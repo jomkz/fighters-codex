@@ -8,17 +8,6 @@ the Jane's combat simulator family (FA, USNF, ATF).
 - Advanced Tactical Fighters (1996)
 - U.S. Navy Fighters (1994)
 
----
-
-## Acknowledgements
-
-Format specifications were made possible by the
-**[OpenFA project](https://gitlab.com/openfa/openfa)** (GPLv3, Rust) — the definitive
-reverse-engineering reference for all FA file formats. All credit for the original
-reverse engineering goes to the OpenFA contributors.
-
----
-
 ## Why this exists
 
 The original FATK (DuoSoft 1998) is a 16-bit app that won't run on 64-bit Windows.
@@ -26,21 +15,6 @@ OpenFA's `ofa-tools` is excellent but Rust-only. Fighters Toolkit provides:
 
 - A **zero-dependency, statically-linked** `ft.exe` — drop it anywhere and run it
 - A **static C++ library** (`ft_lib`) — embed in any GUI, script via ctypes, link from C#
-
----
-
-## Building
-
-Requires Visual Studio 2022 or 2026 (MSVC). CMake ships with VS but isn't in PATH:
-
-```powershell
-$cmake = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-& $cmake -B build -G "Visual Studio 18 2026"
-& $cmake --build build --config Release
-# Output: build\cli\Release\ft.exe
-```
-
----
 
 ## Quick reference
 
@@ -56,16 +30,30 @@ ft mission info / unpack / pack        # .M / .MM mission and map files
 ft sh    info / unpack                 # .SH 3D shapes → Wavefront OBJ
 ```
 
----
-
 ## Documentation
 
+- [docs/](docs/README.md) — file format specs and verification results
 - [docs/cli.md](docs/cli.md) — full command reference with examples
 - [docs/modding.md](docs/modding.md) — modding recipes (textures, stats, missions, models)
 - [docs/api.md](docs/api.md) — C++ library API
-- [docs/](docs/README.md) — file format specs and verification results
 
----
+## Building
+
+Requires Visual Studio 2022 or 2026 (MSVC). CMake ships with VS but isn't in PATH:
+
+```powershell
+$cmake = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+& $cmake -B build -G "Visual Studio 18 2026"
+& $cmake --build build --config Release
+# Output: build\cli\Release\ft.exe
+```
+
+## Acknowledgements
+
+Format specifications were made possible by the
+**[OpenFA project](https://gitlab.com/openfa/openfa)** (GPLv3, Rust) — the definitive
+reverse-engineering reference for all FA file formats. All credit for the original
+reverse engineering goes to the OpenFA contributors.
 
 ## License
 
