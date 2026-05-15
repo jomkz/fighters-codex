@@ -123,10 +123,10 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 | FA_2.LIB | Install dir | Shapes, missions, audio, type defs, cutscenes, text, palette -- 5405 files total |
 | FA_3.LIB | Disk 2 (Red) | 822 JPEG-format textures, 269 aircraft data files |
 | FA_4B.LIB | Install dir | Additional assets |
-| FA_4C.LIB | Disk 1 (Blue) | — |
-| FA_4D.LIB | Install dir | — |
-| FA_7.LIB | Disk 1 (Blue) | — |
-| FA_10.LIB | Disk 2 (Red) | — |
-| FA_10B.LIB | Disk 2 (Red) | — |
-| FA_11.LIB | Disk 2 (Red) | — |
-| FA_11B.LIB | Disk 2 (Red) | — |
+| FA_4C.LIB | Disk 1 (Blue) | Debriefing audio (.11K), medal/award screens (.PIC), FMV data (.CB8) -- 91 files |
+| FA_4D.LIB | Install dir | FMV footage (.CB8 + .11K) -- aerial combat and campaign clips -- 22 files |
+| FA_7.LIB | Disk 1 (Blue) | Mission briefing video sequences (.FBC + .VDO) with .11K audio -- 815 files |
+| FA_10.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-117, B-2, EFA, F-16, F-22 -- 22 files |
+| FA_10B.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- Gripen, RAF, S-35, X-29, X-31 -- 20 files |
+| FA_11.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- A-7, AC-130, AV-8, F-104, F-14 -- 20 files |
+| FA_11B.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-18, F-4B, F-8J, Sea Harrier -- 16 files |
