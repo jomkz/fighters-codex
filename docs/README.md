@@ -29,6 +29,9 @@ validate them against the full game dataset, and document the findings.
 | BRF (OT/NT/PT/JT/SEE/ECM/GAS) | [formats/BRF.md](formats/BRF.md) | Type definitions (aircraft, weapons, objects) |
 | M / MM | [formats/MISSION.md](formats/MISSION.md) | Mission and map files |
 | SH | [formats/SH.md](formats/SH.md) | 3D shape / model (Phar Lap PE bytecode) |
+| CB8 (DRBC/VooM/MRFA) | [formats/CB8.md](formats/CB8.md) | FMV video (intros, cutscenes, per-aircraft clips) |
+| VDO (RATVID) | [formats/VDO.md](formats/VDO.md) | Mission briefing video frames |
+| FBC | [formats/FBC.md](formats/FBC.md) | Per-frame byte-size index for paired .VDO files |
 
 ---
 
