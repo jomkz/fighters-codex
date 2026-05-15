@@ -41,6 +41,7 @@ validate them against the full game dataset, and document the findings.
 | FA_3.LIB | Disk 2 (Red) | 822 JPEG-format .PIC textures, 269 .INF aircraft data files |
 | FA_4B.LIB | Install dir | Additional assets |
 | FA_4C.LIB | Disk 1 (Blue) | — |
+| FA_4D.LIB | Install dir | — |
 | FA_7.LIB | Disk 1 (Blue) | — |
 | FA_10.LIB | Disk 2 (Red) | — |
 | FA_10B.LIB | Disk 2 (Red) | — |
