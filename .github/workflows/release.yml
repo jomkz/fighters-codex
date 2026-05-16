@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Package ft (CLI)
+        run: Compress-Archive -Path build/cli/Release/ft.exe -DestinationPath "ft-${{ github.ref_name }}-windows-x64.zip"
+
+      - name: Package ft-gui
+        run: Compress-Archive -Path build/gui/Release/ft-gui.exe -DestinationPath "ft-gui-${{ github.ref_name }}-windows-x64.zip"
+
+      - name: Package ft_lib (developer SDK)
+        run: |
+          New-Item -ItemType Directory -Path ft-lib-sdk/include -Force | Out-Null
+          Copy-Item build/lib/Release/ft_lib.lib ft-lib-sdk/
+          Copy-Item -Recurse lib/include/ft ft-lib-sdk/include/
+          Compress-Archive -Path ft-lib-sdk/* -DestinationPath "ft-lib-${{ github.ref_name }}-windows-x64.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: false
+          files: |
+            ft-${{ github.ref_name }}-windows-x64.zip
+            ft-gui-${{ github.ref_name }}-windows-x64.zip
+            ft-lib-${{ github.ref_name }}-windows-x64.zip

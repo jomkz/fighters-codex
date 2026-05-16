@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include "ft/version.h"
 
 // Forward declarations from command modules
 int cmd_lib(int argc, char** argv);
@@ -65,6 +66,10 @@ int main(int argc, char** argv) {
     if (argc < 2) { print_usage(); return 1; }
 
     const char* cmd = argv[1];
+    if (strcmp(cmd, "--version") == 0 || strcmp(cmd, "-v") == 0) {
+        puts("ft " FT_VERSION_STRING);
+        return 0;
+    }
     if (strcmp(cmd, "lib") == 0) return cmd_lib(argc - 1, argv + 1);
     if (strcmp(cmd, "pic") == 0) return cmd_pic(argc - 1, argv + 1);
     if (strcmp(cmd, "seq")   == 0) return cmd_seq(argc - 1, argv + 1);

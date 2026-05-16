@@ -1,0 +1,51 @@
+# Component labels
+- name: "ft-lib"
+  color: "0075ca"
+  description: "Affects the ft_lib static library"
+
+- name: "ft-cli"
+  color: "0075ca"
+  description: "Affects the ft command-line tool"
+
+- name: "ft-gui"
+  color: "0075ca"
+  description: "Affects the ft-gui application"
+
+# Type labels
+- name: "bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "New feature or improvement"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information is requested"
+
+# Status labels
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "needs-info"
+  color: "e4e669"
+  description: "Waiting for more information from the reporter"
+
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+# Release labels
+- name: "release"
+  color: "0e8a16"
+  description: "Release preparation or tracking"

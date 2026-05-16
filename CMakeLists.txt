@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(fighters-toolkit CXX)
+project(fighters-toolkit VERSION 0.1.0 CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
+
+configure_file(
+    "${CMAKE_SOURCE_DIR}/version.h.in"
+    "${CMAKE_BINARY_DIR}/include/ft/version.h")
 
 add_subdirectory(lib)
 add_subdirectory(cli)

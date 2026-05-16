@@ -14,7 +14,9 @@ add_executable(ft
 target_link_libraries(ft PRIVATE ft_lib)
 
 # stb_image needed in cli for PNG I/O
-target_include_directories(ft PRIVATE ${CMAKE_SOURCE_DIR}/lib/vendor)
+target_include_directories(ft PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib/vendor
+    ${CMAKE_BINARY_DIR}/include)
 
 if(MSVC)
     target_compile_options(ft PRIVATE /W3 /WX-)

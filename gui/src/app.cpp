@@ -1,4 +1,5 @@
 #include "app.h"
+#include "ft/version.h"
 #include "panels/lib_browser.h"
 #include "panels/editor_host.h"
 #include "panels/preview.h"
@@ -293,7 +294,7 @@ void App::DrawMenuBar() {
     // About popup
     if (ImGui::BeginPopupModal("##About", nullptr,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Fighters Toolkit GUI");
+        ImGui::Text("Fighters Toolkit GUI  v" FT_VERSION_STRING);
         ImGui::Text("Modern replacement for FATK (DuoSoft 1998)");
         ImGui::Separator();
         ImGui::Text("Backend: ft_lib (C++17)");

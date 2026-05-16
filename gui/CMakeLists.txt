@@ -32,6 +32,7 @@ target_include_directories(ft-gui PRIVATE
     ${IMGUI_DIR}/backends
     ${CMAKE_SOURCE_DIR}/lib/include
     ${CMAKE_SOURCE_DIR}/lib/vendor
+    ${CMAKE_BINARY_DIR}/include
 )
 
 target_link_libraries(ft-gui PRIVATE
