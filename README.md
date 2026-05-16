@@ -10,11 +10,15 @@ the Jane's combat simulator family (FA, USNF, ATF).
 
 ## Why this exists
 
-The original FATK (DuoSoft 1998) is a 16-bit app that won't run on 64-bit Windows.
-OpenFA's `ofa-tools` is excellent but Rust-only. Fighters Toolkit provides:
+The original FATK (DuoSoft 1998) is a 16-bit app that won't run natively on 64-bit Windows and had some useability issues by modern standards.
+OpenFA's `ofa-tools` is excellent but Rust-only and has a different focus.
+
+Fighters Toolkit provides:
 
 - A **zero-dependency, statically-linked** `ft.exe` — drop it anywhere and run it
 - A **static C++ library** (`ft_lib`) — embed in any GUI, script via ctypes, link from C#
+
+More than anything, this utility serves as an archaeology tool for me to learn about how these combat flight simulators were built back when the computer's resources were much more constrained and the developers had to focus on playability and not flashy graphics. 
 
 ## Quick reference
 
@@ -50,10 +54,22 @@ $cmake = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\Comm
 
 ## Acknowledgements
 
-Format specifications were made possible by the
-**[OpenFA project](https://gitlab.com/openfa/openfa)** (GPLv3, Rust) — the definitive
-reverse-engineering reference for all FA file formats. All credit for the original
-reverse engineering goes to the OpenFA contributors.
+Playing the Jane's simulations in the 90s was a major factor in getting me into software
+development. Learning how to build basic mods for Fighters Anthology — nothing ever
+released, just personal tinkering — was my first real experience of taking something
+apart to understand how it worked, and that curiosity never left me.
+
+The community of people I met through Fighters Anthology and the many hours spent flying
+it will stay with me forever. The fighters-toolkit is my way of giving back, even if it
+is many years later and maybe too late but we will see where it goes.
+
+Special thanks to **[USNRaptor](http://myplace.frontier.com/~usnraptor/)**, **[The Fighters Anthology Resource Center](http://jkpeterson.net/fa/)**, and the
+many others who put in the hard work to document formats, create missions, and keep the
+game alive long after its time. That body of community knowledge is what the
+**[OpenFA](https://gitlab.com/openfa/openfa)** project built upon to
+produce the definitive reverse-engineering reference that fighters-toolkit used to get started.
+All credit for the original reverse engineering goes to OpenFA and the
+generous community that came before it.
 
 ## License
 

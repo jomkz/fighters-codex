@@ -321,3 +321,42 @@ if needed for rendering.
 - Animation frames, LOD variants, and damage states are not distinguished -- all
   geometry from the main sequential stream is emitted into a single OBJ.
 - OBJ -> SH is not implemented (inverse is too complex given animation/LOD/damage states).
+
+---
+
+## .PTS Extension
+
+Community mod archives sometimes distribute aircraft shadow/crash shapes as `.PTS` files
+(e.g. `A10.PTS`) rather than the in-LIB convention of `A10_S.SH`. The binary format is
+identical — parse with the same SH parser. The `shadow_shape` ptr in the corresponding
+`.PT` file points to the `_S.SH` name; the `.PTS` rename is a distribution artifact only.
+
+---
+
+## External Shape Editing (Community Tools)
+
+The community uses two tools in combination to edit `.SH` vertex geometry:
+
+- **FASHion** — a dedicated FA shape editor. It can only reposition individual vertices;
+  it cannot add or remove vertices, change face topology, or alter the overall mesh
+  structure. The rebuild operation overwrites the original file in place — always back up
+  before editing.
+- **SketchUp 8** — used as the 3D viewport. FASHion exports a vertex coordinate file
+  that SketchUp loads via a plugin; after adjustments the modified coordinates are
+  exported back and FASHion rebuilds the shape.
+
+**Typical workflow:**
+
+1. Unpack the target `.SH` from its `.LIB` with `ft lib unpack`.
+2. Open the `.SH` in FASHion; export the vertex file.
+3. Load into SketchUp 8 (install outside `Program Files` to avoid permissions issues).
+4. Reposition vertices as needed.
+5. Export from SketchUp; rebuild in FASHion → overwrites the `.SH`.
+6. Repack with `ft lib patch`.
+
+For bulk vertex edits (e.g. scaling an entire section), the community workflow converts
+the vertex file to a spreadsheet, applies transformations numerically, then reconverts
+before importing back into FASHion.
+
+SH files with x86-only geometry (65/1275 in FA — see extraction results above) cannot
+be edited with FASHion and require direct x86 disassembly for modification.

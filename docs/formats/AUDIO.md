@@ -75,3 +75,42 @@ ft audio pack   <in.wav> -o <out.11K|.5K|.8K>   # WAV → raw PCM
 
 The output extension determines the stored sample rate when packing.
 Input WAV must be mono, 8-bit; `ft` rejects stereo or 16-bit input.
+
+---
+
+## .MUS -- Music Slot File
+
+`.MUS` files are Phar Lap PE binaries (same container as `.SH`) that act as named
+pointers to `.11K` audio files. The game has nine fixed music slots:
+
+| Filename | Trigger | Referenced audio |
+|----------|---------|-----------------|
+| `M_air.MUS` | Dogfight | `dogf001.11K` |
+| `M_danger.MUS` | Enemy detected | `dang001.11K` |
+| `M_deck.MUS` | On the deck | `valk001.11K` |
+| `M_eject.MUS` | Ejected | `norm001.11K` |
+| `M_home.MUS` | Almost home | `valk001.11K` |
+| `M_launch.MUS` | Takeoff | `slam001.11K` |
+| `M_normal.MUS` | Normal flight | `norm001.11K` |
+| `M_succ.MUS` | Success | `succ001.11K` |
+| `M_valk.MUS` | Ctrl+V hidden track | `valk001.11K` |
+
+### Internal structure
+
+At a fixed offset in the code section there is a 6-byte record:
+
+```
+FF [name 4 bytes] 00 ...
+```
+
+The 4-byte name (e.g. `norm`, `dogf`, `slam`) is appended with `001.11K` to form
+the audio filename the engine looks up in the LIB. To replace in-game music:
+
+1. Prepare a mono 8-bit 11,025 Hz WAV and pack it to `.11K` with `ft audio pack`.
+2. Rename the packed file to match the slot's expected name (e.g. `norm001.11K`).
+3. Update `ITEM.DAT` (or `TK.TRN`) in the toolkit project to reference the new filename.
+4. Patch both the `.MUS` file and the renamed `.11K` into the target `.LIB`.
+
+To create a `.5K` variant: pack at 11025 Hz after doubling playback speed 2×, then
+rename the extension to `.5K`. The engine plays it at half rate, yielding the correct
+pitch with reduced quality.

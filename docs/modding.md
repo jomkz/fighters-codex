@@ -108,6 +108,43 @@ ft lib patch FA_2.LIB KDEAD.SEQ KDEAD_mod.SEQ FA_2_mod.LIB
 
 ---
 
+## Mission briefing text (.MT)
+
+`.MT` files are plain-text companions to `.M` files and can be edited directly — no
+`ft` command needed. They live alongside the `.M` in the `.LIB`.
+
+```powershell
+ft lib unpack FA_2.LIB out\FA_2
+
+# Open the briefing text for any mission
+notepad out\FA_2\BALTIC.MT
+
+# Edit section 2 (briefing) and sections 3/4 (debrief success/failure), then patch back
+ft lib patch FA_2.LIB BALTIC.MT out\FA_2\BALTIC.MT FA_2_mod.LIB
+```
+
+See [formats/MISSION.md](formats/MISSION.md) for the section and directive syntax.
+
+---
+
+## Aircraft flight model reference data
+
+The community has produced G-envelope spreadsheets for 70+ real aircraft
+(F-4, F-14, F-15, F-16, F/A-18, F-22, MiG-25, Rafale, Typhoon, and many more),
+measuring stall and max speeds in KTAS at altitude breakpoints from sea level to 65,000 ft
+across −4 G to +9 G. These map directly to the `env` section in `.PT` files.
+
+The [Fighters Anthology Resource Center](http://jkpeterson.net/fa/) and [USNRaptor](http://myplace.frontier.com/~usnraptor/) community archives include spreadsheets
+covering dozens of airframes. They use KTAS at altitude breakpoints — convert to `.PT`
+`env` units as follows:
+
+```
+speed_ft_per_sec = ktas * 1.6878         # 1 knot = 1.6878 ft/s
+altitude_ft      = altitude_as_read      # already in feet
+```
+
+---
+
 ## Tips
 
 - The game loads flags=0 (uncompressed) LIB entries just as well as flags=4 (compressed).
