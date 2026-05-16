@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: crazy-max/ghaction-github-labeler@v5
+      - uses: EndBug/label-sync@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          config: .github/labels.yml
+          config-file: .github/labels.yml
+          token: ${{ secrets.GITHUB_TOKEN }}

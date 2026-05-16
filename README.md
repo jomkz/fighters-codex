@@ -31,6 +31,16 @@ Both `ft.exe` and `ft-gui.exe` are **64-bit Windows binaries** and require Windo
 
 Windows XP is not supported for three reasons: the build produces x64 PE only (standard XP is 32-bit); MSVC 2022+ dropped the XP-compatible toolset (`v141_xp`); and `std::filesystem` internally calls Vista-only APIs such as `GetFinalPathNameByHandleW`. Supporting XP would require downgrading to C++14, replacing `std::filesystem` with raw Win32 I/O, and using MSVC 2015 with the XP toolset — a significant regression for a negligible user base.
 
+## Downloads
+
+Pre-built Windows x64 binaries are on the [Releases](https://github.com/jomkz/fighters-toolkit/releases) page.
+
+| File | For |
+|------|-----|
+| `ft-vX.X.X-windows-x64.zip` | Modders and scripters — unzip and run `ft.exe` from anywhere |
+| `ft-gui-vX.X.X-windows-x64.zip` | Modders — unzip and run `ft-gui.exe` from anywhere |
+| `ft-lib-vX.X.X-windows-x64.zip` | C++ developers — static library and headers |
+
 ## Documentation
 
 - [docs/](docs/README.md) — file format specs and verification results
