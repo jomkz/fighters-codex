@@ -1,7 +1,7 @@
 # Fighters Toolkit (`ft`)
 
 A native C++17 library and CLI for reading, converting, and repacking game assets from
-the Jane's combat simulator family (FA, USNF, ATF).
+the Jane's combat simulator family.
 
 **Supported games:**
 - Jane's Fighters Anthology (1998)
