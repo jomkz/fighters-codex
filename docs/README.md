@@ -25,6 +25,9 @@ This documentation is an attempt to preserve the knowledge built up from the gre
 | CB8 (DRBC/VooM/MRFA/MRFI) | [formats/CB8.md](formats/CB8.md) | FMV video (intros, cutscenes, per-aircraft clips) |
 | VDO (RATVID) | [formats/VDO.md](formats/VDO.md) | Mission briefing video frames |
 | FBC | [formats/FBC.md](formats/FBC.md) | Per-frame byte-size index for paired .VDO files |
+| INF | [formats/INF.md](formats/INF.md) | Aircraft technical info sheet (RTF) |
+| RAW | [formats/RAW.md](formats/RAW.md) | In-game screenshot capture (structure under investigation) |
+| PLT | [formats/PLT.md](formats/PLT.md) | Pilot save file — career stats, callsign, history (structure under investigation) |
 
 ## Known .LIB Files (Fighters Anthology)
 
