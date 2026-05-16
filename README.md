@@ -1,14 +1,14 @@
 # Fighters Toolkit (`ft`)
 
-A native C++17 library and CLI for reading, converting, and repacking game assets from
-the "Fighters" combat simulator family.
+A native C++17 library, CLI, and GUI for reading, editing, converting, and repacking
+game assets from the "Fighters" combat simulator family.
 
 **Supported games:**
 - Jane's Fighters Anthology (1998)
 - Advanced Tactical Fighters (1996)
 - U.S. Navy Fighters (1994)
 
-> WARNING: This utility is a work in progress and may not function as intended, especially in areas that are not fully understood yet. This could lead to loss of data, so back up your files first and use at your own risk!
+> WARNING: This project's tools are a work in progress and may not function as intended, especially in areas that are not yet fully understood. This could lead to loss of data, so back up your files first and use at your own risk!
 
 ## Why this exists
 
@@ -17,12 +17,19 @@ OpenFA's `ofa-tools` is excellent but Rust-only and has a different focus.
 
 Fighters Toolkit provides:
 
-- A **zero-dependency, statically-linked** `ft.exe` — drop it anywhere and run it
-- A **static C++ library** (`ft_lib`) — embed in any GUI, script via ctypes, link from C#
+- A **zero-dependency, statically-linked** `ft.exe` — drop it anywhere and run it; covers LIB archive management, image/audio/mission/shape conversion, and type-definition inspection from the command line
+- A **graphical editor** `ft-gui.exe` — modern replacement for FATK with a live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
+- A **static C++ library** (`ft_lib`) — all codecs in one linkable unit; embed in any host, script via ctypes, or link from C#
 
-More than anything, this utility serves as an archaeology tool for me to learn about how these combat flight simulators were built back when the computer's resources were much more constrained and the developers had to focus more on playability and not rely on flashy graphics. 
+More than anything, this project started as a vehicle to practice modern C++ — template metaprogramming, constexpr, RAII, span-based APIs, CMake tooling — on a problem domain I actually care about. Reverse-engineering how these simulators squeezed so much out of mid-90s hardware turned out to be exactly the kind of constraint-driven puzzle that makes that kind of practice enjoyable.
 
 
+
+## Platform requirements
+
+Both `ft.exe` and `ft-gui.exe` are **64-bit Windows binaries** and require Windows 7 or later.
+
+Windows XP is not supported for three reasons: the build produces x64 PE only (standard XP is 32-bit); MSVC 2022+ dropped the XP-compatible toolset (`v141_xp`); and `std::filesystem` internally calls Vista-only APIs such as `GetFinalPathNameByHandleW`. Supporting XP would require downgrading to C++14, replacing `std::filesystem` with raw Win32 I/O, and using MSVC 2015 with the XP toolset — a significant regression for a negligible user base.
 
 ## Quick reference
 
@@ -42,6 +49,7 @@ ft sh    info / unpack                 # .SH 3D shapes → Wavefront OBJ
 
 - [docs/](docs/README.md) — file format specs and verification results
 - [docs/cli.md](docs/cli.md) — full command reference with examples
+- [docs/gui.md](docs/gui.md) — ft-gui graphical editor feature reference
 - [docs/modding.md](docs/modding.md) — modding recipes (textures, stats, missions, models)
 - [docs/api.md](docs/api.md) — C++ library API
 
@@ -53,7 +61,8 @@ Requires Visual Studio 2022 or 2026 (MSVC). CMake ships with VS but isn't in PAT
 $cmake = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
 & $cmake -B build -G "Visual Studio 18 2026"
 & $cmake --build build --config Release
-# Output: build\cli\Release\ft.exe
+# Output: build\cli\Release\ft.exe  (CLI)
+#         build\gui\Release\ft-gui.exe  (GUI)
 ```
 
 ## Acknowledgements
