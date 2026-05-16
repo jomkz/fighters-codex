@@ -13,7 +13,7 @@ build/
 *.jpg
 *.jpeg
 
-# ImGui layout state
+# ImGui layout state and user prefs
 imgui.ini
 ft-gui.ini
 

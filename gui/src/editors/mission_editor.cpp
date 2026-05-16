@@ -20,9 +20,31 @@ void DrawMissionEditor(App& app) {
 
     ImVec2 avail = ImGui::GetContentRegionAvail();
     avail.y -= 36;
+
+    // Wrap InputTextMultiline in a horizontally-scrollable child so long lines
+    // are reachable. The input itself is given a large fixed width to prevent
+    // word-wrap; the child provides the actual scroll.
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::BeginChild("##missionScroll", avail, false,
+                      ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::PopStyleVar();
+
+    float inputW = ImGui::GetContentRegionAvail().x;
+    // Compute the width of the longest line so the input never wraps.
+    float charW = ImGui::CalcTextSize("W").x;
+    size_t maxLine = 0, cur = 0;
+    for (char c : s_text) {
+        if (c == '\n') { if (cur > maxLine) maxLine = cur; cur = 0; }
+        else ++cur;
+    }
+    if (cur > maxLine) maxLine = cur;
+    float naturalW = (float)(maxLine + 4) * charW;
+    if (naturalW > inputW) inputW = naturalW;
+
+    ImVec2 inputSize(inputW, ImGui::GetContentRegionAvail().y);
     if (ImGui::InputTextMultiline("##mission", s_text.data(),
                                   s_text.size() + 1,
-                                  avail,
+                                  inputSize,
                                   ImGuiInputTextFlags_AllowTabInput |
                                   ImGuiInputTextFlags_CallbackResize,
                                   [](ImGuiInputTextCallbackData* d) -> int {
@@ -35,6 +57,8 @@ void DrawMissionEditor(App& app) {
                                   }, &s_text)) {
         ed.modified = true;
     }
+
+    ImGui::EndChild();
 
     if (ImGui::Button("Save")) {
         ed.data.assign(s_text.begin(), s_text.end());

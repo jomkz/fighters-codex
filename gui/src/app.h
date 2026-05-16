@@ -6,12 +6,15 @@
 #include <vector>
 #include <functional>
 
-// A single open LIB file.
+// A single open LIB file, or a standalone loose file.
 struct LibSession {
-    std::string              path;       // full path to the .LIB file
-    std::vector<uint8_t>     data;       // raw file bytes
-    std::vector<ft::Entry>   entries;    // parsed directory
-    bool                     dirty = false;
+    std::string              path;           // full path to the file
+    std::vector<uint8_t>     data;           // raw file bytes
+    std::vector<ft::Entry>   entries;        // parsed directory (1 entry if standalone)
+    bool                     dirty      = false;
+    bool                     standalone = false; // true = loose file, not a LIB
+    float                    tableHeight = 0.0f; // browser panel row height (0 = uninitialised)
+    int                      forceOpen  = -1;    // -1=none, 0=collapse, 1=expand (consumed after one frame)
 };
 
 // What is currently open in the editor center panel.
@@ -59,23 +62,36 @@ public:
     // Write the session's in-memory LIB to FA_0.LIB in the configured install dir.
     void InstallToGame(int libIdx);
 
+    // Close one session by index, or all sessions.
+    void CloseSession(int idx);
+    void CloseAllSessions();
+
     // Upload RGBA pixels to a DX11 texture for display in ImGui.
     GpuTexture UploadTexture(const uint8_t* rgba, int w, int h);
+
+    enum class StatusKind { Info, Warning, Error };
 
     // ---------- public state ----------
     std::vector<LibSession> sessions;
     EditorState             editor;
-    std::string             installDir;   // FA game directory
+    std::string             installDir;      // FA game directory
     std::string             statusMsg;
+    StatusKind              statusKind     = StatusKind::Info;
+    int                     selectedSession = -1;
 
 private:
     void DrawMenuBar();
 
     void OpenLibDialog();
+    void OpenFileDialog();
+    void OpenLib(const std::string& path);  // shared by dialog + recent files
+    void OpenStandaloneFile(const std::string& path);
     void SaveSessionDialog(int libIdx);
     void ChooseInstallDir();
+    void AddRecentFile(const std::string& path);
 
     ID3D11Device*        m_device;
     ID3D11DeviceContext* m_ctx;
-    std::string          m_dupLibPath; // set when a duplicate open is attempted
+    std::string          m_dupLibPath;
+    std::vector<std::string> m_recentFiles; // up to 5, most recent first
 };

@@ -2,6 +2,7 @@
 #include "../app.h"
 #include "imgui.h"
 #include <filesystem>
+#include <string>
 #include <cstring>
 
 namespace fs = std::filesystem;
@@ -14,7 +15,6 @@ static bool ci_contains(const char* hay, const char* needle) {
     return false;
 }
 
-// Extension → human-readable type label
 static const char* EntryTypeLabel(const char* name) {
     const char* dot = strrchr(name, '.');
     if (!dot) return "DAT";
@@ -57,14 +57,16 @@ static ImVec4 TypeColor(const char* label) {
     return {0.75f,0.75f,0.75f,1};
 }
 
+static constexpr float kMinTableH = 60.0f;
+static constexpr float kInitMaxH  = 300.0f;
+static constexpr float kHandleH   = 4.0f;
+
 void DrawLibBrowser(App& app) {
     if (app.sessions.empty()) {
-        ImGui::TextDisabled("No LIB open.");
-        ImGui::TextDisabled("File -> Open LIB...");
+        ImGui::TextDisabled("No files open.");
         return;
     }
 
-    // Filter bar
     static char filter[64] = {};
     ImGui::SetNextItemWidth(-1);
     ImGui::InputTextWithHint("##filter", "Filter...", filter, sizeof(filter));
@@ -72,44 +74,62 @@ void DrawLibBrowser(App& app) {
 
     for (int si = 0; si < (int)app.sessions.size(); si++) {
         auto& sess = app.sessions[si];
+
+        float rowH   = ImGui::GetTextLineHeightWithSpacing();
+        float naturalH = (float)(sess.entries.size() + 1) * rowH + 8.0f;
+        if (naturalH < kMinTableH) naturalH = kMinTableH;
+
+        // Initialise height on first appearance.
+        if (sess.tableHeight <= 0.0f) {
+            sess.tableHeight = naturalH < kInitMaxH ? naturalH : kInitMaxH;
+        }
+
         std::string libName = fs::path(sess.path).filename().string();
         if (sess.dirty) libName += " *";
         std::string nodeId = libName + "##lib" + std::to_string(si);
 
-        bool open = ImGui::TreeNodeEx(nodeId.c_str(),
-                        ImGuiTreeNodeFlags_DefaultOpen |
-                        ImGuiTreeNodeFlags_SpanAvailWidth);
+        bool isSelected = (app.selectedSession == si);
+        ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_DefaultOpen |
+                                       ImGuiTreeNodeFlags_SpanAvailWidth;
+        if (isSelected) nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+        if (sess.forceOpen >= 0) {
+            ImGui::SetNextItemOpen(sess.forceOpen == 1, ImGuiCond_Always);
+            sess.forceOpen = -1;
+        }
+        bool open = ImGui::TreeNodeEx(nodeId.c_str(), nodeFlags);
+
+        // Select session on click.
+        if (ImGui::IsItemClicked())
+            app.selectedSession = si;
+
         if (ImGui::IsItemHovered())
             ImGui::SetTooltip("%s\n%zu entries", sess.path.c_str(),
                               sess.entries.size());
-        // Right-click context on the library node
+
         if (ImGui::BeginPopupContextItem()) {
             if (ImGui::MenuItem("Close")) {
                 ImGui::EndPopup();
                 if (open) ImGui::TreePop();
-                if (app.editor.libIdx == si)
-                    app.editor = EditorState{};
-                else if (app.editor.libIdx > si)
-                    app.editor.libIdx--;
-                app.sessions.erase(app.sessions.begin() + si);
+                app.CloseSession(si);
                 return;
             }
-            if (ImGui::MenuItem("Install as FA_0.LIB",
-                                nullptr, false, !app.installDir.empty()))
-                app.InstallToGame(si);
+            if (!sess.standalone)
+                if (ImGui::MenuItem("Install as FA_0.LIB",
+                                    nullptr, false, !app.installDir.empty()))
+                    app.InstallToGame(si);
             ImGui::EndPopup();
         }
 
         if (!open) continue;
 
-        // Column headers
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(4,2));
         if (ImGui::BeginTable("##entries", 3,
                 ImGuiTableFlags_ScrollY |
                 ImGuiTableFlags_RowBg   |
                 ImGuiTableFlags_BordersInnerV |
                 ImGuiTableFlags_Resizable,
-                ImVec2(0, 0))) {
+                ImVec2(0, sess.tableHeight))) {
             ImGui::TableSetupScrollFreeze(0, 1);
             ImGui::TableSetupColumn("Name",  ImGuiTableColumnFlags_WidthStretch);
             ImGui::TableSetupColumn("Type",  ImGuiTableColumnFlags_WidthFixed, 72);
@@ -119,7 +139,6 @@ void DrawLibBrowser(App& app) {
             for (int ei = 0; ei < (int)sess.entries.size(); ei++) {
                 const auto& e = sess.entries[ei];
                 const char* label = EntryTypeLabel(e.name);
-                // Apply filter
                 if (filter[0] != '\0') {
                     if (!ci_contains(e.name, filter) &&
                         !ci_contains(label, filter))
@@ -139,8 +158,7 @@ void DrawLibBrowser(App& app) {
                 ImGui::PopID();
 
                 ImGui::TableSetColumnIndex(1);
-                ImVec4 col = TypeColor(label);
-                ImGui::TextColored(col, "%s", label);
+                ImGui::TextColored(TypeColor(label), "%s", label);
 
                 ImGui::TableSetColumnIndex(2);
                 if (e.size < 1024)
@@ -151,7 +169,33 @@ void DrawLibBrowser(App& app) {
             ImGui::EndTable();
         }
         ImGui::PopStyleVar();
+
+        // Horizontal resize handle — capped at natural full height.
+        ImGui::PushStyleColor(ImGuiCol_Button,        ImGui::GetStyleColorVec4(ImGuiCol_Separator));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_SeparatorHovered));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive,  ImGui::GetStyleColorVec4(ImGuiCol_SeparatorActive));
+        ImGui::Button(("##hr" + std::to_string(si)).c_str(), ImVec2(-1.0f, kHandleH));
+        ImGui::PopStyleColor(3);
+        if (ImGui::IsItemActive()) {
+            sess.tableHeight += ImGui::GetIO().MouseDelta.y;
+            if (sess.tableHeight < kMinTableH) sess.tableHeight = kMinTableH;
+            if (sess.tableHeight > naturalH)   sess.tableHeight = naturalH;
+        }
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+            sess.tableHeight = naturalH;
+        if (ImGui::IsItemHovered() || ImGui::IsItemActive())
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+
         ImGui::TreePop();
     }
 
+    if (ImGui::BeginPopupContextWindow("##BrowserCtx",
+            ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+        bool any = !app.sessions.empty();
+        if (ImGui::MenuItem("Expand All", nullptr, false, any))
+            for (auto& s : app.sessions) s.forceOpen = 1;
+        if (ImGui::MenuItem("Collapse All", nullptr, false, any))
+            for (auto& s : app.sessions) s.forceOpen = 0;
+        ImGui::EndPopup();
+    }
 }

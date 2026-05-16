@@ -93,7 +93,8 @@ void DrawPicEditor(App& app) {
                 if (!encoded.empty()) {
                     ed.data     = std::move(encoded);
                     ed.modified = true;
-                    app.statusMsg = "Imported " + fs::path(path).filename().string();
+                    app.statusMsg  = "Imported " + fs::path(path).filename().string();
+                    app.statusKind = App::StatusKind::Info;
                 }
             }
         }
