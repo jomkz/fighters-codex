@@ -79,6 +79,21 @@ All PIC files in `FA_3.LIB` (aircraft skins) are this format.
 
 ---
 
+## Filename Conventions
+
+The filename prefix identifies the role of the image within the engine:
+
+| Prefix | Role | Example |
+|--------|------|---------|
+| `$` | 2D weapon / ordnance cockpit icon | `$AIM9M.PIC`, `$AGM65A.PIC` |
+| `_` | Aircraft skin / texture (referenced by `.SH` `TextureFile` instruction) | `_A10.PIC`, `_KIN.PIC` |
+| (none) | All other images: UI, medals, backgrounds, terrain tiles | `PALETTE.PIC`, `ATFSPLAS.PIC` |
+
+The `$` and `_` prefixes are engine conventions embedded in the filenames stored in the
+`.LIB` archives. They have no effect on the file format itself.
+
+---
+
 ## Modding Notes
 
 - `ft pic pack` always encodes as format=0 (dense) with a full inline palette. The game

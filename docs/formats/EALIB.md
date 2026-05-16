@@ -42,9 +42,16 @@ are rare and passed through without decompression.
 
 ## Filename Notes
 
-Audio files (`*.11K`, `*.5K`) whose names start with `&` are looping sounds (engine
-convention). Windows rejects `&` in filenames, so `ft lib unpack` maps `&` to `_` on
-extraction. The original name is preserved in memory for patching operations.
+Certain filename prefixes are engine conventions that apply to files of any type stored
+in a `.LIB`. Windows rejects these characters, so `ft lib unpack` maps them to `_` on
+extraction. The original names are preserved in memory for patching operations.
+
+| Prefix | Convention | Applies to |
+|--------|-----------|------------|
+| `&` | Looping ambient / cockpit sound | `*.11K`, `*.5K`, `*.8K` |
+| `^` | Voice / radio callout (one-shot) | `*.11K`, `*.5K`, `*.8K` |
+| `$` | 2D weapon / ordnance cockpit icon | `*.PIC` |
+| `_` | Aircraft skin / texture | `*.PIC` |
 
 Example: `&AFTB2.11K` in the archive extracts to `_AFTB2.11K` on disk.
 
@@ -117,16 +124,21 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 
 ## Known .LIB Files (Fighters Anthology)
 
-| File | Location | Key Contents |
-|------|----------|--------------|
-| FA_1.LIB | Install dir | Fonts (.FNT), UI graphics |
-| FA_2.LIB | Install dir | Shapes, missions, audio, type defs, cutscenes, text, palette -- 5405 files total |
-| FA_3.LIB | Disk 2 (Red) | 822 JPEG-format textures, 269 aircraft data files |
-| FA_4B.LIB | Install dir | Additional assets |
-| FA_4C.LIB | Disk 1 (Blue) | Debriefing audio (.11K), medal/award screens (.PIC), FMV data (.CB8) -- 91 files |
-| FA_4D.LIB | Install dir | FMV footage (.CB8 + .11K) -- aerial combat and campaign clips -- 22 files |
-| FA_7.LIB | Disk 1 (Blue) | Mission briefing video sequences (.FBC + .VDO) with .11K audio -- 815 files |
-| FA_10.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-117, B-2, EFA, F-16, F-22 -- 22 files |
-| FA_10B.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- Gripen, RAF, S-35, X-29, X-31 -- 20 files |
-| FA_11.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- A-7, AC-130, AV-8, F-104, F-14 -- 20 files |
-| FA_11B.LIB | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-18, F-4B, F-8J, Sea Harrier -- 16 files |
+| File | TOOLKIT ID | Location | Key Contents |
+|------|------------|----------|--------------|
+| FA_1.LIB | `"1 "` | Install dir | Fonts (.FNT), UI graphics |
+| FA_2.LIB | `"2 "` | Install dir | Shapes, missions, audio, type defs, cutscenes, text, palette -- 5405 files total |
+| FA_3.LIB | — | Disk 2 (Red) | 822 JPEG-format textures, 269 aircraft data files |
+| FA_4B.LIB | — | Install dir | Additional assets |
+| FA_4C.LIB | `"4C"` | Disk 1 (Blue) | Debriefing audio (.11K), medal/award screens (.PIC), FMV data (.CB8) -- 91 files |
+| FA_4D.LIB | — | Install dir | FMV footage (.CB8 + .11K) -- aerial combat and campaign clips -- 22 files |
+| FA_7.LIB | `"7 "` | Disk 1 (Blue) | Mission briefing video sequences (.FBC + .VDO) with .11K audio -- 815 files |
+| FA_10.LIB | `"10"` | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-117, B-2, EFA, F-16, F-22 -- 22 files |
+| FA_10B.LIB | `"AB"` | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- Gripen, RAF, S-35, X-29, X-31 -- 20 files |
+| FA_11.LIB | `"41"` | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- A-7, AC-130, AV-8, F-104, F-14 -- 20 files |
+| FA_11B.LIB | — | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-18, F-4B, F-8J, Sea Harrier -- 16 files |
+
+**TOOLKIT ID** is the 2-character identifier the FA TOOLKIT uses internally in its
+`CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
+`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` — these do not match the
+filename suffix, so the IDs appear to be opaque tokens rather than derived from the name.
