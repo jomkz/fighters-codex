@@ -65,22 +65,30 @@ Always `$1` across all four files. Likely a stores category flag indicating this
 
 ## Calibration
 
-### Capacity word
+### Mass dword — Confirmed as pounds
 
-The `word` values (108, 198, 248, 315) do not map linearly to US gallons. Method:
+Cross-referenced against PT internal fuel fields (`PLANE_TYPE + 83` offset):
 
-1. Open an aircraft `.PT` BRF file that can carry the 150-gal tank (e.g. `F16.PT`). Read its internal fuel capacity field.
-2. Check the total fuel figure shown on the FA HUD with the 150-gal tank loaded.
-3. Subtract internal fuel from total — the remainder maps to word 108 → derive the conversion factor.
-4. Alternatively: search FA.SMS for `GAS`, `fuel`, or `tank` symbols. The function that reads the capacity `word` and adds to the aircraft's fuel pool will show the conversion arithmetic.
+| Aircraft | PT `dword` (PLANE_TYPE+83) | Known fuel (lbs) |
+|----------|---------------------------|-----------------|
+| A-10 | 10700 | 10,700 lbs ✓ |
+| F-16C | 6972 | 6,972 lbs (Block 25/30) ✓ |
 
-Hypothesis: if internal fuel uses the same unit, values may be in some simulator-internal volume tick (108 internal units per 150 US gallons ≈ 0.72 units/gallon).
+The GAS `dword` mass is in the same unit — **fuel weight in pounds**. The ratio 990/150 = 6.6 lb/gal confirms JP-8 density (6.6 lb/US gal) to within rounding.
 
-### Mass dword
+### Capacity word — Unresolved game-internal unit
 
-Already well-constrained: mass ≈ 6.6× gallon count ≈ **fuel weight in pounds** (JP-8 ≈ 6.6 lb/US gal). Consistent across all four tanks to within rounding.
+The `word` values (108, 198, 248, 315) are NOT in pounds and do NOT map linearly to US gallons:
+
+| Tank | word | word ÷ gallons |
+|------|------|---------------|
+| F150 | 108 | 0.720 |
+| F250 | 198 | 0.792 |
+| F350 | 248 | 0.709 |
+| F500 | 315 | 0.630 |
+
+The conversion factor varies, ruling out a simple linear unit. The `word` is not present in PT files in a comparable form — PT stores fuel only as the `dword` pounds field. The capacity `word` is a game-internal unit consumed by the fuel-system code at runtime; exact semantics require FA.EXE analysis (FA.SMS fuel symbols: search for `GAS`, `fuel`, `tank`).
 
 ## TODO
 
-- Decode capacity `word` unit via `.PT` internal fuel cross-reference or FA.SMS fuel symbols
-- Confirm mass `dword` = pounds via FA.EXE physics code
+- Decode capacity `word` unit via FA.EXE disassembly — search FA.SMS for fuel-system symbols, trace the code that reads `word 108` and adds it to the aircraft fuel pool

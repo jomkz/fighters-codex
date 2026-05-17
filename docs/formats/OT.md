@@ -66,7 +66,7 @@ Single-section structure (OBJ_TYPE only — no NPC_TYPE or PROJ_TYPE).
 - Static objects have no `loopSound` ptr, no `secondSound`, and no hardpoints.
 - The movement info block is all zeros.
 - `_OBJProc` handles collision detection, destruction events, and visibility only.
-- The `~` prefix indicates campaign- or theater-specific variants.
+- The `~` prefix has two distinct uses: (1) **destruction state replacement** — `~BNK5.OT` is "Damaged Shelter 5" with a destroyed model (`dbk5.SH`), zeroed `dmg_armor`, and bit 5 of `ot_flags` cleared; placed by the engine at the same world position after the base object is destroyed. (2) **campaign/theater variant** — `~COLTWR.OT` is an enhanced version of COLTWR with an added loop sound and bit 22 set, used in a specific campaign. Check the `~` prefix section in ARCHITECTURE.md for the full list.
 
 ---
 
@@ -91,39 +91,57 @@ Single-section structure (OBJ_TYPE only — no NPC_TYPE or PROJ_TYPE).
 
 ## Calibration
 
-### `obj_class` word — Partially confirmed
+### `obj_class` word — Confirmed values
 
-| Value | Class | Observed in |
-|-------|-------|-------------|
-| `$40` | Scenery / terrain feature (non-targetable) | TREE1.OT |
-| `$100` | Ground structure (building, runway) | BLDG1.OT, STRIP1.OT |
+| Value | Class | Representative files |
+|-------|-------|---------------------|
+| `$40` | Scenery / terrain feature | TREE1-2, ROAD*, LOT, CITY1-3, CRATER, CROPA/B, FLAG*, RES1-2, HOUS*, HOOCH, MOOSEA/B |
+| `$100` | Ground structure | BLDG1-3, BNK1-9, STRIP1-7, HANGR, SILO, TOWER, COMM, BUNKER, SHELT |
 
-Naval and vehicle classes are in NT files (`$2000` = naval vessel for IOWA.NT, KIROV.NT).
+`$40` covers both pure scenery (TREE, ROAD) and targetable-but-civilian structures (CITY blocks, urban terrain). `$100` covers all military and airfield structures.
 
-### `ot_flags` dword — Partially confirmed
+Naval and vehicle classes appear in NT files only (`$2000` = ship, `$1000` = SAM, etc.).
 
-Observed values and evidence:
+### `ot_flags` dword — Observed bit map
 
-| Object | `ot_flags` | Notes |
-|--------|-----------|-------|
-| TREE1.OT | `$0` | No flags — indestructible scenery |
-| BLDG1.OT | `$521` | Factory building — destructible target |
-| STRIP1.OT | `$208021` | Runway — destructible, mission-critical |
+Full survey of all 170 OT files. Bit positions confirmed by cross-category comparison.
 
-**Bit 0** (`0x1`): set on BLDG1 and STRIP1, absent on TREE1 → **targetable / destroyable**.
+| Bit | Mask | Confirmed | Observed pattern |
+|-----|------|-----------|-----------------|
+| 0 | `$1` | **targetable** | Absent on TREE, ROAD, LOT, CRATER, DEST, REACTB (pure scenery / already-destroyed states) |
+| 5 | `$20` | **primary variant** | Absent on some subdued/simplified variants (BLDG2 `$501` vs BLDG1 `$521`); absent on ~ files where bit removed |
+| 8 | `$100` | **has geometry / collideable** | Present on bridges, most structures, rocks; absent on flat terrain tiles (ROAD, LOT, TREE) |
+| 10 | `$400` | **civilian building** | Set on BLDG*, HOUS*, TWNBK*, CTYBK*, CONT*, CRATE*, airport buildings (APTLA/B/C) |
+| 11 | `$800` | **animated / non-static scenery** | Set on FLAG*, CROP*, CITY1-3, BR*END (bridge endpoints), SUPPLY; absent on solid structures |
+| 15 | `$8000` | **airfield surface** | Exclusive to STRIP1-7 and DTSTRP; never set on other OT types |
+| 17 | `$20000` | **military / hardened structure** | Set on BNK*, HANGR*, COMM, NUCCT, PRDR*, RELAY, TOWER, COLTWR, CTWR*, and other military targets |
+| 20 | `$100000` | **damaged runway surface** | DTSTRP only; contrasts with bit 21 on intact STRIP* |
+| 21 | `$200000` | **intact runway surface** | STRIP1-7; absent on DTSTRP (damaged variant) |
+| 22 | `$400000` | **~-prefixed variant extra flag** | Added vs base in ~COLTWR (`$420121` vs `$20121`); meaning unconfirmed |
 
-Full bit decomposition requires Ghidra cross-reference of the damage/targeting evaluation function. Cross-category method:
+Bits 9, 12–14, 16, 18–19, 23+ not observed in any OT file in FA_2.LIB.
 
-1. Collect flags from ROCKA.OT, FLAGO1.OT (likely `$0` or minimal), BLDG1.OT, BNK1.OT, SA3SITE.OT.
-2. Bit present on BNK1 but absent on BLDG1 → hardened/fortified flag.
-3. Bit present on all targetable objects but absent on indestructible scenery → "valid mission target" flag.
+**Example flag combinations:**
+
+| Object type | `ot_flags` | Bits active |
+|-------------|-----------|-------------|
+| TREE1, ROAD | `$0` | none |
+| SILO | `$21` | 0, 5 |
+| ROCKA | `$101` | 0, 8 |
+| BLDG2 | `$501` | 0, 8, 10 |
+| BLDG1 | `$521` | 0, 5, 8, 10 |
+| BNK1 | `$20121` | 0, 5, 8, 17 |
+| BUNKER | `$400021` | 0, 5, 22 |
+| FLAG* | `$800` | 11 |
+| CITY1 | `$900` | 8, 11 |
+| STRIP1 | `$208021` | 0, 5, 15, 21 |
+| DTSTRP | `$108021` | 0, 5, 15, 20 |
 
 ### Hitpoint scale
 
-Compare `word hitpoints` across object types to calibrate damage values. Soft targets (TREE1.OT, word 166) and buildings share the same hitpoint field position.
+All confirmed in the `word hitpoints` field (field index 23). Values appear to be absolute damage points. Compare `dmg_armor` across JT weapon types against object `hit_points` to calibrate survivability.
 
 ## TODO
 
-- Complete `ot_flags` bit decomposition via cross-category comparison
-- Map hitpoint scale (cannon burst vs. bomb hit survivability)
-- Decode `obj_class $40` sub-classes (do all terrain features use $40?)
+- Confirm exact semantics of bits 5, 8, 10, 11 via Ghidra targeting / collision functions — current labels are inferred from observed patterns, not verified in code
+- Decode bit 22 (`$400000`) — only appears on `~`-prefixed variants of COLTWR and a few others
