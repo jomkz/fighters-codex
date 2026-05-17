@@ -34,11 +34,54 @@ The name prefix encodes context (`HUD`, `WIN`, `MAP`) and suffix may encode loca
 |-----|-------|
 | FA_1.LIB | 13 |
 
+## CODE Section Layout (Partially Confirmed)
+
+FNT files use **Phar Lap PE format** (signature `PL\0\0`). No imports. The CODE section contains a **glyph pointer table** followed by variable-length glyph bitmap data.
+
+### Pointer table
+
+Starts at CODE section offset 0 (VA 0x1000). Layout:
+
+```
+u32  first_char_or_count  (value = 7 in 4X6.FNT and 4X12.FNT)
+u32  glyph_va[N]          one VA per character, starting at ASCII 0
+```
+
+The first ~32 entries (ASCII control chars) all point to the same blank/space glyph VA. Variable-stride entries begin at the first printable character.
+
+Sample from 4X6.FNT (first printable chars, ASCII 0x22..0x26):
+- `'` (0x22): VA 0x1822, size ~25 bytes
+- `#` (0x23): VA 0x183B, ...
+- `$` (0x24): VA 0x1855, ...
+- `%` (0x25): VA 0x1879, ...
+- `&` (0x26): VA 0x189C, ...
+
+The spacing is variable (19–36 bytes per glyph), confirming a **proportional font** with different advance widths.
+
+### $$DOSX metadata
+
+The $$DOSX section (512 bytes) contains a small header. u16 values at byte offsets +8 and +10 are `16` and `6` in 4X6.FNT — likely `(bitmap_stride_bytes, cell_height)`. For a 4-wide font at 1bpp, stride = ceil(4/8) × 32 glyphs per row = 16 bytes/row; height = 6. This is consistent.
+
+### RE next steps
+
+1. Hex-dump the glyph at VA 0x1804 (the "blank" shared by first 32 entries) — its byte count reveals glyph bitmap format.
+2. For 4X6.FNT: glyph at VA 0x1804 should be 1 byte (blank glyph), followed immediately by glyph data at 0x1805 for the next char. Verify by inspecting bytes at those VAs.
+3. Compare 4X6.FNT vs 4X12.FNT glyph data sizes to confirm the height scaling (expect 12/6 = 2× byte count per glyph).
+
+## Toolkit Roadmap
+
+Once pixel format, stride, and per-glyph record size are confirmed:
+
+- New `lib/src/fnt.cpp` + `lib/include/ft/fnt.h` — parse pointer table + glyph bitmaps
+- New `cli/cmd_fnt.cpp` — `ft fnt unpack <file.FNT> -o <dir>/` extracts each glyph as a 1-bpp PNG; writes `metrics.csv` with `{char, width, height}` per row
+- GUI: `fnt_viewer.h/cpp` in `gui/src/editors/` for interactive glyph grid preview
+
 ## TODO — Deep Dive
 
-- Disassemble a `.FNT` overlay to locate the glyph bitmap table and character metrics
-- Determine pixel format (1-bpp, 4-bpp, or 8-bpp indexed) and grid layout
-- Correlate font names (e.g. `4X6`) with rendered glyph dimensions
+- Confirm pixel format (1-bpp strongly suspected from stride=16, height=6, cell_w=4)
+- Determine the per-glyph record size (is it just raw bits, or are there inline metrics?)
+- Verify whether `00`/`01`/`11` suffix encodes locale, resolution, or style variant
+- Identify all 15 FNT filenames and their roles (some may be symbol/icon fonts, not alpha fonts)
 
 ## Related
 

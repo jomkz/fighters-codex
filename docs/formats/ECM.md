@@ -106,8 +106,31 @@ Exact semantics require FA.EXE disassembly.
 - BRF.md — Aircraft definitions that reference ECM suites
 - JT.md — Weapon seekers that ECM jams
 
+## Calibration
+
+### Effectiveness byte groups
+
+Method to assign semantics to the three groups:
+
+1. Compare `F15.ECM` (full suite: 30/35/95, 24/30/35, 159/31/30) against `AV8.ECM` (minimal/zeroed).
+2. Compare `EA6.ECM` (dedicated EW Prowler — should have the highest jamming values).
+3. Compare `ALE40.ECM` (expendable dispenser — should only show chaff/flare effectiveness, not active jamming).
+4. `ALE40.ECM` having non-zero values only in one group identifies that group as decoy/chaff effectiveness. The other two groups belong to radar detection (RWR) and active jamming.
+
+### ECM power field (`word $1f0`)
+
+`$1f0` = 496 = `0001 1111 0000` binary. Possible interpretations:
+- **Bitmask**: bits 4–8 set = five frequency bands supported
+- **Enumerated power level**: 496 = some calibrated power index
+
+Cross-reference: search FA.SMS for `ECM`, `jamming`, or `frequency` symbols. The function that reads `word $1f0` and computes a jamming effectiveness modifier will clarify the encoding.
+
+### Ghidra cross-reference
+
+Load FA.EXE with `ImportFASms` labels. Search for symbols with `ECM` prefix (e.g. `?ECMEvaluate@@`, `?GetJammingFactor@@`). Trace the function that reads the effectiveness bytes and produces a float or percentage modifier — the arithmetic reveals the byte semantics.
+
 ## TODO
 
-- Decode the effectiveness byte triple structure (RWR bands? jamming categories?)
-- Decode `word $1f0` frequency field — bitmask or index into a frequency table?
-- Cross-reference with FA.EXE ECM evaluation code via FA.SMS symbols
+- Identify effectiveness byte group roles (compare ALE40 vs. EA6 per methodology above)
+- Decode `word $1f0` frequency field — bitmask or power index
+- Locate `ECM*` symbols in FA.SMS and trace evaluation logic in Ghidra

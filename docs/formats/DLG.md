@@ -38,10 +38,64 @@ The `CHOOSEAC.DLG` labels are the top-level game start menu items — displayed 
 |-----|-------|
 | FA_2.LIB | 92 |
 
+## Dispatch Table Layout (Confirmed)
+
+DLG files use a **Phar Lap PE format** (signature `PL\0\0` instead of `PE\0\0`). There is no compiled x86 code — the CODE section is a **dispatch table** of fixed-size records.
+
+### Record structure (38 bytes each, empirically confirmed from CHOOSEAC.DLG)
+
+| Offset | Size | Field |
+|--------|------|-------|
+| +0 | u32 | `thunk_va` — VA of the JMP thunk for the draw function (e.g. `_DrawAction`) |
+| +4 | u16 | `x` — screen x in pixels |
+| +6 | u16 | `y` — screen y in pixels |
+| +8 | u8[10] | padding (zeros) |
+| +18 | u16 | `width` — control width in pixels |
+| +20 | u32 | `str_va` — VA of null-terminated label string in CODE section |
+| +24 | u8[14] | trailing padding (zeros) |
+
+Label strings are packed consecutively after the dispatch table in the same CODE section.
+
+### JMP thunks
+
+At the end of the CODE section, each imported function has a 6-byte JMP thunk:
+
+```
+FF 25 [iat_va LE]    ; JMP DWORD PTR [IAT slot]
+```
+
+The `thunk_va` field in each dispatch record points to one of these thunks, identifying which draw function the record invokes.
+
+### CHOOSEAC.DLG decoded (main start screen)
+
+| VA | x | y | width | Label |
+|----|---|---|-------|-------|
+| 00001015 | 44 | 24 | 144 | Play Single Mission |
+| 0000103B | 44 | 56 | 144 | Create Quick Mission |
+| 00001061 | 44 | 88 | 144 | Create Pro Mission |
+| 00001087 | 44 | 120 | 144 | Replay Last Mission |
+| 000010AD | 44 | 251 | 144 | Start New Campaign |
+| 000010D3 | 37 | 283 | 158 | Continue Old Campaign |
+| 000010F9 | 44 | 315 | 144 | View Pilot Records |
+| 0000111F | 32 | 174 | 170 | Reference |
+
+Y gap between 120 and 251 (131 px) divides the menu into two groups; buttons 1–4 are mission-start options, 5–8 are management/info.
+
+### `_ChoosePreload` header record
+
+Every DLG begins with one `_ChoosePreload` record (also 4-byte thunk + params) that contains the dialog bounding box or initialisation args. In CHOOSEAC.DLG this record appears at VA 0x1000 with params `(379, 80, 238, 361)` — likely `(x1=?, y1=80, width=238, height=361)` or a similar bounding-box encoding.
+
+## Toolkit Roadmap
+
+- New `lib/src/dlg.cpp` + `lib/include/ft/dlg.h` — parse dispatch table from PE CODE section
+- New `cli/cmd_dlg.cpp` — `ft dlg dump <file.DLG>` prints control table as JSON `[{func, x, y, width, label}]`
+- GUI: `dlg_editor.h/cpp` — visual dialog layout editor that lets modders reposition controls
+
 ## TODO — Deep Dive
 
-- Disassemble one DLG to determine the binary layout of control position tables (screen coordinates, sizes, z-order)
-- Map all 92 DLG names to their in-game screens
+- Confirm record layout for `_DrawRocker`, `_DrawEditBox`, `_DrawText` (likely different param sizes)
+- Map all 92 DLG filenames to their in-game screens
+- Decode `_ChoosePreload` params (bounding box vs dialog-type ID)
 
 ## Related
 

@@ -133,7 +133,48 @@ Two-section structure: OBJ_TYPE (physical object base) followed by PROJ_TYPE (pr
 
 ---
 
+## Calibration
+
+### Warhead capability flags (`dword $1204f`)
+
+`$1204f` = `0001 0010 0000 0100 1111` binary. Method to decode:
+
+1. List several weapons with different guidance types (IR missile, radar missile, unguided bomb, gun round).
+2. Record the `dword` flags value for each.
+3. XOR pairs that share one guidance type to isolate that type's bit(s).
+4. Known: gun rounds (`GAU8.JT`) use seeker mode `byte 0` (unguided) — their flags value sets a lower baseline. Radar missiles add bits not present in IR missiles.
+
+Likely bit assignments based on flags observed across the inventory:
+
+| Bit | Hypothesis |
+|-----|-----------|
+| 0 | Can engage air targets |
+| 1 | Can engage ground targets |
+| 2 | Can engage naval targets |
+| 3 | Can engage radar emitters (ARM) |
+| 6 | Has proximity fuze |
+| others | TBD from cross-reference |
+
+### Seeker mode byte
+
+Cross-reference with [SEE.md](SEE.md) seeker type byte:
+
+| `byte` value | Hypothesis |
+|-------------|-----------|
+| 0 | Unguided (guns, dumb bombs) |
+| 1 | IR-homing |
+| 2 | Radar-homing (semi-active or active) |
+| 3 | Laser-guided |
+
+Confirm by comparing `GAU8.JT` (byte 0, unguided gun), `AIM9M.JT` (IR), `AIM120.JT` (radar), and a GBU with Pave Knife (laser).
+
+### Agility / hit-probability bytes
+
+The byte sequence after the seeker lobe data controls maneuverability and hit chance. Compare `AIM9X.JT` (high-agility, modern) against `AIM9M.JT` (older) — bytes that differ are agility-related. Compare `GAU8.JT` (guaranteed hit at close range) against long-range missiles — bytes that differ are hit-probability-related.
+
 ## TODO
 
-- Decode numeric fields more precisely (warhead capability flags, seeker mode enum, agility params).
-- Cross-reference seeker type byte against SEE.md seeker definitions.
+- Decode `dword` warhead capability flags (see methodology above)
+- Confirm seeker mode byte enum
+- Map agility byte sequence (turn rate, g-limit, fuze delay)
+- Map hit-probability bytes against known weapon Pk values

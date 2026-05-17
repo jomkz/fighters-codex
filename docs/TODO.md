@@ -46,6 +46,5 @@ These fields are documented structurally but their numeric semantics need calibr
 
 ## Future Inventory
 
-- **FA_3.LIB PIC naming pattern**: Confirm whether the `<AC>_<N>.PIC` N suffix encodes LOD level, paint scheme, or texture region. Extract a sample aircraft's full texture set and cross-reference against SH file UV mapping.
-- **FA.EXE SMS import script**: Write a Ghidra or IDA script that reads FA.SMS and bulk-imports all 3,829 symbols as labels. See [formats/SMS.md](formats/SMS.md).
-- **`~` prefix files**: Confirm semantics of `~`-prefixed entries in FA_2.LIB (e.g. `~BNK5.OT`, `~MOOSE.JT`). Are these campaign/theater overrides or runtime aliases?
+- **FA_3.LIB PIC naming pattern**: Confirm whether the `<AC>_<N>.PIC` N suffix encodes LOD level, paint scheme, or texture region. Method: extract a full aircraft skin set (e.g. all `f22_*.PIC`) using `ft lib unpack`, load each into the GUI PIC viewer, and compare against `f22.SH` UV coordinates. If textures tile differently at distance, suffix = LOD; if they show different colour schemes, suffix = paint scheme.
+- **`~` prefix files**: Confirm semantics of `~`-prefixed entries in FA_2.LIB (e.g. `~BNK5.OT`, `~MOOSE.JT`). Method: (1) unpack both `BNK5.OT` and `~BNK5.OT` and diff their BRF content — if only stats differ, they are campaign/theater overrides; if the shape or name differs, they may be runtime aliases for scripted events. (2) Search FA.SMS for symbol names containing `override`, `variant`, or `theater` for engine-side context.
