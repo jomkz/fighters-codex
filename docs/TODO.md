@@ -8,19 +8,9 @@ Outstanding RE and documentation tasks, grouped by effort.
 
 - **PLT field gap (0xB0–campaign block start)**: Field layout from offset `0xB0` to the campaign block start is unmapped. Method: diff two pilot saves with known differences (aircraft, loadout) byte-by-byte. See [formats/PLT.md](formats/PLT.md). *(Requires gameplay — 4-pass methodology documented in PLT.md)*
 
-- **GAS capacity word**: The `word` field (108/198/248/315) does not map linearly to US gallons. The `dword` mass is confirmed as fuel weight in lbs (6.6× gallon count). The capacity `word` requires FA.EXE fuel-system disassembly to decode. See [formats/GAS.md](formats/GAS.md).
+- **GAS capacity word**: The `word` field (108/198/248/315) does not map linearly to US gallons or lbs, and no PT field shares the unit. Binary analysis is exhausted — requires FA.EXE fuel-system trace (see Win32 DLL section). See [formats/GAS.md](formats/GAS.md).
 
-- **FA_3.LIB PIC naming pattern**: Confirm whether the `<AC>_<N>.PIC` N suffix encodes LOD level, paint scheme, or texture region. Requires disc 2 (FA_3.LIB not on disc 1 or the hard drive install). Method: extract a full aircraft skin set, load each into GUI PIC viewer, compare against SH UV coordinates. See [formats/PIC.md](formats/PIC.md).
-
-- **T2 sub-header and surface class**: Decode sub-header bytes 4–17 (world-space origin, scale, or height bounds). Clarify header unknowns at 0x40 (20 bytes) and 0x60/0x68 (zero — reserved?). Determine surface class byte → PIC atlas tile row/column mapping. Confirm tile-summary record 0 semantics (dominant type, average, or NW-corner?). Check OpenFA `crates/asset/mmm/` for any existing T2 parsing. See [formats/T2.md](formats/T2.md).
-
-- **SSF file manifest and grammar**: Extract the complete file copy manifest from both SSF files to document which LIBs are disk-resident vs. CD-resident. Identify all SSF grammar keywords, operators, and conditionals. See [formats/SSF.md](formats/SSF.md).
-
-- **DLG filename mapping**: Map all 92 DLG filenames to their in-game screens (menu system, dialogs, overlays). Method: `ft lib ls FA_2.LIB | grep .DLG` and cross-reference with `.MNU` files. See [formats/DLG.md](formats/DLG.md).
-
-- **NT hardpoint bit 1 ($2) meaning**: Confirm whether bit 1 on the hardpoint flags byte means "naval surface-strike missile" (inferred from carrier-based NT files) or something else. Method: cross-reference against SEA_SPAR.JT and similar naval weapon JT capability flags. See [formats/NT.md](formats/NT.md).
-
-- **PTS asset reference inventory**: Extract all 37 filenames from the PTS files and cross-reference against `.PT` aircraft to identify which aircraft have custom icons. Disassemble a `.PTS` file to confirm whether it references `.HUD` or `.FNT` assets beyond the icon PIC. See [formats/PTS.md](formats/PTS.md).
+- **T2 sub-header class constants and surface class**: Bytes 4–16 are class constants (3 distinct values by grid size — confirmed). Remaining: decode their world-space meaning (requires Ghidra trace). Determine surface class byte → PIC atlas tile mapping. Confirm tile-summary record 0 algorithm (not NW corner, not dominant type — requires Ghidra). See [formats/T2.md](formats/T2.md).
 
 ---
 
@@ -42,7 +32,11 @@ For each item: load the overlay DLL in Ghidra, import the FA.SMS symbol list via
 
 - **HGR hangar layout**: Identify the second `.HGR` filename (likely a carrier or alternate airbase). Disassemble to extract the hangar layout table — aircraft slot positions, icon placement, camera angle. See [formats/HGR.md](formats/HGR.md).
 
-- **OT/NT `ot_flags` bit semantics**: Bits 5, 8, 10, 11, 19, 20, 22, 25, 26 are catalogued from full survey; specific meanings need Ghidra confirmation of damage/targeting/collision evaluation functions. Bit 22 (`$400000`) only appears on `~`-prefixed variants of COLTWR and a few others — decode separately. See [formats/OT.md](formats/OT.md) and [formats/NT.md](formats/NT.md).
+- **OT/NT `ot_flags` bit semantics**: Full survey complete; per-bit labels documented in OT.md and NT.md. Ghidra confirmation still needed for bits 5, 8, 9, 10, 11, 15, 18, 19, 20, 22, 25, 26 — current labels inferred from category patterns. See [formats/OT.md](formats/OT.md) and [formats/NT.md](formats/NT.md).
+
+- **NT hardpoint bit 1 (`$2`) meaning**: "Surface-strike missile" hypothesis ruled out by BRF survey — IOWA `$a` HPs carry PHALANX/SEA_SPAR; KIROV `$a` carries AAA30 guns; SSN9 uses `$8`. Trace ship fire-control dispatcher (`_GVProc` or internal dispatch) in Ghidra. See [formats/NT.md](formats/NT.md).
+
+- **GAS capacity word unit**: `word` values (108/198/248/315) have no linear or volumetric relationship to gallons or lbs. Search FA.SMS for fuel-system symbols (e.g. `GAS`, `fuel`, `tank`), trace the routine that reads the `word` field and adds it to the aircraft fuel pool. See [formats/GAS.md](formats/GAS.md).
 
 ---
 

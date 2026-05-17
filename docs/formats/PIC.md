@@ -75,7 +75,7 @@ Pixels per span: `end - start + 1`.
 ## Format 0xD8FF -- JPEG
 
 The entire `.PIC` file content is a standard JPEG -- pass it directly to a JPEG decoder.
-All PIC files in `FA_3.LIB` (aircraft skins) are this format.
+All PIC files in `FA_3.LIB` are this format. These are encyclopedia reference images (photographs, diagrams), not the 3D aircraft skin textures (which use format 0 and carry the `_` prefix in FA_2.LIB).
 
 ---
 
@@ -91,6 +91,40 @@ The filename prefix identifies the role of the image within the engine:
 
 The `$` and `_` prefixes are engine conventions embedded in the filenames stored in the
 `.LIB` archives. They have no effect on the file format itself.
+
+---
+
+## FA_3.LIB Naming Convention (Encyclopedia Reference Images)
+
+`FA_3.LIB` (Disc 2) contains 700+ JPEG-format PIC files used by the in-game aircraft
+encyclopedia viewer. All are 512×384 pixels except the five bare-name thumbnail files
+(640×480). They are never referenced by the 3D engine.
+
+### Numeric suffix `<AC>_<N>.PIC` (N = 0–9)
+
+Exterior photographs and action shots of the aircraft, one image per slot. Most aircraft
+have 4–10 numeric variants. The game cycles through them in the encyclopedia photo gallery.
+Simple or uncommon aircraft may have only `_0`.
+
+**Count:** 678 files
+
+### Letter suffixes
+
+| Suffix | Role | Count | Example |
+|--------|------|-------|---------|
+| `_C` | Cockpit interior photograph | 48 | `F14_C.PIC`, `F22_C.PIC` |
+| `_E` | Engine photograph or cutaway | 38 | `F14_E.PIC`, `F22_E.PIC` |
+| `_P` | Profile diagram with callout labels | 37 | `F14_P.PIC`, `F22_P.PIC` |
+| `_F` | Internal structure / systems cutaway (CAD/exploded view) | 16 | `F22_F.PIC`, `F16C_F.PIC` |
+
+`_F` is present only on higher-profile or more technically complex aircraft:
+AF1, ASTOVL, AV8, B747, CMCHE, E2000, E3, F117, F16C, F22, F260, F29, F31, GRIPEN, RAFALE, V22.
+
+### Bare name `<AC>.PIC` (no suffix)
+
+Five files — A6, F15, F15J, F18C, TU160 — at 640×480 pixels. These are aircraft selection
+screen / hangar thumbnails. The aircraft image is composited against a white background.
+All other aircraft use the `_0` exterior photo in contexts where a thumbnail is needed.
 
 ---
 

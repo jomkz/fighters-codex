@@ -153,12 +153,12 @@ All hardpoints have bit 3 (`$8`) set — this appears to be the "active weapon s
 
 | Flag | Observed in | Interpretation |
 |------|-------------|---------------|
-| `$8` | All ground-unit hardpoints (M1, ZSU23, SA2A, etc.); IOWA HP 0–1; KIROV HP 2–3 | Standard weapon slot (guns, SAMs, all AA weapons) |
-| `$a` | IOWA HP 2–3; KIROV HP 0–1 | Long-range surface-strike missile battery (Tomahawk / SS-N-19) |
+| `$8` | All ground-unit hardpoints; majority of naval hardpoints | Standard weapon slot — present on all weapon types |
+| `$a` | Subset of naval hardpoints on ships with 4+ HPs | Bit 1 (`$2`) set in addition to bit 3; exact meaning unconfirmed |
 
-Bit 1 (`$2`), combined with bit 3, marks dedicated ship-to-ship/land-attack cruise missile launchers. Anti-air weapons (ZSU23, SA6, SA2A) use `$8` only — AA vs AG targeting is determined by the loaded JT weapon type, not the hardpoint flag.
+Bit 1 (`$2`) is **not** a surface-strike missile marker — confirmed via BRF survey. IOWA `$a` HPs carry SEA_SPAR and PHALANX (same weapons as its `$8` HPs), KIROV `$a` HPs carry AAA30 guns. Smaller ships (SARAN, KRIVAK with 3 HPs) have no `$a` hardpoints at all. SSN9 (Soviet anti-ship missile on SARAN) uses `$8` with a zero-cone field, not `$a`. Semantic meaning of bit 1 requires Ghidra fire-control dispatcher trace.
 
-SA2A has 6 hardpoints (launch tubes), all `$8`. IOWA and KIROV each have 4 hardpoints with a gun/missile split.
+SA2A has 6 hardpoints (launch tubes), all `$8`. Ships with 4 hardpoints mix `$8` and `$a` in varying ratios (e.g. IOWA 2+2, TICON 1+3).
 
 ### NPC_TYPE AI params — Confirmed (full survey)
 
@@ -184,19 +184,41 @@ Observed values by unit class:
 
 ### `ot_flags` dword — Observed NT patterns
 
-| Flag | Units | Observed pattern |
-|------|-------|-----------------|
-| `$821` | Most ground units (tanks, AAA, SAM, vehicles) | Bits 0, 5, 11 |
-| `$131` | Most naval vessels | Bits 0, 4, 5, 8 |
-| `$521` | Small boats (FISHBT, JUNK, RBOAT) | Bits 0, 5, 8, 10 |
-| `$c21` | Infantry (SOLDIER, RUNNER) | Bits 0, 5, 6, 7 |
-| `$801` | Passive units (MULE_A/B/C, EJECT) | Bits 0, 11 |
-| `$c8331` | Aircraft carrier deck (CLEM, KITT, NIMZ) | Bits 0, 4, 5, 8, 11, 19, 22 |
-| `$1c8131` | Large carrier (KIEV) | Bits 0, 4, 5, 8, 11, 19, 20, 22 |
-| `$2000821` | Towed AA guns (KS12, KS19, M1939) | Bits 0, 5, 11, 25 |
-| `$4000821` | SA2A only | Bits 0, 5, 11, 26 |
+Full survey of all 84 NT files.
 
-Bit 11 (`$800`) appears on all ground units and absent on naval units; bit 8 (`$100`) is the inverse. Bits 19, 20, 22 on carrier ships likely encode flight-deck capability. Bit 25 and 26 meanings require Ghidra.
+| Flag | Units | Bits active |
+|------|-------|------------|
+| `$821` | Most ground units (tanks, AAA, SAM, vehicles) | 0, 5, 11 |
+| `$131` | Most naval vessels | 0, 4, 5, 8 |
+| `$331` | OILR (oil rig) | 0, 4, 5, 8, 9 |
+| `$521` | Small boats (FISHBT, JUNK, RBOAT) | 0, 5, 8, 10 |
+| `$c21` | Infantry (SOLDIER, RUNNER) | 0, 5, 10, 11 |
+| `$d31` | GCI (ground-controlled intercept radar) | 0, 4, 5, 8, 10, 11 |
+| `$801` | Passive units (MULE_A/B/C, EJECT, PLTDWN) | 0, 11 |
+| `$400` | CATGUY (carrier deck officer — visual only) | 10 |
+| `$c8331` | Conventional carriers (CLEM, KITT, NIMZ) | 0, 4, 5, 8, 9, 15, 18, 19 |
+| `$108331` | VSTOL carrier (WASP) | 0, 4, 5, 8, 9, 15, 20 |
+| `$1c8131` | Hybrid carrier (KIEV) | 0, 4, 5, 8, 15, 18, 19, 20 |
+| `$2000821` | Emplaced AA artillery (KS12, KS19, M1939) | 0, 5, 11, 25 |
+| `$4000821` | SA2A only | 0, 5, 11, 26 |
+
+**Bit semantics (inferred from category pattern; Ghidra confirmation pending):**
+
+| Bit | Mask | Observed pattern |
+|-----|------|-----------------|
+| 0 | `$1` | Targetable — absent on CATGUY (purely visual) and A_M1939 (zone marker) |
+| 4 | `$10` | Naval vessel — present on all ships; absent on all ground vehicles |
+| 5 | `$20` | Armed/active unit — absent on passive MULE/EJECT; present on all combat-capable units |
+| 8 | `$100` | Large physical hull — present on large ships; absent on small boats and ground vehicles |
+| 9 | `$200` | Large platform — large ships (carriers, oil rig, GCI); absent on standard destroyers/cruisers |
+| 10 | `$400` | Civilian/light type — infantry (SOLDIER, RUNNER), small civilian craft (FISHBT, JUNK, RBOAT), CATGUY |
+| 11 | `$800` | Ground-mobile unit — present on all ground vehicles; absent on all naval vessels except carriers (which have additional bits 15–20) |
+| 15 | `$8000` | Flight deck present — all carrier types (CLEM, KITT, NIMZ, KIEV, WASP) |
+| 18 | `$40000` | Carrier landing gear (arrestor wire?) — CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP |
+| 19 | `$80000` | Carrier launch gear (catapult?) — CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP |
+| 20 | `$100000` | VSTOL/helicopter deck — KIEV, WASP; absent on conventional carriers without VSTOL |
+| 25 | `$2000000` | Emplaced AA artillery — KS12 (85mm), KS19 (100mm), M1939 (37mm); all towed Soviet guns |
+| 26 | `$4000000` | SA-2A only — possibly marks large fixed-site strategic SAM |
 
 ### Proc symbols
 
@@ -207,5 +229,5 @@ Bit 11 (`$800`) appears on all ground units and absent on naval units; bit 8 (`$
 
 ## TODO
 
-- Confirm ot_flags bit semantics for bits 4, 5, 8, 11, 19, 20, 22, 25, 26 via Ghidra — current labels inferred from category patterns
-- Confirm hardpoint bit 1 ($2) meaning (naval surface-strike missile vs. other interpretations) via Ghidra weapon evaluation function
+- Confirm ot_flags bit semantics (bits 4, 5, 8, 9, 10, 11, 15, 18, 19, 20, 25, 26) via Ghidra — current labels inferred from category patterns only
+- Confirm hardpoint bit 1 (`$2`) meaning via Ghidra fire-control dispatcher — "surface-strike missile" hypothesis ruled out by BRF survey; pattern unclear

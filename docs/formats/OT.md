@@ -109,15 +109,15 @@ Full survey of all 170 OT files. Bit positions confirmed by cross-category compa
 | Bit | Mask | Confirmed | Observed pattern |
 |-----|------|-----------|-----------------|
 | 0 | `$1` | **targetable** | Absent on TREE, ROAD, LOT, CRATER, DEST, REACTB (pure scenery / already-destroyed states) |
-| 5 | `$20` | **primary variant** | Absent on some subdued/simplified variants (BLDG2 `$501` vs BLDG1 `$521`); absent on ~ files where bit removed |
+| 5 | `$20` | **primary/military variant** | Absent on plain civilian variants (BLDG2 `$501` vs BLDG1 `$521`) and ~ destroyed-state replacements |
 | 8 | `$100` | **has geometry / collideable** | Present on bridges, most structures, rocks; absent on flat terrain tiles (ROAD, LOT, TREE) |
-| 10 | `$400` | **civilian building** | Set on BLDG*, HOUS*, TWNBK*, CTYBK*, CONT*, CRATE*, airport buildings (APTLA/B/C) |
-| 11 | `$800` | **animated / non-static scenery** | Set on FLAG*, CROP*, CITY1-3, BR*END (bridge endpoints), SUPPLY; absent on solid structures |
+| 10 | `$400` | **civilian or dual-use infrastructure** | Set on BLDG*, HOUS*, urban blocks, airport buildings (APTLA/B/C), NUCOB, REACTR; also on SAM infrastructure sites (SA3SITE, HAWKSITE) — not exclusively civilian |
+| 11 | `$800` | **animated / non-static scenery** | Set on FLAG*, CROP*, CITY1-3, BR*END (bridge endpoints), SUPPLY, PRDR1/2 (rotating radar dish), MOOSEA/B, MICRO/MICROM (comm dish), CRANE, COMM, BRD1 |
 | 15 | `$8000` | **airfield surface** | Exclusive to STRIP1-7 and DTSTRP; never set on other OT types |
 | 17 | `$20000` | **military / hardened structure** | Set on BNK*, HANGR*, COMM, NUCCT, PRDR*, RELAY, TOWER, COLTWR, CTWR*, and other military targets |
 | 20 | `$100000` | **damaged runway surface** | DTSTRP only; contrasts with bit 21 on intact STRIP* |
 | 21 | `$200000` | **intact runway surface** | STRIP1-7; absent on DTSTRP (damaged variant) |
-| 22 | `$400000` | **~-prefixed variant extra flag** | Added vs base in ~COLTWR (`$420121` vs `$20121`); meaning unconfirmed |
+| 22 | `$400000` | **prominent/large variant flag** | Set on large or strategically significant structure variants: SHELT, BUNKER, HANGRB ("Hangar 2"), CTOWR ("Control Tower, Large"), FUEL, OILW, DOCK1, COMM, REACTR, CTYBKA/B, APTLA, OILW, ~COLTWR; absent from their smaller counterparts (HANGR, CTWR1, CTYBKC–G, APTB1) |
 
 Bits 9, 12–14, 16, 18–19, 23+ not observed in any OT file in FA_2.LIB.
 
@@ -128,12 +128,19 @@ Bits 9, 12–14, 16, 18–19, 23+ not observed in any OT file in FA_2.LIB.
 | TREE1, ROAD | `$0` | none |
 | SILO | `$21` | 0, 5 |
 | ROCKA | `$101` | 0, 8 |
-| BLDG2 | `$501` | 0, 8, 10 |
-| BLDG1 | `$521` | 0, 5, 8, 10 |
-| BNK1 | `$20121` | 0, 5, 8, 17 |
-| BUNKER | `$400021` | 0, 5, 22 |
+| BLDG2 (Warehouse) | `$501` | 0, 8, 10 |
+| BLDG1 (Factory) | `$521` | 0, 5, 8, 10 |
+| SA3SITE, HAWKSITE | `$401` | 0, 10 |
+| SUPPLY | `$820` | 5, 11 |
 | FLAG* | `$800` | 11 |
 | CITY1 | `$900` | 8, 11 |
+| PRDR1/2 (Radar) | `$20d21` | 0, 5, 8, 10, 11, 17 |
+| IND1, RES1, HGRP1 | `$121` | 0, 5, 8 |
+| BNK1 | `$20121` | 0, 5, 8, 17 |
+| HANGR | `$20121` | 0, 5, 8, 17 |
+| HANGRB (large) | `$420121` | 0, 5, 8, 17, 22 |
+| BUNKER, SHELT | `$400021` | 0, 5, 22 |
+| COMM (C&C) | `$400921` | 0, 5, 8, 11, 22 |
 | STRIP1 | `$208021` | 0, 5, 15, 21 |
 | DTSTRP | `$108021` | 0, 5, 15, 20 |
 
@@ -143,5 +150,4 @@ All confirmed in the `word hitpoints` field (field index 23). Values appear to b
 
 ## TODO
 
-- Confirm exact semantics of bits 5, 8, 10, 11 via Ghidra targeting / collision functions — current labels are inferred from observed patterns, not verified in code
-- Decode bit 22 (`$400000`) — only appears on `~`-prefixed variants of COLTWR and a few others
+- Confirm exact semantics of bits 5, 8, 10, 11, 22 via Ghidra targeting / collision functions — current labels are inferred from observed patterns, not verified in code
