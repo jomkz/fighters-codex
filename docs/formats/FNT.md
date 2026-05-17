@@ -1,22 +1,32 @@
 # Font Bitmap (.FNT)
 
-FA_1.LIB contains 13 `.FNT` files. These define the bitmapped fonts used for HUD text, menus, and briefing screens. Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_1.LIB contains 15 `.FNT` files. These define the bitmapped fonts used for HUD text, menus, and briefing screens. Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). File sizes vary — `4X12.FNT` decompresses to **12800 bytes** (0x3200), consistent with the engine's 0x1200-multiple overlay sizing pattern.
+Win32 PE DLL. File sizes vary — `4X12.FNT` decompresses to **12800 bytes** (0x3200). The large size relative to other 4608-byte overlays reflects embedded glyph bitmap data covering the full printable ASCII range.
 
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
+## File Inventory
 
-Named files include `4X12.FNT`, `4X6.FNT`, `HUD00.FNT`, `HUD01.FNT`, `HUDSYM00.FNT`, `MAPFONT.FNT`, `WIN00.FNT`, etc. — naming suggests width×height or target context (HUD, window, map).
+| File | Likely dimensions / context |
+|------|-----------------------------|
+| `4X6.FNT` | 4×6 pixel glyphs (tiny text) |
+| `4X12.FNT` | 4×12 pixel glyphs |
+| `HUD00.FNT` | HUD numeric / status text |
+| `HUD01.FNT` | HUD alternate style |
+| `HUD11.FNT` | HUD variant |
+| `HUDSYM00.FNT` | HUD symbol glyphs (non-alphanumeric) |
+| `HUDSYM01.FNT` | HUD symbol variant |
+| `HUDSYM11.FNT` | HUD symbol variant |
+| `HUI11.FNT` | HUD interface text |
+| `HUISYM11.FNT` | HUD interface symbols |
+| `MAPFONT.FNT` | Theater map labels |
+| `WII11.FNT` | Window interface text |
+| `WIN00.FNT` | Window text (referenced as `winfont` from `.HUD` files) |
+| `WIN01.FNT` | Window text variant |
+| `WIN11.FNT` | Window text variant |
+
+The name prefix encodes context (`HUD`, `WIN`, `MAP`) and suffix may encode locale or variant (`00`=base, `01`=alt, `11`=third).
 
 ## Location
 

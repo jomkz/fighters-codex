@@ -1,20 +1,39 @@
-# Campaign Mission Data (.MC)
+# Mission Condition Script (.MC)
 
-FA_2.LIB contains 21 `.MC` files. With 6 `.CAM` campaigns but 21 `.MC` files, each campaign likely has 3–4 associated `.MC` files — possibly one per mission set or phase within a campaign. Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_2.LIB contains 21 `.MC` files. Each implements the runtime condition checks for a specific mission event — trigger conditions, completion logic, and failure detection. Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
+
+## File Inventory
+
+All 21 filenames:
+
+`CATFAIL.MC`, `EXTRA01.MC`, `FOO.MC`, `K16.MC`, `K17.MC`, `TRAIN01.MC`, `U01.MC`, `U07.MC`, `U08.MC`, `U11.MC`, `U12.MC`, `U15.MC`, `U22.MC`, `U23.MC`, `U24.MC`, `U25.MC`, `U29.MC`, `U34.MC`, `UKR01.MC`, `UKR02.MC`, `VIET03.MC`
+
+- `U*.MC` — Ukraine campaign mission conditions (not all 50 missions have a dedicated `.MC`; only those with non-trivial trigger logic)
+- `K*.MC` — Kurile campaign missions
+- `VIET03.MC` — Vietnam campaign mission 3
+- `CATFAIL.MC` — carrier takeoff failure condition
+- `TRAIN01.MC` — training mission condition
+- `UKR01.MC`, `UKR02.MC` — Ukraine campaign-level events
+- `EXTRA01.MC`, `FOO.MC` — extra/developer missions
+
+## Content
+
+String analysis of `CATFAIL.MC` and `UKR01.MC` reveals the mission condition API:
+
+| Import | Description |
+|--------|-------------|
+| `@OBJAlias@8` | Look up a game object by its alias ID |
+| `_Dist@8` | Compute distance between two objects |
+| `_OnTheGround@0` | Test whether an object is on the ground |
+| `_PopCurObj@0` | Pop the current object from the evaluation stack |
+| `_PushCurObj@4` | Push an object onto the evaluation stack |
+| `_playerId` | Global: the player's object ID |
+
+These are physics/world-state query functions — the `.MC` DLL polls game state each tick to detect mission trigger conditions (e.g. player landed, target destroyed, distance threshold crossed).
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). `CATFAIL.MC` decompresses to **4608 bytes**.
-
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
+Win32 PE DLL. All observed `.MC` files decompressed to **4608 bytes**.
 
 ## Location
 
@@ -24,10 +43,11 @@ Offset  Value   Description
 
 ## TODO — Deep Dive
 
-- List all 21 filenames and group by campaign prefix to confirm the 1-campaign-to-many-MC mapping
-- Disassemble an `.MC` overlay to identify what campaign state it encodes (mission availability, unlock flags, scoring)
-- Determine how `.CAM` overlays reference `.MC` files
+- Disassemble `UKR01.MC` to trace the complete condition check logic and identify all object aliases it monitors
+- Determine how the `.CAM` file references or loads `.MC` files at mission start
+- Clarify `FOO.MC` and `EXTRA01.MC` — developer test missions or FA multiplayer extras
 
 ## Related
 
-- [CAM.md](CAM.md) — campaign definition files that likely reference `.MC` entries
+- [CAM.md](CAM.md) — campaign engine that loads `.MC` files to evaluate mission state
+- [MISSION.md](MISSION.md) — `.M` mission files whose events `.MC` evaluates

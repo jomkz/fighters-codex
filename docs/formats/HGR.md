@@ -1,20 +1,24 @@
-# Unknown -- Hangar? (.HGR)
+# Hangar Screen (.HGR)
 
-FA_2.LIB contains 2 `.HGR` files (`H_AIRB.HGR`, one other). The name prefix `H_` and extension suggest "hangar" — possibly defining the loadout or aircraft selection hangar screen layout. Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_2.LIB contains 2 `.HGR` files. Each defines a hangar screen — the aircraft selection and loadout interface shown at an airbase. Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
+
+## File Inventory
+
+| File | Purpose |
+|------|---------|
+| H_AIRB.HGR | Air base hangar screen |
+| (second file TBD) | — |
+
+## Content
+
+String analysis of `H_AIRB.HGR` reveals asset references:
+
+- **`h_airb.PIC`** — hangar background image (appears twice, likely for foreground and background layers)
+- **`SELICONS.PIC`** — aircraft selection icons displayed in the hangar UI
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). `H_AIRB.HGR` decompresses to **4608 bytes**.
-
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
+Win32 PE DLL. `H_AIRB.HGR` decompresses to **4608 bytes**.
 
 ## Location
 
@@ -24,9 +28,10 @@ Offset  Value   Description
 
 ## TODO — Deep Dive
 
-- Identify both filenames and determine purpose from names and disassembly
-- Locate FA.EXE references to `.HGR` files to understand context of use
+- Identify the second `.HGR` filename (likely a carrier or alternate airbase variant)
+- Disassemble to identify the hangar layout table (aircraft slot positions, icon placement, camera angle)
 
 ## Related
 
-- [MNU.md](MNU.md) — in-game menu overlays, likely the parent system
+- [PIC.md](PIC.md) — `h_airb.PIC` and `SELICONS.PIC` are PIC atlas files
+- [MNU.md](MNU.md) — menus that transition to the hangar screen

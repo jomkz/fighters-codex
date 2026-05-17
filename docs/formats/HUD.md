@@ -1,20 +1,27 @@
 # Heads-Up Display (.HUD)
 
-FA_2.LIB contains 46 `.HUD` files — one per aircraft type (e.g. `A7.HUD`, `F22.HUD`). Each defines the cockpit HUD layout for that aircraft. Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_2.LIB contains 46 `.HUD` files — one per aircraft type (e.g. `A7.HUD`, `F22.HUD`). Each defines the cockpit HUD layout for that aircraft. Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). All observed `.HUD` files decompressed to **4608 bytes**.
+Win32 PE DLL. All observed `.HUD` files decompressed to **4608 bytes**.
 
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
+## Content
+
+String analysis of `F22.HUD` and `B2.HUD` reveals the asset reference pattern:
+
+| String | Role |
+|--------|------|
+| `~f22` / `~b2` | Aircraft 3D model reference |
+| `~f22h` / `~b2h` | HUD overlay image (heads-up display graphic) |
+| `~f22s` / `~b2s` | HUD symbol set |
+| `hudsym` | HUD symbol font (`HUDSYM*.FNT`) |
+| `GEAR`, `FLAP`, `BRAKE` | Indicator label strings |
+| `~f22_p` / `~b2_p` | Aircraft propulsion/engine panel reference |
+| `~f22_w` / `~b2_w` | Weapons panel reference |
+| `winfont` | Window font (`WIN*.FNT`) reference |
+
+The `~` prefix indicates LIB-resident asset references. The HUD DLL binds its aircraft-specific assets at load time using these names.
 
 ## Location
 

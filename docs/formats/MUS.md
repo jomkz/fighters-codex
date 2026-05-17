@@ -1,22 +1,12 @@
 # Music Playlist / Sequencer (.MUS)
 
-FA_2.LIB contains 9 `.MUS` files (e.g. `M_AIR.MUS`). These control background music playback. Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_2.LIB contains 9 `.MUS` files (e.g. `M_AIR.MUS`). These control background music playback. Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). All observed `.MUS` files decompressed to **4608 bytes**.
+Win32 PE DLL. All observed `.MUS` files decompressed to **4608 bytes**. String analysis of `M_AIR.MUS` yields only the standard PE header strings — no embedded `.XMI` track names are visible as plain text, suggesting XMI references are encoded or resolved at runtime by the engine rather than embedded in the DLL data section.
 
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
-
-The `.XMI` files (78 entries) are the actual audio sequences; `.MUS` overlays likely serve as playlists or state machines that reference `.XMI` tracks by name and define playback order, looping, and transition rules.
+The `.XMI` files (78 entries in FA_2.LIB) are the actual audio sequences; `.MUS` overlays likely implement state machine logic that triggers XMI playback based on game state (in-air, in combat, in-base, etc.).
 
 ## Location
 

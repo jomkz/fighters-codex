@@ -1,22 +1,26 @@
-# Aircraft Type Supplement (.PTS)
+# Aircraft Screen Assets (.PTS)
 
-FA_2.LIB contains 37 `.PTS` files (e.g. `A4E.PTS`). The extension mirrors `.PT` (145 aircraft flight model files), strongly suggesting `.PTS` stores supplementary per-aircraft data — possibly cockpit configuration, avionics suite, or sensor/ECM loadout defaults not encoded in the primary `.PT` BRF record. Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_2.LIB contains 37 `.PTS` files (e.g. `A4E.PTS`, `F22.PTS`). Each supplies the screen asset references for one aircraft type — primarily the aircraft icon shown in the hangar and selection screens. Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
+
+## Content
+
+String analysis shows each `.PTS` file references a single PIC asset:
+
+| File | PIC reference |
+|------|---------------|
+| A4E.PTS | `ICONA4E.PIC` |
+| F22.PTS | `ICONF22.PIC` |
+| … | `ICON<AC>.PIC` |
+
+The naming pattern `ICON<aircraft>.PIC` is consistent — the `.PTS` file is the lookup bridge between an aircraft type (identified by the `.PTS` base name) and its icon image.
+
+## Coverage
+
+37 `.PTS` files vs 145 `.PT` aircraft flight model files — most aircraft share a generic icon, and only those 37 with unique cockpit or selection screen art have a dedicated `.PTS` entry.
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). All observed `.PTS` files decompressed to **4608 bytes**.
-
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
-
-Note: 37 `.PTS` files vs 145 `.PT` files — not every aircraft has a `.PTS` entry. The subset with `.PTS` may indicate aircraft with non-standard cockpit or sensor configurations.
+Win32 PE DLL. All observed `.PTS` files decompressed to **4608 bytes**.
 
 ## Location
 
@@ -26,11 +30,12 @@ Note: 37 `.PTS` files vs 145 `.PT` files — not every aircraft has a `.PTS` ent
 
 ## TODO — Deep Dive
 
-- List which aircraft have `.PTS` entries and identify what distinguishes them from those without
-- Disassemble a `.PTS` overlay to identify supplementary data fields
-- Locate FA.EXE references to `.PTS` loading to understand when it is used relative to `.PT`
+- Extract all 37 filenames and cross-reference with `.PT` aircraft to identify which aircraft have custom icons
+- Disassemble a `.PTS` to determine if additional asset references exist beyond the icon PIC (e.g. cockpit PIC, sound file)
+- Determine whether `.PTS` also links to `.HUD` or `.FNT` for the aircraft's cockpit display
 
 ## Related
 
-- [BRF.md](BRF.md) — `.PT` aircraft flight model records
-- [HUD.md](HUD.md) — HUD definitions, possibly linked via `.PTS`
+- [BRF.md](BRF.md) — `.PT` aircraft flight model records (one per aircraft)
+- [PIC.md](PIC.md) — `ICON<AC>.PIC` aircraft icon images
+- [HUD.md](HUD.md) — cockpit HUD definitions (may be referenced via `.PTS`)

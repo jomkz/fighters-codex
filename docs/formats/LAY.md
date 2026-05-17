@@ -1,20 +1,20 @@
-# Cloud Layer (.LAY)
+# Sky / Cloud / Ocean Layer (.LAY)
 
-FA_2.LIB contains 24 `.LAY` files (e.g. `CLOUD1.LAY`, `DAY2.LAY`). Each defines a cloud/atmosphere layer configuration used during flight rendering. Referenced by name from `.MM` theater files (`layer day2.LAY 0`). Each is a **DOS MZ executable overlay** loaded by the FA engine at runtime.
+FA_2.LIB contains 24 `.LAY` files (e.g. `CLOUD1.LAY`, `DAY1.LAY`, `DAY2.LAY`). Each defines a complete atmospheric rendering configuration — sky gradient, cloud layers, horizon, and ocean surface — used during flight. Referenced by name from `.MM` theater files (`layer day2.LAY 0`). Each is a **Win32 PE DLL** loaded at runtime via `LoadLibrary`.
 
 ## Format
 
-DOS MZ executable (magic `4D 5A`). `CLOUD1.LAY` decompresses to **16896 bytes** (0x4200) — the largest of the common overlay sizes, suggesting substantial layer data (possibly multiple altitude bands or particle definitions).
+Win32 PE DLL. `CLOUD1.LAY` decompresses to **16896 bytes** — significantly larger than other overlays (4608 bytes), because `.LAY` files embed the full sky/atmosphere rendering lookup tables as data.
 
-```
-Offset  Value   Description
-------  -----   -----------
-0x00    4D 5A   MZ magic
-0x02    80 00   Last page bytes used (128)
-0x04    01 00   Pages in file
-...
-0x3C    80 00   Overlay header offset
-```
+## Content
+
+String analysis of `CLOUD1.LAY` and `DAY1.LAY` reveals:
+
+- **`wave1.SH`** — animated ocean wave mesh, referenced by name in both cloud and day variants
+- **`ocean*06.PIC`** — ocean surface texture (PIC atlas reference)
+- **`_T_HorizonProc`** — exported function; implements the horizon/sky rendering procedure called by the engine's flight renderer
+
+The large data section contains encoded color gradient tables — the garbled byte sequences are pre-computed sky color ramps, cloud density profiles, and dithering tables used for atmosphere rendering at different altitudes and times of day.
 
 ## Location
 
@@ -24,9 +24,12 @@ Offset  Value   Description
 
 ## TODO — Deep Dive
 
-- Disassemble a `.LAY` overlay to identify cloud band definitions (altitude, density, color)
-- Map the reference from `.MM` (`layer <name>.LAY <index>`) to how the engine selects layers at runtime
+- Disassemble `_T_HorizonProc` to understand the sky gradient and cloud rendering algorithm
+- Map the `layer <name>.LAY <index>` reference in `.MM` files to the engine's layer slot selection
+- Identify the naming convention (CLOUD vs DAY vs other prefixes) and what each group renders
 
 ## Related
 
-- [MM.md](MM.md) — theater files that reference `.LAY` files by name
+- [MM.md](MM.md) — theater files that reference `.LAY` files via the `layer` keyword
+- [SH.md](SH.md) — `wave1.SH` is the ocean wave mesh loaded by `.LAY`
+- [PIC.md](PIC.md) — `ocean*06.PIC` ocean texture atlas
