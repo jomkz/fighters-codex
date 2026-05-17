@@ -2,9 +2,51 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Build ft_lib",
+            "type": "shell",
+            "command": "cmake --build build --target ft_lib --config Debug",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build ft",
+            "type": "shell",
+            "command": "cmake --build build --target ft --config Debug",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "Build ft-gui",
             "type": "shell",
             "command": "cmake --build build --target ft-gui --config Debug",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build all",
+            "type": "shell",
+            "command": "cmake --build build --config Debug",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
