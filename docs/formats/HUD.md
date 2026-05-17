@@ -70,7 +70,7 @@ F22.HUD omits all `_l/c/r` sprites entirely — the F22 has no separate sub-pane
 
 ### Gauge parameter layout (confirmed)
 
-All gauge positions are stored as signed s16 offsets from the HUD anchor point. Confirmed by tracing the HUD draw functions (`FUN_00406040`, `?HUDDrawHeading`, `?HUDDrawSpeed`, `?HUDDrawAlt`, `?HUDDrawHVel`, `?HUDDrawWeaponInfo`, `?HUDDrawRangeInfo`) in FA.EXE via Ghidra.
+All gauge positions are stored as signed s16 offsets from the HUD anchor point. Confirmed by tracing the HUD draw functions (`FUN_00406040`, `?HUDDrawHeading`, `?HUDDrawSpeed`, `?HUDDrawAlt`, `FUN_00408e20` (HVel indicator), `?HUDDrawWeaponInfo`, `?HUDDrawRangeInfo`) in FA.EXE via Ghidra.
 
 After loading, the struct is resident at `DAT_00521360`. Field offsets within the copied struct:
 
@@ -91,10 +91,24 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 | `0x233` | `DAT_00521593` | Flight path marker | dy from anchor |
 | `0x235` | `DAT_00521595` | Flight path marker | box half-width |
 | `0x237` | `DAT_00521597` | Flight path marker | box half-height |
-| `0x265` | `DAT_005215c5` | (unresolved) | dx |
-| `0x267` | `DAT_005215c7` | (unresolved) | dy |
-| `0x269` | `DAT_005215c9` | (unresolved) | dx |
-| `0x26B` | `DAT_005215cb` | (unresolved) | dy |
+| `0x238` | `DAT_00521598` | (unknown) | No cross-references found |
+| `0x239` | `DAT_00521599` | Lock indicator flag A | 3-state lock display; checked against `missile+0xa6 & 0x10` |
+| `0x23A` | `DAT_0052159a` | Lock indicator flag B | Paired with A; selects state 5 (no lock) vs 6 (partial) |
+| `0x23B` | `DAT_0052159b` | HUD center dot enable | Non-zero: draw center pip and radar velocity vector |
+| `0x23C` | `DAT_0052159c` | ECM bar enable | Non-zero: enables ECM/threat bar draw (`FUN_00408c8b`) |
+| `0x23D` | `DAT_0052159d` | Active-lock threat enable | Combined with 0x23C for active-lock threat bar |
+| `0x23E` | `DAT_0052159e` | HVel altitude max | i16; HVel indicator (`FUN_00408e20`) hidden above this altitude; also radar lock altitude gate |
+| `0x240` | `DAT_005215a0` | Lead indicator enable | Non-zero: draw lead angle / velocity prediction overlay |
+| `0x241` | `DAT_005215a1` | Score indicator dx | i8; X offset for score/fuel threshold indicator (`FUN_004078b0`) |
+| `0x243` | `DAT_005215a3` | Score indicator dy | i8; Y offset for score/fuel threshold indicator |
+| `0x245` | `DAT_005215a5` | Advisory icon C | 8-byte icon data; drawn when `DAT_0050cfef & 0x040` |
+| `0x24D` | `DAT_005215ad` | Advisory icon A | 8-byte icon data; drawn when `DAT_0050cfef & 0x100`; `!= ' '` → advisory active |
+| `0x255` | `DAT_005215b5` | Advisory icon B | 8-byte icon data; drawn when `DAT_0050cfef & 0x080` |
+| `0x25D` | `DAT_005215bd` | Advisory icon D | 8-byte icon data; drawn when `DAT_0050cfef & 0x200` or `(& 0x400) && (DAT_0050d322 & 2)` |
+| `0x265` | `DAT_005215c5` | **Warning lights** | dx from anchor (A7=65, F22=70) — `FUN_00407930` |
+| `0x267` | `DAT_005215c7` | Warning lights | dy from anchor (A7=−38, F22=−46) |
+| `0x269` | `DAT_005215c9` | **Throttle/engine readout** | dx from anchor (A7=−65, F22=−70) — `FUN_00407a00` |
+| `0x26B` | `DAT_005215cb` | Throttle/engine readout | dy from anchor (A7=−38, F22=−46) |
 | `0x26D` | `DAT_005215cd` | Weapon info | dx from anchor |
 | `0x26F` | `DAT_005215cf` | Weapon info | dy from anchor |
 | `0x271` | `DAT_005215d1` | Range info | dx from anchor |
@@ -108,9 +122,9 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 
 ## TODO
 
-- Confirm exact struct byte offsets for each field by hex-diffing A7.HUD vs F22.HUD (the offsets in the table above are derived from global address arithmetic and should be verified against raw file bytes)
-- Identify the four unresolved `(0x265–0x26B)` gauge coordinate pairs
 - Confirm per-aircraft anchor point source (the `0x10 0x10` init values in `FUN_00406040` suggest a default; actual per-aircraft position may come from the PT file or a separate config)
+- Name the individual advisory icons (which `DAT_0050cfef` bits correspond to GEAR, LOW FUEL, MASTER CAUTION, etc.)
+- Identify callers of `FUN_00407930` outside the main HUD render loop to confirm which system sets the advisory-enable bits
 
 ## Related
 

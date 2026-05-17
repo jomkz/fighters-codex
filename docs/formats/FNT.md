@@ -8,31 +8,33 @@ Win32 PE DLL. File sizes vary — `4X12.FNT` decompresses to **12800 bytes** (0x
 
 ## File Inventory
 
-| File | Likely dimensions / context |
-|------|-----------------------------|
-| `4X6.FNT` | 4×6 pixel glyphs (tiny text) |
-| `4X12.FNT` | 4×12 pixel glyphs |
-| `HUD00.FNT` | HUD numeric / status text |
-| `HUD01.FNT` | HUD alternate style |
-| `HUD11.FNT` | HUD variant |
-| `HUDSYM00.FNT` | HUD symbol glyphs (non-alphanumeric) |
-| `HUDSYM01.FNT` | HUD symbol variant |
-| `HUDSYM11.FNT` | HUD symbol variant |
-| `HUI11.FNT` | HUD interface text |
-| `HUISYM11.FNT` | HUD interface symbols |
-| `MAPFONT.FNT` | Theater map labels |
-| `WII11.FNT` | Window interface text |
-| `WIN00.FNT` | Window text (referenced as `winfont` from `.HUD` files) |
-| `WIN01.FNT` | Window text variant |
-| `WIN11.FNT` | Window text variant |
+`font_height` confirmed by reading dword at CODE section offset 0 (file offset `0x200`) for all 15 files.
 
-The name prefix encodes context (`HUD`, `WIN`, `MAP`) and suffix may encode locale or variant (`00`=base, `01`=alt, `11`=third).
+| File | font_height | Decompressed size | Context |
+|------|-------------|-------------------|---------|
+| `4X6.FNT` | **7** | 8704 | Tiny fixed-pitch text (4 wide × 6 glyph rows + 1 spacing = 7) |
+| `4X12.FNT` | **12** | 12800 | Fixed-pitch 4×12 text |
+| `HUD00.FNT` | **5** | 8704 | HUD text — 320×200 mode |
+| `HUD01.FNT` | **10** | 12800 | HUD text — hi-res mode A |
+| `HUD11.FNT` | **10** | 12800 | HUD text — hi-res mode B |
+| `HUDSYM00.FNT` | **15** | 12800 | HUD symbols — 320×200 mode |
+| `HUDSYM01.FNT` | **29** | 16896 | HUD symbols — hi-res mode A |
+| `HUDSYM11.FNT` | **31** | 20992 | HUD symbols — hi-res mode B |
+| `HUI11.FNT` | **10** | 12800 | HUD interface text |
+| `HUISYM11.FNT` | **31** | 16896 | HUD interface symbols |
+| `MAPFONT.FNT` | **10** | 12800 | Theater map labels |
+| `WII11.FNT` | **10** | 12800 | Window interface text |
+| `WIN00.FNT` | **6** | 12800 | Window/dialog text — 320×200 mode |
+| `WIN01.FNT` | **12** | 16896 | Window/dialog text — hi-res mode A |
+| `WIN11.FNT` | **10** | 12800 | Window/dialog text — hi-res mode B |
+
+**Suffix semantics confirmed**: `00` = 320×200 (small font, short `font_height`), `01`/`11` = higher-resolution display modes (larger `font_height`). The `01` vs `11` distinction likely targets different colour depths or renderer paths — both are hi-res but `01` fonts are taller than their `11` counterparts for the `WIN`/`HUDSYM` families.
 
 ## Location
 
 | LIB | Count |
 |-----|-------|
-| FA_1.LIB | 13 |
+| FA_1.LIB | 15 |
 
 ## CODE Section Layout (Confirmed)
 
@@ -104,17 +106,11 @@ The $$DOSX section (512 bytes) contains a small header. Both 4X6.FNT and 4X12.FN
 
 ## Toolkit Roadmap
 
-Pointer table and glyph data layout are confirmed. Blocked on glyph encoding scheme (needs Ghidra trace of the drawing routine) before PNG export can produce correct output:
+FONT struct layout, glyph encoding, and all per-file metrics are confirmed. No further RE required before codec implementation:
 
-- New `lib/src/fnt.cpp` + `lib/include/ft/fnt.h` — parse pointer table + glyph bitmaps
-- New `cli/cmd_fnt.cpp` — `ft fnt unpack <file.FNT> -o <dir>/` extracts each glyph as a 1-bpp PNG; writes `metrics.csv` with `{char, width, height}` per row
+- New `lib/src/fnt.cpp` + `lib/include/ft/fnt.h` — parse FONT struct, enumerate glyph functions, extract width/height metrics
+- New `cli/cmd_fnt.cpp` — `ft fnt unpack <file.FNT> -o <dir>/` renders each glyph by executing the x86 function against a pixel buffer; writes `metrics.csv` with `{char, width, height}` per row
 - GUI: `fnt_viewer.h/cpp` in `gui/src/editors/` for interactive glyph grid preview
-
-## TODO
-
-- Confirm `cFont[0]` font height value by reading the pointer table header at raw file offset `0x200` — expected 7 for `4X6.FNT` based on glyph row count
-- Verify whether `00`/`01`/`11` suffix encodes locale, resolution, or style variant
-- Resolve count discrepancy: file inventory lists 15 files but FA_1.LIB contains 13
 
 ## Related
 

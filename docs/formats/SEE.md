@@ -109,8 +109,10 @@ Type byte 1 (laser) confirmed: AV8L.SEE is the AV-8B Harrier laser designator po
 
 ### Sentinel Values
 
-- `dword $80000000` — minimum heading error sentinel (no lower limit)
-- `dword $7fffffff` — maximum heading error sentinel (no upper limit)
+- `dword $80000000` — minimum heading error sentinel: no lower limit (any heading error passes)
+- `dword $7fffffff` — maximum heading error sentinel: no upper limit (any heading error passes)
+
+Confirmed via `_PROJInFOV@40` (0x004c2860): the heading error test explicitly bypasses the check when the sentinel values are present. A lobe with both sentinels set accepts any target heading relative to the sensor. Setting `word 32767` for both half-angles (`0x7FFF`) additionally triggers an unconditional pass that skips the angle check entirely — this is the PAVEKNF.SEE omnidirectional cone.
 
 ## Dual-Lobe Structure
 
@@ -220,12 +222,28 @@ Range unit confirmed as **1 foot**. See table in the Range Encoding section abov
 
 Full enum confirmed. See Seeker Type Byte table above.
 
-### Dual-lobe semantics — Partially resolved
+### Dual-lobe semantics — Resolved
 
-Strong evidence that primary lobe = search mode, secondary lobe = track/lock mode for radar seekers. Exact switch condition (what event triggers the engine to test lobe 2 vs. lobe 1) still requires FA.EXE disassembly.
+Primary lobe = search mode; secondary lobe = track/lock mode. Trigger confirmed via `_PROJLock@24` (0x004c2f20):
+
+The engine maintains two runtime state flags on the projectile/object at struct offset `+0xa6`:
+- `0x10000` — search mode active: engine calls `FUN_004c2eb0` (search-lobe timer check)
+- `0x20000` — track mode active: engine calls `FUN_004c31f0` (track-lobe check, stricter)
+
+Both lobe-check functions receive the **current target struct** (`DAT_0050ce80`) and a timer-window parameter (0x28 = 40 game ticks).
+
+`FUN_004c2eb0` (search lobe, 0x004c2eb0): when the target has not yet been acquired (`target+0x10 & 0x80 == 0`), the function checks that the target is detectable (`target+0xde & 0x400`) and initialises a lock-hold timer at `target+0x11a` to `now + 40 ticks`. Once the target is marked acquired (`+0x80` set), the function verifies the timer has not expired; if `target+0x11a ≤ now`, the check fails and lock is dropped.
+
+`FUN_004c31f0` (track lobe, 0x004c31f0): identical timer logic, but when the target is acquired (`+0x80` set) it additionally requires `target+0xde & 0x100000` (active-tracking flag). If that flag is absent, the track check fails even if the timer is still valid.
+
+`_PROJInFOV@40` (0x004c2860) then performs the range and heading-error comparison using the lobe selected by `param_3`:
+- `param_3 == 0` → primary lobe data (SEE offset `+0x0F`)
+- `param_3 != 0` → secondary lobe data (SEE offset `+0x23`)
+
+### F15R.SEE range calibration — Note
+
+`^911400` ÷ 6076 ≈ 150 nm. The APG-63 published FA range is ~80 nm at typical RCS; the stored value represents maximum theoretical lobe extent under ideal conditions, not the pilot-selectable radar range.
 
 ## TODO
 
-- Determine dual-lobe switch trigger condition via FA.EXE disassembly
-- Verify sentinel values `$80000000` / `$7fffffff` interpretation (heading error limits vs. no-limit flags)
-- Confirm F15R.SEE APG-63 range (~150 nm implied by ^911400) against published FA manual or Ghidra code
+- Confirm exact trigger that transitions the missile state flag from `0x10000` (search) to `0x20000` (track) and sets `target+0xde & 0x100000`. `_PROJLockUpdate@0` (0x004c0960) is NOT the source — it only counts in-range missiles per seeker type. The transition is in the main missile-service / weapon-update path (not yet decompiled).

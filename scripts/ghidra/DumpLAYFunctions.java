@@ -10,13 +10,20 @@ import java.util.*;
 
 public class DumpLAYFunctions extends GhidraScript {
 
-    // T_CloudProc + surrounding LAY functions to trace
     static final String[] SYMBOL_NAMES = {};
 
-    // Also dump by address if known
     static final long[] ADDRESSES = {
-        0x004aace0L, // T_HorizonProc — called by LAY DLLs
-        0x004b4320L, // WRFogLayerUpdate
+        // Layer file loading — reads LAYER_FILE_HEADER, pointer table, gradient sub-blocks
+        0x004B3190L, // _WRGetLayer@8          — main layer loader
+        0x004B4320L, // _WRFogLayerUpdate      — per-frame layer update
+
+        // Horizon / gradient rendering — reads colour sub-blocks via LAYER pointers
+        0x004AACA0L, // _T_InitHorizonProc@0   — horizon init; sets gradient pointers
+        0x004AACE0L, // _T_HorizonProc         — horizon render entry (imported by LAY DLLs)
+        0x004AACF0L, // _T_DefaultHorizon      — default horizon path
+        0x004C8FD4L, // Horizon2d              — 2D horizon renderer
+        0x004C924CL, // _SolidHorizon          — solid-colour horizon
+        0x004C942CL, // _GouraudHorizon        — Gouraud-shaded; reads colour remap tables
     };
 
     @Override

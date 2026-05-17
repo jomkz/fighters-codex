@@ -27,11 +27,11 @@ Full F15.ECM example:
     byte 35             ; band constant 4  (fixed)
     byte 159            ; band constant 5  (fixed)
     byte 31             ; band constant 6  (fixed)
-    byte 30             ; effectiveness C  (variable)
+    byte 30             ; effectiveness C (+0x12) = radar Pk reduction (variable)
     word 100            ; overall ECM strength (100 = full; 0 = none)
     byte 0
     byte 0
-    byte 40             ; secondary effectiveness / chaff rate?
+    byte 40             ; secondary effectiveness (+0x17) = IR Pk reduction (variable)
     word 100            ; secondary strength
     byte 0
 :si_names
@@ -53,27 +53,49 @@ Full F15.ECM example:
 | `word` | Decimal | Meaning | Examples |
 |--------|---------|---------|---------|
 | $0 | 0 | No active jamming | MIG21, ALE40 (chaff/flare only) |
-| $f0 | 240 | Partial active jamming | ALQ72 |
-| $1f0 | 496 | Full active jamming suite | F14, F15, F22, B52, EA6, ALQ167 |
+| $f0 | 240 | Radar-only active jammer | ALQ72 |
+| $1f0 | 496 | Radar + IR jammer | F14, F15, F22, B52, EA6, ALQ167 |
+
+**Power field is a bitmask** (confirmed via `@HARDFindJammer@4` at 0x00452EA0):
+
+| Bit | Hex | Meaning |
+|-----|-----|---------|
+| 4 | `0x010` | Radar jammer active |
+| 8 | `0x100` | IR jammer active |
+
+`@HARDFindJammer@4` iterates hardpoints of type 9 (ECM) and rejects pods where the seeker type does not match the active jammer bit: IR seekers need `0x100`, radar seekers need `0x10`. A pod with `$f0` = `0000 1111 0000` has bit 4 set (radar) but not bit 8 (no IR). A pod with `$0` passes neither check and functions as a passive dispenser only.
+
+The bits 5–7 (the four-band cluster 0xF0) likely represent individual radar frequency-band coverage — the five fixed constants (35, 95, 24, 159, 31) in the effectiveness block may correspond to these band thresholds — but that correlation is not yet confirmed.
 
 ### Effectiveness Bytes
 
-The 9-byte block contains three **variable** effectiveness bytes (positions 1, 5, 9) interleaved with five **fixed** band constants (35, 95, 24, 159, 31). The variable bytes scale with aircraft ECM quality:
+The 9-byte block contains three **variable** effectiveness bytes (positions 1, 5, 9) interleaved with five **fixed** band constants (35, 95, 24, 159, 31). All roles confirmed via Ghidra:
 
-| Aircraft | Byte 1 | Byte 5 | Byte 9 | ECM power |
-|---------|--------|--------|--------|-----------|
-| EA6 (dedicated EW) | 99 | 99 | 80 | $1f0 |
-| F22, A10, F14, B52 | 50 | 50 | 30–50 | $1f0 |
-| F15 | 30 | 30 | 30 | $1f0 |
-| MIG21 | 20 | 20 | 0 | $0 |
-| ALE40 (chaff/flare) | 30 | 30 | 0 | $0 |
-| ALQ72 (jammer pod) | 0 | 0 | 30 | $f0 |
+| Aircraft | eff_A (+0x0A) | eff_B (+0x0E) | eff_C (+0x12) | +0x17 (IR Pk) | ECM power |
+|---------|--------------|--------------|--------------|--------------|-----------|
+| EA6 (dedicated EW) | 99 | 99 | 80 | 80 | $1f0 |
+| F22, A10, F14, B52 | 50 | 50 | 30–50 | 30–50 | $1f0 |
+| F15 | 30 | 30 | 30 | 30 | $1f0 |
+| MIG21 | 20 | 20 | 0 | 0 | $0 |
+| ALE40 (chaff/flare) | 30 | 30 | 0 | 0 | $0 |
+| ALQ72 (radar jammer) | 0 | 0 | 30 | 0 | $f0 |
 
-Observations:
-- The five fixed bytes (35, 95, 24, 159, 31) appear in all ECM files regardless of quality — likely band-frequency thresholds or system constants.
-- ALE40 (chaff/flare dispenser, no active jamming) has non-zero byte 1 and byte 5 but zero byte 9 — suggesting byte 9 correlates with active jamming or IR decoy effectiveness.
-- ALQ72 (jammer pod, no chaff) has zeros in byte 1 and byte 5 but non-zero byte 9.
-- Exact semantics of the three variable positions require FA.EXE disassembly.
+**Byte 9 (+0x12) = radar jamming effectiveness** (confirmed). `_PROJHitChance@28` (0x004c3380) reads `ecm_ptr+0x12` when the shooter has a radar seeker (`missile+0xb4 == 3`): `Pk_final = (100 − eff_C) × Pk_base / 100`.
+
+**Secondary byte (+0x17) = IR jamming effectiveness** (confirmed). Same function reads `ecm_ptr+0x17` for IR seekers (`missile+0xb4 == 2`).
+
+**Byte 1 (+0x0A) = chaff effectiveness; Byte 5 (+0x0E) = flare effectiveness** (confirmed). `_DAMAGEDoHit@12` (0x0040f970) case 9 reads these independently across three hit-probability bands when the player is hit:
+
+```c
+// 0–24%: active jammer hit — full lock break
+if ((*(ushort *)(entity + 0x08) & 0x110) != 0) { *(ecm_struct + 4) = 0; }
+// 25–64%: chaff dispenser hit — radar lock disruption
+if (entity[0x0A] != 0) { *(ecm_struct + 6) = 0; }
+// 65–99%: flare dispenser hit — IR lock disruption
+if (entity[0x0E] != 0) { *(ecm_struct + 7) = 0; }
+```
+
+ALE40 has eff_A=30 and eff_B=30 (both dispensers present); ALQ72 has eff_A=0 and eff_B=0 (active jammer only, no passive dispensers). ✓
 
 ## File Inventory
 
@@ -120,20 +142,17 @@ Observations:
 
 ## Calibration
 
-### Effectiveness byte semantics
+### Effectiveness byte semantics — Resolved
 
-The variable positions (bytes 1, 5, 9) are identified by cross-referencing aircraft types. Their specific roles (radar warning, jamming, decoy) require FA.EXE disassembly:
+- **+0x0A = chaff effectiveness**: confirmed via `_DAMAGEDoHit@12` — non-zero means aircraft has chaff dispensers.
+- **+0x0E = flare effectiveness**: confirmed via `_DAMAGEDoHit@12` — non-zero means aircraft has flare dispensers.
+- **+0x12 = radar jamming effectiveness**: confirmed via `_PROJHitChance@28`. Applied as `(100 − byte) × Pk / 100`.
+- **+0x17 = IR jamming effectiveness**: confirmed via `_PROJHitChance@28` for IR-guided weapons.
 
-1. Load FA.EXE in Ghidra with `ImportFASms` labels applied.
-2. Search FA.SMS for symbols containing `ECM` (e.g. `?ECMEvaluate@@`, `?GetJammingFactor@@`).
-3. In the identified function, find where it reads the effectiveness bytes — the arithmetic (multiply? compare threshold?) against the five fixed constants reveals their role.
+### ECM power field (`word $1f0`) — Resolved
 
-### ECM power field (`word $1f0`)
-
-`$1f0` = 496 = `0001 1111 0000` binary. The three-level structure ($0/$f0/$1f0) suggests either an enumerated power level or a bitmask of frequency bands (bits 4–8 set = five bands). The intermediate value $f0 (ALQ72, an older jammer pod) representing "partial" capability supports an additive band-bit interpretation.
+`$1f0` is a **bitmask**. Bits 4 and 8 are the operative flags (confirmed via `@HARDFindJammer@4`). See the Power Levels table above. The band-bit hypothesis for bits 5–7 (the 0xF0 cluster) is plausible but not confirmed.
 
 ## TODO
 
-- Decode roles of effectiveness bytes 1, 5, 9 via Ghidra ECM evaluation function
-- Confirm whether `$1f0` is a bitmask (five frequency bands) or an enumerated power level
-- Cross-reference five fixed constants (35, 95, 24, 159, 31) against known RWR band frequencies
+- Cross-reference five fixed constants (35, 95, 24, 159, 31) against known RWR band frequencies to confirm band-bit map

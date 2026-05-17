@@ -8,78 +8,80 @@ Outstanding RE and documentation tasks, grouped by effort.
 
 - **PLT field gap (0xB0–campaign block start)**: Field layout from offset `0xB0` to the campaign block start is unmapped. Method: diff two pilot saves with known differences (aircraft, loadout) byte-by-byte. See [formats/PLT.md](formats/PLT.md). *(Requires gameplay — 4-pass methodology documented in PLT.md)*
 
+- **GAS capacity word**: The `word` field (108/198/248/315) does not map linearly to US gallons. The `dword` mass is confirmed as fuel weight in lbs (6.6× gallon count). The capacity `word` requires FA.EXE fuel-system disassembly to decode. See [formats/GAS.md](formats/GAS.md).
+
 - **FA_3.LIB PIC naming pattern**: Confirm whether the `<AC>_<N>.PIC` N suffix encodes LOD level, paint scheme, or texture region. Requires disc 2 (FA_3.LIB not on disc 1 or the hard drive install). Method: extract a full aircraft skin set, load each into GUI PIC viewer, compare against SH UV coordinates. See [formats/PIC.md](formats/PIC.md).
 
-- **RGN**: Decode `POSTER.RGN` (324 bytes) and `BUTTONS.RGN` binary region record structures. Confirm count word at offset 0, parse all 32 region records, explain size difference between the two files. See [formats/RGN.md](formats/RGN.md).
+- **T2 sub-header and surface class**: Decode sub-header bytes 4–17 (world-space origin, scale, or height bounds). Clarify header unknowns at 0x40 (20 bytes) and 0x60/0x68 (zero — reserved?). Determine surface class byte → PIC atlas tile row/column mapping. Confirm tile-summary record 0 semantics (dominant type, average, or NW-corner?). Check OpenFA `crates/asset/mmm/` for any existing T2 parsing. See [formats/T2.md](formats/T2.md).
 
-- **SSF grammar**: Extract the complete file copy manifest from both SSF files; identify all keywords, operators, and conditionals in the SSF grammar. See [formats/SSF.md](formats/SSF.md).
+- **SSF file manifest and grammar**: Extract the complete file copy manifest from both SSF files to document which LIBs are disk-resident vs. CD-resident. Identify all SSF grammar keywords, operators, and conditionals. See [formats/SSF.md](formats/SSF.md).
 
----
+- **DLG filename mapping**: Map all 92 DLG filenames to their in-game screens (menu system, dialogs, overlays). Method: `ft lib ls FA_2.LIB | grep .DLG` and cross-reference with `.MNU` files. See [formats/DLG.md](formats/DLG.md).
 
-## Loose File Differential Mapping (toggle in-game + diff)
+- **NT hardpoint bit 1 ($2) meaning**: Confirm whether bit 1 on the hardpoint flags byte means "naval surface-strike missile" (inferred from carrier-based NT files) or something else. Method: cross-reference against SEA_SPAR.JT and similar naval weapon JT capability flags. See [formats/NT.md](formats/NT.md).
 
-- **EA.CFG**: Map all fields by toggling settings in-game and diffing. Cross-reference `CN_ReadConfig` symbol in FA.SMS. See [formats/CFG.md](formats/CFG.md).
-
-- **NET.DAT**: Map multiplayer network config fields — callsign, session name, transport config. Cross-reference `CN_INFO` struct via FA.SMS. See [formats/NET.md](formats/NET.md).
+- **PTS asset reference inventory**: Extract all 37 filenames from the PTS files and cross-reference against `.PT` aircraft to identify which aircraft have custom icons. Disassemble a `.PTS` file to confirm whether it references `.HUD` or `.FNT` assets beyond the icon PIC. See [formats/PTS.md](formats/PTS.md).
 
 ---
 
 ## Win32 PE DLL Disassembly
 
-For each item: load in Ghidra, import FA.SMS symbols via `scripts/ghidra/ImportFASms.java`, trace from the DLL entry point or a known FA.EXE caller.
+For each item: load the overlay DLL in Ghidra, import the FA.SMS symbol list via `scripts/ghidra/import_sms.py`, trace from the DLL's exported entry point.
 
-- **FNT encoding details**: Confirm `cFont[0]` font height value by reading the pointer table header at raw file offset `0x200`. Verify whether `00`/`01`/`11` suffix encodes locale, resolution, or style. Resolve count discrepancy: 15 files inventoried vs 13 in FA_1.LIB. See [formats/FNT.md](formats/FNT.md).
+- **FNT glyph encoding**: Bytes `{03, F9, 88, 07}` are confirmed code values (not raw pixels); nibble-packed rows, RLE, or advance-width encoding still unresolved. Trace the glyph-drawing routine in FA.EXE. Also resolve count discrepancy (15 files inventoried vs 13 in LIB). See [formats/FNT.md](formats/FNT.md).
 
-- **HUD gauge completeness**: Confirm exact struct byte offsets by hex-diffing A7.HUD vs F22.HUD. Identify the four unresolved coordinate pairs at offsets 0x265–0x26B. Confirm per-aircraft anchor point source (hardcoded in FA.EXE vs stored elsewhere). See [formats/HUD.md](formats/HUD.md).
+- **HUD gauge offset mapping**: Diff A7.HUD vs F22.HUD offset tables byte-by-byte to map each `(dx, dy)` pair to a specific gauge. Confirm anchor point encoding (two u16s at fixed VA, or derived from PT file). Identify `_l`/`_lh`/`_ls` gauge state variant semantics. See [formats/HUD.md](formats/HUD.md).
 
-- **DLG field gaps**: Fill in unknown fields at +0x02..+0x09 (common header gap present in all record types). Decode `_ChoosePreload` record params (bounding-box vs dialog-type ID — `FUN_004897f0` body is minimal). Map all 92 DLG filenames to their in-game screens. See [formats/DLG.md](formats/DLG.md).
+- **HUD advisory icon bit names**: Name the individual advisory icons — which bits of `DAT_0050cfef` correspond to GEAR, LOW FUEL, MASTER CAUTION, etc. Also identify callers of `FUN_00407930` outside the main HUD render loop to confirm which subsystems set each advisory-enable bit. See [formats/HUD.md](formats/HUD.md).
 
-- **LAY gradient header**: Decode the `10 10` bytes in the gradient sub-block header (meaning of both u8 values unknown — channel count? sub-table count?). Confirm whether `0x31` is entries-per-sub-table or a type ID. Explain CLOUD1B = CLOUD1 (byte-for-byte identical). Map `layer <name>.LAY <index>` slot indices from `.MM` files to rendering layers. See [formats/LAY.md](formats/LAY.md).
+- **MUS opcode semantics**: `FA`/`FB`/`FC` are Miles Sound System XMIDI extensions. `FE`/`FD` confirmed via Ghidra to have **no FA.EXE callbacks** — `_AIL_register_*_callback` imports absent; branch conditions are Miles-internal. Full sub-opcode decode requires MSS/AIL SDK headers. See [formats/MUS.md](formats/MUS.md).
 
-- **MUS sub-opcode semantics**: Decode `FA`/`FB`/`FC`/`FD`/`FE` sub-opcode meanings — these are Miles Sound System XMIDI extensions processed by AIL natively; requires MSS documentation or Miles SDK headers. See [formats/MUS.md](formats/MUS.md).
+- **DLG non-Action record sizes and header gap**: `_DrawAction` = 38 bytes (confirmed). Measure exact sizes for `_DrawEditBox`, `_DrawText`, `_DrawRocker`, `_DrawCampaignList`. Fill in the unknown fields at common header offsets +0x02..+0x09 (present in all record types). Decode `_ChoosePreload` bounding-box params via `FUN_004a6e20`. See [formats/DLG.md](formats/DLG.md).
 
-- **HGR layout table**: Identify the second `.HGR` filename (likely a carrier or alternate airbase variant). Disassemble to identify the hangar layout table — aircraft slot positions, icon placement, camera angle. See [formats/HGR.md](formats/HGR.md).
+- **LAY gradient table and slot mapping**: Confirm `0x31` and `10 10` in gradient sub-block header (entry count vs. type ID; stride/channel meaning). Map `layer <name>.LAY <index>` slot indices from `.MM` files to rendering layers. Document CLOUD/DAY prefix naming convention. Map parameter fields at header offsets 0x00–0x0F and gap at 0x1C–0x28. See [formats/LAY.md](formats/LAY.md).
 
-- **PTS asset references**: Extract all 37 filenames and cross-reference with `.PT` aircraft. Determine whether `.PTS` also references `.HUD` or `.FNT` files for the aircraft's cockpit display. See [formats/PTS.md](formats/PTS.md).
+- **HGR hangar layout**: Identify the second `.HGR` filename (likely a carrier or alternate airbase). Disassemble to extract the hangar layout table — aircraft slot positions, icon placement, camera angle. See [formats/HGR.md](formats/HGR.md).
+
+- **OT/NT `ot_flags` bit semantics**: Bits 5, 8, 10, 11, 19, 20, 22, 25, 26 are catalogued from full survey; specific meanings need Ghidra confirmation of damage/targeting/collision evaluation functions. Bit 22 (`$400000`) only appears on `~`-prefixed variants of COLTWR and a few others — decode separately. See [formats/OT.md](formats/OT.md) and [formats/NT.md](formats/NT.md).
+
+---
+
+## Mission System Formats
+
+These formats (AI scripts, campaign state, mission conditions, theater maps) interact at runtime. Most are text-based but some have binary sections or reference binary resources.
+
+- **AI script semantics**: Locate the script parser/interpreter in FA.EXE (xref to `.AI` filename loading). Confirm full `move`/`jink`/`patrol` argument semantics (heading reference points, speed modes). Confirm relationship between `.AI` script and companion `.BI` overlay. See [formats/AI.md](formats/AI.md).
+
+- **CAM binary layout**: Disassemble `UKRAINE.CAM` to confirm the binary layout of the mission state and weapon tables (offsets, sizes, field encoding). Identify which `.MC` files correspond to which campaigns/missions. Determine how `.CAM` references theater `.MM` files (if at all). See [formats/CAM.md](formats/CAM.md).
+
+- **MC condition check logic**: Disassemble `UKR01.MC` to trace the complete condition check logic and identify all object aliases it monitors. Determine how the `.CAM` file loads `.MC` files at mission start. Clarify `FOO.MC` and `EXTRA01.MC` (developer test missions or multiplayer extras?). See [formats/MC.md](formats/MC.md).
+
+- **MM world-space fields**: Confirm `sides` entry count semantics (version/type vs. faction count). Determine world-space coordinate scale and origin for `pos`/`view` values. Document all `flags` bit assignments for `obj` blocks. Clarify `tmap_named` second and third argument semantics (position vs. tile_id/variant). Survey all `w_goal` values to enumerate waypoint goal types. Confirm `tdic id=256` meaning (tile type index into T2?). See [formats/MM.md](formats/MM.md).
 
 ---
 
 ## Format Deep Dives (BRF Numeric Fields)
 
-- **SEE dual-lobe switch trigger**: Primary=search, secondary=track confirmed by range/angle comparison; the engine condition that switches lobes needs Ghidra. Also confirm sentinel values `$80000000`/`$7fffffff` (heading-error limits vs no-limit flags). Confirm F15R APG-63 implied range (~150 nm from raw value `^911400`). See [formats/SEE.md](formats/SEE.md).
+- **SEE dual-lobe switch trigger**: Lobe-check internals confirmed — `FUN_004c2eb0` (search) manages a 40-tick acquisition timer at `target+0x11a`; `FUN_004c31f0` (track) additionally requires `target+0xde & 0x100000`. Neither function writes the transition bit. Remaining: identify the missile-service function that advances `missile+0xa6` from `0x10000` (search) to `0x20000` (track) and sets `target+0xde & 0x100000`. See [formats/SEE.md](formats/SEE.md).
 
-- **JT agility and hit-probability bytes**: Map the byte sequence after seeker lobe data — turn rate, g-limit, fuze delay, Pk values. See [formats/JT.md](formats/JT.md).
+- **JT agility and hit-probability bytes**: Hit-probability bytes at PROJ_TYPE+0x79–0x81 confirmed via `_PROJHitChance@28`; proximity fuze range at PROJ_TYPE+0x4F confirmed via `FUN_004c3960`. Remaining: map PROJ_TYPE+0x50–0x78 (turn rate, g-limit, physics params) via `_PROJProc` callback. See [formats/JT.md](formats/JT.md).
 
-- **JT warhead flags bits 0–15**: Bits 16–17 (AA/AG capability) confirmed; lower bits control fuze/warhead type. Needs Ghidra weapon evaluation function. See [formats/JT.md](formats/JT.md).
+- **JT warhead flags bits 0–8**: Bits 16–17 (AA/AG), bits 4/9/10/21 confirmed from `_PROJLock@24` and `_PROJHitChance@28`. Remaining: bits 0–8 (fuze type, damage model — pattern: AIM-9M `0x4f`, MK-82 `0x12`, 20mm `0xc4`). See [formats/JT.md](formats/JT.md).
 
-- **ECM effectiveness byte roles**: Variable bytes at positions 1, 5, 9 identified; whether they map to radar jamming / chaff / flare effectiveness needs Ghidra. Confirm whether `$1f0` is a bitmask (five frequency bands) or an enumerated power level. Cross-reference five fixed constants (35, 95, 24, 159, 31) against known RWR band frequencies. See [formats/ECM.md](formats/ECM.md).
-
-- **GAS capacity word**: The `word` field (108/198/248/315) does not map linearly to US gallons. The `dword` mass is confirmed as fuel weight in lbs (6.6× gallon count). The capacity `word` requires FA.EXE fuel-system disassembly to decode. See [formats/GAS.md](formats/GAS.md).
+- **ECM band-bit map**: +0x0A = chaff, +0x0E = flare, +0x12 = radar Pk, +0x17 = IR Pk, `$1f0` bitmask (bit 4=radar, bit 8=IR) — all confirmed. Remaining: cross-reference five fixed constants (35, 95, 24, 159, 31) against known RWR band frequencies to confirm band-bit map for bits 5–7. See [formats/ECM.md](formats/ECM.md).
 
 ---
 
-## Mission / Campaign Formats
+## Undocumented Loose Files
 
-- **AI script semantics**: Locate the `.AI` script parser/interpreter in FA.EXE (xref to `.AI` filename loading). Confirm full `move` / `jink` argument semantics — heading reference points, speed modes. Confirm relationship between `.AI` script and companion `.BI` overlay. See [formats/AI.md](formats/AI.md).
+- **EA.CFG**: Map all fields by toggling settings in-game and diffing. Cross-reference `CN_ReadConfig` symbol in FA.SMS. See [formats/CFG.md](formats/CFG.md).
 
-- **CAM binary layout**: Disassemble `UKRAINE.CAM` to confirm binary layout of the mission state and weapon tables. Identify which `.MC` files correspond to which campaigns and missions. Determine how `.CAM` references theater `.MM` files. See [formats/CAM.md](formats/CAM.md).
-
-- **MC condition logic**: Disassemble `UKR01.MC` to trace the complete condition-check logic. Determine how the `.CAM` file references or loads `.MC` files at mission start. Clarify `FOO.MC` and `EXTRA01.MC` — developer test missions or FA multiplayer extras. See [formats/MC.md](formats/MC.md).
-
-- **MM field gaps**: Confirm `sides` entry count semantics. Determine world-space coordinate scale and origin for `pos`/`view` values. Document all `flags` bit assignments for `obj` blocks. Clarify `tmap_named` second and third argument semantics. Survey all `w_goal` values to enumerate waypoint goal types. Confirm `tdic id=256` meaning (tile type index into T2?). See [formats/MM.md](formats/MM.md).
+- **NET.DAT**: Map multiplayer network config fields. Cross-reference `CN_INFO` struct via FA.SMS. Confirm whether NET.DAT holds one transport block or a union of all transport configs. See [formats/NET.md](formats/NET.md).
 
 ---
 
-## Terrain / Environment
+## Developer and Meta
 
-- **T2 sub-header and surface class**: Decode sub-header bytes 4–17 (likely encodes world-space origin, scale, or min/max height bounds). Clarify header unknowns at 0x40 (20 bytes) and 0x60, 0x68. Determine the exact mapping from surface class byte to PIC atlas texture row/column. Confirm meaning of tile-summary record 0. Check OpenFA `crates/asset/mmm/` for any T2 parsing code. Determine whether FA_3.LIB (Disk 2) contains additional `.T2` files. See [formats/T2.md](formats/T2.md).
+- **SMS version cross-reference**: Cross-reference selected VAs in FA.SMS against the live FA.EXE to confirm the symbol map matches the shipped binary. Identify build configuration (debug vs. release indicators in mangled names). See [formats/SMS.md](formats/SMS.md).
 
----
-
-## Flag / Enum Mapping (Ghidra)
-
-- **OT/NT `ot_flags` bits (5, 8, 10, 11, 22+)**: Bit patterns catalogued from full OT/NT survey; specific bit meanings need Ghidra confirmation of the damage/targeting/collision evaluation functions. Bit 22 (`$400000`) appears only on `~`-prefixed COLTWR variants — likely an override flag. See [formats/OT.md](formats/OT.md) and [formats/NT.md](formats/NT.md).
-
-- **NT hardpoint bit 1 (`$2`)**: Bit 0 (hardpoint active) confirmed; bit 1 meaning unknown. Needs Ghidra weapon evaluation function trace. See [formats/NT.md](formats/NT.md).
-
-- **SMS symbol map verification**: Cross-reference selected VAs against FA.EXE to confirm the symbol map is from a matching build. Identify build configuration / PDB origin. See [formats/SMS.md](formats/SMS.md).
+- **SMS IDA Pro import script**: Add `scripts/ida/import_sms.py` mirroring the existing Ghidra import script. See [formats/SMS.md](formats/SMS.md).

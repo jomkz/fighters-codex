@@ -119,7 +119,7 @@ The `short param_2` passed through `_SEQmusic` → `MusicOn` → `_AIL_init_sequ
 
 ## TODO
 
-- Decode FA/FB/FC/FD/FE sub-opcode semantics — these are Miles Sound System XMIDI extensions processed by AIL, not FA game code; requires MSS documentation or Miles SDK headers to fully decode
+- Decode FA/FB/FC/FD/FE sub-opcode semantics — these are Miles Sound System XMIDI extensions processed by AIL, not FA game code; requires MSS documentation or Miles SDK headers to fully decode. **Confirmed via Ghidra**: FA.EXE has no `_AIL_register_sequence_callback` / `_AIL_register_beat_callback` imports — FE/FD branch conditions are evaluated entirely within the Miles runtime, not via FA game callbacks.
 
 ## Related
 

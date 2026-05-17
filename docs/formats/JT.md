@@ -146,14 +146,22 @@ Confirmed flags from cross-referencing weapon types:
 | MK-82 | `$22012` | Unguided bomb (AG) |
 | 20mm cannon round | `$0348c4` | Gun (AA + AG) |
 
-Byte 2 (bits 16–23) encodes engagement-role capability:
+The flags dword is loaded as-is into the runtime missile entity at `missile+0xa6`. At launch, the engine OR-assigns runtime state bits into the same field:
+- `$1204f` (AIM-9M, AIM-120): bit 16 set → starts in search mode, transitions to 0x20000 on acquisition
+- `$2a06f` (AGM-65G): bit 17 set → starts in track mode (fire-and-forget, locked before launch)
 
-| Bit | Meaning | Evidence |
-|-----|---------|---------|
-| 16 (0x010000) | Air-to-air capable | AA missiles and 20mm only |
-| 17 (0x020000) | Air-to-ground capable | AG missiles, bombs, and 20mm |
+Confirmed bit roles from `_PROJLock@24` (0x004c2f20), `_PROJHitChance@28` (0x004c3380), and `@HARDFindJammer@4`:
 
-Bits 0–15 control warhead/fuze properties (proximity fuze, blast radius, guidance type). Full bit map requires Ghidra cross-reference of the weapon evaluation function.
+| Bit | Hex | Meaning | Evidence |
+|-----|-----|---------|---------|
+| 16 | 0x010000 | Air-to-air capable / search-mode init | AA missiles and 20mm; `@HARDFindJammer@4` |
+| 17 | 0x020000 | Air-to-ground capable / track-mode init | AG missiles, bombs, and 20mm |
+| 21 | 0x200000 | Lock-count reduction modifier | `_PROJHitChance@28` |
+| 9 | 0x000200 | Dual-lobe seeker lock processing | gates search/track lobe dispatch in `_PROJLock@24` |
+| 10 | 0x000400 | Active-radar / special guidance mode | gates `FUN_004629e0` + `FUN_00452e60` in `_PROJLock@24` |
+| 4 | 0x000010 | Pk modifier gate | `_PROJLock@24` range-based Pk calc |
+
+Bits 0–8 (lower nibbles) are not yet confirmed individually; the pattern differs: guided missiles `0x4f`, bombs `0x12`, guns `0xc4`, suggesting fuze type and damage model encoding.
 
 ### Seeker mode byte — Confirmed
 
@@ -175,10 +183,23 @@ The `^` range values in PROJ_TYPE seeker lobes use the same 1-foot unit as SEE f
 
 ### Agility / hit-probability bytes
 
-The byte sequence after the seeker lobe data controls maneuverability and hit chance. Compare `AIM9X.JT` (high-agility, modern) against `AIM9M.JT` (older) — bytes that differ are agility-related. Compare `GAU8.JT` (guaranteed hit at close range) against long-range missiles — bytes that differ are hit-probability-related.
+The PROJ_TYPE section base is at `missile+0xa6` in the runtime entity. Confirmed reads from `_PROJHitChance@28` (0x004c3380) and `FUN_004c3960` (proximity fuze check):
+
+| PROJ_TYPE offset | Runtime offset | Role (confirmed) |
+|-----------------|----------------|-----------------|
+| +0x4F | missile+0xF5 | Proximity fuze range (byte) — fuze triggers when `target_arm_size ≥ this`; below 50% = miss |
+| +0x79 | missile+0x11F | Approach angle tolerance byte |
+| +0x7A | missile+0x120 | Approach angle weight byte |
+| +0x7B | missile+0x121 | Angular error weight byte (left-shifted 3 for angle table lookup) |
+| +0x7C | missile+0x122 | Counter-maneuver jam Pk reduction byte — lowers Pk by this % |
+| +0x7D | missile+0x123 | Altitude/range modifier weight byte |
+| +0x7E | missile+0x124 | Range gap modifier byte |
+| +0x7F | missile+0x125 | Pk adjustment byte (applied as signed % of base Pk) |
+| +0x80 | missile+0x126 | Maneuver agility Pk bonus (ushort) |
+
+The 55-byte gap between +0x4F (fuze range) and +0x79 (angle params) spans PROJ_TYPE+0x50–0x78. These bytes include turn rate, g-limit, and other physics params read by the `_PROJProc` callback rather than `_PROJHitChance`.
 
 ## TODO
 
-- Decode bits 0–15 of warhead flags dword via Ghidra weapon-evaluation function
-- Map agility byte sequence (turn rate, g-limit, fuze delay)
-- Map hit-probability bytes against known weapon Pk values
+- Confirm bits 0–8 of warhead flags dword — fuze type, damage model (pattern: AIM-9M `0x4f`, MK-82 `0x12`, 20mm `0xc4`)
+- Map PROJ_TYPE+0x50–0x78 (turn rate, g-limit, maneuver physics) via `_PROJProc` callback disassembly
