@@ -36,7 +36,7 @@ Offsets and lengths confirmed by cross-comparing three pilot files with known va
 The layout between `0xB0` and the campaign block is not yet mapped. The campaign block
 contains null-terminated strings for:
 
-- Campaign `.MM` filename (e.g. `EGYPT.CAM`)
+- Campaign `.CAM` filename (e.g. `EGYPT.CAM`)
 - Campaign display name (e.g. `Egypt 1998`)
 - Assigned aircraft `.PT` reference (e.g. `F22.PT`)
 - Available aircraft pool (`.PT` references)

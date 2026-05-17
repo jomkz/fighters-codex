@@ -13,6 +13,9 @@ int cmd_mission(int argc, char** argv);
 int cmd_sh(int argc, char** argv);
 int cmd_cb8(int argc, char** argv);
 int cmd_raw(int argc, char** argv);
+int cmd_sms(int argc, char** argv);
+int cmd_t2(int argc, char** argv);
+int cmd_plt(int argc, char** argv);
 
 static void print_usage() {
     puts("ft -- Fighters Toolkit\n");
@@ -60,6 +63,15 @@ static void print_usage() {
     puts("  ft ot  info   <file.OT>  (or pt/nt/jt/see/ecm/gas)");
     puts("  ft ot  unpack <file.OT>  [-o output.txt]");
     puts("  ft ot  pack   <file.txt> -o <output.OT>");
+    puts("");
+    puts("Pilot save commands:");
+    puts("  ft plt info   <file.P>");
+    puts("");
+    puts("Symbol map commands:");
+    puts("  ft sms dump   <FA.SMS> [-o out.csv]");
+    puts("");
+    puts("Terrain map commands:");
+    puts("  ft t2  info   <file.T2>");
 }
 
 int main(int argc, char** argv) {
@@ -83,6 +95,12 @@ int main(int argc, char** argv) {
         return cmd_cb8(argc - 1, argv + 1);
     if (strcmp(cmd, "raw") == 0)
         return cmd_raw(argc - 1, argv + 1);
+    if (strcmp(cmd, "sms") == 0)
+        return cmd_sms(argc - 1, argv + 1);
+    if (strcmp(cmd, "t2")  == 0)
+        return cmd_t2(argc - 1, argv + 1);
+    if (strcmp(cmd, "plt") == 0)
+        return cmd_plt(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||

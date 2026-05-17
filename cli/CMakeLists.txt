@@ -9,6 +9,9 @@ add_executable(ft
     cmd_sh.cpp
     cmd_cb8.cpp
     cmd_raw.cpp
+    cmd_sms.cpp
+    cmd_t2.cpp
+    cmd_plt.cpp
 )
 
 target_link_libraries(ft PRIVATE ft_lib)

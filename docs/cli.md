@@ -14,6 +14,9 @@ ft pt      info / unpack / pack         # aircraft type definitions
 ft nt / jt / see / ecm / gas …          # other type definitions
 ft mission info / unpack / pack         # .M / .MM mission and map files
 ft sh      info / unpack                # .SH 3D shapes → Wavefront OBJ
+ft sms     dump                         # FA.SMS symbol map → CSV
+ft t2      info                         # .T2 terrain map grid info
+ft plt     info                         # .P pilot save file
 ```
 
 ## lib — Archive
@@ -203,3 +206,82 @@ Decode every frame to a PGM image (8-bit palette indices as greyscale) in
 The decoder maintains a persistent canvas across frames; each MRFI chunk
 applies a delta to the previous state. Output values are raw palette indices —
 apply the appropriate PAL file separately to get RGB colours.
+
+## sms — Symbol map
+
+```
+ft sms dump <FA.SMS> [-o out.csv]
+```
+
+#### `ft sms dump <FA.SMS> [-o out.csv]`
+
+Export all 3,829 MSVC C++ mangled symbols from `FA.SMS` to a two-column CSV
+(`va,name`), sorted by virtual address. Without `-o`, prints to stdout.
+
+```
+> ft sms dump FA.SMS -o symbols.csv
+FA.SMS -> symbols.csv (3829 symbols)
+```
+
+The CSV can be imported directly into Ghidra (Script Manager → ImportSymbolsScript)
+or IDA Pro to auto-label all known functions and data symbols.
+
+## t2 — Terrain map
+
+```
+ft t2 info <file.T2>
+```
+
+#### `ft t2 info <file.T2>`
+
+Print the terrain grid dimensions, tile count, and surface class distribution
+(water vs land tiles, top land classes by count).
+
+```
+> ft t2 info UKR.T2
+Theater:    UKR
+Grid:       25 x 26 (650 tiles)
+Surface:    water 176 (27.1%)  land 474 (72.9%)
+Land classes:
+  0xD4  315 tiles (48.5%)
+  0xD6   46 tiles (7.1%)
+  ...
+```
+
+T2 files are stored in `FA_2.LIB`; unpack the archive first.
+
+## plt — Pilot save
+
+```
+ft plt info <file.P>
+```
+
+#### `ft plt info <file.P>`
+
+Print pilot identity fields and active campaign state from a `.P` pilot save file.
+
+```
+> ft plt info PLT441.P
+File:       PLT441.P  (9696 bytes)
+Name:       Maverick
+Callsign:   MAVERICK
+Rank:       Captain
+Voice:      ^ACID.5K
+Nose art:   NOSE01
+Left decal: LEFT03
+Right decal:RIGHT03
+Portrait:   PILOT02
+
+Campaign:   UKRAINE.CAM  (Ukraine Crisis)
+Aircraft:   F16C.PT
+Pool:       F16C.PT, F15C.PT
+Ordnance:
+  AIM9M.JT         x4
+  AIM120.JT        x2
+  MK82.JT          x6
+Sensors:    F16CSEE.SEE
+```
+
+Pilot save files (`.P`) are stored in the FA install directory alongside `FA.EXE`.
+The stats block (offsets 0xB0–0x0D7E) is not yet decoded; only the identity and
+campaign blocks are read.

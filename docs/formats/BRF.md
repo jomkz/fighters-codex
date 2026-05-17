@@ -18,9 +18,9 @@ extensions share the same tokenizer; the `struct_type` field distinguishes them.
 | `.NT` | 3 | NPC type (AI unit / crew) |
 | `.PT` | 5 | Plane type (aircraft aerodynamics + avionics) |
 | `.JT` | 7 | Jettison type (projectile / weapon physics) |
-| `.SEE` | ? | Seeker type (missile guidance) |
-| `.ECM` | ? | ECM pod definition |
-| `.GAS` | ? | Gas / smoke type |
+| `.SEE` | 10 | Seeker type (missile guidance) |
+| `.ECM` | 9 | ECM pod definition |
+| `.GAS` | 8 | Gas / fuel tank definition |
 
 ---
 

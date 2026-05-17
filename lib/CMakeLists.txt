@@ -11,6 +11,9 @@ add_library(ft_lib STATIC
     src/sh.cpp
     src/cb8.cpp
     src/raw.cpp
+    src/sms.cpp
+    src/t2.cpp
+    src/plt.cpp
 )
 
 target_include_directories(ft_lib

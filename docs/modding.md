@@ -11,8 +11,9 @@ ft lib unpack FA_2.LIB out\FA_2
 
 ## Texture mod (FA_3.LIB aircraft skins)
 
-FA_3.LIB lives on the CD (typically `F:\`). All 822 textures are JPEG-format PICs —
-no palette needed to decode them, but you do need the palette to re-encode.
+FA_3.LIB lives on the CD (typically `F:\`). All 822 textures are raw (uncompressed)
+8-bit indexed PICs. No palette is needed to decode them, but you do need the palette
+to re-encode.
 
 ```powershell
 # Extract textures from the CD

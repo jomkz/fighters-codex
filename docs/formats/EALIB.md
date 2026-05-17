@@ -126,17 +126,61 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 
 | File | TOOLKIT ID | Location | Key Contents |
 |------|------------|----------|--------------|
-| FA_1.LIB | `"1 "` | Install dir | Fonts (.FNT), UI graphics |
-| FA_2.LIB | `"2 "` | Install dir | Shapes, missions, audio, type defs, cutscenes, text, palette -- 5405 files total |
-| FA_3.LIB | — | Disk 2 (Red) | 822 JPEG-format textures, 269 aircraft data files |
-| FA_4B.LIB | — | Install dir | Additional assets |
-| FA_4C.LIB | `"4C"` | Disk 1 (Blue) | Debriefing audio (.11K), medal/award screens (.PIC), FMV data (.CB8) -- 91 files |
-| FA_4D.LIB | — | Install dir | FMV footage (.CB8 + .11K) -- aerial combat and campaign clips -- 22 files |
-| FA_7.LIB | `"7 "` | Disk 1 (Blue) | Mission briefing video sequences (.FBC + .VDO) with .11K audio -- 815 files |
-| FA_10.LIB | `"10"` | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-117, B-2, EFA, F-16, F-22 -- 22 files |
-| FA_10B.LIB | `"AB"` | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- Gripen, RAF, S-35, X-29, X-31 -- 20 files |
-| FA_11.LIB | `"41"` | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- A-7, AC-130, AV-8, F-104, F-14 -- 20 files |
-| FA_11B.LIB | — | Disk 2 (Red) | Per-aircraft FMV (.CB8 + .11K) -- F-18, F-4B, F-8J, Sea Harrier -- 16 files |
+| FA_1.LIB | `"1 "` | Install dir | `.FNT` ×15, `.PIC` ×1986 |
+| FA_2.LIB | `"2 "` | Install dir | Main asset archive — see extension inventory below |
+| FA_3.LIB | — | Disk 2 (Red) | `.PIC` ×822 (aircraft skin textures, raw), `.INF` ×269 (aircraft tech sheets, dcl) |
+| FA_4B.LIB | — | Install dir | `.11K` ×77, `.5K` ×9 |
+| FA_4C.LIB | `"4C"` | Disk 1 (Blue) | `.11K` ×44, `.PIC` ×43, `.CB8` ×4 |
+| FA_4D.LIB | — | Install dir | `.CB8` + `.11K` FMV footage |
+| FA_7.LIB | `"7 "` | Disk 1 (Blue) | `.FBC` ×355, `.VDO` ×355, `.11K` ×105, `.5K` ×1 |
+| FA_10.LIB | `"10"` | Disk 2 (Red) | `.CB8` ×9, `.11K` ×9 |
+| FA_10B.LIB | `"AB"` | Disk 2 (Red) | `.CB8` ×10, `.11K` ×10 |
+| FA_11.LIB | `"41"` | Disk 2 (Red) | `.CB8` ×10, `.11K` ×10 |
+| FA_11B.LIB | — | Disk 2 (Red) | `.CB8` ×8, `.11K` ×8 |
+
+**TOOLKIT ID** is the 2-character identifier the FA TOOLKIT uses internally in its
+`CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
+`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` — these do not match the
+filename suffix, so the IDs appear to be opaque tokens rather than derived from the name.
+
+### FA_2.LIB Extension Inventory
+
+Full enumeration via `ft lib ls` (FA_3.LIB excluded — Disk 2 not mounted):
+
+| Extension | Count | Notes |
+|-----------|-------|-------|
+| `.AI` | 9 | Artificial intelligence for objects |
+| `.BI` | 9 | Supplementary AI for objects |
+| `.BIN` | 6 | Lookup tables and palette data |
+| `.CAM` | 6 | Campaign definitions |
+| `.DLG` | 92 | In-game menu dialog layouts |
+| `.ECM` | 30 | Electronic counter-measures |
+| `.GAS` | 4 | Fuel definitions |
+| `.HGR` | 2 | Hangar screen (Win32 PE DLL) |
+| `.HUD` | 46 | Heads-up displays |
+| `.JT` | 135 | Weapon (ordnance) definitions |
+| `.LAY` | 24 | Cloud layers |
+| `.M` | 517 | Missions |
+| `.MC` | 21 | Campaign data |
+| `.MM` | 75 | Theater/map layouts |
+| `.MNU` | 12 | In-game menu layouts |
+| `.MT` | 363 | Mission briefing text |
+| `.MUS` | 9 | Music playlist / sequencer (Win32 PE DLL) |
+| `.NT` | 84 | Vehicle definitions |
+| `.OT` | 170 | Object definitions |
+| `.PAL` | 1 | Color palette |
+| `.PIC` | 1158 | 8-bit indexed bitmaps |
+| `.PT` | 145 | Aircraft flight models |
+| `.PTS` | 37 | Aircraft icon lookup (Win32 PE DLL) |
+| `.SEE` | 51 | Seeker definitions |
+| `.SEQ` | 126 | Cutscene sequencer |
+| `.SH` | 1275 | 3D object shapes |
+| `.T2` | 16 | Terrain height/color/type maps |
+| `.TXT` | 8 | Campaign description text |
+| `.XMI` | 78 | MIDI audio (Extended MIDI) |
+| `.5K` | 781 | 5 kHz PCM audio |
+| `.8K` | 1 | 8 kHz PCM audio |
+| `.11K` | 114 | 11 kHz PCM audio |
 
 **TOOLKIT ID** is the 2-character identifier the FA TOOLKIT uses internally in its
 `CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
