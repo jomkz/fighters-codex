@@ -63,8 +63,24 @@ Always `$1` across all four files. Likely a stores category flag indicating this
 - BRF.md — Aircraft flight model; defines base fuel capacity and consumption rates
 - JT.md — Stores system that GAS files participate in alongside weapons
 
+## Calibration
+
+### Capacity word
+
+The `word` values (108, 198, 248, 315) do not map linearly to US gallons. Method:
+
+1. Open an aircraft `.PT` BRF file that can carry the 150-gal tank (e.g. `F16.PT`). Read its internal fuel capacity field.
+2. Check the total fuel figure shown on the FA HUD with the 150-gal tank loaded.
+3. Subtract internal fuel from total — the remainder maps to word 108 → derive the conversion factor.
+4. Alternatively: search FA.SMS for `GAS`, `fuel`, or `tank` symbols. The function that reads the capacity `word` and adds to the aircraft's fuel pool will show the conversion arithmetic.
+
+Hypothesis: if internal fuel uses the same unit, values may be in some simulator-internal volume tick (108 internal units per 150 US gallons ≈ 0.72 units/gallon).
+
+### Mass dword
+
+Already well-constrained: mass ≈ 6.6× gallon count ≈ **fuel weight in pounds** (JP-8 ≈ 6.6 lb/US gal). Consistent across all four tanks to within rounding.
+
 ## TODO
 
-- Decode `word` capacity unit — compare against aircraft total fuel figures in BRF/PT data
-- Identify how the engine burns fuel from GAS tanks (likely references FA.EXE fuel consumption code)
-- Confirm whether `dword` mass is pounds or another weight unit (cross-reference against FA.EXE physics)
+- Decode capacity `word` unit via `.PT` internal fuel cross-reference or FA.SMS fuel symbols
+- Confirm mass `dword` = pounds via FA.EXE physics code

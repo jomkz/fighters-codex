@@ -130,8 +130,40 @@ Each hardpoint references a .JT file as its default weapon type. `ammo count = 3
 
 ---
 
+## Calibration
+
+### Hardpoint flags (`word $8`)
+
+`$8` = bit 3 set. Method:
+
+1. Collect hardpoint flags across NT files: tank main gun, AAA cannon, SAM launcher, naval gun. Objects with multiple hardpoint types (e.g. a ship with guns + SAMs) will have different flags per hardpoint.
+2. Hardpoints that can fire at air targets vs. ground targets likely have distinct bits.
+3. `word $8` on the M-1 tank gun is a baseline — compare against `ZSU23.NT` (AAA, anti-air) which should have an air-engagement bit.
+
+### NPC_TYPE AI params
+
+| Field | Known range | Hypothesis |
+|-------|-------------|-----------|
+| `aggressiveness` | 20 (M-1) | 0–100 scale; higher = attacks without provocation |
+| `byte 60` | 60 (M-1) | Skill / accuracy; higher = better aim |
+| `byte 40` | 40 (M-1) | Reaction time or acquisition speed |
+| `word threat_range` | 32767 | Detection range in internal units (32767 = max / unlimited) |
+
+Calibrate skill vs. aggressiveness by comparing a passive vehicle (`TRUCK.NT`) against an aggressive one (`ZSU23.NT`).
+
+### Proc symbols
+
+| Symbol | Observed in | Expected role |
+|--------|-------------|---------------|
+| `_GVProc` | M1, ZSU23, TRUCK | Ground vehicle AI |
+| `_SHIPProc` (hypothetical) | IOWA, KIROV | Naval unit AI |
+| `_PROJProc` | (via JT) | Projectile physics |
+
+Confirm naval proc name by opening `IOWA.NT` or `KIROV.NT` and reading the `symbol` field.
+
 ## TODO
 
-- Decode hardpoint flags field.
-- Document all NPC_TYPE AI params fully.
-- Identify additional `symbol` proc names for naval and air units.
+- Decode hardpoint flags (see methodology above)
+- Confirm AI param semantics by comparing passive vs. aggressive NT files
+- Confirm naval `symbol` proc name from a ship NT file
+- Identify `obj_class` word semantics (OBJ_TYPE field, also present in OT)

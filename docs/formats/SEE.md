@@ -189,9 +189,35 @@ Exact semantics require FA.EXE disassembly of the targeting/guidance loop.
 - [ECM.md](ECM.md) — ECM degrades seeker performance against SEE parameters
 - BRF.md — Aircraft definitions reference radar SEE files
 
+## Calibration
+
+### Range unit
+
+The `^` prefix denotes FA's fixed-point internal unit. Method to calibrate:
+
+1. Pick a weapon with a published game-manual lock range (e.g. AIM-120C AMRAAM; the FA manual lists lock range in nm).
+2. Open the corresponding `.SEE` file (`AIM120C.SEE` or the radar file that governs it).
+3. Read the primary lobe `dword ^XXXXXX` max range value.
+4. Divide: `unit_per_nm = stored_value / known_nm`.
+5. Cross-check with a short-range IR missile (e.g. AIM-9M, ~2 nm) to confirm linearity.
+
+Hypothesis from `F15R.SEE`: if APG-63 radar range is 80 nm, then `^911400 / 80 = 11392 units/nm` ≈ 11400 units/nm. Confirm or refute with a second data point.
+
+### Seeker type byte 2
+
+Files with `L` suffix (`AV8L.SEE`, `SU24L.SEE`, `KA50L.SEE`, `SU37L.SEE`) are laser-related variants. Hypothesis: `byte 2 = laser designator / laser-guided mode`. Confirm by opening one of those files and checking the byte at position 5 (after `byte type`, `ptr si_names`, `word flags`, `byte subtype`).
+
+### Dual-lobe semantics
+
+To determine whether lobes represent search vs. track or main vs. boresight:
+
+1. Load FA.EXE in Ghidra with `ImportFASms` labels applied.
+2. Search FA.SMS for symbols containing `SEE`, `seeker`, or `lobe` (e.g. `?SEECheck@@`, `?UpdateSeeker@@`).
+3. In the identified function, find where it reads the second lobe data — the condition that switches from lobe 1 to lobe 2 parameters reveals the trigger (lock-on threshold? firing event?).
+
 ## TODO
 
-- Decode range unit scale — calibrate `^XXXXXX` against known weapon/radar ranges in nm or km
-- Decode seeker type byte fully — `byte 2` value unobserved or unidentified
-- Determine how dual-lobe structure maps to game mechanics (main vs. boresight? search vs. track modes?)
-- Verify sentinel values `$80000000` / `$7fffffff` interpretation against FA.EXE guidance code
+- Calibrate range unit scale (see methodology above)
+- Confirm seeker type `byte 2` = laser by reading a `*L.SEE` file
+- Determine dual-lobe trigger condition via FA.EXE disassembly
+- Verify sentinel values `$80000000` / `$7fffffff` interpretation (heading error limits vs. no-limit flags)

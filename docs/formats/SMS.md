@@ -44,17 +44,25 @@ This covers the full FA.EXE image: `.text` (code), `.data`, `.rdata`, and `.bss`
 
 Namespace prefixes seen in the symbol set include: `AP` (autopilot), `VDO` (video), `CD` (campaign/disc), `CN` (network config), and many more.
 
-## Usage with Ghidra / IDA
+## Usage with Ghidra
 
-Import as a symbol / label script:
+A ready-to-run Java script is provided at [`scripts/ghidra/ImportFASms.java`](../../scripts/ghidra/ImportFASms.java). See [`scripts/README.md`](../../scripts/README.md) for full setup and overlay-DLL rebasing instructions.
+
+Quick start:
+
+1. Open FA.EXE in Ghidra and let auto-analysis finish.
+2. Tools → Script Manager → run `ImportFASms`.
+3. Point the file dialog at `FA.SMS` in the FA install directory.
+4. All 3,829 functions and globals are labelled in one pass; progress bar shows in the status bar.
+
+### IDA Pro
 
 1. Parse the binary: read `count`, iterate records, resolve each `str_off` into the string table.
-2. For each record, call `createLabel(toAddr(va), demangle(name), true)` (Ghidra) or `set_name(va, name)` (IDA).
-3. All 3,829 functions and globals will be named automatically, dramatically reducing anonymous stub count.
-
-A loader utility (`ft sms load` or similar) could automate this for Ghidra via its scripting API.
+2. For each record call `idc.set_name(va, name, idc.SN_NOWARN)`.
+3. No script is included yet — the format is simple enough to adapt from the Ghidra version.
 
 ## TODO
 
 - Cross-reference selected VAs against FA.EXE to confirm the symbol map matches the shipped binary version
 - Identify which build configuration / PDB this map was generated from (check for debug vs. release indicators in the mangled names)
+- Add an IDA Pro script (`scripts/ida/import_sms.py`) mirroring the Ghidra version

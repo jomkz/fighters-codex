@@ -89,8 +89,36 @@ Single-section structure (OBJ_TYPE only — no NPC_TYPE or PROJ_TYPE).
 
 ---
 
+## Calibration
+
+### Capability flags (`dword $521`, `$401`, etc.)
+
+`$521` = `0000 0101 0010 0001` binary. Method:
+
+1. Collect flags from objects across categories: a runway (STRIP1.OT), a building (BLDG1.OT), a radar dish (PRDR1.OT), a flag (FLAGO1.OT).
+2. Objects that can be destroyed should share a "destroyable" bit absent in indestructible scenery (trees, flags).
+3. Objects that show on radar/mission map likely share a "radar-visible" or "targetable" bit.
+4. XOR flags across pairs to isolate individual bit meanings.
+
+Likely bit assignments based on OT object roles:
+
+| Bit | Hypothesis |
+|-----|-----------|
+| 0 | Can be targeted / is a valid mission target |
+| 5 | Explosive / generates explosion on destruction |
+| 8 | Strategic value (counts toward mission objective) |
+| 10 | Shows on map / radar |
+
+### Hitpoint and hardness scale
+
+Compare `word hitpoints` and hardness `byte` across object types. Soft targets (TREE1.OT) should have low hitpoints and low hardness. Bunkers (BNK1.OT) should have high hitpoints and high hardness. SAM sites are expected to be more durable than generic buildings.
+
+### Destroyable vs. indestructible
+
+A `capability_flags` bit likely marks indestructibility. Candidate: if `ROCKA.OT` (rock/terrain feature) and `TREE1.OT` have a flags bit not present in `BLDG1.OT`, that bit = indestructible scenery marker.
+
 ## TODO
 
-- Decode capability flags field ($521, $401, etc.).
-- Document the hitpoint and hardness scale.
-- Identify which OT objects are destroyable mission targets vs. indestructible scenery.
+- Decode capability flags via cross-category comparison (see methodology above)
+- Map hitpoint scale (what hitpoint value survives one cannon burst vs. one bomb hit?)
+- Identify indestructible scenery flag bit
