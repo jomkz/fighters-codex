@@ -126,7 +126,7 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 
 | File | TOOLKIT ID | Location | Key Contents |
 |------|------------|----------|--------------|
-| FA_1.LIB | `"1 "` | Install dir | `.FNT` ×13, `.PIC` ×1986 |
+| FA_1.LIB | `"1 "` | Install dir | `.FNT` ×15, `.PIC` ×1986 |
 | FA_2.LIB | `"2 "` | Install dir | Main asset archive — see extension inventory below |
 | FA_3.LIB | — | Disk 2 (Red) | JPEG-format textures and aircraft data (not inventoried — disc not mounted) |
 | FA_4B.LIB | — | Install dir | `.11K` ×77, `.5K` ×9 |
@@ -151,27 +151,27 @@ Full enumeration via `ft lib ls` (FA_3.LIB excluded — Disk 2 not mounted):
 |-----------|-------|-------|
 | `.AI` | 9 | Artificial intelligence for objects |
 | `.BI` | 9 | Supplementary AI for objects |
-| `.BIN` | 6 | Unknown binary |
+| `.BIN` | 6 | Lookup tables and palette data |
 | `.CAM` | 6 | Campaign definitions |
 | `.DLG` | 92 | In-game menu dialog layouts |
 | `.ECM` | 30 | Electronic counter-measures |
 | `.GAS` | 4 | Fuel definitions |
-| `.HGR` | 2 | Unknown |
+| `.HGR` | 2 | Hangar screen (Win32 PE DLL) |
 | `.HUD` | 46 | Heads-up displays |
-| `.JT` | 133 | Weapon (ordnance) definitions |
+| `.JT` | 135 | Weapon (ordnance) definitions |
 | `.LAY` | 24 | Cloud layers |
 | `.M` | 517 | Missions |
 | `.MC` | 21 | Campaign data |
 | `.MM` | 75 | Theater/map layouts |
 | `.MNU` | 12 | In-game menu layouts |
 | `.MT` | 363 | Mission briefing text |
-| `.MUS` | 9 | Music (binary, format unknown) |
-| `.NT` | 83 | Vehicle definitions |
+| `.MUS` | 9 | Music playlist / sequencer (Win32 PE DLL) |
+| `.NT` | 84 | Vehicle definitions |
 | `.OT` | 170 | Object definitions |
 | `.PAL` | 1 | Color palette |
 | `.PIC` | 1158 | 8-bit indexed bitmaps |
 | `.PT` | 145 | Aircraft flight models |
-| `.PTS` | 37 | Unknown (related to `.PT`?) |
+| `.PTS` | 37 | Aircraft icon lookup (Win32 PE DLL) |
 | `.SEE` | 51 | Seeker definitions |
 | `.SEQ` | 126 | Cutscene sequencer |
 | `.SH` | 1275 | 3D object shapes |
