@@ -1,34 +1,65 @@
 # Technical Info -- Aircraft Tech Sheet (.INF)
 
-`.INF` files are **Rich Text Format (RTF)** documents containing the technical information
-sheet for an aircraft. They are displayed in-game on the aircraft selection screen and in
-the mission planner.
+`.INF` files contain the technical information sheet for an aircraft, displayed in-game on the aircraft selection screen and in the mission planner. One `.INF` per aircraft; not all aircraft have one.
 
-Found in: individual aircraft records inside the numbered `.LIB` files. One `.INF` per
-aircraft; not all aircraft have one.
+## Location
 
----
+| LIB | Count |
+|-----|-------|
+| FA_3.LIB | 269 |
 
 ## Format
 
-Standard RTF. No FA-specific extensions. Editable directly in WordPad, Microsoft Word,
-or any RTF-capable editor.
+**Custom dot-command markup** — plain text, not RTF. Lines beginning with `.` are formatting directives; all other lines are body text.
 
-## Extraction and Replacement
+```
+.body .right
+Jane's All The World's Aircraft
 
-Extract via `ft lib unpack` (the record is stored uncompressed). Replace by packing the
-edited `.RTF`/`.INF` back into a custom `FA_0.LIB` using `ft lib pack`.
+.title .center
+A-10 THUNDERBOLT II
+.body .left
 
-When authoring new content, save as RTF 1.x. The in-game renderer is the Windows 3.1
-RichEdit control and does not support advanced RTF features (embedded images, tables,
-complex styles). Stick to plain text with basic formatting (bold, italic, font size).
+TITLE:
+FAIRCHILD REPUBLIC THUNDERBOLT II
+...
+```
 
----
+### Known Directives
 
-## Applications
+| Directive | Effect |
+|-----------|--------|
+| `.body .right` | Body text, right-aligned (used for the "Jane's" header) |
+| `.body .left` | Body text, left-aligned (main content) |
+| `.title .center` | Title text, centred (aircraft name) |
 
-INF files are standard RTF — open and edit directly, no conversion step needed.
+The renderer is the in-game text display, not a standard RTF or HTML control. Only the directives listed above have been observed.
 
-- **LibreOffice Writer** — free, cross-platform; save as RTF 1.x via *File → Save As*
-- **WordPad** — free, built-in on Windows; reliable for basic RTF editing
-- **Microsoft Word** `$` — broadest RTF compatibility; remember to save as `.rtf`, not `.docx`
+## Content Structure
+
+All observed `.INF` files follow the same layout (sourced from *Jane's All The World's Aircraft*):
+
+1. **Header**: "Jane's All The World's Aircraft" right-aligned
+2. **Title**: Aircraft designation, centred
+3. **Body sections**: TITLE, TYPE, PROGRAMME, DESIGN FEATURES, FLYING CONTROLS, STRUCTURE, LANDING GEAR, POWER PLANT, ACCOMMODATION, ARMAMENT, DIMENSIONS: EXTERNAL, WEIGHTS AND LOADINGS, PERFORMANCE
+4. **Structured footer** (machine-readable performance data):
+   ```
+   LENGTH (m): 16.26
+   HEIGHT (m): 4.47
+   WINGSPAN (m): 17.53
+   MAX T.O. WEIGHT (kg): 21,500
+   MAX WING LOAD (kg/m/2): 449.88
+   T.O. RUN (m): 1372
+   LANDING RUN (m): 762
+   MAX RATE CLIMB (m/min): 1828
+   ```
+   These key-value pairs are likely parsed by the engine to populate the stat display.
+
+## Extraction and Editing
+
+Extract via `ft lib unpack` (DCL compressed in FA_3.LIB, flags=4). Edit in any plain text editor. Re-pack into a custom LIB and configure FA to load it.
+
+## Related
+
+- [BRF.md](BRF.md) — `.PT` aircraft flight model records paired with each `.INF`
+- [PIC.md](PIC.md) — aircraft skin textures also in FA_3.LIB

@@ -128,7 +128,7 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 |------|------------|----------|--------------|
 | FA_1.LIB | `"1 "` | Install dir | `.FNT` ×15, `.PIC` ×1986 |
 | FA_2.LIB | `"2 "` | Install dir | Main asset archive — see extension inventory below |
-| FA_3.LIB | — | Disk 2 (Red) | JPEG-format textures and aircraft data (not inventoried — disc not mounted) |
+| FA_3.LIB | — | Disk 2 (Red) | `.PIC` ×822 (aircraft skin textures, raw), `.INF` ×269 (aircraft tech sheets, dcl) |
 | FA_4B.LIB | — | Install dir | `.11K` ×77, `.5K` ×9 |
 | FA_4C.LIB | `"4C"` | Disk 1 (Blue) | `.11K` ×44, `.PIC` ×43, `.CB8` ×4 |
 | FA_4D.LIB | — | Install dir | `.CB8` + `.11K` FMV footage |
