@@ -23,12 +23,30 @@ MUS files use **Phar Lap PE format** (signature `PL\0\0`). The CODE section is a
 | Opcode | Length | Meaning |
 |--------|--------|---------|
 | `FF <name\0>` | variable | Playlist identifier string (e.g. `"air"`) |
-| `FA <sub> <u32>` | 6 bytes | Setup/config (volume, tempo, fade; `sub` selects parameter) |
-| `FB 50 <idx> F9` | 4 bytes | Play XMI track `<idx>` |
+| `FA <sub> <u32>` | 6 bytes | Setup/config; confirmed `sub` values: `0x21`, `0x32`, `0x50`, `0x19` |
+| `FB <mode> <idx> F9` | 4 bytes | Play XMI track `<idx>`; confirmed `mode` values: `0x50`, `0x5A`, `0x32`, `0x19` |
+| `FB <mode> <idx>` | 3 bytes | Play XMI track — short form (no `F9` terminator); appears in M_LAUNCH context |
+| `FC` | 1 byte | Shuffle/loop marker; followed by state dispatch block `01 02 03 02 01 02 03 02 01` |
 | `FE <u32>` | 5 bytes | Conditional branch (game-state test) |
 | `FD <u24>` | 4 bytes | Loop / jump |
 
-### M_AIR.MUS decoded
+The `01 02 03 02 01 02 03 02 01` byte pattern immediately following `FC` is a **state machine dispatch table** — the same pattern appears in DLG CODE sections just before JMP thunks, identifying it as a shared engine construct.
+
+### All 9 playlists decoded
+
+| File | Playlist ID | Track count | Notes |
+|------|-------------|-------------|-------|
+| `M_AIR.MUS` | `"air"` | 20 | In-flight music; two groups separated by `FE` conditional |
+| `M_DECK.MUS` | `"deck"` | ~8 | Carrier deck / on-ground state |
+| `M_LAUNCH.MUS` | `"launch"` | ~4 | Launch sequence; uses 3-byte `FB` form |
+| `M_VALK.MUS` | `"valk"` | ~6 | Valkyrie / dogfight state |
+| `M_EJECT.MUS` | `"eject"` | 1–2 | Ejection event — minimal (1–2 opcodes) |
+| `M_SUCC.MUS` | `"succ"` | 1–2 | Mission success — minimal |
+| `M_HOME.MUS` | `"home"` | 1–2 | Return to base — minimal |
+| `M_BRIEF.MUS` | `"brief"` | ~5 | Mission briefing screen |
+| `M_MENU.MUS` | `"menu"` | ~6 | Main menu |
+
+### M_AIR.MUS decoded (detailed)
 
 Playlist ID: `"air"` (in-flight music)
 
@@ -41,13 +59,6 @@ XMI track sequence (20 tracks): `4 6 107 108 109 18 110 116 117 118 119 24 29 21
 
 One `FE 0x48` conditional separates the sequence into two groups, likely switching between low-intensity and high-intensity music.
 
-### RE next steps
-
-1. Decode `FA` sub-opcodes by comparing against audio parameter symbols in FA.SMS (search for `MUS`, `fade`, `volume`).
-2. Map XMI indices to file names: `ft lib ls FA_2.LIB | grep .XMI` and sort by insertion order to get index 0=first, 1=second, etc.
-3. Decode `FE`/`FD` branching — the argument likely encodes a game-state enum value. Cross-reference with FA.SMS symbols.
-4. Decode all 9 MUS files and compare track sets across game states.
-
 ## Toolkit Roadmap
 
 - New `cli/cmd_mus.cpp` — `ft mus dump <file.MUS>` prints decoded opcode stream and XMI track list
@@ -55,10 +66,10 @@ One `FE 0x48` conditional separates the sequence into two groups, likely switchi
 
 ## TODO — Deep Dive
 
-- Decode `FA` sub-opcode meanings (volume, fade, tempo)
-- Map XMI track indices to file names by cross-referencing FA_2.LIB insertion order
-- Map all 9 MUS playlists to their corresponding game states
-- Decode `FE`/`FD` branch conditions
+- Decode `FA` sub-opcode meanings (volume, fade, tempo) — confirmed sub-values: `0x19`, `0x21`, `0x32`, `0x50`; semantics need FA.SMS symbol cross-reference
+- Map XMI track indices to file names by cross-referencing FA_2.LIB insertion order (`ft lib ls FA_2.LIB` sorted)
+- Decode `FE`/`FD` branch conditions — argument likely encodes game-state enum; cross-reference FA.SMS
+- Clarify `FB` 3-byte vs 4-byte form — does mode byte determine terminator presence?
 
 ## Related
 

@@ -49,7 +49,21 @@ HUD files use **Phar Lap PE format** (signature `PL\0\0`). The CODE section is a
 
 ### Coordinate data
 
-Starting at VA 0x1062, a block of signed s16 pairs encodes gauge positions as **offsets from the HUD anchor point**. The anchor in A7.HUD is at screen position (320, 100) (confirmed at VA 0x1028).
+Starting at VA 0x1062, a block of signed s16 pairs encodes gauge positions as **offsets from the HUD anchor point**.
+
+### Per-aircraft anchor points (confirmed)
+
+| Aircraft | Anchor (x, y) | Notes |
+|----------|--------------|-------|
+| A7 | (320, 100) | Centred horizontally |
+| F22 | (249, 100) | Offset left — narrower HUD layout |
+| F14 | (349, 114) | Offset right + lower — wide-cockpit geometry |
+
+All HUD files have identical CODE virtual size (`0x2BB`), confirming a fixed-size data structure regardless of aircraft.
+
+### F22-specific differences
+
+F22.HUD omits the `~f22_l/c/r` sub-panel sprites entirely — F22 has no separate left/centre/right gauge panels. It also uses `BAY` (weapons bay indicator) instead of `HOOK` (arresting hook present on carrier aircraft such as the A7 and F14).
 
 Sample offsets (A7.HUD):
 
@@ -60,12 +74,6 @@ Sample offsets (A7.HUD):
 | 0000106A | (-25, -28) | — |
 | 0000106E | (48, 86) | — |
 
-### RE next steps
-
-1. Diff A7.HUD and F22.HUD byte-by-byte — offsets that differ are aircraft-specific gauge positions; identical bytes are engine constants or shared layout.
-2. Cross-reference `~a7_l/c/r` sprite names against PIC files (e.g. `~a7_l.PIC` in FA_2.LIB) to identify which gauges each sprite renders.
-3. Trace the `winfont` reference to understand how text overlays attach to the gauge positions.
-
 ## Toolkit Roadmap
 
 - New `lib/src/hud.cpp` + `lib/include/ft/hud.h` — parse sprite name table and coordinate block
@@ -75,8 +83,9 @@ Sample offsets (A7.HUD):
 ## TODO — Deep Dive
 
 - Map each (dx, dy) offset to a specific gauge type (airspeed, altitude, heading, weapons)
-- Confirm anchor point encoding (is (320, 100) stored as two u16s or is it derived from another field?)
-- Identify all gauge state variants (what do _l, _lh, _ls suffixes mean?)
+- Confirm anchor point encoding (two u16s at a fixed VA offset, or derived from another field?)
+- Identify all gauge state variants (`_l`/`_lh`/`_ls` suffixes — likely normal/high-AoA/stowed states)
+- Diff A7 vs F22 offset tables byte-by-byte to isolate aircraft-specific gauge positions
 
 ## Related
 

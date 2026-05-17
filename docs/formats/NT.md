@@ -153,17 +153,26 @@ Calibrate skill vs. aggressiveness by comparing a passive vehicle (`TRUCK.NT`) a
 
 ### Proc symbols
 
-| Symbol | Observed in | Expected role |
-|--------|-------------|---------------|
-| `_GVProc` | M1, ZSU23, TRUCK | Ground vehicle AI |
-| `_SHIPProc` (hypothetical) | IOWA, KIROV | Naval unit AI |
+| Symbol | Observed in | Role |
+|--------|-------------|------|
+| `_GVProc` | M1, ZSU23, TRUCK, IOWA, KIROV | Ground vehicle / naval unit AI (shared) |
 | `_PROJProc` | (via JT) | Projectile physics |
 
-Confirm naval proc name by opening `IOWA.NT` or `KIROV.NT` and reading the `symbol` field.
+`IOWA.NT` and `KIROV.NT` both use `_GVProc`, not a separate ship proc. Either the ground vehicle proc handles naval movement, or the proc is a general NPC dispatcher that routes by `obj_class`.
+
+### `obj_class` word — Confirmed values
+
+| Value | Class | Observed in |
+|-------|-------|-------------|
+| `$40` | Scenery / terrain feature | TREE1.OT |
+| `$100` | Ground structure | BLDG1.OT, STRIP1.OT |
+| `$2000` | Naval vessel | IOWA.NT, KIROV.NT |
+
+The `_GVProc` symbol on naval units despite `obj_class $2000` suggests the proc may dispatch based on this field internally.
 
 ## TODO
 
 - Decode hardpoint flags (see methodology above)
-- Confirm AI param semantics by comparing passive vs. aggressive NT files
-- Confirm naval `symbol` proc name from a ship NT file
-- Identify `obj_class` word semantics (OBJ_TYPE field, also present in OT)
+- Confirm AI param semantics by comparing passive vs. aggressive NT files (`TRUCK.NT` vs `ZSU23.NT`)
+- Identify additional `obj_class` values (ground vehicles, aircraft, SAM launchers)
+- Decode `ot_flags` bit map via cross-category comparison

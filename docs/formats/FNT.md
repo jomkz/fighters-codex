@@ -43,34 +43,45 @@ FNT files use **Phar Lap PE format** (signature `PL\0\0`). No imports. The CODE 
 Starts at CODE section offset 0 (VA 0x1000). Layout:
 
 ```
-u32  first_char_or_count  (value = 7 in 4X6.FNT and 4X12.FNT)
-u32  glyph_va[N]          one VA per character, starting at ASCII 0
+u32  header_constant      (value = 7 in all observed FNT files — likely format version)
+u32  glyph_va[256]        one VA per character, ASCII 0–255
 ```
 
-The first ~32 entries (ASCII control chars) all point to the same blank/space glyph VA. Variable-stride entries begin at the first printable character.
+Control characters (ASCII 0–31) each have a VA pointing to one of the 32 consecutive `0xC3` bytes at VA 0x1804–0x1823. All of those bytes are `0xC3` (the blank glyph marker), so all control chars render as blank regardless of which specific VA they hold.
 
-Sample from 4X6.FNT (first printable chars, ASCII 0x22..0x26):
-- `'` (0x22): VA 0x1822, size ~25 bytes
-- `#` (0x23): VA 0x183B, ...
-- `$` (0x24): VA 0x1855, ...
-- `%` (0x25): VA 0x1879, ...
-- `&` (0x26): VA 0x189C, ...
+ASCII 32 (' ', space) also maps to a `0xC3` byte at VA 0x1824 — space is a blank glyph.
 
-The spacing is variable (19–36 bytes per glyph), confirming a **proportional font** with different advance widths.
+Printable character data begins at VA 0x1825.
+
+### Glyph encoding
+
+**`0xC3` = blank/empty glyph** (single-byte; the engine reads it as "advance with no pixels").
+
+All other glyphs use a variable-length encoding built from four recurring byte values:
+
+| Byte | Binary |
+|------|--------|
+| `0x03` | 00000011 |
+| `0xF9` | 11111001 |
+| `0x88` | 10001000 |
+| `0x07` | 00000111 |
+
+The encoding is **not** raw 1-bpp row data — these values do not correspond to simple scanlines for a 4-pixel-wide cell. The same four values appear in both 4X6.FNT and 4X12.FNT in different orders, confirming a compact encoding (possibly nibble-packed rows + advance-width byte, or a custom RLE). Exact scheme requires tracing the glyph-drawing routine in FA.EXE.
+
+4X6.FNT glyph for ASCII 33 ('!') — starts at VA 0x1825, 22 bytes before the next `0xC3`:
+```
+03 F9 88 07 03 F9 88 07 03 F9 88 07 03 F9 03 F9 88 07 03 F9 03 F9
+```
+
+4X12.FNT '!' starts at VA 0x1825 with a different byte order (same values, more bytes), confirming the 4X12 glyphs are taller/larger encodings of the same characters.
 
 ### $$DOSX metadata
 
-The $$DOSX section (512 bytes) contains a small header. u16 values at byte offsets +8 and +10 are `16` and `6` in 4X6.FNT — likely `(bitmap_stride_bytes, cell_height)`. For a 4-wide font at 1bpp, stride = ceil(4/8) × 32 glyphs per row = 16 bytes/row; height = 6. This is consistent.
-
-### RE next steps
-
-1. Hex-dump the glyph at VA 0x1804 (the "blank" shared by first 32 entries) — its byte count reveals glyph bitmap format.
-2. For 4X6.FNT: glyph at VA 0x1804 should be 1 byte (blank glyph), followed immediately by glyph data at 0x1805 for the next char. Verify by inspecting bytes at those VAs.
-3. Compare 4X6.FNT vs 4X12.FNT glyph data sizes to confirm the height scaling (expect 12/6 = 2× byte count per glyph).
+The $$DOSX section (512 bytes) contains a small header. Both 4X6.FNT and 4X12.FNT show identical $$DOSX values (`u16[4]=16, u16[5]=6`). Since the two files have different glyph heights but the same $$DOSX, these values are **not** per-file cell dimensions — they are system constants or encoding parameters shared by all FNT files.
 
 ## Toolkit Roadmap
 
-Once pixel format, stride, and per-glyph record size are confirmed:
+Pointer table and glyph data layout are confirmed. Blocked on glyph encoding scheme (needs Ghidra trace of the drawing routine) before PNG export can produce correct output:
 
 - New `lib/src/fnt.cpp` + `lib/include/ft/fnt.h` — parse pointer table + glyph bitmaps
 - New `cli/cmd_fnt.cpp` — `ft fnt unpack <file.FNT> -o <dir>/` extracts each glyph as a 1-bpp PNG; writes `metrics.csv` with `{char, width, height}` per row
@@ -78,10 +89,10 @@ Once pixel format, stride, and per-glyph record size are confirmed:
 
 ## TODO — Deep Dive
 
-- Confirm pixel format (1-bpp strongly suspected from stride=16, height=6, cell_w=4)
-- Determine the per-glyph record size (is it just raw bits, or are there inline metrics?)
+- Decode exact glyph encoding scheme — bytes `{03, F9, 88, 07}` are confirmed code values (not raw pixels); nibble-packed rows, RLE, or advance-width encoding still unresolved; requires tracing the glyph-drawing routine in FA.EXE via Ghidra
+- Confirm per-glyph record size (are there inline width/height metrics, or is cell size fixed per FNT file?)
 - Verify whether `00`/`01`/`11` suffix encodes locale, resolution, or style variant
-- Identify all 15 FNT filenames and their roles (some may be symbol/icon fonts, not alpha fonts)
+- Resolve count discrepancy: file inventory lists 15 files but LIB count shows 13
 
 ## Related
 

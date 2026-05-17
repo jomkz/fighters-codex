@@ -51,7 +51,9 @@ All game assets are packed into `.LIB` files using the EALIB container format. S
 
 Many game subsystems are implemented as hot-swappable Win32 PE DLLs loaded via `LoadLibrary()` at runtime. These DLLs import from `main.dll` (the FA engine core) and export named C++ functions.
 
-All overlay DLLs decompress to exactly **4,608 bytes** — a fixed-size slot in the engine's overlay pool. The exception is `4X12.FNT` at 12,800 bytes due to embedded glyph data.
+Most overlay DLLs decompress to **4,608 bytes** — a fixed-size slot in the engine's overlay pool. Exceptions: `.FNT` files vary (e.g. `4X12.FNT` = 12,800 bytes), and `.LAY` files are substantially larger (16,896–20,992 bytes) to accommodate embedded rendering lookup tables.
+
+All overlay DLLs use **Phar Lap PE format** — the signature bytes are `PL\0\0`, not the standard `PE\0\0`. The CODE section is typically a data-only structure (dispatch table, bytecode script, or lookup tables) with no compiled x86 instructions; only `.BI` and `.MC` DLLs contain actual machine code.
 
 **Overlay DLL types:**
 
@@ -103,9 +105,19 @@ All types share an `OBJ_TYPE` section (hitpoints, shape reference, year, sounds,
 | Symbol | Applies to |
 |--------|-----------|
 | `_OBJProc`  | Static objects (OT) |
-| `_GVProc`   | Ground vehicles (NT) |
+| `_GVProc`   | Ground vehicles and naval vessels (NT) — IOWA and KIROV confirmed; likely dispatches by `obj_class` internally |
 | `_PROJProc` | Projectiles (JT) |
 | PT-specific | Playable aircraft |
+
+**`^` fixed-point range fields:** Confirmed 1 unit = 1 foot across sensor and weapon files (e.g. `^60760` = 10 nm, `^360000` = 60 nm). 6,076 units = 1 nautical mile.
+
+**`obj_class` word — confirmed values:**
+
+| Value | Class |
+|-------|-------|
+| `$40`   | Scenery / terrain feature (non-targetable) |
+| `$100`  | Ground structure (building, runway) |
+| `$2000` | Naval vessel |
 
 The OpenFA project (GitLab, Rust) is the primary external reference for BRF format details, particularly for OT, NT, and PT types.
 
@@ -162,7 +174,7 @@ Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress,
 
 ### Cockpit HUD (.HUD)
 
-46 `.HUD` files, one per aircraft — each a Win32 PE DLL binding cockpit assets. References per-aircraft assets by `~<ac>h` (HUD overlay PIC), `~<ac>s` (symbol set PIC), `~<ac>_p` (propulsion panel), `~<ac>_w` (weapons panel), plus the `hudsym` and `winfont` fonts. See [formats/HUD.md](formats/HUD.md).
+46 `.HUD` files, one per aircraft — each a Win32 PE DLL binding cockpit assets. References per-aircraft assets by `~<ac>h` (HUD overlay PIC), `~<ac>s` (symbol set PIC), `~<ac>_p` (propulsion panel), `~<ac>_w` (weapons panel), plus the `hudsym` and `winfont` fonts. Gauge positions are stored as signed s16 offset pairs relative to a per-aircraft **anchor point** (e.g. A7: 320,100 / F22: 249,100 / F14: 349,114). All HUD files have a fixed CODE virtual size of `0x2BB`. See [formats/HUD.md](formats/HUD.md).
 
 ### Fonts (.FNT)
 
@@ -202,7 +214,7 @@ Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress,
 
 PCM files use filename prefixes: `&` for looping ambient, `^` for one-shot voice callouts. Thousands of audio files are distributed across `FA_2.LIB` and `FA_4B`/`4C`/`4D.LIB`. See [formats/AUDIO.md](formats/AUDIO.md).
 
-`.MUS` DLLs control which XMI plays in which game state (in-air, in-combat, in-base, etc.) and manage transitions between tracks.
+`.MUS` CODE sections are **bytecode scripts** (not x86 code). Key opcodes: `FF` = playlist ID string, `FA <sub> <u32>` = setup/config, `FB <mode> <idx>` = play XMI track, `FE <u32>` = conditional branch, `FD <u24>` = loop/jump, `FC` = shuffle marker. All 9 playlists have been decoded; game-state IDs include `"air"`, `"deck"`, `"launch"`, `"valk"`, `"brief"`, `"menu"`, `"eject"`, `"succ"`, `"home"`. See [formats/MUS.md](formats/MUS.md).
 
 ---
 
@@ -225,7 +237,7 @@ Each 3-byte record encodes `[surface_class, elevation_band, texture_variant]`. `
 
 ### Sky & Atmosphere (.LAY)
 
-24 `.LAY` files — Win32 PE DLLs implementing sky and atmosphere rendering. References `wave1.SH` and `ocean*06.PIC`. Exports `_T_HorizonProc`. See [formats/LAY.md](formats/LAY.md).
+24 `.LAY` files — Win32 PE DLLs implementing sky and atmosphere rendering. References `wave1.SH` and `ocean*06.PIC`. Imports (not exports) `_T_HorizonProc` from `main.dll` — the engine provides the horizon renderer; the LAY file supplies lookup table data only. See [formats/LAY.md](formats/LAY.md).
 
 ---
 

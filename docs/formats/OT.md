@@ -91,34 +91,39 @@ Single-section structure (OBJ_TYPE only — no NPC_TYPE or PROJ_TYPE).
 
 ## Calibration
 
-### Capability flags (`dword $521`, `$401`, etc.)
+### `obj_class` word — Partially confirmed
 
-`$521` = `0000 0101 0010 0001` binary. Method:
+| Value | Class | Observed in |
+|-------|-------|-------------|
+| `$40` | Scenery / terrain feature (non-targetable) | TREE1.OT |
+| `$100` | Ground structure (building, runway) | BLDG1.OT, STRIP1.OT |
 
-1. Collect flags from objects across categories: a runway (STRIP1.OT), a building (BLDG1.OT), a radar dish (PRDR1.OT), a flag (FLAGO1.OT).
-2. Objects that can be destroyed should share a "destroyable" bit absent in indestructible scenery (trees, flags).
-3. Objects that show on radar/mission map likely share a "radar-visible" or "targetable" bit.
-4. XOR flags across pairs to isolate individual bit meanings.
+Naval and vehicle classes are in NT files (`$2000` = naval vessel for IOWA.NT, KIROV.NT).
 
-Likely bit assignments based on OT object roles:
+### `ot_flags` dword — Partially confirmed
 
-| Bit | Hypothesis |
-|-----|-----------|
-| 0 | Can be targeted / is a valid mission target |
-| 5 | Explosive / generates explosion on destruction |
-| 8 | Strategic value (counts toward mission objective) |
-| 10 | Shows on map / radar |
+Observed values and evidence:
 
-### Hitpoint and hardness scale
+| Object | `ot_flags` | Notes |
+|--------|-----------|-------|
+| TREE1.OT | `$0` | No flags — indestructible scenery |
+| BLDG1.OT | `$521` | Factory building — destructible target |
+| STRIP1.OT | `$208021` | Runway — destructible, mission-critical |
 
-Compare `word hitpoints` and hardness `byte` across object types. Soft targets (TREE1.OT) should have low hitpoints and low hardness. Bunkers (BNK1.OT) should have high hitpoints and high hardness. SAM sites are expected to be more durable than generic buildings.
+**Bit 0** (`0x1`): set on BLDG1 and STRIP1, absent on TREE1 → **targetable / destroyable**.
 
-### Destroyable vs. indestructible
+Full bit decomposition requires Ghidra cross-reference of the damage/targeting evaluation function. Cross-category method:
 
-A `capability_flags` bit likely marks indestructibility. Candidate: if `ROCKA.OT` (rock/terrain feature) and `TREE1.OT` have a flags bit not present in `BLDG1.OT`, that bit = indestructible scenery marker.
+1. Collect flags from ROCKA.OT, FLAGO1.OT (likely `$0` or minimal), BLDG1.OT, BNK1.OT, SA3SITE.OT.
+2. Bit present on BNK1 but absent on BLDG1 → hardened/fortified flag.
+3. Bit present on all targetable objects but absent on indestructible scenery → "valid mission target" flag.
+
+### Hitpoint scale
+
+Compare `word hitpoints` across object types to calibrate damage values. Soft targets (TREE1.OT, word 166) and buildings share the same hitpoint field position.
 
 ## TODO
 
-- Decode capability flags via cross-category comparison (see methodology above)
-- Map hitpoint scale (what hitpoint value survives one cannon burst vs. one bomb hit?)
-- Identify indestructible scenery flag bit
+- Complete `ot_flags` bit decomposition via cross-category comparison
+- Map hitpoint scale (cannon burst vs. bomb hit survivability)
+- Decode `obj_class $40` sub-classes (do all terrain features use $40?)

@@ -135,38 +135,43 @@ Two-section structure: OBJ_TYPE (physical object base) followed by PROJ_TYPE (pr
 
 ## Calibration
 
-### Warhead capability flags (`dword $1204f`)
+### Warhead capability flags (`dword`)
 
-`$1204f` = `0001 0010 0000 0100 1111` binary. Method to decode:
+Confirmed flags from cross-referencing weapon types:
 
-1. List several weapons with different guidance types (IR missile, radar missile, unguided bomb, gun round).
-2. Record the `dword` flags value for each.
-3. XOR pairs that share one guidance type to isolate that type's bit(s).
-4. Known: gun rounds (`GAU8.JT`) use seeker mode `byte 0` (unguided) — their flags value sets a lower baseline. Radar missiles add bits not present in IR missiles.
+| Weapon | `dword` value | Role |
+|--------|--------------|------|
+| AIM-9M/X, AIM-120 | `$1204f` | Air-to-air missile |
+| AGM-65G, AGM-84A | `$2a06f` | Air-to-ground missile |
+| MK-82 | `$22012` | Unguided bomb (AG) |
+| 20mm cannon round | `$0348c4` | Gun (AA + AG) |
 
-Likely bit assignments based on flags observed across the inventory:
+Byte 2 (bits 16–23) encodes engagement-role capability:
 
-| Bit | Hypothesis |
-|-----|-----------|
-| 0 | Can engage air targets |
-| 1 | Can engage ground targets |
-| 2 | Can engage naval targets |
-| 3 | Can engage radar emitters (ARM) |
-| 6 | Has proximity fuze |
-| others | TBD from cross-reference |
+| Bit | Meaning | Evidence |
+|-----|---------|---------|
+| 16 (0x010000) | Air-to-air capable | AA missiles and 20mm only |
+| 17 (0x020000) | Air-to-ground capable | AG missiles, bombs, and 20mm |
 
-### Seeker mode byte
+Bits 0–15 control warhead/fuze properties (proximity fuze, blast radius, guidance type). Full bit map requires Ghidra cross-reference of the weapon evaluation function.
 
-Cross-reference with [SEE.md](SEE.md) seeker type byte:
+### Seeker mode byte — Confirmed
 
-| `byte` value | Hypothesis |
-|-------------|-----------|
-| 0 | Unguided (guns, dumb bombs) |
-| 1 | IR-homing |
-| 2 | Radar-homing (semi-active or active) |
-| 3 | Laser-guided |
+Matches the SEE seeker type byte:
 
-Confirm by comparing `GAU8.JT` (byte 0, unguided gun), `AIM9M.JT` (IR), `AIM120.JT` (radar), and a GBU with Pave Knife (laser).
+| `byte` | Guidance | Confirmed weapon |
+|--------|---------|-----------------|
+| 0 | Unguided | MK-82.JT, 20MM_4.JT |
+| 1 | Laser-guided | (see *L.SEE laser files) |
+| 2 | IR / EO homing | AIM9M.JT, AIM9X.JT, AGM65G.JT |
+| 3 | Radar (semi-active / active) | AIM120.JT, AGM84A.JT |
+
+### Range unit in PROJ_TYPE
+
+The `^` range values in PROJ_TYPE seeker lobes use the same 1-foot unit as SEE files. Confirmed data points:
+- AIM9X lobe 1 max `^50000` = 8.2 nm; AIM-9X ~8 nm ✓
+- AIM120 lobe 1 max `^144000` = 23.7 nm; AIM-120A ~25 nm ✓
+- AGM84A lobe 1 max `^360000` = 59.3 nm; Harpoon ~60 nm ✓
 
 ### Agility / hit-probability bytes
 
@@ -174,7 +179,6 @@ The byte sequence after the seeker lobe data controls maneuverability and hit ch
 
 ## TODO
 
-- Decode `dword` warhead capability flags (see methodology above)
-- Confirm seeker mode byte enum
+- Decode bits 0–15 of warhead flags dword via Ghidra weapon-evaluation function
 - Map agility byte sequence (turn rate, g-limit, fuze delay)
 - Map hit-probability bytes against known weapon Pk values

@@ -82,16 +82,30 @@ All values are half-angles; total cone coverage is double the stored value.
 
 ### Range Encoding
 
-`dword ^XXXXXX` uses the `^` (relative/fixed-point) prefix. Exact scale requires calibration against known weapon/radar ranges in nm or km.
+`dword ^XXXXXX` uses the `^` (relative/fixed-point) prefix. **1 unit = 1 foot** (confirmed via cross-reference of multiple sensor files against published system ranges):
+
+| File | Stored value | ÷ 6076 | Known range |
+|------|-------------|--------|-------------|
+| AV8L.SEE (laser pod) | ^60760 | 10.0 nm | TIALD pod ~10 nm ✓ |
+| AIM9X lobe 1 | ^50000 | 8.2 nm | AIM-9X ~8 nm ✓ |
+| AIM120 lobe 1 | ^144000 | 23.7 nm | AIM-120A ~25 nm ✓ |
+| AGM65G lobe 1 | ^60000 | 9.9 nm | AGM-65G ~10 nm ✓ |
+| AGM84A lobe 1 | ^360000 | 59.3 nm | Harpoon ~60 nm ✓ |
+| F4BR.SEE (APQ-72) | ^303800 | 50 nm | APQ-72 ~40–50 nm ✓ |
+| E3R.SEE (AWACS) | ^1215200 | 200 nm | E-3 ~200–250 nm ✓ |
+
+6076 ft = 1 nautical mile; divide any `^` range value by 6076 to get nm.
 
 ### Seeker Type Byte
 
-| Value | Type |
-|-------|------|
-| `byte 0` | Visual (VIS*.SEE) |
-| `byte 1` | IR/EO (targeting pods: PAVEKNF, PAVESPK) |
-| `byte 2` | Unknown |
-| `byte 3` | Radar (aircraft radar seekers: F15R, F14R, MIG29R, etc.) |
+| Value | Type | Evidence |
+|-------|------|----------|
+| `byte 0` | Visual | VIS*.SEE files |
+| `byte 1` | Laser | AV8L.SEE (Harrier laser designator), KA50L.SEE, SU24L.SEE, SU37L.SEE |
+| `byte 2` | IR / EO | AIM9M.JT, AIM9X.JT, AGM65G.JT PROJ_TYPE seeker byte |
+| `byte 3` | Radar (active or semi-active) | F4BR.SEE (APQ-72), AV8R.SEE (Blue Fox), E3R.SEE (AWACS), AIM120.JT, AGM84A.JT |
+
+Type byte 1 (laser) confirmed: AV8L.SEE is the AV-8B Harrier laser designator pod; its primary lobe max range `^60760` = 10 nm matches TIALD laser pod operational range.
 
 ### Sentinel Values
 
@@ -100,13 +114,20 @@ All values are half-angles; total cone coverage is double the stored value.
 
 ## Dual-Lobe Structure
 
-Each SEE file defines two detection lobes, each with independent azimuth/elevation half-angles, range limits, heading error limits, and probability of detection. Possible interpretations:
+Each SEE file defines two detection lobes, each with independent azimuth/elevation half-angles, range limits, heading error limits, and probability of detection.
 
-- Main search lobe vs. boresight/lock-on lobe
-- Two radar operating modes (search vs. track)
-- Inner and outer acquisition zones
+**`byte $1` at offset 5** (after seeker type byte) appears to be a **dual-mode enable flag**:
+- `byte $1` set: F4BR.SEE (APQ-72), E3R.SEE (AWACS) — both have meaningfully different primary/secondary lobe parameters
+- `byte $0`: AV8L.SEE, AV8R.SEE — both lobes have the same range (lobes differ only in cone angle)
 
-Exact semantics require FA.EXE disassembly of the targeting/guidance loop.
+For radar seekers with `byte $1`, the lobes appear to represent **search mode vs. track mode**:
+
+| File | Lobe 1 (primary / search) | Lobe 2 (secondary / track) |
+|------|--------------------------|---------------------------|
+| F4BR.SEE | 50 nm, 60° half-angle | 25 nm, 45° half-angle |
+| AV8R.SEE | 90 nm, 60° half-angle | 50 nm, 45° half-angle |
+
+Primary lobe is wider and longer-range (search); secondary lobe is narrower and shorter-range (lock-on/track zone). Exact trigger condition (what causes the engine to switch lobes) requires FA.EXE disassembly.
 
 ## File Inventory
 
@@ -191,33 +212,20 @@ Exact semantics require FA.EXE disassembly of the targeting/guidance loop.
 
 ## Calibration
 
-### Range unit
+### Range unit — Resolved
 
-The `^` prefix denotes FA's fixed-point internal unit. Method to calibrate:
+Range unit confirmed as **1 foot**. See table in the Range Encoding section above. Note: the earlier F15R.SEE hypothesis (11400 units/nm) was incorrect — it assumed APG-63 range is 80 nm when the stored value implies ~150 nm maximum lobe extent. The per-foot calibration is consistent across 7 independent data points.
 
-1. Pick a weapon with a published game-manual lock range (e.g. AIM-120C AMRAAM; the FA manual lists lock range in nm).
-2. Open the corresponding `.SEE` file (`AIM120C.SEE` or the radar file that governs it).
-3. Read the primary lobe `dword ^XXXXXX` max range value.
-4. Divide: `unit_per_nm = stored_value / known_nm`.
-5. Cross-check with a short-range IR missile (e.g. AIM-9M, ~2 nm) to confirm linearity.
+### Seeker type byte — Resolved
 
-Hypothesis from `F15R.SEE`: if APG-63 radar range is 80 nm, then `^911400 / 80 = 11392 units/nm` ≈ 11400 units/nm. Confirm or refute with a second data point.
+Full enum confirmed. See Seeker Type Byte table above.
 
-### Seeker type byte 2
+### Dual-lobe semantics — Partially resolved
 
-Files with `L` suffix (`AV8L.SEE`, `SU24L.SEE`, `KA50L.SEE`, `SU37L.SEE`) are laser-related variants. Hypothesis: `byte 2 = laser designator / laser-guided mode`. Confirm by opening one of those files and checking the byte at position 5 (after `byte type`, `ptr si_names`, `word flags`, `byte subtype`).
-
-### Dual-lobe semantics
-
-To determine whether lobes represent search vs. track or main vs. boresight:
-
-1. Load FA.EXE in Ghidra with `ImportFASms` labels applied.
-2. Search FA.SMS for symbols containing `SEE`, `seeker`, or `lobe` (e.g. `?SEECheck@@`, `?UpdateSeeker@@`).
-3. In the identified function, find where it reads the second lobe data — the condition that switches from lobe 1 to lobe 2 parameters reveals the trigger (lock-on threshold? firing event?).
+Strong evidence that primary lobe = search mode, secondary lobe = track/lock mode for radar seekers. Exact switch condition (what event triggers the engine to test lobe 2 vs. lobe 1) still requires FA.EXE disassembly.
 
 ## TODO
 
-- Calibrate range unit scale (see methodology above)
-- Confirm seeker type `byte 2` = laser by reading a `*L.SEE` file
-- Determine dual-lobe trigger condition via FA.EXE disassembly
+- Determine dual-lobe switch trigger condition via FA.EXE disassembly
 - Verify sentinel values `$80000000` / `$7fffffff` interpretation (heading error limits vs. no-limit flags)
+- Confirm F15R.SEE APG-63 range (~150 nm implied by ^911400) against published FA manual or Ghidra code

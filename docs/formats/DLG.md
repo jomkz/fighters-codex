@@ -56,7 +56,7 @@ DLG files use a **Phar Lap PE format** (signature `PL\0\0` instead of `PE\0\0`).
 
 Label strings are packed consecutively after the dispatch table in the same CODE section.
 
-### JMP thunks
+### JMP thunks and state dispatch table
 
 At the end of the CODE section, each imported function has a 6-byte JMP thunk:
 
@@ -64,7 +64,31 @@ At the end of the CODE section, each imported function has a 6-byte JMP thunk:
 FF 25 [iat_va LE]    ; JMP DWORD PTR [IAT slot]
 ```
 
-The `thunk_va` field in each dispatch record points to one of these thunks, identifying which draw function the record invokes.
+Immediately before the thunk block there is a fixed 9-byte **state machine dispatch table**:
+
+```
+01 02 03 02 01 02 03 02 01
+```
+
+This same sequence appears in MUS CODE sections (after the `FC` opcode), confirming it is a shared engine construct — not DLG-specific. The `thunk_va` field in each dispatch record points to one of the JMP thunks, identifying which draw function the record invokes.
+
+### _cancelString and _okString (button label indirection)
+
+Records whose `thunk_va` points to the `_cancelString` or `_okString` thunk do **not** embed a string directly. The `str_va` field in those records holds the VA of the thunk itself, which the engine dereferences at runtime to call the engine's localized label function. Hex-dumping these records shows garbage if the `str_va` is treated as a code-section string pointer — it must be followed as an indirect call.
+
+### _DrawEditBox (confirmed different record size)
+
+`EDITNAME.DLG` hex dump confirms `_DrawEditBox` records use a different layout than `_DrawAction`:
+- `x=31`, `y=20`, `w=9` (width in characters, not pixels)
+- The record is shorter than 38 bytes; exact size not yet measured
+
+### _DrawText
+
+`str_va` appears at offset 0 of the record (rather than +20 as in `_DrawAction`). The remaining field layout differs — width and position fields are at different offsets.
+
+### Other control types
+
+`_DrawRocker` and `_DrawCampaignList` are confirmed present in `CALLSIGN.DLG`. Record sizes for these types are not yet measured.
 
 ### CHOOSEAC.DLG decoded (main start screen)
 
@@ -93,7 +117,9 @@ Every DLG begins with one `_ChoosePreload` record (also 4-byte thunk + params) t
 
 ## TODO — Deep Dive
 
-- Confirm record layout for `_DrawRocker`, `_DrawEditBox`, `_DrawText` (likely different param sizes)
+- Measure exact record sizes for `_DrawRocker`, `_DrawEditBox`, `_DrawText` (confirmed different from `_DrawAction`'s 38 bytes)
+- Confirm `_DrawEditBox` width field units (characters vs pixels — currently reads as 9, likely characters)
+- Map `_DrawText` field offsets (str_va confirmed at offset 0; x/y/width positions unknown)
 - Map all 92 DLG filenames to their in-game screens
 - Decode `_ChoosePreload` params (bounding box vs dialog-type ID)
 

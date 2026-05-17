@@ -16,52 +16,64 @@ Full F15.ECM example:
 [brent's_relocatable_format]
     byte 9              ; type identifier (9 = ECM)
     ptr si_names
-    word 0              ; flags
-    byte $0             ; sub-type / mode
-    word $1f0           ; ECM power / frequency band (0 = none, $1f0 = 496 = full suite)
-    byte 30             ; effectiveness param 1a
-    byte 35             ; effectiveness param 1b
-    byte 95             ; effectiveness param 1c
-    byte 24             ; effectiveness param 2a
-    byte 30             ; effectiveness param 2b
-    byte 35             ; effectiveness param 2c
-    byte 159            ; effectiveness param 3a
-    byte 31             ; effectiveness param 3b
-    byte 30             ; effectiveness param 3c
-    word 100            ; overall ECM strength (100 = full)
+    word 0              ; quantity (0 = built-in; N = pod carrying capacity)
+    byte $0             ; category (0 = built-in suite, 1 = external pod)
+    word $1f0           ; ECM power level (0=none, $f0=partial, $1f0=full active jamming)
+    byte 30             ; effectiveness A  (variable — aircraft quality)
+    byte 35             ; band constant 1  (fixed across all ECM files)
+    byte 95             ; band constant 2  (fixed)
+    byte 24             ; band constant 3  (fixed)
+    byte 30             ; effectiveness B  (variable)
+    byte 35             ; band constant 4  (fixed)
+    byte 159            ; band constant 5  (fixed)
+    byte 31             ; band constant 6  (fixed)
+    byte 30             ; effectiveness C  (variable)
+    word 100            ; overall ECM strength (100 = full; 0 = none)
     byte 0
     byte 0
-    byte 40             ; chaff/flare effectiveness?
-    word 100
+    byte 40             ; secondary effectiveness / chaff rate?
+    word 100            ; secondary strength
     byte 0
 :si_names
-    string ""           ; short name (empty — ECM has no display name)
-    string ""           ; long name (empty)
+    string ""           ; short name (empty for all ECM files)
+    string ""           ; long name
     string "F15.ECM"    ; filename (self-reference)
     end
 ```
 
-### AV8.ECM Comparison (Harrier — limited ECM)
+### Pod vs. Built-In
 
-- `word $0` instead of `word $1f0` — no ECM power
-- Last byte group: `byte 0` instead of `byte 30` — effectiveness zeroed
-- `word 0` and `word 0` instead of `word 100` — no strength
+| Category | `word` (qty) | `byte` (type) | Examples |
+|----------|-------------|---------------|---------|
+| Built-in suite | 0 | $0 | F14, F15, F22, A10, B52, EA6, MIG21 |
+| External pod | N | $1 | ALE40 (qty 100), ALQ72 (qty 224), ALQ167 (qty 310) |
 
-### Effectiveness Byte Groups
+### ECM Power Levels
 
-The 9 effectiveness bytes appear in three groups of 3. Likely semantics:
+| `word` | Decimal | Meaning | Examples |
+|--------|---------|---------|---------|
+| $0 | 0 | No active jamming | MIG21, ALE40 (chaff/flare only) |
+| $f0 | 240 | Partial active jamming | ALQ72 |
+| $1f0 | 496 | Full active jamming suite | F14, F15, F22, B52, EA6, ALQ167 |
 
-| Group | Params | Probable Function |
-|-------|--------|-------------------|
-| 1 | 1a, 1b, 1c | Radar warning receiver (RWR) detection bands |
-| 2 | 2a, 2b, 2c | Jamming effectiveness against different radar types |
-| 3 | 3a, 3b, 3c | Missile decoy effectiveness |
+### Effectiveness Bytes
 
-Exact semantics require FA.EXE disassembly.
+The 9-byte block contains three **variable** effectiveness bytes (positions 1, 5, 9) interleaved with five **fixed** band constants (35, 95, 24, 159, 31). The variable bytes scale with aircraft ECM quality:
 
-### ECM Power Field
+| Aircraft | Byte 1 | Byte 5 | Byte 9 | ECM power |
+|---------|--------|--------|--------|-----------|
+| EA6 (dedicated EW) | 99 | 99 | 80 | $1f0 |
+| F22, A10, F14, B52 | 50 | 50 | 30–50 | $1f0 |
+| F15 | 30 | 30 | 30 | $1f0 |
+| MIG21 | 20 | 20 | 0 | $0 |
+| ALE40 (chaff/flare) | 30 | 30 | 0 | $0 |
+| ALQ72 (jammer pod) | 0 | 0 | 30 | $f0 |
 
-`word $1f0` (496 decimal) appears to encode the ECM frequency band or power level. `word 0` indicates no ECM suite. The field may be a bitmask of supported frequency bands.
+Observations:
+- The five fixed bytes (35, 95, 24, 159, 31) appear in all ECM files regardless of quality — likely band-frequency thresholds or system constants.
+- ALE40 (chaff/flare dispenser, no active jamming) has non-zero byte 1 and byte 5 but zero byte 9 — suggesting byte 9 correlates with active jamming or IR decoy effectiveness.
+- ALQ72 (jammer pod, no chaff) has zeros in byte 1 and byte 5 but non-zero byte 9.
+- Exact semantics of the three variable positions require FA.EXE disassembly.
 
 ## File Inventory
 
@@ -108,29 +120,20 @@ Exact semantics require FA.EXE disassembly.
 
 ## Calibration
 
-### Effectiveness byte groups
+### Effectiveness byte semantics
 
-Method to assign semantics to the three groups:
+The variable positions (bytes 1, 5, 9) are identified by cross-referencing aircraft types. Their specific roles (radar warning, jamming, decoy) require FA.EXE disassembly:
 
-1. Compare `F15.ECM` (full suite: 30/35/95, 24/30/35, 159/31/30) against `AV8.ECM` (minimal/zeroed).
-2. Compare `EA6.ECM` (dedicated EW Prowler — should have the highest jamming values).
-3. Compare `ALE40.ECM` (expendable dispenser — should only show chaff/flare effectiveness, not active jamming).
-4. `ALE40.ECM` having non-zero values only in one group identifies that group as decoy/chaff effectiveness. The other two groups belong to radar detection (RWR) and active jamming.
+1. Load FA.EXE in Ghidra with `ImportFASms` labels applied.
+2. Search FA.SMS for symbols containing `ECM` (e.g. `?ECMEvaluate@@`, `?GetJammingFactor@@`).
+3. In the identified function, find where it reads the effectiveness bytes — the arithmetic (multiply? compare threshold?) against the five fixed constants reveals their role.
 
 ### ECM power field (`word $1f0`)
 
-`$1f0` = 496 = `0001 1111 0000` binary. Possible interpretations:
-- **Bitmask**: bits 4–8 set = five frequency bands supported
-- **Enumerated power level**: 496 = some calibrated power index
-
-Cross-reference: search FA.SMS for `ECM`, `jamming`, or `frequency` symbols. The function that reads `word $1f0` and computes a jamming effectiveness modifier will clarify the encoding.
-
-### Ghidra cross-reference
-
-Load FA.EXE with `ImportFASms` labels. Search for symbols with `ECM` prefix (e.g. `?ECMEvaluate@@`, `?GetJammingFactor@@`). Trace the function that reads the effectiveness bytes and produces a float or percentage modifier — the arithmetic reveals the byte semantics.
+`$1f0` = 496 = `0001 1111 0000` binary. The three-level structure ($0/$f0/$1f0) suggests either an enumerated power level or a bitmask of frequency bands (bits 4–8 set = five bands). The intermediate value $f0 (ALQ72, an older jammer pod) representing "partial" capability supports an additive band-bit interpretation.
 
 ## TODO
 
-- Identify effectiveness byte group roles (compare ALE40 vs. EA6 per methodology above)
-- Decode `word $1f0` frequency field — bitmask or power index
-- Locate `ECM*` symbols in FA.SMS and trace evaluation logic in Ghidra
+- Decode roles of effectiveness bytes 1, 5, 9 via Ghidra ECM evaluation function
+- Confirm whether `$1f0` is a bitmask (five frequency bands) or an enumerated power level
+- Cross-reference five fixed constants (35, 95, 24, 159, 31) against known RWR band frequencies
