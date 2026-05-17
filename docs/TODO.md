@@ -6,17 +6,11 @@ Outstanding RE and documentation tasks, grouped by effort.
 
 ## Binary Analysis (no disassembly tool required)
 
-- **PLT field gap (0xB0–campaign block start)**: Field layout from offset `0xB0` to the campaign block start is unmapped. Method: diff two pilot saves with known differences (aircraft, loadout) byte-by-byte. See [formats/PLT.md](formats/PLT.md).
+- **PLT field gap (0xB0–campaign block start)**: Field layout from offset `0xB0` to the campaign block start is unmapped. Method: diff two pilot saves with known differences (aircraft, loadout) byte-by-byte. See [formats/PLT.md](formats/PLT.md). *(Requires gameplay — 4-pass methodology documented in PLT.md)*
 
-- **GAS capacity word**: Does not map to US gallons, liters, or a simple scale factor. Cross-reference `.PT` internal fuel field to derive the conversion. See [formats/GAS.md](formats/GAS.md).
+- **GAS capacity word**: The `word` field (108/198/248/315) does not map linearly to US gallons. The `dword` mass is confirmed as fuel weight in lbs (6.6× gallon count). The capacity `word` requires FA.EXE fuel-system disassembly to decode. See [formats/GAS.md](formats/GAS.md).
 
-- **OT/NT ot_flags full bit map**: Bit 0 (targetable) confirmed; remaining bits need cross-category comparison (BNK vs BLDG vs STRIP vs TREE). See [formats/OT.md](formats/OT.md), [formats/NT.md](formats/NT.md).
-
-- **OT/NT obj_class additional values**: `$40`/`$100`/`$2000` confirmed; ground vehicles, aircraft, SAM launchers, and other categories still unmapped. Survey NT files for `obj_class` field values across all categories. See [formats/OT.md](formats/OT.md), [formats/NT.md](formats/NT.md).
-
-- **NT hardpoint flags and AI params**: `$8` (main gun) is the only observed flag; compare ZSU23.NT (AAA) vs M1.NT for air-engagement bit. Calibrate `aggressiveness`/`skill`/`reaction` bytes by comparing TRUCK.NT vs ZSU23.NT. See [formats/NT.md](formats/NT.md).
-
-- **MUS XMI index mapping**: Map XMI track indices to filenames by listing FA_2.LIB insertion order: `ft lib ls FA_2.LIB | grep .XMI`. Index 0 = first entry, etc. Required to make `ft mus dump` output human-readable track names. See [formats/MUS.md](formats/MUS.md).
+- **FA_3.LIB PIC naming pattern**: Confirm whether the `<AC>_<N>.PIC` N suffix encodes LOD level, paint scheme, or texture region. Requires disc 2 (FA_3.LIB not on disc 1 or the hard drive install). Method: extract a full aircraft skin set, load each into GUI PIC viewer, compare against SH UV coordinates. See [formats/PIC.md](formats/PIC.md).
 
 ---
 
@@ -60,6 +54,6 @@ For each item: load the overlay DLL in Ghidra, import the FA.SMS symbol list via
 
 ## Future Inventory
 
-- **FA_3.LIB PIC naming pattern**: Confirm whether the `<AC>_<N>.PIC` N suffix encodes LOD level, paint scheme, or texture region. Method: extract a full aircraft skin set (e.g. all `f22_*.PIC`) using `ft lib unpack`, load each into the GUI PIC viewer, and compare against `f22.SH` UV coordinates.
+- **FA_3.LIB PIC naming pattern**: *(See Binary Analysis above — blocked on disc 2)*
 
-- **`~` prefix files**: Confirm semantics of `~`-prefixed entries in FA_2.LIB (e.g. `~BNK5.OT`, `~MOOSE.JT`). Method: unpack both `BNK5.OT` and `~BNK5.OT` and diff BRF content. Search FA.SMS for symbols containing `override`, `variant`, or `theater`.
+- **OT/NT `ot_flags` bit semantics (bits 5, 8, 10, 11, 22+)**: Bit patterns catalogued from full OT/NT survey (see OT.md and NT.md); specific bit meanings need Ghidra confirmation of the damage/targeting/collision evaluation functions.

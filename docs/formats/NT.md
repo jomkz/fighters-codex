@@ -132,47 +132,80 @@ Each hardpoint references a .JT file as its default weapon type. `ammo count = 3
 
 ## Calibration
 
-### Hardpoint flags (`word $8`)
+### `obj_class` word — Confirmed values (full survey)
 
-`$8` = bit 3 set. Method:
+| Value | Class | Representative files |
+|-------|-------|---------------------|
+| `$40` | Personnel / infantry | CATGUY, EJECT, PLTDWN, RUNNER, SOLDIER, TROOPS |
+| `$200` | Ground vehicle (non-combat) | HUMVEE, LTRACK, MISTRK, MULE_A/B/C, SFLUSH, SRDR1/2, TANKER, TRUCK |
+| `$400` | Armor / tank | BMP2, BTR80, M1, M113, M1975, M2, T72, T80, T90 |
+| `$800` | AAA | A_M1939, KS12, KS19, M163, M1939, ZIF31, ZSU23, ZSU57 |
+| `$1000` | SAM launcher | 2S6, ASA5, CHAP, FIM92, HAWK, MIS, ROLAND, SA2A, SA3, SA6, SA7, SA9, SA13–16 |
+| `$2000` | Naval vessel | BARGE, BUTLER, CARGO, CIM, CLEM, CYCL, FISHBT, IOWA, JIANC, JIANE, JUNK, KIEV, KIROV, KITT, KNOX, KRIVAK, LCAC, NIMZ, OILR, OLEKMA, OSCAR, PMORN, RBOAT, SACRAM, SARAN, SESHDW, SL100, SOVR, TICON, TICON, WASP |
 
-1. Collect hardpoint flags across NT files: tank main gun, AAA cannon, SAM launcher, naval gun. Objects with multiple hardpoint types (e.g. a ship with guns + SAMs) will have different flags per hardpoint.
-2. Hardpoints that can fire at air targets vs. ground targets likely have distinct bits.
-3. `word $8` on the M-1 tank gun is a baseline — compare against `ZSU23.NT` (AAA, anti-air) which should have an air-engagement bit.
+`$40` (personnel) and ground structure `$100` are shared with OT files. Naval units (`$2000`) include CYCL (helicopter) — the game treats helicopters as naval-class objects. Aircraft fighter/bomber values (`$8000`, `$4000`) appear only in PT files.
 
-### NPC_TYPE AI params
+The `_GVProc` proc symbol is shared across ground, AAA, SAM, and naval units; the proc likely dispatches internally on `obj_class`.
 
-| Field | Known range | Hypothesis |
-|-------|-------------|-----------|
-| `aggressiveness` | 20 (M-1) | 0–100 scale; higher = attacks without provocation |
-| `byte 60` | 60 (M-1) | Skill / accuracy; higher = better aim |
-| `byte 40` | 40 (M-1) | Reaction time or acquisition speed |
-| `word threat_range` | 32767 | Detection range in internal units (32767 = max / unlimited) |
+### Hardpoint flags — Confirmed patterns
 
-Calibrate skill vs. aggressiveness by comparing a passive vehicle (`TRUCK.NT`) against an aggressive one (`ZSU23.NT`).
+All hardpoints have bit 3 (`$8`) set — this appears to be the "active weapon slot" marker.
+
+| Flag | Observed in | Interpretation |
+|------|-------------|---------------|
+| `$8` | All ground-unit hardpoints (M1, ZSU23, SA2A, etc.); IOWA HP 0–1; KIROV HP 2–3 | Standard weapon slot (guns, SAMs, all AA weapons) |
+| `$a` | IOWA HP 2–3; KIROV HP 0–1 | Long-range surface-strike missile battery (Tomahawk / SS-N-19) |
+
+Bit 1 (`$2`), combined with bit 3, marks dedicated ship-to-ship/land-attack cruise missile launchers. Anti-air weapons (ZSU23, SA6, SA2A) use `$8` only — AA vs AG targeting is determined by the loaded JT weapon type, not the hardpoint flag.
+
+SA2A has 6 hardpoints (launch tubes), all `$8`. IOWA and KIROV each have 4 hardpoints with a gun/missile split.
+
+### NPC_TYPE AI params — Confirmed (full survey)
+
+| Field | Confirmed range | Interpretation |
+|-------|-----------------|---------------|
+| `aggressiveness` | 20 (most ground) / 40 (ships, capable SAMs) | Engagement aggression level |
+| `skill` | 20–176 | Fire control accuracy; higher = better targeting |
+| `reaction` | 20–80 | Threat acquisition speed; higher = slower (longer lock-on delay) |
+
+Observed values by unit class:
+
+| Unit type | aggressiveness | skill | reaction | Examples |
+|-----------|---------------|-------|----------|---------|
+| Ground vehicle (unarmed) | 20 | 60 | 40 | TRUCK, HUMVEE, MULE |
+| Armor | 20 | 60 | 40 | M1, T72, BMP2, BTR80 |
+| Basic MANPADS / short-range SAM | 20 | 60 | 40 | SA7, SA9, SA13-16, FIM92 |
+| Basic AAA | 20 | 80 | 40 | ZSU23 |
+| Advanced AAA (heavy caliber) | 40 | 80–100 | 40–60 | KS12, KS19, ZSU57, M163 |
+| Advanced SAM | 40 | 144 | 60 | SA2A, SA3, SA6 |
+| Naval vessel | 40 | 100 | 80 | IOWA, KIROV, most ships |
+
+`TRUCK.NT` (no weapons at all) and `M1.NT` share identical AI params (20 / 60 / 40) — confirming these fields drive general NPC movement and threat-response behavior rather than weapon accuracy alone.
+
+### `ot_flags` dword — Observed NT patterns
+
+| Flag | Units | Observed pattern |
+|------|-------|-----------------|
+| `$821` | Most ground units (tanks, AAA, SAM, vehicles) | Bits 0, 5, 11 |
+| `$131` | Most naval vessels | Bits 0, 4, 5, 8 |
+| `$521` | Small boats (FISHBT, JUNK, RBOAT) | Bits 0, 5, 8, 10 |
+| `$c21` | Infantry (SOLDIER, RUNNER) | Bits 0, 5, 6, 7 |
+| `$801` | Passive units (MULE_A/B/C, EJECT) | Bits 0, 11 |
+| `$c8331` | Aircraft carrier deck (CLEM, KITT, NIMZ) | Bits 0, 4, 5, 8, 11, 19, 22 |
+| `$1c8131` | Large carrier (KIEV) | Bits 0, 4, 5, 8, 11, 19, 20, 22 |
+| `$2000821` | Towed AA guns (KS12, KS19, M1939) | Bits 0, 5, 11, 25 |
+| `$4000821` | SA2A only | Bits 0, 5, 11, 26 |
+
+Bit 11 (`$800`) appears on all ground units and absent on naval units; bit 8 (`$100`) is the inverse. Bits 19, 20, 22 on carrier ships likely encode flight-deck capability. Bit 25 and 26 meanings require Ghidra.
 
 ### Proc symbols
 
 | Symbol | Observed in | Role |
 |--------|-------------|------|
-| `_GVProc` | M1, ZSU23, TRUCK, IOWA, KIROV | Ground vehicle / naval unit AI (shared) |
+| `_GVProc` | M1, ZSU23, TRUCK, IOWA, KIROV | NPC AI dispatcher (shared across all categories) |
 | `_PROJProc` | (via JT) | Projectile physics |
-
-`IOWA.NT` and `KIROV.NT` both use `_GVProc`, not a separate ship proc. Either the ground vehicle proc handles naval movement, or the proc is a general NPC dispatcher that routes by `obj_class`.
-
-### `obj_class` word — Confirmed values
-
-| Value | Class | Observed in |
-|-------|-------|-------------|
-| `$40` | Scenery / terrain feature | TREE1.OT |
-| `$100` | Ground structure | BLDG1.OT, STRIP1.OT |
-| `$2000` | Naval vessel | IOWA.NT, KIROV.NT |
-
-The `_GVProc` symbol on naval units despite `obj_class $2000` suggests the proc may dispatch based on this field internally.
 
 ## TODO
 
-- Decode hardpoint flags (see methodology above)
-- Confirm AI param semantics by comparing passive vs. aggressive NT files (`TRUCK.NT` vs `ZSU23.NT`)
-- Identify additional `obj_class` values (ground vehicles, aircraft, SAM launchers)
-- Decode `ot_flags` bit map via cross-category comparison
+- Confirm ot_flags bit semantics for bits 4, 5, 8, 11, 19, 20, 22, 25, 26 via Ghidra — current labels inferred from category patterns
+- Confirm hardpoint bit 1 ($2) meaning (naval surface-strike missile vs. other interpretations) via Ghidra weapon evaluation function

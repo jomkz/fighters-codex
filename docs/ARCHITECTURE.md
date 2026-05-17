@@ -44,6 +44,7 @@ All game assets are packed into `.LIB` files using the EALIB container format. S
 | `^` | One-shot voice callout |
 | `$` | Weapon icon PIC |
 | `_` | Aircraft skin PIC |
+| `~` | **Campaign-specific variant or destruction-state replacement**. Two distinct uses: (1) destruction state — e.g. `~BNK5.OT` is "Damaged Shelter 5", placed by the engine in place of `BNK5.OT` after destruction (different shape, zeroed armor, bit 5 of `ot_flags` cleared); (2) campaign/theater variant — e.g. `~COLTWR.OT` adds a loop sound and sets an extra `ot_flags` bit for a specific theater, while `~MOOSE.JT` is a stand-alone Baltic-campaign weapon with no base counterpart. Mission scripting exposes `do_ifdestroyed` (FA.SMS `0x004D22D4`) and `_MISSIONFortDestroyed` for conditional destruction tracking. |
 
 ---
 
