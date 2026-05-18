@@ -5,8 +5,8 @@ game assets from the "Fighters" combat simulator family.
 
 **Supported games:**
 - Jane's Fighters Anthology (1998)
-- Advanced Tactical Fighters (1996)
-- U.S. Navy Fighters (1994)
+- Advanced Tactical Fighters (1996) - Confirm
+- U.S. Navy Fighters (1994) - Confirm
 
 > WARNING: This project's tools are a work in progress and may not function as intended, especially in areas that are not yet fully understood. This could lead to loss of data, so back up your files first and use at your own risk!
 
