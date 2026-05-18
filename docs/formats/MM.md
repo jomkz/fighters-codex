@@ -202,9 +202,26 @@ Values are `0` (passable) or `1` (blocked). `<id>` observed as 256 in all cases.
 |-----|-------|
 | FA_2.LIB | 75 |
 
+## World-Space Coordinate System (Confirmed)
+
+`?MAPWorldToScreen` (FUN_00422380) maps 3D world-space positions to 2D map screen coordinates:
+
+```c
+screen_x = DAT_00536508 + (world_x  - DAT_00536520) / DAT_0053664c;
+screen_y = DAT_0053650a + (DAT_00536528 - world_z) / DAT_0053664c;
+```
+
+- `world_x` / `world_z` are the first and third components of the int[3] world position vector (Y = `world_z` in the map's X/Z plane; `world_y` = altitude, not used for map display)
+- `DAT_00536520` / `DAT_00536528` — world-space map center (origin) for X and Z axes (set at theater load time)
+- `DAT_00536508` / `DAT_0053650a` — screen center pixel coordinates
+- `DAT_0053664c` — world-units-per-pixel scale factor (runtime zoom level); larger = more zoomed out
+
+The Z-axis inversion (`origin_z - world_z`) means positive world-Z maps to upward on screen, consistent with the engine's +Z = northward convention. `pos` and `view` values in MM files are in these same world-space integer units.
+
+**World-space unit = 1 foot (confirmed).** Calibrated via JT.md seeker-range cross-check: `AIM9X lobe 1 max ^50000` = 8.2 nm; 50,000 feet / 6,076 ft/nm ≈ 8.23 nm ✓. The FA engine uses feet throughout for all world-space coordinates.
+
 ## TODO — Deep Dive
 
-- Determine world-space coordinate scale and origin for `pos` / `view` values (requires Ghidra)
 - Confirm `obj flags` bit 10 and bit 9 semantics (friendly vs hostile ownership; mission-critical — requires Ghidra)
 - Confirm `tdic` id=256 meaning (tile type index into T2? — requires Ghidra)
 
@@ -214,6 +231,7 @@ Values are `0` (passable) or `1` (blocked). `<id>` observed as 256 in all cases.
 - `w_goal` values surveyed: only 0 (stationary anchor) and 1 (active patrol) ✓
 - `react` field = three 16-bit hostile-faction bitmasks covering codes 0–47 ✓
 - `obj flags` bits 0, 1, 14 confirmed ✓
+- World-space unit = 1 foot (calibrated from JT.md seeker ranges: 50,000 units = 8.2 nm ✓) ✓
 
 ## Related
 
