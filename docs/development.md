@@ -109,6 +109,29 @@ fighters-toolkit/
 4. Call `Draw<Format>Editor(app)` from `DrawEditorHost()` in `gui/src/panels/editor_host.cpp`
 5. Add the `.cpp` to `gui/CMakeLists.txt`
 
+## Releasing
+
+1. Add all notable changes to the `## [Unreleased]` section of `CHANGELOG.md` as you work.
+2. When ready to ship, run the release script with the new version:
+
+```powershell
+.\scripts\release.ps1 0.2.0
+```
+
+This will:
+- Bump the version in `CMakeLists.txt`
+- Rotate `CHANGELOG.md` — promotes `[Unreleased]` to the new version with today's date and updates the comparison links
+- Commit both files as `chore: release v0.2.0`
+- Create the tag `v0.2.0`
+
+3. Review the commit (`git log --oneline -2`, `git diff HEAD~1`), then push:
+
+```powershell
+git push origin main --tags
+```
+
+Pushing the tag triggers the GitHub Actions release workflow, which builds the artifacts and publishes the GitHub Release using the new CHANGELOG entry as the release body.
+
 ## Vendored Dependencies
 
 All dependencies are checked in — no package manager or internet access required to build.
