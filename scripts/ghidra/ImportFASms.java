@@ -2,7 +2,7 @@
 // Run from: Tools → Script Manager → ImportFASms.java
 //
 // The current program should be FA.EXE or an overlay DLL rebased to FA.EXE's
-// preferred base (0x00400000). See scripts/README.md for overlay DLL instructions.
+// preferred base (0x00400000). See scripts/ghidra/README.md for setup and overlay DLL instructions.
 //
 // @category FightersAnthology
 // @author fighters-toolkit
