@@ -202,23 +202,24 @@ Full survey of all 84 NT files.
 | `$2000821` | Emplaced AA artillery (KS12, KS19, M1939) | 0, 5, 11, 25 |
 | `$4000821` | SA2A only | 0, 5, 11, 26 |
 
-**Bit semantics (inferred from category pattern; Ghidra confirmation pending):**
+**Bit semantics:**
 
-| Bit | Mask | Observed pattern |
-|-----|------|-----------------|
-| 0 | `$1` | Targetable — absent on CATGUY (purely visual) and A_M1939 (zone marker) |
-| 4 | `$10` | Naval vessel — present on all ships; absent on all ground vehicles |
-| 5 | `$20` | Armed/active unit — absent on passive MULE/EJECT; present on all combat-capable units |
-| 8 | `$100` | Large physical hull — present on large ships; absent on small boats and ground vehicles |
-| 9 | `$200` | Large platform — large ships (carriers, oil rig, GCI); absent on standard destroyers/cruisers |
-| 10 | `$400` | Civilian/light type — infantry (SOLDIER, RUNNER), small civilian craft (FISHBT, JUNK, RBOAT), CATGUY |
-| 11 | `$800` | Ground-mobile unit — present on all ground vehicles; absent on all naval vessels except carriers (which have additional bits 15–20) |
-| 15 | `$8000` | Flight deck present — all carrier types (CLEM, KITT, NIMZ, KIEV, WASP) |
-| 18 | `$40000` | Carrier landing gear (arrestor wire?) — CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP |
-| 19 | `$80000` | Carrier launch gear (catapult?) — CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP |
-| 20 | `$100000` | VSTOL/helicopter deck — KIEV, WASP; absent on conventional carriers without VSTOL |
-| 25 | `$2000000` | Emplaced AA artillery — KS12 (85mm), KS19 (100mm), M1939 (37mm); all towed Soviet guns |
-| 26 | `$4000000` | SA-2A only — possibly marks large fixed-site strategic SAM |
+| Bit | Mask | Label | Status | Notes |
+|-----|------|-------|--------|-------|
+| 0 | `$1` | Targetable | Confirmed | Absent on CATGUY (purely visual) and A_M1939 (zone marker) |
+| 4 | `$10` | Naval vessel | **Confirmed** — `FUN_0043df7b` | Naval-weapon gate: weapon type 3 requires this bit; absent on all ground vehicles. |
+| 5 | `$20` | Armed / valid combat target | **Confirmed** — `FUN_0043df7b` | Hard gate in targeting acquisition — entity with bit 5 clear is immediately rejected as a valid target. Absent on passive MULE/EJECT. |
+| 8 | `$100` | Has collideable oriented hull | **Confirmed** — `FUN_0042c9b0` | When set with non-zero heading, uses angle-based hit detection (`FUN_004c6654`). Present on large ships; absent on small boats and ground vehicles. |
+| 9 | `$200` | Large hull with 3D-oriented bounding box | **Confirmed** — `FUN_0042c9b0` | Tested combined as `& 0x300` (bits 8+9): triggers full 3D bounding-box rotation (`FUN_004d60d8`) for hit detection. Never set without bit 8. Large ships (carriers, oil rig, GCI); absent on standard destroyers/cruisers. |
+| 10 | `$400` | Civilian/light type | Inferred | Infantry (SOLDIER, RUNNER), small civilian craft (FISHBT, JUNK, RBOAT), CATGUY. Not confirmed via entity+0x09 bit test. |
+| 11 | `$800` | Ground-mobile unit | **Confirmed** — `FUN_0042c9b0` | OBJ_TYPE+9 & 0x800 sets a ground-mobile state flag in targeting/collision resolver. Present on all ground vehicles; absent on naval vessels (carriers have it via extra bits). |
+| 15 | `$8000` | Flight deck present | **Confirmed** — `FUN_00425196` | When set, forces targeting category to 4 (flight deck special class). Also tested combined with bit 22 (`& 0x408000`). All carrier types (CLEM, KITT, NIMZ, KIEV, WASP). |
+| 18 | `$40000` | Carrier arrestor-wire deck | Inferred | Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Not confirmed via entity+0x09 bit test — mask found only in runtime entity flags and game-state globals. |
+| 19 | `$80000` | Carrier catapult deck | Inferred | Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Not confirmed via entity+0x09 bit test. |
+| 20 | `$100000` | VSTOL/helicopter deck | Inferred | KIEV, WASP; absent on conventional carriers without VSTOL. Not confirmed via entity+0x09 bit test. |
+| 22 | `$400000` | Prominent/large variant | **Confirmed** — `FUN_0042c9b0` | When set, collision geometry uses hit-point count of 16; also tested combined with bit 15. |
+| 25 | `$2000000` | Emplaced AA artillery | Inferred | KS12 (85mm), KS19 (100mm), M1939 (37mm). Not confirmed via entity+0x09 bit test. |
+| 26 | `$4000000` | SA-2A fixed-site SAM | Inferred | SA2A only. Not confirmed via entity+0x09 bit test. |
 
 ### Proc symbols
 
@@ -229,5 +230,7 @@ Full survey of all 84 NT files.
 
 ## TODO
 
-- Confirm ot_flags bit semantics (bits 4, 5, 8, 9, 10, 11, 15, 18, 19, 20, 25, 26) via Ghidra — current labels inferred from category patterns only
-- Confirm hardpoint bit 1 (`$2`) meaning via Ghidra fire-control dispatcher — "surface-strike missile" hypothesis ruled out by BRF survey; pattern unclear
+- **ot_flags bit 10 (`$400`)**: Not confirmed — no entity+0x09 & 0x400 test found in Ghidra output. Label "civilian/light type" is inferred from category patterns.
+- **ot_flags bits 18, 19, 20 (`$40000`, `$80000`, `$100000`)**: Not confirmed at OBJ_TYPE+0x09 — masks found only in runtime entity flags (entity+0x01) and game-state globals (DAT_004eb6f8), not as direct ot_flags bit tests. Labels "arrestor-wire/catapult/VSTOL deck" are inferred from carrier category patterns.
+- **ot_flags bits 25, 26 (`$2000000`, `$4000000`)**: Not confirmed at OBJ_TYPE+0x09. Labels inferred from emplaced AA / SA-2A category patterns.
+- **Hardpoint bit 1 (`$2`)**: BRF survey ruled out "surface-strike missile." Ghidra carrier approach functions test `OBJ_TYPE+0xba & 2` and `& 8` for approach-sequence dispatch — not hardpoint flags directly. Exact hardpoint bit 1 meaning not established; requires fire-control dispatcher trace.

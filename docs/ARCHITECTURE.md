@@ -165,6 +165,8 @@ Exported API includes: `_AddCampaignPlane`, `_InitCampaignPilot`, `_SeqStart`, p
 
 `.MC` DLLs poll game state each tick via engine imports: `@OBJAlias@8`, `_Dist@8`, `_OnTheGround@0`, `_PopCurObj@0`, `_PushCurObj@4`, `_playerId`. They are only present for missions with non-trivial trigger logic.
 
+**MM runtime loader** — `FUN_0047a130` is the MM text keyword parser. It processes one keyword line at a time; for lines beginning with a filename token ending in `.LAY` it detects the extension via `_strstr` and dispatches to `FUN_0047a510`. `FUN_0047a510` is the generic keyword dispatch handler for all MM line types: it extracts the next whitespace-delimited token (using `FUN_004c686c` with `"%s\\%s"` to form a full path) and hands it off to the asset loader. Any trailing integer on a `layer` line (the slot index `0`, `1`, or `4` seen in shipped files) is left unconsumed and has no runtime effect.
+
 ### Pilot Save Files (.PLT)
 
 Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress, and loadout. The campaign block contains the CAM filename, aircraft `.PT` reference, ordnance inventory (`.JT` filename + `u8` quantity per slot), and sensor/ECM loadout. See [formats/PLT.md](formats/PLT.md). Field layout from offset `0xB0` to the campaign block start is not yet fully mapped.
@@ -239,6 +241,25 @@ Each 3-byte record encodes `[surface_class, elevation_band, texture_variant]`. `
 ### Sky & Atmosphere (.LAY)
 
 24 `.LAY` files — Win32 PE DLLs implementing sky and atmosphere rendering. References `wave1.SH` and `ocean*06.PIC`. Imports (not exports) `_T_HorizonProc` from `main.dll` — the engine provides the horizon renderer; the LAY file supplies lookup table data only. See [formats/LAY.md](formats/LAY.md).
+
+**FA.EXE atmosphere subsystem** — the engine maintains the following globals for the current atmosphere state:
+
+| Global | Role |
+|--------|------|
+| `DAT_00583da8` | Primary active-layer pointer (LAYER struct in loaded DLL) |
+| `DAT_00583dac` | Secondary active-layer pointer — overwritten each frame by `SetActiveLayerByAngle` based on camera elevation angle |
+| `DAT_005843c4`, `DAT_005843c8` | Additional active-layer slots (transition blending) |
+| `DAT_00580db0`–`DAT_00580e24` | DLL data header block — 30 dwords copied verbatim from the loaded LAY DLL's CODE section at offset 0x1000 |
+
+**Per-frame update pipeline:**
+
+1. `ParseLayerFile` (`0x004b4370`) — loads LAY DLL via `LoadLibrary`, copies header block to `DAT_00580db0`, initialises active-layer pointers to the DLL's default LAYER entry, calls `FindNearestColorEntry` (`0x004b3ad0`) for each LAYER entry to populate `colour_entry_ptr`, then loads cloud/sky PIC wildcards.
+2. `UpdateSkyState` (`0x004b3d90`) — per-frame: smooth-transitions all atmosphere parameters and applies the result to the working palette.
+3. `WRFogLayerUpdate` (`0x004b4320`) — per-frame: adds random jitter (±25, clamped to [217, 235]) to each LAYER's `fog_density` field.
+4. `SetActiveLayerByAngle` (`0x004cc4b4`) — per-frame: reads camera elevation angle from AX, multiplies by `sky_angle_scale` or `below_angle_scale` (from the header block), and writes the indexed LAYER pointer into `DAT_00583dac`.
+5. `GetFogColour` (`0x004b3410`) — linearly interpolates the fog visibility ramp (`vis_lo`/`vis_hi` over `fog_alt_low`/`fog_alt_high`) and returns a palette colour from the LAYER's colour array.
+
+The colour entry table (pointed to by header offset +0x6C) uses stride-0x30 entries: `[terminator_byte (0 = valid)][R][G][B][count:u32][colour_array:u32[count]]`. `FindNearestColorEntry` walks entries computing Manhattan RGB distance to find the best palette match for each LAYER's `base_rgb`.
 
 ---
 

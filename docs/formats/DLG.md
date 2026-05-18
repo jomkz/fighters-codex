@@ -165,104 +165,134 @@ The `CHOOSEAC.DLG` labels are the top-level game start menu items — displayed 
 
 ## Dispatch Table Layout (Confirmed)
 
-DLG files use a **Phar Lap PE format** (signature `PL\0\0` instead of `PE\0\0`). There is no compiled x86 code — the CODE section is a **dispatch table** of fixed-size records.
+DLG files use a **Phar Lap PE format** (signature `PL\0\0` instead of `PE\0\0`). There is no compiled x86 code — the CODE section is a **dispatch table** of variable-size records followed by packed label strings.
 
-### Record structure (per-type, confirmed via Ghidra)
+### Common record header — 10 bytes (all types)
 
-Each record begins with a `u32 thunk_va` that identifies the draw function. Remaining fields are type-specific — record sizes vary. All offsets below are from the start of the record (i.e. the same base as `thunk_va`).
-
-Label strings are packed consecutively after the dispatch table in the same CODE section.
-
-#### _DrawAction — 38 bytes
+**Confirmed** via `_DialogSetup` (FUN_00487a63), draw dispatcher (FUN_00488470), and event dispatcher (FUN_00488490).
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x00 | u32 | `thunk_va` |
-| +0x01 | u8 | `flags` — bit 7 = dim/dark colour variant |
-| +0x02 | u8[8] | unknown |
+| +0x00 | u16 | `type_flags` — bits 0–14 = record type (0–9); bit 15 = disabled/dim flag. Set at runtime by `FUN_0048d0d0`; cleared by `FUN_00489580`. Draw functions read bit 15 (via byte +0x01 bit 7) to choose dim vs. normal colour variant. |
+| +0x02 | u32 | `next_record_ptr` — **engine-written** during `_DialogSetup`; zero in DLG file. Linked-list pointer to the next record; traversed by draw pass and event dispatcher via `*(record+2)`. |
+| +0x06 | u32 | `draw_fn_ptr` — VA of the JMP thunk for this record's draw function, stored in the DLG file. The draw dispatcher (FUN_00488470) calls `(**(draw_fn_ptr))(record_ptr)` for each record. |
+| +0x0A | i16 | `x` — horizontal position relative to dialog origin |
+| +0x0C | i16 | `y` — vertical position relative to dialog origin |
+
+Record types and sizes (from `_DialogSetup` switch):
+
+| Type | Draw fn | Record size | Notes |
+|------|---------|-------------|-------|
+| 0 | `_DrawAction` | 0x26 (38) | Clickable button |
+| 1 | — | 0x1F (31) | Button variant |
+| 2 | `_DrawEditBox` | 0x18 (24) | Edit box; first type-2 record tracked as focused edit box in dialog state |
+| 3 | — | 0x17 (23) | Checkbox / toggle |
+| 4 | — | 0x26 (38) | Scrollable list container; anchor record ptr stored in dialog state +0x22 |
+| 5 | — | 0x19 (25) | |
+| 6 | `_DrawRocker` | 0x27 (39) | Rocker switch; two independent hit zones (up and down halves) |
+| 7 | — | 0x30 (48) | Scrollbar; `FUN_004891a0` called on show for thumb-position init |
+| 8 | — | 0x1F (31) | Two-state button (selected / deselected, each has its own hit zone) |
+| 9 | `_DrawText` / `_DrawFormattedText` | 0x16 (22) | Static label / formatted text |
+| 10 | — | — | End-of-list sentinel |
+
+**Note on the former +0x02..+0x09 gap:** Earlier analysis reported these bytes as unused by draw functions. They are now fully explained:
+- +0x02..+0x05: `next_record_ptr` — zeroed in the DLG file; engine-written during `_DialogSetup`
+- +0x06..+0x09: `draw_fn_ptr` — the thunk VA stored in the DLG file; draw functions do not read their own address, hence appearing unused in draw-function traces
+
+### Hit-test and event dispatch (confirmed — FUN_00488490)
+
+The event dispatcher iterates records via `next_record_ptr` and calls `FUN_00412170(mouse_coords_ptr, bounding_box_ptr)` for each record. The bounding-box pointer offset differs by type because each type stores its dimensions at a different place:
+
+| Type | Hit-zone pointer |
+|------|-----------------|
+| 0, 1, 3, 6 (up half), 8 (off→on zone) | `record + 0x0E` |
+| 2 (edit box) | `record + 0x0C` |
+| 4 (list container) | `record + 0x0A` |
+| 6 (down half), 8 (on→off zone) | `record + 0x16` |
+| 7 (scrollbar) | `FUN_00488fd0` (custom handler) |
+
+`_DialogWhatItem@0` (FUN_00488FC0) returns the current value of `DAT_00552fac` — a global pointer set to the last record that passed the hit test during event dispatch. `_TopCenterDialog` (FUN_00489710) positions the dialog: `screen_x = (screen_w − dialog_w) / 2`, `screen_y = (screen_h − dialog_h) / 3`.
+
+### Per-type record fields
+
+All offsets below are from the record base; the common 10-byte header (+0x00..+0x09) is not repeated.
+
+#### _DrawAction — type 0, 38 bytes
+
+| Offset | Type | Field |
+|--------|------|-------|
 | +0x0A | i16 | `x` |
-| +0x0C | u16 | `y` |
-| +0x0E | i16 | unknown |
-| +0x12 | i16 | unknown |
-| +0x14 | i16 | unknown |
-| +0x16 | i16 | unknown |
-| +0x17 | u8 | `action_type` — 1 = radio/checkbox, 3 = type-3, 4 = type-4, else = standard button |
-| +0x18 | i16 | `width_px` — control width in pixels |
+| +0x0C | i16 | `y` |
+| +0x0E | i16 | `screen_x` — engine-managed; lazily written as dialog_x + x on first render |
+| +0x10 | i16 | `screen_y` — engine-managed; lazily written as dialog_y + y on first render |
+| +0x12 | i16 | `render_width` — engine-managed; written from `width_px` on first render |
+| +0x14 | i16 | `render_y_offset` — engine-managed; constant 20 (0x14) written on first render |
+| +0x16 | u32 | (engine-managed — viewport handle slot) |
 | +0x1A | u32 | `label_ptr` — ptr to label string or icon resource |
-| +0x1C | i16 | unknown |
-| +0x1E | u32 | `icon_ptr` |
+| +0x1C | u32 | `last_rendered_label` — engine-managed; written after each render |
+| +0x1E | u32 | `icon_ptr` — engine-managed; icon viewport ptr (set from `DAT_004fca24`/`4fca28`/etc. on first render) |
 | +0x22 | i16 | `text_x` — text x offset within button |
 | +0x24 | i16 | `text_y` — text y offset within button |
 
-The empirically derived x/y offsets (+4, +6) in earlier documentation were incorrect; Ghidra confirms x at +0x0A, y at +0x0C. The 38-byte total size is confirmed by both methods.
+Lazily initialized fields (+0x0E–+0x15, +0x1C) are zero in the DLG file; the engine writes them on the first render pass.
 
-#### _DrawText — 22 bytes
+#### _DrawText — type 9, 22 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x00 | u32 | `thunk_va` |
-| +0x01 | u8 | `flags` — bit 7 = dim variant |
-| +0x02 | u8[8] | unknown |
 | +0x0A | u32 | `text_ptr` — `char*` to label string |
-| +0x0E | u32 | `font_ptr` — font override (`0` → default `PANELFNT`/`PANELFND` loaded from bit 7 of `flags`) |
+| +0x0E | u32 | `font_ptr` — font override (`0` → default `PANELFNT`/`PANELFND`, chosen from disabled flag) |
 | +0x12 | i16 | `x` |
 | +0x14 | i16 | `y` |
 
-#### _DrawFormattedText — 36 bytes
+#### _DrawFormattedText — type 9 variant, 36 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x00 | u32 | `thunk_va` |
-| +0x01 | u8[9] | unknown |
 | +0x0A | i16 | `x` |
 | +0x0C | i16 | `y` |
 | +0x0E | i16 | `width` |
 | +0x10 | i16 | `height` |
-| +0x12 | i16 | unknown |
-| +0x14 | i16 | unknown |
-| +0x16 | i16 | `visible_rows` — items per page |
-| +0x18 | i16 | `selection` — updated by engine at render time |
+| +0x12 | i16 | `secondary_display_x` — x offset for secondary item display; −1 = disabled |
+| +0x14 | i16 | `secondary_display_y` |
+| +0x16 | i16 | `visible_rows` — items per page; written to 1 when edit-mode activates |
+| +0x18 | i16 | `result_val` — engine-managed; stores text-scroll result ptr at render time |
 | +0x1A | i16 | `current_item` |
 | +0x1C | i16 | `last_rendered` |
-| +0x1E | i16 | unknown |
+| +0x1E | i16 | `scroll_base` — starting offset for secondary display |
 | +0x20 | u32 | `text_ptr` — `char**` string array |
 
 #### _DrawCampaignList — 36 bytes
 
-Same field layout as `_DrawFormattedText`. The render logic differs (rows are campaign entries with a highlight sprite from `CAMPHI.PIC`; row height is 0x4B px).
+Same field layout as `_DrawFormattedText`. Render logic differs: rows are campaign entries with a highlight sprite from `CAMPHI.PIC`; row height is 0x4B px.
 
-#### _DrawRocker — 40 bytes
+#### _DrawRocker — type 6, 39 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x00 | u32 | `thunk_va` |
-| +0x01 | u8[9] | unknown |
 | +0x0A | i16 | `x` |
 | +0x0C | i16 | `y` |
-| +0x0E | i16 | unknown |
-| +0x10 | i16 | unknown |
-| +0x12 | i16 | unknown |
-| +0x14 | i16 | unknown |
-| +0x16 | i16 | unknown |
-| +0x18 | i16 | unknown |
-| +0x1A | i16 | `up_value` — option index for up/left arrow |
-| +0x1C | i16 | `down_value` — option index for down/right arrow |
-| +0x1E | i16 | `current_value` |
-| +0x20 | i16 | unknown |
+| +0x0E | i16 | `render_x` — engine-managed; written as copy of `x` on first render |
+| +0x10 | i16 | `render_y` — engine-managed; written as copy of `y` on first render |
+| +0x12 | i16 | engine-managed — up-arrow icon offset A (18 or 16, based on `size_flag`) |
+| +0x14 | i16 | engine-managed — up-arrow icon offset B (16 or 18) |
+| +0x16 | i16 | engine-managed — left-state indicator x (= `x` on first render) |
+| +0x18 | i16 | engine-managed — right-state indicator x (= `x + offset`) |
+| +0x1A | i16 | engine-managed — down-arrow icon offset A (16 or 18) |
+| +0x1C | i16 | engine-managed — down-arrow icon offset B (18 or 16) |
+| +0x1E | i16 | `current_value` — 1 = up/left, else = down/right; updated from `click_state` after render |
+| +0x20 | i16 | `click_state` — engine input: 0 = idle, 1 = click-up, else = click-down |
 | +0x22 | u32 | `parent_ref` — ptr to linked parent control for auto-positioning |
-| +0x26 | u8 | `size_flag` — non-zero = tall/large rocker variant |
-| +0x27 | u8 | pad |
+| +0x26 | u8 | `size_flag` — non-zero = tall/large variant |
 
-#### _DrawEditBox — 24 bytes
+#### _DrawEditBox — type 2, 24 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x00 | u32 | `thunk_va` |
-| +0x01 | u8[9] | unknown |
 | +0x0A | i16 | `char_count` — field width in characters |
 | +0x0C | i16 | `y` |
 | +0x0E | i16 | `x` |
-| +0x10 | i16 | `pixel_width` — computed at render: `char_count × 10 + 16`; written back to record |
+| +0x10 | i16 | `pixel_width` — engine-managed: `char_count × 10 + 16`; written at render time |
 | +0x12 | i16 | `height` — always written as 24 (0x18) at render time |
 | +0x14 | u32 | `text_buffer` — `char*` to editable text |
 
@@ -280,41 +310,51 @@ Immediately before the thunk block there is a fixed 9-byte **state machine dispa
 01 02 03 02 01 02 03 02 01
 ```
 
-This same sequence appears in MUS CODE sections (after the `FC` opcode), confirming it is a shared engine construct — not DLG-specific. The `thunk_va` field in each dispatch record points to one of the JMP thunks, identifying which draw function the record invokes.
+This same sequence appears in MUS CODE sections (after the `FC` opcode), confirming it is a shared engine construct — not DLG-specific. The `draw_fn_ptr` field (+0x06) in each dispatch record points to one of the JMP thunks, identifying which draw function the record invokes.
 
 ### _cancelString and _okString (button label indirection)
 
-Records whose `thunk_va` points to the `_cancelString` or `_okString` thunk do **not** embed a string directly. The `label_ptr` field holds the VA of the thunk itself, which the engine dereferences at runtime to call the localized label function.
+Records whose `draw_fn_ptr` points to the `_cancelString` or `_okString` thunk do **not** embed a string directly. The `label_ptr` field holds the VA of the thunk itself, which the engine dereferences at runtime to call the localized label function.
 
 ### CHOOSEAC.DLG decoded (main start screen)
 
-| VA | x | y | width | Label |
-|----|---|---|-------|-------|
-| 00001015 | 44 | 24 | 144 | Play Single Mission |
-| 0000103B | 44 | 56 | 144 | Create Quick Mission |
-| 00001061 | 44 | 88 | 144 | Create Pro Mission |
-| 00001087 | 44 | 120 | 144 | Replay Last Mission |
-| 000010AD | 44 | 251 | 144 | Start New Campaign |
-| 000010D3 | 37 | 283 | 158 | Continue Old Campaign |
-| 000010F9 | 44 | 315 | 144 | View Pilot Records |
-| 0000111F | 32 | 174 | 170 | Reference |
+Action-button records (type 0) in CHOOSEAC.DLG. Record addresses are PE virtual addresses within the CODE section.
 
-Y gap between 120 and 251 (131 px) divides the menu into two groups; buttons 1–4 are mission-start options, 5–8 are management/info.
+| Record VA | x | y | width | Label |
+|-----------|---|---|-------|-------|
+| 0x1015 | 44 | 24 | 144 | Play Single Mission |
+| 0x103B | 44 | 56 | 144 | Create Quick Mission |
+| 0x1061 | 44 | 88 | 144 | Create Pro Mission |
+| 0x1087 | 44 | 120 | 144 | Replay Last Mission |
+| 0x10AD | 44 | 251 | 144 | Start New Campaign |
+| 0x10D3 | 37 | 283 | 158 | Continue Old Campaign |
+| 0x10F9 | 44 | 315 | 144 | View Pilot Records |
+| 0x111F | 32 | 174 | 170 | Reference |
+
+Records are spaced 0x26 (38) bytes apart, confirming type-0 record size. Y gap between 120 and 251 (131 px) separates mission-start options from management/info buttons.
 
 ### `_ChoosePreload` header record
 
-Every DLG begins with one `_ChoosePreload` record (4-byte thunk + params) that initialises assets and sets dialog state. In CHOOSEAC.DLG this record appears at VA 0x1000 with params `(379, 80, 238, 361)` — encoding not yet decoded (see TODO).
+Every DLG begins with one `_ChoosePreload` record that initialises assets and sets dialog state. In CHOOSEAC.DLG this record appears at PE VA 0x1000 with params `(379, 80, 238, 361)`.
+
+**Params decoded** (Ghidra — `FUN_00436290` DLG module descriptor getter, called from `_DialogSetup`):
+
+The four i16 values are `(default_x, default_y, dialog_width, dialog_height)` — loaded from the DLG module's exported descriptor and stored in the dialog state frame:
+- dialog_state +0x08/+0x0A = default screen position (x, y) — may be overridden by `_TopCenterDialog`
+- dialog_state +0x0C/+0x0E = dialog dimensions (width, height) — used by `_TopCenterDialog` to compute centred position
+
+For CHOOSEAC.DLG: `x=379, y=80, w=238, h=361`. `_TopCenterDialog` overrides position to `((screen_w − 238) / 2, (screen_h − 361) / 3)`.
 
 **`_ChoosePreload` (`FUN_004897f0`) confirmed behaviour** (Ghidra):
-1. Calls `FUN_0040d5f0` — pushes current screen state (`DAT_0053824c`) onto dialog stack (`DAT_00522310[DAT_004ec31c++]`), sets state to `6`
+1. Calls `FUN_0040d5f0` — pushes current screen state onto dialog stack, sets state to `6`
 2. Calls `FUN_00489840` (`__fastcall char param_1`) — loads action-button PIC and font assets keyed by `action_type`:
    - type 1: `ACTDFDxx.PIC` / `ACTDFNxx.PIC` (default, dim/normal); font `LMR`
    - type 3: `ACTI2Nxx.PIC` / `ACTI2Dxx.PIC`; fonts `fontact`/`fontacd`
    - type 4: `ACTI3Nxx.PIC` / `ACTI3Dxx.PIC`; same fonts
    - else:   `ACTIONxx.PIC` / `ACTIODxx.PIC`; same fonts
-3. Decrements `DAT_004ec31c`, pops `DAT_0053824c` from the stack
+3. Decrements stack depth, pops screen state
 
-`_ChoosePreload` is dispatched via computed indirect call — no direct CALL references (confirmed by Ghidra reference scan). The four params in the record are read by the DLG dispatcher through `FUN_004a6e20`; their exact bounding-box or dialog-type semantics require tracing that dispatcher.
+`_ChoosePreload` is dispatched via computed indirect call — no direct CALL references (confirmed by Ghidra reference scan).
 
 ## Toolkit Roadmap
 
@@ -324,8 +364,7 @@ Every DLG begins with one `_ChoosePreload` record (4-byte thunk + params) that i
 
 ## TODO — Deep Dive
 
-- Decode `_ChoosePreload` params — function body confirmed (see above); the four i16 param semantics require tracing `FUN_004a6e20` (the DLG record-params accessor) within the dispatcher
-- Fill in the unknown fields at +0x02..+0x09 (common header gap) and the per-type unknowns above
+- `_DrawFormattedText` `FUN_0048a7d0` secondary-display rendering semantics — the secondary_display_x/y (+0x12/+0x14) and scroll_base (+0x1E) fields are confirmed; remaining: confirm exact rendering behaviour of `FUN_0048a7d0` (what constitutes "secondary item display")
 
 ## Related
 

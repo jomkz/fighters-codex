@@ -150,18 +150,28 @@ The flags dword is loaded as-is into the runtime missile entity at `missile+0xa6
 - `$1204f` (AIM-9M, AIM-120): bit 16 set → starts in search mode, transitions to 0x20000 on acquisition
 - `$2a06f` (AGM-65G): bit 17 set → starts in track mode (fire-and-forget, locked before launch)
 
-Confirmed bit roles from `_PROJLock@24` (0x004c2f20), `_PROJHitChance@28` (0x004c3380), and `@HARDFindJammer@4`:
+Confirmed bit roles from `_PROJLock@24` (0x004c2f20), `_PROJHitChance@28` (0x004c3380), `@HARDFindJammer@4`, and `_DAMAGEDoHit@12` (0x0040f970):
 
 | Bit | Hex | Meaning | Evidence |
 |-----|-----|---------|---------|
+| 0 | 0x000001 | Guided missile / rocket marker | `_DAMAGEDoHit@12`: bit 7=0 AND bit 0=1 → play missile-hit sound; AIM-9M `0x4f` has bit 0=1 ✓ |
+| 4 | 0x000010 | Pk modifier gate | `_PROJLock@24` range-based Pk calc |
+| 7 | 0x000080 | Cannon / gun-round marker | `_DAMAGEDoHit@12`: bit 7=1 → play gun-hit sound; 20mm `0xc4` has bit 7=1 ✓ |
+| 9 | 0x000200 | Dual-lobe seeker lock processing | gates search/track lobe dispatch in `_PROJLock@24` |
+| 10 | 0x000400 | Active-radar / special guidance mode | gates `FUN_004629e0` + `FUN_00452e60` in `_PROJLock@24` |
 | 16 | 0x010000 | Air-to-air capable / search-mode init | AA missiles and 20mm; `@HARDFindJammer@4` |
 | 17 | 0x020000 | Air-to-ground capable / track-mode init | AG missiles, bombs, and 20mm |
 | 21 | 0x200000 | Lock-count reduction modifier | `_PROJHitChance@28` |
-| 9 | 0x000200 | Dual-lobe seeker lock processing | gates search/track lobe dispatch in `_PROJLock@24` |
-| 10 | 0x000400 | Active-radar / special guidance mode | gates `FUN_004629e0` + `FUN_00452e60` in `_PROJLock@24` |
-| 4 | 0x000010 | Pk modifier gate | `_PROJLock@24` range-based Pk calc |
 
-Bits 0–8 (lower nibbles) are not yet confirmed individually; the pattern differs: guided missiles `0x4f`, bombs `0x12`, guns `0xc4`, suggesting fuze type and damage model encoding.
+**Hit-sound dispatch** (`_DAMAGEDoHit@12` projectile-type case):
+
+```c
+if ((warhead_flags & 0x80) != 0)      → gun-hit sound    (20mm: 0xc4 has bit 7)
+else if ((warhead_flags & 0x01) != 0) → missile-hit sound (AIM-9M: 0x4f has bit 0)
+else                                  → bomb-hit sound   (MK-82: 0x12 has neither)
+```
+
+Bits 1–3, 5–6 of the lower byte are not yet individually confirmed; remaining pattern: missiles `0x4f` also have bits 1/2/3/6 set, bombs `0x12` have bits 1/4 set.
 
 ### Seeker mode byte — Confirmed
 
@@ -188,6 +198,12 @@ The PROJ_TYPE section base is at `missile+0xa6` in the runtime entity. Confirmed
 | PROJ_TYPE offset | Runtime offset | Role (confirmed) |
 |-----------------|----------------|-----------------|
 | +0x4F | missile+0xF5 | Proximity fuze range (byte) — fuze triggers when `target_arm_size ≥ this`; below 50% = miss |
+| +0x55 | missile+0xFB | Min maneuver rate (short) — lower clamp in `FUN_004c1120` velocity computation |
+| +0x6F | missile+0x115 | Maneuver rate percentage (byte) — computed as `(this × input_rate) / 100`; upper bound in velocity clamp function `FUN_004c1120` |
+| +0x75 | missile+0x11B | Pk at 0–25% of engagement range (byte) — Pk quartile table entry 0, read by `FUN_004c3890` |
+| +0x76 | missile+0x11C | Pk at 25–50% of engagement range (byte) — Pk quartile table entry 1 |
+| +0x77 | missile+0x11D | Pk at 50–75% of engagement range (byte) — Pk quartile table entry 2 |
+| +0x78 | missile+0x11E | Pk at 75–100% of engagement range (byte) — Pk quartile table entry 3 |
 | +0x79 | missile+0x11F | Approach angle tolerance byte |
 | +0x7A | missile+0x120 | Approach angle weight byte |
 | +0x7B | missile+0x121 | Angular error weight byte (left-shifted 3 for angle table lookup) |
@@ -197,9 +213,13 @@ The PROJ_TYPE section base is at `missile+0xa6` in the runtime entity. Confirmed
 | +0x7F | missile+0x125 | Pk adjustment byte (applied as signed % of base Pk) |
 | +0x80 | missile+0x126 | Maneuver agility Pk bonus (ushort) |
 
-The 55-byte gap between +0x4F (fuze range) and +0x79 (angle params) spans PROJ_TYPE+0x50–0x78. These bytes include turn rate, g-limit, and other physics params read by the `_PROJProc` callback rather than `_PROJHitChance`.
+`FUN_004c3890` (called by `_PROJHitChance@28`) is the Pk range-interpolation function. It reads a 4-byte engagement range reference at `missile+0xD7` (PROJ_TYPE+0x31 in the static layout — within the secondary seeker lobe at runtime), divides it into quartiles, and linearly interpolates between the four Pk bytes at PROJ_TYPE+0x75–0x78 for the given target distance.
+
+`FUN_004c1120` is the velocity-clamp function: it applies the PROJ_TYPE+0x6F percentage to an input angular rate, then clamps between `missile+0xFB` (PROJ_TYPE+0x55) minimum and OBJ_TYPE speed-limit fields at entity+0x67/+0x6B.
+
+The remaining gap PROJ_TYPE+0x50–0x54 and +0x56–0x6E (30 bytes) was not read by any function in the surveyed range. Symbol `_PROJProc` was not found in the Ghidra symbol table — the physics update callback may use a different name or be called through a virtual dispatch table.
 
 ## TODO
 
-- Confirm bits 0–8 of warhead flags dword — fuze type, damage model (pattern: AIM-9M `0x4f`, MK-82 `0x12`, 20mm `0xc4`)
-- Map PROJ_TYPE+0x50–0x78 (turn rate, g-limit, maneuver physics) via `_PROJProc` callback disassembly
+- Confirm bits 1–3, 5–6 of warhead flags lower byte — survey of 0x4b–0x4d code range found no function testing these bits directly from `missile+0xa6`; they may gate combined capability checks not dispatched individually
+- PROJ_TYPE+0x55 and +0x6F confirmed as velocity-clamp params; PROJ_TYPE+0x75–0x78 confirmed as Pk quartile table; gap +0x50–0x54, +0x56–0x6E (30 bytes) unresolved — `_PROJProc` symbol not found; requires virtual-dispatch trace or live breakpoint

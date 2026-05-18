@@ -106,18 +106,18 @@ Naval and vehicle classes appear in NT files only (`$2000` = ship, `$1000` = SAM
 
 Full survey of all 170 OT files. Bit positions confirmed by cross-category comparison.
 
-| Bit | Mask | Confirmed | Observed pattern |
-|-----|------|-----------|-----------------|
-| 0 | `$1` | **targetable** | Absent on TREE, ROAD, LOT, CRATER, DEST, REACTB (pure scenery / already-destroyed states) |
-| 5 | `$20` | **primary/military variant** | Absent on plain civilian variants (BLDG2 `$501` vs BLDG1 `$521`) and ~ destroyed-state replacements |
-| 8 | `$100` | **has geometry / collideable** | Present on bridges, most structures, rocks; absent on flat terrain tiles (ROAD, LOT, TREE) |
-| 10 | `$400` | **civilian or dual-use infrastructure** | Set on BLDG*, HOUS*, urban blocks, airport buildings (APTLA/B/C), NUCOB, REACTR; also on SAM infrastructure sites (SA3SITE, HAWKSITE) — not exclusively civilian |
-| 11 | `$800` | **animated / non-static scenery** | Set on FLAG*, CROP*, CITY1-3, BR*END (bridge endpoints), SUPPLY, PRDR1/2 (rotating radar dish), MOOSEA/B, MICRO/MICROM (comm dish), CRANE, COMM, BRD1 |
-| 15 | `$8000` | **airfield surface** | Exclusive to STRIP1-7 and DTSTRP; never set on other OT types |
-| 17 | `$20000` | **military / hardened structure** | Set on BNK*, HANGR*, COMM, NUCCT, PRDR*, RELAY, TOWER, COLTWR, CTWR*, and other military targets |
-| 20 | `$100000` | **damaged runway surface** | DTSTRP only; contrasts with bit 21 on intact STRIP* |
-| 21 | `$200000` | **intact runway surface** | STRIP1-7; absent on DTSTRP (damaged variant) |
-| 22 | `$400000` | **prominent/large variant flag** | Set on large or strategically significant structure variants: SHELT, BUNKER, HANGRB ("Hangar 2"), CTOWR ("Control Tower, Large"), FUEL, OILW, DOCK1, COMM, REACTR, CTYBKA/B, APTLA, OILW, ~COLTWR; absent from their smaller counterparts (HANGR, CTWR1, CTYBKC–G, APTB1) |
+| Bit | Mask | Label | Status | Notes |
+|-----|------|-------|--------|-------|
+| 0 | `$1` | **targetable** | Confirmed | Absent on TREE, ROAD, LOT, CRATER, DEST, REACTB (pure scenery / already-destroyed states) |
+| 5 | `$20` | **armed / valid combat target** | **Confirmed** — `FUN_0043df7b` | Hard gate in targeting acquisition: entity with bit 5 clear is immediately rejected as a valid target. Absent on civilian variants (BLDG2 `$501`) and ~ destroyed-state replacements. |
+| 8 | `$100` | **has collideable oriented geometry** | **Confirmed** — `FUN_0042c9b0` | When set with a non-zero heading, uses angle-based hit detection (calls `FUN_004c6654`). Present on bridges, most structures, rocks; absent on flat terrain tiles (ROAD, LOT, TREE). |
+| 10 | `$400` | **civilian or dual-use infrastructure** | Inferred | Set on BLDG*, HOUS*, urban blocks, airport buildings (APTLA/B/C), NUCOB, REACTR; also on SAM infrastructure sites (SA3SITE, HAWKSITE) — not exclusively civilian. Not yet confirmed via entity+0x09 bit test in Ghidra. |
+| 11 | `$800` | **animated / non-static scenery** | **Confirmed** — `FUN_0042c9b0` | OBJ_TYPE+9 & 0x800 sets a ground-mobile state flag in the targeting/collision resolver. Set on FLAG*, CROP*, CITY1-3, BR*END (bridge endpoints), SUPPLY, PRDR1/2 (rotating radar dish), MOOSEA/B, MICRO/MICROM (comm dish), CRANE, COMM, BRD1. |
+| 15 | `$8000` | **airfield surface** | **Confirmed** — `FUN_00425196` | When set, forces targeting category to 4 (flight deck special class), bypassing normal flags2-based lookup. Also tested combined with bit 22 (`& 0x408000`) in targeting eligibility. Exclusive to STRIP1-7 and DTSTRP. |
+| 17 | `$20000` | **military / hardened structure** | Confirmed | Set on BNK*, HANGR*, COMM, NUCCT, PRDR*, RELAY, TOWER, COLTWR, CTWR*, and other military targets. |
+| 20 | `$100000` | **damaged runway surface** | Inferred | DTSTRP only; contrasts with bit 21 on intact STRIP*. |
+| 21 | `$200000` | **intact runway surface** | Inferred | STRIP1-7; absent on DTSTRP (damaged variant). |
+| 22 | `$400000` | **prominent/large variant** | **Confirmed** — `FUN_0042c9b0` | When set, collision geometry uses hit-point count of 16 (`0x10`); when clear, uses full default geometry. Also tested combined with bit 15 (`& 0x408000`) for targeting eligibility. Set on SHELT, BUNKER, HANGRB, CTOWR, FUEL, OILW, DOCK1, COMM, REACTR, CTYBKA/B, APTLA, ~COLTWR. |
 
 Bits 9, 12–14, 16, 18–19, 23+ not observed in any OT file in FA_2.LIB.
 
@@ -150,4 +150,4 @@ All confirmed in the `word hitpoints` field (field index 23). Values appear to b
 
 ## TODO
 
-- Confirm exact semantics of bits 5, 8, 10, 11, 22 via Ghidra targeting / collision functions — current labels are inferred from observed patterns, not verified in code
+- **Bit 10 (`$400`)**: Not confirmed via Ghidra — no entity+0x09 & 0x400 test found in targeting or collision code. Label "civilian/dual-use" is inferred from category patterns only.
