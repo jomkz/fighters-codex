@@ -58,10 +58,37 @@ public class AnalyzeOTNT extends FAScript {
         header("Hardpoint $2 scan in 0x460000-0x480000");
         for (long va : findFunctionsWithMask(0x00460000L, 0x00480000L, 0x2L)) dumpAt(va);
 
+        // ot_flags unresolved bits — not yet found in any bit-test scan:
+        //   bit 17 (0x20000) — inferred from BRF survey, no code found
+        //   bit 21 (0x200000) — inferred from BRF survey, no code found
+        header("ot_flags bit 17 (0x20000) scan 0x400000-0x550000");
+        for (long va : findFunctionsWithMask(0x00400000L, 0x00550000L, 0x20000L)) dumpAt(va);
+
+        header("ot_flags bit 21 (0x200000) scan 0x400000-0x550000");
+        for (long va : findFunctionsWithMask(0x00400000L, 0x00550000L, 0x200000L)) dumpAt(va);
+
+        // NT-specific flag bits — inferred from OT/NT BRF records, no bit-test confirmed:
+        //   NT bits 18 (0x40000), 19 (0x80000), 20 (0x100000) share range with priority masks
+        //   above but context is different (NT sub-fields vs OT type bits)
+        //   NT bits 25 (0x2000000), 26 (0x4000000) share range with priority masks above
+        // Re-scan the NT-specific code range for clarity
+        header("NT flag bits 18-20 scan in GV-range 0x470000-0x480000");
+        for (long m : new long[]{0x40000L, 0x80000L, 0x100000L})
+            for (long va : findFunctionsWithMask(0x00470000L, 0x00480000L, m)) dumpAt(va);
+
+        header("NT flag bits 25-26 scan in GV-range 0x470000-0x480000");
+        for (long m : new long[]{0x2000000L, 0x4000000L})
+            for (long va : findFunctionsWithMask(0x00470000L, 0x00480000L, m)) dumpAt(va);
+
+        // NT entity struct offset 0x09 — bit-test for civilian/dual-use (bit 10 = 0x400)
+        // Not found in prior scan; search wider range
+        header("NT bit 10 (0x400) narrowed to vehicle AI 0x470000-0x480000");
+        for (long va : findFunctionsWithMask(0x00470000L, 0x00480000L, 0x400L)) dumpAt(va);
+
         // Symbol search
         header("Symbols matching ot/nt/gv/vehicle/ship/naval/spawn/capability/hardfire");
         dumpSymbolsMatching("gvproc", "gv", "vehicle", "ship", "naval", "spawn",
-                "hardfire", "@hardfire", "otnt", "ot_", "nt_");
+                "hardfire", "@hardfire", "otnt", "ot_", "nt_", "civilian", "dual");
 
         closeOutput();
     }

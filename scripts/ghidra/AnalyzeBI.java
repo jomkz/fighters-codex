@@ -85,6 +85,45 @@ public class AnalyzeBI extends FAScript {
         header("All _CTDo_* symbols");
         dumpSymbolsMatching("ctdo_", "cteval_", "ctexec", "cttry", "ctplan");
 
+        // FRAME opcode 0x28 — writes two s16 values to DAT_00546c44 and DAT_00546c46.
+        // Every bytecode dispatch entry is prefixed with FRAME. The first s16 is a block
+        // ID (1–6 reserved, dispatch starts at 7); the second is monotonically increasing.
+        // The consumer of these globals has not been found; scan a wide range for reads.
+        header("FRAME opcode reader: xrefs to DAT_00546c44");
+        dumpXrefsToData(0x00546c44L);
+
+        header("FRAME opcode reader: xrefs to DAT_00546c46");
+        dumpXrefsToData(0x00546c46L);
+
+        // Widen scan to find profiling/priority subsystem that reads these globals
+        header("Wide scan for reads of DAT_00546c44 address range 0x460000-0x490000");
+        for (long va : findFunctionsReadingOffsets(0x00460000L, 0x00490000L, 0x546c44 & 0xFF, 0x546c46 & 0xFF))
+            dumpAt(va);
+
+        // Bytecode interpreter state globals — IP, priority, actor, halt
+        header("Xrefs to BI runtime state DAT_00546bea (IP)");
+        dumpXrefsToData(0x00546beaL);
+
+        header("Xrefs to BI runtime state DAT_00546bf0 (priority)");
+        dumpXrefsToData(0x00546bf0L);
+
+        header("Xrefs to BI actor DAT_00546c94");
+        dumpXrefsToData(0x00546c94L);
+
+        header("Xrefs to BI halt flag DAT_00546c98");
+        dumpXrefsToData(0x00546c98L);
+
         closeOutput();
+    }
+
+    private void dumpXrefsToData(long va) throws Exception {
+        ghidra.program.model.address.Address addr = toAddr(va);
+        for (ghidra.program.model.symbol.Reference ref :
+                currentProgram.getReferenceManager().getReferencesTo(addr)) {
+            ghidra.program.model.listing.Function fn =
+                    currentProgram.getFunctionManager().getFunctionContaining(ref.getFromAddress());
+            if (fn != null) dumpAt(fn.getEntryPoint().getOffset());
+        }
+    }
     }
 }

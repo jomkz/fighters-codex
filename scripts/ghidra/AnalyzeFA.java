@@ -22,6 +22,9 @@ public class AnalyzeFA extends FAScript {
         analyzeOTNT();
         analyzeT2();
         analyzeGAS();
+        analyzeCAM();
+        analyzeMC();
+        analyzeT2DLL();
 
         closeOutput();
     }
@@ -375,6 +378,72 @@ public class AnalyzeFA extends FAScript {
         for (long c : new long[]{0x95L, 0x80L, 195L, 21L})
             for (long va : findFunctionsReadingOffsets(0x00400000L, 0x00600000L, (int)c, (int)c))
                 dumpAt(va);
+    }
+
+    // -----------------------------------------------------------------------
+    // CAM â€” campaign DLL binary layout
+    // -----------------------------------------------------------------------
+    private void analyzeCAM() throws Exception {
+        header(“CAM â€” campaign launcher FUN_00428412”);
+        dumpAtForced(0x00428412L);
+        header(“CAM â€” callers of campaign launcher”);
+        dumpCallers(0x00428412L);
+        header(“CAM â€” MC loader (0x481940)”);
+        dumpAt(0x00481940L);
+        header(“CAM â€” _ChooseActivity (0x4a08a0)”);
+        dumpAt(0x004a08a0L);
+        header(“CAM â€” campaign range 0x428000-0x430000”);
+        dumpRange(0x00428000L, 0x00430000L);
+        header(“CAM â€” asset loader area 0x4a6cc0-0x4a7200”);
+        dumpRange(0x004a6cc0L, 0x004a7200L);
+        header(“CAM â€” string search: campaign / theater keywords”);
+        searchStrings(new String[]{“.CAM”, “BALTIC”, “PERSIAN”, “KOREA”,
+                “CHINA”, “EGYPT”, “VIETNAM”, “campaign”, “theater”});
+    }
+
+    // -----------------------------------------------------------------------
+    // MC â€” mission condition DLL flow
+    // -----------------------------------------------------------------------
+    private void analyzeMC() throws Exception {
+        header(“MC â€” MC loader (0x481940)”);
+        dumpAt(0x00481940L);
+        header(“MC â€” callers of MC loader”);
+        dumpCallers(0x00481940L);
+        header(“MC â€” _MISSIONInit2 (0x480b50)”);
+        dumpAt(0x00480b50L);
+        header(“MC â€” MM keyword handler FUN_0047a510”);
+        dumpAt(0x0047a510L);
+        header(“MC â€” mission range 0x480000-0x486000”);
+        dumpRange(0x00480000L, 0x00486000L);
+        header(“MC â€” trigger/event range 0x486000-0x489000”);
+        dumpRange(0x00486000L, 0x00489000L);
+        header(“MC â€” string search: condition keywords”);
+        searchStrings(new String[]{“.MC”, “COND”, “TRIGGER”, “DESTROY”,
+                “CAPTURE”, “SUCCEED”, “FAIL”});
+    }
+
+    // -----------------------------------------------------------------------
+    // T2DLL â€” T2 terrain overlay DLL / surface-class mapping
+    // -----------------------------------------------------------------------
+    private void analyzeT2DLL() throws Exception {
+        header(“T2DLL â€” do_use_terrain_detail (0x4d2344)”);
+        dumpAt(0x004d2344L);
+        header(“T2DLL â€” callers of do_use_terrain_detail”);
+        dumpCallers(0x004d2344L);
+        header(“T2DLL â€” tileExpand (0x4f4f78)”);
+        dumpAt(0x004f4f78L);
+        header(“T2DLL â€” expandTerrain (0x50e145)”);
+        dumpAt(0x0050e145L);
+        header(“T2DLL â€” T2 DLL load area 0x4d2000-0x4d5000”);
+        dumpRange(0x004d2000L, 0x004d5000L);
+        header(“T2DLL â€” tileExpand area 0x4f4000-0x4f6000”);
+        dumpRange(0x004f4000L, 0x004f6000L);
+        header(“T2DLL â€” sub-header constant 0x95 scan 0x4d0000-0x510000”);
+        for (long va : findFunctionsWithMask(0x004d0000L, 0x00510000L, 0x95L)) dumpAt(va);
+        header(“T2DLL â€” surface-class offset scan (0-0x20) in T2 area”);
+        for (long va : findFunctionsReadingOffsets(0x004d0000L, 0x00510000L, 0, 0x20)) dumpAt(va);
+        header(“T2DLL â€” string search: BIT2 / T2 terrain keywords”);
+        searchStrings(new String[]{“BIT2”, “.T2”, “tmap”, “tdic”, “terrain”});
     }
 
     // -----------------------------------------------------------------------

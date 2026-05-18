@@ -79,9 +79,32 @@ public class AnalyzeHUD extends FAScript {
         header("PROJMoveProc (0x4c11b0)");
         dumpAt(0x004c11b0L);
 
+        // Bit 14 SP writer — two functions at 0x4bc177 and 0x4bc190 are the unresolved
+        // single-player path that writes bit 14 of DAT_0050cfef. These are read during
+        // ejection states 0x11 and 0x12. Force-create since they may not be auto-named.
+        header("Bit 14 SP writer FUN_004bc177 (ejection state 0x11/0x12)");
+        dumpAtForced(0x004bc177L);
+
+        header("Bit 14 SP writer FUN_004bc190");
+        dumpAtForced(0x004bc190L);
+
+        header("Callers of FUN_004bc177");
+        dumpCallers(0x004bc177L);
+
+        header("Callers of FUN_004bc190");
+        dumpCallers(0x004bc190L);
+
+        // Ejection state machine — bits 0x11 and 0x12 select eject phase
+        header("Ejection state scan: constant 0x11 in 0x4b8000-0x4c0000");
+        for (long va : findFunctionsWithMask(0x004b8000L, 0x004c0000L, 0x11L)) dumpAt(va);
+
+        header("Ejection state scan: constant 0x12 in 0x4b8000-0x4c0000");
+        for (long va : findFunctionsWithMask(0x004b8000L, 0x004c0000L, 0x12L)) dumpAt(va);
+
         // Symbol search
-        header("Symbols matching hud/gauge/warning/indicator/display");
-        dumpSymbolsMatching("hud", "gauge", "warning", "indicator", "display", "cockpit");
+        header("Symbols matching hud/gauge/warning/indicator/display/eject");
+        dumpSymbolsMatching("hud", "gauge", "warning", "indicator", "display",
+                "cockpit", "eject", "pilot", "escape", "canopy");
 
         closeOutput();
     }

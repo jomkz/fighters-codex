@@ -127,10 +127,35 @@ public class AnalyzeGAS extends FAScript {
         header("Xrefs to CTDo_move (0x465cc0)");
         dumpCallers(0x00465cc0L);
 
+        // JT weapon physics struct — entity offsets 0xF6-0x114 cover turn rate, g-limit,
+        // and flight-model parameters that have not yet been scanned.
+        header("JT entity offsets 0xF6-0x114 scan in 0x460000-0x490000");
+        for (long va : findFunctionsReadingOffsets(0x00460000L, 0x00490000L, 0xF6, 0x114)) dumpAt(va);
+
+        // Widen to full range in case JT physics code lives outside the BI/CTDo cluster
+        header("JT entity offsets 0xF6-0x114 wide scan 0x400000-0x510000");
+        for (long va : findFunctionsReadingOffsets(0x00400000L, 0x00510000L, 0xF6, 0x114)) dumpAt(va);
+
+        // JT warhead flag bits 1-3 and 5-6 — no function found testing them in prior analysis;
+        // may be unused or set only at load time; scan JT setup cluster
+        header("JT warhead flag bit 1 (0x2) in 0x4a6000-0x4a8000");
+        for (long va : findFunctionsWithMask(0x004a6000L, 0x004a8000L, 0x2L)) dumpAt(va);
+
+        header("JT warhead flag bit 2 (0x4) in 0x4a6000-0x4a8000");
+        for (long va : findFunctionsWithMask(0x004a6000L, 0x004a8000L, 0x4L)) dumpAt(va);
+
+        header("JT warhead flag bit 3 (0x8) in 0x4a6000-0x4a8000");
+        for (long va : findFunctionsWithMask(0x004a6000L, 0x004a8000L, 0x8L)) dumpAt(va);
+
+        header("JT warhead flag bits 5-6 (0x20/0x40) in 0x4a6000-0x4a8000");
+        for (long m : new long[]{0x20L, 0x40L})
+            for (long va : findFunctionsWithMask(0x004a6000L, 0x004a8000L, m)) dumpAt(va);
+
         // Symbol search
-        header("Symbols matching gas/fuel/burn/fmfuel/hard/brf/gvproc/spawn/load/tank");
+        header("Symbols matching gas/fuel/burn/fmfuel/hard/brf/gvproc/spawn/load/tank/turnrate/glimit");
         dumpSymbolsMatching("gas", "fuel", "burn", "fmfuel", "hard", "brf", "gvproc",
-                "spawn", "tank", "refuel", "afterburner");
+                "spawn", "tank", "refuel", "afterburner", "turnrate", "glimit", "maxg",
+                "maxspeed", "minspeed", "accel", "decel", "jt_", "setupjt");
 
         closeOutput();
     }
