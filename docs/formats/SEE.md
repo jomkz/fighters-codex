@@ -224,19 +224,30 @@ Full enum confirmed. See Seeker Type Byte table above.
 
 ### Dual-lobe semantics — Resolved
 
-Primary lobe = search mode; secondary lobe = track/lock mode. Trigger confirmed via `_PROJLock@24` (0x004c2f20):
+Primary lobe = search mode; secondary lobe = track/lock mode. Trigger confirmed via `_PROJLock@24` (0x004c2f20) and `FUN_004c4700`:
 
-The engine maintains two runtime state flags on the projectile/object at struct offset `+0xa6`:
-- `0x10000` — search mode active: engine calls `FUN_004c2eb0` (search-lobe timer check)
-- `0x20000` — track mode active: engine calls `FUN_004c31f0` (track-lobe check, stricter)
+The engine maintains a **seeker session context struct** at fixed address `0x0050ce80`. The struct has a flags word at offset `+0xde` (`DAT_0050cf5e`) whose bits record the current lock state:
+- `DAT_0050cf5e & 0x10000` — search lock active (partial bracket on HUD)
+- `DAT_0050cf5e & 0x20000` — track lock active (full bracket on HUD)
+- `DAT_0050cf5e & 0x100000` — radar on; required for track-lobe checks (set/cleared by player radar toggle, `FUN_00414690` case `0x52`)
+- `DAT_0050cf5e & 0x400` — seeker enabled (detectable flag)
 
-Both lobe-check functions receive the **current target struct** (`DAT_0050ce80`) and a timer-window parameter (0x28 = 40 game ticks).
+**Transition writer confirmed**: `FUN_004c4700` (outer guidance loop): after `_PROJLock@24` returns a lock, evaluates the angular error probabilistically against `target+0xe8`/`+0xea` thresholds:
+- Clears both bits: `DAT_0050cf5e & 0xfffcffff` (target out of cone or below threshold)
+- Sets `0x10000` when within the wider search-lock zone
+- Sets `0x20000` when within the tighter track-lock zone
 
-`FUN_004c2eb0` (search lobe, 0x004c2eb0): when the target has not yet been acquired (`target+0x10 & 0x80 == 0`), the function checks that the target is detectable (`target+0xde & 0x400`) and initialises a lock-hold timer at `target+0x11a` to `now + 40 ticks`. Once the target is marked acquired (`+0x80` set), the function verifies the timer has not expired; if `target+0x11a ≤ now`, the check fails and lock is dropped.
+The projectile/entity's own flags at struct `+0xa6` select *which* lobe check applies:
+- `entity+0xa6 & 0x10000` set → `_PROJLock@24` calls search-lobe check (`FUN_004c2eb0`)
+- `entity+0xa6 & 0x20000` set (and `0x10000` clear) → calls track-lobe check (`FUN_004c31f0`)
 
-`FUN_004c31f0` (track lobe, 0x004c31f0): identical timer logic, but when the target is acquired (`+0x80` set) it additionally requires `target+0xde & 0x100000` (active-tracking flag). If that flag is absent, the track check fails even if the timer is still valid.
+Both lobe-check functions receive the **seeker session context pointer** (`0x0050ce80`) and a timer-window parameter (`0x28` = 40 game ticks).
 
-`_PROJInFOV@40` (0x004c2860) then performs the range and heading-error comparison using the lobe selected by `param_3`:
+`FUN_004c2eb0` (search lobe, `0x004c2eb0`): when the seeker has not yet acquired (`ctx+0x10 & 0x80 == 0`), checks that the seeker is enabled (`ctx+0xde & 0x400`) and initialises a lock-hold timer at `ctx+0x11a` (`DAT_0050cf9a`) to `now + 40 ticks`. Once acquired (`+0x80` set), verifies the timer has not expired; if `ctx+0x11a ≤ now` the check fails and lock is dropped.
+
+`FUN_004c31f0` (track lobe, `0x004c31f0`): identical timer logic, but when acquired additionally requires `ctx+0xde & 0x100000` (radar on). If radar is off, track check fails even if the timer is still valid.
+
+`_PROJInFOV@40` (`0x004c2860`) performs the range and heading-error comparison using the lobe selected by `param_3`:
 - `param_3 == 0` → primary lobe data (SEE offset `+0x0F`)
 - `param_3 != 0` → secondary lobe data (SEE offset `+0x23`)
 
@@ -244,6 +255,3 @@ Both lobe-check functions receive the **current target struct** (`DAT_0050ce80`)
 
 `^911400` ÷ 6076 ≈ 150 nm. The APG-63 published FA range is ~80 nm at typical RCS; the stored value represents maximum theoretical lobe extent under ideal conditions, not the pilot-selectable radar range.
 
-## TODO
-
-- Confirm exact trigger that transitions the missile state flag from `0x10000` (search) to `0x20000` (track) and sets `target+0xde & 0x100000`. `_PROJLockUpdate@0` (0x004c0960) is NOT the source — it only counts in-range missiles per seeker type. The transition is in the main missile-service / weapon-update path (not yet decompiled).

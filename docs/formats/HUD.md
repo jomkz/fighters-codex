@@ -114,6 +114,47 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 | `0x271` | `DAT_005215d1` | Range info | dx from anchor |
 | `0x273` | `DAT_005215d3` | Range info | dy from anchor |
 
+## `DAT_0050cfef` Advisory/State Flags (Confirmed)
+
+`DAT_0050cfef` is the HUD state flags word. Bits are set by the game's subsystems at each simulation tick; `FUN_00407930` and the tape render functions read them to gate icon and display variants.
+
+| Bit | Hex | Source function | Meaning |
+|-----|-----|-----------------|---------|
+| 0 | `0x00001` | `_DAMAGEDoHit@12` damage state `0x50d3ff` | Aircraft damage indicator level 1 |
+| 1 | `0x00002` | `_DAMAGEDoHit@12` damage state `0x50d400` | Aircraft damage indicator level 2 |
+| 2 | `0x00004` | `_DAMAGEDoHit@12` damage state `0x50d401` | Aircraft damage indicator level 3 |
+| 3 | `0x00008` | `_DAMAGEDoHit@12` damage state `0x50d3f7` (also clears bit 5) | Aircraft damage / engine-out state — cleared bit 5 indicates afterburner disabled by damage |
+| 4 | `0x00010` | `_DAMAGEDoHit@12` damage state `0x50d40c` | Aircraft damage indicator level 4 |
+| 5 | `0x00020` | `FUN_00407a00`; cleared by `_DAMAGEDoHit@12` state `0x50d3f7` | Aircraft has afterburner AND throttle is at max (`DAT_0050d06e == 0x6400`) — shows `"THR: AFT"` instead of numeric throttle; cleared when damage state removes afterburner |
+| 6 | `0x00040` | `FUN_00407ee0`, `FUN_00408420`, `FUN_00407930`; set/cleared by `FUN_00451c90` (speedbrake actuator) via input 0x67 | Advisory icon C active — speedbrake/airbrake deployed; speed tape swaps live reference marker to approach-speed source (`DAT_0050d3aa`); altitude tape draws approach-altitude bracket markers (`DAT_0050d0aa`, `DAT_0050d3ae`) |
+| 7 | `0x00080` | `FUN_00407930`; set/cleared by `FUN_00451d70` (flap actuator) via input 0x62 | Advisory icon B active — flap deployed |
+| 8 | `0x00100` | `FUN_00407930`; set/cleared by `FUN_00451b60` (gear actuator) via input 0x66 | Advisory icon A active — landing gear deployed (down) |
+| 9 | `0x00200` | `FUN_00407930`; set/cleared by `FUN_00452630` (tailhook actuator) via input 0x6f | Advisory icon D active (single-player path) — tailhook deployed |
+| 10 | `0x00400` | `FUN_00407930`; set/cleared by `FUN_00451c30` (bay-door actuator) via input 0x68 | Advisory icon D active (multiplayer path, also requires `DAT_0050d322 & 2`) — weapon bay door / hook variant open |
+| 11 | `0x00800` | `FUN_004530a0` (weapon-state scan, each tick) | Active weapon lock — at least one weapon has ammo and an acquired lock |
+| 12 | `0x01000` | `FUN_00407a00`; toggled by `FUN_00416380` via input 0x61 | Flight-lock / autopilot active — replaces throttle/G readout with lock sprite (`DAT_004ebf94`) |
+| 13 | `0x02000` | `FUN_00414690` case 0x61 (autopilot key handler) | Autopilot ILS/ACLS sub-mode — set alongside bit 12 when flight mode is 6 and aircraft has ACLS capability (PT+0xe9 ≠ 0); gates carrier-approach glide-slope computation |
+| 14 | `0x04000` | Unknown — writer not yet identified | Unknown |
+| 15 | `0x08000` | `FUN_0049fb70` via `FUN_00452140` — OR'd into `DAT_0050cfef` every 5 ticks; returned when glidepath ratio is 240–(dist+299) | Carrier glideslope: on glidepath |
+| 16 | `0x10000` | `FUN_0049fb70` via `FUN_00452140` — returned when glidepath ratio is in the (dist+300)–(dist+599) band | Carrier glideslope: above glidepath |
+| 17 | `0x20000` | `FUN_0049fb70` via `FUN_00452140` — returned when glidepath ratio is 1–239 | Carrier glideslope: below glidepath |
+| 18 | `0x40000` | `FUN_0049fb70` via `FUN_00452140` — returned when glidepath ratio < 1 or no carrier in range | Carrier glideslope: critically below glidepath (wave-off) |
+| 28 | `0x10000000` | `FUN_00407ee0`, `FUN_00408420`; set by `_DAMAGEDoHit@12` state `0x50d40e` | Classified / redacted display — speed tape substitutes string at `0x004ebfbc`; altitude tape substitutes `s_XXXXX_004ebfd8` ("XXXXX"); tape tick-mark rendering skipped entirely; also triggered by aircraft-out-of-control damage state |
+| 29 | `0x20000000` | `_DAMAGEDoHit@12` damage state `0x50d410` | Emergency state — aircraft critical / imminent crash indicator |
+| 30 | `0x40000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result) | Emergency state variant A — aircraft spinning / uncontrolled flight |
+| 31 | `0x80000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result) | Emergency state variant B — aircraft spinning / uncontrolled flight (alternate roll) |
+
+Advisory icon names (label strings embedded in the HUD file, order confirmed from A7.HUD string block at VA `0x00001245`):
+
+| Icon | Bit | Struct offset | Label in A7.HUD | Label in F22.HUD | Subsystem |
+|------|-----|---------------|-----------------|------------------|-----------|
+| A | `0x100` | `+0x24D` | `GEAR` | `GEAR` | `FUN_00451b60` — gear actuator (input 0x66) |
+| B | `0x080` | `+0x255` | `FLAP` | `FLAP` | `FUN_00451d70` — flap actuator (input 0x62) |
+| C | `0x040` | `+0x245` | `BRAKE` | `BRAKE` | `FUN_00451c90` — speedbrake actuator (input 0x67) |
+| D | `0x200`/`0x400` | `+0x25D` | `HOOK` | `BAY` | `FUN_00452630` (tailhook, input 0x6f) / `FUN_00451c30` (bay door, input 0x68) |
+
+The command dispatcher is `FUN_00414690`. Each input case passes `(current_bit == 0)` to the actuator, which deploys the surface when TRUE (bit clear = currently retracted) and retracts it when FALSE (bit set = currently deployed). The actuator function updates the 3D model state and writes the advisory bit.
+
 ## Toolkit Roadmap
 
 - New `lib/src/hud.cpp` + `lib/include/ft/hud.h` — parse sprite name table and gauge parameter block
@@ -123,8 +164,10 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 ## TODO
 
 - Confirm per-aircraft anchor point source (the `0x10 0x10` init values in `FUN_00406040` suggest a default; actual per-aircraft position may come from the PT file or a separate config)
-- Name the individual advisory icons (which `DAT_0050cfef` bits correspond to GEAR, LOW FUEL, MASTER CAUTION, etc.)
-- Identify callers of `FUN_00407930` outside the main HUD render loop to confirm which system sets the advisory-enable bits
+- `FUN_00407930` confirmed as advisory icon renderer (bits 6–11 only): calls `FUN_004986b0(x, y, mode, sprite_ptr)` for GEAR/FLAP/BRAKE/HOOK icons; does NOT read bits 0–4 or 28–31
+- Bits 0–4 and 28–31 confirmed written by `_DAMAGEDoHit@12` — display element that reads these bits (damage overlay or cockpit warning lights) not yet identified; `FUN_00407930` is not the reader
+- Bit 14 (`0x04000`) writer not yet identified — `FUN_0049fb70` (called every 5 ticks via `FUN_00452140`) writes bits 15–18, not bit 14
+- Bits 15–18 writer confirmed as `FUN_0049fb70`; exact glidepath ratio thresholds (using `FUN_004bed70` carrier finder, `FUN_004c66cc` distance, `FUN_0049f7b0` scale) partially decoded from decompile; full semantic confirmation (what `iVar5` represents in ratio units) requires live tracing
 
 ## Related
 

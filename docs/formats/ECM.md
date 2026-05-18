@@ -61,15 +61,16 @@ Full F15.ECM example:
 | Bit | Hex | Meaning |
 |-----|-----|---------|
 | 4 | `0x010` | Radar jammer active |
+| 5–7 | `0x0E0` | Unused — always set alongside bit 4 in active-radar ECM files; no function tests these bits individually |
 | 8 | `0x100` | IR jammer active |
 
 `@HARDFindJammer@4` iterates hardpoints of type 9 (ECM) and rejects pods where the seeker type does not match the active jammer bit: IR seekers need `0x100`, radar seekers need `0x10`. A pod with `$f0` = `0000 1111 0000` has bit 4 set (radar) but not bit 8 (no IR). A pod with `$0` passes neither check and functions as a passive dispenser only.
 
-The bits 5–7 (the four-band cluster 0xF0) likely represent individual radar frequency-band coverage — the five fixed constants (35, 95, 24, 159, 31) in the effectiveness block may correspond to these band thresholds — but that correlation is not yet confirmed.
+Bits 5–7 confirmed unused: exhaustive scan of all AND/TEST instructions in the ECM/jammer code range (0x452000–0x454000) found zero tests against these bits of the power word. They are set in all active-radar ECM files (`$f0` = bits 4–7; `$1f0` adds bit 8) but the engine dispatches exclusively on bits 4 and 8.
 
 ### Effectiveness Bytes
 
-The 9-byte block contains three **variable** effectiveness bytes (positions 1, 5, 9) interleaved with five **fixed** band constants (35, 95, 24, 159, 31). All roles confirmed via Ghidra:
+The 9-byte block (BRF offsets +0x0A–+0x12) contains three **variable** effectiveness bytes interleaved with **six fixed jamming-geometry bytes** forming two groups of three (radar at +0x0B/+0x0C/+0x0D; IR at +0x0F/+0x10/+0x11). All roles confirmed via Ghidra (`FUN_00452980` and related callers):
 
 | Aircraft | eff_A (+0x0A) | eff_B (+0x0E) | eff_C (+0x12) | +0x17 (IR Pk) | ECM power |
 |---------|--------------|--------------|--------------|--------------|-----------|
@@ -96,6 +97,25 @@ if (entity[0x0E] != 0) { *(ecm_struct + 7) = 0; }
 ```
 
 ALE40 has eff_A=30 and eff_B=30 (both dispensers present); ALQ72 has eff_A=0 and eff_B=0 (active jammer only, no passive dispensers). ✓
+
+### Jammer Geometry Bytes (Confirmed)
+
+The six fixed bytes form two groups used by the jammer placement / seeker-defeat calculation:
+
+| Offset | Value | Group | Role |
+|--------|-------|-------|------|
+| +0x0B | 35 | Radar | Effectiveness-scaling parameter — passed directly to `FUN_004c3af0` / `FUN_00470bc0` |
+| +0x0C | 95 | Radar | Jammer azimuth half-angle — passed as `95 << 8` (fixed-point) to `FUN_004d5e58` param_2 |
+| +0x0D | 24 | Radar | Jammer elevation half-angle — passed as `24 << 8` (fixed-point) to `FUN_004d5e58` param_3 |
+| +0x0F | 35 | IR | Effectiveness-scaling parameter — same role as +0x0B |
+| +0x10 | 159 | IR | Jammer azimuth half-angle — passed as `159 << 8` to `FUN_004d5e58` param_2 |
+| +0x11 | 31 | IR | Jammer elevation half-angle — passed as `31 << 8` to `FUN_004d5e58` param_3 |
+
+The radar group is selected when `cStack_29 == 3` (radar seeker); the IR group when `cStack_29 == 2` (IR seeker). Band codes 0x0C (radar) and 0x0D (IR) are passed to `FUN_004447a0` as the jamming-band identifier.
+
+**`FUN_004d5e58` confirmed** (from `FUN_004c39a0` decompile): takes `(output_buf, azimuth_halfangle<<8, elevation_halfangle<<8, vertical_tilt)`. It computes the seeker's angular-bounds block (5 dwords) for cone-overlap testing. When vertical tilt is 0 (all game calls), it initialises symmetric ±azimuth / ±elevation bounds then calls `FUN_004cd588` (sin/cos) and `FUN_004cf2d0` (rotation). The larger the half-angle byte, the wider the jammer coverage arc — IR (159/31) is much wider in azimuth than radar (95/24).
+
+**Hypothesis disproven:** the original theory that these bytes encode RWR radar-band frequencies (L, S, C, X, Ka) is incorrect. They are jammer effectiveness and beam-geometry parameters, consistent across all 30 ECM files because they describe the jammer hardware characteristics, not aircraft-specific threat coverage.
 
 ## File Inventory
 
@@ -151,8 +171,4 @@ ALE40 has eff_A=30 and eff_B=30 (both dispensers present); ALQ72 has eff_A=0 and
 
 ### ECM power field (`word $1f0`) — Resolved
 
-`$1f0` is a **bitmask**. Bits 4 and 8 are the operative flags (confirmed via `@HARDFindJammer@4`). See the Power Levels table above. The band-bit hypothesis for bits 5–7 (the 0xF0 cluster) is plausible but not confirmed.
-
-## TODO
-
-- Cross-reference five fixed constants (35, 95, 24, 159, 31) against known RWR band frequencies to confirm band-bit map
+`$1f0` is a **bitmask**. Bits 4 and 8 are the operative flags (confirmed via `@HARDFindJammer@4`). Bits 5–7 are unused padding. See the Power Levels table above.
