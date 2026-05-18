@@ -134,7 +134,7 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 | 11 | `0x00800` | `FUN_004530a0` (weapon-state scan, each tick) | Active weapon lock — at least one weapon has ammo and an acquired lock |
 | 12 | `0x01000` | `FUN_00407a00`; toggled by `FUN_00416380` via input 0x61 | Flight-lock / autopilot active — replaces throttle/G readout with lock sprite (`DAT_004ebf94`) |
 | 13 | `0x02000` | `FUN_00414690` case 0x61 (autopilot key handler) | Autopilot ILS/ACLS sub-mode — set alongside bit 12 when flight mode is 6 and aircraft has ACLS capability (PT+0xe9 ≠ 0); gates carrier-approach glide-slope computation |
-| 14 | `0x04000` | Unknown — writer not yet identified | Unknown |
+| 14 | `0x04000` | `?MPReceive@@YGDXZ` (0x46C980 = FUN_0046c98f, decompile failed — writes at 0x46db2b) in multiplayer; unanalyzed code at 0x4bc177/0x4bc190 may also write it in single-player. No function in FA.EXE was found to set this bit via a direct `OR [mem], 0x4000` constant — the SP writer path remains unknown. Read in `FUN_004164b0` during ejection states 0x11/0x12 in conjunction with `DAT_0050d0b1` (nearest entity pointer) and entity+0xFB range comparison; also gates aerodynamic integrator reset (`DAT_005451e8`/`ec`, `DAT_00545200`). | Unknown — likely a network-synced or proximity-alert advisory state |
 | 15 | `0x08000` | `FUN_0049fb70` via `FUN_00452140` — OR'd into `DAT_0050cfef` every 5 ticks; returned when glidepath ratio is 240–(dist+299) | Carrier glideslope: on glidepath |
 | 16 | `0x10000` | `FUN_0049fb70` via `FUN_00452140` — returned when glidepath ratio is in the (dist+300)–(dist+599) band | Carrier glideslope: above glidepath |
 | 17 | `0x20000` | `FUN_0049fb70` via `FUN_00452140` — returned when glidepath ratio is 1–239 | Carrier glideslope: below glidepath |
@@ -166,7 +166,7 @@ The command dispatcher is `FUN_00414690`. Each input case passes `(current_bit =
 - Confirm per-aircraft anchor point source (the `0x10 0x10` init values in `FUN_00406040` suggest a default; actual per-aircraft position may come from the PT file or a separate config)
 - `FUN_00407930` confirmed as advisory icon renderer (bits 6–11 only): calls `FUN_004986b0(x, y, mode, sprite_ptr)` for GEAR/FLAP/BRAKE/HOOK icons; does NOT read bits 0–4 or 28–31
 - Bits 0–4 and 28–31 confirmed written by `_DAMAGEDoHit@12` — display element that reads these bits (damage overlay or cockpit warning lights) not yet identified; `FUN_00407930` is not the reader
-- Bit 14 (`0x04000`) writer not yet identified — `FUN_0049fb70` (called every 5 ticks via `FUN_00452140`) writes bits 15–18, not bit 14
+- Bit 14 (`0x04000`) SP writer still unknown. Exhaustive search via `DumpHUDBit14Search.java` confirmed: 215 write refs to `DAT_0050cfef` across 55 functions — none set bit 14 with a direct `0x4000` constant. `?MPReceive@@YGDXZ` (FUN_0046c98f) has a confirmed WRITE ref at 0x46db2b but its decompile fails ("Cannot properly adjust input varnodes"). Unanalyzed [no-function] writes at 0x4bc177/0x4bc190. To resolve: raw disasm of 0x46db2b and 0x4bc177 to find the actual store instruction. Structural note: `DAT_0050cfef` = player entity base (`0x50ce80`) + `0x16F` (confirmed from FUN_00454140: `DAT_0050cfef = *(undefined4 *)(pcVar3 + 0x16f)`).
 - Bits 15–18 writer confirmed as `FUN_0049fb70`; exact glidepath ratio thresholds (using `FUN_004bed70` carrier finder, `FUN_004c66cc` distance, `FUN_0049f7b0` scale) partially decoded from decompile; full semantic confirmation (what `iVar5` represents in ratio units) requires live tracing
 
 ## Related

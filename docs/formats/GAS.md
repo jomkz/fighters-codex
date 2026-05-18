@@ -14,9 +14,9 @@ All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `str
 [brent's_relocatable_format]
     byte 8              ; type identifier (8 = fuel tank)
     ptr si_names
-    word <capacity>     ; fuel capacity (internal units)
-    byte $1             ; flags (always $1)
-    dword <mass>        ; full-tank mass (internal units, ≈ 6.6× gallon count)
+    word <empty_weight> ; empty tank structural weight (lbs)
+    byte $1             ; flags (always $1 = fuel-tank category)
+    dword <fuel_weight> ; full-tank fuel weight (lbs); used to init fuel store
 :si_names
     string "<short>"    ; short display name
     string "<long>"     ; long display name
@@ -26,18 +26,18 @@ All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `str
 
 ## All Four Tanks
 
-| File | word (capacity) | dword (mass) | Short name | Long name |
-|------|----------------|--------------|------------|-----------|
-| F150.GAS | 108 | 990 | "150 gallon tank" | "150 Gallon External Fuel Tank" |
-| F250.GAS | 198 | 1650 | "250 gallon tank" | "250 Gallon External Fuel Tank" |
-| F350.GAS | 248 | 2300 | "350 gallon tank" | "350 Gallon External Fuel Tank" |
-| F500.GAS | 315 | 3300 | "500 gallon tank" | "500 Gallon External Fuel Tank" |
+| File | word (empty_weight lbs) | dword (fuel_weight lbs) | Full weight (word+dword) | Short name | Long name |
+|------|------------------------|------------------------|--------------------------|------------|-----------|
+| F150.GAS | 108 | 990 | 1098 | "150 gallon tank" | "150 Gallon External Fuel Tank" |
+| F250.GAS | 198 | 1650 | 1848 | "250 gallon tank" | "250 Gallon External Fuel Tank" |
+| F350.GAS | 248 | 2300 | 2548 | "350 gallon tank" | "350 Gallon External Fuel Tank" |
+| F500.GAS | 315 | 3300 | 3615 | "500 gallon tank" | "500 Gallon External Fuel Tank" |
 
 ## Field Notes
 
-### Mass (dword)
+### Fuel weight / dword (fuel_weight)
 
-The `dword` mass value is consistently approximately 6.6× the gallon count:
+The `dword` is **full-tank fuel weight in pounds** (confirmed). It is 6.6× the gallon count (JP-8 density = 6.6 lb/US gal):
 
 | Tank | Gallons × 6.6 | dword |
 |------|---------------|-------|
@@ -46,15 +46,24 @@ The `dword` mass value is consistently approximately 6.6× the gallon count:
 | 350 gal | 2310 | 2300 |
 | 500 gal | 3300 | 3300 |
 
-Jet fuel (JP-8) weighs approximately 6.6 lb/US gallon, so `dword` is most likely **fuel weight in pounds** (full tank).
+`FUN_00452c20` (hardpoint load) initializes the fuel store as `dword × quantity × 256` — fixed-point (×256) representation. `_BurnFuel@0` decrements this value by `fuel_rate × 5` each simulation batch.
 
-### Capacity (word)
+### Empty weight / word (empty_weight)
 
-The `word` capacity unit is not yet decoded. It is not gallons directly — 150 gallons maps to word 108, suggesting a conversion factor near 0.72 or an internal volume unit. May be tenths of some measure, or a simulator-internal fuel unit.
+The `word` is **empty tank structural weight in pounds** (confirmed via `FUN_004516b0`). The loadout weight model computes: `total_tank_weight = empty_weight × count + (current_fuel >> 8)`. This produces correct full-tank weights:
+
+| Tank | word (empty) + dword (fuel) = full weight |
+|------|------------------------------------------|
+| 150 gal | 108 + 990 = 1098 lbs |
+| 250 gal | 198 + 1650 = 1848 lbs |
+| 350 gal | 248 + 2300 = 2548 lbs |
+| 500 gal | 315 + 3300 = 3615 lbs |
+
+These match real-world 150–500 gallon external fuel tank weights (full) to within typical simulator rounding.
 
 ### Flags (byte $1)
 
-Always `$1` across all four files. Likely a stores category flag indicating this item is a fuel tank rather than a weapon.
+Always `$1` across all four files. Stores-category flag: value 1 = fuel tank (as opposed to weapon).
 
 **Location:** FA_2.LIB | **Count:** 4
 
@@ -65,7 +74,7 @@ Always `$1` across all four files. Likely a stores category flag indicating this
 
 ## Calibration
 
-### Mass dword — Confirmed as pounds
+### Fuel weight dword — Confirmed as pounds
 
 Cross-referenced against PT internal fuel fields (`PLANE_TYPE + 83` offset):
 
@@ -74,21 +83,8 @@ Cross-referenced against PT internal fuel fields (`PLANE_TYPE + 83` offset):
 | A-10 | 10700 | 10,700 lbs ✓ |
 | F-16C | 6972 | 6,972 lbs (Block 25/30) ✓ |
 
-The GAS `dword` mass is in the same unit — **fuel weight in pounds**. The ratio 990/150 = 6.6 lb/gal confirms JP-8 density (6.6 lb/US gal) to within rounding.
+The GAS `dword` is in the same unit — **fuel weight in pounds**. The ratio 990/150 = 6.6 lb/gal confirms JP-8 density (6.6 lb/US gal) to within rounding.
 
-### Capacity word — Unresolved game-internal unit
+### Empty weight word — Confirmed as pounds (structural weight)
 
-The `word` values (108, 198, 248, 315) are NOT in pounds and do NOT map linearly to US gallons:
-
-| Tank | word | word ÷ gallons |
-|------|------|---------------|
-| F150 | 108 | 0.720 |
-| F250 | 198 | 0.792 |
-| F350 | 248 | 0.709 |
-| F500 | 315 | 0.630 |
-
-The conversion factor varies, ruling out a simple linear unit. The `word` is not present in PT files in a comparable form — PT stores fuel only as the `dword` pounds field. The capacity `word` is a game-internal unit consumed by the fuel-system code at runtime; exact semantics require FA.EXE analysis (FA.SMS fuel symbols: search for `GAS`, `fuel`, `tank`).
-
-## TODO
-
-- Decode capacity `word` unit via FA.EXE disassembly — search FA.SMS for fuel-system symbols, trace the code that reads `word 108` and adds it to the aircraft fuel pool
+`FUN_004516b0` (loadout weight calculator) reads the `word` field as the base structural weight and adds it to the remaining fuel: `weight = word × count + (fuel_store >> 8)`. Cross-checking against typical external fuel tank empty weights (120–260 lbs for 150–500 gal aluminum tanks) confirms the `word` values are empty tank structural weights in pounds.

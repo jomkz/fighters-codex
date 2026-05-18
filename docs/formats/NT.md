@@ -154,9 +154,9 @@ All hardpoints have bit 3 (`$8`) set — this appears to be the "active weapon s
 | Flag | Observed in | Interpretation |
 |------|-------------|---------------|
 | `$8` | All ground-unit hardpoints; majority of naval hardpoints | Standard weapon slot — present on all weapon types |
-| `$a` | Subset of naval hardpoints on ships with 4+ HPs | Bit 1 (`$2`) set in addition to bit 3; exact meaning unconfirmed |
+| `$a` | Subset of naval hardpoints on ships with 4+ HPs | Bit 1 (`$2`) set in addition to bit 3: AI-guided weapon targeting active |
 
-Bit 1 (`$2`) is **not** a surface-strike missile marker — confirmed via BRF survey. IOWA `$a` HPs carry SEA_SPAR and PHALANX (same weapons as its `$8` HPs), KIROV `$a` HPs carry AAA30 guns. Smaller ships (SARAN, KRIVAK with 3 HPs) have no `$a` hardpoints at all. SSN9 (Soviet anti-ship missile on SARAN) uses `$8` with a zero-cone field, not `$a`. Semantic meaning of bit 1 requires Ghidra fire-control dispatcher trace.
+Bit 1 (`$2`) is **confirmed** as the AI-guided targeting flag — **`FUN_004736f0` (GVProc draw handler, param_1=5)**. When iterating type-7 missile hardpoints, the handler checks `*data_ptr & 2`; if set, calls `FUN_004c4700` (AI targeting update) to compute intercept geometry for that hardpoint. Ships like IOWA and KIROV use `$a` on specific hardpoints (Phalanx, Sea Sparrow, AAA30) that the ship AI actively steers toward targets; SARAN and KRIVAK with only 3 hardpoints do not use the AI-guided path.
 
 SA2A has 6 hardpoints (launch tubes), all `$8`. Ships with 4 hardpoints mix `$8` and `$a` in varying ratios (e.g. IOWA 2+2, TICON 1+3).
 
@@ -233,4 +233,3 @@ Full survey of all 84 NT files.
 - **ot_flags bit 10 (`$400`)**: Not confirmed — no entity+0x09 & 0x400 test found in Ghidra output. Label "civilian/light type" is inferred from category patterns.
 - **ot_flags bits 18, 19, 20 (`$40000`, `$80000`, `$100000`)**: Not confirmed at OBJ_TYPE+0x09 — masks found only in runtime entity flags (entity+0x01) and game-state globals (DAT_004eb6f8), not as direct ot_flags bit tests. Labels "arrestor-wire/catapult/VSTOL deck" are inferred from carrier category patterns.
 - **ot_flags bits 25, 26 (`$2000000`, `$4000000`)**: Not confirmed at OBJ_TYPE+0x09. Labels inferred from emplaced AA / SA-2A category patterns.
-- **Hardpoint bit 1 (`$2`)**: BRF survey ruled out "surface-strike missile." Ghidra carrier approach functions test `OBJ_TYPE+0xba & 2` and `& 8` for approach-sequence dispatch — not hardpoint flags directly. Exact hardpoint bit 1 meaning not established; requires fire-control dispatcher trace.
