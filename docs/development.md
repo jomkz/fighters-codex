@@ -22,7 +22,8 @@ cmake -B build -G "Visual Studio 18 2026"   # VS 2026
 If cmake is not in `PATH`:
 
 ```powershell
-$cmake = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+# Adjust <version> (2022/2026) and <edition> (Community/Professional/Enterprise) for your install
+$cmake = "$env:ProgramFiles\Microsoft Visual Studio\<version>\<edition>\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
 & $cmake -B build -G "Visual Studio 17 2022"
 ```
 
@@ -65,9 +66,11 @@ If cmake is not in `PATH`, add it via VS Code's `terminal.integrated.env.windows
 
 ```json
 "terminal.integrated.env.windows": {
-    "PATH": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin;${env:PATH}"
+    "PATH": "C:\\Program Files\\Microsoft Visual Studio\\<version>\\<edition>\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin;${env:PATH}"
 }
 ```
+
+Replace `<version>` (e.g. `2022`, `2026`) and `<edition>` (e.g. `Community`, `Professional`) to match your install.
 
 ### Visual Studio
 
