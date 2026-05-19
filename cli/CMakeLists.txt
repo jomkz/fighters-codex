@@ -18,6 +18,8 @@ add_executable(ft
     cmd_lay.cpp
     cmd_fnt.cpp
     cmd_mus.cpp
+    cmd_bi.cpp
+    cmd_ai.cpp
 )
 
 target_link_libraries(ft PRIVATE ft_lib)

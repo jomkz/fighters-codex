@@ -17,7 +17,7 @@ CodeSection pe_code_section(const uint8_t* data, size_t size) {
     if (pe_off + 24 + 2 > size)
         return {nullptr, 0, 0};
     const uint8_t* pe = data + pe_off;
-    if (pe[0] != 'P' || pe[2] != 0 || pe[3] != 0)
+    if (pe[0] != 'P' || pe[1] != 'L' || pe[2] != 0 || pe[3] != 0)
         return {nullptr, 0, 0};
     uint16_t num_sec    = u16le(pe + 6);
     uint16_t opt_hdr_sz = u16le(pe + 20);

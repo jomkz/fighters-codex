@@ -19,6 +19,8 @@ add_library(ft_lib STATIC
     src/pe.cpp
     src/lay.cpp
     src/fnt.cpp
+    src/bi.cpp
+    src/ai.cpp
 )
 
 target_include_directories(ft_lib

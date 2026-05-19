@@ -22,6 +22,8 @@ int cmd_hud(int argc, char** argv);
 int cmd_lay(int argc, char** argv);
 int cmd_fnt(int argc, char** argv);
 int cmd_mus(int argc, char** argv);
+int cmd_bi(int argc, char** argv);
+int cmd_ai(int argc, char** argv);
 
 static void print_usage() {
     puts("ft -- Fighters Toolkit\n");
@@ -99,6 +101,12 @@ static void print_usage() {
     puts("");
     puts("Music playlist commands:");
     puts("  ft mus dump   <file.MUS>");
+    puts("");
+    puts("BI disassembler commands:");
+    puts("  ft bi dump    <file.BI>");
+    puts("");
+    puts("AI compiler commands:");
+    puts("  ft ai compile <file.AI> -o <file.BI>");
 }
 
 int main(int argc, char** argv) {
@@ -140,6 +148,10 @@ int main(int argc, char** argv) {
         return cmd_fnt(argc - 1, argv + 1);
     if (strcmp(cmd, "mus") == 0)
         return cmd_mus(argc - 1, argv + 1);
+    if (strcmp(cmd, "bi")  == 0)
+        return cmd_bi(argc - 1, argv + 1);
+    if (strcmp(cmd, "ai")  == 0)
+        return cmd_ai(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||
