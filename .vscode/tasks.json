@@ -61,6 +61,38 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "Build ft_tests",
+            "type": "shell",
+            "command": "cmake --build build --target ft_tests --config Release",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run tests",
+            "type": "shell",
+            "command": "ctest --test-dir build -C Release --output-on-failure",
+            "dependsOn": "Build ft_tests",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Run ft-gui",
             "type": "shell",
             "command": "${workspaceFolder}/build/gui/Debug/ft-gui.exe",

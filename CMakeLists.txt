@@ -13,7 +13,10 @@ configure_file(
     "${CMAKE_SOURCE_DIR}/version.h.in"
     "${CMAKE_BINARY_DIR}/include/ft/version.h")
 
+enable_testing()
+
 add_subdirectory(lib)
 add_subdirectory(cli)
 add_subdirectory(gui)
 add_subdirectory(tools)
+add_subdirectory(tests)
