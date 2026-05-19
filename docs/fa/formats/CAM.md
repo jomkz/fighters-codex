@@ -164,12 +164,27 @@ Execution sequence:
 
 `_CallMissionProc_8` (0x481940) is the central mission-DLL dispatcher. Its callers: `FUN_00428412`, `_ChooseScoreInit` (0x441c60), `_MISSIONTextProc@16` (0x481c10), `_MISSIONCheckSuccess@0` (0x486860), and `?usnfmain@@YAXXZ` (0x403700 — main loop).
 
-## TODO — Deep Dive
+## CODE Section Binary Layout — Confirmed (2026-05-19)
 
-- ~~Disassemble UKRAINE.CAM to confirm the binary layout~~ **RESOLVED (2026-05-18):** KURILE.CAM analyzed via `AnalyzeCAMDLL.java`. Dispatch at PE offset 0x1000, command protocol mapped, import table extracted. See `%FA_PROJECT%/output/AnalyzeCAMDLL.txt`.
-- ~~Identify which `.MC` files correspond to which campaigns and missions~~ **RESOLVED (2026-05-18):** The `.M` mission file carries a `code <name>` directive that names the `.MC` DLL for that mission. Each `.CAM` mission list entry maps 1:1 to a `.M` file; the `.M` file selects its own condition DLL. Most missions use per-mission files (`U01.MC`, `K16.MC`, etc.); bonus missions share `EXTRA01.MC`.
-- ~~Determine how `.CAM` references theater `.MM` files~~ **RESOLVED (2026-05-18):** It doesn't. The `.M` mission file carries the `map <theater>.T2` and `layer <sky>.LAY` directives. `.CAM` only contains the ordered mission filename list. See *Reference Chain* section above.
-- Disassemble `FUN_00428340` (post-init finalizer called twice in the launch sequence) to determine its role
+`AnalyzeCAMDLL.java` fixed to scan executable blocks (CODE section). Full string dump of UKRAINE.CAM CODE section (`0x1000–0x19ff`, 2560 bytes):
+
+| CODE offset | Content | Role |
+|-------------|---------|------|
+| `0x1075` | `"Fighters Anthology (CD 1)"` | Required disc label |
+| `0x108f` | `"FA_4C.LIB"` | LIB archive for CD assets |
+| `0x112e` | `"SU33"` | Aircraft type available in campaign |
+| `0x1166`–`0x11c9` | `F150.GAS`–`F500.GAS` (4 entries) | Fuel tank BRF files |
+| `0x11ea`–`0x141d` | `AA11.JT`–`AAS38.SEE` (18 weapon entries) | Weapon/sensor store pool |
+| `0x1477` | `"F22N"` | Second aircraft type (F-22 Night) |
+| `0x149a`–`0x158f` | `U01I`–`U50I` (50 × 5 bytes) | Mission slot IDs — initial/available state keys |
+| `0x1594`–`0x16eb` | `~U01.M`–`~U50.M` (50 × 7 bytes) | Mission filename list (7 bytes each, null-terminated) |
+| `0x16eb`–`0x17bb` | *(0xD1 bytes — all `0x00`)* | Null padding — confirmed by direct hex dump (2026-05-19); no decoded content |
+| `0x17bc`–`0x17d2` | `UMEDAL`, `UDEAD`, `UWON`, `ULOST` | Campaign outcome state IDs |
+| `0x17e3`–`0x1873` | `U01O`, `U03O`, `U05O`, … `U49O` (25 × odd missions) | Secondary mission outcome IDs (odd-numbered missions only) |
+
+The gap at `0x16eb`–`0x17bb` (209 bytes) is all-zero padding. Confirmed by direct hex dump of `UKRAINE.CAM` (2026-05-19) — no encoded data.
+
+**KURILE.CAM** uses the same layout with prefix `K` and 35 missions; its CODE section is `0x1000–0x17ff` (2048 bytes). Mission list starts at `0x14e1` (shorter weapon table). VIETNAM.CAM (`V` prefix, 25 missions), EGYPT.CAM (`E`), BALTIC.CAM (`B`), VLAD.CAM (`V`) follow the same schema.
 
 ## Related
 

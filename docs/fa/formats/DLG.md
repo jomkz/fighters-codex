@@ -362,10 +362,6 @@ For CHOOSEAC.DLG: `x=379, y=80, w=238, h=361`. `_TopCenterDialog` overrides posi
 - New `cli/cmd_dlg.cpp` — `ft dlg dump <file.DLG>` prints control table as JSON `[{func, x, y, width, label}]`
 - GUI: `dlg_editor.h/cpp` — visual dialog layout editor that lets modders reposition controls
 
-## TODO — Deep Dive
-
-- `_DrawFormattedText` `FUN_0048a7d0` secondary-display rendering semantics — the secondary_display_x/y (+0x12/+0x14) and scroll_base (+0x1E) fields are confirmed; remaining: confirm exact rendering behaviour of `FUN_0048a7d0` (what constitutes "secondary item display")
-
 ## Related
 
 - [MNU.md](MNU.md) — top-level menu files that surface DLG dialogs

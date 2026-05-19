@@ -11,16 +11,12 @@
 // Invoke via run_overlays.bat --analyze <DllName>
 // Output: %FA_PROJECT%\output\Overlay_<DllName>.txt
 
-import ghidra.app.script.GhidraScript;
-import ghidra.app.decompiler.*;
-import ghidra.program.model.address.*;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.mem.*;
 import ghidra.program.model.symbol.*;
-import java.io.*;
 import java.util.*;
 
-public class DumpOverlayDLL extends GhidraScript {
+public class DumpOverlayDLL extends FAScript {
 
     @Override
     public void run() throws Exception {
@@ -28,25 +24,7 @@ public class DumpOverlayDLL extends GhidraScript {
         String dllName = (args != null && args.length > 0 && !args[0].isEmpty())
                 ? args[0] : currentProgram.getName();
 
-        String projectDir = System.getenv("FA_PROJECT");
-        if (projectDir == null || projectDir.isEmpty())
-            projectDir = System.getProperty("java.io.tmpdir");
-        File outDir = new File(projectDir, "output");
-        outDir.mkdirs();
-        File outFile = new File(outDir, "Overlay_" + dllName + ".txt");
-
-        DecompInterface decompiler = new DecompInterface();
-        decompiler.openProgram(currentProgram);
-
-        // Append mode: one file accumulates all DLLs in the project
-        PrintWriter out = new PrintWriter(new FileWriter(outFile, true));
-        out.println("// ============================================================");
-        out.println("// DLL: " + currentProgram.getName()
-                + "  [format: " + dllName + "]");
-        out.println("// Image base: 0x"
-                + Long.toHexString(currentProgram.getImageBase().getOffset()));
-        out.println("// ============================================================");
-        out.println();
+        openOutputAppend("Overlay_" + dllName);
 
         FunctionManager fm = currentProgram.getFunctionManager();
         SymbolTable st = currentProgram.getSymbolTable();
@@ -60,16 +38,10 @@ public class DumpOverlayDLL extends GhidraScript {
             }
         }
 
-        Set<Long> dumped = new LinkedHashSet<>();
-
         // Dump exports first
         if (!exported.isEmpty()) {
             out.println("// === EXPORTS ===");
-            for (long va : exported) {
-                if (dumped.contains(va)) continue;
-                dumped.add(va);
-                dumpFunction(currentProgram, fm, decompiler, out, va);
-            }
+            for (long va : exported) dumpAt(va);
         }
 
         // Dump all functions in VA order
@@ -80,44 +52,19 @@ public class DumpOverlayDLL extends GhidraScript {
 
         if (!allFns.isEmpty()) {
             out.println("// === ALL FUNCTIONS (VA order) ===");
-            for (Function fn : allFns) {
-                long va = fn.getEntryPoint().getOffset();
-                if (dumped.contains(va)) continue;
-                dumped.add(va);
-                dumpFunction(currentProgram, fm, decompiler, out, va);
-            }
+            for (Function fn : allFns) dumpAt(fn.getEntryPoint().getOffset());
             out.println("// Total functions: " + dumped.size());
         } else {
             // Data-only DLL: dump all memory blocks as hex + string index
             out.println("// === DATA SECTIONS (no executable code found) ===");
-            dumpDataSections(out);
+            dumpDataSections();
         }
 
         out.println();
-        out.close();
-        decompiler.dispose();
-        println("DumpOverlayDLL [" + dllName + "]: " + dumped.size()
-                + " functions, program=" + currentProgram.getName()
-                + " -> " + outFile.getAbsolutePath());
+        closeOutput();
     }
 
-    private void dumpFunction(Program prog, FunctionManager fm,
-                               DecompInterface decompiler, PrintWriter out,
-                               long va) throws Exception {
-        Function fn = fm.getFunctionAt(prog.getAddressFactory()
-                .getDefaultAddressSpace().getAddress(va));
-        if (fn == null) return;
-        out.println("// --- " + fn.getName() + " @ 0x" + Long.toHexString(va) + " ---");
-        DecompileResults res = decompiler.decompileFunction(fn, 120, monitor);
-        if (res != null && res.getDecompiledFunction() != null) {
-            out.println(res.getDecompiledFunction().getC());
-        } else {
-            out.println("// decompile failed: " + fn.getName());
-        }
-        out.println();
-    }
-
-    private void dumpDataSections(PrintWriter out) throws Exception {
+    private void dumpDataSections() throws Exception {
         Memory mem = currentProgram.getMemory();
         for (MemoryBlock block : mem.getBlocks()) {
             if (!block.isInitialized()) continue;

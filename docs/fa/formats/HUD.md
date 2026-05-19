@@ -145,7 +145,7 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 | 22 | `0x400000` | set by `@SAYLowFuelMessage@8` when Out-of-fuel line plays | Out-of-fuel voice line played (inhibit) |
 | 28 | `0x10000000` | `FUN_00407ee0`, `FUN_00408420`; set by `_DAMAGEDoHit@12` state `0x50d40e` | Classified / redacted display — speed tape substitutes string at `0x004ebfbc`; altitude tape substitutes `s_XXXXX_004ebfd8` ("XXXXX"); tape tick-mark rendering skipped entirely; also triggered by aircraft-out-of-control damage state |
 | 29 | `0x20000000` | `_DAMAGEDoHit@12` damage state `0x50d410` | Emergency state — aircraft critical / imminent crash indicator |
-| 30 | `0x40000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result) | Emergency state variant A — aircraft spinning / uncontrolled flight |
+| 30 | `0x40000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result); also read by carrier HGR renderer (`AnalyzeHGR.txt` lines 4143/4315): when set, suppresses normal slot-dot rendering and fixes the approach-angle indicator at position 2 (of 0–9) instead of computing the live angle from `DAT_0050ce9f` | Emergency state variant A — aircraft spinning / uncontrolled flight |
 | 31 | `0x80000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result) | Emergency state variant B — aircraft spinning / uncontrolled flight (alternate roll) |
 
 Advisory icon names (label strings embedded in the HUD file, order confirmed from A7.HUD string block at VA `0x00001245`):
@@ -164,16 +164,6 @@ The command dispatcher is `FUN_00414690`. Each input case passes `(current_bit =
 - New `lib/src/hud.cpp` + `lib/include/ft/hud.h` — parse sprite name table and gauge parameter block
 - New `cli/cmd_hud.cpp` — `ft hud dump <file.HUD>` prints gauge table as JSON `[{gauge, dx, dy}]`
 - GUI: overlay viewer that renders gauge positions on a 640×480 canvas
-
-## TODO
-
-- Confirm per-aircraft anchor point source (the `0x10 0x10` init values in `FUN_00406040` suggest a default; actual per-aircraft position may come from the PT file or a separate config)
-- `FUN_00407930` confirmed as advisory icon renderer (bits 6–11 only): calls `FUN_004986b0(x, y, mode, sprite_ptr)` for GEAR/FLAP/BRAKE/HOOK icons; does NOT read bits 0–4 or 28–31
-- **Bits 0–4 resolved (2026-05-19):** These are aircraft **system damage inhibitor flags**, not display bits. When set, they suppress system operations directly: bit 2 gates `@FMBrakes@8` (`if ((DAT_0050cfef & 4) == 0)` — brakes silently ignored when damaged). Bits 0, 1, 3, 4 gate analogous subsystems set by the GAS damage event cases 0x50d3ff, 0x50d400, 0x50d3f7, 0x50d40c. There is no dedicated cockpit-warning-light reader for these bits — they are operational inhibitors consumed by the flight-model actuator functions.
-- **Bits 15–22 corrected (2026-05-19):** Previously documented as carrier glideslope indicators. Corrected to fuel warning system based on `@SAYLowFuelMessage@8` decompile: explicit voice-line strings ("Bingo fuel", "Joker fuel", "Running on fumes", "Out of gas") keyed to bits 15–18 as triggers and bits 19–22 as per-level inhibits. `FUN_0049fb70` (via `FUN_00452140`) is confirmed as the fuel level threshold monitor setting these bits, not a carrier glideslope function.
-- Bits 28–31 written by `_DAMAGEDoHit@12`; bit 30 (0x40000000) also read by the carrier HGR hangar renderer (`AnalyzeHGR.txt` lines 4143, 4315). Display consumer for bits 28–31 not yet identified.
-- Bit 14 (`0x04000`) SP writer **resolved**: `FUN_004bc177` and `FUN_004bc190` are a matched fastcall thunk pair — each writes EAX into `DAT_0050cfef` then calls `_EnterState_4(param_1)`. Reached via a function pointer table (ejection/parachute state entry point array). `?MPReceive@@YGDXZ` (FUN_0046c98f) retains an undecompilable write at 0x46db2b (multiplayer sync path — decompile fails with "Cannot properly adjust input varnodes"). Structural note: `DAT_0050cfef` = player entity base (`0x50ce80`) + `0x16F`.
-- Bits 15–22 fully resolved (see correction note above). `FUN_0049fb70` threshold logic (via `FUN_004bed70`, `FUN_004c66cc`, `FUN_0049f7b0`) computes fuel level ratios, not glidepath geometry.
 
 ## Related
 

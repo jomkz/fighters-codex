@@ -140,6 +140,3 @@ Bits 9, 12–14, 16, 18–19, 23+ not observed in any OT file in FA_2.LIB.
 
 All confirmed in the `word hitpoints` field (field index 23). Values appear to be absolute damage points. Compare `dmg_armor` across JT weapon types against object `hit_points` to calibrate survivability.
 
-## TODO
-
-- **Bit 10 (`$400`)**: **Resolved.** `_Reaction_12` (0x464040) and `_MaskEvents_4` (0x463ea0) confirmed as the `entity+0x09 & 0x400` testers; also toggles bay-door actuator.

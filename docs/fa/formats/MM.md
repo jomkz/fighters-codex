@@ -68,6 +68,7 @@ Each `obj` block defines one static scene object. Terminated by a lone `.` line.
 | `tdic` | `<int>` | Tile dictionary index |
 | `special` | *(none)* | Marks object as a special/scripted entity |
 | `w_for` | `<int>` | Waypoint owner reference |
+| `map_obj_success_flags` | `<alias> <hex>` | Looks up entity by alias, then writes the hex value into entity `ot_flags` bits 5–7: `entity+1 = (value) \| (entity+1 & 0xffffff1f)`. Used to set or restore per-object mission-objective state. The mission save handler (`FUN_00495e80`) serialises current bit 5–7 state back using this keyword. |
 
 ### `flags` Bit Survey
 
@@ -89,9 +90,9 @@ Confirmed bit meanings:
 - **Bit 1 (`$2`)** — set on mobile units (`.NT`) and runways; "mobile or functional structure"
 - **Bit 14 (`$4000`)** — set only on runway strips; "landing surface"
 
-Tentative (requires Ghidra confirmation):
-- **Bit 10 (`$400`)** — distinguishes some objects from structurally identical ones without it (e.g. `$1` FUEL vs `$401` FUEL — possibly friendly vs hostile ownership)
-- **Bit 9 (`$200`)** — only on named/significant structures with bit 10 set; possibly "mission-critical target"
+Confirmed bit meanings (continued):
+- **Bit 9 (`$200`)** — **Confirmed** — `@Reaction@12` (0x464040): when set, entity is immediately rejected as a valid AI target (returns `'\x1f'` rejection code, same as non-targetable or dead). Only 24 objects carry this flag (`$601`): carrier KING.OT, houses, and factory types. Semantics: **"protected from AI targeting / not auto-targetable"** — used for mission-critical scene objects enemies should not autonomously engage.
+- **Bit 10 (`$400`)** — **Confirmed** — `_Reaction_12` (0x464040) and `_MaskEvents_4` (0x463ea0): drives civilian/light-type event handling. Set on fuel depots, control towers, runway strips, and flags (`$401`). Shared semantic with NT.md bit 10. Semantics: **"civilian or non-combat structure"** — participates in game logic (bit 0 set) but uses lighter event-system dispatch paths.
 
 ### Example
 
@@ -203,19 +204,6 @@ screen_y = DAT_0053650a + (DAT_00536528 - world_z) / DAT_0053664c;
 The Z-axis inversion (`origin_z - world_z`) means positive world-Z maps to upward on screen, consistent with the engine's +Z = northward convention. `pos` and `view` values in MM files are in these same world-space integer units.
 
 **World-space unit = 1 foot (confirmed).** Calibrated via JT.md seeker-range cross-check: `AIM9X lobe 1 max ^50000` = 8.2 nm; 50,000 feet / 6,076 ft/nm ≈ 8.23 nm ✓. The FA engine uses feet throughout for all world-space coordinates.
-
-## TODO — Deep Dive
-
-- Confirm `obj flags` bit 10 and bit 9 semantics (friendly vs hostile ownership; mission-critical — requires Ghidra)
-- Confirm `tdic` id=256 meaning (tile type index into T2? — requires Ghidra)
-
-**Confirmed resolved:**
-- `sides` suffix = format version (not faction count); table is flat array indexed by faction code; each version is a strict superset ✓
-- `tmap_named` col/row arguments are redundant with key encoding ✓
-- `w_goal` values surveyed: only 0 (stationary anchor) and 1 (active patrol) ✓
-- `react` field = three 16-bit hostile-faction bitmasks covering codes 0–47 ✓
-- `obj flags` bits 0, 1, 14 confirmed ✓
-- World-space unit = 1 foot (calibrated from JT.md seeker ranges: 50,000 units = 8.2 nm ✓) ✓
 
 ## Related
 

@@ -7,9 +7,9 @@ FA_2.LIB contains 9 `.BI` files — exactly one per `.AI` script file (e.g. `AC1
 The FA engine runs a two-part AI system:
 
 - **`.AI`** — plain-text source script compiled to bytecode at build time; defines the logic (conditions, branches, actions) in a goto-based language
-- **`.BI`** — Win32 PE DLL that contains both the compiled bytecode of the paired `.AI` script (in its CODE section) and the native x86 implementations of every condition and action the bytecode calls (as `_CT*` exports)
+- **`.BI`** — Phar Lap PE DLL whose **CODE section contains only compiled AI bytecode** (no x86 machine code). All `_CTDo_*` and `_CTEval_*` action/condition implementations live in FA.EXE; the `.BI` imports them via its `.idata` section. The bytecode starts at the very first byte of the CODE section (raw file offset `0x400`).
 
-At runtime the engine loads the `.BI` and calls `_CTExecProgram@4`, which reads bytecode from the BI CODE section and dispatches to the `_CTDo_*` and `_CTEval_*` exports via `CALL_BY_NAME`/`CALL_DIRECT` opcodes.
+At runtime the engine loads the `.BI`, resolves its `.idata` imports against FA.EXE, and calls `_CTExecProgram@4`, which reads bytecode from the BI CODE section and dispatches to the `_CTDo_*` and `_CTEval_*` functions in FA.EXE via `CALL_BY_NAME`/`CALL_DIRECT` opcodes.
 
 ## Exported Functions
 
@@ -213,12 +213,6 @@ For complex scripts (F, H) the bytecode is more compact than the source text. Fo
 | LIB | Count |
 |-----|-------|
 | FA_2.LIB | 9 |
-
-## TODO
-
-- **Opcode 0x28 (`FRAME`)**: confirmed write path — `case 0x28:` sets `DAT_00546bea = pbVar1`, conditionally calls `FUN_00466820(0xc)` when both `DAT_00546c8c != '\0'` and `DAT_00546c42 != 0` (stack/mode guard), then reads two consecutive `uint16` values from the stream into `_DAT_00546c44` and `_DAT_00546c46`, advancing the pointer by 4. No function reads these globals by direct address; they are accessed via a pointer to the surrounding state block. Candidate consumers identified by offset scan: `_INFO2Draw`, `_FMFlight@0`, `_MANAdd@24`, `_GVDoCurrentWaypoint`, `?MPStatusSet@@YIXJ@Z`, `FUN_0048e740`. First s16 = sequential per-block ID (IDs 1–6 reserved; scripts start at 7); second s16 increases monotonically — likely profiling or priority scheduling data.
-
-- **AI→BI compiler**: The AI language and all 40 bytecode opcodes are fully documented, making a compiler from `.AI` text to bytecode straightforward in principle. The blocker is the BI PE layout: it is not yet known which section holds the bytecode versus the native x86 `_CTDo_*`/`_CTEval_*` implementations, so it is unclear how to embed new bytecode in a valid DLL. The  approach once the layout is mapped: write the _CTDo_*/_CTEval_* implementations from scratch in C and link them into a new DLL alongside the compiled bytecode. This produces a clean, self-contained result.
 
 ## Related
 

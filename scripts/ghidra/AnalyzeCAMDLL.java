@@ -7,42 +7,16 @@
 // Invoke via run_overlays.bat --analyze CAM
 // Output: %FA_PROJECT%\output\AnalyzeCAMDLL.txt
 
-import ghidra.app.script.GhidraScript;
-import ghidra.app.decompiler.*;
-import ghidra.program.model.address.*;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.mem.*;
 import ghidra.program.model.symbol.*;
-import java.io.*;
 import java.util.*;
 
-public class AnalyzeCAMDLL extends GhidraScript {
-
-    private DecompInterface decompiler;
-    private PrintWriter out;
-    private Set<Long> dumped;
+public class AnalyzeCAMDLL extends FAScript {
 
     @Override
     public void run() throws Exception {
-        String projectDir = System.getenv("FA_PROJECT");
-        if (projectDir == null || projectDir.isEmpty())
-            projectDir = System.getProperty("java.io.tmpdir");
-        File outDir = new File(projectDir, "output");
-        outDir.mkdirs();
-        File outFile = new File(outDir, "AnalyzeCAMDLL.txt");
-
-        decompiler = new DecompInterface();
-        decompiler.openProgram(currentProgram);
-        dumped = new LinkedHashSet<>();
-        out = new PrintWriter(new FileWriter(outFile, true));  // append: one file per project run
-
-        out.println("// ============================================================");
-        out.println("// AnalyzeCAMDLL -- campaign DLL binary layout");
-        out.println("// Program: " + currentProgram.getName());
-        out.println("// Image base: 0x" + Long.toHexString(
-                currentProgram.getImageBase().getOffset()));
-        out.println("// ============================================================");
-        out.println();
+        openOutputAppend("AnalyzeCAMDLL");
 
         // -----------------------------------------------------------------------
         // Exported functions
@@ -91,16 +65,16 @@ public class AnalyzeCAMDLL extends GhidraScript {
         scanMissionStateBlock();
 
         out.println("\n// Total functions dumped: " + dumped.size());
-        out.close();
-        decompiler.dispose();
-        println("AnalyzeCAMDLL complete -> " + outFile.getAbsolutePath());
+        closeOutput();
     }
 
     private void scanMissionStateBlock() throws Exception {
         Memory mem = currentProgram.getMemory();
-        // Look for the .data or .rdata segment (non-executable, initialized)
+        // Scan all initialized blocks including the CODE section -- CAM mission string
+        // tables (mission names, aircraft IDs, weapon filenames) live in the executable
+        // CODE section at known offsets (e.g. DAT_00001594 for UKRAINE.CAM), so we
+        // cannot skip executable blocks.
         for (MemoryBlock block : mem.getBlocks()) {
-            if (block.isExecute()) continue;
             if (!block.isInitialized()) continue;
             if (block.getSize() < 16) continue;
 
@@ -126,29 +100,5 @@ public class AnalyzeCAMDLL extends GhidraScript {
                 i++;
             }
         }
-    }
-
-    private void header(String title) {
-        out.println("\n// === " + title + " ===");
-    }
-
-    private void dumpAt(long va) throws Exception {
-        if (dumped.contains(va)) return;
-        dumped.add(va);
-        FunctionManager fm = currentProgram.getFunctionManager();
-        Function fn = fm.getFunctionAt(toAddr(va));
-        if (fn == null) fn = fm.getFunctionContaining(toAddr(va));
-        if (fn == null) {
-            out.println("// NOT FOUND at 0x" + Long.toHexString(va));
-            return;
-        }
-        out.println("// --- " + fn.getName() + " @ " + fn.getEntryPoint() + " ---");
-        DecompileResults res = decompiler.decompileFunction(fn, 120, monitor);
-        if (res != null && res.getDecompiledFunction() != null) {
-            out.println(res.getDecompiledFunction().getC());
-        } else {
-            out.println("// decompile failed: " + fn.getName());
-        }
-        out.println();
     }
 }

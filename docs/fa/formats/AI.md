@@ -149,11 +149,11 @@ Arithmetic is valid in comparisons: `alt < turnRadius * 3`, `distToTgt < minSpee
 
 | Instruction | Signature | Description |
 |-------------|-----------|-------------|
-| `move` | `move <hdg> <alt> <roll> <speed_mode> <value>` | Fly to heading/altitude at given bank angle |
+| `move` | `move <hdg> <angle> <alt> <speed_mode> <duration>` | Fly to heading/altitude. `<angle>` = bank angle (0 = wings level, 180 = inverted); `<alt>` scaled ×0xb6 internally (0x7fffffff = altitude-unlimited); `<speed_mode>` = one of `corner`/`max`/etc.; `<duration>` = integer 0–15. Confirmed from `_CTDo_move` (0x465cc0) bytecode pop order: heading, angle, altitude, speed, duration. |
 | `moveToAlt` | `moveToAlt <hdg> <alt> maxSpeed <value>` | Climb or descend to altitude |
 | `homePos` | `homePos <hdg> <alt> <alt2> corner <value>` | Return to home position |
 | `homeAngle` | `homeAngle <hdg> <alt> <speed_mode> <roll> <value>` | Fly to home angle |
-| `jink` | `jink <hdg> <alt> <roll> <period> <count> <delay> <speed_mode> <value>` | Jinking evasive maneuver |
+| `jink` | `jink <hdg> <defl_angle> <defl1> <defl2> … <count> <speed_mode> <duration>` | Jinking evasive maneuver. `<defl_angle>` = base deflection; `<defl1>`/`<defl2>` = alternating left/right deflection magnitudes; `<count>` = jink repetitions 0–4; `<speed_mode>` = speed control (same domain as `move` speed — clamped to COMinSpeed..COMaxSpeed by `FUN_00465e00`); `<duration>` = integer 0–15. Confirmed from `_CTDo_jink` (0x4663f0) → `_MVRJink@40` (0x4ac9e0): param_8=count, param_9=speed, param_10=duration, param_3/param_4=deflection angles. |
 | `circle` | `circle <cx> <cy> <cz> <radius> <alt> <speed>` | Orbit a point (AC130 only) |
 | `wm_break` | `wm_break <angle> engageP` | Break away from wingman |
 | `wm_approach` | `wm_approach <offset> <engageP\|int> corner` | Wingman approach |
@@ -214,11 +214,6 @@ Engine-defined `switch` target labels (no `maneuver` string needed): `fastHigh`,
 ## Implementation Note — `_CTDo_*` / `_CTEval_*` in FA.EXE
 
 The `_CTDo_*` and `_CTEval_*` condition/action dispatcher functions exist in **FA.EXE itself** at VA range **0x464C80–0x467110** — not only in the companion `.BI` DLL files. This means the interpreter core is compiled into the main executable; the `.BI` DLLs supply per-object script data but delegate dispatch back to FA.EXE's built-in handlers.
-
-## TODO — Deep Dive
-
-- Confirm `<speed_mode>` and `<value>` argument names for `move` in the AI source: the bytecode arg readers pop heading, angle, alt/roll, speed, duration — map these to the AI source syntax precisely
-- `_MVRJink@40` confirmed at 0x4ac9e0 (force-created): jink executes a loop of `FUN_00463a20` calls alternating heading ± angle; jink arg semantics (`param_8` = count, `param_9` = ctrl, `param_10` = duration, `param_3`/`param_4` = deflection angles) now decompiled but full semantic labels need live confirmation
 
 ## Related
 

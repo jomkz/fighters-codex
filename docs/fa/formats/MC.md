@@ -86,7 +86,7 @@ Confirmed condition keyword consumers:
 | `FAIL` | `FUN_004a2a41` |
 | `tmap` | `_MISSIONTextProc@16` (string at `0x4fc228`); `FUN_00495e80` (`.MC` handler at `0x495e80`, string at `0x5010f4`) |
 
-The `cond` keyword appears at 8 locations in FA.EXE but no function references were found — its parse handler and internal dispatch table in `_MISSIONTextProc` remain unmapped.
+The `cond` keyword **does not appear** as a handled keyword in `_MISSIONTextProc@16` — exhaustive read of the ~1,500-line decompile (`DumpAllFunctions.txt` lines 101716–103259) found no `"cond"` string comparison or dispatch branch. `cond` is absent from FA's condition parser; it may be a keyword from a different Jane's title or an unreachable dead branch stripped from this build.
 
 ## Condition Function Protocol (Confirmed)
 
@@ -111,13 +111,6 @@ short FUN_00001000(short param_1, undefined4 param_2, undefined4 param_3, short 
 FA.EXE writes these bytes to track the mission state for the DLL. When `*param_4 = 0x00`, if the target is destroyed (`DAT_00001212 != 0`) and not still alive (`DAT_00001211 == 0`), the MC DLL returns the success code and FA.EXE calls `_MISSIONSuccess@0` to end the mission.
 
 The `.idata` string scan confirmed `_MISSIONSuccess` at offset `0x207F` and `_OBJAlias` at offset `0x2065`.
-
-## TODO — Deep Dive
-
-- ~~Disassemble `UKR01.MC` to trace the complete condition check logic~~ **RESOLVED (2026-05-18):** U34.MC analyzed via `AnalyzeMCDLL.java`. Condition protocol fully confirmed. See `%FA_PROJECT%/output/AnalyzeMCDLL.txt`.
-- Map remaining `.mc_M` keyword handlers beyond those confirmed above (`cond` keyword handler not found)
-- Disassemble `FUN_00495e80` (`.MC` string handler at 0x495e80) to identify its role in the condition pipeline
-- ~~Clarify `EXTRA01.MC` purpose~~ **Resolved (2026-05-18).** Generic bonus-mission condition gate, shared by all 20 standalone extra missions and 13 Baltic extra missions. Each `.M` file loads it via `code extra01` directive. See file inventory above.
 
 ## Related
 

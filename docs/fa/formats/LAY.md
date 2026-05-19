@@ -276,15 +276,6 @@ LAYER struct layout and all major loading functions are now confirmed. Remaining
   - `ft lay dump <file.LAY>` — exports atmosphere parameters as JSON
   - `ft lay gradient <file.LAY> -o gradient.png` — renders sky colour ramp as a PNG strip (one pixel per step)
 
-## TODO — Deep Dive
-
-- ~~Confirm `0x31` and `10 10` in gradient sub-block header~~ **Resolved — builder artefact.** Exhaustive xref search found no FA.EXE function that reads these bytes. The 8-byte preamble at CODE VA 0x10B0 is present in all observed files but is never decoded at runtime; FA.EXE accesses gradient and colour data only via pointers pre-stored in LAYER entries and the DLL data header.
-- ~~Map the `layer <name>.LAY <index>` slot index~~ **Resolved — slot index is ignored.** The MM line parser (`FUN_0047a130`) detects `.LAY` extension via `_strstr`, then calls `FUN_0047a510` which extracts only the filename token (using `FUN_004c686c` with `"%s\\%s"` path format) and loads it. The trailing integer (`0`, `1`, `4`) is never read by the runtime engine. Both MM state serialisers (`FUN_0044f180`, `FUN_00430a90`) always write `0`; values 1 and 4 in shipped files are hand-authored and have no runtime effect. `GetLayerByIndex` (`FUN_004b3170`) is called from rendering code with indices 0 and 3 but is unrelated to the MM slot field.
-- ~~Header gaps +0x34–+0x3C and +0x60–+0x68~~ **Resolved — sky/below array tails.** These are `sky_layer_array[7..9]` and `below_layer_array[7..9]` respectively — the high-index tail of each 10-entry array. Accessed via `(&DAT_00580dc8)[idx]` pointer arithmetic in `SetActiveLayerByAngle` when the angle scale maps to index ≥ 7; `ParseLayerFile` copies them from the DLL header but does not assign `_DAT_0055be*` aliases (only indices 1–6 are aliased), which is why Ghidra showed no named xrefs.
-- ~~Explain CLOUD1B = CLOUD1~~ **Resolved (2026-05-18).** Binary diff shows exactly 3 bytes differ at PE header offsets 0x0088–0x008A (PE metadata/checksum field). All gradient tables, LAYER array, wave params, and rendering data are byte-for-byte identical. The Baltic overcast sky is functionally the same configuration as Ukraine overcast; the 3-byte difference is a build-tool artefact from generating the Baltic variant.
-- ~~Document CLOUD / DAY / other prefix naming convention~~ **Resolved (2026-05-18).** Suffix assignment confirmed from `layer` directives exhaustively read from all 74 `.MM` files. See *Suffix naming convention* section above.
-- Map header +0x00 count/flags semantics (copied to `DAT_00580db0` but not read in any captured function)
-
 ## Related
 
 - [MM.md](MM.md) — theater files that reference `.LAY` files via the `layer` keyword

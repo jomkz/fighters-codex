@@ -16,47 +16,80 @@ Loose file in the FA install directory — not packed into any LIB archive.
 
 ## Known Content
 
-The file is 3,552 bytes and is predominantly null bytes with sparse non-null data. It likely stores IPX/TCP network addresses, player callsigns, session names, and modem settings — the full range of late-1990s multiplayer transport options FA supported.
+The file is 3,552 bytes (4-byte checksum + 3,548-byte `CN_INFO` struct). It stores all transport configuration simultaneously (IPX, TCP/IP, serial, modem) in one unified struct — the active transport is selected at runtime.
 
-## Structure Hypothesis
+**Session name is NOT stored in NET.DAT.** The multiplayer lobby session/game name comes from IP.CFG (`/n=` flag), which is passed to IP.EXE at launch. NET.DAT only holds transport configuration and the Janes.net online identity.
 
-3,552 bytes (0xDE0), predominantly null-padded. The file likely stores one or more transport configuration blocks covering the late-1990s multiplayer options FA supported: IPX LAN, TCP/IP, and serial/modem.
+**Transport union**: All transport configs coexist in one `CN_INFO` struct. The active transport is chosen at runtime by `[0x54]`; all sub-blocks are always persisted.
 
-Probable layout (hypothesis — verify against `CN_INFO` struct via Ghidra):
+## File Layout
+
+NET.DAT is written by `CN_WriteConfig` (0x47f930): a 4-byte checksum followed by the 3,548-byte `CN_INFO` struct (`fwrite(param_1, 0xddc, 1, file)`).
+
+All file offsets below = CN_INFO struct offset + 4 (checksum header).
 
 ```
-Offset     Size  Field
-------     ----  -----
-0x0000        4  magic or version tag
-0x0004      128  player callsign (null-terminated)
-0x0084       64  session/game name
-0x00C4        1  transport type (0=IPX, 1=TCP/IP, 2=serial, 3=modem)
-0x00C5      256  IP address or hostname (TCP/IP mode)
-0x01C5      ...  modem init string / COM port settings
-   ...      ...  (remainder null-padded)
+File off.  CN_INFO  Size  Field
+---------  -------  ----  -----
+0x0000        —       4   checksum (CfigChecksum over CN_INFO block; length = 0xddc/0xdd8/0xdb0 for v3/v2/v1)
+0x0004      [0x0]     4   version dword — must be 3 (current); 2 and 1 are migrated on read
+0x0008      [0x4]    80   callsign / Janes.net online name (null-terminated, 80-byte field)
+                           — seeded from _janesOnlineName by CN_SetFactoryDefaults and CN_ReadConfig
+                           — also passed directly as name to SER_ExchangeNames in serial mode
+0x0058      [0x54]    4   transport type dword — selects active protocol:
+                             3 = serial / RS-232 (SER_Initialize2_5 checks for == 3)
+                             4 = TCP/IP (doConfigurationScreen checks for == 4)
+                             other values used by NetSetProtocol for IPX/modem/NetBEUI
+0x0064      [0x60]    4   baud rate index dword (factory default: 10)
+                             7=9600 · 8=19200 · 9=38400 · 10=57600 · 11=57600 · 12=28800 · 13=115200
+                             (SER_Initialize4 switch; also used by MOD_InitPortAndModem)
+0x0068      [0x64]    4   serial COM port index dword (factory default: 0 = COM1; range 0–3)
+                             — read by SER_Initialize1; written by MOD_FindModemAndInit autodetect
+0x006C      [0x68]   84   modem phone number string (null-terminated, 84-byte field)
+                             — passed to _Dial_12 by MOD_DoConnect when param_2 == 0 (dial mode)
+0x00C0      [0xbc]    4   modem COM port index dword (factory default: 8 = autodetect)
+                             0–7 = COM1–COM8 (explicit); 8 = autodetect (MOD_Initialize1 scans registry)
+                             range valid: 0–8 checked by MOD_Initialize
+                   ~~~~  [0xc0]–[0x8e3]: ~2,180 bytes — IPX node/network address and other
+                          protocol-specific fields (not yet mapped; no direct field accesses
+                          visible in FA.EXE decompile — consumed via protocol vtable calls)
+0x08E8      [0x8e4]   8   IP address hex string — 8 ASCII hex chars, e.g. "c0a80101" for 192.168.1.1
+                           (null-checkable; if [0x8e4]==0 then IP/MAC binary fields are zeroed)
+0x08F0      [0x8ec]  13   MAC/IPX node hex string — 12 ASCII hex chars + null, e.g. "001122334455"
+                   ~~~~  [0x8f9]–[0xdab]: ~1,203 bytes — unknown (possibly padding / modem init strings)
+0x0DB0      [0xdac]   4   appIO callback function pointer — set by SER/MOD/NET_Initialize from CN_INFO;
+                           used for status dialogs during connection setup
+0x0DB4      [0xdb0]  40   TCP sub-block (added in v2; initialized by NetSetFactoryTCP)
+                           — first 12 bytes (3 dwords) zeroed/set via protocol vtable slot +0x66
+                           — [0xdd0]–[0xdd7] (within TCP block) = IP binary + start of MAC binary (v3 decode target)
+0x0DD4      [0xdd0]   4   IP address binary — 4 bytes decoded from hex string at [0x8e4] via _atohb(…,8)
+0x0DD8      [0xdd4]   6   MAC address binary — 6 bytes decoded from hex string at [0x8ec] via _atohb(…,0xc)
+0x0DDE      [0xdda]   1   IP/MAC validity flag — 1 = both fields successfully decoded; 0 = invalid/absent
+0x0DDF      [0xddb]   1   (padding / unused; end of v3 struct)
 ```
 
-## Differential Mapping
+### Version migration (CN_ReadConfig)
 
-Since most of the file is null-padded, the quickest approach is:
+| File version | Action |
+|---|---|
+| v3, size 0xddc | Accepted as-is; `_janesOnlineName` overwrites `[0x4]` if set |
+| v2, size 0xdd8 | Upgraded: version set to 3; TCP sub-block re-initialized; IP/MAC binary decoded from hex strings at `[0x8e4]`/`[0x8ec]` |
+| v1, size 0xdb0 | Upgraded: same as v2 migration |
+| corrupt / missing | Factory defaults applied via `CN_SetFactoryDefaults` |
 
-1. Open FA multiplayer setup (even without a real network). Enter a callsign and session name.
-2. Diff `NET.DAT` before and after — the callsign and session name will appear as ASCII strings; their offset is their field offset.
-3. Change transport type (IPX → TCP/IP) and diff again; the transport byte will change.
+## Confirmed Functions
 
-## Ghidra Cross-Reference
-
-FA.SMS contains `CN_INFO` (confirmed in the SMS symbol set). Load FA.EXE with `ImportFASms` labels:
-
-1. Search for `CN_INFO` or `?CN_INFO@@` in the Symbol Table.
-2. If it appears as a data label, its size and the fields accessed near it (via decompiler) will give the full struct layout without any live game testing.
-3. Cross-reference with the `CN_ReadConfig` function that also reads `EA.CFG` — the two structs may share a common config block.
-
-## TODO
-
-- Read callsign and session name offsets via differential mapping
-- Locate `CN_INFO` in Ghidra and map the full struct
-- Confirm whether NET.DAT holds one transport block or a union of all transport configs
+| Function | VA | Lines | Role |
+|----------|----|-------|------|
+| `CN_ReadConfig` | 0x47f7a0 | 98888 | Reads NET.DAT; populates CN_INFO from file; applies `_janesOnlineName` at `[4]` |
+| `CN_WriteConfig` | 0x47f930 | 99014 | Writes 4-byte checksum + 0xddc-byte CN_INFO to NET.DAT |
+| `CN_SetFactoryDefaults` | 0x47f6d0 | 98785 | Zeroes CN_INFO; sets version=3; seeds `[4]` from `_janesOnlineName`; calls `NetSetFactoryTCP` |
+| `CfigChecksum` | 0x47f740 | 98851 | Checksums CN_INFO; length driven by version dword: 0xddc/0xdd8/0xdb0 |
+| `NetSetFactoryTCP` | 0x4b0700 | 139845 | Writes 3 zero dwords to TCP sub-block start via protocol vtable slot +0x66 |
+| `SER_Initialize` | 0x44cb20 | 57979 | Serial connection setup; reads `[0x54]`, `[0x60]`, `[0x64]` |
+| `SER_Initialize4` | 0x44c990 | 57902 | Maps `[0x60]` baud rate index → internal timing constant |
+| `MOD_Initialize` | 0x49aff0 | 118822 | Modem connection setup; reads `[0x68]` phone number, `[0xbc]` COM port |
+| `NET_Initialize` | 0x4b0830 | 140115 | TCP/IP connection setup; reads `[0x54]` for `NetSetProtocol`, `[0xdac]` for appIO |
 
 ## Related
 

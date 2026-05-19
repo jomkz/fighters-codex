@@ -206,12 +206,12 @@ Full survey of all 84 NT files.
 | 10 | `$400` | Civilian/light type | **Confirmed** — `_Reaction_12` (0x464040), `_MaskEvents_4` (0x463ea0) | Infantry (SOLDIER, RUNNER), small civilian craft (FISHBT, JUNK, RBOAT), CATGUY. Drives `_Reaction_12` and `_MaskEvents_4` event-system handlers; also toggles bay-door actuator. Shared semantic with OT bit 10. |
 | 11 | `$800` | Ground-mobile unit | **Confirmed** — `FUN_0042c9b0` | OBJ_TYPE+9 & 0x800 sets a ground-mobile state flag in targeting/collision resolver. Present on all ground vehicles; absent on naval vessels (carriers have it via extra bits). |
 | 15 | `$8000` | Flight deck present | **Confirmed** — `FUN_00425196` | When set, forces targeting category to 4 (flight deck special class). Also tested combined with bit 22 (`& 0x408000`). All carrier types (CLEM, KITT, NIMZ, KIEV, WASP). |
-| 18 | `$40000` | Carrier arrestor-wire deck | Inferred | Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Not confirmed via entity+0x09 bit test — mask found only in runtime entity flags and game-state globals. |
-| 19 | `$80000` | Carrier catapult deck | Inferred | Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Not confirmed via entity+0x09 bit test. |
-| 20 | `$100000` | VSTOL/helicopter deck | Inferred | KIEV, WASP; absent on conventional carriers without VSTOL. Not confirmed via entity+0x09 bit test. |
+| 18 | `$40000` | Fuel bar capacity doubler / conventional carrier | **Confirmed (fuel bar display)** | `*(uint*)(entity+1) & 0x40000` tested in two fuel bar display functions (`FUN_004558f0` area at line 45759; `FUN_00484e?? ` at line 104545): when set, `fuel_capacity = OBJ_TYPE+0x49_value × 2` for the bar scale. Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Original "arrestor-wire deck" label is inferred from distribution pattern only — carrier landing handler inline tests not confirmed. Actual confirmed effect: doubles the fuel bar capacity denominator so the bar correctly represents the larger fuel load of conventional carriers. |
+| 19 | `$80000` | NPC burst-size modifier A | **Confirmed** — `_PROJServiceWeapon@24` (0x4c4700) | Tested at `*(uint*)(pcVar11 + 0xa6) & 0x80000` in the weapon service loop. When set, a 25% chance (`_Percent_4(0x19)`) scales the burst-round count to `(75 + rand(50))%` of the base value — a high-burst probability path. Present on conventional carriers (CLEM, KITT, NIMZ, KIEV); consistent with high-cyclic defense weapons (Phalanx CIWS). |
+| 20 | `$100000` | NPC burst-size modifier B | **Confirmed** — `_PROJServiceWeapon@24` (0x4c4700) | Tested at `*(uint*)(pcVar11 + 0xa6) & 0x100000` in the same weapon service loop. When set (and bit 19 path not taken), a 75% chance (`_Percent_4(0x4b)`) scales burst-round count to `(50 + rand(100))%` of base — a medium-burst probability path. Present on VSTOL carrier WASP and hybrid KIEV. |
 | 22 | `$400000` | Prominent/large variant | **Confirmed** — `FUN_0042c9b0` | When set, collision geometry uses hit-point count of 16; also tested combined with bit 15. |
-| 25 | `$2000000` | Emplaced AA artillery | Inferred | KS12 (85mm), KS19 (100mm), M1939 (37mm). Not confirmed via entity+0x09 bit test. |
-| 26 | `$4000000` | SA-2A fixed-site SAM | Inferred | SA2A only. Not confirmed via entity+0x09 bit test. |
+| 25 | `$2000000` | Emplaced AA artillery | **Dead/reserved** (2026-05-19) | KS12 (85mm), KS19 (100mm), M1939 (37mm). No entity `ot_flags` bit 25 test found anywhere in FA.EXE full decompile. Only `_gamePrefs & 0x2000000` hits exist — confirmed as a player-preference missile-targeting assist flag (HUD weapon targeting code, line 5239 area), unrelated to entity type. No terrain overlay DLL exists in FA_1.LIB or FA_2.LIB. Bit is set but never consumed — likely a reserved flag from a scrapped feature. Label "Emplaced AA artillery" remains inferred from unit distribution only. |
+| 26 | `$4000000` | SA-2A fixed-site SAM — no post-kill evasion | **Confirmed** — `_GVEventProc` (0x473f50) | `DAT_0050d271 & 0x4000000` (entity+0x09 & 0x4000000). In the kill-hit path: if damage category bits `0x1e` are active AND bit 26 is NOT set, calls `FUN_00474570()` (creates evasion move command) + `_ImmediateService_0()`. Bit 26 set (SA-2A) skips this evasion branch — SA-2A does not attempt a post-kill dodge maneuver. SA2A only. |
 
 ### Proc symbols
 
@@ -220,8 +220,3 @@ Full survey of all 84 NT files.
 | `_GVProc` | M1, ZSU23, TRUCK, IOWA, KIROV | NPC AI dispatcher (shared across all categories) |
 | `_PROJProc` | (via JT) | Projectile physics |
 
-## TODO
-
-- **ot_flags bit 10 (`$400`)**: Confirmed resolved. `_Reaction_12` (0x464040) and `_MaskEvents_4` (0x463ea0) are the entity+0x09 & 0x400 testers.
-- **ot_flags bits 18, 19, 20 (`$40000`, `$80000`, `$100000`)**: Still not confirmed at OBJ_TYPE+0x09 — no dedicated test functions found; tested inline only (NT bits 18–20 / 25–26 confirmed inline-only from Ghidra run). Labels "arrestor-wire/catapult/VSTOL deck" remain inferred from carrier category patterns.
-- **ot_flags bits 25, 26 (`$2000000`, `$4000000`)**: Still not confirmed at OBJ_TYPE+0x09. Labels inferred from emplaced AA / SA-2A category patterns. Tested inline only.

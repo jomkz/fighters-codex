@@ -60,9 +60,14 @@ Fully mapped from `?UCONFIG_save_EA_CFG@@YGDXZ` (0x004b2980) and `?UCONFIG_load_
 
 The three string fields (0x108, 0x129, 0x149) are only written if the source global is non-empty (null-check guards the copy loop). Both load and save functions are named `UCONFIG_*`, distinct from the network `CN_ReadConfig`/`CN_WriteConfig` pair which handles NET.DAT.
 
-## TODO
+## Confirmed Globals
 
-- Identify `DAT_004f8bf9` and `DAT_004f8c19` — likely joystick calibration filename or a NATO/campaign name string saved at session end
+| Address | Size | Name | Confirmed in |
+|---------|------|------|-------------|
+| `DAT_004f8bf9` | 32 bytes | Multiplayer callsign | `_WriteConfig` (0x41e8e0), `FUN_004900f0` (0x4900f0) |
+| `DAT_004f8c19` | 13 bytes | Squadron / wing tag | `_WriteConfig` (0x41e8e0), `FUN_004900f0` (0x4900f0) |
+
+`FUN_004900f0` (entity name lookup): when `param_1 == _playerId` and `DAT_004f8bf9 != '\0'`, uses these globals as the player's display name + tag pair (passed to `FUN_0048e3f0`); otherwise reads the name from `entity+10`.
 
 ## Related
 
