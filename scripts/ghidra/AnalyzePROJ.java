@@ -18,14 +18,14 @@ public class AnalyzePROJ extends FAScript {
         dumpAt(0x004c2170L);
 
         header("_PROJProc (0x4c1f50)");
-        dumpAt(0x004c1f50L);
+        dumpAtForced(0x004c1f50L);
 
         header("FUN_004c1f10 (contains _PROJProc addr)");
         dumpAt(0x004c1f10L);
 
         // Movement / physics
         header("?PROJMoveProc (0x4c11b0)");
-        dumpAt(0x004c11b0L);
+        dumpAtForced(0x004c11b0L);
 
         header("_PROJSpeed@8 (0x4c1120)");
         dumpAt(0x004c1120L);

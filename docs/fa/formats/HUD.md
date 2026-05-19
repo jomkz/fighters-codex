@@ -145,7 +145,7 @@ After loading, the struct is resident at `DAT_00521360`. Field offsets within th
 | 22 | `0x400000` | set by `@SAYLowFuelMessage@8` when Out-of-fuel line plays | Out-of-fuel voice line played (inhibit) |
 | 28 | `0x10000000` | `FUN_00407ee0`, `FUN_00408420`; set by `_DAMAGEDoHit@12` state `0x50d40e` | Classified / redacted display — speed tape substitutes string at `0x004ebfbc`; altitude tape substitutes `s_XXXXX_004ebfd8` ("XXXXX"); tape tick-mark rendering skipped entirely; also triggered by aircraft-out-of-control damage state |
 | 29 | `0x20000000` | `_DAMAGEDoHit@12` damage state `0x50d410` | Emergency state — aircraft critical / imminent crash indicator |
-| 30 | `0x40000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result) | Emergency state variant A — aircraft spinning / uncontrolled flight |
+| 30 | `0x40000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result); also read by carrier HGR renderer (`AnalyzeHGR.txt` lines 4143/4315): when set, suppresses normal slot-dot rendering and fixes the approach-angle indicator at position 2 (of 0–9) instead of computing the live angle from `DAT_0050ce9f` | Emergency state variant A — aircraft spinning / uncontrolled flight |
 | 31 | `0x80000000` | `_DAMAGEDoHit@12` damage state `0x50d40f` (conditional on `FUN_004562f0(3)` result) | Emergency state variant B — aircraft spinning / uncontrolled flight (alternate roll) |
 
 Advisory icon names (label strings embedded in the HUD file, order confirmed from A7.HUD string block at VA `0x00001245`):

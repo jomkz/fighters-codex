@@ -33,6 +33,9 @@ public class AnalyzeFA extends FAScript {
         analyzeNetwork();
         analyzeInput();
 
+        // BI/AI -- FRAME opcode consumer search
+        analyzeBIFRAME();
+
         closeOutput();
     }
 
@@ -93,9 +96,9 @@ public class AnalyzeFA extends FAScript {
         header("HUD  --  _PLANECheckFuel@0 (0x49fb70)");
         dumpAt(0x0049fb70L);
         header("HUD  --  _PROJProc (0x4c1f50)");
-        dumpAt(0x004c1f50L);
+        dumpAtForced(0x004c1f50L);
         header("HUD  --  PROJMoveProc (0x4c11b0)");
-        dumpAt(0x004c11b0L);
+        dumpAtForced(0x004c11b0L);
         header("HUD  --  callers of _HARDPtrs@12 (0x452770)");
         dumpCallers(0x00452770L);
         header("HUD  --  draw range 0x407b60-0x40ac00");
@@ -150,9 +153,9 @@ public class AnalyzeFA extends FAScript {
         header("PROJ  --  _PROJFire@16 (0x4c2170)");
         dumpAt(0x004c2170L);
         header("PROJ  --  _PROJProc (0x4c1f50)");
-        dumpAt(0x004c1f50L);
+        dumpAtForced(0x004c1f50L);
         header("PROJ  --  ?PROJMoveProc (0x4c11b0)");
-        dumpAt(0x004c11b0L);
+        dumpAtForced(0x004c11b0L);
         header("PROJ  --  _PROJSpeed@8 (0x4c1120)");
         dumpAt(0x004c1120L);
         header("PROJ  --  _PROJEngineState@0 (0x4c1170)");
@@ -591,9 +594,9 @@ public class AnalyzeFA extends FAScript {
         header("PROJ  --  callers of _PROJProc wrapper (0x4c1f10)");
         dumpCallers(0x004c1f10L);
         header("PROJ  --  _PROJProc dispatch (0x4c1f50)");
-        dumpAt(0x004c1f50L);
+        dumpAtForced(0x004c1f50L);
         header("PROJ  --  PROJMoveProc (0x4c11b0)");
-        dumpAt(0x004c11b0L);
+        dumpAtForced(0x004c11b0L);
         header("TERRAIN  --  _GetGround@0 (0x47af70) and callers");
         dumpAt(0x0047af70L);
         dumpCallers(0x0047af70L);
@@ -654,6 +657,31 @@ public class AnalyzeFA extends FAScript {
         header("MP  --  player/entity sync");
         dumpSymbolsMatching("mpsetfuel", "?mpsetfuel", "mpsetpos", "mpsetstate",
                 "mpsetweapon", "mpsetdamage", "mpentityupdate");
+    }
+
+    // -----------------------------------------------------------------------
+    // BIFRAME  --  BI opcode 0x28 (FRAME) consumer search
+    // -----------------------------------------------------------------------
+    private void analyzeBIFRAME() throws Exception {
+        header("BIFRAME  --  FRAME writer: case 0x28 dispatch area 0x4ace00-0x4ad800");
+        dumpRange(0x004ace00L, 0x004ad800L);
+        header("BIFRAME  --  CT state save FUN_004668f0");
+        dumpAt(0x004668f0L);
+        header("BIFRAME  --  CT state restore FUN_00466920");
+        dumpAt(0x00466920L);
+        header("BIFRAME  --  findFunctionsReadingOffsets +0x7c (FRAME s16 value in CT state block)");
+        for (long va : findFunctionsReadingOffsets(0x00400000L, 0x00540000L, 0x7c, 0x80)) dumpAt(va);
+        header("BIFRAME  --  _FMFlight@0 (0x47b020) candidate consumer");
+        dumpAtForced(0x0047b020L);
+        header("BIFRAME  --  _MANAdd@24 (0x47ceb0) candidate consumer");
+        dumpAtForced(0x0047ceb0L);
+        header("BIFRAME  --  FUN_0048e740 candidate consumer");
+        dumpAtForced(0x0048e740L);
+        header("BIFRAME  --  _GVDoCurrentWaypoint / MPStatusSet (symbol search)");
+        dumpSymbolsMatching("GVDoCurrentWaypoint", "gvdocurrentwaypoint",
+                "MPStatusSet", "mpstatusset", "INFO2Draw", "info2draw");
+        header("BIFRAME  --  callers of DAT_0050cf90 (CT block saved-copy pointer)");
+        dumpCallers(0x0050cf90L);
     }
 
     // -----------------------------------------------------------------------

@@ -1,92 +1,78 @@
 # Research Backlog
 
-Outstanding RE and documentation tasks, grouped by effort.
+Outstanding RE and documentation tasks, grouped by blocker type. Only open items are listed — resolved items are recorded inline in the individual format docs.
 
 ---
 
-## Binary Analysis (no disassembly tool required)
+## Requires Gameplay (differential save pass)
 
-- **PLT field gap (0xB0–campaign block start)**: Field layout from offset `0xB0` to the campaign block start is unmapped. `PilotSave(PILOT*, short)` confirmed at 0x467180 — decompile in Ghidra (with FA.SMS labels applied) to map the full `PILOT` struct and confirm all field offsets directly. Alternatively: diff two pilot saves with known differences (aircraft, loadout) byte-by-byte. See [formats/PLT.md](formats/PLT.md). *(Requires gameplay — 4-pass methodology documented in PLT.md)*
+- **PLT text-region gaps (`0xB0`–`0xC1`, `0xCF`–`0x5AE`, `0x2018`–`0x20B7`, `0x21F8`–`0x25DF`)**: The numeric stats (kill tallies, mission counters, weapon accuracy at `0x1F80`–`0x21F7`) are fully mapped from RE. Remaining unknowns span four ranges: 18 bytes at `0xB0`–`0xC1` (possibly score level or rank index), 1,344 bytes at `0xCF`–`0x5AE` (between secondary string and mission log), 160 bytes at `0x2018`–`0x20B7` (between kill tallies and weapon accuracy blocks), and ~1,000 bytes at `0x21F8`–`0x25DF` (tail region — likely fort/campaign-phase stats and multiplayer scoring). Differential save is the most direct path: vary rank/score/missions, compare saves at those ranges. See [formats/PLT.md](formats/PLT.md).
 
----
-
-## Win32 PE DLL Disassembly (FA.EXE targets)
-
-Overlay DLL Ghidra projects already imported under `%FA_PROJECT%\overlay_projects\`. FA.EXE project at `%FA_PROJECT%\fa-re.gpr` has all 3,829 FA.SMS symbols applied. Use the Ghidra GUI for manual tracing — the static VA scanner scripts cannot resolve the items below (see blockers).
-
-- ~~**HUD damage overlay (bits 0–4)**~~ **RESOLVED (2026-05-19):** Bits 0–4 are **operational inhibitor flags**, not display bits. There is no separate damage-overlay display function reading them. When set, they suppress system operations in the FM actuator functions: bit 2 (0x4) gates `@FMBrakes@8` (brakes silently disabled when damaged); other bits gate analogous subsystems via GAS damage events. Set by `_DAMAGEDoHit@12` event cases 0x50d3f7–0x50d40c. See [formats/HUD.md](formats/HUD.md).
-
-  **Bits 28–31 reader still open:** Bit 30 (0x40000000) confirmed read by the carrier HGR hangar renderer (`AnalyzeHGR.txt` lines 4143/4315 — checks this bit to modify a display parameter in the hangar slot view). Full display consumer for all four bits not yet identified.
-
-- **HGR hangar slot structure**: `H_AIRB.HGR` (land base) and `H_AIRB2.HGR` (carrier). Loader `FUN_004543c0` confirmed: 30 × 8-byte slot entries at offset +0x2D; X/Y arrays built at load. Remaining: decode the 8-byte entry (icon position, angle, camera?) and trace `FUN_004a6cc0(pcVar5, 0x8104)` sub-resource key. *Blocker: no Ghidra analysis script was written targeting HGR — open the HGR Ghidra project (`overlay_projects\hud\` or FA.EXE) and trace from `FUN_004543c0`.* See [formats/HGR.md](formats/HGR.md).
-
-- **NT `ot_flags` bits 18–20, 25–26**: Labels "arrestor-wire/catapult/VSTOL deck" (18–20) and "emplaced AA / SA-2A" (25–26) are inferred from carrier and AA category patterns only. *Blocker: no dedicated test function exists for these bits — they are tested inline inside larger functions (e.g. carrier landing handler). `AnalyzeOTNT.java` confirmed this. Requires manually reading the containing functions in the Ghidra GUI.* See [formats/NT.md](formats/NT.md).
-
-- **MM `obj flags` bits 9 and 10**: Bit 9 (mission-critical?) and bit 10 (friendly vs hostile ownership?) semantics unconfirmed. *Blocker: inline-only tests; no helper function to target via script. Trace `_MISSIONTextProc@16` (`FUN_00481c10`) obj handler in FA.EXE Ghidra project.* See [formats/MM.md](formats/MM.md).
+- **NET.DAT callsign / session-name offsets**: Callsign and session name are user-visible in the multiplayer lobby screen but their byte offsets within `NET.DAT` are not mapped. Differential approach: write two NET.DAT files with different callsigns and compare. Also needed: confirm whether the file holds one active transport block or a union of all transport configs (IPX + TCP/IP + serial/modem all present simultaneously). See [formats/NET.md](formats/NET.md).
 
 ---
 
-## Overlay DLL Disassembly (must use overlay Ghidra projects, not FA.EXE scripts)
+## Requires Ghidra GUI (FA.EXE project)
 
-These items require opening the relevant format's Ghidra project under `%FA_PROJECT%\overlay_projects\`. Running FA.EXE analysis scripts against them will not work — the logic does not exist in FA.EXE's address space.
+Overlay DLL Ghidra projects already imported under `%FA_PROJECT%\overlay_projects\`. FA.EXE project at `%FA_PROJECT%\fa-re.gpr`. These items have inline-only, pointer-accessed, or vtable-dispatched consumers that headless scripts cannot resolve.
 
-- ~~**CAM binary layout**~~ **RESOLVED (2026-05-18):** KURILE.CAM analyzed via `AnalyzeCAMDLL.java`. Dispatch function at PE offset 0x1000, command protocol 0x00–0x08 mapped, `.idata` import table extracted (all FA.EXE callbacks the DLL calls). Mission list string table at `DAT_000014e1`. See [formats/CAM.md](formats/CAM.md) and `%FA_PROJECT%/output/AnalyzeCAMDLL.txt`.
+- **NT `ot_flags` bit 25 (`$2000000`)**: No entity `ot_flags` test found in FA.EXE full decompile (`DumpAllFunctions.txt`) or in any analyzed overlay DLL. Only `_gamePrefs & 0x2000000` hits exist — not entity-level tests. Label "Emplaced AA artillery" remains inferred from unit distribution (KS12/KS19/M1939 all carry `$2000000`). *Approach: import terrain overlay DLL (not yet identified — search FA install dir for DLLs containing `0x2000000` constant), then search for entity+0x09 tests.* See [formats/NT.md](formats/NT.md).
 
-  *Remaining:* Weapon/aircraft table binary field encoding not yet decoded (needs deeper data-section walk). `FUN_00428340` role unconfirmed.
+- **AI / BI opcode 0x28 FRAME consumer (reader)**: Writer fully confirmed: `FUN_00466a80` case 0x28 (`DumpAllFunctions.txt` line 78118) reads 4 bytes from bytecode stream → `DAT_00546c44`/`DAT_00546c46` (CT state block `+0x7c`/`+0x7e`), advances PC by 4, with a stack-imbalance guard (`DAT_00546c8c != '\0' && DAT_00546c42 != 0 → FUN_00466820(0xc)`). Reader not found — accessed via pointer to the state block (`*(DAT_0050cf90) + 0x7c`), invisible to direct-address offset scans. All 16 `findFunctionsReadingOffsets` candidates at offset +0x7c were false positives. *Approach: cross-reference `DAT_00546bc8` in the FA.EXE Ghidra GUI to find all struct-pointer loads of the 128-byte CT state block.* See [formats/AI.md](formats/AI.md) and [formats/BI.md](formats/BI.md).
 
-- ~~**MC condition check logic**~~ **RESOLVED (2026-05-18):** U34.MC analyzed via `AnalyzeMCDLL.java`. Condition function signature confirmed: `short FUN_00001000(short, undefined4, undefined4, short*)`. Protocol: `*param_4 == 0x00` evaluates condition (reads `DAT_00001212`/`DAT_00001211`); `*param_4 == 0x20` returns pass-through state. Data layout at PE offsets 0x1211–0x1212. See [formats/MC.md](formats/MC.md) and `%FA_PROJECT%/output/AnalyzeMCDLL.txt`.
+- **JT physics gap (`+0x50`–`+0x54`, residual)**: `_PROJMoveProc` (0x4c11b0) decompiled via `dumpAtForced` (2026-05-19). Motor phase thresholds (`+0x57`/`+0x59`/`+0x5B`/`+0x5D`), seeker search params (`+0x69`/`+0x6B`/`+0x6D`), smoke trail (`+0x70`–`+0x74`), and warhead bits 1/5/6/12/13 are confirmed. Remaining: `+0x50`–`+0x54` (entity offset table: reaction params / mode byte) and scattered bytes `+0x56`/`+0x58`/`+0x5A`/`+0x5C`/`+0x5E`–`+0x64` — these addresses overlap the aircraft flight model (BRF entity in scratchpad), so missile-specific semantics cannot be isolated without a type-filtered trace. *Approach: Ghidra GUI, filter `_PROJMoveProc` decompile for reads to `entity+0xF6`–`0xFA` range specifically, or inspect `FUN_004c1630` / `FUN_004c1660` (guidance algorithm targets) for offset reads in that range.* See [formats/JT.md](formats/JT.md).
 
-  *Remaining:* `FUN_00495e80` role still unconfirmed. `EXTRA01.MC` purpose **RESOLVED (2026-05-18):** generic bonus-mission condition gate, shared by `EXTRA01.M`–`EXTRA20.M` and `BEXTRA01.M`–`BEXTRA13.M` via `code extra01` directive in each `.M` file. See [formats/MC.md](formats/MC.md).
+- **HUD state flags (`DAT_0050cfef`) bits 28–31 — cockpit display consumer**: `_DAMAGEDoHit@12` writes these bits; bit 30 (`0x40000000`) is also read by the carrier HGR hangar renderer (`AnalyzeHGR.txt` lines 4143, 4315). The cockpit warning-display consumer for all four bits has not been identified in the decompile. *Approach: search `DumpAllFunctions.txt` for `& 0x10000000`, `& 0x20000000`, `& 0x40000000`, `& 0x80000000` in functions near the HUD draw loop; or Ghidra GUI xref on `DAT_0050cfef`.* See [formats/HUD.md](formats/HUD.md).
 
-- **T2 surface class → PIC atlas mapping and tile-summary algorithm**: T2 loading code is in the T2 terrain overlay DLL — confirmed absent from FA.EXE. Entry point `@T_Load@4` (0x4c5d70) and remap handler `FUN_004d3064` are FA.EXE call sites into the DLL, not the implementation. Sub-header bytes 4–16 class constants and tile-summary record 0 selection algorithm also open. *Approach: open the T2 terrain overlay Ghidra project (likely under `overlay_projects\`), locate the `BIT2` magic handler, trace `FUN_004d3064` to map surface class byte → PIC atlas row/column. Trace the sub-header parser — constant `0x95` found in `FUN_0043faf0`, `FUN_004672c0`, `FUN_0046eedf`, `FUN_00480230` — these are the candidate entry points.* See [formats/T2.md](formats/T2.md).
+- **HUD per-aircraft anchor point source**: `FUN_00406040` initializes the HUD anchor with `0x10 0x10` defaults. Whether the actual per-aircraft anchor position is loaded from the `.PT` type record or a separate config is unconfirmed. *Approach: Ghidra GUI xref on `FUN_00406040` to find the caller that overrides the default, then trace to the PT field.* See [formats/HUD.md](formats/HUD.md).
 
----
+- **FA.CFG — `DAT_004f8bf9` / `DAT_004f8c19`**: Written at session end; likely a joystick calibration filename or NATO/campaign-mode name string saved to config. *Approach: Ghidra GUI xref on both addresses to find all read and write sites.* See [formats/CFG.md](formats/CFG.md).
 
-## Mission System Formats
+- **LAY DLL header `+0x00` — count/flags dword**: Copied to `DAT_00580db0` during `ParseLayerFile` but no function reads `DAT_00580db0` anywhere in the headless decompile. *Approach: cross-reference `DAT_00580db0` in the Ghidra GUI to locate the consumer; confirm whether this is a format-version guard or a runtime count.* See [formats/LAY.md](formats/LAY.md).
 
-- **AI / BI opcode 0x28 FRAME consumer**: FRAME writes two s16 values to `DAT_00546c44`/`DAT_00546c46`. No reader found via address-based scan. *Blocker: the consumer accesses these globals through a pointer to the surrounding interpreter state block, not by direct address — xref-by-address scanning misses it. Approach: in the FA.EXE Ghidra project, find the struct containing `DAT_00546c44` at its known offset, then find all functions that load a pointer to that struct and read the field by offset.* Candidate consumers from offset scan: `_INFO2Draw`, `_FMFlight@0`, `_MANAdd@24`, `_GVDoCurrentWaypoint`, `?MPStatusSet@@YIXJ@Z`, `FUN_0048e740`. See [formats/AI.md](formats/AI.md) and [formats/BI.md](formats/BI.md).
-
-  **Update (2026-05-18):** Writer confirmed — it's case 0x28 in the BI interpreter dispatch function (large switch statement on the bytecode byte, contains opcodes 0x01–0x28+). The interpreter global `DAT_00546bea` is the bytecode pointer. Reader of `DAT_00546c44`/`0546c46` not found in full DumpAllFunctions decompile — confirmed indirect access via struct pointer. Still requires manual Ghidra GUI trace.
-
-- ~~**MM `tdic id=256`**: Whether tile-type index 256 is a sentinel, default, or T2 reference is unconfirmed.~~ **RESOLVED (2026-05-18):** 256 (`0x100`) is the type tag for `tmap_named` entries in the terrain dictionary — written explicitly by the `tmap_named` keyword handler when adding a named terrain reference to `_tdic`. It is NOT a T2 reference; it distinguishes named-tile entries from indexed-tile entries in the tile dictionary. See [formats/MM.md](formats/MM.md).
+- **NET.DAT — `CN_INFO` struct full layout**: `CN_ReadConfig` / `CN_WriteConfig` copy 0xDDC bytes (3548 bytes) between the file and the struct. The field layout of all transport-specific sub-blocks (IPX, TCP/IP, serial/modem offsets, port numbers, baud rate) is not confirmed. *Approach: Ghidra GUI, open the `CN_ReadConfig` area, trace all field-write instructions to recover the struct skeleton; cross-check against `CN_WriteConfig` symmetry.* See [formats/NET.md](formats/NET.md).
 
 ---
 
-## Format Deep Dives (BRF Numeric Fields)
+## Requires Overlay DLL Ghidra Project
 
-- **JT physics gap bytes (+0x50–0x6E, 30 bytes)**: Turn rate, g-limit, and other flight-model params unresolved. *Blocker: `_PROJProc` is called through a virtual function table slot — no static CALL to a known VA exists. Static address-range scanning (`DumpPROJPhysics3`, `DumpPROJDispatch`) found nothing. Approach: in Ghidra GUI, find a known missile entity instance, follow its vtable to `_PROJProc`, then trace offset reads in the 0x50–0x6E range.* See [formats/JT.md](formats/JT.md).
+- **T2 surface class → PIC atlas mapping**: BIT2 binary parser absent from FA.EXE — confirmed via `DumpAllFunctions.txt` (no BIT2 string, no inline magic comparison found). `@T_Load@4` (0x4c5d70) and `FUN_004d3064` are FA.EXE call sites only; `FUN_004d3064` computes a Chebyshev LOD metric and writes the result into `DAT_00515f94 + surface_class_index + 3`. Sub-header bytes 4–16 class constants and tile-summary record 0 selection algorithm remain open. **Terrain overlay DLL not yet identified** — not among the standard overlay types (BI/CAM/MC/HUD/LAY/FNT/MUS) extracted from FA_2.LIB. *Approach: search the FA install directory for DLLs containing the "BIT2" string; import into a new Ghidra project; locate the BIT2 magic handler; trace surface class → PIC atlas mapping.* See [formats/T2.md](formats/T2.md).
 
-- ~~**JT warhead flags bits 1–3, 5–6**~~ **RESOLVED (2026-05-18):** Complete scan of all 135 `.JT` warhead dwords (34 unique values) confirms consistent weapon-category patterns. Bit 1 = missiles/rockets; bit 2 = missiles/rockets/guns; bit 3 = guided+guns; bit 5 = heavy standoff only; bit 6 = everything except gravity bombs. No test function found in full decompile — these are structural category metadata, not runtime-dispatched flags. See [formats/JT.md](formats/JT.md).
+- **CAM weapon/aircraft table — binary gap (`0x16eb`–`0x17bb`, 209 bytes)**: UKRAINE.CAM CODE section string tables (weapon filenames, aircraft IDs, mission names, state ID strings) are fully decoded. The 209-byte binary block between the mission filename list and the campaign outcome strings contains numeric data — likely mission availability bitmasks (7 bytes = 56 bits for 50 missions), per-mission completion counters, or campaign-phase boundary indices. *Approach: UKRAINE.CAM Ghidra project (`%FA_PROJECT%\overlay_projects\cam\`); trace writes from the campaign DLL entry point (`FUN_00001000`) into the binary gap to identify field semantics.* See [formats/CAM.md](formats/CAM.md).
 
-- ~~**Entity runtime flags bits 17 and 21**~~ **RESOLVED (2026-05-19):** These are fuel warning flags in `DAT_0050cfef` (player aircraft HUD state word only — not applicable to all entity types). Bit 17 (0x20000) = running-on-fumes threshold trigger; bit 21 (0x200000) = fumes voice line already played (inhibit). Full fuel warning system mapped from `@SAYLowFuelMessage@8` decompile: bits 15–22 cover Bingo/Joker/fumes/out-of-fuel triggers (15–18) and per-level voice inhibits (19–22). See [formats/HUD.md](formats/HUD.md).
-
-- **Entity runtime flags bits 17 and 21**: Bit 17 (`0x20000`) is toggled as `_gamePrefs` bit at menu option 0x606; also at `DAT_0050ce81` — acts as "low fuel" trigger when bit 21 is clear. Bit 21 (`0x200000`) toggles at menu option 0x616; inhibit flag for "running on fumes" voice line + 0x380000 state. These are runtime entity flags (not `ot_flags`); their full semantic scope across all entity types needs confirmation.
+- **BI DLL PE layout (AI→BI compiler prerequisite)**: The BI DLL interleaves compiled AI bytecode with native x86 `_CTDo_*`/`_CTEval_*` implementations. The PE section layout — specifically which bytes are bytecode vs. x86 code, and where the bytecode array begins — is not yet mapped, blocking correct bytecode embedding for an AI→BI compiler. BI overlay projects already imported under `%FA_PROJECT%\overlay_projects\bi\`. *Approach: open any BI DLL in the Ghidra overlay project; inspect CODE section; locate the bytecode start via the `_CTExecProgram_4` load call that sets `DAT_00546be6`.* See [formats/BI.md](formats/BI.md).
 
 ---
 
-## Undocumented Loose Files
+## Minor RE / Low Priority
 
-- ~~**IP.CFG**~~ **RESOLVED (2026-05-18):** Plain text, two CRLF lines: `/s` (server/standalone mode) and `/n="Fighters Anthology"` (session name). Read by `IP.EXE` at startup as default session parameters. Fully documented in [formats/CFG.md](formats/CFG.md). IP.EXE itself analyzed via `DumpOverlayDLL.java` → `Overlay_IP.EXE.txt`.
+Items likely solvable from existing data (DumpAllFunctions.txt, format file inspection, or a brief live test) but not yet pursued.
 
-- ~~**EA.CFG**~~ **RESOLVED (2026-05-19):** Complete 347-byte struct layout mapped from `?UCONFIG_save_EA_CFG@@YGDXZ` (0x004b2980) decompile — no gameplay diff required. Fields include: joystick/rudder/throttle device indices, 48-dword axis mapping table, window modes, 10 volume sliders, MIDI device, `_gamePrefs`/`_gameMultiPrefs`/`_gameDebugPrefs` dwords, HUD brightness, campaign pilot name, 3D glasses amount. See [formats/CFG.md](formats/CFG.md). **Note:** CN_ReadConfig/CN_WriteConfig handle NET.DAT (3552 bytes), not EA.CFG.
+- **AI `move` / `jink` argument names and semantics**: `move` bytecode pops heading, angle, alt/roll, speed, duration — the exact correspondence to AI source syntax needs live confirmation. `_MVRJink@40` (0x4ac9e0) jink params confirmed: `param_8`=count, `param_9`=ctrl, `param_10`=duration, `param_3`/`param_4`=deflection angles — `ctrl` meaning needs live test. See [formats/AI.md](formats/AI.md).
 
-- ~~**NET.DAT**~~ **RESOLVED (2026-05-19):** `CN_ReadConfig` reads 4-byte checksum + 0xDDC bytes = 3,552 bytes total. NET.DAT is a serialized CN_INFO struct prefixed by a 4-byte CRC (`_CfigChecksum`). Single CN_INFO instance; transport type selector at +0x00. Confirmed in [NETWORK.md](NETWORK.md) and [formats/CFG.md](formats/CFG.md).
+- **MC `cond` keyword handler**: `_MISSIONTextProc@16` handles many `.MC` keywords; the `cond` handler was not identified in the headless decompile. *Approach: grep `DumpAllFunctions.txt` for the string `"cond"` near `MISSIONTextProc` or its callees.* See [formats/MC.md](formats/MC.md).
+
+- **NT `ot_flags` bit 18 (`$40000`) — carrier-landing handler**: Confirmed as fuel-bar capacity doubler in two display functions. Whether an additional carrier-landing code path also tests this bit is unconfirmed. Low impact — does not affect gameplay modding. See [formats/NT.md](formats/NT.md).
+
+- **DLG secondary-display rendering semantics**: `secondary_display_x/y` (+0x12/+0x14) and `scroll_base` (+0x1E) fields confirmed. Exact rendering behaviour of `FUN_0048a7d0` (what constitutes "secondary item display" vs. primary) not yet confirmed. See [formats/DLG.md](formats/DLG.md).
+
+- **HGR second filename and `0x8104` resource key**: The second `.HGR` filename (likely `H_AIRB2.HGR` — carrier hangar) is not confirmed. The `_RMAccess_8(local_50, 0x8104)` sub-resource key meaning (combined flags+type passed to the resource manager) is unconfirmed. See [formats/HGR.md](formats/HGR.md).
 
 ---
 
 ## Implementation (RE complete — ready to build)
 
-Formats whose structure is fully or sufficiently documented to implement. All need a lib parser and a `ft <fmt>` CLI command unless noted.
+Formats whose structure is fully documented. All need a lib parser and a `ft <fmt>` CLI command.
 
 ### Trivial (existing lib, just needs CLI wiring)
 
-- **`ft pal` CLI command**: `pal.cpp` / `pal.h` already exist in lib. No CLI command is wired up. Add `ft pal info <file>` and `ft pal unpack <file>` to expose palette dump and PNG export.
+- **`ft pal` CLI command**: `pal.cpp` / `pal.h` already exist in lib. Add `ft pal info <file>` and `ft pal unpack <file>` to expose palette dump and PNG export.
 
 ### Low effort (format fully documented, straightforward parsing)
 
 - **INF parser**: Dot-command markup (`.body`, `.title`, `.center`, `.left`) plus `LENGTH`/`HEIGHT`/`WINGSPAN`/`WEIGHT`/`PERFORMANCE` footer key-values. Implement text parser → `ft inf unpack <file>` outputs structured JSON. See [formats/INF.md](formats/INF.md).
 
-- **HUD data-section parser** *(distinct from HUD advisory bits RE task above)*: Fixed 0x2BB CODE-section layout confirmed; gauge parameter offsets and anchor-point coordinates documented. Implement PE section reader → decode gauge table → `ft hud dump <file>` outputs `{aircraft, gauges: [{name, x, y}]}`. See [formats/HUD.md](formats/HUD.md).
+- **HUD data-section parser**: Fixed 0x2BB CODE-section layout confirmed; gauge parameter offsets and anchor-point coordinates documented. Implement PE section reader → decode gauge table → `ft hud dump <file>` outputs `{aircraft, gauges: [{name, x, y}]}`. See [formats/HUD.md](formats/HUD.md).
 
 ### Medium effort (PE DLL reader required, structs known)
 

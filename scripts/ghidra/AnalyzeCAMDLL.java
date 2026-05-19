@@ -98,9 +98,11 @@ public class AnalyzeCAMDLL extends GhidraScript {
 
     private void scanMissionStateBlock() throws Exception {
         Memory mem = currentProgram.getMemory();
-        // Look for the .data or .rdata segment (non-executable, initialized)
+        // Scan all initialized blocks including the CODE section -- CAM mission string
+        // tables (mission names, aircraft IDs, weapon filenames) live in the executable
+        // CODE section at known offsets (e.g. DAT_00001594 for UKRAINE.CAM), so we
+        // cannot skip executable blocks.
         for (MemoryBlock block : mem.getBlocks()) {
-            if (block.isExecute()) continue;
             if (!block.isInitialized()) continue;
             if (block.getSize() < 16) continue;
 

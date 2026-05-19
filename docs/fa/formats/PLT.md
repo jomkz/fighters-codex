@@ -13,9 +13,10 @@ All observed files are exactly **9,696 bytes**.
 
 ## Field Layout
 
-Offsets and lengths confirmed by cross-comparing three pilot files with known values.
+`_campaignPilot` global base VA = `0x004f8bb8` (from FA.SMS). File size 0x25E0 = 9,696 bytes.
+All offsets below are confirmed from decompile (`DumpAllFunctions.txt`) or computed from base VA.
 
-### Identity block (offset 0x00 – 0xAF)
+### Identity block (0x00–0xAF) — fully mapped
 
 | Offset | Size | Type | Field |
 |--------|------|------|-------|
@@ -29,55 +30,127 @@ Offsets and lengths confirmed by cross-comparing three pilot files with known va
 | `0x95` | 13 | char[] | Pilot portrait ID (e.g. `PILOT02`), null-padded |
 | `0xA2` | 14 | char[] | Rank string (e.g. `2nd Lieutenant`), null-padded |
 
-### Campaign block (observed starting ~`0x0D7F` for active pilots)
+### Text and display region (0xB0–0xDAD) — partially mapped
 
-The layout between `0xB0` and the campaign block is not yet mapped. The campaign block
-contains null-terminated strings for:
+Four anchor fields confirmed from `FUN_004674f0` (pilot card display, VA 0x4674f0); gaps between them remain unmapped.
 
-- Campaign `.CAM` filename (e.g. `EGYPT.CAM`)
-- Campaign display name (e.g. `Egypt 1998`)
+| Offset | Size | Type | Field |
+|--------|------|------|-------|
+| `0xB0` | 18 | ? | **Unknown** |
+| `0xC2` | ~13 | char[] | Secondary identity string — printed on pilot card after rank (squadron, unit, or location); exact length TBD |
+| `0xCF` | 1344 | ? | **Unknown** |
+| `0x5AF` | var | char[][] | Mission log — up to 10 null-terminated entries read sequentially; each up to 3 lines; likely mission history |
+| `0xD7F` | 13 | char[] | Campaign `.CAM` filename (e.g. `EGYPT.CAM`) — **confirmed**: `DAT_004f9937 = _campaignPilot + 0xD7F`, written by campaign init |
+| `0xD8C` | 32 | char[] | Campaign display name (e.g. `Egypt 1998`) — **confirmed**: `DAT_004f9944 = _campaignPilot + 0xD8C`, written by campaign init |
+| `0xDAC` | 2 | u16 | Pilot status enum — **confirmed**: `DAT_004f9964 = _campaignPilot + 0xDAC`; `0`=Available, `1`=On mission, `2`=MIA, `3`=KIA, `4`=Retired From Active Duty |
+
+### Campaign data strings (0xDAE–0x1C5F) — partially mapped
+
+Variable-length null-terminated strings packed sequentially from 0xDAE:
 - Assigned aircraft `.PT` reference (e.g. `F22.PT`)
 - Available aircraft pool (`.PT` references)
-- Ordnance inventory: `.JT` filename + u8 quantity per item (up to 50 entries)
 - Sensor/ECM loadout (`.SEE`, `.ECM` references)
+- Other campaign-specific strings
 
-### Unknown / unmapped regions
+### Ordnance inventory (0x1C60–0x1F7F) — confirmed
 
-- `0xB0` – `0x0D7E`: status flags (Active / Available / MIA / KIA), missions
-  completed, missions failed, kill tallies, hit percentages, last-modified timestamp,
-  and campaign statistics. Field order and sizes within this range are not yet confirmed.
+**50 entries × 16 bytes** = 800 bytes. `DAT_004fa818 = _campaignPilot + 0x1C60`.
 
-> **TODO:** Do a second differential pass — see methodology below.
+| Field | Offset within entry | Size | Type |
+|-------|---------------------|------|------|
+| Weapon type filename (`.JT`) | +0x00 | 14 | char[] (null-padded) |
+| Quantity | +0x0E | 2 | s16 (`-1` if slot unused; `0x7FFF` = unlimited) |
 
-## Differential Mapping — Stats Block (`0xB0`–`0x0D7E`)
+Managed by `_AddCampaignStore` (0x480E10): searches by name, increments/decrements quantity, or allocates a free slot.
 
-Method to systematically map the unmapped 3,279-byte region:
+### Stats counters (0x1F80–0x21F7) — confirmed from RE
 
-### Pass 1 — Status flags
+All fields confirmed via `FUN_00485380` (0x485380, end-of-mission stats flush) and related functions. `_campaignPilot` base `0x4f8bb8` + listed offset = VA of each field.
 
-1. Create a fresh pilot (zero missions). Save. Note the bytes at `0xB0`–`0xBF`.
-2. Fly one mission and win. Save. Diff against Pass 1. Bytes that changed from `0x00` → non-zero in this narrow range are status/counter fields.
-3. Fly one mission and die (KIA). Diff again. A KIA flag byte should flip.
+#### Mission and loss counters (0x1F80–0x1FAF)
 
-### Pass 2 — Kill tallies
+| Offset | VA | Size | Field |
+|--------|----|------|-------|
+| `0x1F80` | `DAT_004fab38` | u32 | Missions flown (total) |
+| `0x1F84` | `DAT_004fab3c` | u32 | Wingman missions |
+| `0x1F88` | `DAT_004fab40` | u32 | Missions failed — copied to `_campaignFailures` (0x54e418) before campaign proc |
+| `0x1F8C` | `DAT_004fab44` | u32 | Total shots fired — accumulated from per-mission `DAT_0054ddc4` |
+| `0x1F90` | `DAT_004fab48` | u32 | Ejections / bail-outs |
+| `0x1F94` | `DAT_004fab4c` | u32 | Wingman KIA |
+| `0x1F98` | `DAT_004fab50` | u32 | Player aircraft damage % accumulated |
+| `0x1F9C` | `DAT_004fab54` | u32 | Wingman aircraft damage % accumulated |
+| `0x1FA0` | `DAT_004fab58` | u32 | Player landing count |
+| `0x1FA4` | `DAT_004fab5c` | u32 | Wingman landing count |
+| `0x1FA8` | `DAT_004fab60` | u32 | Player landing quality score |
+| `0x1FAC` | `DAT_004fab64` | u32 | Wingman landing quality score |
 
-1. Start from a known state (zero kills). Record bytes `0xB0`–`0x0D7E`.
-2. Get exactly 1 air kill, 1 ground kill, 1 naval kill. Save after each.
-3. Bytes that increment by 1 with each kill type identify the kill counter offsets. Expect u16 or u32 counters.
+#### Kill tallies by target class (0x1FB0–0x2017)
 
-### Pass 3 — Missions statistics
+13 kill categories; each has **player u32** then **wingman u32** (8 bytes per category). Category dispatch from `_KillStats_12` (0x485820) based on `obj_class` word bits:
 
-1. Fly a mission with a known number of shots fired and hits scored.
-2. Diff: look for pairs of values where one tracks shots and one tracks hits (hit% is computed, not stored directly).
+| Offset | VA (player) | Category | `obj_class` bits |
+|--------|-------------|----------|------------------|
+| `0x1FB0` | `DAT_004fab68` | Air — aircraft / fighters | `0x8000` set |
+| `0x1FB8` | `DAT_004fab70` | Air — type B (fighters subtype) | `0x4000` set |
+| `0x1FC0` | `DAT_004fab78` | Aircraft destroyed by crash or BA weapon | obj byte 0 = `0x04` with OBJ_TYPE+0xba bit 3 |
+| `0x1FC8` | `DAT_004fab80` | Naval vessels | `0x2000` set |
+| `0x1FD0` | `DAT_004fab88` | SAM launchers | `0x1000` set |
+| `0x1FD8` | `DAT_004fab90` | AAA guns | `0x800` set |
+| `0x1FE0` | `DAT_004fab98` | Armor / tanks | `0x400` set |
+| `0x1FE8` | `DAT_004faba0` | APCs | `0x200` set |
+| `0x1FF0` | `DAT_004faba8` | Vehicles / trucks | `0x100` set |
+| `0x1FF8` | `DAT_004fabb0` | Infantry | `0x40` set |
+| `0x2000` | `DAT_004fabb8` | Friendly fire | same faction, other conditions |
+| `0x2008` | `DAT_004fabc0` | Air — non-`0x8000` (non-fighter aerial) | `0x8000` absent, aerial |
+| `0x2010` | `DAT_004fabc8` | Capital ships | naval + hitpoints > 999 |
 
-### Pass 4 — Timestamps
+Wingman slot for each = player VA + 4.
 
-1. Check for a 4-byte value near the end of the unmapped block that increases monotonically and is consistent with a DOS/Win32 timestamp (`time_t` = seconds since 1970-01-01, or a FA-internal tick counter).
+#### Unknown gap (0x2018–0x20B7, 0xA0 bytes)
 
-### Recommended tools
+#### Weapon accuracy stats (0x20B8–0x21F7) — confirmed
+
+8 weapon-type groups; each group = **player slot** (0x14 bytes) + **wingman slot** (0x14 bytes) = 0x28 bytes per group.
+
+Each slot = 5 × u32: `[damage_total, shots_fired, hits, type3, kills]`
+Dispatched by `FUN_004856f0` (0x4856f0) based on `OBJ_TYPE` flags; accumulated by `FUN_004854a0` (0x4854a0).
+
+| Offset | VA | Group |
+|--------|----|-------|
+| `0x20B8` | `DAT_004fac70` | Air-to-air gun (OBJ_TYPE bit `0x10000`) |
+| `0x20E0` | `DAT_004fac98` | Air-to-air missile (OBJ_TYPE bit `0x20000`) |
+| `0x2108` | `DAT_004facc0` | Ground attack (OBJ_TYPE bits `0x20080`) |
+| `0x2130` | `DAT_004face8` | Naval attack (OBJ_TYPE bit `0x10`) |
+| `0x2158` | `DAT_004fad10` | Kill by aircraft (shooter = obj byte 0 `0x04`) |
+| `0x2180` | `DAT_004fad38` | Kill type B |
+| `0x21A8` | `DAT_004fad60` | Kill type C |
+| `0x21D0` | `DAT_004fad88` | Kill type D |
+
+Wingman slot for each = player VA + 0x14.
+
+### Tail region (0x21F8–0x25DF) — unmapped
+
+Remaining ~0x3E8 bytes. Likely contains fort/campaign-phase stats, multiplayer scoring, and other end-of-campaign totals. Not yet decoded.
+
+## Differential Mapping — Remaining Unknowns
+
+The numeric stats (kill tallies, mission counters, weapon accuracy) are fully mapped from RE. The remaining unknowns that could benefit from a differential save pass are:
+
+- **0xB0–0xC1** (18 bytes): unknown — possibly score level, rank index, or other small fields
+- **0xCF–0x5AE** (1,344 bytes): large unknown region between secondary string and mission log
+- **0x2018–0x20B7** (0xA0 bytes): gap between kill tallies and weapon accuracy blocks
+- **0x21F8–0x25DF** (~0x3E8 bytes): tail region with fort/campaign-phase stats
+
+### Recommended approach for remaining gaps
+
+1. Create pilots with identical data, varying one field at a time (different rank/score → diff 0xB0–0xC1)
+2. Fill mission log entries with known text → diff 0x5AF–0xD7E to map individual entry boundaries
+3. For 0x21F8 onwards: look at `_EndOfFortMissionStats@0` (0x485040) callers — it clears then populates `_statsFortKills__3PAJA`, `_statsFortAircraftUsed__3PAJA`, etc. which likely flush to this region
+
+### Tools
 
 - **HxD** — load two saves side by side, use Compare → Differ.
-- **010 Editor** — create a template as fields are confirmed; track which bytes are decoded.
+- **010 Editor** — create a template with the confirmed fields above; track which bytes are decoded.
 
 ## Confirmed Engine Functions (FA.SMS)
 
@@ -85,7 +158,22 @@ Method to systematically map the unmapped 3,279-byte region:
 |----|--------|-------------|
 | `0x467180` | `PilotSave(PILOT*, short)` | Write pilot save — takes a `PILOT*` and a short slot index; serialises the identity block and stats block to `PLTnnn.P` |
 
-Use `PilotSave` as the Ghidra entry point to map the full `PILOT` struct layout and confirm the stats block field offsets (`0xB0`–`0x0D7E`).
+Additional confirmed functions from `DumpAllFunctions.txt`:
+
+| VA | Symbol/Name | Description |
+|----|-------------|-------------|
+| `0x4674f0` | `FUN_004674f0` | Pilot card display — renders pilot dossier text; accesses `+0xC2`, `+0x5AF`, `+0xD8C`, `+0xDAC`, `+0x1F88` (formats missions-failed count into display buffer) |
+| `0x467860` | `FUN_00467860` | String copy helper — copies until `\x01` byte (styled text terminator) |
+| `0x480E10` | `_AddCampaignStore` | Adds or increments an ordnance entry in the ordnance inventory table at `+0x1C60` |
+| `0x481320` | `_CampaignSave` | Saves `_campaignPilot` to disk (copies to RM, then `_SaveFile` with full 0x25E0 bytes) |
+| `0x484D90` | `_EndOfMissionStats@0` | Computes per-mission damage %, landing, protection, and player/wm state into temp globals |
+| `0x485040` | `_EndOfFortMissionStats@0` | Computes fort-related kill/suppression stats into named temp globals |
+| `0x485380` | `FUN_00485380` | Flushes all per-mission temp stats into permanent PILOT struct fields at `+0x1F80` onwards |
+| `0x4854E0` | `_WpnStats@28` | Per-shot weapon stats accumulator; updates `shots_fired`, `hits`, `damage_total`, `kills` in temp buffer |
+| `0x485820` | `_KillStats@12` | Records kill into the correct kill-category slot (13 categories at `+0x1FB0`) based on target's `obj_class` |
+| `0x485A40` | `_LandingStats@12` | Accumulates landing count and quality score into temp globals |
+
+`PilotSave` saves the full struct as a single 9,696-byte block via `_SaveFile`. The stats counters are accumulated by the functions above into `_campaignPilot` directly.
 
 ## Related
 
@@ -94,8 +182,7 @@ Use `PilotSave` as the Ghidra entry point to map the full `PILOT` struct layout 
 
 ## Applications
 
-The identity block (offsets `0x01`–`0xAF`) is fully mapped and patchable with a hex
-editor. The stats block (`0xB0`–`0x0D7E`) is pending a second differential pass.
+The identity block (offsets `0x01`–`0xAF`) is fully mapped and patchable with a hex editor. The stats counters (`0x1F80`–`0x21F7`) are confirmed from RE with exact offsets. Remaining unknowns are text-region gaps (`0xB0–0xC1`, `0xCF–0x5AE`) and the tail region (`0x21F8–0x25DF`).
 
 - **FATK** — free (abandonware, 1998); original GUI tool with full pilot editing support; requires a compatibility layer on 64-bit Windows
 - **HxD** — free, Windows; use with the field table above for manual patching

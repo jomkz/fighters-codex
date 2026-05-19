@@ -260,7 +260,7 @@ See [GAME_LOOP.md](GAME_LOOP.md) for the full WinMain init sequence, per-frame c
 
 **Collision:** `_Collision@56` — 14-parameter function covering missile–aircraft, missile–terrain, and aircraft–terrain cases. Terrain height query is `_GetGround@0` (`0x47AF70`), which reads T2 tile elevation bands. See [formats/T2.md](formats/T2.md) for the tile record layout.
 
-**`_PROJProc` dispatch:** Projectile entities call through a vtable slot. The vtable setup site is in the PT/JT loader; the slot has not been statically resolved (the function pointer is set at runtime from the loaded `.JT` file's `utilProc` symbol). Trace in Ghidra GUI from a known JT entity instance to resolve the concrete function.
+**`_PROJProc` dispatch:** `_PROJProc` at `0x4C1F50` is confirmed (**2026-05-19** via `dumpAtForced`). It is a vtable-style dispatcher: `case 1` = init/startup; `case 2` = `_PROJMoveProc` (movement/physics, `0x4C11B0`); `case 3` = `_PROJEventProc`; `case 4` = `_PROJDamageProc`. Both `_PROJProc` and `_PROJMoveProc` have no auto-created Ghidra function (vtable-only call pattern) — `dumpAtForced` is required to decompile them. The physics gap PROJ_TYPE+0x50–+0x6E is accessed through `_PROJMoveProc`.
 
 **Dark zone `0x4D0000–0x4EFFFF`** contains the software 3D rasterizer (matrix multiply, world-to-screen projection, polygon fill), not aerodynamics. The rasterizer entry is `_GRTo2d@8`; the matrix globals (`m2`–`m9`, `_scaled_matrix`) are 16-bit fixed-point elements at `0x515F44`–`0x515F54`.
 

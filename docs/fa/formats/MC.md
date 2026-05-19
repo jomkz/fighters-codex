@@ -116,7 +116,7 @@ The `.idata` string scan confirmed `_MISSIONSuccess` at offset `0x207F` and `_OB
 
 - ~~Disassemble `UKR01.MC` to trace the complete condition check logic~~ **RESOLVED (2026-05-18):** U34.MC analyzed via `AnalyzeMCDLL.java`. Condition protocol fully confirmed. See `%FA_PROJECT%/output/AnalyzeMCDLL.txt`.
 - Map remaining `.mc_M` keyword handlers beyond those confirmed above (`cond` keyword handler not found)
-- Disassemble `FUN_00495e80` (`.MC` string handler at 0x495e80) to identify its role in the condition pipeline
+- ~~Disassemble `FUN_00495e80` (`.MC` string handler at 0x495e80) to identify its role in the condition pipeline~~ **RESOLVED (2026-05-19):** Mission save handler. Full decompile from `DumpAllFunctions.txt` (line 114637): checks `_GetDiskFree(0) >= 25000` (aborts if insufficient), creates output file `DAT_005568a0 = _Create_4(param_1)`, then iterates all objects and clears entity `ot_flags` bit 4 via `*(uint*)((&_objPtrs)[i]+1) &= 0xffffffef`. The `tmap` string at VA 0x496c62 within this function handles terrain tile state saving. The function is the FA.EXE-side mission file writer — `.MC` DLLs are not called from it; the `tmap` reference is a keyword label string used when serializing terrain tile overrides to the save file.
 - ~~Clarify `EXTRA01.MC` purpose~~ **Resolved (2026-05-18).** Generic bonus-mission condition gate, shared by all 20 standalone extra missions and 13 Baltic extra missions. Each `.M` file loads it via `code extra01` directive. See file inventory above.
 
 ## Related
