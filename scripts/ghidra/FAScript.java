@@ -1265,8 +1265,8 @@ public abstract class FAScript extends GhidraScript {
         header("CN -- CN_ReadConfig / CN_WriteConfig (CN_INFO struct)");
         dumpSymbolsMatching("cn_readconfig", "_cn_readconfig", "cn_writeconfig", "_cn_writeconfig",
                 "cnreadconfig", "cnwriteconfig", "cn_init", "_cn_init", "cninit");
-        header("CN -- CN_INFO struct field scan (offsets 0x00-0x200)");
-        findFunctionsReadingOffsets(0x00400000L, 0x00540000L, 0x00, 0x200);
+        header("CN -- CN_INFO struct field scan (offsets 0x00-0xddb, full struct)");
+        for (long va : findFunctionsReadingOffsets(0x00400000L, 0x00540000L, 0x00, 0xddb)) dumpAt(va);
         header("MP -- ?MPReceive@@YGDXZ (0x46C980) and callers");
         dumpAt(0x0046c980L);
         dumpCallers(0x0046c980L);
@@ -1294,6 +1294,19 @@ public abstract class FAScript extends GhidraScript {
                 "_comminit", "comminit", "_commopen", "commopen",
                 "_commsend", "commsend", "_commrecv", "commrecv");
         searchStrings(new String[]{"COM", "modem", "Modem", "serial", "Serial"});
+        header("MOD -- MOD_Initialize (0x49aff0) and callers");
+        dumpAt(0x0049aff0L);
+        dumpCallers(0x0049aff0L);
+        header("MOD -- MOD_* symbol search");
+        dumpSymbolsMatching("mod_", "_mod_", "modinit", "moddial", "modconnect", "modopen",
+                "modclose", "modhangup", "moddetect", "modautodetect", "modanswer",
+                "modatinit", "modatcmd", "phonebook", "phonebk", "phoneno", "phonenum",
+                "dial", "_dial", "doconnect", "modport");
+        searchStrings(new String[]{"ATZ", "ATDT", "ATE", "ATA", "ATH", "phone", "Phone",
+                "phonebook", "PhoneBook", "NetBEUI", "netbeui", "NBF", "nbbios",
+                "NBIOS", "NetBIOS", "netbios"});
+        header("MOD -- CN_INFO unknown range [0xc0]-[0x8e3] offset scan in MOD area");
+        for (long va : findFunctionsReadingOffsets(0x00498000L, 0x004ab000L, 0xc0, 0x8e3)) dumpAt(va);
         header("NET -- packet encode / decode");
         dumpSymbolsMatching("_packetinit", "packetinit", "_packencode", "packencode",
                 "_packdecode", "packdecode", "_packetsend", "packetsend",
