@@ -106,10 +106,16 @@ The interpreter is `_CTExecProgram@4` (`CTExecProgram`). It executes at most 500
 | `DAT_00546c98` | Halt flag — set non-zero to stop execution early |
 | `DAT_0050cf6e` | Current actor slot index (0 = player) |
 | `DAT_0050d312` | CT system enable flag — interpreter is a no-op when this is zero |
+| `DAT_00546bc8` | Live CT state block — 128-byte (32-dword) struct; field `+0x7c`/`+0x7e` = FRAME state (`DAT_00546c44`/`DAT_00546c46`) |
+| `DAT_0050cf90` | Pointer to heap-allocated checkpoint copy of the CT state block (0x80 bytes) |
 
 **End-of-program marker:** `'%'` (0x25) — the main loop checks `*ip != '%'` as its loop condition.
 
-**State save/restore:** `FUN_004668f0` restores a 32-dword CT state block from `DAT_0050cf90` (or zeroes it if no saved state). `FUN_00466920` saves the current state back. This enables preemptible script execution with re-entry.
+**State save/restore:** The interpreter maintains a 128-byte live CT state block at `DAT_00546bc8` and a heap-allocated checkpoint copy pointed to by `DAT_0050cf90`. Three functions manage this:
+
+- `FUN_004668f0` (`0x4668f0`) — **restore**: if `DAT_0050cf90 != NULL`, copies 128 bytes from checkpoint → live block; if NULL, zeroes the live block and clears `DAT_00546bf0`.
+- `FUN_00466920` (`0x466920`) — **save/push**: if `DAT_0050cf90 == NULL`, allocates 0x80 bytes via `@MMAllocPtr@8(0x80, 0x8000)`; then copies live block → checkpoint and zeroes the live block.
+- `_CTRespondToCancelCmdBuf@0` (`0x464c9d`) — **cancel handler**: when `_cg == 2 or 4` (fighter/bomber class) and `DAT_00546ca4 == 0`, orchestrates restore → `FUN_00464cd0(1)` → save. Enables preemptible script execution with re-entry on cancel events.
 
 **Opcode dispatch:** `FUN_00466a80` (0x466a80) reads one opcode byte from `*DAT_00546bea` and dispatches. Full opcode table below.
 
@@ -162,6 +168,33 @@ The interpreter is `_CTExecProgram@4` (`CTExecProgram`). It executes at most 500
 | `0x26` | 5 | CALL_DIRECT | IP += 5; call *(code**)(IP+1); push return value |
 | `0x27` | varies | CALL_BY_NAME | Look up null-terminated name, call; push return value; **self-patches to CALL_DIRECT** for subsequent calls (JIT optimization) |
 | `0x28` | 5 | FRAME | Read 2 s16 values into `DAT_00546c44`/`DAT_00546c46`; IP += 4 |
+
+### FRAME opcode consumer (0x28) — conclusion
+
+The **writer** is confirmed: `FUN_00466a80` case `0x28` reads two s16 values from the bytecode
+stream and writes them to `DAT_00546c44` / `DAT_00546c46` (CT state block `+0x7c` / `+0x7e`).
+
+**No scalar consumer exists anywhere.** Exhaustive analysis closed this item:
+
+- **BI DLLs contain bytecode, not x86 code.** The F.BI CODE section starts at `0x00001000`; its
+  first byte is `0x28` (the FRAME opcode itself). Ghidra's auto-analysis found zero functions after
+  analyzing the BI project — the code section is pure bytecode data, not native machine code. There
+  is no x86 reader in the BI DLLs.
+
+- **Full FA.EXE interpreter path traced with no consumer found:**
+  - `FUN_00466a80` (opcode dispatch 0–0x28): no case reads `+0x7c`/`+0x7e`
+  - `_CTExecProgram@4` (interpreter loop): only calls `FUN_00466a80` per opcode; no field reads
+  - `FUN_00464cd0` (script loader): loads script and calls PC reset; no field reads
+  - `FUN_00464db0` (PC reset): clears `DAT_00546c42` (`+0x7a`), resets IP; no field reads
+
+- `DAT_00546c44` / `DAT_00546c46` have no direct read xrefs in FA.EXE.
+- All reads of `DAT_0050cf90` (checkpoint pointer) are bulk 128-byte block copies via
+  `FUN_004668f0` (restore) and `FUN_00466920` (save/push) — never field-level reads.
+
+**Conclusion:** FRAME is a save-state metadata instruction. The two s16 values it stamps into
+`+0x7c`/`+0x7e` are captured opaquely by the bulk 128-byte save/restore operations but are never
+consumed by any scalar reader. The values likely encode the current maneuver frame or animation
+phase for checkpoint purposes. This item is closed.
 
 ### Argument Readers
 

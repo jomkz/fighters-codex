@@ -269,7 +269,59 @@ undefined1 * _PROJProc(undefined1 param_1) {
 
 **Alternate guidance algorithm** (`FUN_004c1660` @ 0x4c1660, selected when warhead bit 5=1): reads the target entity position, computes distance, then selects guidance speed from a two-tier distance table (+0x65/+0x66 inner range, +0x67/+0x68 outer range) before calling `_CreateMove_52` in positional mode. Falls through to `FUN_004c1630` (standard pursuit mode) when distance is below the outer range threshold.
 
-**Remaining gap:** PROJ_TYPE+0x50–+0x54 (entity offsets +0xF6–+0xFA per the entity offset table: reaction params and mode byte) and isolated bytes +0x56, +0x58, +0x5A, +0x5C, +0x5E–+0x64 remain without confirmed missile-specific reads. Those offsets are used by the aircraft flight model when the scratchpad holds a BRF entity, but their PROJ_TYPE semantics have not been isolated from missile-specific code paths.
+**Remaining gap — confirmed not used in FA.EXE:**
+
+Full exhaustive search (Ghidra GUI, 2026-05-20): all four PROJ proc types decompiled
+(`_PROJMoveProc`, `_PROJEventProc`, `_PROJDamageProc`, guidance proc at `LAB_004c1f90`),
+all reachable sub-functions checked, and Ghidra xref on each gap global address — all returned
+zero references. These bytes are not accessed by any code in FA.EXE.
+
+| PROJ_TYPE offset | Global addr | Status |
+|-----------------|-------------|--------|
+| `+0x50` | `DAT_0050d35e` | Zero xrefs in FA.EXE |
+| `+0x51` | `DAT_0050d35f` | Zero xrefs in FA.EXE |
+| `+0x52` | `DAT_0050d360` | Zero xrefs in FA.EXE |
+| `+0x53` | `DAT_0050d361` | Zero xrefs in FA.EXE |
+| `+0x54` | `DAT_0050d362` | Not in `_PROJMoveProc` |
+| `+0x56` | `DAT_0050d364` | Not in `_PROJMoveProc` — may be high byte of `+0x55` (short) |
+| `+0x58` | `DAT_0050d366` | Not in `_PROJMoveProc` — may be high byte of `+0x57` (short) |
+| `+0x5A` | `DAT_0050d368` | Not in `_PROJMoveProc` — may be high byte of `+0x59` (short) |
+| `+0x5C` | `DAT_0050d36a` | Not in `_PROJMoveProc` — may be high byte of `+0x5B` (short) |
+| `+0x5E`–`+0x64` | `DAT_0050d36c`–`DAT_0050d372` | Not in `_PROJMoveProc` — check `FUN_004c1630` |
+
+**Physics scratchpad (`0x50CE80`–`0x50D267`):** A separate fixed-address block preceding the
+entity struct (`cjt` base `0x50D268`) holds per-tick missile motion state. Key globals confirmed
+from `_PROJMoveProc` full decompile:
+
+| Global | Role |
+|--------|------|
+| `DAT_0050ce91` | Missile world position (passed as `&pos` to `_DistToObj@8`, `_GRAPHICAddExp`) |
+| `DAT_0050ce95` | Remaining range accumulator — decremented by motor deceleration each tick |
+| `DAT_0050cf5e` | Runtime state flags (bit 1 = acquired, bit 2 = fired, bit 3 = skip guidance, bit 4 = alt-guidance, bit 8 = seeker override) |
+| `DAT_0050cf62` | Warhead sub-parameter (passed to `_PROJLock@24`, `_PROJSendCollateralDamages`) |
+| `DAT_0050cf64` | Target entity slot ID (0 = no target; indexes `_objPtrs[]`) |
+| `DAT_0050cf68` | Phase timing reference — `_currentT − this` = elapsed ticks since phase start |
+| `DAT_0050cf70` | Max seeker engagement distance (compared to `iVar6` = `_DistToObj` result) |
+| `ram0x0050cf80` | Motor deceleration accumulator (capped at 0x5000, subtracted from `ce95` when bit 6 set) |
+| `ram0x0050cf82` | Seeker scan azimuth angle (passed to `@ObjPlusAngleParm@8`) |
+| `DAT_0050cf84` | Seeker scan elevation angle (passed to `@ObjPlusAngleParm@8`) |
+| `DAT_0050cf86` | Guidance update timer — next scheduled scan angle update (compared to `_currentT`) |
+
+**Sub-functions checked (Ghidra GUI, 2026-05-20) — all are one-liners, no gap field reads:**
+
+| Function | Address | Body |
+|----------|---------|------|
+| `FUN_004c1630` | `0x4c1630` | `_CreateMove@52(&DAT_0050ceb8, 0, 4, target_slot, 4, 0, 1, 0, 1, 0, 8, 0x10, 0x7fff)` — standard pursuit, fixed params |
+| `FUN_004c17f0` | `0x4c17f0` | Seeker acquisition eligibility: checks atmosphere layer bit 3 + sun/heading angle constraints; no PROJ_TYPE reads |
+| `FUN_004c1720` | `0x4c1720` | `_CreateMove@52(&DAT_0050ceb8, 0, 1, heading, 1, pitch, 1, roll, 1, 0, 8, 0x10, 0x7fff)` — lock handler, uses missile own angles |
+| `FUN_004c1760` | `0x4c1760` | `_CreateMove@52(&DAT_0050ceb8, 0, 1, _sunAngle, 1, az, 1, roll, 1, 0, 8, 0x10, 0x7fff)` — acquisition, sun-angle homing |
+
+**Conclusion:** The scattered gap bytes `+0x56`/`+0x58`/`+0x5A`/`+0x5C` are the high bytes of the
+confirmed short fields immediately preceding them (`+0x55`/`+0x57`/`+0x59`/`+0x5B`) — not
+independent fields. The block `+0x50`–`+0x54` and isolated range `+0x5E`–`+0x64` have zero xrefs
+in all of FA.EXE — no missile code, no BRF code, no generic entity loop touches them. These bytes
+are either dead/unused fields from an earlier engine version, or are read exclusively by overlay
+DLLs. Semantics cannot be determined from FA.EXE alone.
 
 ### Confirmed entity offsets 0xF0–0x16F (from DumpPROJDispatch run)
 
