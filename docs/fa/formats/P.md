@@ -132,25 +132,61 @@ Wingman slot for each = player VA + 0x14.
 
 Remaining ~0x3E8 bytes. Likely contains fort/campaign-phase stats, multiplayer scoring, and other end-of-campaign totals. Not yet decoded.
 
-## Differential Mapping — Remaining Unknowns
+## RE and Differential Analysis — Gap Status
 
-The numeric stats (kill tallies, mission counters, weapon accuracy) are fully mapped from RE. The remaining unknowns that could benefit from a differential save pass are:
+Static Ghidra analysis (`AnalyzePLT.java`, 46,985-line output) and binary diff of three existing
+pilot saves produced the following findings for each unmapped gap:
 
-- **0xB0–0xC1** (18 bytes): unknown — possibly score level, rank index, or other small fields
-- **0xCF–0x5AE** (1,344 bytes): large unknown region between secondary string and mission log
-- **0x2018–0x20B7** (0xA0 bytes): gap between kill tallies and weapon accuracy blocks
-- **0x21F8–0x25DF** (~0x3E8 bytes): tail region with fort/campaign-phase stats
+### Gap 0xB0–0xC1 (18 bytes)
 
-### Recommended approach for remaining gaps
+**RE result:** No named DAT_ label or MOV/CMP instruction targeting VA `0x004f8c68`–`0x004f8c79`
+found in any function in FA.EXE.  
+**Differential result:** All zeros in all three saves (PLT441.P, PLT628.P, PLT937.P).  
+**Status: unmapped.** Struct context suggests these bytes are written only after campaign
+assignment — possibly a score tier index, medal count, or secondary rank fields.
+Requires a post-gameplay save for differential analysis.
 
-1. Create pilots with identical data, varying one field at a time (different rank/score → diff 0xB0–0xC1)
-2. Fill mission log entries with known text → diff 0x5AF–0xD7E to map individual entry boundaries
-3. For 0x21F8 onwards: look at `_EndOfFortMissionStats@0` (0x485040) callers — it clears then populates `_statsFortKills__3PAJA`, `_statsFortAircraftUsed__3PAJA`, etc. which likely flush to this region
+### Gap 0xCF–0x5AE (1,344 bytes)
 
-### Tools
+**RE result:** This region holds variable-length null-terminated mission log text; decompile of
+`FUN_004674f0` shows the pilot card reader scanning from `0x5AF` backwards, implying the entries
+grow downward from `0x5AE`. No fixed-offset accesses within the region.  
+**Differential result:** All zeros in all three saves (fresh pilots, no missions flown).  
+**Status: partially understood — structure known, content unsampled.** Each log entry is one
+or more null-terminated lines terminated by a `0x01` styled-text byte. Differential pass
+requires saves taken after completing at least 3–5 missions.
 
-- **HxD** — load two saves side by side, use Compare → Differ.
-- **010 Editor** — create a template with the confirmed fields above; track which bytes are decoded.
+### Gap 0x2018–0x20B7 (160 bytes)
+
+**RE result:** `findFunctionsReadingOffsets` returned only false positives — video-decoder
+functions accessing `param_1 + 0x2044` where `param_1` is a frame buffer, not `_campaignPilot`.
+No genuine PILOT struct access in this range was found anywhere in the analyzed code.  
+**Differential result:** All zeros in all three saves.  
+**Status: unmapped.** Sits between the confirmed kill-tally block (ends 0x2017) and the
+confirmed weapon-accuracy block (starts 0x20B8). Could be additional kill subcategories
+(objective kills, suppression counts), a mission-result history array, or reserved padding.
+
+### Gap 0x21F8–0x25DF (~1,000 bytes)
+
+**RE result:** `_EndOfFortMissionStats@0` (0x485040) and all callers write exclusively to
+scratch globals at `0x005xxxxx` — no flush path into this region was found in the decompile.
+`findFunctionsReadingOffsets` returned only false positives (explosion-struct offsets,
+keystroke comparisons, random constants).  
+**Differential result:** All zeros in all three saves.  
+**Status: unmapped.** Fort/campaign-phase stats scratch globals (`_statsFortKills__3PAJA`,
+`_statsFortAircraftUsed__3PAJA`, etc.) are confirmed present but their flush path into the
+PILOT struct was not identified. This region is populated only after completing campaign
+fort-assault missions. Requires a post-fort-mission save for differential analysis.
+
+### Recommended next step
+
+All four gaps require pilot saves taken after actual gameplay:
+1. Complete 5+ standard missions → diff PLT for gaps 0xCF–0x5AE and 0x2018–0x20B7
+2. Complete a fort-assault mission → diff for gap 0x21F8–0x25DF
+3. Advance pilot rank (enough missions/score) → diff for gap 0xB0–0xC1
+
+Tools: **HxD** (side-by-side compare → Differ) or **010 Editor** with the template from
+the confirmed fields above.
 
 ## Confirmed Engine Functions (FA.SMS)
 
@@ -182,9 +218,15 @@ Additional confirmed functions from `DumpAllFunctions.txt`:
 
 ## Applications
 
-The identity block (offsets `0x01`–`0xAF`) is fully mapped and patchable with a hex editor. The stats counters (`0x1F80`–`0x21F7`) are confirmed from RE with exact offsets. Remaining unknowns are text-region gaps (`0xB0–0xC1`, `0xCF–0x5AE`) and the tail region (`0x21F8–0x25DF`).
+```
+ft plt info  PLT441.P        # identity block: name, rank, campaign, ordnance
+ft plt dump  PLT441.P        # full stats block: missions, kills, weapon accuracy
+```
+
+The identity block (`0x01`–`0xAF`) is fully mapped and editable via the ft-gui PLT editor.
+The stats counters (`0x1F80`–`0x21F7`) are confirmed from RE and displayed by `ft plt dump`
+and the ft-gui stats pane. The four gap regions remain unmapped (see above).
 
 - **FATK** — free (abandonware, 1998); original GUI tool with full pilot editing support; requires a compatibility layer on 64-bit Windows
 - **HxD** — free, Windows; use with the field table above for manual patching
-- **VS Code** + [Hex Editor](https://marketplace.visualstudio.com/items?itemName=ms-vscode.hexeditor) — free, cross-platform; convenient if already using VS Code for text editing
-- **010 Editor** `$` — paid; binary templates will allow a fully labelled struct view once the stats block is mapped
+- **010 Editor** `$` — paid; binary templates will allow a fully labelled struct view once all gaps are mapped

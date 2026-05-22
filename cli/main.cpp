@@ -74,6 +74,7 @@ static void print_usage() {
     puts("");
     puts("Pilot save commands:");
     puts("  ft plt info   <file.P>");
+    puts("  ft plt dump   <file.P>");
     puts("");
     puts("Symbol map commands:");
     puts("  ft sms dump   <FA.SMS> [-o out.csv]");

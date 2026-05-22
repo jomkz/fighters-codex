@@ -7,17 +7,17 @@ static const int HEADER_SIZE  = 32;
 static const int PALETTE_SIZE = 768;
 static const int DATA_OFFSET  = HEADER_SIZE + PALETTE_SIZE; // 800
 
-static uint16_t r16(const uint8_t* d, int o) {
-    return (uint16_t)(d[o] | (d[o+1] << 8));
+static uint16_t r16be(const uint8_t* d, int o) {
+    return (uint16_t)((d[o] << 8) | d[o+1]);
 }
 
 bool raw_info(const uint8_t* data, size_t size, RawInfo* info) {
     if (size < (size_t)DATA_OFFSET) return false;
     if (memcmp(data, "mhwanh", 6) != 0) return false;
-    uint32_t w = r16(data, 6);
-    if (w == 0) return false;
-    uint32_t h = (uint32_t)((size - DATA_OFFSET) / w);
-    if (h == 0) return false;
+    uint32_t w = r16be(data, 8);
+    uint32_t h = r16be(data, 10);
+    if (w == 0 || h == 0) return false;
+    if (size < (size_t)(DATA_OFFSET + w * h)) return false;
     info->width  = w;
     info->height = h;
     return true;

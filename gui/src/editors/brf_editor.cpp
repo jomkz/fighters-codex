@@ -26,14 +26,43 @@ static void RebuildBuffers(const ft::BrfDoc& doc) {
     }
 }
 
-// Return the schema for the given extension.
-static void GetSchema(const std::string& ext,
-                      const ft::OtField** fields, int* count) {
-    *fields = nullptr; *count = 0;
-    if (ext=="ot")                        { *fields=ft::OT_GENERAL_FIELDS; *count=ft::OT_GENERAL_COUNT; }
-    else if (ext=="nt")                   { *fields=ft::NT_FIELDS;         *count=ft::NT_COUNT; }
-    else if (ext=="pt")                   { *fields=ft::PT_FIELDS;         *count=ft::PT_COUNT; }
-    else if (ext=="jt")                   { *fields=ft::JT_FIELDS;         *count=ft::JT_COUNT; }
+// Return (name, note) for field at index fi using the compound schema for ext.
+// SEE/ECM/GAS are standalone (no OT_GENERAL prefix).
+// OT/NT/PT/JT all begin with OT_GENERAL_FIELDS, then chain extension sections.
+static std::pair<const char*, const char*> FieldLabel(const std::string& ext, int fi) {
+    // Flat standalone schemas
+    if (ext == "see") {
+        if (fi < ft::SEE_COUNT) return { ft::SEE_FIELDS[fi].name, ft::SEE_FIELDS[fi].note };
+        return { nullptr, nullptr };
+    }
+    if (ext == "ecm") {
+        if (fi < ft::ECM_COUNT) return { ft::ECM_FIELDS[fi].name, ft::ECM_FIELDS[fi].note };
+        return { nullptr, nullptr };
+    }
+    if (ext == "gas") {
+        if (fi < ft::GAS_COUNT) return { ft::GAS_FIELDS[fi].name, ft::GAS_FIELDS[fi].note };
+        return { nullptr, nullptr };
+    }
+
+    // OT / NT / PT / JT — all begin with the OT_GENERAL section
+    if (fi < ft::OT_GENERAL_COUNT)
+        return { ft::OT_GENERAL_FIELDS[fi].name, ft::OT_GENERAL_FIELDS[fi].note };
+
+    int off = fi - ft::OT_GENERAL_COUNT;
+
+    if (ext == "jt") {
+        if (off < ft::JT_COUNT) return { ft::JT_FIELDS[off].name, ft::JT_FIELDS[off].note };
+        return { nullptr, nullptr };
+    }
+    if (ext == "nt" || ext == "pt") {
+        if (off < ft::NT_COUNT) return { ft::NT_FIELDS[off].name, ft::NT_FIELDS[off].note };
+        off -= ft::NT_COUNT;
+        if (ext == "pt" && off < ft::PT_COUNT)
+            return { ft::PT_FIELDS[off].name, ft::PT_FIELDS[off].note };
+        return { nullptr, nullptr };
+    }
+    // OT — only OT_GENERAL (already covered above)
+    return { nullptr, nullptr };
 }
 
 void DrawBrfEditor(App& app) {
@@ -52,10 +81,6 @@ void DrawBrfEditor(App& app) {
         return;
     }
 
-    const ft::OtField* schema = nullptr;
-    int schemaCount = 0;
-    GetSchema(ed.ext, &schema, &schemaCount);
-
     bool anyChanged = false;
 
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(4,3));
@@ -72,12 +97,7 @@ void DrawBrfEditor(App& app) {
 
         for (int i = 0; i < (int)s_doc.fields.size(); i++) {
             const auto& f = s_doc.fields[i];
-            const char* fieldName = nullptr;
-            const char* note      = nullptr;
-            if (schema && i < schemaCount) {
-                fieldName = schema[i].name;
-                note      = schema[i].note;
-            }
+            auto [fieldName, note] = FieldLabel(ed.ext, i);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);

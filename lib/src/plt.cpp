@@ -113,4 +113,68 @@ bool plt_parse(const uint8_t* data, size_t size, PltInfo* info) {
     return true;
 }
 
+static uint32_t read_u32le(const uint8_t* p) {
+    return (uint32_t)p[0] | ((uint32_t)p[1] << 8) |
+           ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+}
+
+static PltKill read_kill(const uint8_t* base, size_t offset) {
+    return { read_u32le(base + offset), read_u32le(base + offset + 4) };
+}
+
+static PltWpnSlot read_wpn_slot(const uint8_t* p) {
+    return { read_u32le(p), read_u32le(p+4), read_u32le(p+8),
+             read_u32le(p+12), read_u32le(p+16) };
+}
+
+static PltWpnGroup read_wpn_group(const uint8_t* base, size_t offset) {
+    return { read_wpn_slot(base + offset), read_wpn_slot(base + offset + 0x14) };
+}
+
+bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* st) {
+    if (size < 0x21F8) return false;
+
+    const uint8_t* b = data;
+    // Mission counters (12 u32s at 0x1F80)
+    st->missions_flown        = read_u32le(b + 0x1F80);
+    st->wingman_missions      = read_u32le(b + 0x1F84);
+    st->missions_failed       = read_u32le(b + 0x1F88);
+    st->shots_fired_total     = read_u32le(b + 0x1F8C);
+    st->ejections             = read_u32le(b + 0x1F90);
+    st->wingman_kia           = read_u32le(b + 0x1F94);
+    st->player_damage_pct     = read_u32le(b + 0x1F98);
+    st->wingman_damage_pct    = read_u32le(b + 0x1F9C);
+    st->player_landings       = read_u32le(b + 0x1FA0);
+    st->wingman_landings      = read_u32le(b + 0x1FA4);
+    st->player_landing_score  = read_u32le(b + 0x1FA8);
+    st->wingman_landing_score = read_u32le(b + 0x1FAC);
+
+    // Kill tallies (13 categories x 8 bytes at 0x1FB0)
+    st->kills_air_fighter    = read_kill(b, 0x1FB0);
+    st->kills_air_fighter_b  = read_kill(b, 0x1FB8);
+    st->kills_air_crash      = read_kill(b, 0x1FC0);
+    st->kills_naval          = read_kill(b, 0x1FC8);
+    st->kills_sam            = read_kill(b, 0x1FD0);
+    st->kills_aaa            = read_kill(b, 0x1FD8);
+    st->kills_armor          = read_kill(b, 0x1FE0);
+    st->kills_apc            = read_kill(b, 0x1FE8);
+    st->kills_vehicle        = read_kill(b, 0x1FF0);
+    st->kills_infantry       = read_kill(b, 0x1FF8);
+    st->kills_friendly_fire  = read_kill(b, 0x2000);
+    st->kills_air_nonfighter = read_kill(b, 0x2008);
+    st->kills_capital_ship   = read_kill(b, 0x2010);
+
+    // Weapon accuracy groups (8 x 0x28 bytes at 0x20B8)
+    st->wpn_aa_gun       = read_wpn_group(b, 0x20B8);
+    st->wpn_aa_missile   = read_wpn_group(b, 0x20E0);
+    st->wpn_ground       = read_wpn_group(b, 0x2108);
+    st->wpn_naval        = read_wpn_group(b, 0x2130);
+    st->wpn_kill_aircraft= read_wpn_group(b, 0x2158);
+    st->wpn_kill_b       = read_wpn_group(b, 0x2180);
+    st->wpn_kill_c       = read_wpn_group(b, 0x21A8);
+    st->wpn_kill_d       = read_wpn_group(b, 0x21D0);
+
+    return true;
+}
+
 } // namespace ft

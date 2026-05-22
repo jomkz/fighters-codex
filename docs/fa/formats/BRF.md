@@ -222,7 +222,7 @@ Unused slots are zeroed. A typical FA aircraft has 4 negative-G and 9 positive-G
 
 ### Hardpoints
 
-Each PT has exactly 10 hardpoints. Per-hardpoint fields:
+Each PT has up to 9 hardpoints (count varies by aircraft; F16C has 9, MiG-29 has 8, some light aircraft have fewer). Per-hardpoint fields:
 
 ```
 hld                 word    Hardpoint Loading Data flags (see table below)

@@ -35,6 +35,8 @@ call "%~dp0run_ghidra.bat" AnalyzeMUS.java
 call "%~dp0run_ghidra.bat" AnalyzeOTNT.java
 call "%~dp0run_ghidra.bat" AnalyzeT2.java
 call "%~dp0run_ghidra.bat" AnalyzeGAS.java
+call "%~dp0run_ghidra.bat" AnalyzePT.java
+call "%~dp0run_ghidra.bat" AnalyzePLT.java
 call "%~dp0run_ghidra.bat" AnalyzeCAM.java
 call "%~dp0run_ghidra.bat" AnalyzeMC.java
 call "%~dp0run_ghidra.bat" AnalyzeT2DLL.java

@@ -8,6 +8,18 @@
 #include "../editors/inf_editor.h"
 #include "../editors/plt_editor.h"
 #include "../editors/raw_viewer.h"
+#include "../editors/sh_editor.h"
+#include "../editors/txt_editor.h"
+#include "../editors/bin_editor.h"
+#include "../editors/lay_editor.h"
+#include "../editors/hud_editor.h"
+#include "../editors/mus_editor.h"
+#include "../editors/fnt_editor.h"
+#include "../editors/cb8_editor.h"
+#include "../editors/ai_editor.h"
+#include "../editors/xmi_editor.h"
+#include "../editors/vdo_editor.h"
+#include "../editors/cam_editor.h"
 #include "imgui.h"
 
 void DrawEditorHost(App& app) {
@@ -43,6 +55,18 @@ void DrawEditorHost(App& app) {
     case EditorKind::Inf:     DrawInfEditor(app);     break;
     case EditorKind::Plt:     DrawPltEditor(app);     break;
     case EditorKind::Raw:     DrawRawViewer(app);     break;
+    case EditorKind::Sh:      DrawShEditor(app);      break;
+    case EditorKind::Txt:     DrawTxtEditor(app);     break;
+    case EditorKind::Bin:     DrawBinEditor(app);     break;
+    case EditorKind::Lay:     DrawLayEditor(app);     break;
+    case EditorKind::Hud:     DrawHudEditor(app);     break;
+    case EditorKind::Mus:     DrawMusEditor(app);     break;
+    case EditorKind::Fnt:     DrawFntEditor(app);     break;
+    case EditorKind::Cb8:     DrawCb8Editor(app);     break;
+    case EditorKind::Ai:      DrawAiEditor(app);      break;
+    case EditorKind::Xmi:     DrawXmiEditor(app);     break;
+    case EditorKind::Vdo:     DrawVdoEditor(app);     break;
+    case EditorKind::Cam:     DrawCamEditor(app);     break;
     default:
         ImGui::TextDisabled("No editor for .%s files.", app.editor.ext.c_str());
         break;

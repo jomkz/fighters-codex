@@ -188,7 +188,7 @@ The gap at `0x16eb`–`0x17bb` (209 bytes) is all-zero padding. Confirmed by dir
 
 ## Related
 
-- [PLT.md](PLT.md) — pilot save files store the active campaign `.CAM` filename
+- [P.md](P.md) — pilot save files store the active campaign `.CAM` filename
 - [M.md](M.md) — `.M` mission files referenced by `~<prefix>NN.M` strings
 - [MC.md](MC.md) — per-mission state checkpoint files
 - [BRF.md](BRF.md) — `.JT`, `.GAS`, `.SEE`, `.ECM` weapon type files listed in the weapon table

@@ -7,13 +7,15 @@
 //
 // File layout:
 //   0    6   Magic: "mhwanh"
-//   6    2   Width  (u16 LE)
-//   8    6   Unknown header fields
+//   6    2   Unknown (observed: 0x0004)
+//   8    2   Width  (u16 big-endian)
+//  10    2   Height (u16 big-endian)
+//  12    2   Unknown
 //  14   18   Null padding
 //  32  768   Embedded palette: 256 x RGB8 triplets (8-bit, 0-255)
 // 800  w*h   Pixel indices, row-major
 //
-// Height is derived from file size: (size - 800) / width.
+// Width and height are stored big-endian despite FA.EXE being little-endian.
 // Palette values are full 8-bit (not the 6-bit VGA format used by .PAL/.PIC).
 
 namespace ft {

@@ -38,6 +38,18 @@ extern const int     PT_COUNT;
 extern const OtField JT_FIELDS[];
 extern const int     JT_COUNT;
 
+// ---------- SEE (Seeker/Sensor) standalone file ----------
+extern const OtField SEE_FIELDS[];
+extern const int     SEE_COUNT;
+
+// ---------- ECM (Electronic Countermeasures) standalone file ----------
+extern const OtField ECM_FIELDS[];
+extern const int     ECM_COUNT;
+
+// ---------- GAS (External Fuel Tank) standalone file ----------
+extern const OtField GAS_FIELDS[];
+extern const int     GAS_COUNT;
+
 // Print annotated field dump for a parsed BRF document.
 // format: "ot", "nt", "pt", "jt", "see", "ecm", "gas" (controls which schema to use)
 void brf_print_info(const BrfDoc& doc, const char* format);

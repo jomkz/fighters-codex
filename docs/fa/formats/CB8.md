@@ -115,7 +115,7 @@ for i in 0..extra-1:
 ```
 
 To render frame: for each block `b`, copy `canvas[b*16..+15]` to the 4×4
-pixel area at `((b%80)*4, (b/60)*4)` in row-major order.
+pixel area at `((b%80)*4, (b/80)*4)` in row-major order.
 
 ## Chunk Type: VooM — Video Index / Key Frame
 
@@ -170,6 +170,23 @@ MRFA  — trailing audio
 
 JANELOGO.CB8 (6,496,064 bytes): VooM at offset 14812 with 466 index entries
 (chunk_size 7476 = 20 + 466×16). Frame 0 offset: 22288, duration: ~31.1 s @ 15 fps.
+
+## Palette and Colour
+
+CB8 frame data consists entirely of 8-bit palette indices. The palette used to
+render those indices is **not stored in any LIB file**. It is an engine-internal
+table loaded at startup from a resource embedded in FA.EXE (or a companion file
+loaded before the cutscene begins).
+
+**PALETTE.PAL is the wrong palette for CB8.** Indices 1–46 in PALETTE.PAL are
+all set to `(63, 0, 63)` (magenta in 6-bit VGA). CB8 frame data is heavily
+saturated with index `0x01` (the sky / background colour for cutscene videos),
+so applying PALETTE.PAL produces a garbled pink/magenta image.
+
+**Greyscale fallback:** mapping each index byte directly to a grey value
+(`R = G = B = index`) is always spatially correct and produces a legible
+monochrome image. It is the recommended display mode until the true engine
+palette is recovered.
 
 ## Applications
 

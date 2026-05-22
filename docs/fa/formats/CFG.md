@@ -71,7 +71,7 @@ The three string fields (0x108, 0x129, 0x149) are only written if the source glo
 
 ## Related
 
-- [PLT.md](PLT.md) — pilot save files (`PLT_*.PLT`) whose slot is referenced here
+- [P.md](P.md) — pilot save files (`PLTnnn.P`) whose slot is referenced here
 
 ---
 
