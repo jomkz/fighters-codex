@@ -7,6 +7,18 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-16
+
+### Added
+- Add download info and fix label sync action
+- Add support for new formats to lib and CLI
+- Feat/vscode build tasks
+- Add DLL analyzer tool and documented FA overlay DLL format structures
+
+### Fixed
+- Docs/format inventory
+- Update DLL format and ARCHITECTURE docs
+
 ## [0.1.0] - 2026-05-16
 
 ### Added
@@ -15,5 +27,6 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `ft` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `ft-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-toolkit/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-toolkit/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/jomkz/fighters-toolkit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jomkz/fighters-toolkit/releases/tag/v0.1.0
