@@ -36,7 +36,7 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 
 | Format | Spec | Description |
 |--------|------|-------------|
-| AUDIO | [AUDIO.md](AUDIO.md) | Raw PCM audio clips at 11 kHz, 5 kHz, or 8 kHz mono |
+| 11K / 5K / 8K | [11K.md](11K.md) | Raw PCM audio clips at 11 kHz, 5 kHz, or 8 kHz mono |
 | XMI | [XMI.md](XMI.md) | Extended MIDI music sequences |
 | MUS | [MUS.md](MUS.md) | In-flight music sequencer bytecode (Win32 DLL overlay) |
 
@@ -90,9 +90,9 @@ Seven file types share a plain-text assembly-like DSL. See [BRF.md](BRF.md) for 
 | Format | Spec | Description |
 |--------|------|-------------|
 | CFG | [CFG.md](CFG.md) | Binary game configuration — graphics, controls, audio, pilot slot |
-| NET | [NET.md](NET.md) | Binary multiplayer network settings (IPX/TCP addresses, session config) |
+| DAT | [DAT.md](DAT.md) | Binary multiplayer network settings (NET.DAT / MODEM.DAT / SERIAL.DAT) |
 | SMS | [SMS.md](SMS.md) | FA.EXE symbol map — 3,829 MSVC-mangled C++ symbols with virtual addresses |
-| PLT | [PLT.md](PLT.md) | Pilot save file — career stats, callsign, and campaign progress |
+| P | [P.md](P.md) | Pilot save file — career stats, callsign, and campaign progress |
 | BIN | [BIN.md](BIN.md) | Lookup tables and palette subsets (INSIGMAP.BIN, VFONTPAL.BIN) |
 
 ## Installer

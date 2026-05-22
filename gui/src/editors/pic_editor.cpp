@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "ft/pic.h"
 #include "ft/pal.h"
+#include "ft/ealib.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -71,7 +72,23 @@ void DrawPicEditor(App& app) {
         std::string path = Win32SaveFile(
             L"PNG Image\0*.png\0All Files\0*.*\0", L"png");
         if (!path.empty()) {
-            auto rgba = ft::pic_decode(ed.data.data(), ed.data.size(), nullptr);
+            // Find PALETTE.PAL in any open session for correct colour rendering.
+            ft::Palette sysPal = ft::pal_load(nullptr, 0);
+            for (const auto& sess : app.sessions) {
+                for (size_t ei = 0; ei < sess.entries.size(); ++ei) {
+                    std::string n = sess.entries[ei].name;
+                    for (auto& c : n) c = (char)toupper((unsigned char)c);
+                    if (n == "PALETTE.PAL") {
+                        auto raw = ft::ealib_extract(sess.data.data(),
+                                                    sess.data.size(),
+                                                    sess.entries[ei]);
+                        if (!raw.empty()) { sysPal = ft::pal_load(raw.data(), raw.size()); }
+                        goto pal_found;
+                    }
+                }
+            }
+            pal_found:
+            auto rgba = ft::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
             if (!rgba.empty() && valid)
                 stbi_write_png(path.c_str(), (int)info.width, (int)info.height,
                                4, rgba.data(), (int)info.width * 4);

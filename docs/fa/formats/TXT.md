@@ -97,4 +97,4 @@ No directives. Raw ASCII credits block rendered verbatim.
 - [CAM.md](CAM.md) — campaign definitions paired with campaign description `.TXT` files
 - [MNU.md](MNU.md) — the campaign selection menu that renders these descriptions
 - [MT.md](MT.md) — mission briefing text using the same directive engine (without `.button`/`.picture`)
-- [PLT.md](PLT.md) — pilot save data displayed by SHWPILOT.TXT
+- [P.md](P.md) — pilot save data displayed by SHWPILOT.TXT

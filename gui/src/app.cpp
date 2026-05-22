@@ -1,5 +1,9 @@
 #include "app.h"
 #include "ft/version.h"
+
+// Defined in main.cpp — applies the correct ImGui colour scheme based on
+// App::themePref (and re-applies rounding).
+void ApplySystemTheme();
 #include "panels/lib_browser.h"
 #include "panels/editor_host.h"
 #include "panels/preview.h"
@@ -44,12 +48,20 @@ App::App(ID3D11Device* device, ID3D11DeviceContext* ctx)
         } else if (readVal(line, "RecentFile=", val)) {
             if (!val.empty() && (int)app->m_recentFiles.size() < kMaxRecent)
                 app->m_recentFiles.push_back(val);
+        } else if (readVal(line, "Theme=", val)) {
+            if (!val.empty()) {
+                int v = 0;
+                try { v = std::stoi(val); } catch (...) {}
+                if (v >= 0 && v <= 2)
+                    app->themePref = static_cast<ThemePreference>(v);
+            }
         }
     };
     h.WriteAllFn = [](ImGuiContext*, ImGuiSettingsHandler* handler, ImGuiTextBuffer* buf) {
         App* app = static_cast<App*>(handler->UserData);
         buf->appendf("[%s][Data]\n", handler->TypeName);
         buf->appendf("InstallDir=%s\n", app->installDir.c_str());
+        buf->appendf("Theme=%d\n", (int)app->themePref);
         for (const auto& p : app->m_recentFiles)
             buf->appendf("RecentFile=%s\n", p.c_str());
         buf->append("\n");
@@ -277,6 +289,21 @@ void App::DrawMenuBar() {
         }
 
         ImGui::Separator();
+        ImGui::Text("Theme");
+        int tp = (int)themePref;
+        bool themeChanged = false;
+        themeChanged |= ImGui::RadioButton("Auto (system setting)", &tp, (int)ThemePreference::Auto);
+        ImGui::SameLine();
+        themeChanged |= ImGui::RadioButton("Dark",  &tp, (int)ThemePreference::Dark);
+        ImGui::SameLine();
+        themeChanged |= ImGui::RadioButton("Light", &tp, (int)ThemePreference::Light);
+        if (themeChanged) {
+            themePref = static_cast<ThemePreference>(tp);
+            ApplySystemTheme();
+            ImGui::MarkIniSettingsDirty();
+        }
+
+        ImGui::Separator();
         if (ImGui::Button("Close", ImVec2(120, 0)))
             ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
@@ -355,15 +382,15 @@ void App::OpenLibDialog() {
 
 void App::OpenFileDialog() {
     for (const auto& path : Win32OpenFiles(
-            L"Game Files\0*.RAW;*.PLT;*.PIC;*.11K;*.5K;*.8K;*.22K\0",
+            L"Game Files\0*.P;*.RAW;*.PIC;*.SH;*.11K;*.5K;*.8K;*.22K\0",
             L"Open File"))
         OpenStandaloneFile(path);
 }
 
 static const char* kStandaloneExts[] = {
-    "raw","plt","pic","11k","5k","8k","22k",
+    "p","raw","pic","11k","5k","8k","22k",
     "ot","nt","pt","jt","see","ecm","gas",
-    "m","mm","mt","seq","inf", nullptr
+    "m","mm","mt","seq","inf","sh", nullptr
 };
 
 void App::OpenStandaloneFile(const std::string& path) {
@@ -495,6 +522,21 @@ void App::OpenEntry(int libIdx, int entryIdx) {
     else if (es.ext == "seq")                      es.kind = EditorKind::Seq;
     else if (es.ext == "inf")                      es.kind = EditorKind::Inf;
     else if (es.ext == "raw")                      es.kind = EditorKind::Raw;
+    else if (es.ext == "sh")                       es.kind = EditorKind::Sh;
+    else if (es.ext == "p")                        es.kind = EditorKind::Plt;
+    else if (es.ext == "txt" || es.ext == "wri" ||
+             es.ext == "hlp" || es.ext == "cnt" ||
+             es.ext == "ini")                      es.kind = EditorKind::Txt;
+    else if (es.ext == "bin" || es.ext == "sms")   es.kind = EditorKind::Bin;
+    else if (es.ext == "lay")                      es.kind = EditorKind::Lay;
+    else if (es.ext == "hud")                      es.kind = EditorKind::Hud;
+    else if (es.ext == "mus")                      es.kind = EditorKind::Mus;
+    else if (es.ext == "fnt")                      es.kind = EditorKind::Fnt;
+    else if (es.ext == "cb8")                      es.kind = EditorKind::Cb8;
+    else if (es.ext == "ai")                       es.kind = EditorKind::Ai;
+    else if (es.ext == "xmi")                      es.kind = EditorKind::Xmi;
+    else if (es.ext == "vdo" || es.ext == "fbc")   es.kind = EditorKind::Vdo;
+    else if (es.ext == "cam")                      es.kind = EditorKind::Cam;
 
     if (es.kind == EditorKind::None) {
         statusMsg  = "No editor for ." + es.ext + " files";

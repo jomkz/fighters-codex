@@ -82,7 +82,7 @@ For disassembly: load the DLL in Ghidra, import the FA.SMS symbol list to auto-n
 
 ## Object Type System — Brent's Relocatable Format (BRF)
 
-Seven file types share a plain-text assembly-like DSL invented by a developer named "Brent". See [formats/BRF.md](formats/BRF.md) for the full format specification. Implemented in `lib/src/brf.cpp`.
+Seven file types share a plain-text assembly-like DSL invented by Brent "Buzzboy" Iverson at Electronic Arts. See [formats/BRF.md](formats/BRF.md) for the full format specification. Implemented in `lib/src/brf.cpp`.
 
 **Magic header:** `[brent's_relocatable_format]`
 
@@ -175,7 +175,7 @@ Exported API includes: `_AddCampaignPlane`, `_InitCampaignPilot`, `_SeqStart`, p
 
 ### Pilot Save Files (.PLT)
 
-Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress, and loadout. The campaign block contains the CAM filename, aircraft `.PT` reference, ordnance inventory (`.JT` filename + `u8` quantity per slot), and sensor/ECM loadout. See [formats/PLT.md](formats/PLT.md). Field layout from offset `0xB0` to the campaign block start is not yet fully mapped.
+Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress, and loadout. The campaign block contains the CAM filename, aircraft `.PT` reference, ordnance inventory (`.JT` filename + `u8` quantity per slot), and sensor/ECM loadout. See [formats/P.md](formats/P.md). Field layout from offset `0xB0` to the campaign block start is not yet fully mapped.
 
 ---
 
@@ -221,7 +221,7 @@ Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress,
 | `.5K`    | —  | Raw uncompressed PCM at 5 kHz |
 | `.8K`    | —  | Raw uncompressed PCM at 8 kHz |
 
-PCM files use filename prefixes: `&` for looping ambient, `^` for one-shot voice callouts. Thousands of audio files are distributed across `FA_2.LIB` and `FA_4B`/`4C`/`4D.LIB`. See [formats/AUDIO.md](formats/AUDIO.md).
+PCM files use filename prefixes: `&` for looping ambient, `^` for one-shot voice callouts. Thousands of audio files are distributed across `FA_2.LIB` and `FA_4B`/`4C`/`4D.LIB`. See [formats/11K.md](formats/11K.md).
 
 `.MUS` CODE sections are **bytecode scripts** (not x86 code). Key opcodes: `FF` = playlist ID string, `FA <sub> <u32>` = setup/config, `FB <mode> <idx>` = play XMI track, `FE <u32>` = conditional branch, `FD <u24>` = loop/jump, `FC` = shuffle marker. All 9 playlists have been decoded; game-state IDs include `"air"`, `"deck"`, `"launch"`, `"valk"`, `"brief"`, `"menu"`, `"eject"`, `"succ"`, `"home"`. See [formats/MUS.md](formats/MUS.md).
 
@@ -353,7 +353,7 @@ See [RENDERER.md](RENDERER.md) for the full pipeline, shape system, and camera/v
 | File | Size | Description |
 |------|------|-------------|
 | `EA.CFG`  | 347 bytes   | Binary game configuration (graphics, controls, audio, pilot slot). See [formats/CFG.md](formats/CFG.md) |
-| `NET.DAT` | 3,552 bytes | Binary multiplayer network settings (IPX/TCP addresses, session config), mostly null-padded. See [formats/NET.md](formats/NET.md) |
+| `NET.DAT` | 3,552 bytes | Binary multiplayer network settings (IPX/TCP addresses, session config), mostly null-padded. See [formats/DAT.md](formats/DAT.md) |
 
 **CN_INFO struct** — total 0xDDC bytes. Written by `CN_WriteConfig`; read by `CN_ReadConfig`. Key fields:
 

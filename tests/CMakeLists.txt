@@ -8,6 +8,14 @@ FetchContent_MakeAvailable(Catch2)
 
 add_executable(ft_tests
     test_ealib.cpp
+    test_pic.cpp
+    test_audio.cpp
+    test_seq.cpp
+    test_brf.cpp
+    test_mission.cpp
+    test_sh.cpp
+    test_t2.cpp
+    test_plt.cpp
 )
 
 target_link_libraries(ft_tests PRIVATE ft_lib Catch2::Catch2WithMain)

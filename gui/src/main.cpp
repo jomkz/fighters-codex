@@ -6,6 +6,7 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include <tchar.h>
+#include <string>
 
 // Forward declaration of ImGui Win32 message handler
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
@@ -97,6 +98,37 @@ static void RenderFrame() {
     g_swapChain->Present(1, 0);
 }
 
+// ---------- Theme ----------
+// Applies the correct ImGui colour scheme based on App::themePref (when the
+// App exists) or falls back to the system setting (Auto behaviour).
+// Also re-applies rounding so it survives mid-session theme switches.
+// Not static — called from app.cpp via forward declaration.
+void ApplySystemTheme() {
+    ThemePreference pref = g_app ? g_app->themePref : ThemePreference::Auto;
+    bool dark = true;
+    if (pref == ThemePreference::Auto) {
+        DWORD useLightTheme = 0;
+        DWORD sz = sizeof(useLightTheme);
+        RegGetValueW(
+            HKEY_CURRENT_USER,
+            L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+            L"AppsUseLightTheme",
+            RRF_RT_DWORD, nullptr, &useLightTheme, &sz);
+        dark = (useLightTheme == 0);
+    } else {
+        dark = (pref == ThemePreference::Dark);
+    }
+    if (dark)
+        ImGui::StyleColorsDark();
+    else
+        ImGui::StyleColorsLight();
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding    = 4.0f;
+    style.FrameRounding     = 3.0f;
+    style.GrabRounding      = 3.0f;
+    style.ScrollbarRounding = 3.0f;
+}
+
 // ---------- Win32 window proc ----------
 static LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wp, lp)) return true;
@@ -121,6 +153,11 @@ static LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         return 0;
     case WM_SYSCOMMAND:
         if ((wp & 0xfff0) == SC_KEYMENU) return 0;
+        break;
+    case WM_SETTINGCHANGE:
+        if (lp && wcscmp(reinterpret_cast<LPCWSTR>(lp), L"ImmersiveColorSet") == 0)
+            if (!g_app || g_app->themePref == ThemePreference::Auto)
+                ApplySystemTheme();
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
@@ -196,12 +233,32 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
     io.IniFilename = "ft-gui.ini";
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-    ImGui::StyleColorsDark();
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding   = 4.0f;
-    style.FrameRounding    = 3.0f;
-    style.GrabRounding     = 3.0f;
-    style.ScrollbarRounding = 3.0f;
+    ApplySystemTheme();
+
+    // Load a crisper font from the Windows system font directory.
+    // Consolas (monospace) is ideal for data/code editing; Tahoma as fallback.
+    {
+        wchar_t winDir[MAX_PATH] = {};
+        GetWindowsDirectoryW(winDir, MAX_PATH);
+        // Convert to UTF-8
+        int len = WideCharToMultiByte(CP_UTF8, 0, winDir, -1, nullptr, 0, nullptr, nullptr);
+        std::string winDirA(len - 1, '\0');
+        WideCharToMultiByte(CP_UTF8, 0, winDir, -1, winDirA.data(), len, nullptr, nullptr);
+
+        const char* candidates[] = {
+            "\\Fonts\\consola.ttf",   // Consolas Regular
+            "\\Fonts\\tahoma.ttf",    // Tahoma (fallback)
+            nullptr
+        };
+        bool loaded = false;
+        for (int ci = 0; candidates[ci] && !loaded; ci++) {
+            std::string fontPath = winDirA + candidates[ci];
+            if (io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 14.0f))
+                loaded = true;
+        }
+        if (!loaded)
+            io.Fonts->AddFontDefault();
+    }
 
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_device, g_context);
@@ -240,6 +297,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
 
     // Load ini now that all handlers are registered.
     ImGui::LoadIniSettingsFromDisk(io.IniFilename);
+
+    // Re-apply theme now that App::themePref has been populated from the ini.
+    // (The earlier call at context init used Auto because g_app wasn't set yet.)
+    ApplySystemTheme();
 
     // Position window from saved placement, or center if none / invalid.
     if (!ApplyWindowPlacement(hwnd))

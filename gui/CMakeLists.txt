@@ -23,6 +23,18 @@ add_executable(ft-gui WIN32
     src/editors/inf_editor.cpp
     src/editors/plt_editor.cpp
     src/editors/raw_viewer.cpp
+    src/editors/sh_editor.cpp
+    src/editors/txt_editor.cpp
+    src/editors/bin_editor.cpp
+    src/editors/lay_editor.cpp
+    src/editors/hud_editor.cpp
+    src/editors/mus_editor.cpp
+    src/editors/fnt_editor.cpp
+    src/editors/cb8_editor.cpp
+    src/editors/ai_editor.cpp
+    src/editors/xmi_editor.cpp
+    src/editors/vdo_editor.cpp
+    src/editors/cam_editor.cpp
     ${IMGUI_SOURCES}
 )
 
@@ -41,6 +53,7 @@ target_link_libraries(ft-gui PRIVATE
     dxgi.lib
     d3dcompiler.lib
     dwmapi.lib
+    advapi32.lib
 )
 
 if(MSVC)

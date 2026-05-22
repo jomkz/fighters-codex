@@ -28,11 +28,11 @@ const OtField OT_GENERAL_FIELDS[] = {
     { "year_available",     "u32 year (V3+)" },
     { "max_vis_dist",       "i16 feet" },
     { "camera_dist",        "i16 feet" },
-    { "unk_sig_22",         "u16" },
-    { "unk_sig_laser",      "u16" },
-    { "unk_sig_ir",         "u16" },
-    { "unk_sig_radar",      "u16" },
-    { "unk_sig_26",         "u16" },
+    { "sig_vis",            "u16 visual/optical signature" },
+    { "sig_laser",          "u16 laser reflectivity" },
+    { "sig_ir",             "u16 infrared signature" },
+    { "sig_radar",          "u16 radar cross-section" },
+    { "sig_unk",            "u16 unknown fifth signature" },
     { "hit_points",         "u16" },
     { "dmg_planes",         "u16 damage vs planes" },
     { "dmg_ships",          "u16 damage vs ships" },
@@ -79,14 +79,14 @@ const int OT_GENERAL_COUNT = (int)(sizeof(OT_GENERAL_FIELDS) / sizeof(OT_GENERAL
 // NT (NpcType) extension -- follows OT_GENERAL when struct_type >= 3
 // ---------------------------------------------------------------------------
 const OtField NT_FIELDS[] = {
-    { "npc_flags",          "u32" },
+    { "npc_flags",          "u32 bitfield; bits 18-20/25-26 control AI state" },
     { "ct_name",            "ptr -> pilot/crew type name" },
-    { "crew_chief_skill",   "byte" },
-    { "wingman_skill",      "byte" },
-    { "leader_skill",       "byte" },
-    { "max_target_dist",    "i16" },
-    { "unk_nt_1",           "i16" },
-    { "ai_aggressiveness",  "byte" },
+    { "crew_chief_skill",   "byte 0-5" },
+    { "wingman_skill",      "byte 0-5" },
+    { "leader_skill",       "byte 0-5" },
+    { "max_target_dist",    "i16 feet" },
+    { "target_unk",         "i16" },
+    { "ai_aggressiveness",  "byte 0=passive 5=aggressive" },
     { "hards",              "ptr -> hardpoint table" },
 };
 const int NT_COUNT = (int)(sizeof(NT_FIELDS) / sizeof(NT_FIELDS[0]));
@@ -180,22 +180,112 @@ const int PT_COUNT = (int)(sizeof(PT_FIELDS) / sizeof(PT_FIELDS[0]));
 // JT (ProjectileType) extension -- follows OT_GENERAL when struct_type == 7
 // ---------------------------------------------------------------------------
 const OtField JT_FIELDS[] = {
-    { "jt_flags",           "u32" },
-    { "warhead_type",       "u16" },
-    { "guidance_type",      "u8" },
-    { "si_names",           "ptr -> seeker info names" },
-    { "lock_angle",         "u16 deg" },
-    { "unk_jt_1",           "u8" },
-    { "unk_jt_2",           "u8" },
-    { "unk_jt_3",           "u8" },
-    { "unk_jt_4",           "u8" },
-    { "unk_jt_5",           "u8" },
-    { "unk_jt_6",           "u8" },
-    { "unk_jt_7",           "u8" },
-    { "unk_jt_8",           "u8" },
-    // (many more JT fields -- schema is partial)
+    { "jt_flags",           "u32 warhead/capability flags" },
+    { "warhead_count",      "u16 number of warheads" },
+    { "seeker_class",       "u8 seeker category (same as SEE struct_type)" },
+    { "si_names",           "ptr -> seeker display names" },
+    { "seeker_flags",       "u16 capability/identifier flags" },
+    { "seeker_subtype",     "u8 seeker sub-type byte" },
+    { "seeker_mode",        "u8 0=unguided 1=radar 2=IR 3=laser" },
+    { "target_param_1",     "u8" },
+    { "target_param_2",     "u8" },
+    { "target_param_3",     "u8" },
+    { "target_param_4",     "u8" },
+    { "target_param_5",     "u8" },
+    { "target_param_6",     "u8" },
+    // Seeker lobe 1 (primary / search)
+    { "lobe1_az",           "u16 azimuth half-angle (182 units/deg); $7FFF=omnidirectional" },
+    { "lobe1_el",           "u16 elevation half-angle" },
+    { "lobe1_min_range",    "i32 feet (^prefix = negative two's complement)" },
+    { "lobe1_max_range",    "i32 feet" },
+    { "lobe1_min_heading",  "i32 $80000000=no limit" },
+    { "lobe1_max_heading",  "i32 $7fffffff=no limit" },
+    // Seeker lobe 2 (secondary / track)
+    { "lobe2_az",           "u16 azimuth half-angle" },
+    { "lobe2_el",           "u16 elevation half-angle" },
+    { "lobe2_min_range",    "i32 feet" },
+    { "lobe2_max_range",    "i32 feet" },
+    { "lobe2_min_heading",  "i32 $80000000=no limit" },
+    { "lobe2_max_heading",  "i32 $7fffffff=no limit" },
+    // (remaining warhead / guidance / fire parameters are format-version dependent)
 };
 const int JT_COUNT = (int)(sizeof(JT_FIELDS) / sizeof(JT_FIELDS[0]));
+
+// ---------------------------------------------------------------------------
+// SEE (Seeker/Sensor) -- standalone BRF, struct_type=10
+// Derived from SEE.md and F15R.SEE example.
+// ---------------------------------------------------------------------------
+const OtField SEE_FIELDS[] = {
+    { "struct_type",        "u8 always 10 (seeker)" },
+    { "names",              "ptr -> short, long, filename strings" },
+    { "capability_flags",   "u16 seeker identifier / capability flags" },
+    { "seeker_subtype",     "u8 seeker sub-type" },
+    { "seeker_type",        "u8 0=visual 1=laser 2=IR 3=radar" },
+    { "dual_mode",          "u8 $1=search/track lobe split enabled" },
+    { "track_rate",         "u8 acquisition time / track rate" },
+    { "reserved_1",         "u8" },
+    { "reserved_2",         "u8" },
+    { "reserved_3",         "u8" },
+    { "reserved_4",         "u8" },
+    // Primary lobe (search / initial acquisition)
+    { "lobe1_az",           "u16 azimuth half-angle (182 units/deg); $7FFF=omnidirectional" },
+    { "lobe1_el",           "u16 elevation half-angle" },
+    { "lobe1_min_range",    "i32 feet (^prefix = negative two's complement)" },
+    { "lobe1_max_range",    "i32 feet; divide by 6076 for nautical miles" },
+    { "lobe1_min_heading",  "i32 $80000000=no limit (any heading passes)" },
+    { "lobe1_max_heading",  "i32 $7fffffff=no limit" },
+    // Secondary lobe (track / lock-on)
+    { "lobe2_az",           "u16 azimuth half-angle; narrower than lobe1 for track mode" },
+    { "lobe2_el",           "u16 elevation half-angle" },
+    { "lobe2_min_range",    "i32 feet" },
+    { "lobe2_max_range",    "i32 feet" },
+    { "lobe2_min_heading",  "i32 $80000000=no limit" },
+    { "lobe2_max_heading",  "i32 $7fffffff=no limit" },
+    { "lobe1_prob_detect",  "u8 probability of detection % (100=always)" },
+    { "lobe2_prob_detect",  "u8 probability of detection %" },
+};
+const int SEE_COUNT = (int)(sizeof(SEE_FIELDS) / sizeof(SEE_FIELDS[0]));
+
+// ---------------------------------------------------------------------------
+// ECM (Electronic Countermeasures) -- standalone BRF, struct_type=9
+// Derived from ECM.md and F15.ECM example.
+// ---------------------------------------------------------------------------
+const OtField ECM_FIELDS[] = {
+    { "struct_type",        "u8 always 9 (ECM)" },
+    { "names",              "ptr -> short, long, filename strings" },
+    { "quantity",           "u16 0=built-in suite; N=pod carrying capacity" },
+    { "category",           "u8 0=built-in 1=external pod" },
+    { "ecm_power",          "u16 bitmask: $10=radar jammer $100=IR jammer; $0=passive only" },
+    { "chaff_eff",          "u8 chaff effectiveness (0=no chaff dispensers)" },
+    { "radar_scale",        "u8 radar jammer effect scale (passed to MakeObjRotationMatrix)" },
+    { "radar_az",           "u8 radar jammer azimuth half-angle (value×256 = fixed-point deg)" },
+    { "radar_el",           "u8 radar jammer elevation half-angle (value×256)" },
+    { "flare_eff",          "u8 flare effectiveness (0=no flare dispensers)" },
+    { "ir_scale",           "u8 IR jammer effect scale" },
+    { "ir_az",              "u8 IR jammer azimuth half-angle (value×256)" },
+    { "ir_el",              "u8 IR jammer elevation half-angle (value×256)" },
+    { "radar_pk_red",       "u8 radar Pk reduction % (Pk_final = (100-byte)×Pk_base/100)" },
+    { "radar_strength",     "u16 overall radar ECM strength (100=full 0=none)" },
+    { "unk_ecm_1",          "u8" },
+    { "unk_ecm_2",          "u8" },
+    { "ir_pk_red",          "u8 IR Pk reduction % applied against IR-guided weapons" },
+    { "ir_strength",        "u16 overall IR ECM strength" },
+    { "unk_ecm_3",          "u8" },
+};
+const int ECM_COUNT = (int)(sizeof(ECM_FIELDS) / sizeof(ECM_FIELDS[0]));
+
+// ---------------------------------------------------------------------------
+// GAS (External Fuel Tank) -- standalone BRF, struct_type=8
+// Derived from GAS.md; only 4 files exist (F150/F250/F350/F500.GAS).
+// ---------------------------------------------------------------------------
+const OtField GAS_FIELDS[] = {
+    { "struct_type",        "u8 always 8 (fuel tank)" },
+    { "names",              "ptr -> short, long, filename strings" },
+    { "empty_weight",       "u16 lbs — tank structural weight when empty" },
+    { "flags",              "u8 always $1 (fuel-tank category flag)" },
+    { "fuel_weight",        "u32 lbs — usable fuel weight when full (JP-8: 6.6 lb/US gal)" },
+};
+const int GAS_COUNT = (int)(sizeof(GAS_FIELDS) / sizeof(GAS_FIELDS[0]));
 
 // ---------------------------------------------------------------------------
 // Info printer

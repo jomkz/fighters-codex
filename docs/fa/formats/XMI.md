@@ -35,4 +35,4 @@ Conversion to Standard MIDI (`.MID`) is possible with `xmi2mid` from the WildMID
 ## Related
 
 - [MUS.md](MUS.md) — `.MUS` overlay files that likely act as playlists referencing `.XMI` tracks
-- [AUDIO.md](AUDIO.md) — PCM audio formats (`.5K`, `.11K`) used for sound effects and voice
+- [11K.md](11K.md) — PCM audio formats (`.5K`, `.11K`) used for sound effects and voice

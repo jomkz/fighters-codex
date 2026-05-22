@@ -27,8 +27,8 @@ Offset  Size  Description
 16       2    uint16 LE: frame count (N)
 18       2    uint16 LE: width in pixels (observed: 320)
 20       2    uint16 LE: height in pixels (observed: 200)
-22       2    uint16 LE: unknown (observed: 0x0100 = 256)
-24       2    uint16 LE: unknown (observed: 1)
+22       2    uint16 LE: palette entry count (always 256)
+24       2    uint16 LE: audio channel count (always 1 = mono)
 26       2    uint16 LE: audio sample rate in Hz (observed: 8000)
 28       4    uint32 LE: unknown
 32      16    zeroed
@@ -40,16 +40,47 @@ The 768-byte palette at offset 48 is a standard VGA DAC palette — 256 entries 
 VGA register format). Entry 0 is always black (00 00 00). The palette is
 per-video; each `.VDO` file carries its own.
 
-Field at offset 22 (0x0100 = 256) likely reflects the palette size; field at
-offset 24 (1) is likely audio channel count (mono).
+Field at offset 22 is confirmed to be the palette entry count (always 256,
+matching the 768-byte palette block at +48). Field at offset 24 is confirmed
+to be the audio channel count (always 1 = mono).
 
 ## Frame Data
 
 Frame data begins at offset 816. Frames are packed back-to-back with no
 delimiters. Frame N starts at offset `816 + sum(FBC[0..N-1])`.
 
-Frame data is palettized (8-bit palette indices into the header palette). The
-per-frame encoding has not been fully reversed.
+Frame data is palettized (8-bit palette indices into the header palette at +48).
+Each frame is Cobra-compressed. Partial RE of `DecodeFrame` (VA `0x442370` in
+FA.EXE) reveals the following structure:
+
+### Cobra codec — known structure
+
+`DecodeFrame(MovieContext*, arg1, arg2)` dispatches on two fields of its
+`MovieContext` struct:
+
+| `context[8]` | Meaning |
+|---|---|
+| `0` | Delta frame (P-frame) — only changed regions are encoded |
+| `1` | Key frame (I-frame) — full frame is encoded |
+
+For delta frames (`context[8] == 0`), a second field `context[9]` selects a
+sub-mode via an 8-entry jump table (VA `0x44260C`). Sub-modes 5 and 6 are the
+only values observed in practice. Each sub-mode calls a dedicated leaf decoder
+in the range `0x456300–0x45D090` (~45 functions); those leaf functions have not
+yet been reversed.
+
+`InitMovieContext` (VA `0x442360`) initialises the context; it only sets
+`context[0x14] = 0`. The MovieContext struct is large — a pointer at offset
+`0xC14E` points to the output/canvas buffer.
+
+`VDOSetMode` (VA `0x4AED50`) selects between 320×200 and 640×480 render paths
+and stores the result in `VDO.field_0x38`; this feeds `context[8]` during
+decode.
+
+The per-frame compression algorithm (the actual pixel-decompression loops inside
+the leaf functions) has **not yet been fully reversed**. Implementing a decoder
+requires completing the RE of those leaf functions and acquiring `.VDO` test
+files (FA_7.LIB, not present in a typical FA install).
 
 ## Audio
 

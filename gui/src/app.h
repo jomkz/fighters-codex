@@ -6,6 +6,8 @@
 #include <vector>
 #include <functional>
 
+enum class ThemePreference { Auto = 0, Dark = 1, Light = 2 };
+
 // A single open LIB file, or a standalone loose file.
 struct LibSession {
     std::string              path;           // full path to the file
@@ -28,6 +30,18 @@ enum class EditorKind {
     Inf,
     Plt,
     Raw,
+    Sh,
+    Txt,        // TXT/WRI/HLP/INI plain text
+    Bin,        // BIN/SMS binary hex viewer
+    Lay,        // LAY atmosphere
+    Hud,        // HUD cockpit DLL
+    Mus,        // MUS music bytecode
+    Fnt,        // FNT font DLL
+    Cb8,        // CB8 FMV frame scrubber
+    Ai,         // AI script + BI compile
+    Xmi,        // XMI MIDI metadata
+    Vdo,        // VDO/FBC video metadata
+    Cam,        // CAM campaign
 };
 
 struct EditorState {
@@ -69,6 +83,9 @@ public:
     // Upload RGBA pixels to a DX11 texture for display in ImGui.
     GpuTexture UploadTexture(const uint8_t* rgba, int w, int h);
 
+    ID3D11Device*        GetDevice() const { return m_device; }
+    ID3D11DeviceContext* GetCtx()    const { return m_ctx; }
+
     enum class StatusKind { Info, Warning, Error };
 
     // ---------- public state ----------
@@ -76,8 +93,9 @@ public:
     EditorState             editor;
     std::string             installDir;      // FA game directory
     std::string             statusMsg;
-    StatusKind              statusKind     = StatusKind::Info;
+    StatusKind              statusKind      = StatusKind::Info;
     int                     selectedSession = -1;
+    ThemePreference         themePref       = ThemePreference::Auto;
 
 private:
     void DrawMenuBar();

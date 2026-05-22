@@ -53,7 +53,7 @@ Index 0 (magenta) is the standard VGA transparency key. Indices 1–7 render a b
 
 ## INSIGMAP.BIN (256 bytes)
 
-Flat 256-entry byte array. Entry 0 = `0x00`; all remaining 255 entries = `0x3B` (59 decimal). The `0x3B` fill suggests a "no insignia" sentinel — most insignia slots are unused, with the actual insignia assets referenced by the pilot save file fields at offsets `0x6E`–`0x94` ([PLT.md](PLT.md)).
+Flat 256-entry byte array. Entry 0 = `0x00`; all remaining 255 entries = `0x3B` (59 decimal). The `0x3B` fill suggests a "no insignia" sentinel — most insignia slots are unused, with the actual insignia assets referenced by the pilot save file fields at offsets `0x6E`–`0x94` ([P.md](P.md)).
 
 ## Location
 
@@ -63,5 +63,5 @@ Flat 256-entry byte array. Entry 0 = `0x00`; all remaining 255 entries = `0x3B` 
 
 ## Related
 
-- [PLT.md](PLT.md) — pilot save files reference insignia asset IDs cross-referenced by INSIGMAP.BIN
+- [P.md](P.md) — pilot save files reference insignia asset IDs cross-referenced by INSIGMAP.BIN
 - [PAL.md](PAL.md) — main VGA palette; VFONTPAL.BIN is a separate 16-color subset for video text
