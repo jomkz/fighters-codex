@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace ft {
+namespace fx {
 
 struct LayGrad {
     uint8_t r, g, b;
@@ -26,7 +26,7 @@ struct LayLayer {
     int32_t  gradient_alt_end;
     int32_t  gradient_val_end;
     uint8_t  base_rgb[3];
-    LayGrad  zenith_grad[31];   // +0x3E: zenith→horizon, 31 RGB entries
+    LayGrad  zenith_grad[31];   // +0x3E: zenithâ†’horizon, 31 RGB entries
     LayGrad  horizon_grad[32];  // +0x9B: horizon downward, 32 RGB entries
     uint8_t  horizon_base_rgb[3];
     uint32_t fog_density;
@@ -52,4 +52,4 @@ struct LayFile {
 
 LayFile lay_parse(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

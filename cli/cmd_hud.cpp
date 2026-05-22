@@ -1,10 +1,10 @@
-#include "ft/hud.h"
+﻿#include "fx/hud.h"
 #include <cstdio>
 #include <cstring>
 #include <vector>
 #include <fstream>
 
-using namespace ft;
+using namespace fx;
 
 static std::vector<uint8_t> read_file(const char* path) {
     std::ifstream f(path, std::ios::binary | std::ios::ate);

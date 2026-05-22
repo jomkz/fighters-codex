@@ -1,7 +1,7 @@
-#include <cstdio>
+﻿#include <cstdio>
 #include <cstring>
 #include <string>
-#include "ft/version.h"
+#include "fx/version.h"
 
 // Forward declarations from command modules
 int cmd_lib(int argc, char** argv);
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
 
     const char* cmd = argv[1];
     if (strcmp(cmd, "--version") == 0 || strcmp(cmd, "-v") == 0) {
-        puts("ft " FT_VERSION_STRING);
+        puts("fx " FX_VERSION_STRING);
         return 0;
     }
     if (strcmp(cmd, "lib") == 0) return cmd_lib(argc - 1, argv + 1);

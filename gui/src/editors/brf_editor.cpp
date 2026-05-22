@@ -1,8 +1,8 @@
-#include "brf_editor.h"
+﻿#include "brf_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/brf.h"
-#include "ft/ot.h"
+#include "fx/brf.h"
+#include "fx/ot.h"
 #include <cstring>
 #include <cstdio>
 #include <string>
@@ -16,9 +16,9 @@ struct FieldBuf {
 static std::vector<FieldBuf> s_bufs;
 static int s_lastLib   = -2;
 static int s_lastEntry = -2;
-static ft::BrfDoc s_doc;
+static fx::BrfDoc s_doc;
 
-static void RebuildBuffers(const ft::BrfDoc& doc) {
+static void RebuildBuffers(const fx::BrfDoc& doc) {
     s_bufs.resize(doc.fields.size());
     for (size_t i = 0; i < doc.fields.size(); i++) {
         strncpy_s(s_bufs[i].buf, doc.fields[i].value.c_str(), 127);
@@ -32,36 +32,36 @@ static void RebuildBuffers(const ft::BrfDoc& doc) {
 static std::pair<const char*, const char*> FieldLabel(const std::string& ext, int fi) {
     // Flat standalone schemas
     if (ext == "see") {
-        if (fi < ft::SEE_COUNT) return { ft::SEE_FIELDS[fi].name, ft::SEE_FIELDS[fi].note };
+        if (fi < fx::SEE_COUNT) return { fx::SEE_FIELDS[fi].name, fx::SEE_FIELDS[fi].note };
         return { nullptr, nullptr };
     }
     if (ext == "ecm") {
-        if (fi < ft::ECM_COUNT) return { ft::ECM_FIELDS[fi].name, ft::ECM_FIELDS[fi].note };
+        if (fi < fx::ECM_COUNT) return { fx::ECM_FIELDS[fi].name, fx::ECM_FIELDS[fi].note };
         return { nullptr, nullptr };
     }
     if (ext == "gas") {
-        if (fi < ft::GAS_COUNT) return { ft::GAS_FIELDS[fi].name, ft::GAS_FIELDS[fi].note };
+        if (fi < fx::GAS_COUNT) return { fx::GAS_FIELDS[fi].name, fx::GAS_FIELDS[fi].note };
         return { nullptr, nullptr };
     }
 
-    // OT / NT / PT / JT — all begin with the OT_GENERAL section
-    if (fi < ft::OT_GENERAL_COUNT)
-        return { ft::OT_GENERAL_FIELDS[fi].name, ft::OT_GENERAL_FIELDS[fi].note };
+    // OT / NT / PT / JT â€” all begin with the OT_GENERAL section
+    if (fi < fx::OT_GENERAL_COUNT)
+        return { fx::OT_GENERAL_FIELDS[fi].name, fx::OT_GENERAL_FIELDS[fi].note };
 
-    int off = fi - ft::OT_GENERAL_COUNT;
+    int off = fi - fx::OT_GENERAL_COUNT;
 
     if (ext == "jt") {
-        if (off < ft::JT_COUNT) return { ft::JT_FIELDS[off].name, ft::JT_FIELDS[off].note };
+        if (off < fx::JT_COUNT) return { fx::JT_FIELDS[off].name, fx::JT_FIELDS[off].note };
         return { nullptr, nullptr };
     }
     if (ext == "nt" || ext == "pt") {
-        if (off < ft::NT_COUNT) return { ft::NT_FIELDS[off].name, ft::NT_FIELDS[off].note };
-        off -= ft::NT_COUNT;
-        if (ext == "pt" && off < ft::PT_COUNT)
-            return { ft::PT_FIELDS[off].name, ft::PT_FIELDS[off].note };
+        if (off < fx::NT_COUNT) return { fx::NT_FIELDS[off].name, fx::NT_FIELDS[off].note };
+        off -= fx::NT_COUNT;
+        if (ext == "pt" && off < fx::PT_COUNT)
+            return { fx::PT_FIELDS[off].name, fx::PT_FIELDS[off].note };
         return { nullptr, nullptr };
     }
-    // OT — only OT_GENERAL (already covered above)
+    // OT â€” only OT_GENERAL (already covered above)
     return { nullptr, nullptr };
 }
 
@@ -72,7 +72,7 @@ void DrawBrfEditor(App& app) {
     if (ed.libIdx != s_lastLib || ed.entryIdx != s_lastEntry) {
         s_lastLib   = ed.libIdx;
         s_lastEntry = ed.entryIdx;
-        s_doc = ft::brf_parse(ed.data.data(), ed.data.size());
+        s_doc = fx::brf_parse(ed.data.data(), ed.data.size());
         RebuildBuffers(s_doc);
     }
 
@@ -167,7 +167,7 @@ void DrawBrfEditor(App& app) {
                 }
             }
         }
-        ed.data     = ft::brf_serialize(s_doc);
+        ed.data     = fx::brf_serialize(s_doc);
         ed.modified = true;
     }
 }

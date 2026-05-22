@@ -1,4 +1,4 @@
-add_library(ft_lib STATIC
+﻿add_library(fx_lib STATIC
     src/blast.cpp
     src/pal.cpp
     src/ealib.cpp
@@ -23,13 +23,13 @@ add_library(ft_lib STATIC
     src/ai.cpp
 )
 
-target_include_directories(ft_lib
+target_include_directories(fx_lib
     PUBLIC  include
     PRIVATE vendor
 )
 
 if(MSVC)
-    target_compile_options(ft_lib PRIVATE /W3 /WX-)
+    target_compile_options(fx_lib PRIVATE /W3 /WX-)
 else()
-    target_compile_options(ft_lib PRIVATE -Wall -Wextra)
+    target_compile_options(fx_lib PRIVATE -Wall -Wextra)
 endif()

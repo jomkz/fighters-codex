@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -16,7 +16,7 @@
 // WAV 8-bit is also unsigned (values 0-255, silence = 128), so the raw
 // bytes can be copied directly into / out of a standard WAV file.
 
-namespace ft {
+namespace fx {
 
 struct AudioInfo {
     uint32_t sample_rate;  // Hz (11025, 5000, 8000, ...)
@@ -42,4 +42,4 @@ std::vector<uint8_t> audio_to_wav(const uint8_t* pcm, size_t pcm_size,
 std::vector<uint8_t> wav_to_pcm(const uint8_t* wav, size_t wav_size,
                                   uint32_t* out_rate);
 
-} // namespace ft
+} // namespace fx

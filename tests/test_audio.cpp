@@ -1,11 +1,11 @@
-#include <catch2/catch_test_macros.hpp>
+﻿#include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
-#include <ft/audio.h>
+#include <fx/audio.h>
 #include <cmath>
 #include <cstdint>
 #include <vector>
 
-using namespace ft;
+using namespace fx;
 
 TEST_CASE("audio_rate_from_ext recognises all FA extensions") {
     REQUIRE(audio_rate_from_ext(".11k") == 11025u);

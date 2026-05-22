@@ -1,7 +1,7 @@
-#include "ft/plt.h"
+﻿#include "fx/plt.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static std::string read_fixed(const uint8_t* data, size_t max_len) {
     size_t len = strnlen((const char*)data, max_len);
@@ -177,4 +177,4 @@ bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* st) {
     return true;
 }
 
-} // namespace ft
+} // namespace fx

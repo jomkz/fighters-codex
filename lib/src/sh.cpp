@@ -1,10 +1,10 @@
-#include "ft/sh.h"
+﻿#include "fx/sh.h"
 #include <algorithm>
 #include <climits>
 #include <cstring>
 #include <sstream>
 
-namespace ft {
+namespace fx {
 
 // ---- PE/LE header parsing -----------------------------------------------
 
@@ -383,4 +383,4 @@ std::string sh_to_obj(const ShMesh& mesh) {
     return ss.str();
 }
 
-} // namespace ft
+} // namespace fx

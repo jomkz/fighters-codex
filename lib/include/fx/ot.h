@@ -1,5 +1,5 @@
-#pragma once
-#include "ft/brf.h"
+﻿#pragma once
+#include "fx/brf.h"
 #include <string>
 #include <vector>
 
@@ -9,7 +9,7 @@
 // Field order and names derived from OpenFA crates/asset/ot, nt, pt, jt, see, ecm.
 // Not all versions are fully documented; fields at version boundaries are marked.
 
-namespace ft {
+namespace fx {
 
 // Named field descriptor for BRF info display.
 struct OtField {
@@ -54,4 +54,4 @@ extern const int     GAS_COUNT;
 // format: "ot", "nt", "pt", "jt", "see", "ecm", "gas" (controls which schema to use)
 void brf_print_info(const BrfDoc& doc, const char* format);
 
-} // namespace ft
+} // namespace fx

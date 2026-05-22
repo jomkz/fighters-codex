@@ -439,8 +439,8 @@ Weapon / projectile entity offsets are documented separately in [formats/JT.md](
 
 **OpenFA project** (GitLab, Rust) â€” Primary external reference for BRF/OT/NT/PT formats and the EALIB parser.
 
-**fighters-toolkit** (this repo):
-- `ft` CLI â€” LIB archive operations
-- `ft-gui` â€” GUI editor for LIB archives
+**fighters-codex** (this repo):
+- `fx` CLI â€” LIB archive operations
+- `fx-gui` â€” GUI editor for LIB archives
 - `lib/src/blast.cpp` â€” DCL-Blast decompressor
 - `lib/src/brf.cpp` â€” BRF format parser

@@ -1,11 +1,11 @@
-#include "ft/t2.h"
+﻿#include "fx/t2.h"
 #include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <vector>
 #include <filesystem>
 
-using namespace ft;
+using namespace fx;
 namespace fs = std::filesystem;
 
 static std::vector<uint8_t> read_file(const char* path) {

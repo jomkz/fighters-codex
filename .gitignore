@@ -1,10 +1,10 @@
-# Claude Code internal directory
+﻿# Claude Code internal directory
 .claude/
 
 # Build output
 build/
 
-# Game asset files — never commit copyrighted game content
+# Game asset files â€” never commit copyrighted game content
 *.LIB
 *.PIC
 *.PAL
@@ -15,7 +15,7 @@ build/
 
 # ImGui layout state and user prefs
 imgui.ini
-ft-gui.ini
+fx-gui.ini
 
 # Visual Studio
 .vs/

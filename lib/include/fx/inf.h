@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <map>
@@ -9,7 +9,7 @@
 // Format: plain text with dot-command directives (.body .right, .title .center, etc.)
 // and a structured footer with measurement key-value pairs (LENGTH (m): 16.26, etc.).
 
-namespace ft {
+namespace fx {
 
 struct InfSection {
     std::string directive;  // e.g. ".body .right", ".title .center", "" for leading text
@@ -24,4 +24,4 @@ struct InfFile {
 
 InfFile inf_parse(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

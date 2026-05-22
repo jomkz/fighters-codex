@@ -1,12 +1,12 @@
-// PKWare DCL ("Blast") decompressor.
+﻿// PKWare DCL ("Blast") decompressor.
 // Based on blast.c by Mark Adler (Copyright (C) 2003, 2012; zlib/libpng license).
 // This file is an altered version -- see LICENSE for the required notice.
 
-#include "ft/blast.h"
+#include "fx/blast.h"
 #include <cstring>
 #include <vector>
 
-namespace ft {
+namespace fx {
 
 static const int MAXBITS = 13;
 static const int END_SYM = 519; // lenbase[15] + 255 = 264 + 255
@@ -162,4 +162,4 @@ int blast_decompress_ea(const uint8_t* in, size_t in_size,
     return blast_decompress(in + 4, in_size - 4, out, cap);
 }
 
-} // namespace ft
+} // namespace fx

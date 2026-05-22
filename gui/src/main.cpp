@@ -1,4 +1,4 @@
-#include "app.h"
+﻿#include "app.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_win32.h"
@@ -102,7 +102,7 @@ static void RenderFrame() {
 // Applies the correct ImGui colour scheme based on App::themePref (when the
 // App exists) or falls back to the system setting (Auto behaviour).
 // Also re-applies rounding so it survives mid-session theme switches.
-// Not static — called from app.cpp via forward declaration.
+// Not static â€” called from app.cpp via forward declaration.
 void ApplySystemTheme() {
     ThemePreference pref = g_app ? g_app->themePref : ThemePreference::Auto;
     bool dark = true;
@@ -225,12 +225,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
     }
 
     // Init ImGui before creating App so all handlers are registered before
-    // we call LoadIniSettingsFromDisk — window placement needs to be read
+    // we call LoadIniSettingsFromDisk â€” window placement needs to be read
     // before ShowWindow.
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.IniFilename = "ft-gui.ini";
+    io.IniFilename = "fx-gui.ini";
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     ApplySystemTheme();
@@ -291,7 +291,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
         ImGui::AddSettingsHandler(&wh);
     }
 
-    // Create App — registers the FightersToolkit handler (installDir, recent files).
+    // Create App â€” registers the FightersToolkit handler (installDir, recent files).
     App app(g_device, g_context);
     g_app = &app;
 

@@ -1,8 +1,8 @@
-#include "ft/lay.h"
-#include "ft/pe.h"
+﻿#include "fx/lay.h"
+#include "fx/pe.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static int32_t s32le(const uint8_t* p) {
     return (int32_t)((uint32_t)p[0] | ((uint32_t)p[1] << 8) |
@@ -88,4 +88,4 @@ LayFile lay_parse(const uint8_t* data, size_t size) {
     return result;
 }
 
-} // namespace ft
+} // namespace fx

@@ -1,8 +1,8 @@
-#include "ft/hud.h"
-#include "ft/pe.h"
+﻿#include "fx/hud.h"
+#include "fx/pe.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static uint16_t u16le(const uint8_t* p) {
     return (uint16_t)(p[0] | ((uint16_t)p[1] << 8));
@@ -83,7 +83,7 @@ HudFile hud_parse(const uint8_t* data, size_t size) {
     if (!cs.data || cs.size < 0x2BB) return result;
 
     // Scan printable null-terminated strings in two passes: the string region
-    // before the gauge params (offsets 1–0x1E0), and the string region after
+    // before the gauge params (offsets 1â€“0x1E0), and the string region after
     // the gauge params (offsets 0x275 onward). Strings are asset references
     // (~<ac>, ~<ac>h, hudsym, winfont, etc.) and sub-panel sprite suffixes.
     auto scan_strings = [&](size_t from, size_t to) {
@@ -124,4 +124,4 @@ HudFile hud_parse(const uint8_t* data, size_t size) {
     return result;
 }
 
-} // namespace ft
+} // namespace fx

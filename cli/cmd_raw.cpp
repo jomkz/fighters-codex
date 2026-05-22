@@ -1,4 +1,4 @@
-#include "ft/raw.h"
+﻿#include "fx/raw.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -6,9 +6,9 @@
 #include <fstream>
 #include <filesystem>
 
-using namespace ft;
+using namespace fx;
 
-// stb_image_write declarations only — implementation compiled in cmd_pic.cpp
+// stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
 #include "stb_image_write.h"
 
 namespace fs = std::filesystem;

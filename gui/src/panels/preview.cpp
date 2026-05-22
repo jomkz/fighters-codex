@@ -1,12 +1,12 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 #include "preview.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/pic.h"
-#include "ft/pal.h"
-#include "ft/ealib.h"
-#include "ft/raw.h"
-#include "ft/sh.h"
+#include "fx/pic.h"
+#include "fx/pal.h"
+#include "fx/ealib.h"
+#include "fx/raw.h"
+#include "fx/sh.h"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -27,7 +27,7 @@ static int        s_previewEntry = -2;
 
 // Locate PALETTE.PAL across all open sessions. Returns a loaded Palette,
 // or a greyscale fallback if not found.
-static ft::Palette FindSysPalette(const App& app) {
+static fx::Palette FindSysPalette(const App& app) {
     for (const auto& sess : app.sessions) {
         for (size_t ei = 0; ei < sess.entries.size(); ++ei) {
             const auto& entry = sess.entries[ei];
@@ -36,14 +36,14 @@ static ft::Palette FindSysPalette(const App& app) {
             for (auto& c : name) c = (char)toupper((unsigned char)c);
             if (name == "PALETTE.PAL") {
                 // Decompress and load
-                auto raw = ft::ealib_extract(sess.data.data(), sess.data.size(),
+                auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
                                              entry);
                 if (!raw.empty())
-                    return ft::pal_load(raw.data(), raw.size());
+                    return fx::pal_load(raw.data(), raw.size());
             }
         }
     }
-    return ft::pal_load(nullptr, 0); // greyscale fallback
+    return fx::pal_load(nullptr, 0); // greyscale fallback
 }
 
 // ---------------------------------------------------------------------------
@@ -230,14 +230,14 @@ static bool EnsureRT(ID3D11Device* device, int w, int h) {
     return s_sh.rtv && s_sh.srv && s_sh.dsv;
 }
 
-static void BuildMeshVB(ID3D11Device* device, const ft::ShMesh& mesh) {
+static void BuildMeshVB(ID3D11Device* device, const fx::ShMesh& mesh) {
     s_sh.ReleaseMesh();
     if (mesh.vertices.empty() || mesh.faces.empty()) return;
 
     std::vector<Vtx3D> verts;
     verts.reserve(mesh.faces.size() * 6);
 
-    // Fixed directional light — upper-left-front in render space (X=right, Y=up, Z=fwd)
+    // Fixed directional light â€” upper-left-front in render space (X=right, Y=up, Z=fwd)
     const float Lx = 0.577f, Ly = 0.577f, Lz = -0.577f;
     const float ambient = 0.15f, diffuse = 0.85f;
 
@@ -293,7 +293,7 @@ static void BuildMeshVB(ID3D11Device* device, const ft::ShMesh& mesh) {
 // Room is a cube of half-size = max_span*2, centred on the model bbox centre.
 // Camera orbits at <= max_span*1.6, so it is always INSIDE the room.
 // All coordinates are in render space: X=FA_X, Y=FA_Z(up), Z=FA_Y(fwd).
-static void BuildBoxGridVB(ID3D11Device* device, const ft::ShInfo& info, float max_span) {
+static void BuildBoxGridVB(ID3D11Device* device, const fx::ShInfo& info, float max_span) {
     float cx = (info.bbox[0] + info.bbox[3]) * 0.5f;
     float cy = (info.bbox[2] + info.bbox[5]) * 0.5f; // render_Y = FA_Z centre
     float cz = (info.bbox[1] + info.bbox[4]) * 0.5f; // render_Z = FA_Y centre
@@ -344,8 +344,8 @@ static void BuildBoxGridVB(ID3D11Device* device, const ft::ShInfo& info, float m
         }
     };
 
-    faceXZ(ylo, 0.22f);   // floor  — slightly brighter
-    faceXZ(yhi, 0.14f);   // ceiling — dimmer
+    faceXZ(ylo, 0.22f);   // floor  â€” slightly brighter
+    faceXZ(yhi, 0.14f);   // ceiling â€” dimmer
     faceYZ(xlo, 0.17f);   // left wall
     faceYZ(xhi, 0.17f);   // right wall
     faceXY(zlo, 0.17f);   // rear wall
@@ -381,7 +381,7 @@ static void RenderSh(ID3D11Device* device, ID3D11DeviceContext* ctx, int w, int 
     ctx->ClearRenderTargetView(s_sh.rtv, kClear);
     ctx->ClearDepthStencilView(s_sh.dsv, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-    if (!s_sh.vb || s_sh.vtx_count == 0) return; // empty model — just show dark bg
+    if (!s_sh.vb || s_sh.vtx_count == 0) return; // empty model â€” just show dark bg
 
     // Build MVP
     float azRad = s_sh.azimuth   * XM_PI / 180.0f;
@@ -420,7 +420,7 @@ static void RenderSh(ID3D11Device* device, ID3D11DeviceContext* ctx, int w, int 
 
     UINT stride = sizeof(Vtx3D), offset = 0;
 
-    // Floor grid — draw first so model depth writes occlude it naturally
+    // Floor grid â€” draw first so model depth writes occlude it naturally
     if (s_sh.grid_vb && s_sh.grid_vtx_count > 0) {
         ctx->IASetVertexBuffers(0, 1, &s_sh.grid_vb, &stride, &offset);
         ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -433,7 +433,7 @@ static void RenderSh(ID3D11Device* device, ID3D11DeviceContext* ctx, int w, int 
     ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     ctx->Draw((UINT)s_sh.vtx_count, 0);
 
-    // Wireframe overlay — dark lines on top of the solid mesh
+    // Wireframe overlay â€” dark lines on top of the solid mesh
     if (s_sh.rs_wire && s_sh.ps_wire && s_sh.dss_wire) {
         ctx->RSSetState(s_sh.rs_wire);
         ctx->PSSetShader(s_sh.ps_wire, nullptr, 0);
@@ -462,18 +462,18 @@ void DrawPreview(App& app) {
 
         if (!ed.data.empty() && ed.kind != EditorKind::Sh) {
             if (ed.kind == EditorKind::Pic) {
-                ft::PicInfo info;
-                if (ft::pic_info(ed.data.data(), ed.data.size(), &info)) {
-                    ft::Palette sysPal = FindSysPalette(app);
-                    auto rgba = ft::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
+                fx::PicInfo info;
+                if (fx::pic_info(ed.data.data(), ed.data.size(), &info)) {
+                    fx::Palette sysPal = FindSysPalette(app);
+                    auto rgba = fx::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
                     if (!rgba.empty())
                         s_preview = app.UploadTexture(rgba.data(),
                                                       (int)info.width, (int)info.height);
                 }
             } else if (ed.kind == EditorKind::Raw) {
-                ft::RawInfo info;
-                if (ft::raw_info(ed.data.data(), ed.data.size(), &info)) {
-                    auto rgba = ft::raw_decode(ed.data.data(), ed.data.size());
+                fx::RawInfo info;
+                if (fx::raw_info(ed.data.data(), ed.data.size(), &info)) {
+                    auto rgba = fx::raw_decode(ed.data.data(), ed.data.size());
                     if (!rgba.empty())
                         s_preview = app.UploadTexture(rgba.data(),
                                                       (int)info.width, (int)info.height);
@@ -492,8 +492,8 @@ void DrawPreview(App& app) {
             s_sh.cached_lib   = ed.libIdx;
             s_sh.cached_entry = ed.entryIdx;
 
-            ft::ShInfo info = ft::sh_parse_info(ed.data.data(), ed.data.size());
-            ft::ShMesh mesh = ft::sh_parse_mesh(ed.data.data(), ed.data.size());
+            fx::ShInfo info = fx::sh_parse_info(ed.data.data(), ed.data.size());
+            fx::ShMesh mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size());
 
             // Reset camera to fit the model.
             // SH bbox is (X, Y, Z) = (right, forward, up); remap target to DX Y-up.

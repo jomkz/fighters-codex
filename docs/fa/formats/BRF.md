@@ -1,4 +1,4 @@
-# BRF -- Brent's Relocatable Format (.OT / .NT / .PT / .JT / .SEE / .ECM / .GAS)
+﻿# BRF -- Brent's Relocatable Format (.OT / .NT / .PT / .JT / .SEE / .ECM / .GAS)
 
 ## Overview
 
@@ -6,12 +6,12 @@ BRF is a **plain ASCII text** container for all game type definitions. Seven fil
 extensions share the same tokenizer; the `struct_type` field distinguishes them.
 
 The "Relocatable" in the name refers to pointer relocation. Each BRF file opens with
-a pointer table — the `:name` lines before the first `\tend` — that enumerates every
+a pointer table â€” the `:name` lines before the first `\tend` â€” that enumerates every
 `ptr` field in the record by symbolic name. This is a relocation table: in the plain-text
 format, `ptr` fields hold quoted filename strings or `NULL`; in the engine's in-memory
 representation they become actual pointers. At load time the engine walks the pointer
 table and resolves each named field to a memory address, making the loaded record
-independent of where it was placed — relocatable. The mechanism is the same concept as
+independent of where it was placed â€” relocatable. The mechanism is the same concept as
 relocation entries in a linker object file, applied to game data.
 
 | Extension | struct_type | Contents |
@@ -116,7 +116,7 @@ year_available      dword   earliest campaign year this object appears
 ## PT Fields (Plane Type)
 
 PT extends OT with ~80 additional aerodynamic and avionics fields, beginning immediately
-after the NT section in the BRF file (section name unverified — needs confirmation against
+after the NT section in the BRF file (section name unverified â€” needs confirmation against
 a live `.PT` file).
 
 ### Carrier / datalink / thrust-vectoring dword
@@ -140,7 +140,7 @@ Example: `$4591` = ATG datalink + full 3D thrust vectoring.
 
 ```
 carrier_flags       dword   see table above
-env                 ptr     → G-envelope section
+env                 ptr     â†’ G-envelope section
 neg_g_count         word    number of negative-G envelope entries (negative number)
 pos_g_count         word    number of positive-G envelope entries
 max_speed_sl        word    mph at sea level
@@ -156,7 +156,7 @@ military_thrust     dword   lbf
 afterburner_thrust  dword   lbf
 throttle_accel      word    percent/sec
 throttle_decel      word    percent/sec
-tv_min_angle        word    thrust-vectoring min angle (−60 = 60°)
+tv_min_angle        word    thrust-vectoring min angle (âˆ’60 = 60Â°)
 tv_max_angle        word    thrust-vectoring max down-angle
 tv_speed            word    deg/sec
 fuel_consumption_mil word   at military power
@@ -209,7 +209,7 @@ defining the aircraft's performance boundary at that G.
 
 ```
 [env_entry]
-gload               word    e.g. -4, -3, … 9
+gload               word    e.g. -4, -3, â€¦ 9
 count               word    number of valid speed/altitude pairs
 stall_lift          word    index of stall boundary in data[]
 max_speed           word    index of max-speed boundary in data[]
@@ -229,7 +229,7 @@ hld                 word    Hardpoint Loading Data flags (see table below)
 offset_x            word    right/left offset, feet (positive = right)
 offset_y            word    up/down offset, feet
 offset_z            word    fore/aft offset, feet
-slew_heading        word    1 deg = 182 (e.g. 364 = 2°)
+slew_heading        word    1 deg = 182 (e.g. 364 = 2Â°)
 slew_pitch          word    1 deg = 182
 slew_limit_heading  word    1 deg = 182
 slew_limit_pitch    word    1 deg = 182
@@ -243,7 +243,7 @@ location            byte    see location codes below
 
 | Value | Meaning |
 |-------|---------|
-| `$8` | Required load only (gun, built-in sensor — always loaded) |
+| `$8` | Required load only (gun, built-in sensor â€” always loaded) |
 | `$85` | External HP, symmetrical load, IR-guided missile |
 | `$465` | External HP, symmetrical load, active-radar missile, SARH missile, store |
 | `$520` | Stealth, internal bay, active-radar missile, other missile, store |
@@ -272,28 +272,28 @@ protected), `148`/`150` (moderately armored), `36` (structural), `6` (critical s
 
 ## Round-Trip Notes
 
-- Parse → serialize produces byte-identical files for all OT/NT/PT files in FA_2.LIB.
+- Parse â†’ serialize produces byte-identical files for all OT/NT/PT files in FA_2.LIB.
 - Null pointers are written as `ptr NULL`.
 - Integer field sign interpretation must match the type assignments in the spec; wrong signedness
   produces visually wrong values in `info` output.
 
-## ft commands
+## fx commands
 
 ```
 # Same pattern for all seven extensions:
-ft ot  info   <file.OT>              # human-readable field dump
-ft ot  unpack <file.OT>  [-o out.txt] # editable text
-ft ot  pack   <in.txt>   -o out.OT   # write back
+fx ot  info   <file.OT>              # human-readable field dump
+fx ot  unpack <file.OT>  [-o out.txt] # editable text
+fx ot  pack   <in.txt>   -o out.OT   # write back
 
-ft nt  info / unpack / pack
-ft pt  info / unpack / pack
-ft jt  info / unpack / pack
-ft see info / unpack / pack
-ft ecm info / unpack / pack
-ft gas info / unpack / pack
+fx nt  info / unpack / pack
+fx pt  info / unpack / pack
+fx jt  info / unpack / pack
+fx see info / unpack / pack
+fx ecm info / unpack / pack
+fx gas info / unpack / pack
 ```
 
-Example: `ft pt info F16C.PT` → thrust, max_speed, fuel, stall speed, ceiling.
+Example: `fx pt info F16C.PT` â†’ thrust, max_speed, fuel, stall speed, ceiling.
 
 ## Confirmed Engine Functions (FA.SMS)
 
@@ -310,8 +310,8 @@ These four are the canonical entry points for tracing how BRF fields map to in-m
 
 ## Applications
 
-BRF files are plain ASCII — open and edit directly after `ft unpack`, no further conversion needed.
+BRF files are plain ASCII â€” open and edit directly after `fx unpack`, no further conversion needed.
 
-- **VS Code** — free; multi-file search useful when cross-referencing `.PT` hardpoint names against `.JT` definitions
-- **Notepad++** — free, Windows; lightweight for quick field edits
-- **Notepad / TextEdit** — free, built-in; sufficient for small edits
+- **VS Code** â€” free; multi-file search useful when cross-referencing `.PT` hardpoint names against `.JT` definitions
+- **Notepad++** â€” free, Windows; lightweight for quick field edits
+- **Notepad / TextEdit** â€” free, built-in; sufficient for small edits

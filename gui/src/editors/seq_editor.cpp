@@ -1,30 +1,30 @@
-#include "seq_editor.h"
+﻿#include "seq_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/seq.h"
+#include "fx/seq.h"
 #include <string>
 #include <cstring>
 
-static ft::SeqFile s_seq;
+static fx::SeqFile s_seq;
 static int s_lastLib   = -2;
 static int s_lastEntry = -2;
 
 // Color per command keyword.
 static ImVec4 CmdColor(const std::string& cmd) {
-    if (cmd == "palette")            return {0.6f, 1.0f, 0.6f, 1};   // green  — palette load
-    if (cmd == "fadein")             return {0.5f, 0.85f, 1.0f, 1};  // cyan   — transition
+    if (cmd == "palette")            return {0.6f, 1.0f, 0.6f, 1};   // green  â€” palette load
+    if (cmd == "fadein")             return {0.5f, 0.85f, 1.0f, 1};  // cyan   â€” transition
     if (cmd == "fadeout")            return {0.5f, 0.85f, 1.0f, 1};  // cyan
-    if (cmd == "video")              return {1.0f, 0.7f, 0.7f, 1};   // rose   — video playback
-    if (cmd == "bitmap")             return {1.0f, 0.8f, 0.5f, 1};   // amber  — still image
-    if (cmd == "sound")              return {1.0f, 0.9f, 0.4f, 1};   // yellow — audio
-    if (cmd == "font")               return {0.8f, 0.7f, 1.0f, 1};   // lavender — font
-    if (cmd == "wait" || cmd == "sync") return {0.75f, 0.75f, 0.75f, 1}; // grey — control flow
-    return {0.85f, 0.82f, 0.78f, 1}; // off-white — unknown
+    if (cmd == "video")              return {1.0f, 0.7f, 0.7f, 1};   // rose   â€” video playback
+    if (cmd == "bitmap")             return {1.0f, 0.8f, 0.5f, 1};   // amber  â€” still image
+    if (cmd == "sound")              return {1.0f, 0.9f, 0.4f, 1};   // yellow â€” audio
+    if (cmd == "font")               return {0.8f, 0.7f, 1.0f, 1};   // lavender â€” font
+    if (cmd == "wait" || cmd == "sync") return {0.75f, 0.75f, 0.75f, 1}; // grey â€” control flow
+    return {0.85f, 0.82f, 0.78f, 1}; // off-white â€” unknown
 }
 
 // Build a blank SeqEvent raw line with reasonable defaults.
-static ft::SeqEvent MakeBlankEvent(int ticks) {
-    ft::SeqEvent e;
+static fx::SeqEvent MakeBlankEvent(int ticks) {
+    fx::SeqEvent e;
     e.relative = false;
     e.ticks    = ticks;
     e.sync     = false;
@@ -39,7 +39,7 @@ void DrawSeqEditor(App& app) {
     if (ed.libIdx != s_lastLib || ed.entryIdx != s_lastEntry) {
         s_lastLib   = ed.libIdx;
         s_lastEntry = ed.entryIdx;
-        s_seq = ft::seq_parse(ed.data.data(), ed.data.size());
+        s_seq = fx::seq_parse(ed.data.data(), ed.data.size());
     }
 
     int evCount = 0;
@@ -56,11 +56,11 @@ void DrawSeqEditor(App& app) {
             if (s_seq.is_event[i] && s_seq.events[i].ticks > lastTick)
                 lastTick = s_seq.events[i].ticks;
 
-        ft::SeqEvent ne = MakeBlankEvent(lastTick + 100);
+        fx::SeqEvent ne = MakeBlankEvent(lastTick + 100);
         s_seq.lines.push_back("\t" + ne.raw);
         s_seq.is_event.push_back(true);
         s_seq.events.push_back(ne);
-        ed.data     = ft::seq_serialize(s_seq);
+        ed.data     = fx::seq_serialize(s_seq);
         ed.modified = true;
     }
 
@@ -99,11 +99,11 @@ void DrawSeqEditor(App& app) {
             else
                 ImGui::Text("%d", ev.ticks);
 
-            // Cmd column — coloured by command type
+            // Cmd column â€” coloured by command type
             ImGui::TableSetColumnIndex(1);
             ImGui::TextColored(CmdColor(ev.command), "%s", ev.command.c_str());
 
-            // Args column — editable; reconstruct raw line on edit
+            // Args column â€” editable; reconstruct raw line on edit
             ImGui::TableSetColumnIndex(2);
             std::string argsStr;
             {
@@ -181,21 +181,21 @@ void DrawSeqEditor(App& app) {
         s_seq.lines.erase(   s_seq.lines.begin()    + deleteIdx);
         s_seq.is_event.erase(s_seq.is_event.begin() + deleteIdx);
         s_seq.events.erase(  s_seq.events.begin()   + deleteIdx);
-        ed.data     = ft::seq_serialize(s_seq);
+        ed.data     = fx::seq_serialize(s_seq);
         ed.modified = true;
     }
     // Apply deferred insert (after the target index)
     else if (insertIdx >= 0) {
-        ft::SeqEvent ne = MakeBlankEvent(insertTick);
+        fx::SeqEvent ne = MakeBlankEvent(insertTick);
         int pos = insertIdx + 1;
         s_seq.lines.insert(   s_seq.lines.begin()    + pos, "\t" + ne.raw);
         s_seq.is_event.insert(s_seq.is_event.begin() + pos, true);
         s_seq.events.insert(  s_seq.events.begin()   + pos, ne);
-        ed.data     = ft::seq_serialize(s_seq);
+        ed.data     = fx::seq_serialize(s_seq);
         ed.modified = true;
     }
 
     if (ed.modified) {
-        ed.data = ft::seq_serialize(s_seq);
+        ed.data = fx::seq_serialize(s_seq);
     }
 }

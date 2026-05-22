@@ -1,4 +1,4 @@
-# SEQ -- Sequence / Cutscene Timeline (.SEQ)
+﻿# SEQ -- Sequence / Cutscene Timeline (.SEQ)
 
 ## Overview
 
@@ -16,7 +16,7 @@ bitmaps, sounds, palette changes, and fades.
 
 - Lines beginning with `;` are comments and are preserved verbatim on round-trip.
 - Event lines begin with a tab, then a time field, then another tab, then a command.
-- Lines may use `\r\n` or `\n` — write `\r\n` on output.
+- Lines may use `\r\n` or `\n` â€” write `\r\n` on output.
 
 ### Time field
 
@@ -61,21 +61,21 @@ Arguments are space-separated on the same line, after the command:
 
 ## Round-Trip Notes
 
-`ft seq pack` emits files byte-identical to the originals (tabs, trailing spaces, CRLF).
+`fx seq pack` emits files byte-identical to the originals (tabs, trailing spaces, CRLF).
 Parsed event count for KDEAD.SEQ: 4 events.
 
-## ft commands
+## fx commands
 
 ```
-ft seq dump   <file.SEQ>              # pretty-print events to stdout
-ft seq unpack <file.SEQ> [-o out.txt] # write editable text
-ft seq pack   <in.txt>   -o <out.SEQ> # write binary SEQ
+fx seq dump   <file.SEQ>              # pretty-print events to stdout
+fx seq unpack <file.SEQ> [-o out.txt] # write editable text
+fx seq pack   <in.txt>   -o <out.SEQ> # write binary SEQ
 ```
 
 ## Applications
 
-SEQ files are plain ASCII — open and edit directly, no conversion step needed.
+SEQ files are plain ASCII â€” open and edit directly, no conversion step needed.
 
-- **VS Code** — free; multi-file find/replace useful for batch renaming bitmap or sound references
-- **Notepad++** — free, Windows; column editing helps with tab-aligned time fields
-- **Notepad / TextEdit** — free, built-in; sufficient for small edits
+- **VS Code** â€” free; multi-file find/replace useful for batch renaming bitmap or sound references
+- **Notepad++** â€” free, Windows; column editing helps with tab-aligned time fields
+- **Notepad / TextEdit** â€” free, built-in; sufficient for small edits

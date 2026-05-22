@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace ft {
+namespace fx {
 
 struct BiInstr {
     uint32_t offset;
@@ -15,4 +15,4 @@ struct BiInstr {
 // Returns empty vector on failure.
 std::vector<BiInstr> bi_disasm(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

@@ -1,4 +1,4 @@
-#include "ft/ai.h"
+﻿#include "fx/ai.h"
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <sstream>
 
-namespace ft {
+namespace fx {
 
 // ---- Lexer ------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ struct Backpatch {
 
 struct Codegen {
     std::vector<uint8_t>         code;
-    std::map<std::string,uint32_t> labels;  // lowercase → bytecode offset
+    std::map<std::string,uint32_t> labels;  // lowercase â†’ bytecode offset
     std::vector<Backpatch>       patches;
     std::vector<AiCompileError>& errors;
     int                          stmt_idx = 0;
@@ -230,7 +230,7 @@ struct Codegen {
     uint32_t emit_if_false_placeholder() {
         emit(0x23);
         uint32_t off = offset();
-        emit16(0);  // placeholder — caller must patch
+        emit16(0);  // placeholder â€” caller must patch
         return off;
     }
 
@@ -263,7 +263,7 @@ struct Codegen {
 struct InstrDef {
     const char* name;       // lowercase identifier as it appears in AI source
     int         num_args;   // number of expression arguments
-    bool        string_arg; // first arg is a string literal → PUSH_ADDR
+    bool        string_arg; // first arg is a string literal â†’ PUSH_ADDR
 };
 
 static const InstrDef kInstrs[] = {
@@ -273,7 +273,7 @@ static const InstrDef kInstrs[] = {
     {"homeangle",   5, false},
     {"jink",        8, false},
     {"circle",      6, false},
-    {"maneuver",    1, true},   // string arg → PUSH_ADDR
+    {"maneuver",    1, true},   // string arg â†’ PUSH_ADDR
     {"immelman",    1, false},
     {"invert",      0, false},
     {"yoyo",        3, false},
@@ -346,7 +346,7 @@ struct Parser {
                 else { err("expected number or variable after 'chance'"); cg.emit_push(0); }
                 cg.emit(0x1F); return;
             }
-            // All other identifiers are attribute names → _CTEval_<lowercase>
+            // All other identifiers are attribute names â†’ _CTEval_<lowercase>
             (void)src_line;
             cg.emit_call_by_name("_CTEval_" + lower);
             return;
@@ -503,7 +503,7 @@ struct Parser {
     // Parse an inline `if <expr> goto <label>` or `if <expr> <stmt>`.
     // We have just consumed "if".
     void parse_inline_if(int src_line) {
-        parse_expr(); // condition — leaves bool on stack
+        parse_expr(); // condition â€” leaves bool on stack
 
         lex.eat_if(T_COMMA); // optional comma separator before goto or statement
 
@@ -523,7 +523,7 @@ struct Parser {
         // Inline if with statement: `if <cond> <stmt>`
         cg.emit_frame(src_line);
         uint32_t if_false_off = cg.emit_if_false_placeholder();
-        parse_statement(false); // inner stmt — no FRAME (already emitted above)
+        parse_statement(false); // inner stmt â€” no FRAME (already emitted above)
         cg.patch_to_here(if_false_off);
     }
 
@@ -546,10 +546,10 @@ struct Parser {
         }
 
         cg.emit_frame(src_line);
-        // PUSH N, RANDOM → yields random 0..N-1
+        // PUSH N, RANDOM â†’ yields random 0..N-1
         cg.emit_push((int32_t)n);
         cg.emit(0x1D); // RANDOM
-        // SWITCH opcode: 0x24, label-count byte, then count × s16 targets
+        // SWITCH opcode: 0x24, label-count byte, then count Ã— s16 targets
         cg.emit(0x24);
         cg.emit((uint8_t)labels.size());
         for (const auto& lbl : labels) {
@@ -565,7 +565,7 @@ struct Parser {
 
         if (def.num_args == 0) {
             cg.emit_call_by_name(std::string("_CTDo_") + def.name);
-            cg.emit(0x04); // EVAL — discard return value
+            cg.emit(0x04); // EVAL â€” discard return value
             return;
         }
 
@@ -625,7 +625,7 @@ struct Parser {
         lex.skip_eols();
         if (lex.at(T_EOF)) return;
 
-        // #DEBUG ... → skip rest of line
+        // #DEBUG ... â†’ skip rest of line
         if (lex.at(T_HASH)) { lex.skip_line(); return; }
 
         // .if block
@@ -718,7 +718,7 @@ struct Parser {
 
 // ---- PE builder -------------------------------------------------------------
 
-// Fixed MZ stub (bytes 0x000–0x07F), taken from LARGE.BI.
+// Fixed MZ stub (bytes 0x000â€“0x07F), taken from LARGE.BI.
 static const uint8_t kMzStub[128] = {
     0x4D,0x5A,0x80,0x00,0x01,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,
     0xB8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -795,7 +795,7 @@ static std::vector<uint8_t> build_pe(const std::vector<uint8_t>& bytecode) {
     write_u16le(opt+44, 0); write_u16le(opt+46, 0);  // Image version
     write_u16le(opt+48, 4); write_u16le(opt+50, 0);  // Subsystem version (from LARGE.BI)
     write_u32le(opt+52, 0);               // Win32VersionValue
-    write_u32le(opt+56, 0x5000);          // SizeOfImage (4 sections × 0x1000 + base 0x1000)
+    write_u32le(opt+56, 0x5000);          // SizeOfImage (4 sections Ã— 0x1000 + base 0x1000)
     write_u32le(opt+60, 0x0400);          // SizeOfHeaders
     write_u32le(opt+64, 0);               // CheckSum
     write_u16le(opt+68, 0x0002);          // Subsystem = WINDOWS_GUI (from LARGE.BI)
@@ -806,13 +806,13 @@ static std::vector<uint8_t> build_pe(const std::vector<uint8_t>& bytecode) {
     write_u32le(opt+84, 0x00001000);      // SizeOfHeapCommit
     write_u32le(opt+88, 0);               // LoaderFlags
     write_u32le(opt+92, 16);              // NumberOfRvaAndSizes
-    // Data directories (16 × 8 bytes = 128 bytes, all zero except import descriptor)
-    // Import table: VA=.idata VMA=0x2000, size=0 (no real imports — CALL_BY_NAME)
+    // Data directories (16 Ã— 8 bytes = 128 bytes, all zero except import descriptor)
+    // Import table: VA=.idata VMA=0x2000, size=0 (no real imports â€” CALL_BY_NAME)
     write_u32le(opt+96+8,  0x2000);  // [1] = import descriptor VA
     write_u32le(opt+96+12, 0);       // [1] = import descriptor size (0 = none)
     // All other data directories remain zero.
 
-    // Section table: 4 entries × 40 bytes at offset 0x98 in file = 0x178
+    // Section table: 4 entries Ã— 40 bytes at offset 0x98 in file = 0x178
     uint8_t* sec = pe + 24 + 0xE0; // = 0x080 + 4 + 20 + 224 = offset 0x178 in file
 
     // Helper: write one section table entry
@@ -869,4 +869,4 @@ std::vector<uint8_t> ai_compile(const std::string& source,
     return build_pe(cg.code);
 }
 
-} // namespace ft
+} // namespace fx

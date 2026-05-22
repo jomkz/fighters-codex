@@ -1,4 +1,4 @@
-set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
+﻿set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
 
 set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui.cpp
@@ -9,7 +9,7 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/backends/imgui_impl_dx11.cpp
 )
 
-add_executable(ft-gui WIN32
+add_executable(fx-gui WIN32
     src/main.cpp
     src/app.cpp
     src/panels/lib_browser.cpp
@@ -38,7 +38,7 @@ add_executable(ft-gui WIN32
     ${IMGUI_SOURCES}
 )
 
-target_include_directories(ft-gui PRIVATE
+target_include_directories(fx-gui PRIVATE
     src
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
@@ -47,8 +47,8 @@ target_include_directories(ft-gui PRIVATE
     ${CMAKE_BINARY_DIR}/include
 )
 
-target_link_libraries(ft-gui PRIVATE
-    ft_lib
+target_link_libraries(fx-gui PRIVATE
+    fx_lib
     d3d11.lib
     dxgi.lib
     d3dcompiler.lib
@@ -57,9 +57,9 @@ target_link_libraries(ft-gui PRIVATE
 )
 
 if(MSVC)
-    target_compile_options(ft-gui PRIVATE /W3 /WX-)
+    target_compile_options(fx-gui PRIVATE /W3 /WX-)
     # Enable large address awareness and set subsystem to Windows
-    set_target_properties(ft-gui PROPERTIES
+    set_target_properties(fx-gui PROPERTIES
         LINK_FLAGS "/SUBSYSTEM:WINDOWS"
     )
 endif()

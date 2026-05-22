@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -8,7 +8,7 @@
 // Format: Win32 PE DLL (Phar Lap LE variant). CODE section is a pure data
 // struct -- no x86 code. Fixed size 0x2BB (699 bytes) across all aircraft.
 
-namespace ft {
+namespace fx {
 
 struct HudParam {
     std::string gauge;
@@ -28,4 +28,4 @@ struct HudFile {
 
 HudFile hud_parse(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

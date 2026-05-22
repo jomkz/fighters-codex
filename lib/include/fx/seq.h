@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -18,7 +18,7 @@
 // Round-trip: parse -> serialize produces byte-for-byte identical output
 // when the source uses standard CRLF line endings.
 
-namespace ft {
+namespace fx {
 
 struct SeqEvent {
     // Raw line text (everything after the leading TAB, before CRLF).
@@ -53,4 +53,4 @@ SeqFile seq_parse(const uint8_t* data, size_t size);
 // Serialize back to bytes (CRLF line endings).
 std::vector<uint8_t> seq_serialize(const SeqFile& seq);
 
-} // namespace ft
+} // namespace fx

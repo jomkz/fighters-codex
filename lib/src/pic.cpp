@@ -1,4 +1,4 @@
-#include "ft/pic.h"
+﻿#include "fx/pic.h"
 #include <algorithm>
 #include <cstring>
 
@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-namespace ft {
+namespace fx {
 
 static const int HEADER_SIZE = 64;
 
@@ -185,4 +185,4 @@ std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
     return out;
 }
 
-} // namespace ft
+} // namespace fx

@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace ft {
+namespace fx {
 
 struct AiCompileError {
     int line;
@@ -15,4 +15,4 @@ struct AiCompileError {
 std::vector<uint8_t> ai_compile(const std::string& source,
                                 std::vector<AiCompileError>& errors);
 
-} // namespace ft
+} // namespace fx

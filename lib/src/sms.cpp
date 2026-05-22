@@ -1,7 +1,7 @@
-#include "ft/sms.h"
+﻿#include "fx/sms.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static uint32_t r32(const uint8_t* p) {
     return (uint32_t)(p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
@@ -39,4 +39,4 @@ std::vector<SmsSymbol> sms_parse(const uint8_t* data, size_t size) {
     return syms;
 }
 
-} // namespace ft
+} // namespace fx

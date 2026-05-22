@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Prepares a release: bumps the version in CMakeLists.txt, rotates CHANGELOG.md,
@@ -25,7 +25,7 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') {
 }
 
 $tag     = "v$Version"
-$repoUrl = 'https://github.com/jomkz/fighters-toolkit'
+$repoUrl = 'https://github.com/jomkz/fighters-codex'
 $root    = Split-Path $PSScriptRoot -Parent
 $cmake   = Join-Path $root 'CMakeLists.txt'
 $chlog   = Join-Path $root 'CHANGELOG.md'

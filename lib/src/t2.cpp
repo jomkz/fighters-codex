@@ -1,7 +1,7 @@
-#include "ft/t2.h"
+﻿#include "fx/t2.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static const uint32_t HEADER_SIZE = 149;
 static const uint32_t TILE_SIZE   = 195; // 65 * 3 bytes
@@ -13,7 +13,7 @@ static const uint32_t TILE_SIZE   = 195; // 65 * 3 bytes
 //   0x64  u32 LE  dim_x (grid columns)
 //   0x7D  u8      dim_y (grid rows; byte inside what looks like a u32 field)
 // Tile block starts immediately after the 149-byte header.
-// Each tile: 195 bytes (65 records × 3 bytes). Record 0 byte 0 = surface class (0xFF=water).
+// Each tile: 195 bytes (65 records Ã— 3 bytes). Record 0 byte 0 = surface class (0xFF=water).
 
 bool t2_info(const uint8_t* data, size_t size, T2Info* info) {
     if (size < HEADER_SIZE) return false;
@@ -42,4 +42,4 @@ bool t2_info(const uint8_t* data, size_t size, T2Info* info) {
     return true;
 }
 
-} // namespace ft
+} // namespace fx

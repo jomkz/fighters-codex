@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -14,7 +14,7 @@
 // str_off is a byte offset into the string table.
 // String table base = 4 + N * 8.
 
-namespace ft {
+namespace fx {
 
 struct SmsSymbol {
     uint32_t    va;
@@ -24,4 +24,4 @@ struct SmsSymbol {
 // Parse FA.SMS. Returns empty vector on error (wrong size, truncated, etc.).
 std::vector<SmsSymbol> sms_parse(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

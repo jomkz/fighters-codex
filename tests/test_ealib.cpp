@@ -1,8 +1,8 @@
-#include <catch2/catch_test_macros.hpp>
-#include <ft/ealib.h>
+﻿#include <catch2/catch_test_macros.hpp>
+#include <fx/ealib.h>
 #include <cstring>
 
-using namespace ft;
+using namespace fx;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -20,7 +20,7 @@ static std::vector<uint8_t> bytes(std::initializer_list<uint8_t> il) {
 }
 
 // ---------------------------------------------------------------------------
-// ealib_read_dir — parsing
+// ealib_read_dir â€” parsing
 // ---------------------------------------------------------------------------
 
 TEST_CASE("ealib_read_dir rejects bad magic") {
@@ -31,7 +31,7 @@ TEST_CASE("ealib_read_dir rejects bad magic") {
 
 TEST_CASE("ealib_read_dir rejects truncated buffer") {
     auto lib = ealib_build(make_files({ { "a.bin", bytes({ 1 }) } }));
-    // Feed only the first 4 bytes — smaller than the minimum header
+    // Feed only the first 4 bytes â€” smaller than the minimum header
     REQUIRE(ealib_read_dir(lib.data(), 4).empty());
 }
 
@@ -61,7 +61,7 @@ TEST_CASE("ealib_read_dir populates names correctly") {
 }
 
 TEST_CASE("ealib_read_dir name is always null-terminated") {
-    // 12-character name exactly fills the 13-byte field — byte 12 must be '\0'
+    // 12-character name exactly fills the 13-byte field â€” byte 12 must be '\0'
     auto lib = ealib_build(make_files({ { "123456789012", bytes({ 0 }) } }));
     auto entries = ealib_read_dir(lib.data(), lib.size());
     REQUIRE(entries[0].name[12] == '\0');
@@ -86,7 +86,7 @@ TEST_CASE("ealib_read_dir raw entries have flags == 0") {
 }
 
 // ---------------------------------------------------------------------------
-// ealib_extract — extraction
+// ealib_extract â€” extraction
 // ---------------------------------------------------------------------------
 
 TEST_CASE("ealib_extract returns exact raw bytes") {
@@ -123,7 +123,7 @@ TEST_CASE("ealib_extract returns empty vector for out-of-bounds entry") {
 }
 
 // ---------------------------------------------------------------------------
-// Round-trip: build → read_dir → extract
+// Round-trip: build â†’ read_dir â†’ extract
 // ---------------------------------------------------------------------------
 
 TEST_CASE("ealib round-trip preserves all file contents") {

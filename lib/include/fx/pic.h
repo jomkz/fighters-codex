@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pal.h"
 #include <cstddef>
 #include <cstdint>
@@ -11,7 +11,7 @@
 //
 // Palette index 0xFF = transparent (alpha=0 in RGBA output).
 
-namespace ft {
+namespace fx {
 
 struct PicInfo {
     uint16_t format;          // 0, 1, or 0xD8FF
@@ -44,4 +44,4 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
 std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
                                  const Palette& pal);
 
-} // namespace ft
+} // namespace fx

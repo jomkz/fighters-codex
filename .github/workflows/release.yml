@@ -1,4 +1,4 @@
-name: Release
+﻿name: Release
 
 on:
   push:
@@ -19,18 +19,18 @@ jobs:
       - name: Build
         run: cmake --build build --config Release
 
-      - name: Package ft (CLI)
-        run: Compress-Archive -Path build/cli/Release/ft.exe -DestinationPath "ft-${{ github.ref_name }}-windows-x64.zip"
+      - name: Package fx (CLI)
+        run: Compress-Archive -Path build/cli/Release/fx.exe -DestinationPath "fx-${{ github.ref_name }}-windows-x64.zip"
 
-      - name: Package ft-gui
-        run: Compress-Archive -Path build/gui/Release/ft-gui.exe -DestinationPath "ft-gui-${{ github.ref_name }}-windows-x64.zip"
+      - name: Package fx-gui
+        run: Compress-Archive -Path build/gui/Release/fx-gui.exe -DestinationPath "fx-gui-${{ github.ref_name }}-windows-x64.zip"
 
-      - name: Package ft_lib (developer SDK)
+      - name: Package fx_lib (developer SDK)
         run: |
-          New-Item -ItemType Directory -Path ft-lib-sdk/include -Force | Out-Null
-          Copy-Item build/lib/Release/ft_lib.lib ft-lib-sdk/
-          Copy-Item -Recurse lib/include/ft ft-lib-sdk/include/
-          Compress-Archive -Path ft-lib-sdk/* -DestinationPath "ft-lib-${{ github.ref_name }}-windows-x64.zip"
+          New-Item -ItemType Directory -Path fx-lib-sdk/include -Force | Out-Null
+          Copy-Item build/lib/Release/fx_lib.lib fx-lib-sdk/
+          Copy-Item -Recurse lib/include/fx fx-lib-sdk/include/
+          Compress-Archive -Path fx-lib-sdk/* -DestinationPath "fx-lib-${{ github.ref_name }}-windows-x64.zip"
 
       - name: Extract changelog
         id: changelog
@@ -49,6 +49,6 @@ jobs:
           body: ${{ steps.changelog.outputs.body }}
           draft: false
           files: |
-            ft-${{ github.ref_name }}-windows-x64.zip
-            ft-gui-${{ github.ref_name }}-windows-x64.zip
-            ft-lib-${{ github.ref_name }}-windows-x64.zip
+            fx-${{ github.ref_name }}-windows-x64.zip
+            fx-gui-${{ github.ref_name }}-windows-x64.zip
+            fx-lib-${{ github.ref_name }}-windows-x64.zip

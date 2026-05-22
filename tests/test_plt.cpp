@@ -1,9 +1,9 @@
-#include <catch2/catch_test_macros.hpp>
-#include <ft/plt.h>
+﻿#include <catch2/catch_test_macros.hpp>
+#include <fx/plt.h>
 #include <cstring>
 #include <vector>
 
-using namespace ft;
+using namespace fx;
 
 // Build a minimal PLT identity block (0xB0 bytes).
 static std::vector<uint8_t> make_plt_identity(

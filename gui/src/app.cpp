@@ -1,7 +1,7 @@
-#include "app.h"
-#include "ft/version.h"
+﻿#include "app.h"
+#include "fx/version.h"
 
-// Defined in main.cpp — applies the correct ImGui colour scheme based on
+// Defined in main.cpp â€” applies the correct ImGui colour scheme based on
 // App::themePref (and re-applies rounding).
 void ApplySystemTheme();
 #include "panels/lib_browser.h"
@@ -24,7 +24,7 @@ static constexpr int kMaxRecent = 5;
 App::App(ID3D11Device* device, ID3D11DeviceContext* ctx)
     : m_device(device), m_ctx(ctx) {
 
-    // Persist app settings (e.g. installDir) inside ft-gui.ini.
+    // Persist app settings (e.g. installDir) inside fx-gui.ini.
     ImGuiSettingsHandler h = {};
     h.TypeName   = "FightersToolkit";
     h.TypeHash   = ImHashStr("FightersToolkit");
@@ -72,7 +72,7 @@ App::App(ID3D11Device* device, ID3D11DeviceContext* ctx)
 App::~App() {}
 
 void App::Draw() {
-    // Host window — fills the OS window's client area exactly.
+    // Host window â€” fills the OS window's client area exactly.
     const ImGuiViewport* vp = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(vp->WorkPos);
     ImGui::SetNextWindowSize(vp->WorkSize);
@@ -321,7 +321,7 @@ void App::DrawMenuBar() {
     // About popup
     if (ImGui::BeginPopupModal("##About", nullptr,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Fighters Toolkit GUI  v" FT_VERSION_STRING);
+        ImGui::Text("Fighters Codex GUI  v" FX_VERSION_STRING);
         ImGui::Text("Modern replacement for FATK (DuoSoft 1998)");
         ImGui::Separator();
         ImGui::Text("Backend: ft_lib (C++17)");
@@ -424,7 +424,7 @@ void App::OpenStandaloneFile(const std::string& path) {
     f.read((char*)s.data.data(), sz);
 
     // Synthetic single-entry directory for the editor pipeline.
-    ft::Entry e = {};
+    fx::Entry e = {};
     std::string fname = fs::path(path).filename().string();
     strncpy_s(e.name, fname.c_str(), sizeof(e.name) - 1);
     e.flags  = 0;
@@ -454,7 +454,7 @@ void App::OpenLib(const std::string& path) {
     s.path = path;
     s.data.resize((size_t)sz);
     f.read((char*)s.data.data(), sz);
-    s.entries = ft::ealib_read_dir(s.data.data(), s.data.size());
+    s.entries = fx::ealib_read_dir(s.data.data(), s.data.size());
     if (s.entries.empty()) { statusMsg = "Not a valid LIB: " + path; statusKind = StatusKind::Error; return; }
     sessions.insert(sessions.begin(), std::move(s));
     if (editor.libIdx >= 0) editor.libIdx++;
@@ -504,7 +504,7 @@ void App::OpenEntry(int libIdx, int entryIdx) {
     es.entryIdx = entryIdx;
     es.data     = s.standalone
         ? s.data
-        : ft::ealib_extract(s.data.data(), s.data.size(), s.entries[entryIdx], true);
+        : fx::ealib_extract(s.data.data(), s.data.size(), s.entries[entryIdx], true);
 
     std::string name = s.entries[entryIdx].name;
     auto dot = name.rfind('.');
@@ -563,8 +563,8 @@ void App::CommitEntry(const std::vector<uint8_t>& newData) {
         statusMsg         = "Saved " + name;
         statusKind        = StatusKind::Info;
     } else {
-        s.data    = ft::ealib_patch(s.data.data(), s.data.size(), name, newData);
-        s.entries = ft::ealib_read_dir(s.data.data(), s.data.size());
+        s.data    = fx::ealib_patch(s.data.data(), s.data.size(), name, newData);
+        s.entries = fx::ealib_read_dir(s.data.data(), s.data.size());
         s.dirty         = true;
         editor.modified = false;
         statusMsg       = std::string("Patched ") + name;

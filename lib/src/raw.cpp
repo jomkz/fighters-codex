@@ -1,7 +1,7 @@
-#include "ft/raw.h"
+﻿#include "fx/raw.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static const int HEADER_SIZE  = 32;
 static const int PALETTE_SIZE = 768;
@@ -43,4 +43,4 @@ std::vector<uint8_t> raw_decode(const uint8_t* data, size_t size) {
     return rgba;
 }
 
-} // namespace ft
+} // namespace fx

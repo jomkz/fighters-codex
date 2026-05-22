@@ -1,4 +1,4 @@
-include(FetchContent)
+﻿include(FetchContent)
 FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
@@ -6,7 +6,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(ft_tests
+add_executable(fx_tests
     test_ealib.cpp
     test_pic.cpp
     test_audio.cpp
@@ -18,12 +18,12 @@ add_executable(ft_tests
     test_plt.cpp
 )
 
-target_link_libraries(ft_tests PRIVATE ft_lib Catch2::Catch2WithMain)
+target_link_libraries(fx_tests PRIVATE fx_lib Catch2::Catch2WithMain)
 
 if(MSVC)
-    target_compile_options(ft_tests PRIVATE /W3 /WX-)
+    target_compile_options(fx_tests PRIVATE /W3 /WX-)
 endif()
 
 include(CTest)
 include(Catch)
-catch_discover_tests(ft_tests)
+catch_discover_tests(fx_tests)

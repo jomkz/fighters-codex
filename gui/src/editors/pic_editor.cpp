@@ -1,9 +1,9 @@
-#include "pic_editor.h"
+﻿#include "pic_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/pic.h"
-#include "ft/pal.h"
-#include "ft/ealib.h"
+#include "fx/pic.h"
+#include "fx/pal.h"
+#include "fx/ealib.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -51,8 +51,8 @@ static std::string Win32OpenFile(const wchar_t* filter, const wchar_t* title) {
 
 void DrawPicEditor(App& app) {
     auto& ed = app.editor;
-    ft::PicInfo info;
-    bool valid = ft::pic_info(ed.data.data(), ed.data.size(), &info);
+    fx::PicInfo info;
+    bool valid = fx::pic_info(ed.data.data(), ed.data.size(), &info);
 
     if (valid && info.format != 0xD8FF) {
         ImGui::Text("Format: %s  |  %u x %u",
@@ -73,22 +73,22 @@ void DrawPicEditor(App& app) {
             L"PNG Image\0*.png\0All Files\0*.*\0", L"png");
         if (!path.empty()) {
             // Find PALETTE.PAL in any open session for correct colour rendering.
-            ft::Palette sysPal = ft::pal_load(nullptr, 0);
+            fx::Palette sysPal = fx::pal_load(nullptr, 0);
             for (const auto& sess : app.sessions) {
                 for (size_t ei = 0; ei < sess.entries.size(); ++ei) {
                     std::string n = sess.entries[ei].name;
                     for (auto& c : n) c = (char)toupper((unsigned char)c);
                     if (n == "PALETTE.PAL") {
-                        auto raw = ft::ealib_extract(sess.data.data(),
+                        auto raw = fx::ealib_extract(sess.data.data(),
                                                     sess.data.size(),
                                                     sess.entries[ei]);
-                        if (!raw.empty()) { sysPal = ft::pal_load(raw.data(), raw.size()); }
+                        if (!raw.empty()) { sysPal = fx::pal_load(raw.data(), raw.size()); }
                         goto pal_found;
                     }
                 }
             }
             pal_found:
-            auto rgba = ft::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
+            auto rgba = fx::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
             if (!rgba.empty() && valid)
                 stbi_write_png(path.c_str(), (int)info.width, (int)info.height,
                                4, rgba.data(), (int)info.width * 4);
@@ -104,8 +104,8 @@ void DrawPicEditor(App& app) {
             int w=0,h=0,ch=0;
             uint8_t* rgba = stbi_load(path.c_str(), &w, &h, &ch, 4);
             if (rgba) {
-                ft::Palette pal = {};
-                auto encoded = ft::pic_encode(rgba, w, h, pal);
+                fx::Palette pal = {};
+                auto encoded = fx::pic_encode(rgba, w, h, pal);
                 stbi_image_free(rgba);
                 if (!encoded.empty()) {
                     ed.data     = std::move(encoded);
