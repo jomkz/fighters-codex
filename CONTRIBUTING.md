@@ -1,5 +1,9 @@
 # Contributing
 
+This file covers commit message and branch naming conventions — the things that affect
+everyone working on the repo. For the full developer reference (building, IDE setup,
+project structure, and release workflow) see [docs/development.md](docs/development.md).
+
 ## Commit Messages
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit

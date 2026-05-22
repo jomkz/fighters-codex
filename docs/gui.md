@@ -1,9 +1,13 @@
 # ft-gui — Graphical Editor
 
-`ft-gui.exe` is a modern GUI replacement for FATK (DuoSoft 1998), the only original
-editor for Jane's Fighters Anthology assets. FATK is a 16-bit/32-bit VB6 application
-that does not run on 64-bit Windows and is abandonware. `ft-gui` wraps the same
-`ft_lib` backend used by the CLI and targets Windows 7+.
+`ft-gui.exe` is the interactive validation layer for the FA asset format research. It
+exercises the `ft_lib` codecs against real game data and makes format behaviour
+directly observable — loading a LIB archive, editing a type definition, or previewing
+a decoded image confirms that the underlying format understanding is correct.
+
+FATK (DuoSoft 1998), the original FA editor, is a 16-bit/32-bit VB6 application that
+does not run on 64-bit Windows. `ft-gui` covers the same ground and more, but
+replacing FATK is a byproduct rather than the goal.
 
 ## Layout
 

@@ -82,6 +82,8 @@ ft lib patch FA_2.LIB BALTIC.TXT edits\BALTIC.TXT FA_2_mod.LIB
 ft lib patch FA_3.LIB F16C_0.PIC F16C_mod.PIC FA_3_mod.LIB
 ```
 
+*See also: [fa/formats/LIB.md](fa/formats/LIB.md)*
+
 ## pic — Images
 
 ```
@@ -105,6 +107,8 @@ Encode to a dense PIC (format 0) with a full 256-color inline palette. Pixels wi
 alpha < 128 map to transparent (index 0xFF). Always provide the same `PALETTE.PAL`
 used during unpack.
 
+*See also: [fa/formats/PIC.md](fa/formats/PIC.md) · [fa/formats/PAL.md](fa/formats/PAL.md)*
+
 ## seq — Cutscene timelines
 
 ```
@@ -121,6 +125,8 @@ Pretty-print all events to stdout.
 
 Round-trip editable text. Output is byte-identical to originals.
 
+*See also: [fa/formats/SEQ.md](fa/formats/SEQ.md)*
+
 ## audio — PCM audio
 
 ```
@@ -131,6 +137,8 @@ ft audio pack   <in.wav>       -o <out.11K|.5K> [-r hz]
 
 Sample rate is inferred from the file extension (`.11K` = 11025 Hz, `.5K` = 5512 Hz).
 Override with `-r`. Input WAV for packing must be mono and 8-bit.
+
+*See also: [fa/formats/11K.md](fa/formats/11K.md)*
 
 ## ot / nt / pt / jt / see / ecm / gas — Type definitions
 
@@ -161,6 +169,8 @@ Ceiling:     50000 ft
 Fuel:        6972 lb
 ```
 
+*See also: [fa/formats/BRF.md](fa/formats/BRF.md) · [fa/formats/OT.md](fa/formats/OT.md) · [fa/formats/NT.md](fa/formats/NT.md) · [fa/formats/PT.md](fa/formats/PT.md) · [fa/formats/JT.md](fa/formats/JT.md) · [fa/formats/SEE.md](fa/formats/SEE.md) · [fa/formats/ECM.md](fa/formats/ECM.md) · [fa/formats/GAS.md](fa/formats/GAS.md)*
+
 ## mission / mm — Mission and map files
 
 ```
@@ -171,6 +181,8 @@ ft mission pack   <in.txt>     -o <out.M|.MM>
 
 `ft mm` is an alias for `.MM` map files. Round-trips byte-identically for all 592
 mission files in FA_2.LIB.
+
+*See also: [fa/formats/M.md](fa/formats/M.md) · [fa/formats/MM.md](fa/formats/MM.md)*
 
 ## sh — 3D shapes
 
@@ -190,6 +202,8 @@ Open in Blender, MeshLab, or any 3D viewer.
 
 65 of 1275 FA shape files use x86 machine code for rendering (particle effects,
 AC130, etc.) and produce no OBJ output. All others extract cleanly.
+
+*See also: [fa/formats/SH.md](fa/formats/SH.md)*
 
 ## cb8 — FMV video
 
@@ -218,6 +232,8 @@ The decoder maintains a persistent canvas across frames; each MRFI chunk
 applies a delta to the previous state. Output values are raw palette indices —
 apply the appropriate PAL file separately to get RGB colours.
 
+*See also: [fa/formats/CB8.md](fa/formats/CB8.md)*
+
 ## sms — Symbol map
 
 ```
@@ -236,6 +252,8 @@ FA.SMS -> symbols.csv (3829 symbols)
 
 The CSV can be imported directly into Ghidra (Script Manager → ImportSymbolsScript)
 or IDA Pro to auto-label all known functions and data symbols.
+
+*See also: [fa/formats/SMS.md](fa/formats/SMS.md)*
 
 ## t2 — Terrain map
 
@@ -260,6 +278,8 @@ Land classes:
 ```
 
 T2 files are stored in `FA_2.LIB`; unpack the archive first.
+
+*See also: [fa/formats/T2.md](fa/formats/T2.md)*
 
 ## plt — Pilot save
 
@@ -296,3 +316,5 @@ Sensors:    F16CSEE.SEE
 Pilot save files (`.P`) are stored in the FA install directory alongside `FA.EXE`.
 The stats block (offsets 0xB0–0x0D7E) is not yet decoded; only the identity and
 campaign blocks are read.
+
+*See also: [fa/formats/P.md](fa/formats/P.md)*

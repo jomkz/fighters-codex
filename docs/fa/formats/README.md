@@ -4,11 +4,15 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 
 ## Archive
 
+The container format that holds all game assets; almost every file in the game is packed into one of several `.LIB` archives.
+
 | Format | Spec | Description |
 |--------|------|-------------|
 | LIB | [LIB.md](LIB.md) | Main asset archive container with LZSS, PXPK, and DCL compression |
 
 ## Graphics & Images
+
+Paletted image formats used for aircraft skins, cockpit art, icons, and in-game screenshots.
 
 | Format | Spec | Description |
 |--------|------|-------------|
@@ -18,12 +22,16 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 
 ## Terrain & Maps
 
+Theater-level tile maps and the top-down mini-map used during mission selection and in-flight navigation.
+
 | Format | Spec | Description |
 |--------|------|-------------|
 | T2 | [T2.md](T2.md) | Terrain tile map with height and texture data |
 | MM | [MM.md](MM.md) | Theater map and mini-map layout |
 
 ## 3D & Scene
+
+Aircraft and object geometry, briefing room backgrounds, and the atmosphere/sky lookup tables loaded as Win32 overlay DLLs.
 
 | Format | Spec | Description |
 |--------|------|-------------|
@@ -34,6 +42,8 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 
 ## Audio
 
+Raw PCM sound effects and MIDI-based music, plus the in-flight music sequencer bytecode.
+
 | Format | Spec | Description |
 |--------|------|-------------|
 | 11K / 5K / 8K | [11K.md](11K.md) | Raw PCM audio clips at 11 kHz, 5 kHz, or 8 kHz mono |
@@ -41,6 +51,8 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 | MUS | [MUS.md](MUS.md) | In-flight music sequencer bytecode (Win32 DLL overlay) |
 
 ## Video & Cutscenes
+
+Full-motion video frames for intros and per-aircraft clips, mission briefing video streams, and the scripted cutscene timeline format.
 
 | Format | Spec | Description |
 |--------|------|-------------|
@@ -50,6 +62,8 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 | SEQ | [SEQ.md](SEQ.md) | Cutscene and animation event timeline |
 
 ## Mission & Campaign
+
+Mission definitions, briefing text, campaign state, AI scripts, and their compiled runtime companions — most loaded as Win32 PE DLLs.
 
 | Format | Spec | Description |
 |--------|------|-------------|
@@ -62,7 +76,7 @@ All formats used by Jane's Fighters Anthology, organized by subsystem.
 
 ## Type Definitions (BRF DSL)
 
-Seven file types share a plain-text assembly-like DSL. See [BRF.md](BRF.md) for the format overview.
+Seven file types share a plain-text assembly-like DSL that defines aircraft, weapons, objects, and sensors. See [BRF.md](BRF.md) for the format overview.
 
 | Format | Spec | Description |
 |--------|------|-------------|
@@ -77,6 +91,8 @@ Seven file types share a plain-text assembly-like DSL. See [BRF.md](BRF.md) for 
 
 ## UI & Win32 Overlays
 
+The FA menu system is built from Win32 PE DLLs; each dialog, menu screen, font, and HUD element is a separate overlay loaded at runtime.
+
 | Format | Spec | Description |
 |--------|------|-------------|
 | HUD | [HUD.md](HUD.md) | Heads-up display overlay DLL |
@@ -86,6 +102,8 @@ Seven file types share a plain-text assembly-like DSL. See [BRF.md](BRF.md) for 
 | PTS | [PTS.md](PTS.md) | Points and scoring overlay DLL |
 
 ## System & Config
+
+Game configuration, multiplayer network settings, the recovered C++ symbol map, and pilot save files.
 
 | Format | Spec | Description |
 |--------|------|-------------|
@@ -97,12 +115,16 @@ Seven file types share a plain-text assembly-like DSL. See [BRF.md](BRF.md) for 
 
 ## Installer
 
+Files used by the EA disc-based setup program — the install script and splash screen click-zone maps.
+
 | Format | Spec | Description |
 |--------|------|-------------|
 | SSF | [SSF.md](SSF.md) | EA installer script — plain-text keywords driving the setup UI |
 | RGN | [RGN.md](RGN.md) | Installer UI region maps — splash screen click zones and button sprite atlas |
 
 ## Text
+
+Plain-text files embedded in the LIB archives for menu labels and UI screens, sharing the same directive engine as mission briefing files.
 
 | Format | Spec | Description |
 |--------|------|-------------|

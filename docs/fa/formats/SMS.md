@@ -1,25 +1,25 @@
-# FA.EXE Symbol Map (FA.SMS)
+﻿# FA.EXE Symbol Map (FA.SMS)
 
 `FA.SMS` is a binary symbol map file shipped with Jane's Fighters Anthology. It contains 3,829 MSVC-mangled C++ function and variable names paired with their virtual addresses in FA.EXE. It is the single most useful resource for FA.EXE reverse engineering.
 
 ## Location
 
-Loose file in the FA install directory — not packed into any LIB archive.
+Loose file in the FA install directory â€” not packed into any LIB archive.
 
 ## Binary Structure
 
 ```
 Offset  Size  Field
 ------  ----  -----
-0x0000     4  count        u32 LE — number of symbol records (3829 = 0x0EF5)
-0x0004  N×8  records      N × { str_off: u32 LE, va: u32 LE }
+0x0000     4  count        u32 LE â€” number of symbol records (3829 = 0x0EF5)
+0x0004  NÃ—8  records      N Ã— { str_off: u32 LE, va: u32 LE }
 0x????     *  string_table null-terminated C strings, densely packed
 ```
 
-- `string_table` base offset = `4 + count × 8` = **30636** (0x778C)
+- `string_table` base offset = `4 + count Ã— 8` = **30636** (0x778C)
 - Total file size: **106,706 bytes**
-- `va` — virtual address of the symbol in FA.EXE's address space (not a file offset)
-- `str_off` — byte offset into `string_table` of the null-terminated symbol name
+- `va` â€” virtual address of the symbol in FA.EXE's address space (not a file offset)
+- `str_off` â€” byte offset into `string_table` of the null-terminated symbol name
 - Records are stored in `str_off` order (string-table insertion order), **not** sorted by VA
 
 ## Address Range
@@ -78,14 +78,14 @@ Spot-checked 10 symbols across the full VA range against the shipped `FA.EXE` (I
 
 **Release build.** Evidence:
 
-- No `_RTC_CheckStackVars`, `_RTC_CheckEsp`, `_RTC_Shutdown`, or any other `/RTCx` runtime-check symbols — these are injected only by MSVC debug builds
+- No `_RTC_CheckStackVars`, `_RTC_CheckEsp`, `_RTC_Shutdown`, or any other `/RTCx` runtime-check symbols â€” these are injected only by MSVC debug builds
 - No `_CrtDbgReport`, `_CrtDbgBreak`, or debug CRT entry points
 - `__chkstk` and `__crtheap` are present but both appear in release builds (stack probing for large frames; CRT heap pointer)
 - Mangled names show no debug-specific decorations
 
 ## Key Confirmed Symbols
 
-A curated list of all 3,829 named symbols is maintained in [docs/fa/SYMBOLS.md](../SYMBOLS.md). Selected high-value symbols confirmed during the main Ghidra disassembly pass:
+A curated list of all 3,829 named symbols is maintained in [docs/fa/symbols.md](../symbols.md). Selected high-value symbols confirmed during the main Ghidra disassembly pass:
 
 | VA | Symbol | Notes |
 |----|--------|-------|
@@ -94,10 +94,10 @@ A curated list of all 3,829 named symbols is maintained in [docs/fa/SYMBOLS.md](
 | `0x41EB60` | `LoadDLL` | Generic overlay DLL loader |
 | `0x41F240` | `LoadBrentDLL` | Load a Phar Lap BRF overlay DLL |
 | `0x441C60` | `_ChooseScoreInit` | Score / debrief screen initialiser |
-| `0x464C80` | `_CTDo_*` range start | AI condition/action dispatcher — in FA.EXE itself (see AI.md) |
+| `0x464C80` | `_CTDo_*` range start | AI condition/action dispatcher â€” in FA.EXE itself (see AI.md) |
 | `0x463EA0` | `_MaskEvents_4` | Entity flag bit 10 event-mask handler |
 | `0x464040` | `_Reaction_12` | Entity flag bit 10 reaction handler |
-| `0x467110` | `_CTEval_*` range end | AI condition evaluator — in FA.EXE itself |
+| `0x467110` | `_CTEval_*` range end | AI condition evaluator â€” in FA.EXE itself |
 | `0x467180` | `PilotSave(PILOT*, short)` | Write pilot data to `PLTnnn.P` save file |
 | `0x480B50` | `_MISSIONInit2_0` | Mission system second-phase init |
 | `0x481940` | `_CallMissionProc_8` | Dispatch per-mission condition proc |
@@ -105,10 +105,10 @@ A curated list of all 3,829 named symbols is maintained in [docs/fa/SYMBOLS.md](
 | `0x486860` | `_MISSIONCheckSuccess@0` | Check win/loss conditions |
 | `0x4A6EB0` | `SetupOT` | OBJ_TYPE init (BRF type init entry) |
 | `0x4A7230` | `SetupJT` | PROJ_TYPE init |
-| `0x4AACF0` | `T_HorizonProc` | Horizon renderer — exported by FA.EXE, consumed by .LAY DLLs |
-| `0x4B4320` | `WRFogLayerUpdate` | Per-frame fog opacity jitter — confirmed FA.EXE export |
+| `0x4AACF0` | `T_HorizonProc` | Horizon renderer â€” exported by FA.EXE, consumed by .LAY DLLs |
+| `0x4B4320` | `WRFogLayerUpdate` | Per-frame fog opacity jitter â€” confirmed FA.EXE export |
 | `0x4C5D70` | `@T_Load@4` | T2 terrain file loader entry point |
-| `0x4D22D4` | `do_ifdestroyed` | Shape bytecode opcode handler — tests destroyed state |
+| `0x4D22D4` | `do_ifdestroyed` | Shape bytecode opcode handler â€” tests destroyed state |
 
 ## Usage with Ghidra
 
@@ -117,7 +117,7 @@ A ready-to-run Java script is provided at [`scripts/ghidra/ImportFASms.java`](..
 Quick start:
 
 1. Open FA.EXE in Ghidra and let auto-analysis finish.
-2. Tools → Script Manager → run `ImportFASms`.
+2. Tools â†’ Script Manager â†’ run `ImportFASms`.
 3. Point the file dialog at `FA.SMS` in the FA install directory.
 4. All 3,829 functions and globals are labelled in one pass; progress bar shows in the status bar.
 
