@@ -109,9 +109,84 @@ fighters-toolkit/
 4. Call `Draw<Format>Editor(app)` from `DrawEditorHost()` in `gui/src/panels/editor_host.cpp`
 5. Add the `.cpp` to `gui/CMakeLists.txt`
 
+## Commit Messages
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/). The
+format matters because `scripts/draft-changelog.ps1` parses commit messages to
+auto-populate `CHANGELOG.md` before each release.
+
+### Format
+
+```
+<type>[(<scope>)][!]: <description>
+```
+
+### Types and changelog impact
+
+| Type | Changelog section | Semver impact |
+|---|---|---|
+| `feat` | `### Added` | Minor bump |
+| `fix` | `### Fixed` | Patch bump |
+| `docs` | `### Changed` | — |
+| `refactor`, `perf` | `### Changed` | Patch bump |
+| `chore`, `ci`, `build`, `test`, `style` | *(omitted)* | — |
+| `feat!` or `BREAKING CHANGE:` footer | `### Changed` (prominent) | Major bump |
+
+### Scopes
+
+Use a scope when the change is isolated to one component:
+
+| Scope | Targets |
+|---|---|
+| `ft-lib` | `lib/` static library |
+| `ft-cli` | `cli/` command-line tool |
+| `ft-gui` | `gui/` GUI application |
+
+Scoped entries get a bold qualifier in the changelog:
+```markdown
+- **ft-gui** Add dark/light theming toggle
+```
+
+### Cross-cutting commits
+
+When a change genuinely spans multiple components, **omit the scope** rather than
+listing multiple scopes:
+
+```
+# Good — scope omitted for a cross-cutting change
+feat: add RAW to PNG conversion support
+
+# Better when the work is separable — two focused commits
+feat(ft-lib): implement RAW decoder
+feat(ft-cli): add 'ft convert' subcommand for RAW to PNG
+```
+
+Prefer splitting when the components are independently releasable. Omit scope when the
+change is inseparable or applies repo-wide.
+
+### Breaking changes
+
+Append `!` to the type/scope, or add a `BREAKING CHANGE:` footer in the commit body:
+
+```
+feat(ft-lib)!: rename Lib::extract() to Lib::unpack()
+```
+
+Breaking commits sort to the top of the changelog and signal a semver major version bump.
+
 ## Releasing
 
-1. Add all notable changes to the `## [Unreleased]` section of `CHANGELOG.md` as you work.
+0. Optionally draft changelog entries from conventional commits since the last tag:
+
+```powershell
+.\scripts\draft-changelog.ps1
+```
+
+Review and edit `CHANGELOG.md` (the script drafts; you refine), then commit any
+changes before releasing. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the commit
+message format that drives this.
+
+1. Ensure `CHANGELOG.md` has the desired content under `## [Unreleased]`.
 2. When ready to ship, run the release script with the new version:
 
 ```powershell
