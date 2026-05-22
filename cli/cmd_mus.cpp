@@ -1,4 +1,4 @@
-#include "ft/pe.h"
+﻿#include "fx/pe.h"
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -26,7 +26,7 @@ static int cmd_mus_dump(const char* path) {
     fread(buf.data(), 1, sz, f);
     fclose(f);
 
-    ft::CodeSection cs = ft::pe_code_section(buf.data(), buf.size());
+    fx::CodeSection cs = fx::pe_code_section(buf.data(), buf.size());
     if (!cs.data) { fprintf(stderr, "No CODE section in: %s\n", path); return 1; }
 
     puts("{");
@@ -43,7 +43,7 @@ static int cmd_mus_dump(const char* path) {
         // Stop if we hit zero padding at end
         if (op == 0x00) break;
 
-        // F9 is a section end marker — skip silently
+        // F9 is a section end marker â€” skip silently
         if (op == 0xF9) { ++p; continue; }
 
         if (!first) puts(",");
@@ -51,7 +51,7 @@ static int cmd_mus_dump(const char* path) {
         printf("    ");
 
         if (op == 0xFF) {
-            // FF <name\0> — playlist identifier
+            // FF <name\0> â€” playlist identifier
             ++p;
             std::string name;
             while (p < end && *p) name += (char)(*p++);
@@ -61,7 +61,7 @@ static int cmd_mus_dump(const char* path) {
         }
 
         if (op == 0xFA && p + 5 < end) {
-            // FA <sub> <u32> — setup/config
+            // FA <sub> <u32> â€” setup/config
             uint8_t sub = p[1];
             uint32_t val = (uint32_t)(p[2]) | ((uint32_t)p[3] << 8) |
                            ((uint32_t)p[4] << 16) | ((uint32_t)p[5] << 24);
@@ -71,7 +71,7 @@ static int cmd_mus_dump(const char* path) {
         }
 
         if (op == 0xFB && p + 2 < end) {
-            // FB <mode> <idx> [F9] — play track
+            // FB <mode> <idx> [F9] â€” play track
             uint8_t mode = p[1];
             uint8_t idx  = p[2];
             std::string xmi = xmi_name(idx);
@@ -88,7 +88,7 @@ static int cmd_mus_dump(const char* path) {
         }
 
         if (op == 0xFC) {
-            // FC — shuffle/loop marker; skip following dispatch table bytes
+            // FC â€” shuffle/loop marker; skip following dispatch table bytes
             printf("{\"op\": \"FC\"}");
             ++p;
             // Skip the dispatch table: 01 02 03 02 01 02 03 02 01 (9 bytes)
@@ -101,7 +101,7 @@ static int cmd_mus_dump(const char* path) {
         }
 
         if (op == 0xFE && p + 4 < end) {
-            // FE <u32> — conditional branch; same dispatch table may follow
+            // FE <u32> â€” conditional branch; same dispatch table may follow
             uint32_t val = (uint32_t)(p[1]) | ((uint32_t)p[2] << 8) |
                            ((uint32_t)p[3] << 16) | ((uint32_t)p[4] << 24);
             printf("{\"op\": \"FE\", \"state\": \"0x%08X\"}", val);
@@ -116,14 +116,14 @@ static int cmd_mus_dump(const char* path) {
         }
 
         if (op == 0xFD && p + 3 < end) {
-            // FD <u24> — loop/jump
+            // FD <u24> â€” loop/jump
             uint32_t val = (uint32_t)(p[1]) | ((uint32_t)p[2] << 8) | ((uint32_t)p[3] << 16);
             printf("{\"op\": \"FD\", \"target\": \"0x%06X\"}", val);
             p += 4;
             continue;
         }
 
-        // Unrecognised byte — emit raw and stop
+        // Unrecognised byte â€” emit raw and stop
         printf("{\"op\": \"??\", \"byte\": \"0x%02X\"}", op);
         ++p;
         break;

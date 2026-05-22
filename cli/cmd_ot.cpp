@@ -1,5 +1,5 @@
-#include "ft/brf.h"
-#include "ft/ot.h"
+﻿#include "fx/brf.h"
+#include "fx/ot.h"
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-using namespace ft;
+using namespace fx;
 namespace fs = std::filesystem;
 
 static std::vector<uint8_t> read_file(const char* path) {

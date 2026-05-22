@@ -271,10 +271,10 @@ Binary diff of `CLOUD1B.LAY` vs `CLOUD1.LAY` shows **3 bytes different**, all at
 
 LAYER struct layout and all major loading functions are now confirmed. Remaining before codec implementation:
 
-- New `lib/src/lay.cpp` + `lib/include/ft/lay.h` â€” parse DLL data header, LAYER array, gradient byte arrays, wave params
+- New `lib/src/lay.cpp` + `lib/include/fx/lay.h` â€” parse DLL data header, LAYER array, gradient byte arrays, wave params
 - New `cli/cmd_lay.cpp`:
-  - `ft lay dump <file.LAY>` â€” exports atmosphere parameters as JSON
-  - `ft lay gradient <file.LAY> -o gradient.png` â€” renders sky colour ramp as a PNG strip (one pixel per step)
+  - `fx lay dump <file.LAY>` â€” exports atmosphere parameters as JSON
+  - `fx lay gradient <file.LAY> -o gradient.png` â€” renders sky colour ramp as a PNG strip (one pixel per step)
 
 ## Related
 

@@ -1,10 +1,10 @@
-#include <catch2/catch_test_macros.hpp>
-#include <ft/pic.h>
-#include <ft/pal.h>
+﻿#include <catch2/catch_test_macros.hpp>
+#include <fx/pic.h>
+#include <fx/pal.h>
 #include <vector>
 #include <cstdint>
 
-using namespace ft;
+using namespace fx;
 
 static std::vector<uint8_t> make_rgba(int w, int h, uint8_t r, uint8_t g, uint8_t b) {
     std::vector<uint8_t> buf(w * h * 4);

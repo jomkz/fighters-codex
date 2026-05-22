@@ -1,8 +1,8 @@
-#include "ft/fnt.h"
-#include "ft/pe.h"
+﻿#include "fx/fnt.h"
+#include "fx/pe.h"
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static uint32_t u32le(const uint8_t* p) {
     return (uint32_t)(p[0] | ((uint32_t)p[1] << 8) |
@@ -26,10 +26,10 @@ FntFile fnt_parse(const uint8_t* data, size_t size) {
 
 // Interpret x86 glyph function bytecode to produce a pixel bitmap.
 // Instructions used:
-//   03 F9          ADD EDI, ECX  → advance one row
-//   88 07          MOV [EDI], AL  → write pixel at column 0
-//   88 47 NN       MOV [EDI+NN], AL  → write pixel at column NN
-//   C3             RET  → end of glyph
+//   03 F9          ADD EDI, ECX  â†’ advance one row
+//   88 07          MOV [EDI], AL  â†’ write pixel at column 0
+//   88 47 NN       MOV [EDI+NN], AL  â†’ write pixel at column NN
+//   C3             RET  â†’ end of glyph
 // We simulate a virtual framebuffer wide enough to hold the glyph.
 static FntGlyph render_glyph(uint8_t ch, uint32_t va, uint32_t width,
                               uint32_t height,
@@ -44,7 +44,7 @@ static FntGlyph render_glyph(uint8_t ch, uint32_t va, uint32_t width,
     size_t fn_off = (va >= cs_vma) ? (size_t)(va - cs_vma) : cs_size;
     if (fn_off >= cs_size) return g;
 
-    // Virtual framebuffer: row × col, one byte per pixel
+    // Virtual framebuffer: row Ã— col, one byte per pixel
     // EDI tracks absolute position: row * width + 0 (column offset added by MOV)
     int edi_row = 0;  // current row index (EDI = edi_row * width)
     const size_t MAX_INSNS = 4096;
@@ -55,27 +55,27 @@ static FntGlyph render_glyph(uint8_t ch, uint32_t va, uint32_t width,
         if (op0 == 0xC3) break;  // RET
 
         if (op0 == 0x03 && pc + 1 < cs_size && cs_data[pc + 1] == 0xF9) {
-            // ADD EDI, ECX — advance one row
+            // ADD EDI, ECX â€” advance one row
             ++edi_row;
             pc += 2;
             continue;
         }
         if (op0 == 0x88 && pc + 1 < cs_size && cs_data[pc + 1] == 0x07) {
-            // MOV [EDI], AL — pixel at column 0 of current row
+            // MOV [EDI], AL â€” pixel at column 0 of current row
             if ((uint32_t)edi_row < height && width > 0)
                 g.pixels[(size_t)edi_row * width + 0] = 0xFF;
             pc += 2;
             continue;
         }
         if (op0 == 0x88 && pc + 2 < cs_size && cs_data[pc + 1] == 0x47) {
-            // MOV [EDI+NN], AL — pixel at column NN
+            // MOV [EDI+NN], AL â€” pixel at column NN
             uint8_t col = cs_data[pc + 2];
             if ((uint32_t)edi_row < height && col < width)
                 g.pixels[(size_t)edi_row * width + col] = 0xFF;
             pc += 3;
             continue;
         }
-        // Unknown byte — stop
+        // Unknown byte â€” stop
         break;
     }
     return g;
@@ -93,4 +93,4 @@ void fnt_render_glyphs(FntFile& fnt, const uint8_t* cs_data, size_t cs_size, uin
     }
 }
 
-} // namespace ft
+} // namespace fx

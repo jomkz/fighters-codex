@@ -1,15 +1,15 @@
-#include "sh_editor.h"
+﻿#include "sh_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/sh.h"
+#include "fx/sh.h"
 #include <commdlg.h>
 #include <fstream>
 #include <string>
 
 static int    s_shLastLib   = -2;
 static int    s_shLastEntry = -2;
-static ft::ShInfo s_shInfo  = {};
-static ft::ShMesh s_shMesh  = {};
+static fx::ShInfo s_shInfo  = {};
+static fx::ShMesh s_shMesh  = {};
 
 void DrawShEditor(App& app) {
     auto& ed = app.editor;
@@ -17,8 +17,8 @@ void DrawShEditor(App& app) {
     if (ed.libIdx != s_shLastLib || ed.entryIdx != s_shLastEntry) {
         s_shLastLib   = ed.libIdx;
         s_shLastEntry = ed.entryIdx;
-        s_shInfo = ft::sh_parse_info(ed.data.data(), ed.data.size());
-        s_shMesh = ft::sh_parse_mesh(ed.data.data(), ed.data.size());
+        s_shInfo = fx::sh_parse_info(ed.data.data(), ed.data.size());
+        s_shMesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size());
     }
 
     ImGui::Text("Scale: %d  (%.1fx)",  s_shInfo.scale_raw, s_shInfo.scale);
@@ -39,7 +39,7 @@ void DrawShEditor(App& app) {
 
     if (s_shInfo.vert_count == 0) {
         ImGui::TextColored({1.0f, 0.8f, 0.0f, 1.0f},
-            "x86-only geometry — no OBJ export available.");
+            "x86-only geometry â€” no OBJ export available.");
     } else if (ImGui::Button("Export OBJ...")) {
         wchar_t buf[MAX_PATH] = {};
         OPENFILENAMEW ofn     = {};
@@ -56,7 +56,7 @@ void DrawShEditor(App& app) {
             WideCharToMultiByte(CP_UTF8, 0, buf, -1, path.data(), len, nullptr, nullptr);
             std::ofstream f(path);
             if (f) {
-                f << ft::sh_to_obj(s_shMesh);
+                f << fx::sh_to_obj(s_shMesh);
                 app.statusMsg  = "Exported to " + path;
                 app.statusKind = App::StatusKind::Info;
             } else {

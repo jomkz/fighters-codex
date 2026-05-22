@@ -1,7 +1,7 @@
-#include "ft/inf.h"
+﻿#include "fx/inf.h"
 #include <sstream>
 
-namespace ft {
+namespace fx {
 
 InfFile inf_parse(const uint8_t* data, size_t size) {
     InfFile result{};
@@ -68,4 +68,4 @@ InfFile inf_parse(const uint8_t* data, size_t size) {
     return result;
 }
 
-} // namespace ft
+} // namespace fx

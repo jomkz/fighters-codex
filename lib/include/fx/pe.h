@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 
 // Minimal PE/LE section reader shared by FA overlay parsers.
 // FA DLLs use Phar Lap LE format ("PL\0\0" signature) with one CODE section.
 
-namespace ft {
+namespace fx {
 
 struct CodeSection {
     const uint8_t* data;  // pointer into the raw file buffer; null on failure
@@ -25,4 +25,4 @@ inline size_t pe_va_to_offset(const CodeSection& cs, uint32_t va) {
     return (off < cs.size) ? off : (size_t)-1;
 }
 
-} // namespace ft
+} // namespace fx

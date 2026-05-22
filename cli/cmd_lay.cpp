@@ -1,10 +1,10 @@
-#include "ft/lay.h"
+﻿#include "fx/lay.h"
 #include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <vector>
 
-// stb_image_write declarations only — implementation compiled in cmd_pic.cpp
+// stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
 #include "stb_image_write.h"
 
 static std::string json_str(const std::string& s) {
@@ -40,7 +40,7 @@ static int cmd_lay_dump(const char* path) {
     fread(buf.data(), 1, sz, f);
     fclose(f);
 
-    ft::LayFile lay = ft::lay_parse(buf.data(), buf.size());
+    fx::LayFile lay = fx::lay_parse(buf.data(), buf.size());
     if (!lay.valid) { fprintf(stderr, "Failed to parse LAY: %s\n", path); return 1; }
 
     puts("{");
@@ -62,7 +62,7 @@ static int cmd_lay_dump(const char* path) {
 
     printf("  \"layers\": [\n");
     for (size_t i = 0; i < lay.layers.size(); ++i) {
-        const ft::LayLayer& L = lay.layers[i];
+        const fx::LayLayer& L = lay.layers[i];
         bool last = (i + 1 == lay.layers.size());
         puts("    {");
         printf("      \"flags\": %u,\n", L.flags);
@@ -120,7 +120,7 @@ static int cmd_lay_gradient(int argc, char** argv) {
     fread(buf.data(), 1, sz, f);
     fclose(f);
 
-    ft::LayFile lay = ft::lay_parse(buf.data(), buf.size());
+    fx::LayFile lay = fx::lay_parse(buf.data(), buf.size());
     if (!lay.valid || lay.layers.empty()) {
         fprintf(stderr, "Failed to parse LAY: %s\n", path);
         return 1;
@@ -134,7 +134,7 @@ static int cmd_lay_gradient(int argc, char** argv) {
     std::vector<uint8_t> img(W * H * 3, 0);
 
     for (int li = 0; li < rows; ++li) {
-        const ft::LayLayer& L = lay.layers[li];
+        const fx::LayLayer& L = lay.layers[li];
         for (int row = 0; row < ROW_H; ++row) {
             int y = li * ROW_H + row;
             for (int x = 0; x < 31; ++x) {

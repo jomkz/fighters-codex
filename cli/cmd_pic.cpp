@@ -1,5 +1,5 @@
-#include "ft/pic.h"
-#include "ft/pal.h"
+﻿#include "fx/pic.h"
+#include "fx/pal.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -7,13 +7,13 @@
 #include <fstream>
 #include <filesystem>
 
-using namespace ft;
+using namespace fx;
 
 // stb_image_write for PNG output (implementation lives here)
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-// stb_image declarations only — implementation is compiled in pic.cpp
+// stb_image declarations only â€” implementation is compiled in pic.cpp
 #include "stb_image.h"
 
 namespace fs = std::filesystem;

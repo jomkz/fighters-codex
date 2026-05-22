@@ -1,11 +1,11 @@
-#include "ft/fnt.h"
-#include "ft/pe.h"
+﻿#include "fx/fnt.h"
+#include "fx/pe.h"
 #include <cstdio>
 #include <cstring>
 #include <vector>
 #include <string>
 
-// stb_image_write declarations only — implementation compiled in cmd_pic.cpp
+// stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
 #include "stb_image_write.h"
 
 static void write_png_cb(void* ctx, void* data, int size) {
@@ -30,7 +30,7 @@ static int cmd_fnt_info(const char* path) {
     fread(buf.data(), 1, sz, f);
     fclose(f);
 
-    ft::FntFile fnt = ft::fnt_parse(buf.data(), buf.size());
+    fx::FntFile fnt = fx::fnt_parse(buf.data(), buf.size());
     if (!fnt.valid) { fprintf(stderr, "Failed to parse FNT: %s\n", path); return 1; }
 
     printf("font_height: %u\n", fnt.font_height);
@@ -59,13 +59,13 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     fread(buf.data(), 1, sz, f);
     fclose(f);
 
-    ft::FntFile fnt = ft::fnt_parse(buf.data(), buf.size());
+    fx::FntFile fnt = fx::fnt_parse(buf.data(), buf.size());
     if (!fnt.valid) { fprintf(stderr, "Failed to parse FNT: %s\n", path); return 1; }
 
-    ft::CodeSection cs = ft::pe_code_section(buf.data(), buf.size());
+    fx::CodeSection cs = fx::pe_code_section(buf.data(), buf.size());
     if (!cs.data) { fprintf(stderr, "No CODE section in %s\n", path); return 1; }
 
-    ft::fnt_render_glyphs(fnt, cs.data, cs.size, cs.vma);
+    fx::fnt_render_glyphs(fnt, cs.data, cs.size, cs.vma);
 
     // Write metrics.csv
     {
@@ -74,7 +74,7 @@ static int cmd_fnt_unpack(int argc, char** argv) {
         FILE* fc = fopen(csv_path, "w");
         if (!fc) { fprintf(stderr, "Cannot write: %s\n", csv_path); return 1; }
         fprintf(fc, "ascii,char,width,height\n");
-        for (const ft::FntGlyph& g : fnt.glyphs) {
+        for (const fx::FntGlyph& g : fnt.glyphs) {
             char display = (g.ch >= 32 && g.ch < 127) ? (char)g.ch : '?';
             fprintf(fc, "%d,%c,%u,%u\n", (int)g.ch, display, g.width, g.height);
         }
@@ -83,16 +83,16 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     }
 
     // Build glyph sheet: all printable glyphs in a grid
-    // 16 columns, rows as needed; each cell = max_w × font_height pixels
+    // 16 columns, rows as needed; each cell = max_w Ã— font_height pixels
     uint32_t max_w = 1;
     for (int i = 0; i < 256; ++i) if (fnt.glyph_width[i] > max_w) max_w = fnt.glyph_width[i];
     if (max_w == 0) max_w = 1;
     uint32_t fh = fnt.font_height;
     if (fh == 0) fh = 1;
 
-    // Count printable glyphs (ASCII 33–126)
-    std::vector<const ft::FntGlyph*> printable;
-    for (const ft::FntGlyph& g : fnt.glyphs) {
+    // Count printable glyphs (ASCII 33â€“126)
+    std::vector<const fx::FntGlyph*> printable;
+    for (const fx::FntGlyph& g : fnt.glyphs) {
         if (g.ch >= 33 && g.ch <= 126) printable.push_back(&g);
     }
 
@@ -105,7 +105,7 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     std::vector<uint8_t> sheet(sheet_w * sheet_h, 0);
 
     for (int gi = 0; gi < (int)printable.size(); ++gi) {
-        const ft::FntGlyph* g = printable[gi];
+        const fx::FntGlyph* g = printable[gi];
         int cell_col = gi % COLS;
         int cell_row = gi / COLS;
         int x0 = cell_col * (int)max_w;

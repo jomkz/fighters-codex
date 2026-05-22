@@ -1,7 +1,7 @@
-#include "ft/pal.h"
+﻿#include "fx/pal.h"
 #include <algorithm>
 
-namespace ft {
+namespace fx {
 
 static inline uint8_t vga_to_8(uint8_t v) {
     return (uint8_t)((v << 2) | (v >> 6));
@@ -31,4 +31,4 @@ void pal_save(const Palette& pal, uint8_t out[768]) {
     }
 }
 
-} // namespace ft
+} // namespace fx

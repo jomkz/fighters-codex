@@ -1,15 +1,15 @@
-#include <catch2/catch_test_macros.hpp>
+﻿#include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
-#include <ft/sh.h>
+#include <fx/sh.h>
 #include <cstring>
 #include <vector>
 
-using namespace ft;
+using namespace fx;
 
 // Build a minimal valid SH binary containing one VertexBuffer (3 verts) and
 // one triangular Face, then EndShape.  Structure:
-//   MZ stub (64 B) → Phar-Lap PE header (24 B) → section table (40 B)
-//   → CODE section (48 B)
+//   MZ stub (64 B) â†’ Phar-Lap PE header (24 B) â†’ section table (40 B)
+//   â†’ CODE section (48 B)
 static std::vector<uint8_t> make_minimal_sh() {
     // PE/LE header offset in the file
     const uint32_t PE_OFF   = 64;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -35,7 +35,7 @@
 //     react <a> <b> <c>
 //     .                 -- end of object block
 
-namespace ft {
+namespace fx {
 
 struct MissionObj {
     std::string type_file;   // e.g. "KIEV.NT"
@@ -66,4 +66,4 @@ MissionInfo mission_parse_info(const uint8_t* data, size_t size);
 // Round-trip: parse raw lines and re-emit (verbatim copy with CRLF normalization).
 std::vector<uint8_t> mission_roundtrip(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

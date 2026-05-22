@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -21,7 +21,7 @@
 // Null pointers are written as:    dword 0   OR   ptr <name-that-resolves-to-empty>
 // Hex values:                      dword $12bf3
 
-namespace ft {
+namespace fx {
 
 struct BrfField {
     std::string type;   // "byte", "word", "dword", "ptr", "symbol", "string"
@@ -58,4 +58,4 @@ std::vector<uint8_t> brf_serialize(const BrfDoc& doc);
 // E.g. "^300" -> -300, "$7fffffff" -> 2147483647, "300" -> 300.
 int64_t brf_parse_int(const std::string& value);
 
-} // namespace ft
+} // namespace fx

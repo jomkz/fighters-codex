@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <vector>
@@ -18,7 +18,7 @@
 // Width and height are stored big-endian despite FA.EXE being little-endian.
 // Palette values are full 8-bit (not the 6-bit VGA format used by .PAL/.PIC).
 
-namespace ft {
+namespace fx {
 
 struct RawInfo {
     uint32_t width;
@@ -32,4 +32,4 @@ bool raw_info(const uint8_t* data, size_t size, RawInfo* info);
 // Returns empty vector on error.
 std::vector<uint8_t> raw_decode(const uint8_t* data, size_t size);
 
-} // namespace ft
+} // namespace fx

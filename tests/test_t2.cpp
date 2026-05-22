@@ -1,9 +1,9 @@
-#include <catch2/catch_test_macros.hpp>
-#include <ft/t2.h>
+﻿#include <catch2/catch_test_macros.hpp>
+#include <fx/t2.h>
 #include <cstring>
 #include <vector>
 
-using namespace ft;
+using namespace fx;
 
 // Minimal T2 binary: 149-byte header + dim_x*dim_y*195 bytes of tile data.
 static std::vector<uint8_t> make_t2(uint32_t dim_x, uint8_t dim_y,

@@ -1,24 +1,24 @@
-# Library API
+﻿# Library API
 
-`ft_lib` is a static C++17 library. Link it from CMake:
+`fx_lib` is a static C++17 library. Link it from CMake:
 
 ```cmake
-add_subdirectory(fighters-toolkit/lib)
-target_link_libraries(your_target PRIVATE ft_lib)
+add_subdirectory(fighters-codex/lib)
+target_link_libraries(your_target PRIVATE fx_lib)
 ```
 
-All public headers are under `lib/include/ft/`. Include them with the `ft/` prefix:
+All public headers are under `lib/include/fx/`. Include them with the `fx/` prefix:
 
 ```cpp
-#include "ft/ealib.h"
-#include "ft/pic.h"
+#include "fx/ealib.h"
+#include "fx/pic.h"
 // etc.
 ```
 
-## ealib.h — Archive container
+## ealib.h â€” Archive container
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct Entry {
     char     name[13];   // null-terminated 8.3 filename
@@ -42,27 +42,27 @@ std::vector<uint8_t> ealib_build(
 std::vector<uint8_t> ealib_patch(const uint8_t* data, size_t size,
                                   const std::string& name,
                                   const std::vector<uint8_t>& new_data);
-} // namespace ft
+} // namespace fx
 ```
 
-## pal.h — VGA palette
+## pal.h â€” VGA palette
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct Palette {
-    uint8_t r[256], g[256], b[256]; // already scaled to 8-bit (0–255)
+    uint8_t r[256], g[256], b[256]; // already scaled to 8-bit (0â€“255)
 };
 
 Palette pal_load(const uint8_t* data, size_t size); // load a .PAL file
 void    pal_save(const Palette& pal, uint8_t out[768]);
-} // namespace ft
+} // namespace fx
 ```
 
-## pic.h — PIC image codec
+## pic.h â€” PIC image codec
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct PicInfo {
     uint16_t format;          // 0=dense, 1=sparse, 0xD8FF=JPEG
@@ -84,13 +84,13 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
 // Pixels with alpha < 128 become transparent (index 0xFF).
 std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
                                  const Palette& pal);
-} // namespace ft
+} // namespace fx
 ```
 
-## blast.h — PKWare DCL decompressor
+## blast.h â€” PKWare DCL decompressor
 
 ```cpp
-// Decompress a raw PKWare DCL stream (litmode=0, dictbits=4–6).
+// Decompress a raw PKWare DCL stream (litmode=0, dictbits=4â€“6).
 // Returns bytes written, or -1 on error.
 int blast_decompress(const uint8_t* in, size_t in_size,
                      uint8_t* out, size_t out_capacity);
@@ -100,10 +100,10 @@ int blast_decompress_ea(const uint8_t* in, size_t in_size,
                         uint8_t* out, size_t out_capacity);
 ```
 
-## seq.h — Cutscene timeline
+## seq.h â€” Cutscene timeline
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct SeqEvent {
     bool        relative;        // true = time is +N ticks from previous event
@@ -119,13 +119,13 @@ struct SeqFile {
 
 SeqFile              seq_parse(const uint8_t* data, size_t size);
 std::vector<uint8_t> seq_serialize(const SeqFile&);
-} // namespace ft
+} // namespace fx
 ```
 
-## audio.h — Raw PCM audio
+## audio.h â€” Raw PCM audio
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct AudioInfo {
     int    sample_rate;   // Hz
@@ -137,42 +137,42 @@ AudioInfo            audio_info(const uint8_t* data, size_t size, int sample_rat
 std::vector<uint8_t> audio_to_wav(const uint8_t* data, size_t size, int sample_rate);
 std::vector<uint8_t> audio_from_wav(const uint8_t* wav, size_t size,
                                      int* sample_rate_out);
-} // namespace ft
+} // namespace fx
 ```
 
-## brf.h / ot.h — Type definitions
+## brf.h / ot.h â€” Type definitions
 
 ```cpp
-namespace ft {
+namespace fx {
 
 // ObjectType covers OT, NT, JT, SEE, ECM, GAS.
 // PlaneType extends ObjectType with aerodynamic fields.
-// Full field lists are in lib/include/ft/ot.h.
+// Full field lists are in lib/include/fx/ot.h.
 
 ObjectType           ot_parse(const uint8_t* data, size_t size);
 PlaneType            pt_parse(const uint8_t* data, size_t size);
 std::vector<uint8_t> ot_serialize(const ObjectType&);
 std::vector<uint8_t> pt_serialize(const PlaneType&);
 // nt_parse, jt_parse, see_parse, ecm_parse, gas_parse follow the same pattern
-} // namespace ft
+} // namespace fx
 ```
 
-## mission.h — Mission and map files
+## mission.h â€” Mission and map files
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct MissionFile { /* map name, time, wind, clouds, object list */ };
 
 MissionFile          mission_parse(const uint8_t* data, size_t size);
 std::vector<uint8_t> mission_serialize(const MissionFile&);
-} // namespace ft
+} // namespace fx
 ```
 
-## sh.h — 3D shape / model
+## sh.h â€” 3D shape / model
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct ShVertex { float x, y, z; };   // world coordinates, feet
 
@@ -200,20 +200,20 @@ struct ShMesh {
 ShInfo      sh_parse_info(const uint8_t* data, size_t size);
 ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);
 std::string sh_to_obj(const ShMesh& mesh);   // returns Wavefront OBJ text
-} // namespace ft
+} // namespace fx
 ```
 
-## cb8.h — FMV video decoder
+## cb8.h â€” FMV video decoder
 
 ```cpp
-namespace ft {
+namespace fx {
 
 struct Cb8Info {
     uint32_t width;
     uint32_t height;
     uint32_t frame_count;
     uint32_t samples_per_frame;  // sync counter ticks per frame (400)
-    uint32_t audio_sync_rate;    // sync counter ticks per second (6000 = 400 × 15 fps)
+    uint32_t audio_sync_rate;    // sync counter ticks per second (6000 = 400 Ã— 15 fps)
 };
 
 // Parse VooM header from a CB8 file in memory.
@@ -226,12 +226,12 @@ struct Cb8Decoder;  // opaque
 Cb8Decoder* cb8_open(const uint8_t* data, size_t size);
 void        cb8_close(Cb8Decoder* dec);
 
-// Decode frame `frame_idx` and return palette index bytes (width × height),
+// Decode frame `frame_idx` and return palette index bytes (width Ã— height),
 // row-major, top-to-bottom.  Seeking backward resets the canvas to frame 0.
 // Returns empty on error or out-of-range frame_idx.
 std::vector<uint8_t> cb8_decode_frame(Cb8Decoder* dec, uint32_t frame_idx);
 
-} // namespace ft
+} // namespace fx
 ```
 
 For best performance iterate frames in forward order; backward seeks replay

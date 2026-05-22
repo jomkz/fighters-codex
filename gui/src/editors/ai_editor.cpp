@@ -1,8 +1,8 @@
-#include "ai_editor.h"
+﻿#include "ai_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/ai.h"
-#include "ft/ealib.h"
+#include "fx/ai.h"
+#include "fx/ealib.h"
 #include <string>
 #include <vector>
 #include <cstring>
@@ -10,7 +10,7 @@
 namespace fs = std::filesystem;
 
 static std::string                    s_source;
-static std::vector<ft::AiCompileError> s_errors;
+static std::vector<fx::AiCompileError> s_errors;
 static int  s_lastLib   = -2;
 static int  s_lastEntry = -2;
 static bool s_compiled  = false;
@@ -66,17 +66,17 @@ void DrawAiEditor(App& app) {
     if (ImGui::Button("Compile -> BI", ImVec2(100, 0))) {
         s_errors.clear();
         s_compiled = false;
-        auto biBytes = ft::ai_compile(s_source, s_errors);
+        auto biBytes = fx::ai_compile(s_source, s_errors);
         if (!biBytes.empty() && s_errors.empty()) {
             // Write BI back into session
             if (biIdx >= 0) {
                 std::string biName = app.sessions[ed.libIdx].entries[biIdx].name;
                 auto& sess = app.sessions[ed.libIdx];
-                sess.data    = ft::ealib_patch(sess.data.data(), sess.data.size(),
+                sess.data    = fx::ealib_patch(sess.data.data(), sess.data.size(),
                                                biName, biBytes);
-                sess.entries = ft::ealib_read_dir(sess.data.data(), sess.data.size());
+                sess.entries = fx::ealib_read_dir(sess.data.data(), sess.data.size());
                 sess.dirty   = true;
-                app.statusMsg  = "Compiled OK — " + biName + " updated";
+                app.statusMsg  = "Compiled OK â€” " + biName + " updated";
                 app.statusKind = App::StatusKind::Info;
             } else {
                 app.statusMsg  = "Compiled OK (no .BI entry to patch)";
@@ -84,7 +84,7 @@ void DrawAiEditor(App& app) {
             }
             s_compiled = true;
         } else {
-            app.statusMsg  = "Compile failed — " + std::to_string(s_errors.size()) + " error(s)";
+            app.statusMsg  = "Compile failed â€” " + std::to_string(s_errors.size()) + " error(s)";
             app.statusKind = App::StatusKind::Error;
         }
     }

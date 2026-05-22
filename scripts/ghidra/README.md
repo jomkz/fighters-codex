@@ -1,4 +1,4 @@
-# Ghidra Scripts — FA.EXE Reverse Engineering
+﻿# Ghidra Scripts â€” FA.EXE Reverse Engineering
 
 Scripts for decompiling and analysing Jane's Fighters Anthology (`FA.EXE`) using Ghidra.
 
@@ -10,7 +10,7 @@ Scripts for decompiling and analysing Jane's Fighters Anthology (`FA.EXE`) using
 | JDK | 21+ (JDK 26 tested) | `C:\java\jdk-26.0.1` |
 | FA.EXE | any FA install | `C:\JANES\Fighters Anthology\FA.EXE` |
 | FA.SMS | same FA install | `C:\JANES\Fighters Anthology\FA.SMS` |
-| ft.exe | this repo build | `build\cli\Release\ft.exe` |
+| fx.exe | this repo build | `build\cli\Release\fx.exe` |
 
 Edit the variables at the top of `run_ghidra.bat` if your Ghidra / JDK locations differ:
 
@@ -38,9 +38,9 @@ All output lands under `%FA_PROJECT%\output\` and `%FA_PROJECT%\overlay_projects
 
 ### 1. Create the Ghidra project
 
-1. Launch Ghidra and choose **File → New Project**
+1. Launch Ghidra and choose **File â†’ New Project**
 2. Create a **Non-Shared Project** at `%USERPROFILE%\src\fa`, name it `fa-re`
-3. **File → Import File** → select `FA.EXE`
+3. **File â†’ Import File** â†’ select `FA.EXE`
 4. Accept the default PE import options and click **OK**
 5. When prompted to analyse, click **Yes** and accept the default analysers
 
@@ -61,7 +61,7 @@ scripts\ghidra\run_ghidra.bat ImportFASmsHeadless.java
 
 **GUI (interactive):**
 1. In the Ghidra CodeBrowser, open `FA.EXE`
-2. **Window → Script Manager**, locate `ImportFASms.java` and run it
+2. **Window â†’ Script Manager**, locate `ImportFASms.java` and run it
 3. When prompted, select `FA.SMS` from your FA install directory
 
 > `ImportFASms.java` requires the Ghidra GUI. For automation use `ImportFASmsHeadless.java`.
@@ -81,7 +81,7 @@ If you placed it elsewhere, update `FA_PROJECT` in `run_ghidra.bat`.
 
 ## Running FA.EXE analysis scripts
 
-**All subsystems — separate output files per script:**
+**All subsystems â€” separate output files per script:**
 
 ```bat
 scripts\ghidra\run_all.bat
@@ -117,7 +117,7 @@ FA stores many subsystems as Win32 PE DLLs packed inside `FA_2.LIB`. These have 
 
 1. Unpacks `FA_2.LIB` into a staging directory
 2. Sorts files by extension into `%FA_PROJECT%\overlays\{BI,CAM,MC,HUD,LAY,FNT,MUS}`
-3. Patches the two-byte signature `PL` → `PE` in each overlay (copies only — originals are preserved in `_all\`)
+3. Patches the two-byte signature `PL` â†’ `PE` in each overlay (copies only â€” originals are preserved in `_all\`)
 4. Imports each format group into its own Ghidra project under `%FA_PROJECT%\overlay_projects\`
 
 ```bat
@@ -149,7 +149,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 
 | Script | Subsystem | Output |
 |---|---|---|
-| `AnalyzeFA.java` | Master — runs all subsystems | `AnalyzeFA.txt` |
+| `AnalyzeFA.java` | Master â€” runs all subsystems | `AnalyzeFA.txt` |
 | `AnalyzeLAY.java` | Sky / atmosphere / horizon | `AnalyzeLAY.txt` |
 | `AnalyzeHUD.java` | HUD draw, warning bits, bit 14 SP writer | `AnalyzeHUD.txt` |
 | `AnalyzeDLG.java` | Dialog / UI system | `AnalyzeDLG.txt` |
@@ -171,7 +171,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 
 | Script | Purpose | Headless? |
 |---|---|---|
-| `FAScript.java` | Base class — shared helpers | n/a |
+| `FAScript.java` | Base class â€” shared helpers | n/a |
 | `ImportFASms.java` | Import FA.SMS symbols (interactive file picker) | No |
 | `ImportFASmsHeadless.java` | Import FA.SMS symbols (path from arg/env/default) | Yes |
 
@@ -183,14 +183,14 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `run_all.bat` | Run all 17 analysis scripts; `--setup` flag rebuilds the project first |
 | `setup_project.bat` | One-shot: create project, import FA.EXE, load FA.SMS symbols |
 | `extract_overlays.bat` | Unpack FA_2.LIB and sort overlays by extension |
-| `import_overlays.bat` | Patch PL→PE signature and import overlay DLLs into Ghidra |
+| `import_overlays.bat` | Patch PLâ†’PE signature and import overlay DLLs into Ghidra |
 | `run_overlays.bat` | Orchestrate extract + import; supports `--extract`/`--import [FORMAT]` |
 
 ---
 
 ## Adding new scripts
 
-Extend `FAScript` rather than `GhidraScript` directly — it provides all shared helpers and handles output file setup:
+Extend `FAScript` rather than `GhidraScript` directly â€” it provides all shared helpers and handles output file setup:
 
 ```java
 public class AnalyzeMyThing extends FAScript {

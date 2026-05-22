@@ -1,9 +1,9 @@
-#include "ft/seq.h"
+﻿#include "fx/seq.h"
 #include <cctype>
 #include <cstdlib>
 #include <sstream>
 
-namespace ft {
+namespace fx {
 
 // ---- tokenizer -------------------------------------------------------
 
@@ -165,4 +165,4 @@ std::vector<uint8_t> seq_serialize(const SeqFile& seq) {
     return out;
 }
 
-} // namespace ft
+} // namespace fx

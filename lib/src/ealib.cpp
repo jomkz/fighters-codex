@@ -1,9 +1,9 @@
-#include "ft/ealib.h"
-#include "ft/blast.h"
+﻿#include "fx/ealib.h"
+#include "fx/blast.h"
 #include <algorithm>
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 static const char MAGIC[]  = "EALIB";
 static const int  MAGIC_LEN = 5;
@@ -134,4 +134,4 @@ std::vector<uint8_t> ealib_patch(const uint8_t* lib_data, size_t lib_size,
     return ealib_build(files);
 }
 
-} // namespace ft
+} // namespace fx

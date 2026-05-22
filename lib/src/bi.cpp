@@ -1,11 +1,11 @@
-#include "ft/bi.h"
-#include "ft/pe.h"
+﻿#include "fx/bi.h"
+#include "fx/pe.h"
 #include <cstring>
 #include <map>
 #include <set>
 #include <cstdio>
 
-namespace ft {
+namespace fx {
 
 static uint16_t u16le_bi(const uint8_t* p) {
     return (uint16_t)(p[0] | ((uint16_t)p[1] << 8));
@@ -46,7 +46,7 @@ static std::vector<BiSection> parse_bi_sections(const uint8_t* data, size_t size
     return secs;
 }
 
-// Build a map from CALL_DIRECT address (thunk VA) → function name.
+// Build a map from CALL_DIRECT address (thunk VA) â†’ function name.
 static std::map<uint32_t, std::string> build_import_map(
     const uint8_t* data, size_t size,
     const std::vector<BiSection>& secs)
@@ -67,7 +67,7 @@ static std::map<uint32_t, std::string> build_import_map(
     uint32_t       idata_vm = idata_sec->vma;
     uint32_t       idata_sz = idata_sec->raw_sz;
 
-    uint32_t orig_thunk_va = u32le_bi(idata);       // INT: array of VA → hint/name
+    uint32_t orig_thunk_va = u32le_bi(idata);       // INT: array of VA â†’ hint/name
     uint32_t first_thunk_va = u32le_bi(idata + 16); // IAT base VA
     if (orig_thunk_va == 0 || first_thunk_va == 0) return m;
 
@@ -305,4 +305,4 @@ std::vector<BiInstr> bi_disasm(const uint8_t* data, size_t size) {
     return result;
 }
 
-} // namespace ft
+} // namespace fx

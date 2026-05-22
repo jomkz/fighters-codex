@@ -1,7 +1,7 @@
-#include "raw_viewer.h"
+﻿#include "raw_viewer.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/raw.h"
+#include "fx/raw.h"
 #include "stb_image_write.h"
 #include <commdlg.h>
 #include <string>
@@ -36,8 +36,8 @@ static std::string SavePngDialog(const std::string& defaultPath) {
 
 void DrawRawViewer(App& app) {
     auto& ed = app.editor;
-    ft::RawInfo info;
-    if (!ft::raw_info(ed.data.data(), ed.data.size(), &info)) {
+    fx::RawInfo info;
+    if (!fx::raw_info(ed.data.data(), ed.data.size(), &info)) {
         ImGui::TextColored({1,0.4f,0.4f,1}, "Not a valid RAW screenshot.");
         return;
     }
@@ -61,7 +61,7 @@ void DrawRawViewer(App& app) {
 
         std::string out = SavePngDialog(defaultPath);
         if (!out.empty()) {
-            auto rgba = ft::raw_decode(ed.data.data(), ed.data.size());
+            auto rgba = fx::raw_decode(ed.data.data(), ed.data.size());
             if (!rgba.empty()) {
                 if (stbi_write_png(out.c_str(), (int)info.width, (int)info.height,
                                    4, rgba.data(), (int)info.width * 4)) {

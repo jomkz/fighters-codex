@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "imgui.h"
-#include "ft/ealib.h"
+#include "fx/ealib.h"
 #include <d3d11.h>
 #include <string>
 #include <vector>
@@ -12,7 +12,7 @@ enum class ThemePreference { Auto = 0, Dark = 1, Light = 2 };
 struct LibSession {
     std::string              path;           // full path to the file
     std::vector<uint8_t>     data;           // raw file bytes
-    std::vector<ft::Entry>   entries;        // parsed directory (1 entry if standalone)
+    std::vector<fx::Entry>   entries;        // parsed directory (1 entry if standalone)
     bool                     dirty      = false;
     bool                     standalone = false; // true = loose file, not a LIB
     float                    tableHeight = 0.0f; // browser panel row height (0 = uninitialised)

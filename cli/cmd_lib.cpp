@@ -1,4 +1,4 @@
-#include "ft/ealib.h"
+﻿#include "fx/ealib.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -6,7 +6,7 @@
 #include <fstream>
 #include <filesystem>
 
-using namespace ft;
+using namespace fx;
 
 namespace fs = std::filesystem;
 

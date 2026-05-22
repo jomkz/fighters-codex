@@ -1,11 +1,11 @@
-#include "ft/brf.h"
+﻿#include "fx/brf.h"
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
 
-namespace ft {
+namespace fx {
 
 // ---- helpers ----------------------------------------------------------
 
@@ -171,4 +171,4 @@ int64_t brf_parse_int(const std::string& value) {
     return std::strtoll(value.c_str(), nullptr, 10);
 }
 
-} // namespace ft
+} // namespace fx

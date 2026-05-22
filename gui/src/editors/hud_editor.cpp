@@ -1,11 +1,11 @@
-#include "hud_editor.h"
+﻿#include "hud_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/hud.h"
+#include "fx/hud.h"
 #include <string>
 #include <cstdio>
 
-static ft::HudFile s_hud;
+static fx::HudFile s_hud;
 static int s_lastLib   = -2;
 static int s_lastEntry = -2;
 
@@ -15,7 +15,7 @@ void DrawHudEditor(App& app) {
     if (ed.libIdx != s_lastLib || ed.entryIdx != s_lastEntry) {
         s_lastLib   = ed.libIdx;
         s_lastEntry = ed.entryIdx;
-        s_hud = ft::hud_parse(ed.data.data(), ed.data.size());
+        s_hud = fx::hud_parse(ed.data.data(), ed.data.size());
     }
 
     if (!s_hud.valid) {

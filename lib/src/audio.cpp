@@ -1,9 +1,9 @@
-#include "ft/audio.h"
+﻿#include "fx/audio.h"
 #include <algorithm>
 #include <cctype>
 #include <cstring>
 
-namespace ft {
+namespace fx {
 
 // ---- helpers ---------------------------------------------------------
 
@@ -146,4 +146,4 @@ std::vector<uint8_t> wav_to_pcm(const uint8_t* wav, size_t wav_size,
     return std::vector<uint8_t>(pcm_start, pcm_start + pcm_size);
 }
 
-} // namespace ft
+} // namespace fx

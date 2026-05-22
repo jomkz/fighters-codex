@@ -358,8 +358,8 @@ For CHOOSEAC.DLG: `x=379, y=80, w=238, h=361`. `_TopCenterDialog` overrides posi
 
 ## Toolkit Roadmap
 
-- New `lib/src/dlg.cpp` + `lib/include/ft/dlg.h` â€” parse dispatch table from PE CODE section
-- New `cli/cmd_dlg.cpp` â€” `ft dlg dump <file.DLG>` prints control table as JSON `[{func, x, y, width, label}]`
+- New `lib/src/dlg.cpp` + `lib/include/fx/dlg.h` â€” parse dispatch table from PE CODE section
+- New `cli/cmd_dlg.cpp` â€” `fx dlg dump <file.DLG>` prints control table as JSON `[{func, x, y, width, label}]`
 - GUI: `dlg_editor.h/cpp` â€” visual dialog layout editor that lets modders reposition controls
 
 ## Related

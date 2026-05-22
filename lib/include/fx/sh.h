@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace ft {
+namespace fx {
 
 struct ShVertex { float x, y, z; };
 
@@ -33,4 +33,4 @@ ShInfo      sh_parse_info(const uint8_t* data, size_t size);
 ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);
 std::string sh_to_obj(const ShMesh& mesh);
 
-} // namespace ft
+} // namespace fx

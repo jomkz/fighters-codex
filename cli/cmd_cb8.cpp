@@ -1,4 +1,4 @@
-#include "ft/cb8.h"
+﻿#include "fx/cb8.h"
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
@@ -19,7 +19,7 @@ static std::vector<uint8_t> read_file(const char* path) {
     return buf;
 }
 
-// PGM (P5) — palette index bytes written as 8-bit greyscale.
+// PGM (P5) â€” palette index bytes written as 8-bit greyscale.
 static bool write_pgm(const char* path, const uint8_t* pixels, uint32_t w, uint32_t h) {
     FILE* f = fopen(path, "wb");
     if (!f) return false;
@@ -37,8 +37,8 @@ static int cmd_info(int argc, char** argv) {
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read %s\n", argv[1]); return 1; }
 
-    ft::Cb8Info info;
-    if (!ft::cb8_info(data.data(), data.size(), &info)) {
+    fx::Cb8Info info;
+    if (!fx::cb8_info(data.data(), data.size(), &info)) {
         fprintf(stderr, "Not a valid CB8 file\n");
         return 1;
     }
@@ -72,18 +72,18 @@ static int cmd_frames(int argc, char** argv) {
 
     fs::create_directories(outdir);
 
-    ft::Cb8Info info;
-    if (!ft::cb8_info(data.data(), data.size(), &info)) {
+    fx::Cb8Info info;
+    if (!fx::cb8_info(data.data(), data.size(), &info)) {
         fprintf(stderr, "Not a valid CB8 file\n");
         return 1;
     }
 
-    ft::Cb8Decoder* dec = ft::cb8_open(data.data(), data.size());
+    fx::Cb8Decoder* dec = fx::cb8_open(data.data(), data.size());
     if (!dec) { fprintf(stderr, "Failed to open CB8 decoder\n"); return 1; }
 
     uint32_t written = 0;
     for (uint32_t f = 0; f < info.frame_count; f++) {
-        auto frame = ft::cb8_decode_frame(dec, f);
+        auto frame = fx::cb8_decode_frame(dec, f);
         if (frame.empty()) {
             fprintf(stderr, "Failed to decode frame %u\n", f);
             continue;
@@ -96,7 +96,7 @@ static int cmd_frames(int argc, char** argv) {
         else
             fprintf(stderr, "Failed to write %s\n", path.c_str());
     }
-    ft::cb8_close(dec);
+    fx::cb8_close(dec);
     printf("Wrote %u/%u frames to %s\n", written, info.frame_count, outdir);
     return (written == info.frame_count) ? 0 : 1;
 }

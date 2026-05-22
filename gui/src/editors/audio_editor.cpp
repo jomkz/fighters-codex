@@ -1,8 +1,8 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 #include "audio_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/audio.h"
+#include "fx/audio.h"
 #include <windows.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
@@ -230,7 +230,7 @@ void DrawAudioEditor(App& app) {
         dl->AddLine(ImVec2(x0, y0), ImVec2(x1, y1), IM_COL32(80, 180, 80, 255));
     }
 
-    // Playhead — colour signals state.
+    // Playhead â€” colour signals state.
     if (samples > 0) {
         ImU32 headCol;
         if      (s_player.IsPlaying()) headCol = IM_COL32(255, 210,  50, 220); // yellow: playing
@@ -271,7 +271,7 @@ void DrawAudioEditor(App& app) {
     if (ImGui::Button("Export WAV...")) {
         std::string path = Win32SaveFile(L"WAV Audio\0*.wav\0All Files\0*.*\0", L"wav");
         if (!path.empty()) {
-            auto wav = ft::audio_to_wav(ed.data.data(), ed.data.size(), (uint32_t)rate);
+            auto wav = fx::audio_to_wav(ed.data.data(), ed.data.size(), (uint32_t)rate);
             if (!wav.empty()) {
                 std::ofstream f(path, std::ios::binary);
                 if (f) f.write((const char*)wav.data(), (std::streamsize)wav.size());
@@ -289,7 +289,7 @@ void DrawAudioEditor(App& app) {
                 std::vector<uint8_t> wav((size_t)sz);
                 f.read((char*)wav.data(), (std::streamsize)sz);
                 uint32_t outRate = 0;
-                auto pcm = ft::wav_to_pcm(wav.data(), wav.size(), &outRate);
+                auto pcm = fx::wav_to_pcm(wav.data(), wav.size(), &outRate);
                 if (!pcm.empty()) {
                     s_player.Stop();
                     ed.data     = std::move(pcm);

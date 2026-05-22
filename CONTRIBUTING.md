@@ -1,13 +1,13 @@
-# Contributing
+﻿# Contributing
 
-This file covers commit message and branch naming conventions — the things that affect
+This file covers commit message and branch naming conventions â€” the things that affect
 everyone working on the repo. For the full developer reference (building, IDE setup,
 project structure, and release workflow) see [docs/development.md](docs/development.md).
 
 ## Commit Messages
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit
-messages drive the automated changelog — `scripts/draft-changelog.ps1` parses them to
+messages drive the automated changelog â€” `scripts/draft-changelog.ps1` parses them to
 populate `CHANGELOG.md` before each release.
 
 ### Format
@@ -18,11 +18,11 @@ populate `CHANGELOG.md` before each release.
 
 **Examples:**
 ```
-feat(ft-gui): add dark/light theming toggle
-fix(ft-lib): correct CB8 stride calculation for odd-width images
+feat(fx-gui): add dark/light theming toggle
+fix(fx-lib): correct CB8 stride calculation for odd-width images
 docs: document MUS opcode table
-refactor(ft-cli): simplify extract command argument parsing
-feat!: change LIB archive header magic — breaks existing files
+refactor(fx-cli): simplify extract command argument parsing
+feat!: change LIB archive header magic â€” breaks existing files
 ```
 
 ### Types
@@ -46,12 +46,12 @@ Use a scope when the change is isolated to one component:
 
 | Scope | Targets |
 |---|---|
-| `ft-lib` | `lib/` static library |
-| `ft-cli` | `cli/` command-line tool |
-| `ft-gui` | `gui/` GUI application |
+| `fx-lib` | `lib/` static library |
+| `fx-cli` | `cli/` command-line tool |
+| `fx-gui` | `gui/` GUI application |
 
 **Omit the scope** when a change spans multiple components or is repo-wide. Do not
-combine scopes (e.g. `feat(ft-lib,ft-cli):`) — either split into separate commits or
+combine scopes (e.g. `feat(fx-lib,fx-cli):`) â€” either split into separate commits or
 drop the scope entirely.
 
 ### Breaking Changes
@@ -59,7 +59,7 @@ drop the scope entirely.
 Append `!` after the type/scope, or add a `BREAKING CHANGE:` footer:
 
 ```
-feat(ft-lib)!: rename Lib::extract() to Lib::unpack()
+feat(fx-lib)!: rename Lib::extract() to Lib::unpack()
 
 BREAKING CHANGE: all callers must update to the new method name.
 ```
@@ -78,5 +78,5 @@ followed by a short lowercase kebab-case description. See
 
 ---
 
-For the full workflow — building, releasing, and the draft-changelog script — see
+For the full workflow â€” building, releasing, and the draft-changelog script â€” see
 [docs/development.md](docs/development.md).

@@ -1,4 +1,4 @@
-#include "ft/bi.h"
+﻿#include "fx/bi.h"
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -18,7 +18,7 @@ static int cmd_bi_dump(const char* path) {
     fread(buf.data(), 1, (size_t)sz, f);
     fclose(f);
 
-    auto instrs = ft::bi_disasm(buf.data(), buf.size());
+    auto instrs = fx::bi_disasm(buf.data(), buf.size());
     if (instrs.empty()) {
         fprintf(stderr, "No CODE section or empty bytecode in: %s\n", path);
         return 1;

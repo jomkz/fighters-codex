@@ -1,6 +1,6 @@
-# Development
+﻿# Development
 
-This is the full developer reference — build setup, IDE configuration, project
+This is the full developer reference â€” build setup, IDE configuration, project
 structure, and release workflow. For commit message and branch naming conventions,
 see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -12,7 +12,7 @@ see [CONTRIBUTING.md](../CONTRIBUTING.md).
 - **Git**
 - **Windows 10 or 11** recommended for development (target runtime is Windows 7+)
 
-CMake ships with Visual Studio but is not added to `PATH` by default. The easiest fix is to add it manually — find `cmake.exe` under your VS install (typically `Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\`) and add that directory to your user `PATH`, or use the `$cmake` variable pattern shown below.
+CMake ships with Visual Studio but is not added to `PATH` by default. The easiest fix is to add it manually â€” find `cmake.exe` under your VS install (typically `Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\`) and add that directory to your user `PATH`, or use the `$cmake` variable pattern shown below.
 
 ## Building
 
@@ -35,8 +35,8 @@ $cmake = "$env:ProgramFiles\Microsoft Visual Studio\<version>\<edition>\Common7\
 
 ```powershell
 cmake --build build --config Debug              # all targets
-cmake --build build --target ft-gui --config Debug    # GUI only
-cmake --build build --target ft     --config Debug    # CLI only
+cmake --build build --target fx-gui --config Debug    # GUI only
+cmake --build build --target fx     --config Debug    # CLI only
 cmake --build build --config Release            # release build
 ```
 
@@ -44,9 +44,9 @@ Output locations:
 
 | Target | Debug | Release |
 |---|---|---|
-| `ft-gui.exe` | `build\gui\Debug\ft-gui.exe` | `build\gui\Release\ft-gui.exe` |
-| `ft.exe` | `build\cli\Debug\ft.exe` | `build\cli\Release\ft.exe` |
-| `ft_lib.lib` | `build\lib\Debug\ft_lib.lib` | `build\lib\Release\ft_lib.lib` |
+| `fx-gui.exe` | `build\gui\Debug\fx-gui.exe` | `build\gui\Release\fx-gui.exe` |
+| `fx.exe` | `build\cli\Debug\fx.exe` | `build\cli\Release\fx.exe` |
+| `fx_lib.lib` | `build\lib\Debug\fx_lib.lib` | `build\lib\Release\fx_lib.lib` |
 
 ## IDE Setup
 
@@ -57,14 +57,14 @@ VS Code works well for editing and building. CMake configuration is done once fr
 **Recommended extensions:**
 - C/C++ (Microsoft)
 - CMake Tools (Microsoft)
-- Hex Editor (Microsoft) — useful for inspecting binary game assets
+- Hex Editor (Microsoft) â€” useful for inspecting binary game assets
 
 **Build and run tasks** are pre-configured in `.vscode/tasks.json`:
 
 | Task | Shortcut | Action |
 |---|---|---|
-| Build ft-gui | `Ctrl+Shift+B` | `cmake --build build --target ft-gui --config Debug` |
-| Run ft-gui | — | Builds then launches `build\gui\Debug\ft-gui.exe` |
+| Build fx-gui | `Ctrl+Shift+B` | `cmake --build build --target fx-gui --config Debug` |
+| Run fx-gui | â€” | Builds then launches `build\gui\Debug\fx-gui.exe` |
 
 If cmake is not in `PATH`, add it via VS Code's `terminal.integrated.env.windows` setting in your user `settings.json`:
 
@@ -81,28 +81,28 @@ Replace `<version>` (e.g. `2022`, `2026`) and `<edition>` (e.g. `Community`, `Pr
 Open the generated solution directly:
 
 ```
-build\fighters-toolkit.sln
+build\fighters-codex.sln
 ```
 
-Or use **File → Open → CMake…** to open the root `CMakeLists.txt` — VS will configure the project automatically. Set the startup project to `ft-gui` for F5 debugging.
+Or use **File â†’ Open â†’ CMakeâ€¦** to open the root `CMakeLists.txt` â€” VS will configure the project automatically. Set the startup project to `fx-gui` for F5 debugging.
 
 ## Project Structure
 
 ```
-fighters-toolkit/
-├── lib/                    # ft_lib static library (all codecs, no platform deps)
-│   ├── include/ft/         # public headers
-│   └── src/                # codec implementations
-├── cli/                    # ft.exe CLI frontend
-│   └── src/
-├── gui/                    # ft-gui.exe ImGui/DX11 frontend
-│   ├── src/
-│   │   ├── main.cpp        # Win32 + DX11 host, window placement, ImGui init
-│   │   ├── app.h / app.cpp # App class, session management, menu bar
-│   │   ├── panels/         # lib_browser, editor_host, preview
-│   │   └── editors/        # per-format editors (audio, mission, brf, pic, …)
-│   └── vendor/             # Dear ImGui (vendored)
-└── docs/                   # documentation
+fighters-codex/
+â”œâ”€â”€ lib/                    # fx_lib static library (all codecs, no platform deps)
+â”‚   â”œâ”€â”€ include/fx/         # public headers
+â”‚   â””â”€â”€ src/                # codec implementations
+â”œâ”€â”€ cli/                    # fx.exe CLI frontend
+â”‚   â””â”€â”€ src/
+â”œâ”€â”€ gui/                    # fx-gui.exe ImGui/DX11 frontend
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ main.cpp        # Win32 + DX11 host, window placement, ImGui init
+â”‚   â”‚   â”œâ”€â”€ app.h / app.cpp # App class, session management, menu bar
+â”‚   â”‚   â”œâ”€â”€ panels/         # lib_browser, editor_host, preview
+â”‚   â”‚   â””â”€â”€ editors/        # per-format editors (audio, mission, brf, pic, â€¦)
+â”‚   â””â”€â”€ vendor/             # Dear ImGui (vendored)
+â””â”€â”€ docs/                   # documentation
 ```
 
 ### Adding a new editor
@@ -134,7 +134,7 @@ message format that drives this.
 
 This will:
 - Bump the version in `CMakeLists.txt`
-- Rotate `CHANGELOG.md` — promotes `[Unreleased]` to the new version with today's date and updates the comparison links
+- Rotate `CHANGELOG.md` â€” promotes `[Unreleased]` to the new version with today's date and updates the comparison links
 - Commit both files as `chore: release v0.2.0`
 - Create the tag `v0.2.0`
 
@@ -148,7 +148,7 @@ Pushing the tag triggers the GitHub Actions release workflow, which builds the a
 
 ## Vendored Dependencies
 
-All dependencies are checked in — no package manager or internet access required to build.
+All dependencies are checked in â€” no package manager or internet access required to build.
 
 | Library | Location | License |
 |---|---|---|

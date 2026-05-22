@@ -1,20 +1,20 @@
-#include "fnt_editor.h"
+﻿#include "fnt_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/fnt.h"
-#include "ft/pe.h"
+#include "fx/fnt.h"
+#include "fx/pe.h"
 #include <vector>
 #include <cstdio>
 #include <cstring>
 
-static ft::FntFile  s_fnt;
+static fx::FntFile  s_fnt;
 static GpuTexture   s_tex;
 static int          s_lastLib   = -2;
 static int          s_lastEntry = -2;
 
-// Build an RGBA atlas of all rendered glyphs arranged in a 16×16 grid.
-// Each cell is cellW×cellH pixels.  White glyph on dark background.
-static GpuTexture BuildGlyphAtlas(App& app, const ft::FntFile& fnt) {
+// Build an RGBA atlas of all rendered glyphs arranged in a 16Ã—16 grid.
+// Each cell is cellWÃ—cellH pixels.  White glyph on dark background.
+static GpuTexture BuildGlyphAtlas(App& app, const fx::FntFile& fnt) {
     // Determine cell size from the widest / tallest glyph.
     uint32_t cellW = 8, cellH = fnt.font_height ? fnt.font_height : 8;
     for (const auto& g : fnt.glyphs) {
@@ -66,12 +66,12 @@ void DrawFntEditor(App& app) {
         s_lastEntry = ed.entryIdx;
 
         s_tex.Release();
-        s_fnt = ft::fnt_parse(ed.data.data(), ed.data.size());
+        s_fnt = fx::fnt_parse(ed.data.data(), ed.data.size());
 
         if (s_fnt.valid) {
-            ft::CodeSection cs = ft::pe_code_section(ed.data.data(), ed.data.size());
+            fx::CodeSection cs = fx::pe_code_section(ed.data.data(), ed.data.size());
             if (cs.data)
-                ft::fnt_render_glyphs(s_fnt, cs.data, cs.size, cs.vma);
+                fx::fnt_render_glyphs(s_fnt, cs.data, cs.size, cs.vma);
             s_tex = BuildGlyphAtlas(app, s_fnt);
         }
     }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <map>
@@ -14,7 +14,7 @@
 //   0x95  N*195 Tile blocks: each tile = 65 * 3-byte records
 //              Record 0 byte 0 = surface_class (0xFF=water)
 
-namespace ft {
+namespace fx {
 
 struct T2Info {
     uint32_t dim_x;       // grid columns
@@ -30,4 +30,4 @@ struct T2Info {
 // Returns false if magic doesn't match or file size is inconsistent.
 bool t2_info(const uint8_t* data, size_t size, T2Info* info);
 
-} // namespace ft
+} // namespace fx

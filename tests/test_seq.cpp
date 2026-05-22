@@ -1,9 +1,9 @@
-#include <catch2/catch_test_macros.hpp>
-#include <ft/seq.h>
+﻿#include <catch2/catch_test_macros.hpp>
+#include <fx/seq.h>
 #include <cstring>
 #include <vector>
 
-using namespace ft;
+using namespace fx;
 
 static std::vector<uint8_t> bytes(const char* s) {
     return std::vector<uint8_t>(s, s + strlen(s));

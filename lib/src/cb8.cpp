@@ -1,9 +1,9 @@
-#include "ft/cb8.h"
+﻿#include "fx/cb8.h"
 #include <algorithm>
 #include <cstring>
 #include <vector>
 
-namespace ft {
+namespace fx {
 
 // ---- helpers -------------------------------------------------------
 
@@ -110,15 +110,15 @@ void cb8_close(Cb8Decoder* dec) { delete dec; }
 // Apply one MRFI delta frame to the decoder canvas.
 //
 // MRFI chunk layout (offsets from chunk start):
-//   0–3    "MRFI" tag
-//   4–7    uint32 LE chunk_size (includes these 8 bytes)
-//   8–23   16-byte payload header (4 × uint32 LE, purpose unknown)
-//   24–623 skip map: 4800 bits, one per 4×4 block; bit=1 → block changed
-//   624+   block data (chunk_size − 624 bytes)
+//   0â€“3    "MRFI" tag
+//   4â€“7    uint32 LE chunk_size (includes these 8 bytes)
+//   8â€“23   16-byte payload header (4 Ã— uint32 LE, purpose unknown)
+//   24â€“623 skip map: 4800 bits, one per 4Ã—4 block; bit=1 â†’ block changed
+//   624+   block data (chunk_size âˆ’ 624 bytes)
 //
-// Block data — two sections:
+// Block data â€” two sections:
 //   Section 1 (bytes 0 .. n_changed*16 - 1):
-//     n_changed × 16-byte delta blocks, ordered by skip-map position.
+//     n_changed Ã— 16-byte delta blocks, ordered by skip-map position.
 //   Section 2 (bytes n_changed*16 .. bdSize - 1, when present):
 //     Full-state blocks starting from block 0.  Floor(extra/16) complete
 //     blocks; any trailing bytes (<16) are ignored.
@@ -162,7 +162,7 @@ static void apply_mrfi(Cb8Decoder* dec, uint32_t frame_idx) {
     }
 }
 
-// Flatten the block canvas into a contiguous width×height pixel array.
+// Flatten the block canvas into a contiguous widthÃ—height pixel array.
 static std::vector<uint8_t> render_canvas(const Cb8Decoder* dec) {
     uint32_t w              = dec->width;
     uint32_t h              = dec->height;
@@ -196,4 +196,4 @@ std::vector<uint8_t> cb8_decode_frame(Cb8Decoder* dec, uint32_t frame_idx) {
     return render_canvas(dec);
 }
 
-} // namespace ft
+} // namespace fx

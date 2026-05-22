@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -14,7 +14,7 @@
 //   3 = PxPk (raw + inline PXPK header) -- not yet implemented
 //   4 = PKWare DCL with 4-byte EA decompressed-size prefix
 
-namespace ft {
+namespace fx {
 
 struct Entry {
     char     name[13]; // null-terminated 8.3 filename
@@ -43,4 +43,4 @@ std::vector<uint8_t> ealib_patch(const uint8_t* lib_data, size_t lib_size,
                                   const std::string& name,
                                   const std::vector<uint8_t>& new_data);
 
-} // namespace ft
+} // namespace fx

@@ -1,10 +1,10 @@
-{
+﻿{
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build ft_lib",
+            "label": "Build fx_lib",
             "type": "shell",
-            "command": "cmake --build build --target ft_lib --config Debug",
+            "command": "cmake --build build --target fx_lib --config Debug",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -30,9 +30,9 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build ft-gui",
+            "label": "Build fx-gui",
             "type": "shell",
-            "command": "cmake --build build --target ft-gui --config Debug",
+            "command": "cmake --build build --target fx-gui --config Debug",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -61,9 +61,9 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build ft_tests",
+            "label": "Build fx_tests",
             "type": "shell",
-            "command": "cmake --build build --target ft_tests --config Release",
+            "command": "cmake --build build --target fx_tests --config Release",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -78,7 +78,7 @@
             "label": "Run tests",
             "type": "shell",
             "command": "ctest --test-dir build -C Release --output-on-failure",
-            "dependsOn": "Build ft_tests",
+            "dependsOn": "Build fx_tests",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -93,10 +93,10 @@
             "problemMatcher": []
         },
         {
-            "label": "Run ft-gui",
+            "label": "Run fx-gui",
             "type": "shell",
-            "command": "${workspaceFolder}/build/gui/Debug/ft-gui.exe",
-            "dependsOn": "Build ft-gui",
+            "command": "${workspaceFolder}/build/gui/Debug/fx-gui.exe",
+            "dependsOn": "Build fx-gui",
             "presentation": {
                 "reveal": "silent",
                 "panel": "shared"

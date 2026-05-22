@@ -1,11 +1,11 @@
-#include "lay_editor.h"
+﻿#include "lay_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/lay.h"
+#include "fx/lay.h"
 #include <string>
 #include <cstdio>
 
-static ft::LayFile s_lay;
+static fx::LayFile s_lay;
 static int s_lastLib   = -2;
 static int s_lastEntry = -2;
 
@@ -15,7 +15,7 @@ void DrawLayEditor(App& app) {
     if (ed.libIdx != s_lastLib || ed.entryIdx != s_lastEntry) {
         s_lastLib   = ed.libIdx;
         s_lastEntry = ed.entryIdx;
-        s_lay = ft::lay_parse(ed.data.data(), ed.data.size());
+        s_lay = fx::lay_parse(ed.data.data(), ed.data.size());
     }
 
     if (!s_lay.valid) {

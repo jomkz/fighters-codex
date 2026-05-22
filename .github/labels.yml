@@ -1,13 +1,13 @@
-# Component labels
-- name: "ft-lib"
+﻿# Component labels
+- name: "fx-lib"
   color: "0075ca"
   description: "Affects the ft_lib static library"
 
-- name: "ft-cli"
+- name: "fx-cli"
   color: "0075ca"
   description: "Affects the ft command-line tool"
 
-- name: "ft-gui"
+- name: "fx-gui"
   color: "0075ca"
   description: "Affects the ft-gui application"
 

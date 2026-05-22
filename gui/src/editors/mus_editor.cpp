@@ -1,7 +1,7 @@
-#include "mus_editor.h"
+﻿#include "mus_editor.h"
 #include "../app.h"
 #include "imgui.h"
-#include "ft/pe.h"
+#include "fx/pe.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -22,13 +22,13 @@ static const char* OpMnemonic(uint8_t op) {
 }
 static int OpOperandBytes(uint8_t op) {
     switch (op) {
-    case 0xFF: return 0;   // END — no operands
+    case 0xFF: return 0;   // END â€” no operands
     case 0xFA: return 3;   // PLAY_NOTE  note vel dur(u8)
     case 0xFB: return 2;   // SET_TEMPO  bpm(u16)
     case 0xFC: return 4;   // JUMP       offset(i32)
     case 0xFD: return 2;   // LOOP       count(u16)
     case 0xFE: return 4;   // XMI_REF    va(u32) -> null-terminated filename in CODE
-    default:   return -1;  // unknown — stop disassembly
+    default:   return -1;  // unknown â€” stop disassembly
     }
 }
 
@@ -46,9 +46,9 @@ static int s_lastEntry = -2;
 static void Disassemble(const uint8_t* data, size_t size) {
     s_insns.clear();
 
-    ft::CodeSection cs = ft::pe_code_section(data, size);
+    fx::CodeSection cs = fx::pe_code_section(data, size);
     if (!cs.data || cs.size == 0) {
-        // Not a PE — try walking raw bytes for simple embedded bytecode.
+        // Not a PE â€” try walking raw bytes for simple embedded bytecode.
         cs.data = data;
         cs.size = size;
         cs.vma  = 0;
@@ -58,7 +58,7 @@ static void Disassemble(const uint8_t* data, size_t size) {
     const uint8_t* end = cs.data + cs.size;
 
     // Heuristic: scan forward to find the first known opcode byte.
-    // MUS code section starts with the entry-point — skip any header bytes
+    // MUS code section starts with the entry-point â€” skip any header bytes
     // by looking for the first 0xFA/0xFF/0xFB/0xFC/0xFD/0xFE.
     while (p < end) {
         uint8_t b = *p;
@@ -70,7 +70,7 @@ static void Disassemble(const uint8_t* data, size_t size) {
         uint8_t  op  = *p;
         uint32_t off = (uint32_t)(p - cs.data);
         const char* mn = OpMnemonic(op);
-        if (!mn) break;  // unknown opcode — stop
+        if (!mn) break;  // unknown opcode â€” stop
 
         int opsz = OpOperandBytes(op);
         if (opsz < 0) break;
@@ -107,7 +107,7 @@ static void Disassemble(const uint8_t* data, size_t size) {
         }
         case 0xFE: { // XMI_REF va (little-endian u32)
             uint32_t va = (uint32_t)(p[1] | (p[2]<<8) | (p[3]<<16) | (p[4]<<24));
-            size_t strOff = ft::pe_va_to_offset(cs, va);
+            size_t strOff = fx::pe_va_to_offset(cs, va);
             if (strOff != (size_t)-1 && strOff < cs.size) {
                 // Read null-terminated string
                 const char* s = (const char*)cs.data + strOff;

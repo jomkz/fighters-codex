@@ -1,6 +1,6 @@
-#include "ft/pe.h"
+﻿#include "fx/pe.h"
 
-namespace ft {
+namespace fx {
 
 static uint16_t u16le(const uint8_t* p) {
     return (uint16_t)(p[0] | ((uint16_t)p[1] << 8));
@@ -35,4 +35,4 @@ CodeSection pe_code_section(const uint8_t* data, size_t size) {
     return {nullptr, 0, 0};
 }
 
-} // namespace ft
+} // namespace fx

@@ -1,4 +1,4 @@
-#include "ft/ai.h"
+﻿#include "fx/ai.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -19,8 +19,8 @@ static int cmd_ai_compile(const char* src_path, const char* out_path) {
     fread(&source[0], 1, (size_t)sz, f);
     fclose(f);
 
-    std::vector<ft::AiCompileError> errors;
-    std::vector<uint8_t> bi = ft::ai_compile(source, errors);
+    std::vector<fx::AiCompileError> errors;
+    std::vector<uint8_t> bi = fx::ai_compile(source, errors);
 
     for (const auto& e : errors)
         fprintf(stderr, "%s:%d: error: %s\n", src_path, e.line, e.message.c_str());
