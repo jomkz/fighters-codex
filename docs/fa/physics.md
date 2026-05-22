@@ -7,7 +7,7 @@ real units) unless noted.
 
 ---
 
-## Globals â€” Key Physics State
+## Globals — Key Physics State
 
 These globals are polled by nearly every function in the flight model. All are
 per-player (the flight model operates on the current object selected by `_curId`).
@@ -16,18 +16,18 @@ per-player (the flight model operates on the current object selected by `_curId`
 |--------|---------|------|
 | `DAT_0050ceb4` | `0x50CEB4` | Current airspeed (s16.8 knots) |
 | `DAT_0050ce9f` | `0x50CE9F` | Pitch angle (s16, engine units) |
-| `DAT_0050ce95` | `0x50CE95` | Altitude (absolute, engine units â€” 1 unit = 1 ft) |
+| `DAT_0050ce95` | `0x50CE95` | Altitude (absolute, engine units — 1 unit = 1 ft) |
 | `DAT_0050ceaf` | `0x50CEAF` | Ground elevation below aircraft |
 | `DAT_0050ce9d` | `0x50CE9D` | Heading angle |
 | `DAT_0050cea1` | `0x50CEA1` | Bank angle |
 | `DAT_0050ce91` | `0x50CE91` | X world position |
 | `DAT_0050ce99` | `0x50CE99` | Z world position |
 | `DAT_0050d06e` | `0x50D06E` | Current throttle position (s16.8, smoothed) |
-| `DAT_0050d072` | `0x50D072` | Target throttle % (0â€“100) |
+| `DAT_0050d072` | `0x50D072` | Target throttle % (0–100) |
 | `DAT_0050d07c` | `0x50D07C` | Internal fuel quantity (s16.8) |
 | `DAT_0050d01b` | `0x50D01B` | G-load (s16.8, 0x100 = 1 G) |
 | `DAT_0050d08c` | `0x50D08C` | Stall state byte (0=normal, 1=warning, 2=stall, 3=deep stall, 4=snap) |
-| `DAT_0050cfef` | `0x50CFEF` | HUD/state flags word â€” bit 0x40 = gear down, bit 0x20 = afterburner, bit 0x80 = low fuel, bit 0x200 = bay open |
+| `DAT_0050cfef` | `0x50CFEF` | HUD/state flags word — bit 0x40 = gear down, bit 0x20 = afterburner, bit 0x80 = low fuel, bit 0x200 = bay open |
 | `_onTheGround` | (SMS) | Boolean: aircraft on ground |
 
 ---
@@ -37,17 +37,17 @@ per-player (the flight model operates on the current object selected by `_curId`
 The player flight model runs inside `_FMFlight@0`. For NPC aircraft the same PT data
 is used but fuel burn goes through `@FMBurnNPCFuel@4`.
 
-### `_FMFlight@0` â€” `0x47B020`
+### `_FMFlight@0` — `0x47B020`
 
 FA.SMS name: `_FMFlight@0`
 
 Main per-frame flight update for the player aircraft. Called from the flying loop.
 Entry sequence:
 
-1. `_FMAircraftSetup_0()` â€” copies PT type fields to the working globals (see Â§7).
-2. `_F24ToPA_4(DAT_0050d013)` â†’ `DAT_0050ce9f` â€” converts stick pitch to pitch angle.
-3. `_SetThrottle_4(_throttle)` â€” applies throttle input.
-4. `_BurnFuel_0()` â€” deducts fuel for this tick.
+1. `_FMAircraftSetup_0()` — copies PT type fields to the working globals (see Â§7).
+2. `_F24ToPA_4(DAT_0050d013)` â†’ `DAT_0050ce9f` — converts stick pitch to pitch angle.
+3. `_SetThrottle_4(_throttle)` — applies throttle input.
+4. `_BurnFuel_0()` — deducts fuel for this tick.
 5. Gear, gear pitch, weapon bay, thrust vector, and wing sweep update calls.
 6. Stall detection: compares `DAT_0050ceb4 >> 8` against `_oneGStallSpeed__3JA`.
    State machine transitions through `DAT_0050d08c` values 0â†’1â†’2â†’4; state 2 applies
@@ -56,7 +56,7 @@ Entry sequence:
    (`DAT_0050cfff`), yaw (`DAT_0050d007`), and thrust-vector nozzle
    (`DAT_0050d12f` / `DAT_0050d133`).
 
-### `@FMFuelConsumption@4` â€” `0x451E50`
+### `@FMFuelConsumption@4` — `0x451E50`
 
 FA.SMS name: `@FMFuelConsumption@4`
 
@@ -69,12 +69,12 @@ int _FMFuelConsumption_4(int throttle_pct)
 }
 ```
 
-Parameters: `throttle_pct` â€” integer 0â€“100 (or >100 for afterburner).  
+Parameters: `throttle_pct` — integer 0–100 (or >100 for afterburner).  
 Returns: fuel flow rate in s16.8 units per tick.  
 Reads: `DAT_0050d3c9` (mil power fuel flow, PT field), `DAT_0050d3cb` (AB fuel flow, PT field).  
-Callers: `_PLANECheckFuel@0` (0x49FB70), `FUN_00451e8b` (0x451E8B â€” the player fuel tick).
+Callers: `_PLANECheckFuel@0` (0x49FB70), `FUN_00451e8b` (0x451E8B — the player fuel tick).
 
-### `_BurnFuel@0` â€” `0x451E80`
+### `_BurnFuel@0` — `0x451E80`
 
 FA.SMS name: `_BurnFuel@0`
 
@@ -86,7 +86,7 @@ service interval; when an external tank empties it is automatically jettisoned a
 the HUD message `"Empty external tanks automatically jettisoned"` is played with the
 `_BOMB_11K` sound.
 
-### `@FMBurnNPCFuel@4` â€” `0x452050`
+### `@FMBurnNPCFuel@4` — `0x452050`
 
 FA.SMS name: `@FMBurnNPCFuel@4`
 
@@ -104,7 +104,7 @@ the PT has an afterburner (`DAT_0050d3bb != 0`).
 
 | Symbol | Address | Role |
 |--------|---------|------|
-| `?oneGStallSpeed@@3JA` | `0x54B72C` | 1-G stall speed (knots, integer) â€” threshold for stall warning |
+| `?oneGStallSpeed@@3JA` | `0x54B72C` | 1-G stall speed (knots, integer) — threshold for stall warning |
 | `?stallVol@@3GA` | `0x5718E4` | Stall warning audio volume |
 | `?stallString@@3PADA` | `0x4EC9E8` | Stall text string pointer |
 | `?stallWarningString@@3PADA` | `0x4EC9F0` | Stall-warning text string pointer |
@@ -115,7 +115,7 @@ The margin of 25 knots above 1-G stall speed is the warning threshold.
 Stall sounds: `_STALL_5K` (looped) at full `_stallVol` during stall state 2;
 `_STALLWR_5K` (looped) at 55% volume during state 1 (warning).
 
-Flight envelope check uses `_CheckFlightEnvelope_8` (reads `DAT_0050d32a`â€“`DAT_0050d32c`
+Flight envelope check uses `_CheckFlightEnvelope_8` (reads `DAT_0050d32a`–`DAT_0050d32c`
 for the altitude-band range), `_GetFlightEnvelope_4`, and `_EnvelopeSpeedLimits_16`.
 Return codes from `_CheckFlightEnvelope_8`: 0 = normal, 1 = stall warning,
 2 = stall, 3 = deep stall / snap.
@@ -148,7 +148,7 @@ fixed-point convention (6,076 units = 1 nm; 1 unit = 1 ft).
 
 ### Wing Sweep
 
-`_FMUpdateWingSweep@0` (`0x4515E0`) â€” for variable-sweep aircraft. Reads
+`_FMUpdateWingSweep@0` (`0x4515E0`) — for variable-sweep aircraft. Reads
 `_COMinSpeed_0()` and `_COMaxSpeed_0()`, linearly interpolates sweep position
 `_DAT_0050d021` from 0 to 0x7FFF across the speed range
 `[minSpeed, (minSpeed + maxSpeed)/2]`.
@@ -157,15 +157,15 @@ fixed-point convention (6,076 units = 1 nm; 1 unit = 1 ft).
 
 ## 3. `_PROJProc` Virtual Dispatch
 
-### Wrapper â€” `FUN_004C1F10` (`0x4C1F10`)
+### Wrapper — `FUN_004C1F10` (`0x4C1F10`)
 
 No FA.SMS name. Confirmed to read entity field `+0x4` from the PROJ entity. Callers
-list in the Ghidra output is empty â€” the wrapper is invoked indirectly through the
+list in the Ghidra output is empty — the wrapper is invoked indirectly through the
 object-update loop's `utilProc` pointer, not via a direct call chain that Ghidra could
 trace statically. The architecture.md table maps `_PROJProc` as the `utilProc`
 symbol for `.JT` projectile files.
 
-### Dispatch â€” `0x4C1F50` and `PROJMoveProc` â€” `0x4C11B0`
+### Dispatch — `0x4C1F50` and `PROJMoveProc` — `0x4C11B0`
 
 Both addresses returned **NOT FOUND** in the Ghidra analysis; neither contains a
 decompilable function at those exact VAs. They are likely thunks or mid-function entry
@@ -180,7 +180,7 @@ points in the PROJ update path. The closest named functions in the vicinity are:
 | `0x4C26F0` | `_PROJFireSound@4` | Fire sound; reads entity `+0x7F` |
 | `0x4C2860` | `_PROJInFOV@40` | FOV check; reads entity `+0x50` |
 
-### `_PROJSpeed@8` â€” `0x4C1120`
+### `_PROJSpeed@8` — `0x4C1120`
 
 ```c
 int _PROJSpeed_8(int proj_type_ptr, int throttle_pct)
@@ -196,12 +196,12 @@ int _PROJSpeed_8(int proj_type_ptr, int throttle_pct)
 Reads three PROJ_TYPE speed fields at `+0x67` (min speed floor), `+0x6B` (max speed
 cap), `+0xFB` (boost minimum), and `+0x115` (throttle scaling byte).
 
-### `_PROJEngineState@0` â€” `0x4C1170`
+### `_PROJEngineState@0` — `0x4C1170`
 
 Returns the motor phase for the current projectile:
-- `0` â€” boost phase (time since fire < `ram0x0050d367`)
-- `1` â€” sustain phase
-- `2` â€” coast / burnout (time since fire >= `DAT_0050d369`)
+- `0` — boost phase (time since fire < `ram0x0050d367`)
+- `1` — sustain phase
+- `2` — coast / burnout (time since fire >= `DAT_0050d369`)
 
 Reads `DAT_0050cf68` (fire timestamp) and `ram0x0050d367` / `DAT_0050d369` (phase
 durations from the JT type). Turn rates in `_COTurnRate@0` for `_cg == 6` (missile)
@@ -212,16 +212,16 @@ state 2 returns `_DAT_0050d36f`.
 
 ## 4. Terrain Collision
 
-### `_GetGround@0` â€” `0x47AF20`
+### `_GetGround@0` — `0x47AF20`
 
 FA.SMS name: `_GetGround@0`. Reads entity field `+0x1` (confirmed from offset scan).
 Returns the ground elevation at the current object's position. Called by terrain
 avoidance and landing logic throughout the flight model.
 
 The Ghidra script queried `0x47AF70` under the label `_GetGround@0` but found
-`_FMSetTV@8` at that address â€” the correct VA from the offset scan is `0x47AF20`.
+`_FMSetTV@8` at that address — the correct VA from the offset scan is `0x47AF20`.
 
-### `_FMSetTV@8` â€” `0x47AF70`
+### `_FMSetTV@8` — `0x47AF70`
 
 FA.SMS name: (none found; internal FM helper). Configures thrust-vector nozzle
 direction flags `_dirTVY` / `_dirTVZ` and the corresponding `_onTVY` / `_onTVZ`
@@ -229,7 +229,7 @@ booleans. Refuses to activate thrust vectoring while `_OnTheGround_0()` is true.
 Callers: `?TVKey@@YIGG@Z` (0x413C70), `@FlightKey@4` (0x414690), `_FMFlight@0`
 (0x47B020), `_FlightMenu` (0x474800), `_FMResetTV@0` (0x47B000).
 
-### `_T_Info@24` â€” `0x4ABAB0`
+### `_T_Info@24` — `0x4ABAB0`
 
 FA.SMS name: `_T_Info@24`. Returns terrain elevation at a world-space point. Called by
 `@COLPitchToAvoidTerrain@0` to find the ground level 250 ft ahead of the aircraft:
@@ -241,7 +241,7 @@ clearance = altitude - iVar1 - DAT_0050d2dd;
 
 `DAT_0050d2dd` is the terrain avoidance margin.
 
-### `_COLPitchToAvoidTerrain@0` â€” `0x42DF80`
+### `_COLPitchToAvoidTerrain@0` — `0x42DF80`
 
 Computes the pitch command needed to avoid terrain. Projects a point 250 ft ahead
 using `_Rotate2_8` and the current heading `DAT_0050ce9d`, then queries `_T_Info_24`.
@@ -251,7 +251,7 @@ pitch value `DAT_0050ceda`; the cache expires based on whether the aircraft is i
 critical regime (`DAT_0050ce9f < -0x71C` or terrain clearance < 0xBB800 = ~3 nm),
 refreshed every 1 vs. 4 ticks accordingly.
 
-### `do_use_terrain_detail` â€” `0x4D2344` and `expandTerrain` â€” `0x50E145`
+### `do_use_terrain_detail` — `0x4D2344` and `expandTerrain` — `0x50E145`
 
 Neither address resolved to a function in the Ghidra output. `_expandTerrain` (the
 global, not a function) is used as a flag at `0x50E145`-vicinity code: it is set to 1,
@@ -261,7 +261,7 @@ terrain renderer to emit extra-detail geometry for the current tick.
 
 ---
 
-## 5. PROJ_TYPE Physics Fields â€” Offset Scan 0x50â€“0x7F
+## 5. PROJ_TYPE Physics Fields — Offset Scan 0x50–0x7F
 
 Offsets confirmed used by projectile functions. All relative to the PROJ_TYPE base
 pointer (the `.JT` BRF data pointer passed as `param_1`).
@@ -286,27 +286,27 @@ happen to share the same local offset within their respective type structs.
 
 ## 6. Collision Detection
 
-### `_Collision@56` â€” `0x42B800`
+### `_Collision@56` — `0x42B800`
 
 FA.SMS name: `_Collision@56`. The main broad-phase + narrow-phase collision query.
 
 Signature:
 ```c
 void _Collision_56(
-    ushort   obj_id,         // param_1  â€” object to test against
-    char    *last_hit_cache, // param_2  â€” optional per-object cache (NULL = no caching)
-    byte     flags,          // param_3  â€” bit 0x80 = use cache; bits 1/4/8/10 = test modes
-    int     *pos_a,          // param_4  â€” start position [x,y,z]
-    int     *pos_b,          // param_5  â€” end position [x,y,z]
-    int      radius,         // param_6  â€” swept-sphere radius
-    short    sweep_len,      // param_7  â€” sweep length hint
-    ushort   col_flags,      // param_8  â€” bit 0x1 = terrain test; bit 0x4 = mesh test; bit 0x200 = no-radius
-    ushort  *result_type,    // param_9  â€” OUT: 0=miss, 0xFFFF=terrain, else mesh-hit index
-    int     *hit_pos,        // param_10 â€” OUT: hit world position [x,y,z]
-    ushort  *surface_id,     // param_11 â€” OUT: mesh surface ID (optional)
-    ushort  *poly_id,        // param_12 â€” OUT: polygon ID (optional)
-    short   *hit_normal,     // param_13 â€” OUT: surface normal (via _COLSetAngle_8)
-    int      cache_write     // param_14 â€” if non-zero, writes back to last_hit_cache
+    ushort   obj_id,         // param_1  — object to test against
+    char    *last_hit_cache, // param_2  — optional per-object cache (NULL = no caching)
+    byte     flags,          // param_3  — bit 0x80 = use cache; bits 1/4/8/10 = test modes
+    int     *pos_a,          // param_4  — start position [x,y,z]
+    int     *pos_b,          // param_5  — end position [x,y,z]
+    int      radius,         // param_6  — swept-sphere radius
+    short    sweep_len,      // param_7  — sweep length hint
+    ushort   col_flags,      // param_8  — bit 0x1 = terrain test; bit 0x4 = mesh test; bit 0x200 = no-radius
+    ushort  *result_type,    // param_9  — OUT: 0=miss, 0xFFFF=terrain, else mesh-hit index
+    int     *hit_pos,        // param_10 — OUT: hit world position [x,y,z]
+    ushort  *surface_id,     // param_11 — OUT: mesh surface ID (optional)
+    ushort  *poly_id,        // param_12 — OUT: polygon ID (optional)
+    short   *hit_normal,     // param_13 — OUT: surface normal (via _COLSetAngle_8)
+    int      cache_write     // param_14 — if non-zero, writes back to last_hit_cache
 );
 ```
 
@@ -320,7 +320,7 @@ matches the previous tick's stored values; cache validity is bounded by
 `_currentTicks + 1` or `_currentTicks + 0x100` depending on the hit object's
 altitude and armor state.
 
-### `?IntersectT@@YAJPAUF24_POINT@@JJ@Z` â€” `0x447970`
+### `?IntersectT@@YAJPAUF24_POINT@@JJ@Z` — `0x447970`
 
 FA.SMS name (demangled): `IntersectT(F24_POINT*, long, long)`.
 
@@ -339,7 +339,7 @@ int _IntersectT(int *point, int t_min, int t_max)
 }
 ```
 
-### Terrain flat-ground test â€” `_COLFlatGround__YIDJPAUF24_POINT3__00_Z`
+### Terrain flat-ground test — `_COLFlatGround__YIDJPAUF24_POINT3__00_Z`
 
 Called by `_Collision@56` with the object ID, start/end positions, and an output
 buffer for the hit point. Returns non-zero on terrain hit; if detailed terrain
@@ -348,10 +348,10 @@ from the T2 tile, which is then passed to `FUN_0042de60` for the landing/damage 
 
 ---
 
-## 7. PT_TYPE (Aircraft Performance Type) â€” Field Mapping
+## 7. PT_TYPE (Aircraft Performance Type) — Field Mapping
 
 `_FMAircraftSetup@0` (`0x47A690`) copies PT type data into the working globals at
-`0x50D3xx` and `0x50D38x`. The offset scan covers `0x00â€“0xC0` in the PT type block.
+`0x50D3xx` and `0x50D38x`. The offset scan covers `0x00–0xC0` in the PT type block.
 The following offsets are confirmed read by named FM or CO functions:
 
 | Global (after setup) | Source offset in PT | Confirmed by | Role |
@@ -377,7 +377,7 @@ The following offsets are confirmed read by named FM or CO functions:
 | `DAT_0050d3a8` | (PT +?) | `_FMUpdateGearPitch@0` | Gear-pitch authority factor (Ã— 0xB6) |
 
 The flight-envelope data (`_GetFlightEnvelope_4`, `_EnvelopeSpeedLimits_16`,
-`_StallSpeed@4`) is indexed by altitude band (integer 0â€“`DAT_0050d32c`). Each
+`_StallSpeed@4`) is indexed by altitude band (integer 0–`DAT_0050d32c`). Each
 envelope entry holds a min speed, a max (corner) speed, and a stall speed; the
 interpolation in `_FMUpdatePlaneFields@0` produces `DAT_0050d0d7` (min safe speed)
 and `DAT_0050d0d9` (best turn speed) every game tick.
@@ -395,26 +395,26 @@ uint _StallSpeed_4(short *envelope_entry)
 
 ---
 
-## 8. Dark Zone 0x4D0000â€“0x4EFFFF
+## 8. Dark Zone 0x4D0000–0x4EFFFF
 
-This range is the 3D renderer and rasteriser â€” not a physics dark zone in the
+This range is the 3D renderer and rasteriser — not a physics dark zone in the
 traditional sense. It has no FA.SMS symbols but contains dense, hand-optimised x86.
 Notable functions found:
 
 | VA | Internal name | Role |
 |----|--------------|------|
-| `0x4D028C` | `FUN_004d028c` | Polygon clip / projection kernel. Takes a packed shift word; applies the 3Ã—3 rotation matrix (`m1`â€“`m9`, `_scaled_matrix`) to a scaled vertex and tests all six clip planes. Returns a signed distance for the determining clip edge. |
+| `0x4D028C` | `FUN_004d028c` | Polygon clip / projection kernel. Takes a packed shift word; applies the 3Ã—3 rotation matrix (`m1`–`m9`, `_scaled_matrix`) to a scaled vertex and tests all six clip planes. Returns a signed distance for the determining clip edge. |
 | `0x4D0494` | `get_sort_dist` | Painter's-algorithm sort key. Computes `|xv32| + |yv32| + |zv32|` using abs-and-add approximation plus a per-object size bias from `*(ushort*)(EDI - 0xC) * 0x100`. |
 | `0x4D057C` | `_GRAddBrentObj@40` | Adds a BRF object to the render list. Transforms object-relative position to viewer-relative, scales, calls `FUN_004d028c` for the clip test, calls `get_sort_dist`, then writes a 0x30-byte sort entry to `obj_ptr` / `cur_sort_ptr`. |
 | `0x4D0798` | `FUN_004d0798` | BRF shape renderer. Saves the rotation matrix and viewer-relative components (`_xv`, `_yv`, `_zv`), calls `_WRSetRemaps_8` for palette remapping, calls `FUN_004ce784` for the perspective divide, dispatches to the shape-type draw routine via `vector_table`, then restores state. |
 | `0x4D1694` | `FUN_004d1694` | Terrain object render entry. Computes absolute viewer-relative delta (`*ESI - __viewer_x/y/z`), shift-normalises, applies the rotation matrix, and dispatches to the terrain polygon pipeline. |
-| `0x4D715A` | `_DirectDrawCreate@12` | Thin thunk to `DirectDrawCreate` Win32 API â€” marks the start of the DirectDraw IAT stub block. |
+| `0x4D715A` | `_DirectDrawCreate@12` | Thin thunk to `DirectDrawCreate` Win32 API — marks the start of the DirectDraw IAT stub block. |
 
 Key renderer globals in this range:
 
 | Global | Role |
 |--------|------|
-| `_scaled_matrix`, `m2`â€“`m9` | Current 3Ã—3 rotation matrix (s16 fixed-point) |
+| `_scaled_matrix`, `m2`–`m9` | Current 3Ã—3 rotation matrix (s16 fixed-point) |
 | `_xv`, `_yv`, `_zv` | Current vertex in viewer space (s16) |
 | `_xv32`, `_yv32`, `_zv32` | Same in s32 for high-precision paths |
 | `__viewer_x/y/z` | Camera world position |
@@ -424,14 +424,14 @@ Key renderer globals in this range:
 | `_overflow` | Set to 0xFFFF when a vertex overflows the clip range |
 | `axis_check_type` | Selects the axial clip variant via `PTR_LAB_004d04dc` |
 
-`_expandTerrain` and `_coarse` are not function VAs â€” they are boolean globals
+`_expandTerrain` and `_coarse` are not function VAs — they are boolean globals
 toggled around the terrain dispatch call. The query for function `expandTerrain @
 0x50E145` found them being set at that address as part of a larger terrain-update
 function that builds a terrain command buffer before dispatching through `vector_table`.
 
 ---
 
-## Summary â€” Function Quick Reference
+## Summary — Function Quick Reference
 
 | VA | FA.SMS name | Section |
 |----|------------|---------|

@@ -10,7 +10,7 @@
 
 ## Format
 
-**Custom dot-command markup** â€” plain text, not RTF. Lines beginning with `.` are formatting directives; all other lines are body text.
+**Custom dot-command markup** — plain text, not RTF. Lines beginning with `.` are formatting directives; all other lines are body text.
 
 ```
 .body .right
@@ -61,5 +61,5 @@ Extract via `fx lib unpack` (DCL compressed in FA_3.LIB, flags=4). Edit in any p
 
 ## Related
 
-- [BRF.md](BRF.md) â€” `.PT` aircraft flight model records paired with each `.INF`
-- [PIC.md](PIC.md) â€” aircraft skin textures also in FA_3.LIB
+- [BRF.md](BRF.md) — `.PT` aircraft flight model records paired with each `.INF`
+- [PIC.md](PIC.md) — aircraft skin textures also in FA_3.LIB

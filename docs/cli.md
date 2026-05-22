@@ -19,7 +19,7 @@ fx t2      info                         # .T2 terrain map grid info
 fx plt     info                         # .P pilot save file
 ```
 
-## lib â€” Archive
+## lib — Archive
 
 ```
 fx lib ls      <file.LIB>
@@ -84,7 +84,7 @@ fx lib patch FA_3.LIB F16C_0.PIC F16C_mod.PIC FA_3_mod.LIB
 
 *See also: [fa/formats/LIB.md](fa/formats/LIB.md)*
 
-## pic â€” Images
+## pic — Images
 
 ```
 fx pic info   <file.PIC>
@@ -109,7 +109,7 @@ used during unpack.
 
 *See also: [fa/formats/PIC.md](fa/formats/PIC.md) Â· [fa/formats/PAL.md](fa/formats/PAL.md)*
 
-## seq â€” Cutscene timelines
+## seq — Cutscene timelines
 
 ```
 fx seq dump   <file.SEQ>
@@ -127,7 +127,7 @@ Round-trip editable text. Output is byte-identical to originals.
 
 *See also: [fa/formats/SEQ.md](fa/formats/SEQ.md)*
 
-## audio â€” PCM audio
+## audio — PCM audio
 
 ```
 fx audio info   <file.11K|.5K>
@@ -140,7 +140,7 @@ Override with `-r`. Input WAV for packing must be mono and 8-bit.
 
 *See also: [fa/formats/11K.md](fa/formats/11K.md)*
 
-## ot / nt / pt / jt / see / ecm / gas â€” Type definitions
+## ot / nt / pt / jt / see / ecm / gas — Type definitions
 
 All seven type definition formats share the same subcommand pattern:
 
@@ -171,7 +171,7 @@ Fuel:        6972 lb
 
 *See also: [fa/formats/BRF.md](fa/formats/BRF.md) Â· [fa/formats/OT.md](fa/formats/OT.md) Â· [fa/formats/NT.md](fa/formats/NT.md) Â· [fa/formats/PT.md](fa/formats/PT.md) Â· [fa/formats/JT.md](fa/formats/JT.md) Â· [fa/formats/SEE.md](fa/formats/SEE.md) Â· [fa/formats/ECM.md](fa/formats/ECM.md) Â· [fa/formats/GAS.md](fa/formats/GAS.md)*
 
-## mission / mm â€” Mission and map files
+## mission / mm — Mission and map files
 
 ```
 fx mission info   <file.M|.MM>
@@ -184,7 +184,7 @@ mission files in FA_2.LIB.
 
 *See also: [fa/formats/M.md](fa/formats/M.md) Â· [fa/formats/MM.md](fa/formats/MM.md)*
 
-## sh â€” 3D shapes
+## sh — 3D shapes
 
 ```
 fx sh info   <file.SH>
@@ -205,7 +205,7 @@ AC130, etc.) and produce no OBJ output. All others extract cleanly.
 
 *See also: [fa/formats/SH.md](fa/formats/SH.md)*
 
-## cb8 â€” FMV video
+## cb8 — FMV video
 
 ```
 fx cb8 info   <file.CB8>
@@ -229,12 +229,12 @@ Decode every frame to a PGM image (8-bit palette indices as greyscale) in
 `frame0001.pgm`, etc.
 
 The decoder maintains a persistent canvas across frames; each MRFI chunk
-applies a delta to the previous state. Output values are raw palette indices â€”
+applies a delta to the previous state. Output values are raw palette indices —
 apply the appropriate PAL file separately to get RGB colours.
 
 *See also: [fa/formats/CB8.md](fa/formats/CB8.md)*
 
-## sms â€” Symbol map
+## sms — Symbol map
 
 ```
 fx sms dump <FA.SMS> [-o out.csv]
@@ -255,7 +255,7 @@ or IDA Pro to auto-label all known functions and data symbols.
 
 *See also: [fa/formats/SMS.md](fa/formats/SMS.md)*
 
-## t2 â€” Terrain map
+## t2 — Terrain map
 
 ```
 fx t2 info <file.T2>
@@ -281,7 +281,7 @@ T2 files are stored in `FA_2.LIB`; unpack the archive first.
 
 *See also: [fa/formats/T2.md](fa/formats/T2.md)*
 
-## plt â€” Pilot save
+## plt — Pilot save
 
 ```
 fx plt info <file.P>
@@ -314,7 +314,7 @@ Sensors:    F16CSEE.SEE
 ```
 
 Pilot save files (`.P`) are stored in the FA install directory alongside `FA.EXE`.
-The stats block (offsets 0xB0â€“0x0D7E) is not yet decoded; only the identity and
+The stats block (offsets 0xB0–0x0D7E) is not yet decoded; only the identity and
 campaign blocks are read.
 
 *See also: [fa/formats/P.md](fa/formats/P.md)*

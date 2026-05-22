@@ -2,7 +2,7 @@
 
 ## Overview
 
-`.M` files define individual missions using a `[textFormat]` container with `[key value]`-style bracketed tokens. The related `.MM` theater map format is distinct â€” see [MM.md](MM.md).
+`.M` files define individual missions using a `[textFormat]` container with `[key value]`-style bracketed tokens. The related `.MM` theater map format is distinct — see [MM.md](MM.md).
 
 ## File Structure
 
@@ -26,9 +26,9 @@
 
 ### Token format
 
-- `[key value]` â€” single-line key-value pair; value may be a string, number, or space-
+- `[key value]` — single-line key-value pair; value may be a string, number, or space-
   separated list
-- `[key\n ... \t]` â€” bracketed block: contents terminated by `\t]` on its own line
+- `[key\n ... \t]` — bracketed block: contents terminated by `\t]` on its own line
 - Blocks may be nested
 
 ### Top-level keys
@@ -40,7 +40,7 @@
 | `layer` | name index | Terrain layer |
 | `time` | hour min | Start time of day |
 | `wind` | dir_deg speed | Wind conditions |
-| `clouds` | percent | Cloud cover 0â€“100 |
+| `clouds` | percent | Cloud cover 0–100 |
 | `sides` | 8 integers | Team assignments for each side slot |
 | `objects` | block | Object placement list |
 
@@ -112,7 +112,7 @@ fx mission unpack <file.M> [-o out.txt] # editable text
 fx mission pack   <in.txt>  -o out.M    # write back
 ```
 
-## .MT â€” Mission Text / Briefing
+## .MT — Mission Text / Briefing
 
 `.MT` files are plain ASCII companions to each `.M` file containing the mission briefing
 and debrief text displayed in-game. See [MT.md](MT.md) for the full format specification.
@@ -122,5 +122,5 @@ and debrief text displayed in-game. See [MT.md](MT.md) for the full format speci
 `.M` files require `fx mission unpack` â†’ edit â†’ `fx mission pack`. `.MT` files
 are plain ASCII and can be opened directly.
 
-- **VS Code** â€” free, cross-platform; multi-file search useful for tracking object names and map references across missions
-- **Notepad++** â€” free, Windows; lightweight for quick briefing text edits
+- **VS Code** — free, cross-platform; multi-file search useful for tracking object names and map references across missions
+- **Notepad++** — free, Windows; lightweight for quick briefing text edits

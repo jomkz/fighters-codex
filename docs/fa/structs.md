@@ -4,20 +4,20 @@ Master struct reference for Jane's Fighters Anthology, recovered via Ghidra stat
 
 **Confidence notation:**
 
-- **High** â€” accessor function name clearly indicates field meaning (e.g., `MPSetFuel`, `HUDDrawAlt`, `DAMAGEDoHit`)
-- **Low** â€” only generic `FUN_*` accessors; field name is inferred from access context or is unknown
+- **High** — accessor function name clearly indicates field meaning (e.g., `MPSetFuel`, `HUDDrawAlt`, `DAMAGEDoHit`)
+- **Low** — only generic `FUN_*` accessors; field name is inferred from access context or is unknown
 
-All sizes are in bytes. Multi-byte integer types are little-endian. Fixed-point values use FA's standard F24.8 format (24-bit integer part, 8-bit fraction) unless noted. The `entity` struct scan covered offsets `0x00`â€“`0x11E`; the raw scan logged 286 distinct offsets. The tables below present the most useful subset; unlisted offsets within a range are unaccessed or aliased to adjacent fields.
+All sizes are in bytes. Multi-byte integer types are little-endian. Fixed-point values use FA's standard F24.8 format (24-bit integer part, 8-bit fraction) unless noted. The `entity` struct scan covered offsets `0x00`–`0x11E`; the raw scan logged 286 distinct offsets. The tables below present the most useful subset; unlisted offsets within a range are unaccessed or aliased to adjacent fields.
 
 ---
 
-## 1. `entity` â€” Game Object Base
+## 1. `entity` — Game Object Base
 
 Every live game object (aircraft, missile, vehicle, static object, NPC, etc.) shares this common header. Allocated and managed by the object system (`_MoveObj@0`, `_explode`, `_T_AddObj@12`). At runtime a pointer to the current object is held in a global (`_currentT` or equivalent); subsystems such as HUD, damage, flight model, and AI all index off this pointer.
 
 The struct begins at the object's base address. Extension structs (`PROJ_TYPE`, `GV_TYPE`, etc.) overlay the upper region of the same allocation.
 
-**Scan range:** `0x400000`â€“`0x540000`, offsets `0x00`â€“`0x11E`
+**Scan range:** `0x400000`–`0x540000`, offsets `0x00`–`0x11E`
 
 | Offset | Size | Field name (inferred) | Accessor functions | Notes |
 |--------|------|-----------------------|--------------------|-------|
@@ -150,11 +150,11 @@ The struct begins at the object's base address. Extension structs (`PROJ_TYPE`, 
 
 ---
 
-## 2. `PROJ_TYPE` â€” Projectile / Missile Extension
+## 2. `PROJ_TYPE` — Projectile / Missile Extension
 
-Overlays the upper region of an entity allocation for missile and projectile objects. Scanned in the range `0x4c0000`â€“`0x4c3000` (the PROJ subsystem code block). Only offsets `0x50`â€“`0x7F` are documented; the lower range is shared with `entity`.
+Overlays the upper region of an entity allocation for missile and projectile objects. Scanned in the range `0x4c0000`–`0x4c3000` (the PROJ subsystem code block). Only offsets `0x50`–`0x7F` are documented; the lower range is shared with `entity`.
 
-**Scan range:** `0x4c0000`â€“`0x4c3000`, offsets `0x50`â€“`0x7F`
+**Scan range:** `0x4c0000`–`0x4c3000`, offsets `0x50`–`0x7F`
 
 | Offset | Size | Field name (inferred) | Accessor functions | Notes |
 |--------|------|-----------------------|--------------------|-------|
@@ -179,19 +179,19 @@ Overlays the upper region of an entity allocation for missile and projectile obj
 
 ---
 
-## 3. `PT_TYPE` â€” Aircraft Performance Type
+## 3. `PT_TYPE` — Aircraft Performance Type
 
 Performance type data loaded from `.JT` files on disk (see `architecture.md` BRF type byte `5`). At runtime the struct pointer is obtained from `@T_Load@4` / `@T_GetLeaf@12` and passed to the flight model. Key physics globals (`DAT_0050d3xx` range) in `AnalyzePhysics.txt` map to fields in this struct.
 
 **Disk source:** `.JT` files (BRF struct_type `5`)
 
-**Scan range:** `0x400000`â€“`0x540000`, offsets `0x00`â€“`0xC0`
+**Scan range:** `0x400000`–`0x540000`, offsets `0x00`–`0xC0`
 
-Offsets `0x00`â€“`0x4F` are shared with the `entity` header (same access patterns); the PT-specific physics fields begin around `0x50`. The table below lists the complete distinct set found in the PT_TYPE scan; offsets that exactly match the `entity` scan are marked as shared.
+Offsets `0x00`–`0x4F` are shared with the `entity` header (same access patterns); the PT-specific physics fields begin around `0x50`. The table below lists the complete distinct set found in the PT_TYPE scan; offsets that exactly match the `entity` scan are marked as shared.
 
 | Offset | Size | Field name (inferred) | Accessor functions | Notes |
 |--------|------|-----------------------|--------------------|-------|
-| `0x00`â€“`0x4F` | â€” | *(entity header fields)* | â€” | Shared with `entity`; see Â§1 above |
+| `0x00`–`0x4F` | — | *(entity header fields)* | — | Shared with `entity`; see Â§1 above |
 | `0x50` | 4 | `pt_perf_base` | `FUN_00406a5e`, `FUN_00409760`, `FUN_0040991b` | First PT-specific dword after header. **Low** |
 | `0x5A` | 2 | `pt_damage` | `FUN_004089a0`, `_DAMAGEDoHit@12`, `_DAMAGEUpdate@0` | Written by damage system. **High** |
 | `0x5C` | 4 | `pt_usnf_data` | `usnfmain`, `FUN_00406a5e`, `FUN_0040991b` | **Low** |
@@ -223,7 +223,7 @@ Offsets `0x00`â€“`0x4F` are shared with the `entity` header (same access pa
 
 ---
 
-## 4. `CN_INFO` â€” Network Configuration
+## 4. `CN_INFO` — Network Configuration
 
 Persisted to and loaded from `EA.CFG` / `NET.DAT` on disk. `CN_ReadConfig` reads `0xDDC` bytes after a 4-byte checksum header; `CN_WriteConfig` writes the same. The struct is version-stamped at `[0x00]` (version byte: `1`, `2`, or `3`). Version 3 is the current live format.
 
@@ -264,22 +264,22 @@ Persisted to and loaded from `EA.CFG` / `NET.DAT` on disk. `CN_ReadConfig` reads
 | `0xC0` | 4 | `cn_ifm_time` | `IFMSetTime@@YAXD@Z` | IFM timer. **High** |
 | `0xC8` | 4 | `cn_damage` | `_DAMAGEDoHit@12` | Damage data for net sync. **High** |
 | `0xD8` | 4 | `cn_slave_fail` | `handle_slave_connection_failed` | Failure state for disconnection. **High** |
-| `0xDB0` | â€” | `cn_tcp_block` | `_NetSetFactoryTCP` | TCP factory defaults block; set by `_NetSetFactoryTCP__YAXPAUCN_INFO_TCP___Z`. **High** |
+| `0xDB0` | — | `cn_tcp_block` | `_NetSetFactoryTCP` | TCP factory defaults block; set by `_NetSetFactoryTCP__YAXPAUCN_INFO_TCP___Z`. **High** |
 | `0x8E4` | 1 | `cn_has_mac_str` | `CN_ReadConfig` | Non-zero if MAC address string present at this offset. **High** |
 | `0x8E4` | 8 | `cn_mac_str[8]` | `CN_ReadConfig`, `_atohb` | ASCII MAC address string, converted to binary at `0xDD0`. **High** |
 | `0x8EC` | 12 | `cn_ip_str[12]` | `CN_ReadConfig`, `_atohb` | ASCII IP address string, converted to binary at `0xDD4`. **High** |
 | `0xDD0` | 8 | `cn_mac_bin[8]` | `CN_ReadConfig` | Binary MAC address bytes (decoded from `0x8E4`). **High** |
 | `0xDD4` | 12 | `cn_ip_bin[12]` | `CN_ReadConfig` | Binary IP address bytes (decoded from `0x8EC`). **High** |
 | `0xDDA` | 1 | `cn_addr_valid` | `CN_ReadConfig` | Set to `1` when both MAC and IP decoded successfully. **High** |
-| `0xDDC` | â€” | *(end of struct)* | `CN_WriteConfig` | `fwrite(param_1, 0xDDC, 1, _File)` confirms total body size. |
+| `0xDDC` | — | *(end of struct)* | `CN_WriteConfig` | `fwrite(param_1, 0xDDC, 1, _File)` confirms total body size. |
 
 ---
 
-## 5. `GV_TYPE` â€” Ground Vehicle Extension
+## 5. `GV_TYPE` — Ground Vehicle Extension
 
-Extension struct overlaid on entity allocations for ground vehicle objects. Scanned exclusively in the MP subsystem code block (`0x470000`â€“`0x480000`), which handles multiplayer synchronization of ground vehicles. The MP message functions (`MPMsgSend`, `MPGraphicAdd*`, `MPKey`) drive nearly all accesses.
+Extension struct overlaid on entity allocations for ground vehicle objects. Scanned exclusively in the MP subsystem code block (`0x470000`–`0x480000`), which handles multiplayer synchronization of ground vehicles. The MP message functions (`MPMsgSend`, `MPGraphicAdd*`, `MPKey`) drive nearly all accesses.
 
-**Scan range:** `0x470000`â€“`0x480000`, offsets `0x00`â€“`0x80`
+**Scan range:** `0x470000`–`0x480000`, offsets `0x00`–`0x80`
 
 | Offset | Size | Field name (inferred) | Accessor functions | Notes |
 |--------|------|-----------------------|--------------------|-------|
@@ -324,16 +324,16 @@ Extension struct overlaid on entity allocations for ground vehicle objects. Scan
 
 ---
 
-## 6. `OT_TYPE` â€” Ordnance Type (Static Object)
+## 6. `OT_TYPE` — Ordnance Type (Static Object)
 
-Type data loaded from `.OT` files (BRF struct_type `1`). The scan for this struct covers the same broad address range as `entity`; offsets below `0x60` are listed since the scan was bounded there. Offsets `0x00`â€“`0x4F` strongly overlap the `entity` header.
+Type data loaded from `.OT` files (BRF struct_type `1`). The scan for this struct covers the same broad address range as `entity`; offsets below `0x60` are listed since the scan was bounded there. Offsets `0x00`–`0x4F` strongly overlap the `entity` header.
 
 **Disk source:** `.OT` files (BRF struct_type `1`)  
-**Scan range:** `0x400000`â€“`0x540000`, offsets `0x00`â€“`0x60`
+**Scan range:** `0x400000`–`0x540000`, offsets `0x00`–`0x60`
 
 | Offset | Size | Field name (inferred) | Accessor functions | Notes |
 |--------|------|-----------------------|--------------------|-------|
-| `0x00`â€“`0x4F` | â€” | *(entity header fields)* | â€” | See Â§1 above |
+| `0x00`–`0x4F` | — | *(entity header fields)* | — | See Â§1 above |
 | `0x50` | 4 | `ot_perf_base` | `FUN_00406a5e`, `FUN_00409760`, `FUN_0040991b` | First OT-specific offset after shared header. **Low** |
 | `0x5A` | 2 | `ot_damage` | `FUN_004089a0`, `_DAMAGEDoHit@12`, `_DAMAGEUpdate@0` | Damage hit data. **High** |
 | `0x5C` | 4 | `ot_unk_5C` | `usnfmain`, `FUN_00406a5e`, `FUN_0040991b` | **Low** |
@@ -344,16 +344,16 @@ Type data loaded from `.OT` files (BRF struct_type `1`). The scan for this struc
 
 ---
 
-## 7. `NT_TYPE` â€” Nav Target
+## 7. `NT_TYPE` — Nav Target
 
-Type data loaded from `.NT` files (BRF struct_type `3`). Like `OT_TYPE`, the scan covers `0x00`â€“`0x60`. The accessor pattern through the shared range is identical to `entity`; NT-specific behavior appears at `0x5D`â€“`0x60`.
+Type data loaded from `.NT` files (BRF struct_type `3`). Like `OT_TYPE`, the scan covers `0x00`–`0x60`. The accessor pattern through the shared range is identical to `entity`; NT-specific behavior appears at `0x5D`–`0x60`.
 
 **Disk source:** `.NT` files (BRF struct_type `3`)  
-**Scan range:** `0x400000`â€“`0x540000`, offsets `0x00`â€“`0x60`
+**Scan range:** `0x400000`–`0x540000`, offsets `0x00`–`0x60`
 
 | Offset | Size | Field name (inferred) | Accessor functions | Notes |
 |--------|------|-----------------------|--------------------|-------|
-| `0x00`â€“`0x4F` | â€” | *(entity header fields)* | â€” | See Â§1 above |
+| `0x00`–`0x4F` | — | *(entity header fields)* | — | See Â§1 above |
 | `0x50` | 4 | `nt_nav_base` | `FUN_00406a5e`, `FUN_00409760`, `FUN_0040991b` | **Low** |
 | `0x5A` | 2 | `nt_damage` | `FUN_004089a0`, `_DAMAGEDoHit@12`, `_DAMAGEUpdate@0` | **High** |
 | `0x5C` | 4 | `nt_unk_5C` | `usnfmain`, `FUN_00406a5e` | **Low** |
@@ -366,11 +366,11 @@ Type data loaded from `.NT` files (BRF struct_type `3`). Like `OT_TYPE`, the sca
 
 ## Notes on Methodology
 
-The raw data was produced by `RecoverStructs.java`, a Ghidra headless script that enumerates all instructions in the given VA range and records every memory dereference of the form `[reg + constant]` where `reg` holds a known struct pointer argument. The access count column reflects how often each offset was touched across the entire executable scan â€” higher counts indicate more deeply integrated fields.
+The raw data was produced by `RecoverStructs.java`, a Ghidra headless script that enumerates all instructions in the given VA range and records every memory dereference of the form `[reg + constant]` where `reg` holds a known struct pointer argument. The access count column reflects how often each offset was touched across the entire executable scan — higher counts indicate more deeply integrated fields.
 
 **Known limitations:**
 
-- The scan cannot distinguish between two different struct types that happen to use the same pointer argument convention. The `entity`, `OT_TYPE`, `NT_TYPE`, and `PT_TYPE` scans share access patterns in the `0x00`â€“`0x4F` range because many engine functions are generic and accept any object pointer.
+- The scan cannot distinguish between two different struct types that happen to use the same pointer argument convention. The `entity`, `OT_TYPE`, `NT_TYPE`, and `PT_TYPE` scans share access patterns in the `0x00`–`0x4F` range because many engine functions are generic and accept any object pointer.
 - `PROJ_TYPE` and `GV_TYPE` were isolated by restricting the scan to subsystem-specific code blocks, which removes the shared-header noise but may miss cross-subsystem accesses.
 - Fields accessed only once or twice are often incidental (e.g., CRT helper functions scanning memory). Treat single-access entries as tentative.
 - Size column values are inferred from the next observed offset; actual padding may differ.

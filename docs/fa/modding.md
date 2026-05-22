@@ -97,7 +97,7 @@ fx lib patch FA_2.LIB KDEAD.SEQ KDEAD_mod.SEQ FA_2_mod.LIB
 
 ## Mission briefing text (.MT)
 
-`.MT` files are plain-text companions to `.M` files and can be edited directly â€” no
+`.MT` files are plain-text companions to `.M` files and can be edited directly — no
 `fx` command needed. They live alongside the `.M` in the `.LIB`.
 
 ```powershell
@@ -120,7 +120,7 @@ measuring stall and max speeds in KTAS at altitude breakpoints from sea level to
 across âˆ’4 G to +9 G. These map directly to the `env` section in `.PT` files.
 
 The [Fighters Anthology Resource Center](http://jkpeterson.net/fa/) and [USNRaptor](http://myplace.frontier.com/~usnraptor/) community archives include spreadsheets
-covering dozens of airframes. They use KTAS at altitude breakpoints â€” convert to `.PT`
+covering dozens of airframes. They use KTAS at altitude breakpoints — convert to `.PT`
 `env` units as follows:
 
 ```
@@ -131,7 +131,7 @@ altitude_ft      = altitude_as_read      # already in feet
 ## Tips
 
 - The game loads flags=0 (uncompressed) LIB entries just as well as flags=4 (compressed).
-  `fx lib patch` always writes uncompressed â€” no need to re-compress.
+  `fx lib patch` always writes uncompressed — no need to re-compress.
 - Keep image dimensions unchanged. The engine does not resize at load time.
 - Pixels are quantized to the nearest palette color on PIC re-encode. Keep source art
   at 256 colors or less for best fidelity.
@@ -170,7 +170,7 @@ For FA audio files (after `fx audio unpack` to WAV).
 | [Adobe Audition](https://www.adobe.com/products/audition.html) `$` | Win / Mac | Paid; professional mastering and spectral repair |
 
 ### 3D editors
-For shape inspection (after `fx sh unpack` to OBJ). Geometry editing requires the FASHion + SketchUp 8 community workflow â€” see [SH.md](formats/SH.md).
+For shape inspection (after `fx sh unpack` to OBJ). Geometry editing requires the FASHion + SketchUp 8 community workflow — see [SH.md](formats/SH.md).
 
 | Tool | Platform | Notes |
 |------|----------|-------|
@@ -194,4 +194,4 @@ For PAL files and binary formats without full ft support (PLT pilot saves, FBC).
 | Tool | Notes |
 |------|-------|
 | **fx** (this toolkit) | Primary CLI for all LIB, PIC, audio, mission, shape, and screenshot operations |
-| **FATK** (DuoSoft 1998) | Original GUI toolkit; free (abandonware). Does not run natively on 64-bit Windows â€” requires a compatibility layer. Supports pilot editing and project-based LIB management. |
+| **FATK** (DuoSoft 1998) | Original GUI toolkit; free (abandonware). Does not run natively on 64-bit Windows — requires a compatibility layer. Supports pilot editing and project-based LIB management. |

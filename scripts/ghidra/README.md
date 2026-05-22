@@ -1,4 +1,4 @@
-﻿# Ghidra Scripts â€” FA.EXE Reverse Engineering
+﻿# Ghidra Scripts — FA.EXE Reverse Engineering
 
 Scripts for decompiling and analysing Jane's Fighters Anthology (`FA.EXE`) using Ghidra.
 
@@ -81,7 +81,7 @@ If you placed it elsewhere, update `FA_PROJECT` in `run_ghidra.bat`.
 
 ## Running FA.EXE analysis scripts
 
-**All subsystems â€” separate output files per script:**
+**All subsystems — separate output files per script:**
 
 ```bat
 scripts\ghidra\run_all.bat
@@ -117,7 +117,7 @@ FA stores many subsystems as Win32 PE DLLs packed inside `FA_2.LIB`. These have 
 
 1. Unpacks `FA_2.LIB` into a staging directory
 2. Sorts files by extension into `%FA_PROJECT%\overlays\{BI,CAM,MC,HUD,LAY,FNT,MUS}`
-3. Patches the two-byte signature `PL` â†’ `PE` in each overlay (copies only â€” originals are preserved in `_all\`)
+3. Patches the two-byte signature `PL` â†’ `PE` in each overlay (copies only — originals are preserved in `_all\`)
 4. Imports each format group into its own Ghidra project under `%FA_PROJECT%\overlay_projects\`
 
 ```bat
@@ -149,7 +149,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 
 | Script | Subsystem | Output |
 |---|---|---|
-| `AnalyzeFA.java` | Master â€” runs all subsystems | `AnalyzeFA.txt` |
+| `AnalyzeFA.java` | Master — runs all subsystems | `AnalyzeFA.txt` |
 | `AnalyzeLAY.java` | Sky / atmosphere / horizon | `AnalyzeLAY.txt` |
 | `AnalyzeHUD.java` | HUD draw, warning bits, bit 14 SP writer | `AnalyzeHUD.txt` |
 | `AnalyzeDLG.java` | Dialog / UI system | `AnalyzeDLG.txt` |
@@ -171,7 +171,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 
 | Script | Purpose | Headless? |
 |---|---|---|
-| `FAScript.java` | Base class â€” shared helpers | n/a |
+| `FAScript.java` | Base class — shared helpers | n/a |
 | `ImportFASms.java` | Import FA.SMS symbols (interactive file picker) | No |
 | `ImportFASmsHeadless.java` | Import FA.SMS symbols (path from arg/env/default) | Yes |
 
@@ -190,7 +190,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 
 ## Adding new scripts
 
-Extend `FAScript` rather than `GhidraScript` directly â€” it provides all shared helpers and handles output file setup:
+Extend `FAScript` rather than `GhidraScript` directly — it provides all shared helpers and handles output file setup:
 
 ```java
 public class AnalyzeMyThing extends FAScript {

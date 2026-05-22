@@ -1,13 +1,13 @@
 ﻿# Contributing
 
-This file covers commit message and branch naming conventions â€” the things that affect
+This file covers commit message and branch naming conventions — the things that affect
 everyone working on the repo. For the full developer reference (building, IDE setup,
 project structure, and release workflow) see [docs/development.md](docs/development.md).
 
 ## Commit Messages
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit
-messages drive the automated changelog â€” `scripts/draft-changelog.ps1` parses them to
+messages drive the automated changelog — `scripts/draft-changelog.ps1` parses them to
 populate `CHANGELOG.md` before each release.
 
 ### Format
@@ -22,7 +22,7 @@ feat(fx-gui): add dark/light theming toggle
 fix(fx-lib): correct CB8 stride calculation for odd-width images
 docs: document MUS opcode table
 refactor(fx-cli): simplify extract command argument parsing
-feat!: change LIB archive header magic â€” breaks existing files
+feat!: change LIB archive header magic — breaks existing files
 ```
 
 ### Types
@@ -51,7 +51,7 @@ Use a scope when the change is isolated to one component:
 | `fx-gui` | `gui/` GUI application |
 
 **Omit the scope** when a change spans multiple components or is repo-wide. Do not
-combine scopes (e.g. `feat(fx-lib,fx-cli):`) â€” either split into separate commits or
+combine scopes (e.g. `feat(fx-lib,fx-cli):`) — either split into separate commits or
 drop the scope entirely.
 
 ### Breaking Changes
@@ -78,5 +78,5 @@ followed by a short lowercase kebab-case description. See
 
 ---
 
-For the full workflow â€” building, releasing, and the draft-changelog script â€” see
+For the full workflow — building, releasing, and the draft-changelog script — see
 [docs/development.md](docs/development.md).

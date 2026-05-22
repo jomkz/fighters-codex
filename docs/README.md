@@ -1,6 +1,6 @@
 ﻿# Documentation
 
-The primary output of this project is the reverse-engineering documentation: format specifications, engine architecture notes, and modding guides for Jane's Fighters Anthology and related titles, built up from binary analysis of the game's assets and executable. The toolkit software exists to exercise and validate that documentation â€” a working codec is the proof of understanding.
+The primary output of this project is the reverse-engineering documentation: format specifications, engine architecture notes, and modding guides for Jane's Fighters Anthology and related titles, built up from binary analysis of the game's assets and executable. The toolkit software exists to exercise and validate that documentation — a working codec is the proof of understanding.
 
 This is a work in progress and will be updated as more is discovered. If something here is wrong or needs more detail, please submit an issue.
 
