@@ -1,34 +1,40 @@
 # Fighters Toolkit (`ft`)
 
-A native C++17 library, CLI, and GUI for reading, editing, converting, and repacking
-game assets from the "Fighters" combat simulator family.
+A reverse-engineering effort to fully understand and document the game engine and file
+formats of the "Fighters" combat simulator family. The documentation — format specs,
+architecture notes, recovered symbols — is the primary output. The `ft_lib` library,
+`ft` CLI, and `ft-gui` are the validation layer: a working, byte-identical codec
+implementation is the proof that a format is truly understood.
 
-> WARNING: This project's tools are a work in progress and may not function as intended, especially in areas that are not yet fully understood. This could lead to loss of data, so back up your files first and use at your own risk!
+> **Note:** The tools are validation artifacts for ongoing reverse-engineering work. Areas still being documented may have incomplete or incorrect implementations. Back up your files before using any write operations.
 
 **Supported games:**
 - Jane's Fighters Anthology (1998)
 - Advanced Tactical Fighters (1996) - Confirmation needed
 - U.S. Navy Fighters (1994) - Confirmation needed
 
-**Fighters Toolkit provides:**
+**Documentation and research:**
 
-- A **zero-dependency, statically-linked** `ft.exe` — drop it anywhere and run it; covers all the basics the original FATK handled (LIB archives, images, audio, missions, shapes, type definitions) plus dozens of formats FATK never touched
-- A **graphical editor** `ft-gui.exe` — modern replacement for FATK with a live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
+- **44 fully-documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; see [docs/fa/formats/](docs/fa/formats/README.md)
+- **Engine architecture notes** — runtime environment, asset pipeline, physics model, renderer, AI bytecode interpreter, network protocol, and Win32 overlay DLL system; see [docs/fa/architecture.md](docs/fa/architecture.md)
+- **3,829 recovered C++ symbols** from FA.EXE and all overlay DLLs — organized by subsystem with demangled names and virtual addresses; see [docs/fa/symbols.md](docs/fa/symbols.md)
+- **Modding guides** — step-by-step recipes for textures, aircraft stats, missions, audio, and more; see [docs/fa/modding.md](docs/fa/modding.md)
+
+**Validation tools** *(proving the documentation by implementing it)*:
+
+- A **zero-dependency, statically-linked** `ft.exe` — round-trip codec coverage for all documented formats; if a format is in the docs, it can be unpacked and repacked
+- A **graphical editor** `ft-gui.exe` — interactive codec validation against real game data; live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
 - A **static C++ library** (`ft_lib`) — all codecs in one linkable unit; embed in any host, script via ctypes, or link from C#
-- An **AI→BI compiler** (`ft ai compile`) — compile plain-text `.AI` flight-AI scripts directly to the Phar Lap PE bytecode format the game loads; the first working compiler for this format
+- An **AI→BI compiler** (`ft ai compile`) — the first working compiler for the Phar Lap PE bytecode format the game's AI interpreter loads; validates the complete AI bytecode spec
 - A **BI disassembler** (`ft bi dump`) — disassemble compiled `.BI` AI bytecode back to readable mnemonics, with cross-referenced label annotations and resolved `CALL_BY_NAME` targets
-- **Screenshot and video extraction** — convert `.RAW` in-game screenshots to PNG (`ft raw unpack`) and extract individual frames from `.CB8` FMV video sequences (`ft cb8 frames`)
-- **Font, HUD, sky, and palette tooling** — unpack `.FNT` bitmap fonts to individual glyph PNGs, inspect `.HUD` layout files, export `.LAY` sky-gradient strips to PNG, and dump `.PAL` palettes with colour swatches
-- **Pilot save, aircraft sheet, and terrain inspection** — decode `.P` pilot save files, dump `.INF` aircraft tech sheets, and inspect `.T2` terrain map metadata
-- **Symbol map and music tooling** — dump the `.SMS` symbol table used by the in-game debug overlay, and inspect `.MUS` music playlist files
-- A **deep reverse-engineering documentation suite** — 44 fully-documented binary formats, plus architecture notes covering the game's runtime, asset pipeline, physics model, renderer, network protocol, and AI bytecode interpreter; all produced from scratch via binary analysis of FA.EXE and the overlay DLLs
 
 ## Why this exists
 
-The original FATK (DuoSoft 1998) is a 16-bit app that won't run natively on 64-bit Windows and had some useability issues by modern standards.
-OpenFA's `ofa-tools` is excellent but Rust-only and has a different focus.
+The goal is a complete, accurate record of how the Fighters Anthology engine works — every format, every subsystem, every recoverable symbol — produced from scratch via binary analysis. Not to replace any existing tool, but to understand the thing deeply enough to document it properly. The lib, CLI, and GUI are how that understanding gets verified: if you can implement a working, byte-identical codec, you genuinely understand the format.
 
-More than anything, this project started as a vehicle to practice modern C++ — template metaprogramming, constexpr, RAII, span-based APIs, CMake tooling — on a problem domain I actually care about. Reverse-engineering how these simulators squeezed so much out of mid-90s hardware turned out to be exactly the kind of constraint-driven puzzle that makes that kind of practice enjoyable.
+The original FATK (DuoSoft 1998) is a 16-bit app that won't run natively on 64-bit Windows; **[OpenFA](https://gitlab.com/openfa/openfa)** is excellent but has a different focus. Neither is the reason this project exists — they're context.
+
+Reverse-engineering how these simulators squeezed so much out of mid-90s hardware turned out to be exactly the kind of constraint-driven puzzle that makes the work enjoyable. Building the tooling in modern C++ — template metaprogramming, constexpr, RAII, span-based APIs — on a problem domain I actually care about was a bonus, not the point.
 
 ## Platform requirements
 
@@ -70,9 +76,7 @@ Special thanks to **[USNRaptor](http://myplace.frontier.com/~usnraptor/)**, **[T
 many others who put in the hard work to document formats, create missions, and keep the
 game alive long after its time.
 
-**[OpenFA](https://gitlab.com/openfa/openfa)** deserves a special mention — seeing that project exist and seeing someone
-else care enough about these old sims to do something serious with them is part of what sparked the curiosity to build this.
-The work is independent, but the motivation is the same.
+**[OpenFA](https://gitlab.com/openfa/openfa)** deserves a special mention — the work is independent, but the motivation is the same.
 
 ## License
 

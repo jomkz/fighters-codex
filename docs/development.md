@@ -1,5 +1,9 @@
 # Development
 
+This is the full developer reference — build setup, IDE configuration, project
+structure, and release workflow. For commit message and branch naming conventions,
+see [CONTRIBUTING.md](../CONTRIBUTING.md).
+
 ## Prerequisites
 
 - **Visual Studio 2022 or 2026** (MSVC) with the following workloads:
@@ -108,93 +112,6 @@ fighters-toolkit/
 3. Create `gui/src/editors/<format>_editor.h` and `<format>_editor.cpp`
 4. Call `Draw<Format>Editor(app)` from `DrawEditorHost()` in `gui/src/panels/editor_host.cpp`
 5. Add the `.cpp` to `gui/CMakeLists.txt`
-
-## Commit Messages
-
-This project follows [Conventional Commits](https://www.conventionalcommits.org/). The
-format matters because `scripts/draft-changelog.ps1` parses commit messages to
-auto-populate `CHANGELOG.md` before each release.
-
-### Format
-
-```
-<type>[(<scope>)][!]: <description>
-```
-
-### Types and changelog impact
-
-| Type | Changelog section | Semver impact |
-|---|---|---|
-| `feat` | `### Added` | Minor bump |
-| `fix` | `### Fixed` | Patch bump |
-| `docs` | `### Changed` | — |
-| `refactor`, `perf` | `### Changed` | Patch bump |
-| `chore`, `ci`, `build`, `test`, `style` | *(omitted)* | — |
-| `feat!` or `BREAKING CHANGE:` footer | `### Changed` (prominent) | Major bump |
-
-### Scopes
-
-Use a scope when the change is isolated to one component:
-
-| Scope | Targets |
-|---|---|
-| `ft-lib` | `lib/` static library |
-| `ft-cli` | `cli/` command-line tool |
-| `ft-gui` | `gui/` GUI application |
-
-Scoped entries get a bold qualifier in the changelog:
-```markdown
-- **ft-gui** Add dark/light theming toggle
-```
-
-### Cross-cutting commits
-
-When a change genuinely spans multiple components, **omit the scope** rather than
-listing multiple scopes:
-
-```
-# Good — scope omitted for a cross-cutting change
-feat: add RAW to PNG conversion support
-
-# Better when the work is separable — two focused commits
-feat(ft-lib): implement RAW decoder
-feat(ft-cli): add 'ft convert' subcommand for RAW to PNG
-```
-
-Prefer splitting when the components are independently releasable. Omit scope when the
-change is inseparable or applies repo-wide.
-
-### Breaking changes
-
-Append `!` to the type/scope, or add a `BREAKING CHANGE:` footer in the commit body:
-
-```
-feat(ft-lib)!: rename Lib::extract() to Lib::unpack()
-```
-
-Breaking commits sort to the top of the changelog and signal a semver major version bump.
-
-### Branch Names
-
-```
-<type>/<short-kebab-description>
-```
-
-| Prefix | When to use | Example |
-|---|---|---|
-| `feat/` | New user-facing functionality | `feat/raw-to-png-converter` |
-| `fix/` | Bug fixes | `fix/cb8-stride-calculation` |
-| `docs/` | Documentation only | `docs/mus-opcode-table` |
-| `refactor/` | Code restructuring, no behaviour change | `refactor/extract-command-args` |
-| `chore/` | Maintenance, CI, build, dependencies | `chore/update-imgui-vendor` |
-
-**Rules:**
-- Lowercase kebab-case only — `feat/add-raw-decoder`, not `feat/AddRawDecoder` or `feat/add_raw_decoder`
-- 3–5 words in the description; enough to identify the work at a glance
-- Describes *what* is changing, not *why*
-- No issue numbers needed
-
-`main` is the only permanent branch. All work branches are deleted after merge.
 
 ## Releasing
 

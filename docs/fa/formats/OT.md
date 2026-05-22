@@ -62,7 +62,7 @@ Single-section structure (OBJ_TYPE only — no NPC_TYPE or PROJ_TYPE).
 - Static objects have no `loopSound` ptr, no `secondSound`, and no hardpoints.
 - The movement info block is all zeros.
 - `_OBJProc` handles collision detection, destruction events, and visibility only.
-- The `~` prefix has two distinct uses: (1) **destruction state replacement** — `~BNK5.OT` is "Damaged Shelter 5" with a destroyed model (`dbk5.SH`), zeroed `dmg_armor`, and bit 5 of `ot_flags` cleared; placed by the engine at the same world position after the base object is destroyed. (2) **campaign/theater variant** — `~COLTWR.OT` is an enhanced version of COLTWR with an added loop sound and bit 22 set, used in a specific campaign. Check the `~` prefix section in ARCHITECTURE.md for the full list.
+- The `~` prefix has two distinct uses: (1) **destruction state replacement** — `~BNK5.OT` is "Damaged Shelter 5" with a destroyed model (`dbk5.SH`), zeroed `dmg_armor`, and bit 5 of `ot_flags` cleared; placed by the engine at the same world position after the base object is destroyed. (2) **campaign/theater variant** — `~COLTWR.OT` is an enhanced version of COLTWR with an added loop sound and bit 22 set, used in a specific campaign. Check the `~` prefix section in architecture.md for the full list.
 
 ## File Inventory
 

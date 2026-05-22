@@ -1,6 +1,6 @@
-# In-Game Menu Layout (.MNU)
+﻿# In-Game Menu Layout (.MNU)
 
-FA_2.LIB contains 12 `.MNU` files. Each defines one top-level in-game menu screen. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded by the FA engine at runtime; they import rendering functions from `main.dll` (= FA.EXE — see [ARCHITECTURE.md](../ARCHITECTURE.md#overlay-system--win32-pe-dlls)) and embed their label strings directly in the PE data section.
+FA_2.LIB contains 12 `.MNU` files. Each defines one top-level in-game menu screen. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded by the FA engine at runtime; they import rendering functions from `main.dll` (= FA.EXE â€” see [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and embed their label strings directly in the PE data section.
 
 ## File Inventory
 
@@ -21,22 +21,22 @@ FA_2.LIB contains 12 `.MNU` files. Each defines one top-level in-game menu scree
 
 ## Menu Labels by File
 
-### AR_MENU.MNU — Aircraft Reference Browser
+### AR_MENU.MNU â€” Aircraft Reference Browser
 Object category filter: **Fighters, Bombers, Helicopters, SAMs, Tanks, Ships, Other vehicles, Structures, Missiles, Misc**
 Pagination: **Next Page (PgDn), Prev Page (PgUp)**
 Display: **Show background in 3D view**, H3D Eyewear toggle, 3D effect depth controls (Ctrl-=, Ctrl-[, Ctrl-])
 
-### ARMPLANE.MNU — Mission Loadout Screen
+### ARMPLANE.MNU â€” Mission Loadout Screen
 **Weapons, Unload All, Cheat (load anything anywhere)**
 Navigation: **Airbase, Next Aircraft, Previous Aircraft**
 Campaign: **Campaign, Replay This Mission, Exit Campaign**
 
-### CHOOSEM.MNU — Mission Selection + Preferences
+### CHOOSEM.MNU â€” Mission Selection + Preferences
 Mission types: **Airbase Assault** (plus others surfaced via DLG dialogs)
-Graphics prefs: **Screen resolution** — 320×200, 640×480, 800×600, 1024×768
+Graphics prefs: **Screen resolution** â€” 320Ã—200, 640Ã—480, 800Ã—600, 1024Ã—768
 Network: **Serial, Modem, IPX/SPX Network, TCP/IP Network, Disconnect**
 
-### FMENUD.MNU — In-Flight Menu
+### FMENUD.MNU â€” In-Flight Menu
 **End mission** (Ctrl-Q), **Exit to Windows** (Alt-F4)
 
 **Control:**
@@ -44,11 +44,11 @@ Network: **Serial, Modem, IPX/SPX Network, TCP/IP Network, Disconnect**
 - Rudder: Keyboard, Rudder pedals
 - Throttle: Keyboard, Throttle stick, Slews view, Vectors thrust
 
-**Pref → Graphics:** HUD pitch ladder, Dim/Brighten HUD (Shift-[/]), cockpit, rear-view mirrors, large windows, authentic radar CRT, target info (Ctrl-T), IR/Laser targeting, radio silence (Alt-S)
+**Pref â†’ Graphics:** HUD pitch ladder, Dim/Brighten HUD (Shift-[/]), cockpit, rear-view mirrors, large windows, authentic radar CRT, target info (Ctrl-T), IR/Laser targeting, radio silence (Alt-S)
 
-**Pref → Time:** Paused (Ctrl-P), Slow-motion (Shift-C), Accelerated time
+**Pref â†’ Time:** Paused (Ctrl-P), Slow-motion (Shift-C), Accelerated time
 
-**View:** Front, Back, Track, Player↔Missile, Player↔Wingman, Player↔Target, Target↔Player, Fly-by, External, Missile; View transitions toggle
+**View:** Front, Back, Track, Playerâ†”Missile, Playerâ†”Wingman, Playerâ†”Target, Targetâ†”Player, Fly-by, External, Missile; View transitions toggle
 
 **Window:** Envelope, Forward/IR-Laser (Shift-2), Other (Shift-3), Target/Radar (Shift-4/5), Navigation (Shift-6), System Status (Shift-7), Weapon Status (Shift-8), Radar (Shift-9), Radar Cross Section (Shift-0)
 
@@ -60,15 +60,15 @@ Network: **Serial, Modem, IPX/SPX Network, TCP/IP Network, Disconnect**
 
 **Multi:** Reduce bullet/missile accuracy/damage, reduce engine thrust/radar look-down, weapon camera, player scores, display windows, pauses flight
 
-### MAINMENU.MNU — Campaign Action Bar
-**Campaign, Replay This Mission, Exit Campaign** — minimal bar overlaid on certain screens.
+### MAINMENU.MNU â€” Campaign Action Bar
+**Campaign, Replay This Mission, Exit Campaign** â€” minimal bar overlaid on certain screens.
 
-### MB_MENU.MNU — Mission Briefing Map
+### MB_MENU.MNU â€” Mission Briefing Map
 Scroll (Left/Right/Up/Down), Center map at cursor/selection, Zoom in/out/Smart zoom
 **Waypoint:** Delete, Create loop, Delete loop, Select prev/next waypoint
 **Show:** Planes, SAM sites, AAA sites, Ships, Airports, Vehicles, Other, Mission items only, SAM threat ranges, Distance grid
 
-### MC_MENU.MNU — Mission Creator / Editor
+### MC_MENU.MNU â€” Mission Creator / Editor
 **File:** New mission (Ctrl-N), Load mission, Save mission
 **View:** same scroll/zoom controls as MB_MENU
 **World:** Set map, Set weather, Set friendly & enemy sides, Set screens; Friendly/Enemy Pilot/SAM skill (Novice/Average/Good/Expert)
@@ -77,14 +77,14 @@ Scroll (Left/Right/Up/Down), Center map at cursor/selection, Zoom in/out/Smart z
 **Multiplayer:** Time limit, Number of kills, End scenario conditions, Number of revives, Revive time delay, Revive distance
 **Aircraft era filter:** Fly All, 1956-1976, 1956-1982, 1956-1996, 1956-Future
 
-### QM_MENU.MNU / SM_MENU.MNU — Quick/Single Mission
+### QM_MENU.MNU / SM_MENU.MNU â€” Quick/Single Mission
 Aircraft era filter: **Fly all, 1956-1976, 1956-1982, 1956-1996, 1956-Future**
 
-### SELMENU.MNU — Selection Bar
+### SELMENU.MNU â€” Selection Bar
 **Cheat:** Allow Flying Any Plane
 **Campaign:** Replay This Mission, Exit Campaign
 
-### V_MENU.MNU — Vehicle Reference Browser
+### V_MENU.MNU â€” Vehicle Reference Browser
 Same category structure as AR_MENU plus **Weapons** category.
 
 ## Format
@@ -107,4 +107,4 @@ Label strings are embedded as null-terminated ASCII in the PE data section.
 
 ## Related
 
-- [DLG.md](DLG.md) — dialog box overlays nested within menus
+- [DLG.md](DLG.md) â€” dialog box overlays nested within menus
