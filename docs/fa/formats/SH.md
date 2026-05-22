@@ -24,7 +24,7 @@ Section entry layout:
   [24..40]  (ignored)
 ```
 
-Take the **first section** with `PointerToRawData > 0` â€” that is the code section.
+Take the **first section** with `PointerToRawData > 0` — that is the code section.
 Always named `CODE`. `PointerToRawData` is the file offset; `SizeOfRawData` is its length.
 
 ## Code Section Structure
@@ -312,18 +312,18 @@ Shape opcodes that branch on entity state are handled by FA.EXE functions. Confi
 
 Community mod archives sometimes distribute aircraft shadow/crash shapes as `.PTS` files
 (e.g. `A10.PTS`) rather than the in-LIB convention of `A10_S.SH`. The binary format is
-identical â€” parse with the same SH parser. The `shadow_shape` ptr in the corresponding
+identical — parse with the same SH parser. The `shadow_shape` ptr in the corresponding
 `.PT` file points to the `_S.SH` name; the `.PTS` rename is a distribution artifact only.
 
 ## External Shape Editing (Community Tools)
 
 The community uses two tools in combination to edit `.SH` vertex geometry:
 
-- **FASHion** â€” a dedicated FA shape editor. It can only reposition individual vertices;
+- **FASHion** — a dedicated FA shape editor. It can only reposition individual vertices;
   it cannot add or remove vertices, change face topology, or alter the overall mesh
-  structure. The rebuild operation overwrites the original file in place â€” always back up
+  structure. The rebuild operation overwrites the original file in place — always back up
   before editing.
-- **SketchUp 8** â€” used as the 3D viewport. FASHion exports a vertex coordinate file
+- **SketchUp 8** — used as the 3D viewport. FASHion exports a vertex coordinate file
   that SketchUp loads via a plugin; after adjustments the modified coordinates are
   exported back and FASHion rebuilds the shape.
 
@@ -340,17 +340,17 @@ For bulk vertex edits (e.g. scaling an entire section), the community workflow c
 the vertex file to a spreadsheet, applies transformations numerically, then reconverts
 before importing back into FASHion.
 
-SH files with x86-only geometry (65/1275 in FA â€” see extraction results above) cannot
+SH files with x86-only geometry (65/1275 in FA — see extraction results above) cannot
 be edited with FASHion and require direct x86 disassembly for modification.
 
 ## Applications
 
-Use `fx sh unpack` to export to Wavefront OBJ. There is no pack command â€” OBJ export
+Use `fx sh unpack` to export to Wavefront OBJ. There is no pack command — OBJ export
 is for inspection and reference. For geometry edits, use the FASHion + SketchUp 8
 community workflow described above.
 
-- **Blender** â€” free, cross-platform; best option for inspecting and measuring exported OBJ geometry
-- **MeshLab** â€” free, cross-platform; lightweight viewer with basic mesh statistics
-- **FASHion** â€” free, FA-specific; vertex repositioning only (see workflow above)
-- **SketchUp 8** â€” free (legacy version required by FASHion plugin); use alongside FASHion
-- **3ds Max** `$` â€” paid; full mesh editing if a pack command is added in future
+- **Blender** — free, cross-platform; best option for inspecting and measuring exported OBJ geometry
+- **MeshLab** — free, cross-platform; lightweight viewer with basic mesh statistics
+- **FASHion** — free, FA-specific; vertex repositioning only (see workflow above)
+- **SketchUp 8** — free (legacy version required by FASHion plugin); use alongside FASHion
+- **3ds Max** `$` — paid; full mesh editing if a pack command is added in future

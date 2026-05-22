@@ -90,10 +90,10 @@ The `$` and `_` prefixes are engine conventions embedded in the filenames stored
 encyclopedia viewer. All are 512Ã—384 pixels except the five bare-name thumbnail files
 (640Ã—480). They are never referenced by the 3D engine.
 
-### Numeric suffix `<AC>_<N>.PIC` (N = 0â€“9)
+### Numeric suffix `<AC>_<N>.PIC` (N = 0–9)
 
 Exterior photographs and action shots of the aircraft, one image per slot. Most aircraft
-have 4â€“10 numeric variants. The game cycles through them in the encyclopedia photo gallery.
+have 4–10 numeric variants. The game cycles through them in the encyclopedia photo gallery.
 Simple or uncommon aircraft may have only `_0`.
 
 **Count:** 678 files
@@ -112,7 +112,7 @@ AF1, ASTOVL, AV8, B747, CMCHE, E2000, E3, F117, F16C, F22, F260, F29, F31, GRIPE
 
 ### Bare name `<AC>.PIC` (no suffix)
 
-Five files â€” A6, F15, F15J, F18C, TU160 â€” at 640Ã—480 pixels. These are aircraft selection
+Five files — A6, F15, F15J, F18C, TU160 — at 640Ã—480 pixels. These are aircraft selection
 screen / hangar thumbnails. The aircraft image is composited against a white background.
 All other aircraft use the `_0` exterior photo in contexts where a thumbnail is needed.
 
@@ -127,7 +127,7 @@ All other aircraft use the `_0` exterior photo in contexts where a thumbnail is 
 
 Use `fx pic unpack` to convert to PNG, edit, then `fx pic pack` to re-encode.
 
-- **GIMP** â€” free, cross-platform; handles indexed-color and palette-aware editing well
-- **Paint.NET** â€” free, Windows; simple and fast for texture touch-ups
-- **Photoshop** `$` â€” industry standard; use 8-bit indexed mode to stay within palette
-- **Affinity Photo** `$` â€” one-time purchase alternative to Photoshop
+- **GIMP** — free, cross-platform; handles indexed-color and palette-aware editing well
+- **Paint.NET** — free, Windows; simple and fast for texture touch-ups
+- **Photoshop** `$` — industry standard; use 8-bit indexed mode to stay within palette
+- **Affinity Photo** `$` — one-time purchase alternative to Photoshop

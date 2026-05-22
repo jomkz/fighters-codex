@@ -15,7 +15,7 @@ All public headers are under `lib/include/fx/`. Include them with the `fx/` pref
 // etc.
 ```
 
-## ealib.h â€” Archive container
+## ealib.h — Archive container
 
 ```cpp
 namespace fx {
@@ -45,13 +45,13 @@ std::vector<uint8_t> ealib_patch(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
-## pal.h â€” VGA palette
+## pal.h — VGA palette
 
 ```cpp
 namespace fx {
 
 struct Palette {
-    uint8_t r[256], g[256], b[256]; // already scaled to 8-bit (0â€“255)
+    uint8_t r[256], g[256], b[256]; // already scaled to 8-bit (0–255)
 };
 
 Palette pal_load(const uint8_t* data, size_t size); // load a .PAL file
@@ -59,7 +59,7 @@ void    pal_save(const Palette& pal, uint8_t out[768]);
 } // namespace fx
 ```
 
-## pic.h â€” PIC image codec
+## pic.h — PIC image codec
 
 ```cpp
 namespace fx {
@@ -87,10 +87,10 @@ std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
 } // namespace fx
 ```
 
-## blast.h â€” PKWare DCL decompressor
+## blast.h — PKWare DCL decompressor
 
 ```cpp
-// Decompress a raw PKWare DCL stream (litmode=0, dictbits=4â€“6).
+// Decompress a raw PKWare DCL stream (litmode=0, dictbits=4–6).
 // Returns bytes written, or -1 on error.
 int blast_decompress(const uint8_t* in, size_t in_size,
                      uint8_t* out, size_t out_capacity);
@@ -100,7 +100,7 @@ int blast_decompress_ea(const uint8_t* in, size_t in_size,
                         uint8_t* out, size_t out_capacity);
 ```
 
-## seq.h â€” Cutscene timeline
+## seq.h — Cutscene timeline
 
 ```cpp
 namespace fx {
@@ -122,7 +122,7 @@ std::vector<uint8_t> seq_serialize(const SeqFile&);
 } // namespace fx
 ```
 
-## audio.h â€” Raw PCM audio
+## audio.h — Raw PCM audio
 
 ```cpp
 namespace fx {
@@ -140,7 +140,7 @@ std::vector<uint8_t> audio_from_wav(const uint8_t* wav, size_t size,
 } // namespace fx
 ```
 
-## brf.h / ot.h â€” Type definitions
+## brf.h / ot.h — Type definitions
 
 ```cpp
 namespace fx {
@@ -157,7 +157,7 @@ std::vector<uint8_t> pt_serialize(const PlaneType&);
 } // namespace fx
 ```
 
-## mission.h â€” Mission and map files
+## mission.h — Mission and map files
 
 ```cpp
 namespace fx {
@@ -169,7 +169,7 @@ std::vector<uint8_t> mission_serialize(const MissionFile&);
 } // namespace fx
 ```
 
-## sh.h â€” 3D shape / model
+## sh.h — 3D shape / model
 
 ```cpp
 namespace fx {
@@ -203,7 +203,7 @@ std::string sh_to_obj(const ShMesh& mesh);   // returns Wavefront OBJ text
 } // namespace fx
 ```
 
-## cb8.h â€” FMV video decoder
+## cb8.h — FMV video decoder
 
 ```cpp
 namespace fx {

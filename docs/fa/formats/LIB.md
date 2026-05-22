@@ -119,25 +119,25 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 | File | TOOLKIT ID | Location | Key Contents |
 |------|------------|----------|--------------|
 | FA_1.LIB | `"1 "` | Install dir | `.FNT` Ã—15, `.PIC` Ã—1986 |
-| FA_2.LIB | `"2 "` | Install dir | Main asset archive â€” see extension inventory below |
-| FA_3.LIB | â€” | Disk 2 (Red) | `.PIC` Ã—822 (aircraft skin textures, raw), `.INF` Ã—269 (aircraft tech sheets, dcl) |
-| FA_4B.LIB | â€” | Install dir | `.11K` Ã—77, `.5K` Ã—9 |
+| FA_2.LIB | `"2 "` | Install dir | Main asset archive — see extension inventory below |
+| FA_3.LIB | — | Disk 2 (Red) | `.PIC` Ã—822 (aircraft skin textures, raw), `.INF` Ã—269 (aircraft tech sheets, dcl) |
+| FA_4B.LIB | — | Install dir | `.11K` Ã—77, `.5K` Ã—9 |
 | FA_4C.LIB | `"4C"` | Disk 1 (Blue) | `.11K` Ã—44, `.PIC` Ã—43, `.CB8` Ã—4 |
-| FA_4D.LIB | â€” | Install dir | `.CB8` + `.11K` FMV footage |
+| FA_4D.LIB | — | Install dir | `.CB8` + `.11K` FMV footage |
 | FA_7.LIB | `"7 "` | Disk 1 (Blue) | `.FBC` Ã—355, `.VDO` Ã—355, `.11K` Ã—105, `.5K` Ã—1 |
 | FA_10.LIB | `"10"` | Disk 2 (Red) | `.CB8` Ã—9, `.11K` Ã—9 |
 | FA_10B.LIB | `"AB"` | Disk 2 (Red) | `.CB8` Ã—10, `.11K` Ã—10 |
 | FA_11.LIB | `"41"` | Disk 2 (Red) | `.CB8` Ã—10, `.11K` Ã—10 |
-| FA_11B.LIB | â€” | Disk 2 (Red) | `.CB8` Ã—8, `.11K` Ã—8 |
+| FA_11B.LIB | — | Disk 2 (Red) | `.CB8` Ã—8, `.11K` Ã—8 |
 
 **TOOLKIT ID** is the 2-character identifier the FA TOOLKIT uses internally in its
 `CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
-`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` â€” these do not match the
+`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` — these do not match the
 filename suffix, so the IDs appear to be opaque tokens rather than derived from the name.
 
 ### FA_2.LIB Extension Inventory
 
-Full enumeration via `fx lib ls` (FA_3.LIB excluded â€” Disk 2 not mounted):
+Full enumeration via `fx lib ls` (FA_3.LIB excluded — Disk 2 not mounted):
 
 | Extension | Count | Notes |
 |-----------|-------|-------|
@@ -176,10 +176,10 @@ Full enumeration via `fx lib ls` (FA_3.LIB excluded â€” Disk 2 not mounted)
 
 **TOOLKIT ID** is the 2-character identifier the FA TOOLKIT uses internally in its
 `CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
-`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` â€” these do not match the
+`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` — these do not match the
 filename suffix, so the IDs appear to be opaque tokens rather than derived from the name.
 
 ## Applications
 
-- **fx** â€” the fighters-codex CLI; primary tool for all LIB operations (`unpack`, `pack`, `patch`, `ls`)
-- **FATK** â€” free (abandonware, 1998); original GUI tool with project-based LIB editing; requires a compatibility layer on 64-bit Windows
+- **fx** — the fighters-codex CLI; primary tool for all LIB operations (`unpack`, `pack`, `patch`, `ls`)
+- **FATK** — free (abandonware, 1998); original GUI tool with project-based LIB editing; requires a compatibility layer on 64-bit Windows

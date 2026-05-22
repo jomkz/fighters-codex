@@ -40,7 +40,7 @@ Offset  Size  Description
 18      46    0xFF padding
 ```
 
-## Chunk Type: MRFA â€” Audio Block
+## Chunk Type: MRFA — Audio Block
 
 Raw PCM audio data. The chunk payload contains uncompressed 8-bit unsigned
 PCM samples at 11025 Hz (matching the `.11K` convention). Silence is 0x80.
@@ -50,7 +50,7 @@ Offset  Size  Description
 ------  ----  -----------
 0        4    Magic: "MRFA"
 4        4    uint32 LE: chunk size (observed: 7374)
-8        4    uint32 LE: unknown (observed: 128 â€” not a pixel dimension)
+8        4    uint32 LE: unknown (observed: 128 — not a pixel dimension)
 12       4    uint32 LE: unknown (observed: 0)
 16       4    uint32 LE: unknown (observed: 8)
 20       4    uint32 LE: unknown (observed: 1)
@@ -59,7 +59,7 @@ Offset  Size  Description
 
 7350 samples Ã· 11025 Hz = 666.7 ms = exactly 10 video frames at 15 fps.
 
-## Chunk Type: MRFI â€” Inter Video Frame
+## Chunk Type: MRFI — Inter Video Frame
 
 A single delta-coded (P-frame) video frame. The chunk carries a skip map
 identifying which 4Ã—4 pixel blocks changed, followed by the new block data.
@@ -81,7 +81,7 @@ Video is divided into non-overlapping 4Ã—4 pixel blocks. For 320Ã—240 vide
 80 columns Ã— 60 rows = 4800 blocks. Block index `b` maps to pixel coordinates
 `((b % 80) * 4, (b / 80) * 4)`.
 
-### Block data â€” two sections
+### Block data — two sections
 
 Let `bdSize = chunk_size âˆ’ 624` and `n_changed` = number of set bits in the
 skip map.
@@ -117,7 +117,7 @@ for i in 0..extra-1:
 To render frame: for each block `b`, copy `canvas[b*16..+15]` to the 4Ã—4
 pixel area at `((b%80)*4, (b/80)*4)` in row-major order.
 
-## Chunk Type: VooM â€” Video Index / Key Frame
+## Chunk Type: VooM — Video Index / Key Frame
 
 Serves as both a video key frame marker and an A/V index table. The payload
 begins with a 12-byte header describing the video stream, followed by a flat
@@ -149,14 +149,14 @@ Offset  Size  Description
 
 ```
 DRBC header
-MRFA  â€” silent/blank audio lead-in
-MRFA  â€” first audio block
-VooM  â€” A/V index (N entries) + video key frame marker
-MRFI  â€” delta frame 0
-MRFI  â€” delta frame 1
+MRFA  — silent/blank audio lead-in
+MRFA  — first audio block
+VooM  — A/V index (N entries) + video key frame marker
+MRFI  — delta frame 0
+MRFI  — delta frame 1
 ...
-MRFI  â€” delta frame N-1
-MRFA  â€” trailing audio
+MRFI  — delta frame N-1
+MRFA  — trailing audio
 ```
 
 ## Observed Files
@@ -178,7 +178,7 @@ render those indices is **not stored in any LIB file**. It is an engine-internal
 table loaded at startup from a resource embedded in FA.EXE (or a companion file
 loaded before the cutscene begins).
 
-**PALETTE.PAL is the wrong palette for CB8.** Indices 1â€“46 in PALETTE.PAL are
+**PALETTE.PAL is the wrong palette for CB8.** Indices 1–46 in PALETTE.PAL are
 all set to `(63, 0, 63)` (magenta in 6-bit VGA). CB8 frame data is heavily
 saturated with index `0x01` (the sky / background colour for cutscene videos),
 so applying PALETTE.PAL produces a garbled pink/magenta image.
@@ -190,10 +190,10 @@ palette is recovered.
 
 ## Applications
 
-`fx cb8 frames` extracts individual frames as PNG images. There is no repack command â€”
+`fx cb8 frames` extracts individual frames as PNG images. There is no repack command —
 frame-level edits only.
 
-- **GIMP** â€” free, cross-platform; batch script (`File â†’ Script-Fu`) useful for processing many frames
-- **Paint.NET** â€” free, Windows
-- **Photoshop** `$` â€” industry standard; *Image Processor* script for batch frame edits
-- **Affinity Photo** `$` â€” one-time purchase alternative to Photoshop
+- **GIMP** — free, cross-platform; batch script (`File â†’ Script-Fu`) useful for processing many frames
+- **Paint.NET** — free, Windows
+- **Photoshop** `$` — industry standard; *Image Processor* script for batch frame edits
+- **Affinity Photo** `$` — one-time purchase alternative to Photoshop

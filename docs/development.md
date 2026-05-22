@@ -1,6 +1,6 @@
 ﻿# Development
 
-This is the full developer reference â€” build setup, IDE configuration, project
+This is the full developer reference — build setup, IDE configuration, project
 structure, and release workflow. For commit message and branch naming conventions,
 see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -12,7 +12,7 @@ see [CONTRIBUTING.md](../CONTRIBUTING.md).
 - **Git**
 - **Windows 10 or 11** recommended for development (target runtime is Windows 7+)
 
-CMake ships with Visual Studio but is not added to `PATH` by default. The easiest fix is to add it manually â€” find `cmake.exe` under your VS install (typically `Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\`) and add that directory to your user `PATH`, or use the `$cmake` variable pattern shown below.
+CMake ships with Visual Studio but is not added to `PATH` by default. The easiest fix is to add it manually — find `cmake.exe` under your VS install (typically `Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\`) and add that directory to your user `PATH`, or use the `$cmake` variable pattern shown below.
 
 ## Building
 
@@ -57,14 +57,14 @@ VS Code works well for editing and building. CMake configuration is done once fr
 **Recommended extensions:**
 - C/C++ (Microsoft)
 - CMake Tools (Microsoft)
-- Hex Editor (Microsoft) â€” useful for inspecting binary game assets
+- Hex Editor (Microsoft) — useful for inspecting binary game assets
 
 **Build and run tasks** are pre-configured in `.vscode/tasks.json`:
 
 | Task | Shortcut | Action |
 |---|---|---|
 | Build fx-gui | `Ctrl+Shift+B` | `cmake --build build --target fx-gui --config Debug` |
-| Run fx-gui | â€” | Builds then launches `build\gui\Debug\fx-gui.exe` |
+| Run fx-gui | — | Builds then launches `build\gui\Debug\fx-gui.exe` |
 
 If cmake is not in `PATH`, add it via VS Code's `terminal.integrated.env.windows` setting in your user `settings.json`:
 
@@ -84,7 +84,7 @@ Open the generated solution directly:
 build\fighters-codex.sln
 ```
 
-Or use **File â†’ Open â†’ CMakeâ€¦** to open the root `CMakeLists.txt` â€” VS will configure the project automatically. Set the startup project to `fx-gui` for F5 debugging.
+Or use **File â†’ Open â†’ CMakeâ€¦** to open the root `CMakeLists.txt` — VS will configure the project automatically. Set the startup project to `fx-gui` for F5 debugging.
 
 ## Project Structure
 
@@ -134,7 +134,7 @@ message format that drives this.
 
 This will:
 - Bump the version in `CMakeLists.txt`
-- Rotate `CHANGELOG.md` â€” promotes `[Unreleased]` to the new version with today's date and updates the comparison links
+- Rotate `CHANGELOG.md` — promotes `[Unreleased]` to the new version with today's date and updates the comparison links
 - Commit both files as `chore: release v0.2.0`
 - Create the tag `v0.2.0`
 
@@ -148,7 +148,7 @@ Pushing the tag triggers the GitHub Actions release workflow, which builds the a
 
 ## Vendored Dependencies
 
-All dependencies are checked in â€” no package manager or internet access required to build.
+All dependencies are checked in — no package manager or internet access required to build.
 
 | Library | Location | License |
 |---|---|---|

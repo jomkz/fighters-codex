@@ -1,7 +1,7 @@
 ﻿# Aircraft Flight Model (.PT)
 
 `.PT` files are the per-aircraft aerodynamics and avionics records. There are 145+ `.PT` files
-in FA_2.LIB, one per aircraft variant. They use [BRF](BRF.md) (Brent's Relocatable Format) â€”
+in FA_2.LIB, one per aircraft variant. They use [BRF](BRF.md) (Brent's Relocatable Format) —
 plain ASCII text that is parsed at game startup by `SetupPT`.
 
 ## Quick Reference
@@ -45,25 +45,25 @@ Layout derived by direct byte-counting against `F16C.PT` (type_size = 660 = 0x29
 Offsets marked **confirmed** were read or written directly by decompiled FA.EXE code.
 All others are inferred from packing (BRF fields written sequentially, no alignment padding).
 
-`file_name` is **not stored** in the binary struct â€” it is the LIB lookup key only.
+`file_name` is **not stored** in the binary struct — it is the LIB lookup key only.
 `ot_names` is a **single** ptr (not two separate `short_name`/`long_name` ptrs as BRF.md
 implies); it points to a name-record holding all name strings.
 
-Total layout: OBJ_TYPE 166 B (0x00â€“0xA5) + NPC_TYPE 20 B (0xA6â€“0xB9) + PLANE_TYPE
-main 258 B (0xBAâ€“0x1BB) + 9 hardpoints Ã— 24 B (0x1BCâ€“0x293) = **660 B** âœ“
+Total layout: OBJ_TYPE 166 B (0x00–0xA5) + NPC_TYPE 20 B (0xA6–0xB9) + PLANE_TYPE
+main 258 B (0xBA–0x1BB) + 9 hardpoints Ã— 24 B (0x1BC–0x293) = **660 B** âœ“
 
-#### OBJ_TYPE section (0x00â€“0xA5, 166 B)
+#### OBJ_TYPE section (0x00–0xA5, 166 B)
 
 | Offset | Size | Field              | BRF type | Notes |
 |--------|------|--------------------|----------|-------|
 | `0x00` | 1    | struct_type        | byte     | = 5 for PT |
 | `0x01` | 2    | type_size          | word     | F16C = 660 |
-| `0x03` | 2    | instance_size      | word     | **confirmed** â€” `_T_AddObj@12` reads `*(short*)(ptr+3)` |
+| `0x03` | 2    | instance_size      | word     | **confirmed** — `_T_AddObj@12` reads `*(short*)(ptr+3)` |
 | `0x05` | 4    | ot_names           | ptr      | single ptr to name record; F16C = ptr |
 | `0x09` | 4    | ot_flags           | dword    | F16C = `$806bf3` (flyable, visible in library) |
-| `0x0D` | 2    | obj_class          | word     | **confirmed** â€” `_SetupOT` tests bits `0xc000`/`0x2000`/`0x1000`/`0x800`/`0x400`/`0x200` |
-| `0x0F` | 4    | shape              | ptr      | **confirmed** â€” `_SetupOT` passes `iVar4+0x0f` to `FUN_004a71e0`; string compared to `"eject_SH"` |
-| `0x13` | 4    | shadow_shape       | ptr      | **confirmed** â€” `_SetupOT` reads `*(char**)(iVar4+0x13)` for shape-name derivation |
+| `0x0D` | 2    | obj_class          | word     | **confirmed** — `_SetupOT` tests bits `0xc000`/`0x2000`/`0x1000`/`0x800`/`0x400`/`0x200` |
+| `0x0F` | 4    | shape              | ptr      | **confirmed** — `_SetupOT` passes `iVar4+0x0f` to `FUN_004a71e0`; string compared to `"eject_SH"` |
+| `0x13` | 4    | shadow_shape       | ptr      | **confirmed** — `_SetupOT` reads `*(char**)(iVar4+0x13)` for shape-name derivation |
 | `0x17` | 4    | *(damage_shape_a)* | ptr      | filled by `_SetupOT` (`"_a"` variant); dword 0 in source BRF |
 | `0x1B` | 4    | *(damage_shape_b)* | ptr      | filled by `_SetupOT` (`"_b"` variant); dword 0 in source BRF |
 | `0x1F` | 2    | (unknown)          | word     | F16C = 0; possibly dst_debris_pos[0] |
@@ -83,7 +83,7 @@ main 258 B (0xBAâ€“0x1BB) + 9 hardpoints Ã— 24 B (0x1BCâ€“0x293) = 
 | `0x43` | 2    | rcs_signature      | word     | F16C = 100 |
 | `0x45` | 2    | hit_points         | word     | F16C = 100 |
 | `0x47` | 2    | dmg_planes         | word     | F16C = 0 |
-| `0x49` | 2    | dmg_ships          | word     | **confirmed** â€” `_T_AddObj@12` reads as `DAT_0050ce8e` (crash damage threshold); F16C = 92 |
+| `0x49` | 2    | dmg_ships          | word     | **confirmed** — `_T_AddObj@12` reads as `DAT_0050ce8e` (crash damage threshold); F16C = 92 |
 | `0x4B` | 2    | dmg_structs        | word     | F16C = 255 |
 | `0x4D` | 2    | dmg_armor          | word     | F16C = 255 |
 | `0x4F` | 2    | dmg_other          | word     | F16C = 255 |
@@ -104,7 +104,7 @@ main 258 B (0xBAâ€“0x1BB) + 9 hardpoints Ã— 24 B (0x1BCâ€“0x293) = 
 | `0x92` | 16   | sound params       | 8Ã—word   | F16C = 15000,320,160,20,1600,0,20,60 |
 | `0xA2` | 4    | hudName            | ptr      | |
 
-#### NPC_TYPE section (0xA6â€“0xB9, 20 B)
+#### NPC_TYPE section (0xA6–0xB9, 20 B)
 
 | Offset | Size | Field   | BRF type | Notes |
 |--------|------|---------|----------|-------|
@@ -118,7 +118,7 @@ main 258 B (0xBAâ€“0x1BB) + 9 hardpoints Ã— 24 B (0x1BCâ€“0x293) = 
 | `0xB5` | 1    | (byte)  | byte     | F16C = 9 (hardpoint count) |
 | `0xB6` | 4    | hards   | ptr      | â†’ hardpoints array |
 
-#### PLANE_TYPE section (0xBAâ€“0x1BB, 258 B)
+#### PLANE_TYPE section (0xBA–0x1BB, 258 B)
 
 | Offset | Size | Field               | BRF type | Notes |
 |--------|------|---------------------|----------|-------|
@@ -156,14 +156,14 @@ main 258 B (0xBAâ€“0x1BB) + 9 hardpoints Ã— 24 B (0x1BCâ€“0x293) = 
 | `0x181` | 2   | max_side_speed      | word     | F16C = 40 ft/sec |
 | `0x183` | 2   | max_sink_rate       | word     | F16C = 2560 ft/sec |
 | `0x185` | 2   | max_landing_pitch   | word     | F16C = 5120 |
-| `0x187` | 45  | systemDamage[]      | byteÃ—45  | subsystem hit thresholds; F16C values range 6â€“150 |
+| `0x187` | 45  | systemDamage[]      | byteÃ—45  | subsystem hit thresholds; F16C values range 6–150 |
 | `0x1B4` | 2   | misc_per_flight     | word     | F16C = 10 (maintenance man-hours) |
 | `0x1B6` | 2   | repair_multiplier   | word     | F16C = 10 |
 | `0x1B8` | 4   | mtow                | dword    | F16C = 33,000 lbs |
 
-#### Hardpoints section (0x1BCâ€“0x293, 9 Ã— 24 B)
+#### Hardpoints section (0x1BC–0x293, 9 Ã— 24 B)
 
-F16C.PT has **9** hardpoints (not 10 as BRF.md states â€” BRF.md needs correction).
+F16C.PT has **9** hardpoints (not 10 as BRF.md states — BRF.md needs correction).
 Each hardpoint is 24 bytes: 8Ã—word + ptr (4B) + byte + word + byte.
 
 | Offset | Size | Field         | Notes |
@@ -183,17 +183,17 @@ Each hardpoint is 24 bytes: 8Ã—word + ptr (4B) + byte + word + byte.
 
 ### Next trace targets
 
-The 65-word aerodynamic block (0xCAâ€“0x14B) is the main remaining gap.  BRF.md names the
+The 65-word aerodynamic block (0xCA–0x14B) is the main remaining gap.  BRF.md names the
 first six fields (accel_runway through neg_g_limit) but the remaining 59 cover roll/pitch/yaw
 surface limits, G-load model parameters, stall/spin tuning, and landing-gear dynamics.
-Direct `.PT` byte-counting against `F16C.PT` is the effective approach â€” no Ghidra
+Direct `.PT` byte-counting against `F16C.PT` is the effective approach — no Ghidra
 script needed.  To name the remaining 59 words, compare F16C.PT values side-by-side with
 a known-different aircraft (e.g. F14A.PT or A10.PT) and correlate numeric deltas with
 the BRF.md stall/spin field list.
 
 The three 2-byte unknowns at 0x1F/0x21/0x23 and three at 0x2D/0x2F/0x31 are plausible
 candidates for `dst_debris_pos[3]` and `dmg_debris_pos[3]` (i16[3] each per BRF.md),
-but the 0x23/0x2D values of 30 don't obviously map to debris-offset coordinates â€” needs
+but the 0x23/0x2D values of 30 don't obviously map to debris-offset coordinates — needs
 a second PT file comparison to confirm.
 
 ## Engine Entry Points
@@ -216,7 +216,7 @@ a second PT file comparison to confirm.
 
 ## Related
 
-- [BRF.md](BRF.md) â€” Full BRF field reference for all PT fields, hardpoints, G-envelope
-- [OT.md](OT.md) â€” OT base fields that PT inherits
-- [JT.md](JT.md) â€” Weapon/projectile types loaded via `SetupJT` (`0x4A7230`)
-- [SH.md](SH.md) â€” 3D model format referenced by `shape` / `shadow_shape` ptr fields
+- [BRF.md](BRF.md) — Full BRF field reference for all PT fields, hardpoints, G-envelope
+- [OT.md](OT.md) — OT base fields that PT inherits
+- [JT.md](JT.md) — Weapon/projectile types loaded via `SetupJT` (`0x4A7230`)
+- [SH.md](SH.md) — 3D model format referenced by `shape` / `shadow_shape` ptr fields

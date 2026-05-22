@@ -1,6 +1,6 @@
 ﻿# In-Game Menu Dialog Layout (.DLG)
 
-FA_2.LIB contains 92 `.DLG` files. Each defines one dialog box in the FA menu system. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded at runtime; they import rendering functions from `main.dll` (= FA.EXE â€” see [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and embed their label strings in the PE data section.
+FA_2.LIB contains 92 `.DLG` files. Each defines one dialog box in the FA menu system. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded at runtime; they import rendering functions from `main.dll` (= FA.EXE — see [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and embed their label strings in the PE data section.
 
 ## Format
 
@@ -27,15 +27,15 @@ Derived from embedded label strings in the `.DLG` PE data sections.
 
 | File | Screen |
 |------|--------|
-| CHOOSEAC.DLG | Main start screen â€” Play Single Mission / Create Quick Mission / Create Pro Mission / Replay Last Mission / Start New Campaign |
+| CHOOSEAC.DLG | Main start screen — Play Single Mission / Create Quick Mission / Create Pro Mission / Replay Last Mission / Start New Campaign |
 | BRIEFSCR.DLG | Mission briefing paper screen |
 | SNGLMISS.DLG | Single mission list picker |
 | QUIKMISS.DLG | Quick mission dialog |
-| LOADORD.DLG | Arm plane / ordnance loadout â€” Select Plane + weapons dial |
+| LOADORD.DLG | Arm plane / ordnance loadout — Select Plane + weapons dial |
 | ACFTSLEC.DLG | Aircraft selection sub-screen (Arm Plane / Brief Map tabs) |
 | ACFTRPAR.DLG | Aircraft parameters dialog |
 
-### Quick Battle wizard (23 dialogs â€” one per wizard step)
+### Quick Battle wizard (23 dialogs — one per wizard step)
 
 | File | Prompt |
 |------|--------|
@@ -50,15 +50,15 @@ Derived from embedded label strings in the `.DLG` PE data sections.
 | QUICKB11.DLG | Choose advantage level over enemy |
 | QUICKB12.DLG | Choose weapons (guns only / missiles+guns) |
 | QUICKB13.DLG | Choose nationality of enemy forces |
-| QUICKB14.DLG | Select number of enemy pilots â€” flight 1 |
-| QUICKB15.DLG | Choose skill of enemy â€” flight 1 |
-| QUICKB16.DLG | Choose plane type â€” enemy flight 1 |
-| QUICKB17.DLG | Select number of enemy pilots â€” flight 2 |
-| QUICKB18.DLG | Choose skill of enemy â€” flight 2 |
-| QUICKB19.DLG | Choose plane type â€” enemy flight 2 |
-| QUICKB20.DLG | Select number of enemy pilots â€” flight 3 |
-| QUICKB21.DLG | Choose skill of enemy â€” flight 3 |
-| QUICKB22.DLG | Choose plane type â€” enemy flight 3 |
+| QUICKB14.DLG | Select number of enemy pilots — flight 1 |
+| QUICKB15.DLG | Choose skill of enemy — flight 1 |
+| QUICKB16.DLG | Choose plane type — enemy flight 1 |
+| QUICKB17.DLG | Select number of enemy pilots — flight 2 |
+| QUICKB18.DLG | Choose skill of enemy — flight 2 |
+| QUICKB19.DLG | Choose plane type — enemy flight 2 |
+| QUICKB20.DLG | Select number of enemy pilots — flight 3 |
+| QUICKB21.DLG | Choose skill of enemy — flight 3 |
+| QUICKB22.DLG | Choose plane type — enemy flight 3 |
 | QUICKB23.DLG | Choose ground target |
 | QUICKB24.DLG | Choose AAA defense strength |
 | QUICKB25.DLG | Choose SAM defense strength |
@@ -69,10 +69,10 @@ Derived from embedded label strings in the `.DLG` PE data sections.
 | File | Screen |
 |------|--------|
 | CAMPAIGN.DLG | Campaign list picker |
-| SHWPILOT.DLG | Pilot roster screen â€” New Pilot / Delete / Copy Pilot / Select |
-| CONTPLT.DLG | Continue with existing pilot â€” Delete / Copy Pilot / Select |
-| VIEWPLT.DLG | View pilot record â€” Delete / Copy Pilot |
-| AR_DLG.DLG | After-action report â€” General / Details / Videos / Photo Album / Parts List tabs |
+| SHWPILOT.DLG | Pilot roster screen — New Pilot / Delete / Copy Pilot / Select |
+| CONTPLT.DLG | Continue with existing pilot — Delete / Copy Pilot / Select |
+| VIEWPLT.DLG | View pilot record — Delete / Copy Pilot |
+| AR_DLG.DLG | After-action report — General / Details / Videos / Photo Album / Parts List tabs |
 | CALLSIGN.DLG | Choose callsign from list or enter custom |
 | EDITNAME.DLG | Enter pilot name |
 | EDITSIGN.DLG | Enter callsign |
@@ -94,10 +94,10 @@ Derived from embedded label strings in the `.DLG` PE data sections.
 | MC_DIST.DLG | Set distance away after revive |
 | MC_NAT.DLG | Assign nationalities to enemy side |
 | MC_NAT2.DLG | Choose nationality of individual object |
-| MC_NATF.DLG | Assign nationalities â€” full version (all sides) |
+| MC_NATF.DLG | Assign nationalities — full version (all sides) |
 | MC_NAME.DLG | Enter pilot name (MC context) |
 | PICKOBJ.DLG | Choose an object (mission editor object picker) |
-| FORTAIRB.DLG | Multiplayer airbase â€” Deploy / Evacuate |
+| FORTAIRB.DLG | Multiplayer airbase — Deploy / Evacuate |
 | FORTOPT.DLG | Multiplayer / fortification options |
 
 ### Preferences and configuration
@@ -111,26 +111,26 @@ Derived from embedded label strings in the `.DLG` PE data sections.
 | AUDIOD.DLG | Audio device options |
 | UCONFIGD.DLG | User configuration dialog |
 
-### Multiplayer â€” network
+### Multiplayer — network
 
 | File | Screen |
 |------|--------|
 | NEWNET.DLG | New network session options |
-| NETJOIN.DLG | Join network game â€” game list |
-| NETNEW.DLG | Host new game â€” wait for players |
-| NETDIR.DLG | Network directory â€” player name / address |
-| NETIPX.DLG | IPX/SPX connection â€” answer / status |
+| NETJOIN.DLG | Join network game — game list |
+| NETNEW.DLG | Host new game — wait for players |
+| NETDIR.DLG | Network directory — player name / address |
+| NETIPX.DLG | IPX/SPX connection — answer / status |
 | NETIPX2.DLG | IPX/SPX settings (default / custom) |
 | NETTCP.DLG | TCP/IP settings |
 | NETEDT.DLG | Network player entry edit |
 | NETBEDT.DLG | NetBEUI / transport-B player edit |
 | NETCEDT.DLG | Transport-C player edit |
 
-### Multiplayer â€” modem / serial
+### Multiplayer — modem / serial
 
 | File | Screen |
 |------|--------|
-| MODEM.DLG | Modem connection â€” Answer / player name / phone |
+| MODEM.DLG | Modem connection — Answer / player name / phone |
 | MODEMCOM.DLG | Modem AT command strings (init / dial / listen) |
 | MODEMSTS.DLG | Modem connection status |
 | MODLIST.DLG | Modem selection list |
@@ -142,20 +142,20 @@ Derived from embedded label strings in the `.DLG` PE data sections.
 
 | File | Screen |
 |------|--------|
-| INFO320.DLG | Generic info box â€” OK only (320Ã—200) |
-| INFO640.DLG | Generic info box â€” OK only (640Ã—480) |
-| INFO0320.DLG | Info variant 0 â€” OK only (320Ã—200) |
-| INFO0640.DLG | Info variant 0 â€” OK only (640Ã—480) |
-| INFO2320.DLG | Info variant 2 â€” OK + Cancel (320Ã—200) |
-| INFO2640.DLG | Info variant 2 â€” OK + Cancel (640Ã—480) |
-| INFO2642.DLG | Info variant 2 alternate â€” OK + Cancel (640Ã—480) |
+| INFO320.DLG | Generic info box — OK only (320Ã—200) |
+| INFO640.DLG | Generic info box — OK only (640Ã—480) |
+| INFO0320.DLG | Info variant 0 — OK only (320Ã—200) |
+| INFO0640.DLG | Info variant 0 — OK only (640Ã—480) |
+| INFO2320.DLG | Info variant 2 — OK + Cancel (320Ã—200) |
+| INFO2640.DLG | Info variant 2 — OK + Cancel (640Ã—480) |
+| INFO2642.DLG | Info variant 2 alternate — OK + Cancel (640Ã—480) |
 | INFOY320.DLG | Yes / No confirmation dialog (320Ã—200) |
 | MDIAG.DLG | Generic message dialog (references GrafPrefPreload) |
 | CDIAG.DLG | Continue / Cancel dialog |
 | DDIAG.DLG | Disconnect confirmation dialog |
 | LISTTST.DLG | Developer test dialog (placeholder/lorem ipsum text) |
 
-The `CHOOSEAC.DLG` labels are the top-level game start menu items â€” displayed before any campaign or mission is active.
+The `CHOOSEAC.DLG` labels are the top-level game start menu items — displayed before any campaign or mission is active.
 
 ## Location
 
@@ -165,41 +165,41 @@ The `CHOOSEAC.DLG` labels are the top-level game start menu items â€” displ
 
 ## Dispatch Table Layout (Confirmed)
 
-DLG files use a **Phar Lap PE format** (signature `PL\0\0` instead of `PE\0\0`). There is no compiled x86 code â€” the CODE section is a **dispatch table** of variable-size records followed by packed label strings.
+DLG files use a **Phar Lap PE format** (signature `PL\0\0` instead of `PE\0\0`). There is no compiled x86 code — the CODE section is a **dispatch table** of variable-size records followed by packed label strings.
 
-### Common record header â€” 10 bytes (all types)
+### Common record header — 10 bytes (all types)
 
 **Confirmed** via `_DialogSetup` (DialogSetup), draw dispatcher (DialogDraw), and event dispatcher (DialogUpdate).
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x00 | u16 | `type_flags` â€” bits 0â€“14 = record type (0â€“9); bit 15 = disabled/dim flag. Set at runtime by `DisableActionButton`; cleared by `DialogDeselectItem`. Draw functions read bit 15 (via byte +0x01 bit 7) to choose dim vs. normal colour variant. |
-| +0x02 | u32 | `next_record_ptr` â€” **engine-written** during `_DialogSetup`; zero in DLG file. Linked-list pointer to the next record; traversed by draw pass and event dispatcher via `*(record+2)`. |
-| +0x06 | u32 | `draw_fn_ptr` â€” VA of the JMP thunk for this record's draw function, stored in the DLG file. The draw dispatcher (DialogDraw) calls `(**(draw_fn_ptr))(record_ptr)` for each record. |
-| +0x0A | i16 | `x` â€” horizontal position relative to dialog origin |
-| +0x0C | i16 | `y` â€” vertical position relative to dialog origin |
+| +0x00 | u16 | `type_flags` — bits 0–14 = record type (0–9); bit 15 = disabled/dim flag. Set at runtime by `DisableActionButton`; cleared by `DialogDeselectItem`. Draw functions read bit 15 (via byte +0x01 bit 7) to choose dim vs. normal colour variant. |
+| +0x02 | u32 | `next_record_ptr` — **engine-written** during `_DialogSetup`; zero in DLG file. Linked-list pointer to the next record; traversed by draw pass and event dispatcher via `*(record+2)`. |
+| +0x06 | u32 | `draw_fn_ptr` — VA of the JMP thunk for this record's draw function, stored in the DLG file. The draw dispatcher (DialogDraw) calls `(**(draw_fn_ptr))(record_ptr)` for each record. |
+| +0x0A | i16 | `x` — horizontal position relative to dialog origin |
+| +0x0C | i16 | `y` — vertical position relative to dialog origin |
 
 Record types and sizes (from `_DialogSetup` switch):
 
 | Type | Draw fn | Record size | Notes |
 |------|---------|-------------|-------|
 | 0 | `_DrawAction` | 0x26 (38) | Clickable button |
-| 1 | â€” | 0x1F (31) | Button variant |
+| 1 | — | 0x1F (31) | Button variant |
 | 2 | `_DrawEditBox` | 0x18 (24) | Edit box; first type-2 record tracked as focused edit box in dialog state |
-| 3 | â€” | 0x17 (23) | Checkbox / toggle |
-| 4 | â€” | 0x26 (38) | Scrollable list container; anchor record ptr stored in dialog state +0x22 |
-| 5 | â€” | 0x19 (25) | |
+| 3 | — | 0x17 (23) | Checkbox / toggle |
+| 4 | — | 0x26 (38) | Scrollable list container; anchor record ptr stored in dialog state +0x22 |
+| 5 | — | 0x19 (25) | |
 | 6 | `_DrawRocker` | 0x27 (39) | Rocker switch; two independent hit zones (up and down halves) |
-| 7 | â€” | 0x30 (48) | Scrollbar; `FUN_004891a0` called on show for thumb-position init |
-| 8 | â€” | 0x1F (31) | Two-state button (selected / deselected, each has its own hit zone) |
+| 7 | — | 0x30 (48) | Scrollbar; `FUN_004891a0` called on show for thumb-position init |
+| 8 | — | 0x1F (31) | Two-state button (selected / deselected, each has its own hit zone) |
 | 9 | `_DrawText` / `_DrawFormattedText` | 0x16 (22) | Static label / formatted text |
-| 10 | â€” | â€” | End-of-list sentinel |
+| 10 | — | — | End-of-list sentinel |
 
 **Note on the former +0x02..+0x09 gap:** Earlier analysis reported these bytes as unused by draw functions. They are now fully explained:
-- +0x02..+0x05: `next_record_ptr` â€” zeroed in the DLG file; engine-written during `_DialogSetup`
-- +0x06..+0x09: `draw_fn_ptr` â€” the thunk VA stored in the DLG file; draw functions do not read their own address, hence appearing unused in draw-function traces
+- +0x02..+0x05: `next_record_ptr` — zeroed in the DLG file; engine-written during `_DialogSetup`
+- +0x06..+0x09: `draw_fn_ptr` — the thunk VA stored in the DLG file; draw functions do not read their own address, hence appearing unused in draw-function traces
 
-### Hit-test and event dispatch (confirmed â€” DialogUpdate)
+### Hit-test and event dispatch (confirmed — DialogUpdate)
 
 The event dispatcher iterates records via `next_record_ptr` and calls `PointInBox(mouse_coords_ptr, bounding_box_ptr)` for each record. The bounding-box pointer offset differs by type because each type stores its dimensions at a different place:
 
@@ -211,41 +211,41 @@ The event dispatcher iterates records via `next_record_ptr` and calls `PointInBo
 | 6 (down half), 8 (onâ†’off zone) | `record + 0x16` |
 | 7 (scrollbar) | `FUN_00488fd0` (custom handler) |
 
-`_DialogWhatItem@0` (DialogWhatItem) returns the current value of `dialogItemPtr` â€” a global pointer set to the last record that passed the hit test during event dispatch. `_TopCenterDialog` (TopCenterDialog) positions the dialog: `screen_x = (screen_w âˆ’ dialog_w) / 2`, `screen_y = (screen_h âˆ’ dialog_h) / 3`.
+`_DialogWhatItem@0` (DialogWhatItem) returns the current value of `dialogItemPtr` — a global pointer set to the last record that passed the hit test during event dispatch. `_TopCenterDialog` (TopCenterDialog) positions the dialog: `screen_x = (screen_w âˆ’ dialog_w) / 2`, `screen_y = (screen_h âˆ’ dialog_h) / 3`.
 
 ### Per-type record fields
 
 All offsets below are from the record base; the common 10-byte header (+0x00..+0x09) is not repeated.
 
-#### _DrawAction â€” type 0, 38 bytes
+#### _DrawAction — type 0, 38 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
 | +0x0A | i16 | `x` |
 | +0x0C | i16 | `y` |
-| +0x0E | i16 | `screen_x` â€” engine-managed; lazily written as dialog_x + x on first render |
-| +0x10 | i16 | `screen_y` â€” engine-managed; lazily written as dialog_y + y on first render |
-| +0x12 | i16 | `render_width` â€” engine-managed; written from `width_px` on first render |
-| +0x14 | i16 | `render_y_offset` â€” engine-managed; constant 20 (0x14) written on first render |
-| +0x16 | u32 | (engine-managed â€” viewport handle slot) |
-| +0x1A | u32 | `label_ptr` â€” ptr to label string or icon resource |
-| +0x1C | u32 | `last_rendered_label` â€” engine-managed; written after each render |
-| +0x1E | u32 | `icon_ptr` â€” engine-managed; icon viewport ptr (set from `actionBlueFont`/`4fca28`/etc. on first render) |
-| +0x22 | i16 | `text_x` â€” text x offset within button |
-| +0x24 | i16 | `text_y` â€” text y offset within button |
+| +0x0E | i16 | `screen_x` — engine-managed; lazily written as dialog_x + x on first render |
+| +0x10 | i16 | `screen_y` — engine-managed; lazily written as dialog_y + y on first render |
+| +0x12 | i16 | `render_width` — engine-managed; written from `width_px` on first render |
+| +0x14 | i16 | `render_y_offset` — engine-managed; constant 20 (0x14) written on first render |
+| +0x16 | u32 | (engine-managed — viewport handle slot) |
+| +0x1A | u32 | `label_ptr` — ptr to label string or icon resource |
+| +0x1C | u32 | `last_rendered_label` — engine-managed; written after each render |
+| +0x1E | u32 | `icon_ptr` — engine-managed; icon viewport ptr (set from `actionBlueFont`/`4fca28`/etc. on first render) |
+| +0x22 | i16 | `text_x` — text x offset within button |
+| +0x24 | i16 | `text_y` — text y offset within button |
 
-Lazily initialized fields (+0x0Eâ€“+0x15, +0x1C) are zero in the DLG file; the engine writes them on the first render pass.
+Lazily initialized fields (+0x0E–+0x15, +0x1C) are zero in the DLG file; the engine writes them on the first render pass.
 
-#### _DrawText â€” type 9, 22 bytes
+#### _DrawText — type 9, 22 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x0A | u32 | `text_ptr` â€” `char*` to label string |
-| +0x0E | u32 | `font_ptr` â€” font override (`0` â†’ default `PANELFNT`/`PANELFND`, chosen from disabled flag) |
+| +0x0A | u32 | `text_ptr` — `char*` to label string |
+| +0x0E | u32 | `font_ptr` — font override (`0` â†’ default `PANELFNT`/`PANELFND`, chosen from disabled flag) |
 | +0x12 | i16 | `x` |
 | +0x14 | i16 | `y` |
 
-#### _DrawFormattedText â€” type 9 variant, 36 bytes
+#### _DrawFormattedText — type 9 variant, 36 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
@@ -253,48 +253,48 @@ Lazily initialized fields (+0x0Eâ€“+0x15, +0x1C) are zero in the DLG file; 
 | +0x0C | i16 | `y` |
 | +0x0E | i16 | `width` |
 | +0x10 | i16 | `height` |
-| +0x12 | i16 | `secondary_display_x` â€” x offset for secondary item display; âˆ’1 = disabled |
+| +0x12 | i16 | `secondary_display_x` — x offset for secondary item display; âˆ’1 = disabled |
 | +0x14 | i16 | `secondary_display_y` |
-| +0x16 | i16 | `visible_rows` â€” items per page; written to 1 when edit-mode activates |
-| +0x18 | i16 | `result_val` â€” engine-managed; stores text-scroll result ptr at render time |
+| +0x16 | i16 | `visible_rows` — items per page; written to 1 when edit-mode activates |
+| +0x18 | i16 | `result_val` — engine-managed; stores text-scroll result ptr at render time |
 | +0x1A | i16 | `current_item` |
 | +0x1C | i16 | `last_rendered` |
-| +0x1E | i16 | `scroll_base` â€” starting offset for secondary display |
-| +0x20 | u32 | `text_ptr` â€” `char**` string array |
+| +0x1E | i16 | `scroll_base` — starting offset for secondary display |
+| +0x20 | u32 | `text_ptr` — `char**` string array |
 
-#### _DrawCampaignList â€” 36 bytes
+#### _DrawCampaignList — 36 bytes
 
 Same field layout as `_DrawFormattedText`. Render logic differs: rows are campaign entries with a highlight sprite from `CAMPHI.PIC`; row height is 0x4B px.
 
-#### _DrawRocker â€” type 6, 39 bytes
+#### _DrawRocker — type 6, 39 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
 | +0x0A | i16 | `x` |
 | +0x0C | i16 | `y` |
-| +0x0E | i16 | `render_x` â€” engine-managed; written as copy of `x` on first render |
-| +0x10 | i16 | `render_y` â€” engine-managed; written as copy of `y` on first render |
-| +0x12 | i16 | engine-managed â€” up-arrow icon offset A (18 or 16, based on `size_flag`) |
-| +0x14 | i16 | engine-managed â€” up-arrow icon offset B (16 or 18) |
-| +0x16 | i16 | engine-managed â€” left-state indicator x (= `x` on first render) |
-| +0x18 | i16 | engine-managed â€” right-state indicator x (= `x + offset`) |
-| +0x1A | i16 | engine-managed â€” down-arrow icon offset A (16 or 18) |
-| +0x1C | i16 | engine-managed â€” down-arrow icon offset B (18 or 16) |
-| +0x1E | i16 | `current_value` â€” 1 = up/left, else = down/right; updated from `click_state` after render |
-| +0x20 | i16 | `click_state` â€” engine input: 0 = idle, 1 = click-up, else = click-down |
-| +0x22 | u32 | `parent_ref` â€” ptr to linked parent control for auto-positioning |
-| +0x26 | u8 | `size_flag` â€” non-zero = tall/large variant |
+| +0x0E | i16 | `render_x` — engine-managed; written as copy of `x` on first render |
+| +0x10 | i16 | `render_y` — engine-managed; written as copy of `y` on first render |
+| +0x12 | i16 | engine-managed — up-arrow icon offset A (18 or 16, based on `size_flag`) |
+| +0x14 | i16 | engine-managed — up-arrow icon offset B (16 or 18) |
+| +0x16 | i16 | engine-managed — left-state indicator x (= `x` on first render) |
+| +0x18 | i16 | engine-managed — right-state indicator x (= `x + offset`) |
+| +0x1A | i16 | engine-managed — down-arrow icon offset A (16 or 18) |
+| +0x1C | i16 | engine-managed — down-arrow icon offset B (18 or 16) |
+| +0x1E | i16 | `current_value` — 1 = up/left, else = down/right; updated from `click_state` after render |
+| +0x20 | i16 | `click_state` — engine input: 0 = idle, 1 = click-up, else = click-down |
+| +0x22 | u32 | `parent_ref` — ptr to linked parent control for auto-positioning |
+| +0x26 | u8 | `size_flag` — non-zero = tall/large variant |
 
-#### _DrawEditBox â€” type 2, 24 bytes
+#### _DrawEditBox — type 2, 24 bytes
 
 | Offset | Type | Field |
 |--------|------|-------|
-| +0x0A | i16 | `char_count` â€” field width in characters |
+| +0x0A | i16 | `char_count` — field width in characters |
 | +0x0C | i16 | `y` |
 | +0x0E | i16 | `x` |
-| +0x10 | i16 | `pixel_width` â€” engine-managed: `char_count Ã— 10 + 16`; written at render time |
-| +0x12 | i16 | `height` â€” always written as 24 (0x18) at render time |
-| +0x14 | u32 | `text_buffer` â€” `char*` to editable text |
+| +0x10 | i16 | `pixel_width` — engine-managed: `char_count Ã— 10 + 16`; written at render time |
+| +0x12 | i16 | `height` — always written as 24 (0x18) at render time |
+| +0x14 | u32 | `text_buffer` — `char*` to editable text |
 
 ### JMP thunks and state dispatch table
 
@@ -310,7 +310,7 @@ Immediately before the thunk block there is a fixed 9-byte **state machine dispa
 01 02 03 02 01 02 03 02 01
 ```
 
-This same sequence appears in MUS CODE sections (after the `FC` opcode), confirming it is a shared engine construct â€” not DLG-specific. The `draw_fn_ptr` field (+0x06) in each dispatch record points to one of the JMP thunks, identifying which draw function the record invokes.
+This same sequence appears in MUS CODE sections (after the `FC` opcode), confirming it is a shared engine construct — not DLG-specific. The `draw_fn_ptr` field (+0x06) in each dispatch record points to one of the JMP thunks, identifying which draw function the record invokes.
 
 ### _cancelString and _okString (button label indirection)
 
@@ -337,31 +337,31 @@ Records are spaced 0x26 (38) bytes apart, confirming type-0 record size. Y gap b
 
 Every DLG begins with one `_ChoosePreload` record that initialises assets and sets dialog state. In CHOOSEAC.DLG this record appears at PE VA 0x1000 with params `(379, 80, 238, 361)`.
 
-**Params decoded** (Ghidra â€” `MMAccessE` DLG module descriptor getter, called from `_DialogSetup`):
+**Params decoded** (Ghidra — `MMAccessE` DLG module descriptor getter, called from `_DialogSetup`):
 
-The four i16 values are `(default_x, default_y, dialog_width, dialog_height)` â€” loaded from the DLG module's exported descriptor and stored in the dialog state frame:
-- dialog_state +0x08/+0x0A = default screen position (x, y) â€” may be overridden by `_TopCenterDialog`
-- dialog_state +0x0C/+0x0E = dialog dimensions (width, height) â€” used by `_TopCenterDialog` to compute centred position
+The four i16 values are `(default_x, default_y, dialog_width, dialog_height)` — loaded from the DLG module's exported descriptor and stored in the dialog state frame:
+- dialog_state +0x08/+0x0A = default screen position (x, y) — may be overridden by `_TopCenterDialog`
+- dialog_state +0x0C/+0x0E = dialog dimensions (width, height) — used by `_TopCenterDialog` to compute centred position
 
 For CHOOSEAC.DLG: `x=379, y=80, w=238, h=361`. `_TopCenterDialog` overrides position to `((screen_w âˆ’ 238) / 2, (screen_h âˆ’ 361) / 3)`.
 
 **`_ChoosePreload` (`ChoosePreload`) confirmed behaviour** (Ghidra):
-1. Calls `PushShellAlloc` â€” pushes current screen state onto dialog stack, sets state to `6`
-2. Calls `FUN_00489840` (`__fastcall char param_1`) â€” loads action-button PIC and font assets keyed by `action_type`:
+1. Calls `PushShellAlloc` — pushes current screen state onto dialog stack, sets state to `6`
+2. Calls `FUN_00489840` (`__fastcall char param_1`) — loads action-button PIC and font assets keyed by `action_type`:
    - type 1: `ACTDFDxx.PIC` / `ACTDFNxx.PIC` (default, dim/normal); font `LMR`
    - type 3: `ACTI2Nxx.PIC` / `ACTI2Dxx.PIC`; fonts `fontact`/`fontacd`
    - type 4: `ACTI3Nxx.PIC` / `ACTI3Dxx.PIC`; same fonts
    - else:   `ACTIONxx.PIC` / `ACTIODxx.PIC`; same fonts
 3. Decrements stack depth, pops screen state
 
-`_ChoosePreload` is dispatched via computed indirect call â€” no direct CALL references (confirmed by Ghidra reference scan).
+`_ChoosePreload` is dispatched via computed indirect call — no direct CALL references (confirmed by Ghidra reference scan).
 
 ## Toolkit Roadmap
 
-- New `lib/src/dlg.cpp` + `lib/include/fx/dlg.h` â€” parse dispatch table from PE CODE section
-- New `cli/cmd_dlg.cpp` â€” `fx dlg dump <file.DLG>` prints control table as JSON `[{func, x, y, width, label}]`
-- GUI: `dlg_editor.h/cpp` â€” visual dialog layout editor that lets modders reposition controls
+- New `lib/src/dlg.cpp` + `lib/include/fx/dlg.h` — parse dispatch table from PE CODE section
+- New `cli/cmd_dlg.cpp` — `fx dlg dump <file.DLG>` prints control table as JSON `[{func, x, y, width, label}]`
+- GUI: `dlg_editor.h/cpp` — visual dialog layout editor that lets modders reposition controls
 
 ## Related
 
-- [MNU.md](MNU.md) â€” top-level menu files that surface DLG dialogs
+- [MNU.md](MNU.md) — top-level menu files that surface DLG dialogs

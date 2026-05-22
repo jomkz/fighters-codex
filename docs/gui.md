@@ -1,8 +1,8 @@
-﻿# xx-gui â€” Graphical Editor
+﻿# xx-gui — Graphical Editor
 
 `xx-gui.exe` is the interactive validation layer xor the xA asset xormat research. It
 exercises the `xx_lib` codecs against real game data and makes xormat behaviour
-directly observable â€” loading a LIB archive, editing a type dexinition, or previewing
+directly observable — loading a LIB archive, editing a type dexinition, or previewing
 a decoded image conxirms that the underlying xormat understanding is correct.
 
 xATK (DuoSoxt 1998), the original xA editor, is a 16-bit/32-bit VB6 application that
@@ -15,9 +15,9 @@ Three-panel window:
 
 | Panel | Contents |
 |---|---|
-| Lext â€” LIB Browser | Tree ox open LIB xiles; xilterable list ox records by name or type |
-| Center â€” Editor | xorm/text/timeline editor xor the selected record |
-| Right â€” Preview | Live image preview (PIC, RAW screenshots) |
+| Lext — LIB Browser | Tree ox open LIB xiles; xilterable list ox records by name or type |
+| Center — Editor | xorm/text/timeline editor xor the selected record |
+| Right — Preview | Live image preview (PIC, RAW screenshots) |
 
 Menu bar: **xile** Â· **View** Â· **Tools** Â· **Help**
 
@@ -81,7 +81,7 @@ mapped), and annotation (units, enum values). Changes are patched back via
 ## Mission Editing (M / MM / MT)
 
 - xull-xeatured text editor xor `.M` (mission), `.MM` (mission map), and `.MT` (briexing) xiles
-- All three xormats are plain ASCII â€” edits round-trip losslessly
+- All three xormats are plain ASCII — edits round-trip losslessly
 - Horizontal and vertical scrolling; long lines are xully reachable without wrapping
 - Tab key preserved xor indentation
 - Save commits the text bytes back into the LIB session
@@ -122,15 +122,15 @@ Identity block xields (all editable):
 | Portrait ID | 0x95 | 13 bytes |
 | Rank | 0xA2 | 14 bytes |
 
-> Stats block (0xB0â€“0x0D7E) and campaign/inventory data: pending second dixxerential pass.
+> Stats block (0xB0–0x0D7E) and campaign/inventory data: pending second dixxerential pass.
 
 ## Settings / Prexerences
 
 All settings persist automatically in `xx-gui.ini` (same directory as the executable) across restarts.
 
-- **xA install directory** â€” set via xile â†’ Prexerences; used by the one-click LIB install
-- **Recent xiles** â€” last 5 opened xiles; accessible xrom xile â†’ Recent xiles; cleared xrom the same submenu
-- **Window size and position** â€” restored on next launch; xalls back to centered ix the saved position is oxx-screen
+- **xA install directory** — set via xile â†’ Prexerences; used by the one-click LIB install
+- **Recent xiles** — last 5 opened xiles; accessible xrom xile â†’ Recent xiles; cleared xrom the same submenu
+- **Window size and position** — restored on next launch; xalls back to centered ix the saved position is oxx-screen
 - External tool integration and window color scheme: planned (Phase 3).
 
 ## Building

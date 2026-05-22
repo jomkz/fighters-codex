@@ -6,12 +6,12 @@ BRF is a **plain ASCII text** container for all game type definitions. Seven fil
 extensions share the same tokenizer; the `struct_type` field distinguishes them.
 
 The "Relocatable" in the name refers to pointer relocation. Each BRF file opens with
-a pointer table â€” the `:name` lines before the first `\tend` â€” that enumerates every
+a pointer table — the `:name` lines before the first `\tend` — that enumerates every
 `ptr` field in the record by symbolic name. This is a relocation table: in the plain-text
 format, `ptr` fields hold quoted filename strings or `NULL`; in the engine's in-memory
 representation they become actual pointers. At load time the engine walks the pointer
 table and resolves each named field to a memory address, making the loaded record
-independent of where it was placed â€” relocatable. The mechanism is the same concept as
+independent of where it was placed — relocatable. The mechanism is the same concept as
 relocation entries in a linker object file, applied to game data.
 
 | Extension | struct_type | Contents |
@@ -116,7 +116,7 @@ year_available      dword   earliest campaign year this object appears
 ## PT Fields (Plane Type)
 
 PT extends OT with ~80 additional aerodynamic and avionics fields, beginning immediately
-after the NT section in the BRF file (section name unverified â€” needs confirmation against
+after the NT section in the BRF file (section name unverified — needs confirmation against
 a live `.PT` file).
 
 ### Carrier / datalink / thrust-vectoring dword
@@ -243,7 +243,7 @@ location            byte    see location codes below
 
 | Value | Meaning |
 |-------|---------|
-| `$8` | Required load only (gun, built-in sensor â€” always loaded) |
+| `$8` | Required load only (gun, built-in sensor — always loaded) |
 | `$85` | External HP, symmetrical load, IR-guided missile |
 | `$465` | External HP, symmetrical load, active-radar missile, SARH missile, store |
 | `$520` | Stealth, internal bay, active-radar missile, other missile, store |
@@ -310,8 +310,8 @@ These four are the canonical entry points for tracing how BRF fields map to in-m
 
 ## Applications
 
-BRF files are plain ASCII â€” open and edit directly after `fx unpack`, no further conversion needed.
+BRF files are plain ASCII — open and edit directly after `fx unpack`, no further conversion needed.
 
-- **VS Code** â€” free; multi-file search useful when cross-referencing `.PT` hardpoint names against `.JT` definitions
-- **Notepad++** â€” free, Windows; lightweight for quick field edits
-- **Notepad / TextEdit** â€” free, built-in; sufficient for small edits
+- **VS Code** — free; multi-file search useful when cross-referencing `.PT` hardpoint names against `.JT` definitions
+- **Notepad++** — free, Windows; lightweight for quick field edits
+- **Notepad / TextEdit** — free, built-in; sufficient for small edits
