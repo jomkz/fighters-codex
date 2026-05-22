@@ -174,6 +174,28 @@ feat(ft-lib)!: rename Lib::extract() to Lib::unpack()
 
 Breaking commits sort to the top of the changelog and signal a semver major version bump.
 
+### Branch Names
+
+```
+<type>/<short-kebab-description>
+```
+
+| Prefix | When to use | Example |
+|---|---|---|
+| `feat/` | New user-facing functionality | `feat/raw-to-png-converter` |
+| `fix/` | Bug fixes | `fix/cb8-stride-calculation` |
+| `docs/` | Documentation only | `docs/mus-opcode-table` |
+| `refactor/` | Code restructuring, no behaviour change | `refactor/extract-command-args` |
+| `chore/` | Maintenance, CI, build, dependencies | `chore/update-imgui-vendor` |
+
+**Rules:**
+- Lowercase kebab-case only — `feat/add-raw-decoder`, not `feat/AddRawDecoder` or `feat/add_raw_decoder`
+- 3–5 words in the description; enough to identify the work at a glance
+- Describes *what* is changing, not *why*
+- No issue numbers needed
+
+`main` is the only permanent branch. All work branches are deleted after merge.
+
 ## Releasing
 
 0. Optionally draft changelog entries from conventional commits since the last tag:

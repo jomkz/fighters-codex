@@ -62,6 +62,16 @@ BREAKING CHANGE: all callers must update to the new method name.
 
 Breaking commits appear prominently in the changelog and signal a semver major bump.
 
+### Branch Names
+
+```
+<type>/<short-kebab-description>
+```
+
+Use the same type prefix as your commit (`feat/`, `fix/`, `docs/`, `refactor/`, `chore/`),
+followed by a short lowercase kebab-case description. See
+[docs/development.md](docs/development.md#branch-names) for the full table and rules.
+
 ---
 
 For the full workflow — building, releasing, and the draft-changelog script — see
