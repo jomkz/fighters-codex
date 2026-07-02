@@ -1,0 +1,133 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": { "major": 3, "minor": 21, "patch": 0 },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "linux-base",
+            "hidden": true,
+            "inherits": "base",
+            "generator": "Ninja",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "msvc",
+            "displayName": "MSVC x64 (default Visual Studio generator)",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/build",
+            "architecture": "x64",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+        },
+        {
+            "name": "gcc",
+            "displayName": "Linux GCC (Debug)",
+            "inherits": "linux-base",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "clang",
+            "displayName": "Linux Clang (Debug)",
+            "inherits": "linux-base",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "asan-ubsan",
+            "displayName": "Linux Clang + ASan/UBSan (Debug)",
+            "inherits": "clang",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all",
+                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined",
+                "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=address,undefined"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Linux Release (default compiler)",
+            "inherits": "linux-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "msvc",
+            "configurePreset": "msvc",
+            "configuration": "Release",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+        },
+        {
+            "name": "msvc-debug",
+            "configurePreset": "msvc",
+            "configuration": "Debug",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+        },
+        {
+            "name": "gcc",
+            "configurePreset": "gcc",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "clang",
+            "configurePreset": "clang",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "asan-ubsan",
+            "configurePreset": "asan-ubsan",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "release",
+            "configurePreset": "release",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "msvc",
+            "configurePreset": "msvc",
+            "configuration": "Release",
+            "output": { "outputOnFailure": true },
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+        },
+        {
+            "name": "gcc",
+            "configurePreset": "gcc",
+            "output": { "outputOnFailure": true },
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "clang",
+            "configurePreset": "clang",
+            "output": { "outputOnFailure": true },
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "asan-ubsan",
+            "configurePreset": "asan-ubsan",
+            "output": { "outputOnFailure": true },
+            "environment": { "UBSAN_OPTIONS": "print_stacktrace=1" },
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "release",
+            "configurePreset": "release",
+            "output": { "outputOnFailure": true },
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        }
+    ]
+}
