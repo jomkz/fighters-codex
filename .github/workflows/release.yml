@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure
         # No pinned generator — the runner image's default Visual Studio moves
@@ -46,7 +46,7 @@ jobs:
           "body<<EOF`n$($body.Trim())`nEOF" | Out-File $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           body: ${{ steps.changelog.outputs.body }}
           draft: false

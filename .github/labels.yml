@@ -82,3 +82,8 @@
 - name: "release"
   color: "0e8a16"
   description: "Release preparation or tracking"
+
+# Maintenance labels
+- name: "dependencies"
+  color: "0366d6"
+  description: "Dependency updates (Dependabot)"

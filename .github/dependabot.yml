@@ -1,0 +1,11 @@
+# Keeps the SHA-pinned action references in .github/workflows/ current.
+# The "dependencies" label is declared in .github/labels.yml — Dependabot's
+# default labels would be deleted by the label-sync workflow otherwise.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies

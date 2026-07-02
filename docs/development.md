@@ -131,6 +131,23 @@ python3 tests/integration/fa_manifest.py generate \
 Hashes are facts about the game data; the assets themselves must never enter
 the repository (`*.LIB`, `*.PIC`, `*.PAL`, … are gitignored — keep it that way).
 
+## Continuous Integration
+
+Every PR to `main` (and every push to it) runs the
+[CI workflow](../.github/workflows/ci.yml): a matrix that runs
+`cmake --preset <p>`, `cmake --build --preset <p>`, `ctest --preset <p>` per leg.
+
+| Check | Runner | Proves |
+|---|---|---|
+| `gcc` | ubuntu-latest | Linux GCC build + full test suite |
+| `clang` | ubuntu-latest | Linux Clang build + full test suite |
+| `msvc` | windows-latest | Windows MSVC build + full test suite |
+
+Every `uses:` in the workflows is pinned to a commit SHA (with the version in a
+trailing comment); [Dependabot](../.github/dependabot.yml) keeps the pins current.
+Test presets are configured with `noTestsAction: error`, so a leg that discovers
+zero tests fails instead of passing vacuously.
+
 ## IDE Setup
 
 ### VS Code (Linux and Windows)
