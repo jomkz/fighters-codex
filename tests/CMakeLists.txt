@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(fx_tests
     test_ealib.cpp
     test_pic.cpp
+    test_pal.cpp
     test_audio.cpp
     test_seq.cpp
     test_brf.cpp

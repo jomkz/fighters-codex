@@ -1,10 +1,95 @@
-# SH -- Shape / 3D Model Format (.SH)
+---
+format: SH
+name: Shape 3D Model
+extensions: [".SH"]
+category: 3d
+endianness: little
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 52
+      note: "40+ Unk* opcode semantics (sizes known, behavior untraced)"
+    - kind: re-static
+      issue: 52
+      note: "x86-embedded geometry regions (65/1275 files) undecoded"
+codec:
+  direction: read
+  rationale: "OBJ export only; OBJ→SH is intentionally out of scope (animation/LOD/damage states make the inverse impractical — roadmap 1.0 definition)"
+  lib: [lib/src/sh.cpp]
+  commands: [sh]
+  tests: [tests/test_sh.cpp]
+  fuzz: []
+  gui: [gui/src/editors/sh_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [PIC, LIB, PT]
+---
 
-## Container: Phar Lap PE/LE Executable
+# SH — Shape 3D Model (.SH)
 
-SH files are **Phar Lap PE/LE executables**. The shape bytecode lives in the CODE section.
+`.SH` files hold the 3D geometry for every aircraft, vehicle, weapon, and scene
+object — 1275 of them in FA_2.LIB. Each is a **Phar Lap PE/LE executable**
+whose CODE section carries a shape *bytecode* stream: vertex buffers, faces,
+texture references, and conditional jumps the engine interprets at render time
+(some models embed raw x86 code as well).
 
-Parse via the standard MZ/PE header chain:
+## Tools
+
+### fx
+
+```
+fx sh info   <file.SH>               # scale, bounding box, vertex/face count, textures
+fx sh unpack <file.SH> [-o out.obj]  # export Wavefront OBJ (with usemtl directives)
+```
+
+The exported OBJ uses `mtllib shape.mtl` and `usemtl <texture_name>` directives
+when textures are present. A `.mtl` file is not written automatically — create
+one manually if needed for rendering. The library API behind these commands
+(`sh_parse_info` / `sh_parse_mesh` / `sh_to_obj`) is documented in
+[api.md](../../api.md).
+
+### Other Tools
+
+- **Blender** — free, cross-platform; best option for inspecting and measuring exported OBJ geometry
+- **MeshLab** — free, cross-platform; lightweight viewer with basic mesh statistics
+- **FASHion** — free, FA-specific; vertex repositioning only (see workflow below)
+- **SketchUp 8** — free (legacy version required by FASHion plugin); use alongside FASHion
+- **3ds Max** `$` — paid; full mesh editing if a pack command is added in future
+
+**Community editing workflow (FASHion + SketchUp 8):**
+
+- **FASHion** can only reposition individual vertices; it cannot add or remove
+  vertices, change face topology, or alter the overall mesh structure. The
+  rebuild operation overwrites the original file in place — always back up
+  before editing.
+- **SketchUp 8** is used as the 3D viewport. FASHion exports a vertex
+  coordinate file that SketchUp loads via a plugin; after adjustments the
+  modified coordinates are exported back and FASHion rebuilds the shape.
+
+1. Unpack the target `.SH` from its `.LIB` with `fx lib unpack`.
+2. Open the `.SH` in FASHion; export the vertex file.
+3. Load into SketchUp 8 (install outside `Program Files` to avoid permissions issues).
+4. Reposition vertices as needed.
+5. Export from SketchUp; rebuild in FASHion → overwrites the `.SH`.
+6. Repack with `fx lib patch`.
+
+For bulk vertex edits (e.g. scaling an entire section), the community workflow
+converts the vertex file to a spreadsheet, applies transformations numerically,
+then reconverts before importing back into FASHion.
+
+SH files with x86-only geometry (65/1275 in FA — see Round-Trip Notes) cannot
+be edited with FASHion and require direct x86 disassembly for modification.
+
+## File Layout
+
+All multi-byte integers are little-endian.
+
+### Container: Phar Lap PE/LE Executable
+
+SH files are **Phar Lap PE/LE executables**. The shape bytecode lives in the
+CODE section. Parse via the standard MZ/PE header chain:
 
 ```
 data[0x00..0x02]  MZ signature: 'M' 'Z'
@@ -24,10 +109,11 @@ Section entry layout:
   [24..40]  (ignored)
 ```
 
-Take the **first section** with `PointerToRawData > 0` — that is the code section.
-Always named `CODE`. `PointerToRawData` is the file offset; `SizeOfRawData` is its length.
+Take the **first section** with `PointerToRawData > 0` — that is the code
+section. Always named `CODE`. `PointerToRawData` is the file offset;
+`SizeOfRawData` is its length.
 
-## Code Section Structure
+### Code Section Structure
 
 ```
 [FF FF]              2-byte signature
@@ -51,12 +137,12 @@ Always named `CODE`. `PointerToRawData` is the file offset; `SizeOfRawData` is i
 | 11 | 8.0 | Terrain features |
 | 0 | 1.0 | Treated as 8 |
 
-## Instruction Dispatch
+### Instruction Dispatch
 
-Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic** (2-byte opcode:
-`[op_byte, 0x00]`). Dispatch is on the first byte.
+Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
+(2-byte opcode: `[op_byte, 0x00]`). Dispatch is on the first byte.
 
-### Key Instructions
+**Key instructions:**
 
 | First byte | Name | Total size | Notes |
 |------------|------|------------|-------|
@@ -70,7 +156,7 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic** (2-byte
 | `0xF6` | VertexInfo | 7 | `[F6][idx u16][color u8][normal i8[3]]` |
 | `0xFC` | Face | variable | See face format section |
 
-### Word-magic instructions (second byte = `0x00`)
+**Word-magic instructions (second byte = `0x00`):**
 
 | First byte | Name | Total size |
 |------------|------|------------|
@@ -121,8 +207,6 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic** (2-byte
 | `0xEE` | UnkEE | 2 |
 | `0xF2` | PtrToObjEnd | 4 |
 
-## Geometry Instructions in Detail
-
 ### VertexBuffer (0x82 0x00)
 
 Pushes a batch of vertices into the global vertex pool.
@@ -134,9 +218,9 @@ Pushes a batch of vertices into the global vertex pool.
 [x y z i16 ...]   nverts * 3 signed 16-bit coordinates (LE)
 ```
 
-**Pool index** = `push_at / 8`. Vertex slot size is 8 bytes in the engine's pool
-(6 bytes of coords + 2 bytes alignment padding), so `push_at` is always a multiple of 8.
-Face indices reference global pool indices.
+**Pool index** = `push_at / 8`. Vertex slot size is 8 bytes in the engine's
+pool (6 bytes of coords + 2 bytes alignment padding), so `push_at` is always a
+multiple of 8. Face indices reference global pool indices.
 
 ### TextureFile (0xE2 0x00)
 
@@ -192,41 +276,64 @@ Variable-length polygon face instruction.
 
 | Bit | Mask | Meaning |
 |-----|------|---------|
-| 7 | 0x80 | Unk1 |
+| 7 | 0x80 | **Unknown** (Unk1) |
 | 6 | 0x40 | HAVE_FACE_NORMAL |
-| 5 | 0x20 | Unk2 (brighter shading) |
-| 4 | 0x10 | Unk3 (perspective-correct mapping) |
-| 3 | 0x08 | Unk4 |
+| 5 | 0x20 | **Unknown** (Unk2 — brighter shading) |
+| 4 | 0x10 | **Unknown** (Unk3 — perspective-correct mapping) |
+| 3 | 0x08 | **Unknown** (Unk4) |
 | 2 | 0x04 | HAVE_TEXCOORDS |
 | 1 | 0x02 | FILL_BACKGROUND |
-| 0 | 0x01 | Unk5 |
+| 0 | 0x01 | **Unknown** (Unk5) |
 
 **FaceLayoutFlags:**
 
 | Bit | Mask | Meaning |
 |-----|------|---------|
-| 3 | 0x08 | Unk0 |
+| 3 | 0x08 | **Unknown** (Unk0) |
 | 2 | 0x04 | USE_SHORT_INDICES (u16 instead of u8) |
 | 1 | 0x02 | USE_BYTE_FACE_CENTER (i8[3] instead of i16[3]) |
 | 0 | 0x01 | USE_BYTE_TEXCOORDS (u8[2] instead of u16[2]) |
 
-## X86Unknown Region
+### X86Unknown Region
 
 Some models (main aircraft like A10.SH, AC130.SH) use x86 machine code to drive
 face rendering. These regions are detected and skipped:
 
 1. **PtrToObjEnd (0xF2)** seen: record `obj_end_off = offset_field`.
 2. **EndObject (0x00)** seen while `current_pos < obj_end_off`: the range
-   `[current_pos .. obj_end_off)` is x86 machine code mixed with embedded SH face
-   instructions. Skip to `obj_end_off` and continue.
-3. **EndObject (0x00)** seen while `current_pos >= obj_end_off`: real end of object;
-   stop parsing.
+   `[current_pos .. obj_end_off)` is x86 machine code mixed with embedded SH
+   face instructions. Skip to `obj_end_off` and continue.
+3. **EndObject (0x00)** seen while `current_pos >= obj_end_off`: real end of
+   object; stop parsing.
 
 Models with x86-only geometry cannot be exported to OBJ without x86 disassembly.
 
-## Geometry Extraction Results
+### .PTS distribution files
 
-Tested against all 1275 `.SH` files from `FA_2.LIB`:
+Community mod archives sometimes distribute aircraft shadow/crash shapes as
+`.PTS` files (e.g. `A10.PTS`) rather than the in-LIB convention of `A10_S.SH`.
+The binary format is identical — parse with the same SH parser. The
+`shadow_shape` ptr in the corresponding [.PT](PT.md) file points to the `_S.SH`
+name; the `.PTS` rename is a distribution artifact only. (Unrelated to the
+in-LIB **PTS overlay DLL** format documented in [PTS.md](PTS.md).)
+
+## Engine Notes
+
+Shape opcodes that branch on entity state are handled by FA.EXE functions.
+Confirmed from FA.SMS:
+
+| VA | Symbol | Description |
+|----|--------|-------------|
+| `0x4D22D4` | `do_ifdestroyed` | Tests whether the entity is in destroyed state; skips or follows a conditional branch in the shape bytecode stream |
+
+## Round-Trip Notes
+
+The codec is deliberately export-only: OBJ→SH is out of scope because a shape
+is a bytecode *program* (animation frames, LOD variants, damage states,
+embedded x86), not a plain mesh — regenerating one from a static OBJ would
+discard the behavioral stream.
+
+Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 
 | Result | Count | % |
 |--------|-------|---|
@@ -234,9 +341,9 @@ Tested against all 1275 `.SH` files from `FA_2.LIB`:
 | x86-only geometry (no OBJ output) | 65 | 5.1% |
 | Parser crash / error | 0 | 0% |
 
-**x86-only files** are all procedural effects or complex models:
-`FIRE.SH`, `FLARE.SH`, `BULLET.SH`, `CHAFF.SH`, `CLOUD*.SH`, `CRATER.SH`,
-`DEBRIS.SH`, `EXP.SH`, `EJECT.SH`, `AC130.SH` (and variants), `CATGUY.SH`, etc.
+**x86-only files** are all procedural effects or complex models: `FIRE.SH`,
+`FLARE.SH`, `BULLET.SH`, `CHAFF.SH`, `CLOUD*.SH`, `CRATER.SH`, `DEBRIS.SH`,
+`EXP.SH`, `EJECT.SH`, `AC130.SH` (and variants), `CATGUY.SH`, etc.
 
 **Shadow models** (`*_S.SH`): flat ground silhouettes, Z=0, typically 6-20 faces.
 
@@ -251,106 +358,37 @@ Tested against all 1275 `.SH` files from `FA_2.LIB`:
 | F15E.SH | 8 (1x) | 387 | 42 | |
 | AC130.SH | 9 (2x) | 0 | 0 | (x86-only) |
 
-## Library API
+Further limitations: animation frames, LOD variants, and damage states are not
+distinguished — all geometry from the main sequential stream is emitted into a
+single OBJ.
 
-```cpp
-// lib/include/fx/sh.h
-namespace fx {
-struct ShVertex { float x, y, z; };
-struct ShFace {
-    uint8_t  color;
-    std::string texture;           // from last TextureFile before this face
-    std::vector<uint32_t> indices; // 0-based pool indices
-};
-struct ShInfo {
-    int   scale_raw;    // raw scale field (8 = 1 ft/unit)
-    float scale;        // multiplier: raw_coord * scale = feet
-    int   vert_count;
-    int   face_count;
-    float bbox[6];      // min_x min_y min_z max_x max_y max_z (feet)
-    std::vector<std::string> textures;
-};
-struct ShMesh {
-    float scale;
-    std::vector<ShVertex>    vertices;
-    std::vector<ShFace>      faces;
-    std::vector<std::string> textures;
-};
-ShInfo      sh_parse_info(const uint8_t* data, size_t size);
-ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);
-std::string sh_to_obj(const ShMesh& mesh);
-}
-```
+## Open Questions
 
-## fx commands
+### 1. Unk* opcode semantics
 
-```
-fx sh info   <file.SH>               # scale, bounding box, vertex/face count, textures
-fx sh unpack <file.SH> [-o out.obj]  # export Wavefront OBJ (with usemtl directives)
-```
+40+ opcodes have confirmed sizes (the parser walks every FA shape without
+error) but untraced behavior — the Unk06…UnkEE word-magic set, Unk38/UnkBC,
+and the unknown Face flag bits. Decoding them is the core of the Phase 5 SH
+engine-behavior work.
 
-The exported OBJ uses `mtllib shape.mtl` and `usemtl <texture_name>` directives when
-textures are present. A `.mtl` file is not written automatically -- create one manually
-if needed for rendering.
+*Status: open — re-static (#52)*
 
-## Known Limitations
+### 2. x86-embedded geometry regions
 
-- Faces embedded in x86 code blocks (65/1275 files) cannot be exported.
-- Animation frames, LOD variants, and damage states are not distinguished -- all
-  geometry from the main sequential stream is emitted into a single OBJ.
-- OBJ -> SH is not implemented (inverse is too complex given animation/LOD/damage states).
+65/1275 files drive some or all rendering through embedded x86 machine code
+(detected and skipped via the PtrToObjEnd/EndObject protocol). Extracting
+their geometry requires disassembling those regions and modeling what the
+engine executes.
 
-## Confirmed Engine Opcode Handlers (FA.EXE)
+*Status: open — re-static (#52)*
 
-Shape opcodes that branch on entity state are handled by FA.EXE functions. Confirmed from FA.SMS:
+## Related
 
-| VA | Symbol | Description |
-|----|--------|-------------|
-| `0x4D22D4` | `do_ifdestroyed` | Tests whether the entity is in destroyed state; skips or follows a conditional branch in the shape bytecode stream |
+**Formats:** [PIC](PIC.md) — `_`-prefixed skin textures referenced by
+`TextureFile`; [LIB](LIB.md) — container (FA_2.LIB ×1275); [PT](PT.md) —
+flight-model records whose `shadow_shape` field names the `_S.SH` shadow
+shapes.
 
-## .PTS Extension
-
-Community mod archives sometimes distribute aircraft shadow/crash shapes as `.PTS` files
-(e.g. `A10.PTS`) rather than the in-LIB convention of `A10_S.SH`. The binary format is
-identical — parse with the same SH parser. The `shadow_shape` ptr in the corresponding
-`.PT` file points to the `_S.SH` name; the `.PTS` rename is a distribution artifact only.
-
-## External Shape Editing (Community Tools)
-
-The community uses two tools in combination to edit `.SH` vertex geometry:
-
-- **FASHion** — a dedicated FA shape editor. It can only reposition individual vertices;
-  it cannot add or remove vertices, change face topology, or alter the overall mesh
-  structure. The rebuild operation overwrites the original file in place — always back up
-  before editing.
-- **SketchUp 8** — used as the 3D viewport. FASHion exports a vertex coordinate file
-  that SketchUp loads via a plugin; after adjustments the modified coordinates are
-  exported back and FASHion rebuilds the shape.
-
-**Typical workflow:**
-
-1. Unpack the target `.SH` from its `.LIB` with `fx lib unpack`.
-2. Open the `.SH` in FASHion; export the vertex file.
-3. Load into SketchUp 8 (install outside `Program Files` to avoid permissions issues).
-4. Reposition vertices as needed.
-5. Export from SketchUp; rebuild in FASHion → overwrites the `.SH`.
-6. Repack with `fx lib patch`.
-
-For bulk vertex edits (e.g. scaling an entire section), the community workflow converts
-the vertex file to a spreadsheet, applies transformations numerically, then reconverts
-before importing back into FASHion.
-
-SH files with x86-only geometry (65/1275 in FA — see extraction results above) cannot
-be edited with FASHion and require direct x86 disassembly for modification.
-
-## Applications
-
-Use `fx sh unpack` to export to Wavefront OBJ. There is no pack command — OBJ export
-is for inspection and reference. For geometry edits, use the FASHion + SketchUp 8
-community workflow described above.
-
-- **Blender** — free, cross-platform; best option for inspecting and measuring exported OBJ geometry
-- **MeshLab** — free, cross-platform; lightweight viewer with basic mesh statistics
-- **FASHion** — free, FA-specific; vertex repositioning only (see workflow above)
-- **SketchUp 8** — free (legacy version required by FASHion plugin); use alongside FASHion
-- **3ds Max** `$` — paid; full mesh editing if a pack command is added in future
+**Engine:** [renderer.md](../renderer.md) — the shape interpreter and
+rasterizer pipeline; [architecture.md](../architecture.md) — Phar Lap overlay
+loading.

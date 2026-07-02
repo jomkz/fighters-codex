@@ -40,10 +40,10 @@ NON_SPEC = {"README.md", "STATUS.md"}
 # Specs not yet restructured to the template (docs/spec-authoring.md). Each
 # conversion batch removes its tokens; the mechanism is deleted when empty.
 LEGACY = {
-    "11K", "AI", "BI", "BIN", "BRF", "CAM", "CB8", "CFG", "DAT", "DLG",
-    "ECM", "FNT", "GAS", "HGR", "HUD", "INF", "JT", "LAY", "M", "MC",
-    "MM", "MNU", "MT", "MUS", "NT", "OT", "P", "PAL", "PIC", "PT",
-    "PTS", "RAW", "RGN", "SEE", "SEQ", "SH", "SMS", "SSF", "T2", "TXT",
+    "11K", "AI", "BI", "BRF", "CAM", "CB8", "CFG", "DAT", "DLG",
+    "ECM", "FNT", "GAS", "HUD", "JT", "M", "MC",
+    "MNU", "MT", "MUS", "NT", "OT", "P", "PT",
+    "PTS", "RGN", "SEE", "SEQ", "SMS", "SSF", "TXT",
     "VDO", "XMI",
 }
 
