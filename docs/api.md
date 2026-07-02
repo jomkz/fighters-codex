@@ -42,7 +42,9 @@ const Entry*         ealib_find(const std::vector<Entry>& entries,
 // every platform: & * ? " < > | / \ : each become '_'
 std::string          ealib_safe_name(const char* name);
 
-// Extract one entry (decompress if decompress=true and flags=4)
+// Extract one entry (decompress if decompress=true and flags=4).
+// Decompressed-size claims above 64 MiB are rejected as malformed (empty
+// return) — the size prefix is attacker-controlled in a crafted archive
 std::vector<uint8_t> ealib_extract(const uint8_t* data, size_t size,
                                     const Entry& entry, bool decompress = true);
 

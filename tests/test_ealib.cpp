@@ -19,6 +19,36 @@ static std::vector<uint8_t> bytes(std::initializer_list<uint8_t> il) {
     return std::vector<uint8_t>(il);
 }
 
+// Single-entry LIB with arbitrary flags — ealib_build writes raw entries
+// only, so compressed fixtures are assembled by hand.
+static std::vector<uint8_t> make_lib_with_entry(const char* name, uint8_t flags,
+                                                const std::vector<uint8_t>& payload) {
+    std::vector<uint8_t> lib(7 + 18, 0);
+    memcpy(lib.data(), "EALIB", 5);
+    lib[5] = 1; // count = 1 (LE)
+    uint8_t* e = lib.data() + 7;
+    memcpy(e, name, std::min(strlen(name), (size_t)12));
+    e[13] = flags;
+    e[14] = 7 + 18; // offset (LE, fits in one byte)
+    lib.insert(lib.end(), payload.begin(), payload.end());
+    return lib;
+}
+
+// Mark Adler's blast.c example stream: litmode 0, dictbits 4, decompresses
+// to "AIAIAIAIAIAIA" (13 bytes)
+static const std::vector<uint8_t> dcl_example =
+    { 0x00, 0x04, 0x82, 0x24, 0x25, 0x8F, 0x80, 0x7F };
+
+// flags=4 payload: 4-byte LE EA decompressed-size prefix + DCL stream
+static std::vector<uint8_t> dcl_payload(uint32_t claimed_size) {
+    std::vector<uint8_t> p = {
+        (uint8_t)claimed_size, (uint8_t)(claimed_size >> 8),
+        (uint8_t)(claimed_size >> 16), (uint8_t)(claimed_size >> 24)
+    };
+    p.insert(p.end(), dcl_example.begin(), dcl_example.end());
+    return p;
+}
+
 // ---------------------------------------------------------------------------
 // ealib_read_dir â€” parsing
 // ---------------------------------------------------------------------------
@@ -109,6 +139,48 @@ TEST_CASE("ealib_extract returns correct data for each of multiple entries") {
     REQUIRE(ealib_extract(lib.data(), lib.size(), entries[0]) == a);
     REQUIRE(ealib_extract(lib.data(), lib.size(), entries[1]) == b);
     REQUIRE(ealib_extract(lib.data(), lib.size(), entries[2]) == c);
+}
+
+TEST_CASE("ealib_extract decompresses a flags==4 (PKWare DCL) entry") {
+    auto lib = make_lib_with_entry("dcl.bin", 4, dcl_payload(13));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+    REQUIRE(entries[0].flags == 4);
+
+    auto out = ealib_extract(lib.data(), lib.size(), entries[0]);
+    REQUIRE(std::string(out.begin(), out.end()) == "AIAIAIAIAIAIA");
+}
+
+TEST_CASE("ealib_extract rejects an implausible decompressed-size claim") {
+    // #168: the EA size prefix is attacker-controlled — a crafted archive
+    // claiming ~1.3 GiB must be rejected as malformed, not allocated.
+    auto lib = make_lib_with_entry("evil.bin", 4, dcl_payload(0x50000009u));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+
+    REQUIRE(ealib_extract(lib.data(), lib.size(), entries[0]).empty());
+}
+
+TEST_CASE("ealib_extract handles a zero decompressed-size claim") {
+    // #169: expected == 0 hands blast a null output buffer; the extraction
+    // must degrade to an empty payload without UB (verified by the sanitizer
+    // presets)
+    auto lib = make_lib_with_entry("zero.bin", 4, dcl_payload(0));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+
+    REQUIRE(ealib_extract(lib.data(), lib.size(), entries[0]).empty());
+}
+
+TEST_CASE("ealib_extract accepts a decompressed-size claim at the ceiling") {
+    // Exactly 64 MiB — the documented maximum plausible decompressed size.
+    // The prefix may overstate the actual output; extraction still succeeds.
+    auto lib = make_lib_with_entry("edge.bin", 4, dcl_payload(64u << 20));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+
+    auto out = ealib_extract(lib.data(), lib.size(), entries[0]);
+    REQUIRE(std::string(out.begin(), out.end()) == "AIAIAIAIAIAIA");
 }
 
 TEST_CASE("ealib_extract returns empty vector for out-of-bounds entry") {
