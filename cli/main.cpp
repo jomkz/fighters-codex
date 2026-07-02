@@ -29,10 +29,11 @@ static void print_usage() {
     puts("fx -- Fighters Codex\n");
     puts("Usage:  fx <command> <subcommand> [options]\n");
     puts("Library commands:");
-    puts("  fx lib ls     <file.LIB>");
-    puts("  fx lib unpack <file.LIB> [output_dir]");
-    puts("  fx lib pack   <dir>      <output.LIB>");
-    puts("  fx lib patch  <src.LIB>  <name> <file> <output.LIB>");
+    puts("  fx lib ls      <file.LIB>");
+    puts("  fx lib unpack  <file.LIB> [output_dir]");
+    puts("  fx lib extract <file.LIB> <NAME> [NAME ...] [-o output_dir]");
+    puts("  fx lib pack    <dir>      <output.LIB>");
+    puts("  fx lib patch   <src.LIB>  <name> <file> <output.LIB>");
     puts("");
     puts("Picture commands:");
     puts("  fx pic info   <file.PIC>");
