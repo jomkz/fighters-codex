@@ -1,16 +1,47 @@
-# NT — NPC / Vehicle Definition (.NT)
+---
+format: NT
+name: NPC Vehicle Definition
+extensions: [".NT"]
+family: BRF
+category: typedef
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/brf.cpp, lib/src/ot.cpp]
+  commands: [nt]
+  tests: [tests/test_brf.cpp]
+  fuzz: []
+  gui: [gui/src/editors/brf_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [BRF, JT, SH, OT, AI]
+---
 
-FA_2.LIB contains 84 .NT files. Each defines one non-player-controlled vehicle or unit type (tanks, ships, soldiers, SAM launchers, etc.).
+# NT — NPC Vehicle Definition (.NT)
 
-**Format:** Brent's Relocatable Format (plain text). NOT a Win32 PE DLL. File sizes after decompression vary (e.g. M1.NT=1805 bytes, ZSU23.NT=similar).
+FA_2.LIB contains 84 `.NT` files. Each defines one non-player-controlled
+vehicle or unit type (tanks, ships, soldiers, SAM launchers, etc.).
+[BRF](BRF.md) plain text (NOT a Win32 PE DLL); decompressed sizes vary (e.g.
+M1.NT = 1805 bytes).
 
-**Location:** FA_2.LIB | **Count:** 84
+## Tools
 
-**Related:** JT.md (weapons on hardpoints), SH.md (3D shapes), OT.md (static counterparts), AI.md / BI.md (AI system that drives _GVProc behavior)
+### fx
 
-## Structure
+```
+fx nt info   <file.NT>               # human-readable field dump
+fx nt unpack <file.NT> [-o out.txt]  # editable text
+fx nt pack   <in.txt>  -o out.NT     # write back (byte-identical)
+```
 
-Two-section structure: OBJ_TYPE (physical object base — same layout as JT/OT) followed by NPC_TYPE.
+## File Layout
+
+Plain text; BRF syntax (see [BRF.md](BRF.md)). Two-section structure: OBJ_TYPE
+(physical object base — same layout as JT/OT) followed by NPC_TYPE.
 
 ### Section 1: OBJ_TYPE
 
@@ -94,37 +125,13 @@ Two-section structure: OBJ_TYPE (physical object base — same layout as JT/OT) 
     end
 ```
 
-## Notes
-
-### AI Callbacks
-
-| Symbol | Used by |
-|--------|---------|
-| `_GVProc` | Ground vehicles (tanks, APCs, trucks, soldiers) |
-| `_SHIPProc` (likely) | Naval units |
-
 ### Hardpoints
 
-Each hardpoint references a .JT file as its default weapon type. `ammo count = 32767` indicates unlimited ammunition. Multiple hardpoints are indexed sequentially (`defaultTypeName0`, `defaultTypeName1`, ...).
+Each hardpoint references a .JT file as its default weapon type.
+`ammo count = 32767` indicates unlimited ammunition. Multiple hardpoints are
+indexed sequentially (`defaultTypeName0`, `defaultTypeName1`, ...).
 
-## File Inventory
-
-| Category | Examples |
-|----------|---------|
-| Tanks | M1, T72, T80, T90, TYPE69 |
-| APCs | M2, M113, BTR80, BMP2 |
-| AAA | ZSU23, ZSU57, M163 |
-| SAM launchers | SA2A, SA3, SA6, SA7, SA9, SA13-16, SA19, HAWK, ROLAND, MIM23, FIM92, HQ61 |
-| Ships | IOWA, KIROV, KIEV, OSCAR, NIMZ, SFLUSH, OLEKMA, TICON, KNOX, KRIVAK, SOVR, JIANC, JIANE, PMORN, SESHDW |
-| Vehicles | HUMVEE, TRUCK, LTRACK |
-| Air units | CYCL (helicopter), EJECT (ejection seat) |
-| Naval small | BARGE, CARGO, CARGO2, RBOAT, WASP, LCAC |
-| Personnel | SOLDIER, TROOPS, CATGUY |
-| Misc | SCUD, GCI, OILR, SACRAM, RUNNER |
-
-## Calibration
-
-### `obj_class` word — Confirmed values (full survey)
+### `obj_class` word — confirmed values (full survey)
 
 | Value | Class | Representative files |
 |-------|-------|---------------------|
@@ -133,26 +140,37 @@ Each hardpoint references a .JT file as its default weapon type. `ammo count = 3
 | `$400` | Armor / tank | BMP2, BTR80, M1, M113, M1975, M2, T72, T80, T90 |
 | `$800` | AAA | A_M1939, KS12, KS19, M163, M1939, ZIF31, ZSU23, ZSU57 |
 | `$1000` | SAM launcher | 2S6, ASA5, CHAP, FIM92, HAWK, MIS, ROLAND, SA2A, SA3, SA6, SA7, SA9, SA13–16 |
-| `$2000` | Naval vessel | BARGE, BUTLER, CARGO, CIM, CLEM, CYCL, FISHBT, IOWA, JIANC, JIANE, JUNK, KIEV, KIROV, KITT, KNOX, KRIVAK, LCAC, NIMZ, OILR, OLEKMA, OSCAR, PMORN, RBOAT, SACRAM, SARAN, SESHDW, SL100, SOVR, TICON, TICON, WASP |
+| `$2000` | Naval vessel | BARGE, BUTLER, CARGO, CIM, CLEM, CYCL, FISHBT, IOWA, JIANC, JIANE, JUNK, KIEV, KIROV, KITT, KNOX, KRIVAK, LCAC, NIMZ, OILR, OLEKMA, OSCAR, PMORN, RBOAT, SACRAM, SARAN, SESHDW, SL100, SOVR, TICON, WASP |
 
-`$40` (personnel) and ground structure `$100` are shared with OT files. Naval units (`$2000`) include CYCL (helicopter) — the game treats helicopters as naval-class objects. Aircraft fighter/bomber values (`$8000`, `$4000`) appear only in PT files.
+`$40` (personnel) and ground structure `$100` are shared with OT files. Naval
+units (`$2000`) include CYCL (helicopter) — the game treats helicopters as
+naval-class objects. Aircraft fighter/bomber values (`$8000`, `$4000`) appear
+only in PT files.
 
-The `_GVProc` proc symbol is shared across ground, AAA, SAM, and naval units; the proc likely dispatches internally on `obj_class`.
+The `_GVProc` proc symbol is shared across ground, AAA, SAM, and naval units;
+the proc is inferred to dispatch internally on `obj_class`.
 
-### Hardpoint flags — Confirmed patterns
+### Hardpoint flags — confirmed patterns
 
-All hardpoints have bit 3 (`$8`) set — this appears to be the "active weapon slot" marker.
+All hardpoints have bit 3 (`$8`) set — the "active weapon slot" marker.
 
 | Flag | Observed in | Interpretation |
 |------|-------------|---------------|
 | `$8` | All ground-unit hardpoints; majority of naval hardpoints | Standard weapon slot — present on all weapon types |
 | `$a` | Subset of naval hardpoints on ships with 4+ HPs | Bit 1 (`$2`) set in addition to bit 3: AI-guided weapon targeting active |
 
-Bit 1 (`$2`) is **confirmed** as the AI-guided targeting flag — **`NPCWeaponsProc` (GVProc draw handler, param_1=5)**. When iterating type-7 missile hardpoints, the handler checks `*data_ptr & 2`; if set, calls `PROJServiceWeapon` (AI targeting update) to compute intercept geometry for that hardpoint. Ships like IOWA and KIROV use `$a` on specific hardpoints (Phalanx, Sea Sparrow, AAA30) that the ship AI actively steers toward targets; SARAN and KRIVAK with only 3 hardpoints do not use the AI-guided path.
+Bit 1 (`$2`) is **confirmed** as the AI-guided targeting flag —
+`NPCWeaponsProc` (GVProc draw handler, param_1=5). When iterating type-7
+missile hardpoints, the handler checks `*data_ptr & 2`; if set, calls
+`PROJServiceWeapon` (AI targeting update) to compute intercept geometry for
+that hardpoint. Ships like IOWA and KIROV use `$a` on specific hardpoints
+(Phalanx, Sea Sparrow, AAA30) that the ship AI actively steers toward targets;
+SARAN and KRIVAK with only 3 hardpoints do not use the AI-guided path.
 
-SA2A has 6 hardpoints (launch tubes), all `$8`. Ships with 4 hardpoints mix `$8` and `$a` in varying ratios (e.g. IOWA 2+2, TICON 1+3).
+SA2A has 6 hardpoints (launch tubes), all `$8`. Ships with 4 hardpoints mix
+`$8` and `$a` in varying ratios (e.g. IOWA 2+2, TICON 1+3).
 
-### NPC_TYPE AI params — Confirmed (full survey)
+### NPC_TYPE AI params — confirmed (full survey)
 
 | Field | Confirmed range | Interpretation |
 |-------|-----------------|---------------|
@@ -172,9 +190,11 @@ Observed values by unit class:
 | Advanced SAM | 40 | 144 | 60 | SA2A, SA3, SA6 |
 | Naval vessel | 40 | 100 | 80 | IOWA, KIROV, most ships |
 
-`TRUCK.NT` (no weapons at all) and `M1.NT` share identical AI params (20 / 60 / 40) — confirming these fields drive general NPC movement and threat-response behavior rather than weapon accuracy alone.
+`TRUCK.NT` (no weapons at all) and `M1.NT` share identical AI params
+(20 / 60 / 40) — confirming these fields drive general NPC movement and
+threat-response behavior rather than weapon accuracy alone.
 
-### `ot_flags` dword — Observed NT patterns
+### `ot_flags` dword — observed NT patterns
 
 Full survey of all 84 NT files.
 
@@ -198,25 +218,48 @@ Full survey of all 84 NT files.
 
 | Bit | Mask | Label | Status | Notes |
 |-----|------|-------|--------|-------|
-| 0 | `$1` | Targetable | Confirmed | Absent on CATGUY (purely visual) and A_M1939 (zone marker) |
-| 4 | `$10` | Naval vessel | **Confirmed** — `FUN_0043df7b` | Naval-weapon gate: weapon type 3 requires this bit; absent on all ground vehicles. |
-| 5 | `$20` | Armed / valid combat target | **Confirmed** — `FUN_0043df7b` | Hard gate in targeting acquisition — entity with bit 5 clear is immediately rejected as a valid target. Absent on passive MULE/EJECT. |
-| 8 | `$100` | Has collideable oriented hull | **Confirmed** — `FUN_0042c9b0` | When set with non-zero heading, uses angle-based hit detection (`Rotate2`). Present on large ships; absent on small boats and ground vehicles. |
-| 9 | `$200` | Large hull with 3D-oriented bounding box | **Confirmed** — `FUN_0042c9b0` | Tested combined as `& 0x300` (bits 8+9): triggers full 3D bounding-box rotation (`MakeViewRotationMatrix`) for hit detection. Never set without bit 8. Large ships (carriers, oil rig, GCI); absent on standard destroyers/cruisers. |
-| 10 | `$400` | Civilian/light type | **Confirmed** — `_Reaction_12` (0x464040), `_MaskEvents_4` (0x463ea0) | Infantry (SOLDIER, RUNNER), small civilian craft (FISHBT, JUNK, RBOAT), CATGUY. Drives `_Reaction_12` and `_MaskEvents_4` event-system handlers; also toggles bay-door actuator. Shared semantic with OT bit 10. |
-| 11 | `$800` | Ground-mobile unit | **Confirmed** — `FUN_0042c9b0` | OBJ_TYPE+9 & 0x800 sets a ground-mobile state flag in targeting/collision resolver. Present on all ground vehicles; absent on naval vessels (carriers have it via extra bits). |
-| 15 | `$8000` | Flight deck present | **Confirmed** — `FUN_00425196` | When set, forces targeting category to 4 (flight deck special class). Also tested combined with bit 22 (`& 0x408000`). All carrier types (CLEM, KITT, NIMZ, KIEV, WASP). |
-| 18 | `$40000` | Fuel bar capacity doubler / conventional carrier | **Confirmed (fuel bar display)** | `*(uint*)(entity+1) & 0x40000` tested in two fuel bar display functions (`FUN_004558f0` area at line 45759; `FUN_00484e?? ` at line 104545): when set, `fuel_capacity = OBJ_TYPE+0x49_value × 2` for the bar scale. Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Original "arrestor-wire deck" label is inferred from distribution pattern only — carrier landing handler inline tests not confirmed. Actual confirmed effect: doubles the fuel bar capacity denominator so the bar correctly represents the larger fuel load of conventional carriers. |
-| 19 | `$80000` | NPC burst-size modifier A | **Confirmed** — `_PROJServiceWeapon@24` (0x4c4700) | Tested at `*(uint*)(pcVar11 + 0xa6) & 0x80000` in the weapon service loop. When set, a 25% chance (`_Percent_4(0x19)`) scales the burst-round count to `(75 + rand(50))%` of the base value — a high-burst probability path. Present on conventional carriers (CLEM, KITT, NIMZ, KIEV); consistent with high-cyclic defense weapons (Phalanx CIWS). |
-| 20 | `$100000` | NPC burst-size modifier B | **Confirmed** — `_PROJServiceWeapon@24` (0x4c4700) | Tested at `*(uint*)(pcVar11 + 0xa6) & 0x100000` in the same weapon service loop. When set (and bit 19 path not taken), a 75% chance (`_Percent_4(0x4b)`) scales burst-round count to `(50 + rand(100))%` of base — a medium-burst probability path. Present on VSTOL carrier WASP and hybrid KIEV. |
-| 22 | `$400000` | Prominent/large variant | **Confirmed** — `FUN_0042c9b0` | When set, collision geometry uses hit-point count of 16; also tested combined with bit 15. |
-| 25 | `$2000000` | Emplaced AA artillery | **Dead/reserved** (2026-05-19) | KS12 (85mm), KS19 (100mm), M1939 (37mm). No entity `ot_flags` bit 25 test found anywhere in FA.EXE full decompile. Only `_gamePrefs & 0x2000000` hits exist — confirmed as a player-preference missile-targeting assist flag (HUD weapon targeting code, line 5239 area), unrelated to entity type. No terrain overlay DLL exists in FA_1.LIB or FA_2.LIB. Bit is set but never consumed — likely a reserved flag from a scrapped feature. Label "Emplaced AA artillery" remains inferred from unit distribution only. |
-| 26 | `$4000000` | SA-2A fixed-site SAM — no post-kill evasion | **Confirmed** — `_GVEventProc` (0x473f50) | `DAT_0050d271 & 0x4000000` (entity+0x09 & 0x4000000). In the kill-hit path: if damage category bits `0x1e` are active AND bit 26 is NOT set, calls `FUN_00474570()` (creates evasion move command) + `_ImmediateService_0()`. Bit 26 set (SA-2A) skips this evasion branch — SA-2A does not attempt a post-kill dodge maneuver. SA2A only. |
+| 0 | `$1` | Targetable | confirmed | Absent on CATGUY (purely visual) and A_M1939 (zone marker) |
+| 4 | `$10` | Naval vessel | confirmed — `FUN_0043df7b` | Naval-weapon gate: weapon type 3 requires this bit; absent on all ground vehicles. |
+| 5 | `$20` | Armed / valid combat target | confirmed — `FUN_0043df7b` | Hard gate in targeting acquisition — entity with bit 5 clear is immediately rejected as a valid target. Absent on passive MULE/EJECT. |
+| 8 | `$100` | Has collideable oriented hull | confirmed — `FUN_0042c9b0` | When set with non-zero heading, uses angle-based hit detection (`Rotate2`). Present on large ships; absent on small boats and ground vehicles. |
+| 9 | `$200` | Large hull with 3D-oriented bounding box | confirmed — `FUN_0042c9b0` | Tested combined as `& 0x300` (bits 8+9): triggers full 3D bounding-box rotation (`MakeViewRotationMatrix`) for hit detection. Never set without bit 8. Large ships (carriers, oil rig, GCI); absent on standard destroyers/cruisers. |
+| 10 | `$400` | Civilian/light type | confirmed — `_Reaction_12` (0x464040), `_MaskEvents_4` (0x463ea0) | Infantry (SOLDIER, RUNNER), small civilian craft (FISHBT, JUNK, RBOAT), CATGUY. Drives the event-system handlers; also toggles bay-door actuator. Shared semantic with OT bit 10. |
+| 11 | `$800` | Ground-mobile unit | confirmed — `FUN_0042c9b0` | OBJ_TYPE+9 & 0x800 sets a ground-mobile state flag in targeting/collision resolver. Present on all ground vehicles; absent on naval vessels (carriers have it via extra bits). |
+| 15 | `$8000` | Flight deck present | confirmed — `FUN_00425196` | When set, forces targeting category to 4 (flight deck special class). Also tested combined with bit 22 (`& 0x408000`). All carrier types (CLEM, KITT, NIMZ, KIEV, WASP). |
+| 18 | `$40000` | Fuel bar capacity doubler / conventional carrier | confirmed (fuel bar display) | `*(uint*)(entity+1) & 0x40000` tested in two fuel bar display functions (`FUN_004558f0` area at line 45759; `FUN_00484e??` at line 104545): when set, `fuel_capacity = OBJ_TYPE+0x49_value × 2` for the bar scale. Present: CLEM, KITT, NIMZ, KIEV; absent on VSTOL-only WASP. Original "arrestor-wire deck" label is inferred from distribution pattern only — carrier landing handler inline tests not confirmed. Actual confirmed effect: doubles the fuel bar capacity denominator so the bar correctly represents the larger fuel load of conventional carriers. |
+| 19 | `$80000` | NPC burst-size modifier A | confirmed — `_PROJServiceWeapon@24` (0x4c4700) | Tested at `*(uint*)(pcVar11 + 0xa6) & 0x80000` in the weapon service loop. When set, a 25% chance (`_Percent_4(0x19)`) scales the burst-round count to `(75 + rand(50))%` of the base value — a high-burst probability path. Present on conventional carriers (CLEM, KITT, NIMZ, KIEV); consistent with high-cyclic defense weapons (Phalanx CIWS). |
+| 20 | `$100000` | NPC burst-size modifier B | confirmed — `_PROJServiceWeapon@24` (0x4c4700) | Tested at `*(uint*)(pcVar11 + 0xa6) & 0x100000` in the same weapon service loop. When set (and bit 19 path not taken), a 75% chance (`_Percent_4(0x4b)`) scales burst-round count to `(50 + rand(100))%` of base — a medium-burst probability path. Present on VSTOL carrier WASP and hybrid KIEV. |
+| 22 | `$400000` | Prominent/large variant | confirmed — `FUN_0042c9b0` | When set, collision geometry uses hit-point count of 16; also tested combined with bit 15. |
+| 25 | `$2000000` | Emplaced AA artillery | dead/reserved | KS12 (85mm), KS19 (100mm), M1939 (37mm). No entity `ot_flags` bit 25 test found anywhere in FA.EXE full decompile. Only `_gamePrefs & 0x2000000` hits exist — confirmed as a player-preference missile-targeting assist flag (HUD weapon targeting code, line 5239 area), unrelated to entity type. No terrain overlay DLL exists in FA_1.LIB or FA_2.LIB. Bit is set but never consumed — likely a reserved flag from a scrapped feature. Label "Emplaced AA artillery" remains inferred from unit distribution only. |
+| 26 | `$4000000` | SA-2A fixed-site SAM — no post-kill evasion | confirmed — `_GVEventProc` (0x473f50) | `DAT_0050d271 & 0x4000000` (entity+0x09 & 0x4000000). In the kill-hit path: if damage category bits `0x1e` are active AND bit 26 is NOT set, calls `FUN_00474570()` (creates evasion move command) + `_ImmediateService_0()`. Bit 26 set (SA-2A) skips this evasion branch — SA-2A does not attempt a post-kill dodge maneuver. SA2A only. |
 
 ### Proc symbols
 
 | Symbol | Observed in | Role |
 |--------|-------------|------|
 | `_GVProc` | M1, ZSU23, TRUCK, IOWA, KIROV | NPC AI dispatcher (shared across all categories) |
+| `_SHIPProc` | (inferred for naval units) | Not yet observed in a file; naval units surveyed so far use `_GVProc` |
 | `_PROJProc` | (via JT) | Projectile physics |
 
+## File Inventory
+
+| Category | Examples |
+|----------|---------|
+| Tanks | M1, T72, T80, T90, TYPE69 |
+| APCs | M2, M113, BTR80, BMP2 |
+| AAA | ZSU23, ZSU57, M163 |
+| SAM launchers | SA2A, SA3, SA6, SA7, SA9, SA13-16, SA19, HAWK, ROLAND, MIM23, FIM92, HQ61 |
+| Ships | IOWA, KIROV, KIEV, OSCAR, NIMZ, SFLUSH, OLEKMA, TICON, KNOX, KRIVAK, SOVR, JIANC, JIANE, PMORN, SESHDW |
+| Vehicles | HUMVEE, TRUCK, LTRACK |
+| Air units | CYCL (helicopter), EJECT (ejection seat) |
+| Naval small | BARGE, CARGO, CARGO2, RBOAT, WASP, LCAC |
+| Personnel | SOLDIER, TROOPS, CATGUY |
+| Misc | SCUD, GCI, OILR, SACRAM, RUNNER |
+
+All 84 live in FA_2.LIB.
+
+## Related
+
+**Formats:** [BRF](BRF.md) — family grammar; [JT](JT.md) — weapons on
+hardpoints; [SH](SH.md) — 3D shapes; [OT](OT.md) — static counterparts;
+[AI](AI.md) — the AI system that drives `_GVProc` behavior.

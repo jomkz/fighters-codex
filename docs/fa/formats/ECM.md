@@ -1,14 +1,46 @@
+---
+format: ECM
+name: Electronic Countermeasures Definition
+extensions: [".ECM"]
+family: BRF
+category: typedef
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/brf.cpp, lib/src/ot.cpp]
+  commands: [ecm]
+  tests: [tests/test_brf.cpp]
+  fuzz: []
+  gui: [gui/src/editors/brf_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [BRF, SEE, JT]
+---
+
 # ECM — Electronic Countermeasures Definition (.ECM)
 
-FA_2.LIB contains 30 .ECM files. Each defines the electronic warfare suite for one aircraft type (e.g. F15.ECM, AV8.ECM, B52.ECM). Loaded at runtime by the FA weapon/sensor system.
+FA_2.LIB contains 30 `.ECM` files. Each defines the electronic warfare suite
+for one aircraft type (e.g. F15.ECM, AV8.ECM, B52.ECM). [BRF](BRF.md) plain
+text (NOT a Win32 PE DLL); very small — F15.ECM decompresses to 352 bytes.
+Loaded at runtime by the FA weapon/sensor system.
 
-## Format
+## Tools
 
-Brent's Relocatable Format (plain text). NOT a Win32 PE DLL. Very small — F15.ECM decompresses to 352 bytes.
+### fx
 
-All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `string`, `end`. Labels use `:label_name`. Hex values use `$XX` prefix.
+```
+fx ecm info   <file.ECM>               # human-readable field dump
+fx ecm unpack <file.ECM> [-o out.txt]  # editable text
+fx ecm pack   <in.txt>   -o out.ECM    # write back (byte-identical)
+```
 
-## Structure
+## File Layout
+
+Plain text; BRF syntax (see [BRF.md](BRF.md)). Hex values use `$XX`.
 
 Full F15.ECM example:
 
@@ -19,11 +51,11 @@ Full F15.ECM example:
     word 0              ; quantity (0 = built-in; N = pod carrying capacity)
     byte $0             ; category (0 = built-in suite, 1 = external pod)
     word $1f0           ; ECM power level (0=none, $f0=partial, $1f0=full active jamming)
-    byte 30             ; effectiveness A  (variable — aircraft quality)
+    byte 30             ; effectiveness A  (variable — chaff)
     byte 35             ; band constant 1  (fixed across all ECM files)
     byte 95             ; band constant 2  (fixed)
     byte 24             ; band constant 3  (fixed)
-    byte 30             ; effectiveness B  (variable)
+    byte 30             ; effectiveness B  (variable — flare)
     byte 35             ; band constant 4  (fixed)
     byte 159            ; band constant 5  (fixed)
     byte 31             ; band constant 6  (fixed)
@@ -56,7 +88,8 @@ Full F15.ECM example:
 | $f0 | 240 | Radar-only active jammer | ALQ72 |
 | $1f0 | 496 | Radar + IR jammer | F14, F15, F22, B52, EA6, ALQ167 |
 
-**Power field is a bitmask** (confirmed via `@HARDFindJammer@4` at 0x00452EA0):
+**Power field is a bitmask** (confirmed via `@HARDFindJammer@4` at
+0x00452EA0):
 
 | Bit | Hex | Meaning |
 |-----|-----|---------|
@@ -64,13 +97,24 @@ Full F15.ECM example:
 | 5–7 | `0x0E0` | Unused — always set alongside bit 4 in active-radar ECM files; no function tests these bits individually |
 | 8 | `0x100` | IR jammer active |
 
-`@HARDFindJammer@4` iterates hardpoints of type 9 (ECM) and rejects pods where the seeker type does not match the active jammer bit: IR seekers need `0x100`, radar seekers need `0x10`. A pod with `$f0` = `0000 1111 0000` has bit 4 set (radar) but not bit 8 (no IR). A pod with `$0` passes neither check and functions as a passive dispenser only.
+`@HARDFindJammer@4` iterates hardpoints of type 9 (ECM) and rejects pods where
+the seeker type does not match the active jammer bit: IR seekers need `0x100`,
+radar seekers need `0x10`. A pod with `$f0` = `0000 1111 0000` has bit 4 set
+(radar) but not bit 8 (no IR). A pod with `$0` passes neither check and
+functions as a passive dispenser only.
 
-Bits 5–7 confirmed unused: exhaustive scan of all AND/TEST instructions in the ECM/jammer code range (0x452000–0x454000) found zero tests against these bits of the power word. They are set in all active-radar ECM files (`$f0` = bits 4–7; `$1f0` adds bit 8) but the engine dispatches exclusively on bits 4 and 8.
+Bits 5–7 confirmed unused: exhaustive scan of all AND/TEST instructions in the
+ECM/jammer code range (0x452000–0x454000) found zero tests against these bits
+of the power word. They are set in all active-radar ECM files (`$f0` = bits
+4–7; `$1f0` adds bit 8) but the engine dispatches exclusively on bits 4 and 8.
 
-### Effectiveness Bytes
+### Effectiveness Bytes — resolved
 
-The 9-byte block (BRF offsets +0x0A–+0x12) contains three **variable** effectiveness bytes interleaved with **six fixed jamming-geometry bytes** forming two groups of three (radar at +0x0B/+0x0C/+0x0D; IR at +0x0F/+0x10/+0x11). All roles confirmed via Ghidra (`HARDCanLoad` and related callers):
+The 9-byte block (BRF offsets +0x0A–+0x12) contains three **variable**
+effectiveness bytes interleaved with **six fixed jamming-geometry bytes**
+forming two groups of three (radar at +0x0B/+0x0C/+0x0D; IR at
++0x0F/+0x10/+0x11). All roles confirmed via Ghidra (`HARDCanLoad` and related
+callers):
 
 | Aircraft | eff_A (+0x0A) | eff_B (+0x0E) | eff_C (+0x12) | +0x17 (IR Pk) | ECM power |
 |---------|--------------|--------------|--------------|--------------|-----------|
@@ -81,11 +125,18 @@ The 9-byte block (BRF offsets +0x0A–+0x12) contains three **variable** effecti
 | ALE40 (chaff/flare) | 30 | 30 | 0 | 0 | $0 |
 | ALQ72 (radar jammer) | 0 | 0 | 30 | 0 | $f0 |
 
-**Byte 9 (+0x12) = radar jamming effectiveness** (confirmed). `_PROJHitChance@28` (0x004c3380) reads `ecm_ptr+0x12` when the shooter has a radar seeker (`missile+0xb4 == 3`): `Pk_final = (100 − eff_C) × Pk_base / 100`.
+- **+0x0A = chaff effectiveness** — confirmed via `_DAMAGEDoHit@12`; non-zero
+  means aircraft has chaff dispensers.
+- **+0x0E = flare effectiveness** — confirmed via `_DAMAGEDoHit@12`; non-zero
+  means aircraft has flare dispensers.
+- **+0x12 = radar jamming effectiveness** — confirmed via `_PROJHitChance@28`
+  (0x004c3380), read when the shooter has a radar seeker
+  (`missile+0xb4 == 3`): `Pk_final = (100 − eff_C) × Pk_base / 100`.
+- **+0x17 = IR jamming effectiveness** — same function reads `ecm_ptr+0x17`
+  for IR seekers (`missile+0xb4 == 2`).
 
-**Secondary byte (+0x17) = IR jamming effectiveness** (confirmed). Same function reads `ecm_ptr+0x17` for IR seekers (`missile+0xb4 == 2`).
-
-**Byte 1 (+0x0A) = chaff effectiveness; Byte 5 (+0x0E) = flare effectiveness** (confirmed). `_DAMAGEDoHit@12` (0x0040f970) case 9 reads these independently across three hit-probability bands when the player is hit:
+`_DAMAGEDoHit@12` (0x0040f970) case 9 reads the dispenser bytes independently
+across three hit-probability bands when the player is hit:
 
 ```c
 // 0–24%: active jammer hit — full lock break
@@ -96,26 +147,40 @@ if (entity[0x0A] != 0) { *(ecm_struct + 6) = 0; }
 if (entity[0x0E] != 0) { *(ecm_struct + 7) = 0; }
 ```
 
-ALE40 has eff_A=30 and eff_B=30 (both dispensers present); ALQ72 has eff_A=0 and eff_B=0 (active jammer only, no passive dispensers). ✓
+ALE40 has eff_A=30 and eff_B=30 (both dispensers present); ALQ72 has eff_A=0
+and eff_B=0 (active jammer only, no passive dispensers). ✓
 
-### Jammer Geometry Bytes (Confirmed)
+### Jammer Geometry Bytes — confirmed
 
-The six fixed bytes form two groups used by the jammer placement / seeker-defeat calculation:
+The six fixed bytes form two groups used by the jammer placement /
+seeker-defeat calculation:
 
 | Offset | Value | Group | Role |
 |--------|-------|-------|------|
-| +0x0B | 35 | Radar | Effectiveness-scaling parameter — passed directly to `PROJRetargetMissilesOnDevice` / `MPLaunchDevice` |
-| +0x0C | 95 | Radar | Jammer azimuth half-angle — passed as `95 << 8` (fixed-point) to `MakeObjRotationMatrix` param_2 |
-| +0x0D | 24 | Radar | Jammer elevation half-angle — passed as `24 << 8` (fixed-point) to `MakeObjRotationMatrix` param_3 |
-| +0x0F | 35 | IR | Effectiveness-scaling parameter — same role as +0x0B |
-| +0x10 | 159 | IR | Jammer azimuth half-angle — passed as `159 << 8` to `MakeObjRotationMatrix` param_2 |
-| +0x11 | 31 | IR | Jammer elevation half-angle — passed as `31 << 8` to `MakeObjRotationMatrix` param_3 |
+| `+0x0B` | 35 | Radar | Effectiveness-scaling parameter — passed directly to `PROJRetargetMissilesOnDevice` / `MPLaunchDevice` |
+| `+0x0C` | 95 | Radar | Jammer azimuth half-angle — passed as `95 << 8` (fixed-point) to `MakeObjRotationMatrix` param_2 |
+| `+0x0D` | 24 | Radar | Jammer elevation half-angle — passed as `24 << 8` (fixed-point) to `MakeObjRotationMatrix` param_3 |
+| `+0x0F` | 35 | IR | Effectiveness-scaling parameter — same role as +0x0B |
+| `+0x10` | 159 | IR | Jammer azimuth half-angle — passed as `159 << 8` to `MakeObjRotationMatrix` param_2 |
+| `+0x11` | 31 | IR | Jammer elevation half-angle — passed as `31 << 8` to `MakeObjRotationMatrix` param_3 |
 
-The radar group is selected when `cStack_29 == 3` (radar seeker); the IR group when `cStack_29 == 2` (IR seeker). Band codes 0x0C (radar) and 0x0D (IR) are passed to `GRAPHICAddDevice` as the jamming-band identifier.
+The radar group is selected when `cStack_29 == 3` (radar seeker); the IR group
+when `cStack_29 == 2` (IR seeker). Band codes 0x0C (radar) and 0x0D (IR) are
+passed to `GRAPHICAddDevice` as the jamming-band identifier.
 
-**`MakeObjRotationMatrix` confirmed** (from `PROJLaunchDevice` decompile): takes `(output_buf, azimuth_halfangle<<8, elevation_halfangle<<8, vertical_tilt)`. It computes the seeker's angular-bounds block (5 dwords) for cone-overlap testing. When vertical tilt is 0 (all game calls), it initialises symmetric ±azimuth / ±elevation bounds then calls `sincos` (sin/cos) and `FUN_004cf2d0` (rotation). The larger the half-angle byte, the wider the jammer coverage arc — IR (159/31) is much wider in azimuth than radar (95/24).
+**`MakeObjRotationMatrix` confirmed** (from `PROJLaunchDevice` decompile):
+takes `(output_buf, azimuth_halfangle<<8, elevation_halfangle<<8,
+vertical_tilt)`. It computes the seeker's angular-bounds block (5 dwords) for
+cone-overlap testing. When vertical tilt is 0 (all game calls), it initialises
+symmetric ±azimuth / ±elevation bounds then calls `sincos` (sin/cos) and
+`FUN_004cf2d0` (rotation). The larger the half-angle byte, the wider the
+jammer coverage arc — IR (159/31) is much wider in azimuth than radar (95/24).
 
-**Hypothesis disproven:** the original theory that these bytes encode RWR radar-band frequencies (L, S, C, X, Ka) is incorrect. They are jammer effectiveness and beam-geometry parameters, consistent across all 30 ECM files because they describe the jammer hardware characteristics, not aircraft-specific threat coverage.
+**Hypothesis disproven:** the original theory that these bytes encode RWR
+radar-band frequencies (L, S, C, X, Ka) is incorrect. They are jammer
+effectiveness and beam-geometry parameters, consistent across all 30 ECM files
+because they describe the jammer hardware characteristics, not
+aircraft-specific threat coverage.
 
 ## File Inventory
 
@@ -152,23 +217,10 @@ The radar group is selected when `cStack_29 == 3` (radar seeker); the IR group w
 | TU160.ECM | Blackjack |
 | YAK141.ECM | Freestyle |
 
-**Location:** FA_2.LIB | **Count:** 30
+All 30 live in FA_2.LIB.
 
-## Related Formats
+## Related
 
-- [SEE.md](SEE.md) — Seeker/sensor definitions; ECM degrades seeker performance
-- BRF.md — Aircraft definitions that reference ECM suites
-- JT.md — Weapon seekers that ECM jams
-
-## Calibration
-
-### Effectiveness byte semantics — Resolved
-
-- **+0x0A = chaff effectiveness**: confirmed via `_DAMAGEDoHit@12` — non-zero means aircraft has chaff dispensers.
-- **+0x0E = flare effectiveness**: confirmed via `_DAMAGEDoHit@12` — non-zero means aircraft has flare dispensers.
-- **+0x12 = radar jamming effectiveness**: confirmed via `_PROJHitChance@28`. Applied as `(100 − byte) × Pk / 100`.
-- **+0x17 = IR jamming effectiveness**: confirmed via `_PROJHitChance@28` for IR-guided weapons.
-
-### ECM power field (`word $1f0`) — Resolved
-
-`$1f0` is a **bitmask**. Bits 4 and 8 are the operative flags (confirmed via `@HARDFindJammer@4`). Bits 5–7 are unused padding. See the Power Levels table above.
+**Formats:** [BRF](BRF.md) — family grammar and the aircraft definitions that
+reference ECM suites; [SEE](SEE.md) — seeker/sensor definitions whose
+performance ECM degrades; [JT](JT.md) — weapon seekers that ECM jams.

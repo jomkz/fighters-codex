@@ -1,14 +1,51 @@
-# SEE — Seeker / Sensor Definition (.SEE)
+---
+format: SEE
+name: Seeker Sensor Definition
+extensions: [".SEE"]
+family: BRF
+category: typedef
+endianness: none
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "param byte at +0x08 and dual-mode flag at +0x05 inferred only"
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/brf.cpp, lib/src/ot.cpp]
+  commands: [see]
+  tests: [tests/test_brf.cpp]
+  fuzz: []
+  gui: [gui/src/editors/brf_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [BRF, JT, ECM]
+---
 
-FA_2.LIB contains 51 .SEE files. Each defines the sensor parameters for one seeker type — radar, infrared, targeting pod, or visual acquisition cone. Loaded at runtime by the FA weapon guidance and AI targeting system.
+# SEE — Seeker Sensor Definition (.SEE)
 
-## Format
+FA_2.LIB contains 51 `.SEE` files. Each defines the sensor parameters for one
+seeker type — radar, infrared, targeting pod, or visual acquisition cone.
+[BRF](BRF.md) plain text (NOT a Win32 PE DLL); F15R.SEE decompresses to 470
+bytes. Loaded at runtime by the FA weapon guidance and AI targeting system.
 
-Brent's Relocatable Format (plain text). NOT a Win32 PE DLL. F15R.SEE decompresses to 470 bytes.
+## Tools
 
-All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `string`, `end`. Labels use `:label_name`. Hex values use `$XX` prefix. Fixed-point/relative values use `^XXXXX` prefix.
+### fx
 
-## Structure
+```
+fx see info   <file.SEE>               # human-readable field dump
+fx see unpack <file.SEE> [-o out.txt]  # editable text
+fx see pack   <in.txt>   -o out.SEE    # write back (byte-identical)
+```
+
+## File Layout
+
+Plain text; BRF syntax (see [BRF.md](BRF.md)). Hex values use `$XX`;
+fixed-point/relative values use `^XXXXX`.
 
 ### F15R.SEE — Radar Seeker Example
 
@@ -18,15 +55,15 @@ All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `str
     ptr si_names
     word 0              ; seeker identifier / capability flags
     byte $0             ; seeker sub-type
-    byte 3              ; seeker type (0=visual, 1=IR, 2=radar active, 3=radar, ...)
-    byte $1             ; mode flags
-    byte 30             ; (param — likely acquisition time or track rate)
+    byte 3              ; seeker type (0=visual, 1=laser, 2=IR, 3=radar)
+    byte $1             ; mode flags (dual-mode enable — inferred, see Open Questions)
+    byte 30             ; param — likely acquisition time or track rate (unconfirmed)
     byte 0 ... byte 0   ; (4 bytes reserved/unused)
     ; --- Primary lobe ---
     word 10920          ; azimuth half-angle (≈ 60° at 182 units/°)
     word 10920          ; elevation half-angle
     dword ^0            ; min range
-    dword ^911400       ; max range (fixed-point internal units)
+    dword ^911400       ; max range (feet)
     dword $80000000     ; min heading error (sentinel = no limit)
     dword $7fffffff     ; max heading error (sentinel = no limit)
     ; --- Secondary lobe ---
@@ -48,8 +85,8 @@ All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `str
 ### PAVEKNF.SEE — Targeting Pod (AVQ-10 Pave Knife)
 
 - `word 425` — pod identifier / capability code
-- `byte 1` — seeker type (IR/EO)
-- Cone half-angles: `word 32767` (approximately 180° — omnidirectional field?)
+- `byte 1` — seeker type (laser)
+- Cone half-angles: `word 32767` (approximately 180° — omnidirectional)
 - Short max range: `^60760`
 - Both lobes identical
 - `si_names` contains display label strings (unlike aircraft radars)
@@ -62,11 +99,10 @@ All directives use the standard BRF syntax: `byte`, `word`, `dword`, `ptr`, `str
 - Elevation: `word 21840` (≈ 120°)
 - Empty `si_names` strings
 
-## Encoding
-
 ### Angle Encoding
 
-`word 16380 = 90°` (quarter circle), giving a resolution of 16380 / 90 = **182 units per degree**.
+`word 16380 = 90°` (quarter circle), giving a resolution of 16380 / 90 =
+**182 units per degree**.
 
 | word value | Degrees |
 |-----------|---------|
@@ -82,7 +118,9 @@ All values are half-angles; total cone coverage is double the stored value.
 
 ### Range Encoding
 
-`dword ^XXXXXX` uses the `^` (relative/fixed-point) prefix. **1 unit = 1 foot** (confirmed via cross-reference of multiple sensor files against published system ranges):
+`dword ^XXXXXX` uses the `^` (relative/fixed-point) prefix. **1 unit = 1
+foot** (confirmed via cross-reference of multiple sensor files against
+published system ranges):
 
 | File | Stored value | ÷ 6076 | Known range |
 |------|-------------|--------|-------------|
@@ -94,9 +132,13 @@ All values are half-angles; total cone coverage is double the stored value.
 | F4BR.SEE (APQ-72) | ^303800 | 50 nm | APQ-72 ~40–50 nm ✓ |
 | E3R.SEE (AWACS) | ^1215200 | 200 nm | E-3 ~200–250 nm ✓ |
 
-6076 ft = 1 nautical mile; divide any `^` range value by 6076 to get nm.
+6076 ft = 1 nautical mile; divide any `^` range value by 6076 to get nm. (An
+earlier 11400-units/nm hypothesis from F15R.SEE alone was incorrect; the
+per-foot calibration is consistent across 7 independent data points.
+F15R.SEE's `^911400` ≈ 150 nm represents maximum theoretical lobe extent under
+ideal conditions, not the pilot-selectable APG-63 range.)
 
-### Seeker Type Byte
+### Seeker Type Byte — confirmed
 
 | Value | Type | Evidence |
 |-------|------|----------|
@@ -105,31 +147,34 @@ All values are half-angles; total cone coverage is double the stored value.
 | `byte 2` | IR / EO | AIM9M.JT, AIM9X.JT, AGM65G.JT PROJ_TYPE seeker byte |
 | `byte 3` | Radar (active or semi-active) | F4BR.SEE (APQ-72), AV8R.SEE (Blue Fox), E3R.SEE (AWACS), AIM120.JT, AGM84A.JT |
 
-Type byte 1 (laser) confirmed: AV8L.SEE is the AV-8B Harrier laser designator pod; its primary lobe max range `^60760` = 10 nm matches TIALD laser pod operational range.
+Type byte 1 (laser) confirmed: AV8L.SEE is the AV-8B Harrier laser designator
+pod; its primary lobe max range `^60760` = 10 nm matches TIALD laser pod
+operational range.
 
 ### Sentinel Values
 
-- `dword $80000000` — minimum heading error sentinel: no lower limit (any heading error passes)
-- `dword $7fffffff` — maximum heading error sentinel: no upper limit (any heading error passes)
+- `dword $80000000` — minimum heading error sentinel: no lower limit (any
+  heading error passes)
+- `dword $7fffffff` — maximum heading error sentinel: no upper limit
 
-Confirmed via `_PROJInFOV@40` (0x004c2860): the heading error test explicitly bypasses the check when the sentinel values are present. A lobe with both sentinels set accepts any target heading relative to the sensor. Setting `word 32767` for both half-angles (`0x7FFF`) additionally triggers an unconditional pass that skips the angle check entirely — this is the PAVEKNF.SEE omnidirectional cone.
+Confirmed via `_PROJInFOV@40` (0x004c2860): the heading error test explicitly
+bypasses the check when the sentinel values are present. A lobe with both
+sentinels set accepts any target heading relative to the sensor. Setting
+`word 32767` for both half-angles (`0x7FFF`) additionally triggers an
+unconditional pass that skips the angle check entirely — this is the
+PAVEKNF.SEE omnidirectional cone.
 
-## Dual-Lobe Structure
+### Dual-Lobe Structure — resolved
 
-Each SEE file defines two detection lobes, each with independent azimuth/elevation half-angles, range limits, heading error limits, and probability of detection.
-
-**`byte $1` at offset 5** (after seeker type byte) appears to be a **dual-mode enable flag**:
-- `byte $1` set: F4BR.SEE (APQ-72), E3R.SEE (AWACS) — both have meaningfully different primary/secondary lobe parameters
-- `byte $0`: AV8L.SEE, AV8R.SEE — both lobes have the same range (lobes differ only in cone angle)
-
-For radar seekers with `byte $1`, the lobes appear to represent **search mode vs. track mode**:
+Each SEE file defines two detection lobes, each with independent
+azimuth/elevation half-angles, range limits, heading error limits, and
+probability of detection. Primary lobe = search mode; secondary lobe =
+track/lock mode:
 
 | File | Lobe 1 (primary / search) | Lobe 2 (secondary / track) |
 |------|--------------------------|---------------------------|
 | F4BR.SEE | 50 nm, 60° half-angle | 25 nm, 45° half-angle |
 | AV8R.SEE | 90 nm, 60° half-angle | 50 nm, 45° half-angle |
-
-Primary lobe is wider and longer-range (search); secondary lobe is narrower and shorter-range (lock-on/track zone). Exact trigger condition (what causes the engine to switch lobes) requires FA.EXE disassembly.
 
 ## File Inventory
 
@@ -144,7 +189,7 @@ Primary lobe is wider and longer-range (search); secondary lobe is narrower and 
 | AC130I.SEE | AC-130 Spectre (IR) |
 | AV8R.SEE | AV-8 Harrier (radar) |
 | AV8IR.SEE | AV-8 Harrier (IR) |
-| AV8L.SEE | AV-8 Harrier (laser?) |
+| AV8L.SEE | AV-8 Harrier (laser) |
 | B52R.SEE | B-52 Stratofortress |
 | E2R.SEE | E-2 Hawkeye |
 | E3R.SEE | E-3 Sentry (AWACS) |
@@ -204,54 +249,72 @@ Primary lobe is wider and longer-range (search); secondary lobe is narrower and 
 | VIS300.SEE | 300° arc |
 | VIS340.SEE | 340° arc |
 
-**Location:** FA_2.LIB | **Count:** 51
+All 51 live in FA_2.LIB.
 
-## Related Formats
+## Engine Notes
 
-- JT.md — PROJ_TYPE seeker section references SEE definitions
-- [ECM.md](ECM.md) — ECM degrades seeker performance against SEE parameters
-- BRF.md — Aircraft definitions reference radar SEE files
+### Search/track lobe dispatch — confirmed
 
-## Calibration
+The lobe-switch trigger was confirmed via `_PROJLock@24` (0x004c2f20) and
+`PROJServiceWeapon`.
 
-### Range unit — Resolved
-
-Range unit confirmed as **1 foot**. See table in the Range Encoding section above. Note: the earlier F15R.SEE hypothesis (11400 units/nm) was incorrect — it assumed APG-63 range is 80 nm when the stored value implies ~150 nm maximum lobe extent. The per-foot calibration is consistent across 7 independent data points.
-
-### Seeker type byte — Resolved
-
-Full enum confirmed. See Seeker Type Byte table above.
-
-### Dual-lobe semantics — Resolved
-
-Primary lobe = search mode; secondary lobe = track/lock mode. Trigger confirmed via `_PROJLock@24` (0x004c2f20) and `PROJServiceWeapon`:
-
-The engine maintains a **seeker session context struct** at fixed address `0x0050ce80`. The struct has a flags word at offset `+0xde` (`DAT_0050cf5e`) whose bits record the current lock state:
+The engine maintains a **seeker session context struct** at fixed address
+`0x0050ce80`. The struct has a flags word at offset `+0xde` (`DAT_0050cf5e`)
+whose bits record the current lock state:
 - `DAT_0050cf5e & 0x10000` — search lock active (partial bracket on HUD)
 - `DAT_0050cf5e & 0x20000` — track lock active (full bracket on HUD)
-- `DAT_0050cf5e & 0x100000` — radar on; required for track-lobe checks (set/cleared by player radar toggle, `FlightKey` case `0x52`)
+- `DAT_0050cf5e & 0x100000` — radar on; required for track-lobe checks
+  (set/cleared by player radar toggle, `FlightKey` case `0x52`)
 - `DAT_0050cf5e & 0x400` — seeker enabled (detectable flag)
 
-**Transition writer confirmed**: `PROJServiceWeapon` (outer guidance loop): after `_PROJLock@24` returns a lock, evaluates the angular error probabilistically against `target+0xe8`/`+0xea` thresholds:
-- Clears both bits: `DAT_0050cf5e & 0xfffcffff` (target out of cone or below threshold)
+**Transition writer confirmed**: `PROJServiceWeapon` (outer guidance loop):
+after `_PROJLock@24` returns a lock, evaluates the angular error
+probabilistically against `target+0xe8`/`+0xea` thresholds:
+- Clears both bits: `DAT_0050cf5e & 0xfffcffff` (target out of cone or below
+  threshold)
 - Sets `0x10000` when within the wider search-lock zone
 - Sets `0x20000` when within the tighter track-lock zone
 
-The projectile/entity's own flags at struct `+0xa6` select *which* lobe check applies:
-- `entity+0xa6 & 0x10000` set → `_PROJLock@24` calls search-lobe check (`PROJRadarIsOn`)
-- `entity+0xa6 & 0x20000` set (and `0x10000` clear) → calls track-lobe check (`FUN_004c31f0`)
+The projectile/entity's own flags at struct `+0xa6` select *which* lobe check
+applies:
+- `entity+0xa6 & 0x10000` set → `_PROJLock@24` calls search-lobe check
+  (`PROJRadarIsOn`)
+- `entity+0xa6 & 0x20000` set (and `0x10000` clear) → calls track-lobe check
+  (`FUN_004c31f0`)
 
-Both lobe-check functions receive the **seeker session context pointer** (`0x0050ce80`) and a timer-window parameter (`0x28` = 40 game ticks).
+Both lobe-check functions receive the seeker session context pointer
+(`0x0050ce80`) and a timer-window parameter (`0x28` = 40 game ticks).
 
-`PROJRadarIsOn` (search lobe, `0x004c2eb0`): when the seeker has not yet acquired (`ctx+0x10 & 0x80 == 0`), checks that the seeker is enabled (`ctx+0xde & 0x400`) and initialises a lock-hold timer at `ctx+0x11a` (`DAT_0050cf9a`) to `now + 40 ticks`. Once acquired (`+0x80` set), verifies the timer has not expired; if `ctx+0x11a ≤ now` the check fails and lock is dropped.
+`PROJRadarIsOn` (search lobe, `0x004c2eb0`): when the seeker has not yet
+acquired (`ctx+0x10 & 0x80 == 0`), checks that the seeker is enabled
+(`ctx+0xde & 0x400`) and initialises a lock-hold timer at `ctx+0x11a`
+(`DAT_0050cf9a`) to `now + 40 ticks`. Once acquired (`+0x80` set), verifies
+the timer has not expired; if `ctx+0x11a ≤ now` the check fails and lock is
+dropped.
 
-`FUN_004c31f0` (track lobe, `0x004c31f0`): identical timer logic, but when acquired additionally requires `ctx+0xde & 0x100000` (radar on). If radar is off, track check fails even if the timer is still valid.
+`FUN_004c31f0` (track lobe, `0x004c31f0`): identical timer logic, but when
+acquired additionally requires `ctx+0xde & 0x100000` (radar on). If radar is
+off, track check fails even if the timer is still valid.
 
-`_PROJInFOV@40` (`0x004c2860`) performs the range and heading-error comparison using the lobe selected by `param_3`:
+`_PROJInFOV@40` (`0x004c2860`) performs the range and heading-error comparison
+using the lobe selected by `param_3`:
 - `param_3 == 0` → primary lobe data (SEE offset `+0x0F`)
 - `param_3 != 0` → secondary lobe data (SEE offset `+0x23`)
 
-### F15R.SEE range calibration — Note
+## Open Questions
 
-`^911400` ÷ 6076 ≈ 150 nm. The APG-63 published FA range is ~80 nm at typical RCS; the stored value represents maximum theoretical lobe extent under ideal conditions, not the pilot-selectable radar range.
+### 1. Mode flag and parameter byte
 
+The `byte $1` at offset 5 (after the seeker type byte) is inferred to be a
+dual-mode enable flag — set on radars with meaningfully different search/track
+lobes (F4BR, E3R), clear where lobes differ only in cone angle (AV8L, AV8R) —
+and the following `byte 30` is inferred to be an acquisition-time or
+track-rate parameter. Neither has a traced consumer.
+
+*Status: open — re-static (#54)*
+
+## Related
+
+**Formats:** [BRF](BRF.md) — family grammar; [JT](JT.md) — PROJ_TYPE seeker
+sections reference SEE definitions and share the angle/range encodings;
+[ECM](ECM.md) — ECM degrades seeker performance against SEE parameters.

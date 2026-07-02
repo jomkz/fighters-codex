@@ -1,16 +1,51 @@
-# JT — Weapon / Ordnance Definition (.JT)
+---
+format: JT
+name: Weapon Ordnance Definition
+extensions: [".JT"]
+family: BRF
+category: typedef
+endianness: none
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "PROJ_TYPE bytes +0x50-0x54 and +0x5E-0x64 have zero FA.EXE xrefs (overlay DLL readers?)"
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/brf.cpp, lib/src/ot.cpp]
+  commands: [jt]
+  tests: [tests/test_brf.cpp]
+  fuzz: []
+  gui: [gui/src/editors/brf_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [BRF, SH, SEE, NT, OT]
+---
 
-FA_2.LIB contains 135 .JT files. Each defines one weapon/ordnance type (missiles, bombs, guns, rockets). Loaded at runtime by the FA object system.
+# JT — Weapon Ordnance Definition (.JT)
 
-**Format:** Brent's Relocatable Format (plain text). NOT a Win32 PE DLL. File sizes after decompression vary (e.g. AIM9M.JT=2775 bytes, GAU8.JT=similar).
+FA_2.LIB contains 135 `.JT` files. Each defines one weapon/ordnance type
+(missiles, bombs, guns, rockets). [BRF](BRF.md) plain text (NOT a Win32 PE
+DLL); decompressed sizes vary (e.g. AIM9M.JT = 2775 bytes). Loaded at runtime
+by the FA object system.
 
-**Location:** FA_2.LIB | **Count:** 135
+## Tools
 
-**Related:** SH.md (3D shapes), SEE.md (seeker definitions referenced in PROJ_TYPE), NT.md (NPC vehicles that carry weapons), OT.md (static objects), BRF.md (aircraft that carry weapons)
+### fx
 
-## Structure
+```
+fx jt info   <file.JT>               # human-readable field dump
+fx jt unpack <file.JT> [-o out.txt]  # editable text
+fx jt pack   <in.txt>  -o out.JT     # write back (byte-identical)
+```
 
-Two-section structure: OBJ_TYPE (physical object base) followed by PROJ_TYPE (projectile/seeker).
+## File Layout
+
+Plain text; BRF syntax (see [BRF.md](BRF.md)). Two-section structure: OBJ_TYPE
+(physical object base) followed by PROJ_TYPE (projectile/seeker).
 
 ### Section 1: OBJ_TYPE
 
@@ -107,25 +142,13 @@ Two-section structure: OBJ_TYPE (physical object base) followed by PROJ_TYPE (pr
     end
 ```
 
-## Notes
+Notes:
 
-- Gun rounds (e.g. GAU8.JT) use seeker mode byte=0 (unguided), wide cone angles (word 16380), and short ranges.
+- Gun rounds (e.g. GAU8.JT) use seeker mode byte=0 (unguided), wide cone
+  angles (word 16380), and short ranges.
 - Missiles use narrow cones and long ranges.
-- The `~` prefix (e.g. `~BLDR.JT`, `~MOOSE.JT`, `~MOTHB.JT`, `~VOMIT.JT`) indicates theater-specific or campaign-specific weapon variants.
-
-## File Inventory
-
-| Category | Examples |
-|----------|---------|
-| Missiles (IR/radar) | AIM-9M/X, AA-10/11/12, AM-39, R-530/550, MICA, HQ-61 |
-| Bombs | MK-82/84, GBU-10/28/29/30, FAB-250/500, PAVEWAY, CBU-87/89 |
-| Guns | GAU8, GAU12, GSH-23/30, M61, DEFA, ADEN, BK27 |
-| Rockets | LAU-10/61, B8, B13 |
-| SAM rounds | SA-2/3/6/7/9/13-16/19 |
-| Naval weapons | SSN-9, SEA_SPAR, ASROC |
-| Campaign variants | ~BLDR, ~MOOSE, ~MOTHB, ~VOMIT |
-
-## Calibration
+- The `~` prefix (e.g. `~BLDR.JT`, `~MOOSE.JT`, `~MOTHB.JT`, `~VOMIT.JT`)
+  indicates theater-specific or campaign-specific weapon variants.
 
 ### Warhead capability flags (`dword`)
 
@@ -138,11 +161,17 @@ Confirmed flags from cross-referencing weapon types:
 | MK-82 | `$22012` | Unguided bomb (AG) |
 | 20mm cannon round | `$0348c4` | Gun (AA + AG) |
 
-The flags dword is loaded as-is into the runtime missile entity at `missile+0xa6`. At launch, the engine OR-assigns runtime state bits into the same field:
-- `$1204f` (AIM-9M, AIM-120): bit 16 set → starts in search mode, transitions to 0x20000 on acquisition
-- `$2a06f` (AGM-65G): bit 17 set → starts in track mode (fire-and-forget, locked before launch)
+The flags dword is loaded as-is into the runtime missile entity at
+`missile+0xa6`. At launch, the engine OR-assigns runtime state bits into the
+same field:
+- `$1204f` (AIM-9M, AIM-120): bit 16 set → starts in search mode, transitions
+  to 0x20000 on acquisition
+- `$2a06f` (AGM-65G): bit 17 set → starts in track mode (fire-and-forget,
+  locked before launch)
 
-Confirmed bit roles from `_PROJLock@24` (0x004c2f20), `_PROJHitChance@28` (0x004c3380), `@HARDFindJammer@4`, `_DAMAGEDoHit@12` (0x0040f970), `_PROJMoveProc` (0x4c11b0), and `_PROJAdd_40`:
+Confirmed bit roles from `_PROJLock@24` (0x004c2f20), `_PROJHitChance@28`
+(0x004c3380), `@HARDFindJammer@4`, `_DAMAGEDoHit@12` (0x0040f970),
+`_PROJMoveProc` (0x4c11b0), and `_PROJAdd_40`:
 
 | Bit | Hex | Meaning | Evidence |
 |-----|-----|---------|---------|
@@ -168,16 +197,20 @@ else if ((warhead_flags & 0x01) != 0) → missile-hit sound (AIM-9M: 0x4f has bi
 else                                  → bomb-hit sound   (MK-82: 0x12 has neither)
 ```
 
-Bits 2–3 of the lower byte are present in consistent category-level patterns across all 135 `.JT` files but no function in the full FA.EXE decompile or any analyzed overlay DLL tests them individually. Remaining inferred assignments:
+Bits 2–3 of the lower byte are present in consistent category-level patterns
+across all 135 `.JT` files but no function in the full FA.EXE decompile or any
+analyzed overlay DLL tests them individually. Remaining inferred assignments:
 
 | Bit | Hex | Inferred pattern | Notes |
 |-----|-----|-----------------|-------|
 | 2 | 0x000004 | Set for missiles, rockets, and gun rounds; clear for gravity bombs | Possible "active ordnance" marker |
 | 3 | 0x000008 | Set for guided missiles and gun rounds; clear for most unguided weapons | Possible "terminal-guidance capable" marker |
 
-Bits 1, 5, and 6 were previously listed as inferred — all three are now confirmed from `_PROJMoveProc` / `_PROJAdd_40` decompile (2026-05-19) and moved to the confirmed table above.
+Bits 1, 5, and 6 were previously listed as inferred — all three are now
+confirmed from `_PROJMoveProc` / `_PROJAdd_40` decompile and moved to the
+confirmed table above.
 
-### Seeker mode byte — Confirmed
+### Seeker mode byte — confirmed
 
 Matches the SEE seeker type byte:
 
@@ -190,50 +223,72 @@ Matches the SEE seeker type byte:
 
 ### Range unit in PROJ_TYPE
 
-The `^` range values in PROJ_TYPE seeker lobes use the same 1-foot unit as SEE files. Confirmed data points:
+The `^` range values in PROJ_TYPE seeker lobes use the same 1-foot unit as SEE
+files. Confirmed data points:
 - AIM9X lobe 1 max `^50000` = 8.2 nm; AIM-9X ~8 nm ✓
 - AIM120 lobe 1 max `^144000` = 23.7 nm; AIM-120A ~25 nm ✓
 - AGM84A lobe 1 max `^360000` = 59.3 nm; Harpoon ~60 nm ✓
 
 ### Agility / hit-probability bytes
 
-The PROJ_TYPE section base is at `missile+0xa6` in the runtime entity (confirmed entity base at `cjt` in the FA scratchpad; PROJ_TYPE base at `DAT_0050d30e`). Confirmed reads from `_PROJHitChance@28` (0x004c3380), `FUN_004c3960` (proximity fuze check), `_PROJMoveProc` (0x4c11b0), `_PROJEngineState_0` (0x4c1170), `FUN_004c17a0`, and `FUN_004c1660`:
+The PROJ_TYPE section base is at `missile+0xa6` in the runtime entity
+(confirmed entity base at `cjt` in the FA scratchpad; PROJ_TYPE base at
+`DAT_0050d30e`). Confirmed reads from `_PROJHitChance@28` (0x004c3380),
+`FUN_004c3960` (proximity fuze check), `_PROJMoveProc` (0x4c11b0),
+`_PROJEngineState_0` (0x4c1170), `FUN_004c17a0`, and `FUN_004c1660`:
 
 | PROJ_TYPE offset | Global addr | Role (confirmed) | Source |
 |-----------------|-------------|-----------------|--------|
-| +0x4F | `DAT_0050d35d` | Proximity fuze range (byte) — fuze triggers when `target_arm_size ≥ this`; below 50% = miss | `FUN_004c3960` |
-| +0x55 | `DAT_0050d363` | Min maneuver rate (short) — lower clamp in `PROJSpeed` velocity computation | `PROJSpeed` |
-| +0x57 | `DAT_0050d365` | Coast/glide speed — target speed during engine state 2 (coast phase, motor off) | `_PROJMoveProc` + `_PROJEngineState_0` |
-| +0x59 | `DAT_0050d367` | Boost phase end (ticks after launch) — transition from state 0 (boost) to state 1 (cruise) | `_PROJEngineState_0` |
-| +0x5B | `DAT_0050d369` | Motor burnout threshold (ticks after launch) — transition from state 1 (cruise) to state 2 (coast) | `_PROJEngineState_0` |
-| +0x5D | `DAT_0050d36b` | Max flight time / missile TTL (ticks) — missile self-destructs when elapsed ≥ this | `_PROJMoveProc` |
-| +0x65 | `DAT_0050d373` | Alt-guidance inner range threshold (byte) — if dist>>16 ≥ PROJ_TYPE+0x67 but < this, use inner speed | `FUN_004c1660` (warhead bit 5=1) |
-| +0x66 | `DAT_0050d374` | Alt-guidance inner range speed (byte) — `_CreateMove_52` speed at close range | `FUN_004c1660` |
-| +0x67 | `DAT_0050d375` | Alt-guidance outer range threshold (byte) — min distance for alt-guidance mode activation | `FUN_004c1660` |
-| +0x68 | `DAT_0050d376` | Alt-guidance outer range speed (byte) — `_CreateMove_52` speed at far range | `FUN_004c1660` |
-| +0x69 | `DAT_0050d377` | Seeker search angular spread half-width (angle units) — used in `_Rand_4` for scan jitter | `FUN_004c17a0` |
-| +0x6B | `DAT_0050d379` | Search reacquisition interval (ticks) — added to `_currentTime` to set next scan-angle update | `FUN_004c17a0` |
-| +0x6D | `DAT_0050d37b` | Active search window duration (ticks; 0 = disabled) — while elapsed < this, missile scans via random angles | `_PROJMoveProc` |
-| +0x6F | `DAT_0050d37d` | Maneuver rate percentage (byte) — `(this × input_rate) / 100`; upper bound in `PROJSpeed` | `PROJSpeed` |
-| +0x70 | `DAT_0050d37e` | Smoke trail flags (bits 0–6 = trail count; bit 7 = continuous smoke flag) | `_PROJMoveProc` |
-| +0x71 | `DAT_0050d37f` | Smoke trail param 1 (passed to `_GRAPHICAddSmokeAdder_40`) | `_PROJMoveProc` |
-| +0x72 | `DAT_0050d380` | Smoke trail param 2 | `_PROJMoveProc` |
-| +0x73 | `DAT_0050d381` | Smoke trail param 3 | `_PROJMoveProc` |
-| +0x74 | `DAT_0050d382` | Smoke trail param 4 | `_PROJMoveProc` |
-| +0x75 | `DAT_0050d383` | Pk at 0–25% of engagement range (byte) — Pk quartile table entry 0, read by `FUN_004c3890` | `_PROJHitChance@28` |
-| +0x76 | `DAT_0050d384` | Pk at 25–50% of engagement range (byte) — Pk quartile table entry 1 | `_PROJHitChance@28` |
-| +0x77 | `DAT_0050d385` | Pk at 50–75% of engagement range (byte) — Pk quartile table entry 2 | `_PROJHitChance@28` |
-| +0x78 | `DAT_0050d386` | Pk at 75–100% of engagement range (byte) — Pk quartile table entry 3 | `_PROJHitChance@28` |
-| +0x79 | `DAT_0050d387` | Approach angle tolerance byte | `_PROJHitChance@28` |
-| +0x7A | `DAT_0050d388` | Approach angle weight byte | `_PROJHitChance@28` |
-| +0x7B | `DAT_0050d389` | Angular error weight byte (left-shifted 3 for angle table lookup) | `_PROJHitChance@28` |
-| +0x7C | `DAT_0050d38a` | Counter-maneuver jam Pk reduction byte — lowers Pk by this % | `_PROJHitChance@28` |
-| +0x7D | `DAT_0050d38b` | Altitude/range modifier weight byte | `_PROJHitChance@28` |
-| +0x7E | `DAT_0050d38c` | Range gap modifier byte | `_PROJHitChance@28` |
-| +0x7F | `DAT_0050d38d` | Pk adjustment byte (applied as signed % of base Pk) | `_PROJHitChance@28` |
-| +0x80 | `DAT_0050d38e` | Maneuver agility Pk bonus (ushort) | `_PROJHitChance@28` |
+| `+0x4F` | `DAT_0050d35d` | Proximity fuze range (byte) — fuze triggers when `target_arm_size ≥ this`; below 50% = miss | `FUN_004c3960` |
+| `+0x55` | `DAT_0050d363` | Min maneuver rate (short) — lower clamp in `PROJSpeed` velocity computation | `PROJSpeed` |
+| `+0x57` | `DAT_0050d365` | Coast/glide speed — target speed during engine state 2 (coast phase, motor off) | `_PROJMoveProc` + `_PROJEngineState_0` |
+| `+0x59` | `DAT_0050d367` | Boost phase end (ticks after launch) — transition from state 0 (boost) to state 1 (cruise) | `_PROJEngineState_0` |
+| `+0x5B` | `DAT_0050d369` | Motor burnout threshold (ticks after launch) — transition from state 1 (cruise) to state 2 (coast) | `_PROJEngineState_0` |
+| `+0x5D` | `DAT_0050d36b` | Max flight time / missile TTL (ticks) — missile self-destructs when elapsed ≥ this | `_PROJMoveProc` |
+| `+0x65` | `DAT_0050d373` | Alt-guidance inner range threshold (byte) — if dist>>16 ≥ PROJ_TYPE+0x67 but < this, use inner speed | `FUN_004c1660` (warhead bit 5=1) |
+| `+0x66` | `DAT_0050d374` | Alt-guidance inner range speed (byte) — `_CreateMove_52` speed at close range | `FUN_004c1660` |
+| `+0x67` | `DAT_0050d375` | Alt-guidance outer range threshold (byte) — min distance for alt-guidance mode activation | `FUN_004c1660` |
+| `+0x68` | `DAT_0050d376` | Alt-guidance outer range speed (byte) — `_CreateMove_52` speed at far range | `FUN_004c1660` |
+| `+0x69` | `DAT_0050d377` | Seeker search angular spread half-width (angle units) — used in `_Rand_4` for scan jitter | `FUN_004c17a0` |
+| `+0x6B` | `DAT_0050d379` | Search reacquisition interval (ticks) — added to `_currentTime` to set next scan-angle update | `FUN_004c17a0` |
+| `+0x6D` | `DAT_0050d37b` | Active search window duration (ticks; 0 = disabled) — while elapsed < this, missile scans via random angles | `_PROJMoveProc` |
+| `+0x6F` | `DAT_0050d37d` | Maneuver rate percentage (byte) — `(this × input_rate) / 100`; upper bound in `PROJSpeed` | `PROJSpeed` |
+| `+0x70` | `DAT_0050d37e` | Smoke trail flags (bits 0–6 = trail count; bit 7 = continuous smoke flag) | `_PROJMoveProc` |
+| `+0x71` | `DAT_0050d37f` | Smoke trail param 1 (passed to `_GRAPHICAddSmokeAdder_40`) | `_PROJMoveProc` |
+| `+0x72` | `DAT_0050d380` | Smoke trail param 2 | `_PROJMoveProc` |
+| `+0x73` | `DAT_0050d381` | Smoke trail param 3 | `_PROJMoveProc` |
+| `+0x74` | `DAT_0050d382` | Smoke trail param 4 | `_PROJMoveProc` |
+| `+0x75` | `DAT_0050d383` | Pk at 0–25% of engagement range (byte) — Pk quartile table entry 0, read by `FUN_004c3890` | `_PROJHitChance@28` |
+| `+0x76` | `DAT_0050d384` | Pk at 25–50% of engagement range (byte) — Pk quartile table entry 1 | `_PROJHitChance@28` |
+| `+0x77` | `DAT_0050d385` | Pk at 50–75% of engagement range (byte) — Pk quartile table entry 2 | `_PROJHitChance@28` |
+| `+0x78` | `DAT_0050d386` | Pk at 75–100% of engagement range (byte) — Pk quartile table entry 3 | `_PROJHitChance@28` |
+| `+0x79` | `DAT_0050d387` | Approach angle tolerance byte | `_PROJHitChance@28` |
+| `+0x7A` | `DAT_0050d388` | Approach angle weight byte | `_PROJHitChance@28` |
+| `+0x7B` | `DAT_0050d389` | Angular error weight byte (left-shifted 3 for angle table lookup) | `_PROJHitChance@28` |
+| `+0x7C` | `DAT_0050d38a` | Counter-maneuver jam Pk reduction byte — lowers Pk by this % | `_PROJHitChance@28` |
+| `+0x7D` | `DAT_0050d38b` | Altitude/range modifier weight byte | `_PROJHitChance@28` |
+| `+0x7E` | `DAT_0050d38c` | Range gap modifier byte | `_PROJHitChance@28` |
+| `+0x7F` | `DAT_0050d38d` | Pk adjustment byte (applied as signed % of base Pk) | `_PROJHitChance@28` |
+| `+0x80` | `DAT_0050d38e` | Maneuver agility Pk bonus (ushort) | `_PROJHitChance@28` |
 
-**Engine state machine** (`_PROJEngineState_0` @ 0x4c1170, called from `_PROJMoveProc` when warhead bit 6 is set):
+## File Inventory
+
+| Category | Examples |
+|----------|---------|
+| Missiles (IR/radar) | AIM-9M/X, AA-10/11/12, AM-39, R-530/550, MICA, HQ-61 |
+| Bombs | MK-82/84, GBU-10/28/29/30, FAB-250/500, PAVEWAY, CBU-87/89 |
+| Guns | GAU8, GAU12, GSH-23/30, M61, DEFA, ADEN, BK27 |
+| Rockets | LAU-10/61, B8, B13 |
+| SAM rounds | SA-2/3/6/7/9/13-16/19 |
+| Naval weapons | SSN-9, SEA_SPAR, ASROC |
+| Campaign variants | ~BLDR, ~MOOSE, ~MOTHB, ~VOMIT |
+
+All 135 live in FA_2.LIB.
+
+## Engine Notes
+
+**Engine state machine** (`_PROJEngineState_0` @ 0x4c1170, called from
+`_PROJMoveProc` when warhead bit 6 is set):
 
 ```c
 // Returns: 0 = boost, 1 = cruise (motor on), 2 = coast (motor off)
@@ -245,14 +300,23 @@ return 2;                                    // coast phase
 // PROJ_TYPE[+0x5D] = TTL: missile removed when elapsed ≥ this
 ```
 
-**Seeker scan mode** (enabled when `PROJ_TYPE[+0x6D] != 0` and target entity type == aircraft):
-The missile enters a search scan phase while elapsed flight time < `PROJ_TYPE[+0x6D]`. Each `PROJ_TYPE[+0x6B]` ticks, `FUN_004c17a0` generates a new random scan angle within ±`PROJ_TYPE[+0x69]` and applies it via `_ObjPlusAngleParm_8`. When elapsed ≥ `+0x6D`, scan angles are zeroed (passive flight until seeker acquires or TTL).
+**Seeker scan mode** (enabled when `PROJ_TYPE[+0x6D] != 0` and target entity
+type == aircraft): the missile enters a search scan phase while elapsed flight
+time < `PROJ_TYPE[+0x6D]`. Each `PROJ_TYPE[+0x6B]` ticks, `FUN_004c17a0`
+generates a new random scan angle within ±`PROJ_TYPE[+0x69]` and applies it
+via `_ObjPlusAngleParm_8`. When elapsed ≥ `+0x6D`, scan angles are zeroed
+(passive flight until seeker acquires or TTL).
 
-`FUN_004c3890` (called by `_PROJHitChance@28`) is the Pk range-interpolation function. It reads the engagement range reference at `PROJ_TYPE+0x31` (secondary lobe max range), divides it into quartiles, and linearly interpolates between the four Pk bytes at +0x75–0x78.
+`FUN_004c3890` (called by `_PROJHitChance@28`) is the Pk range-interpolation
+function. It reads the engagement range reference at `PROJ_TYPE+0x31`
+(secondary lobe max range), divides it into quartiles, and linearly
+interpolates between the four Pk bytes at +0x75–0x78.
 
-`PROJSpeed` is the velocity-clamp function: applies `PROJ_TYPE+0x6F` % to an input angular rate, clamps between `PROJ_TYPE+0x55` minimum and OBJ_TYPE speed-limit fields at `entity+0x67/+0x6b`.
+`PROJSpeed` is the velocity-clamp function: applies `PROJ_TYPE+0x6F` % to an
+input angular rate, clamps between `PROJ_TYPE+0x55` minimum and OBJ_TYPE
+speed-limit fields at `entity+0x67/+0x6b`.
 
-**`_PROJProc` dispatch** (confirmed via `dumpAtForced`, 2026-05-19):
+**`_PROJProc` dispatch** (confirmed via `dumpAtForced`):
 
 ```c
 // _PROJProc @ 0x4c1f50
@@ -267,31 +331,16 @@ undefined1 * _PROJProc(undefined1 param_1) {
 }
 ```
 
-**Alternate guidance algorithm** (`FUN_004c1660` @ 0x4c1660, selected when warhead bit 5=1): reads the target entity position, computes distance, then selects guidance speed from a two-tier distance table (+0x65/+0x66 inner range, +0x67/+0x68 outer range) before calling `_CreateMove_52` in positional mode. Falls through to `FUN_004c1630` (standard pursuit mode) when distance is below the outer range threshold.
+**Alternate guidance algorithm** (`FUN_004c1660` @ 0x4c1660, selected when
+warhead bit 5=1): reads the target entity position, computes distance, then
+selects guidance speed from a two-tier distance table (+0x65/+0x66 inner
+range, +0x67/+0x68 outer range) before calling `_CreateMove_52` in positional
+mode. Falls through to `FUN_004c1630` (standard pursuit mode) when distance is
+below the outer range threshold.
 
-**Remaining gap — confirmed not used in FA.EXE:**
-
-Full exhaustive search (Ghidra GUI, 2026-05-20): all four PROJ proc types decompiled
-(`_PROJMoveProc`, `_PROJEventProc`, `_PROJDamageProc`, guidance proc at `LAB_004c1f90`),
-all reachable sub-functions checked, and Ghidra xref on each gap global address — all returned
-zero references. These bytes are not accessed by any code in FA.EXE.
-
-| PROJ_TYPE offset | Global addr | Status |
-|-----------------|-------------|--------|
-| `+0x50` | `DAT_0050d35e` | Zero xrefs in FA.EXE |
-| `+0x51` | `DAT_0050d35f` | Zero xrefs in FA.EXE |
-| `+0x52` | `DAT_0050d360` | Zero xrefs in FA.EXE |
-| `+0x53` | `DAT_0050d361` | Zero xrefs in FA.EXE |
-| `+0x54` | `DAT_0050d362` | Not in `_PROJMoveProc` |
-| `+0x56` | `DAT_0050d364` | Not in `_PROJMoveProc` — may be high byte of `+0x55` (short) |
-| `+0x58` | `DAT_0050d366` | Not in `_PROJMoveProc` — may be high byte of `+0x57` (short) |
-| `+0x5A` | `DAT_0050d368` | Not in `_PROJMoveProc` — may be high byte of `+0x59` (short) |
-| `+0x5C` | `DAT_0050d36a` | Not in `_PROJMoveProc` — may be high byte of `+0x5B` (short) |
-| `+0x5E`–`+0x64` | `DAT_0050d36c`–`DAT_0050d372` | Not in `_PROJMoveProc` — check `FUN_004c1630` |
-
-**Physics scratchpad (`0x50CE80`–`0x50D267`):** A separate fixed-address block preceding the
-entity struct (`cjt` base `0x50D268`) holds per-tick missile motion state. Key globals confirmed
-from `_PROJMoveProc` full decompile:
+**Physics scratchpad (`0x50CE80`–`0x50D267`):** a separate fixed-address block
+preceding the entity struct (`cjt` base `0x50D268`) holds per-tick missile
+motion state. Key globals confirmed from `_PROJMoveProc` full decompile:
 
 | Global | Role |
 |--------|------|
@@ -307,7 +356,7 @@ from `_PROJMoveProc` full decompile:
 | `DAT_0050cf84` | Seeker scan elevation angle (passed to `@ObjPlusAngleParm@8`) |
 | `DAT_0050cf86` | Guidance update timer — next scheduled scan angle update (compared to `_currentT`) |
 
-**Sub-functions checked (Ghidra GUI, 2026-05-20) — all are one-liners, no gap field reads:**
+**Sub-functions checked (all are one-liners, no gap field reads):**
 
 | Function | Address | Body |
 |----------|---------|------|
@@ -316,16 +365,9 @@ from `_PROJMoveProc` full decompile:
 | `FUN_004c1720` | `0x4c1720` | `_CreateMove@52(&DAT_0050ceb8, 0, 1, heading, 1, pitch, 1, roll, 1, 0, 8, 0x10, 0x7fff)` — lock handler, uses missile own angles |
 | `FUN_004c1760` | `0x4c1760` | `_CreateMove@52(&DAT_0050ceb8, 0, 1, _sunAngle, 1, az, 1, roll, 1, 0, 8, 0x10, 0x7fff)` — acquisition, sun-angle homing |
 
-**Conclusion:** The scattered gap bytes `+0x56`/`+0x58`/`+0x5A`/`+0x5C` are the high bytes of the
-confirmed short fields immediately preceding them (`+0x55`/`+0x57`/`+0x59`/`+0x5B`) — not
-independent fields. The block `+0x50`–`+0x54` and isolated range `+0x5E`–`+0x64` have zero xrefs
-in all of FA.EXE — no missile code, no BRF code, no generic entity loop touches them. These bytes
-are either dead/unused fields from an earlier engine version, or are read exclusively by overlay
-DLLs. Semantics cannot be determined from FA.EXE alone.
-
-### Confirmed entity offsets 0xF0–0x16F (from DumpPROJDispatch run)
-
-The entity-relative offsets around the PROJ_TYPE base (`missile+0xa6`) were confirmed by scanning entity+0xF0–0x114:
+**Confirmed entity offsets 0xF0–0x16F (from DumpPROJDispatch run):** the
+entity-relative offsets around the PROJ_TYPE base (`missile+0xa6`) were
+confirmed by scanning entity+0xF0–0x114:
 
 | Runtime offset | Role (confirmed) |
 |----------------|-----------------|
@@ -340,3 +382,41 @@ The entity-relative offsets around the PROJ_TYPE base (`missile+0xa6`) were conf
 | `entity+0x114` | Init handle |
 | `entity+0x16F` | HUD state flags (also `DAT_0050cfef` = player entity + 0x16F per HUD.md) |
 
+## Open Questions
+
+### 1. PROJ_TYPE bytes with zero FA.EXE xrefs
+
+Full exhaustive search (Ghidra GUI): all four PROJ proc types decompiled
+(`_PROJMoveProc`, `_PROJEventProc`, `_PROJDamageProc`, guidance proc at
+`LAB_004c1f90`), all reachable sub-functions checked, and Ghidra xref on each
+gap global address — all returned zero references:
+
+| PROJ_TYPE offset | Global addr | Status |
+|-----------------|-------------|--------|
+| `+0x50` | `DAT_0050d35e` | Zero xrefs in FA.EXE |
+| `+0x51` | `DAT_0050d35f` | Zero xrefs in FA.EXE |
+| `+0x52` | `DAT_0050d360` | Zero xrefs in FA.EXE |
+| `+0x53` | `DAT_0050d361` | Zero xrefs in FA.EXE |
+| `+0x54` | `DAT_0050d362` | Not in `_PROJMoveProc` |
+| `+0x56` | `DAT_0050d364` | Not in `_PROJMoveProc` — may be high byte of `+0x55` (short) |
+| `+0x58` | `DAT_0050d366` | Not in `_PROJMoveProc` — may be high byte of `+0x57` (short) |
+| `+0x5A` | `DAT_0050d368` | Not in `_PROJMoveProc` — may be high byte of `+0x59` (short) |
+| `+0x5C` | `DAT_0050d36a` | Not in `_PROJMoveProc` — may be high byte of `+0x5B` (short) |
+| `+0x5E`–`+0x64` | `DAT_0050d36c`–`DAT_0050d372` | Not in `_PROJMoveProc` — check `FUN_004c1630` |
+
+The scattered gap bytes `+0x56`/`+0x58`/`+0x5A`/`+0x5C` are the high bytes of
+the confirmed short fields immediately preceding them (`+0x55`/`+0x57`/
+`+0x59`/`+0x5B`) — not independent fields. The block `+0x50`–`+0x54` and
+isolated range `+0x5E`–`+0x64` have zero xrefs in all of FA.EXE — no missile
+code, no BRF code, no generic entity loop touches them. These bytes are either
+dead/unused fields from an earlier engine version, or are read exclusively by
+overlay DLLs. Closing this requires scanning the overlay DLL corpus for
+readers.
+
+*Status: open — re-static (#54)*
+
+## Related
+
+**Formats:** [BRF](BRF.md) — family grammar; [SH](SH.md) — 3D shapes;
+[SEE](SEE.md) — seeker definitions referenced in PROJ_TYPE; [NT](NT.md) — NPC
+vehicles that carry weapons; [OT](OT.md) — static objects.

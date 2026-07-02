@@ -1,14 +1,44 @@
-# Aircraft Screen Assets (.PTS)
+---
+format: PTS
+name: Aircraft Screen Assets
+extensions: [".PTS"]
+category: ui-overlay
+endianness: little
+spec:
+  status: complete
+codec:
+  direction: none
+  issue: 108
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: [BRF, PIC, HUD]
+---
 
-FA_2.LIB contains 37 `.PTS` files (e.g. `A4E.PTS`, `F22.PTS`). Each supplies the screen asset references for one aircraft type — primarily the aircraft icon shown in the hangar and selection screens. Each is a **Win32 PE DLL** loaded at runtime.
+# PTS — Aircraft Screen Assets (.PTS)
 
-## Content
+FA_2.LIB contains 37 `.PTS` files (e.g. `A4E.PTS`, `F22.PTS`). Each supplies
+the screen asset references for one aircraft type — primarily the aircraft
+icon shown in the hangar and selection screens. Each is a **Win32 PE DLL**
+loaded at runtime; all observed files decompress to 4608 bytes.
 
-String analysis confirms each `.PTS` file references exactly **one** PIC asset — the aircraft icon. No `.HUD`, `.FNT`, or `.5K`/`.11K` references are present in any `.PTS` file; those assets are loaded directly by the cockpit and HUD subsystems at flight time.
+(Unrelated to the community `.PTS` distribution rename of SH shadow shapes —
+see the note in [SH.md](SH.md).)
 
-The naming pattern `ICON<AC>.PIC` is consistent; some aircraft share an icon (e.g. `F22N.PTS` reuses `ICONF22.PIC`, all ASTOVL variants share `ICONAST.PIC`).
+## File Layout
 
-## Full Inventory (37 files)
+All multi-byte integers are little-endian.
+
+Win32 PE DLL. String analysis confirms each `.PTS` file references exactly
+**one** PIC asset — the aircraft icon. No `.HUD`, `.FNT`, or `.5K`/`.11K`
+references are present in any `.PTS` file; those assets are loaded directly by
+the cockpit and HUD subsystems at flight time.
+
+The naming pattern `ICON<AC>.PIC` is consistent; some aircraft share an icon
+(e.g. `F22N.PTS` reuses `ICONF22.PIC`, all ASTOVL variants share
+`ICONAST.PIC`).
+
+## File Inventory
 
 | PTS file | Icon PIC | Notes |
 |----------|----------|-------|
@@ -50,23 +80,16 @@ The naming pattern `ICON<AC>.PIC` is consistent; some aircraft share an icon (e.
 | YAK141.PTS | ICONY141.PIC | |
 | ~MOTH.PTS | II~MOTH.PIC | campaign variant moth icon |
 
-## Coverage
+All 37 live in FA_2.LIB.
 
-37 `.PTS` files vs 145+ `.PT` aircraft flight model files — most aircraft share a generic icon, and only those 37 have a dedicated `.PTS` entry. Variants of the same aircraft (ASTOVLE/F/V, F31E/F/V, RAFALEE, A7V) typically share their base aircraft's icon.
-
-## Format
-
-Win32 PE DLL. All observed `.PTS` files decompressed to **4608 bytes**.
-
-## Location
-
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 37 |
-
+**Coverage:** 37 `.PTS` files vs 145+ `.PT` aircraft flight model files — most
+aircraft share a generic icon, and only those 37 have a dedicated `.PTS`
+entry. Variants of the same aircraft (ASTOVLE/F/V, F31E/F/V, RAFALEE, A7V)
+typically share their base aircraft's icon.
 
 ## Related
 
-- [BRF.md](BRF.md) — `.PT` aircraft flight model records (one per aircraft)
-- [PIC.md](PIC.md) — `ICON<AC>.PIC` aircraft icon images
-- [HUD.md](HUD.md) — cockpit HUD definitions (may be referenced via `.PTS`)
+**Formats:** [BRF](BRF.md) — the `.PT` aircraft flight model records (one per
+aircraft); [PIC](PIC.md) — the `ICON<AC>.PIC` aircraft icon images;
+[HUD](HUD.md) — cockpit HUD definitions, loaded separately by the HUD
+subsystem (not referenced from `.PTS`).
