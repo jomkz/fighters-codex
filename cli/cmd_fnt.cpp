@@ -71,7 +71,7 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     {
         char csv_path[512];
         snprintf(csv_path, sizeof(csv_path), "%s/metrics.csv", out_dir);
-        FILE* fc = fopen(csv_path, "w");
+        FILE* fc = fopen(csv_path, "wb");  // binary: LF line endings on every platform
         if (!fc) { fprintf(stderr, "Cannot write: %s\n", csv_path); return 1; }
         fprintf(fc, "ascii,char,width,height\n");
         for (const fx::FntGlyph& g : fnt.glyphs) {

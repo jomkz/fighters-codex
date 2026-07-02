@@ -251,7 +251,8 @@ fx sms dump <FA.SMS> [-o out.csv]
 #### `fx sms dump <FA.SMS> [-o out.csv]`
 
 Export all 3,829 MSVC C++ mangled symbols from `FA.SMS` to a two-column CSV
-(`va,name`), sorted by virtual address. Without `-o`, prints to stdout.
+(`va,name`), sorted by virtual address. Without `-o`, prints to stdout. The CSV
+uses LF line endings on every platform (previously CRLF on Windows).
 
 ```
 > fx sms dump FA.SMS -o symbols.csv
@@ -407,7 +408,9 @@ Print glyph count and font metrics from a font overlay DLL.
 
 #### `fx fnt unpack <file.FNT> [-o output_dir]`
 
-Extract every glyph as an image into the output directory.
+Extract every glyph as an image into the output directory, plus a `metrics.csv`
+(`ascii,char,width,height`). The CSV uses LF line endings on every platform
+(previously CRLF on Windows).
 
 *See also: [fa/formats/FNT.md](fa/formats/FNT.md)*
 

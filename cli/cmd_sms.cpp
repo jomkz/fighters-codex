@@ -40,7 +40,7 @@ static int cmd_dump(int argc, char** argv) {
 
     FILE* out = stdout;
     if (out_path) {
-        out = fopen(out_path, "w");
+        out = fopen(out_path, "wb");  // binary: LF line endings on every platform
         if (!out) { fprintf(stderr, "Cannot write: %s\n", out_path); return 1; }
     }
 
