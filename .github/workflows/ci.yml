@@ -48,6 +48,21 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.preset }}
 
+  docs:
+    name: docs-status
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # Spec front-matter, template conformance, encoding/link hygiene, and
+      # STATUS.md currency (docs/spec-authoring.md). Stdlib-only — the
+      # runner's system python3 is all it needs.
+      - name: Checker self-test
+        run: python3 tools/check_status.py --self-test
+
+      - name: Check docs and status matrix
+        run: python3 tools/check_status.py --check
+
   macos:
     name: macos (informational)
     runs-on: macos-latest
