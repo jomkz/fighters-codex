@@ -54,6 +54,17 @@
             }
         },
         {
+            "name": "fuzz",
+            "displayName": "Linux Clang + libFuzzer coverage + ASan/UBSan (Debug)",
+            "inherits": "clang",
+            "cacheVariables": {
+                "FX_BUILD_FUZZERS": "ON",
+                "CMAKE_CXX_FLAGS": "-fsanitize=fuzzer-no-link,address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all",
+                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined",
+                "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=address,undefined"
+            }
+        },
+        {
             "name": "release",
             "displayName": "Linux Release (default compiler)",
             "inherits": "linux-base",
@@ -91,6 +102,11 @@
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         },
         {
+            "name": "fuzz",
+            "configurePreset": "fuzz",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
             "name": "release",
             "configurePreset": "release",
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
@@ -125,6 +141,15 @@
             "output": { "outputOnFailure": true },
             "execution": { "noTestsAction": "error" },
             "environment": { "UBSAN_OPTIONS": "print_stacktrace=1" },
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "fuzz",
+            "configurePreset": "fuzz",
+            "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" },
+            "environment": { "UBSAN_OPTIONS": "print_stacktrace=1" },
+            "filter": { "include": { "label": "^fuzz$" } },
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         },
         {

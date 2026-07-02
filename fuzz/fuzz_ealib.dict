@@ -1,0 +1,3 @@
+# EALIB container keywords (see docs/fa/formats/LIB.md)
+magic="EALIB"
+pxpk_header="PXPK"

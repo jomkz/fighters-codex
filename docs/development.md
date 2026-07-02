@@ -41,6 +41,7 @@ All builds go through [CMake presets](../CMakePresets.json):
 | `gcc` | Linux | g++ | Debug | `build/gcc/` |
 | `clang` | Linux | clang++ | Debug | `build/clang/` |
 | `asan-ubsan` | Linux | clang++ + ASan/UBSan | Debug | `build/asan-ubsan/` |
+| `fuzz` | Linux | clang++ + libFuzzer/ASan/UBSan | Debug | `build/fuzz/` |
 | `release` | Linux | default | Release | `build/release/` |
 | `msvc` | Windows | MSVC x64 | multi-config | `build/` |
 
@@ -102,6 +103,9 @@ the path embedders use (see [api.md](api.md)).
   test validates the consumer contract, not instrumentation).
 - **`cli_e2e_lib`**: round-trips a synthetic archive through the real `fx`
   binary — pack, ls, extract, unpack, patch — byte-comparing every output.
+- **Fuzz smoke runs** (`fuzz` preset only, label `fuzz`): each libFuzzer
+  harness fuzzes for 60 seconds from its committed seed corpus — see
+  [Fuzzing](#fuzzing).
 
 ### Real-asset integration mode (FX_FA_ROOT)
 
@@ -131,6 +135,37 @@ python3 tests/integration/fa_manifest.py generate \
 Hashes are facts about the game data; the assets themselves must never enter
 the repository (`*.LIB`, `*.PIC`, `*.PAL`, … are gitignored — keep it that way).
 
+## Fuzzing
+
+libFuzzer harnesses live in [fuzz/](../fuzz/) and build only under the `fuzz`
+preset (Clang; the whole tree gets coverage instrumentation plus ASan/UBSan):
+
+```bash
+cmake --preset fuzz
+cmake --build --preset fuzz --target fuzzers
+ctest --preset fuzz              # 60-second smoke run per harness
+```
+
+For a longer local session, run a harness directly against its seed corpus:
+
+```bash
+build/fuzz/fuzz/fuzz_ealib -max_total_time=600 \
+    -dict=fuzz/fuzz_ealib.dict fuzz/corpus/fuzz_ealib
+```
+
+To add a harness (the Phase 4 rollout, [epic #51](https://github.com/jomkz/fighters-codex/issues/51)):
+create `fuzz/<name>.cpp` implementing `LLVMFuzzerTestOneInput`, add
+`fx_add_fuzzer(<name>)` to `fuzz/CMakeLists.txt`, and commit tiny **synthetic**
+seeds under `fuzz/corpus/<name>/` — never game assets, and name them
+`seed-*.bin` (`*.LIB` and friends are gitignored by design). An optional
+`fuzz/<name>.dict` is picked up automatically. The ctest smoke run and the CI
+fuzz job need no further wiring.
+
+Findings are written as `crash-*`/`oom-*`/`timeout-*` reproducers (gitignored;
+in CI they upload as the `fuzz-findings` artifact). Minimize with the
+harness's `-minimize_crash=1`, then fix and add a Catch2 regression test
+before merging.
+
 ## Continuous Integration
 
 Every PR to `main` (and every push to it) runs the
@@ -143,6 +178,7 @@ Every PR to `main` (and every push to it) runs the
 | `clang` | ubuntu-latest | Linux Clang build + full test suite |
 | `asan-ubsan` | ubuntu-latest | Full suite under AddressSanitizer + UBSan — memory errors and UB in the binary parsers fail the PR |
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
+| `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
 | CodeQL | ubuntu-latest | Static analysis ([security-extended](../.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
 
 Every `uses:` in the workflows is pinned to a commit SHA (with the version in a

@@ -9,3 +9,7 @@
 *.json text eol=lf
 *.sha256 text eol=lf
 CMakeLists.txt text eol=lf
+
+# Fuzz corpus seeds are binary fixtures; their mostly-ASCII content must not
+# be caught by `text=auto` EOL normalization (it would corrupt them silently)
+fuzz/corpus/** -text
