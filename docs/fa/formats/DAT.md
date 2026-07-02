@@ -1,12 +1,32 @@
-# Multiplayer Network Configuration (NET.DAT)
+---
+format: DAT
+name: Multiplayer Network Configuration
+extensions: [".DAT"]
+variants: ["NET.DAT", "MODEM.DAT", "SERIAL.DAT"]
+category: system
+endianness: little
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "~1,203-byte region [0x8f9]-[0xdab] unmapped"
+codec:
+  direction: none
+  issue: 104
+  fixtures:
+    synthetic: false
+    real_manifest: false
+related: [CFG]
+---
 
-`NET.DAT`, `MODEM.DAT`, and `SERIAL.DAT` are binary files that store FA's multiplayer network
-settings. All three share the same 3,552-byte `CN_INFO` format and are read/written by the same
+# DAT — Multiplayer Network Configuration (.DAT)
+
+`NET.DAT`, `MODEM.DAT`, and `SERIAL.DAT` are binary files that store FA's
+multiplayer network settings — three loose files in the FA install directory,
+none packed into any LIB archive. All three share the same 3,552-byte
+`CN_INFO` format and are read/written by the same
 `CN_ReadConfig`/`CN_WriteConfig` functions.
-
-## Location
-
-Three loose files in the FA install directory — none packed into any LIB archive.
 
 | File | Purpose |
 |------|---------|
@@ -14,36 +34,27 @@ Three loose files in the FA install directory — none packed into any LIB archi
 | `MODEM.DAT` | Modem phone book (8 player name + phone number pairs) and COM port selection |
 | `SERIAL.DAT` | Serial (RS-232) COM port and baud rate preferences |
 
-## Observed Properties
-
-| Property | Value |
-|----------|-------|
-| Format   | Binary: 4-byte checksum + 3,548-byte `CN_INFO` struct (all three files) |
-| Size     | 3,552 bytes (0xDE0) each |
-| Encoding | Mostly null-padded; strings are null-terminated |
-
-## Known Content
-
-Each file is 3,552 bytes (4-byte checksum + 3,548-byte `CN_INFO` struct). The struct stores all
-transport configuration simultaneously (IPX, TCP/IP, serial, modem) in one unified layout — the
-active transport is selected at runtime by field `[0x54]`.
-
-**Session name is NOT stored in NET.DAT.** The multiplayer lobby session/game name comes from
-IP.CFG (`/n=` flag), which is passed to IP.EXE at launch. NET.DAT only holds transport
-configuration and the Janes.net online identity.
-
-**Transport union**: All transport configs coexist in one `CN_INFO` struct. The active transport is
-chosen at runtime by `[0x54]`; all sub-blocks are always persisted.
-
-**Phone book in MODEM.DAT**: `RunModemConfigurationScreen` reads/writes MODEM.DAT separately from
-NET.DAT. It manages 8 phone-book slots (player name + phone number pairs) stored in CN_INFO
-`[0xd0]`–`[0x5cf]`. In NET.DAT these bytes are always zeroed.
-
 ## File Layout
 
-All three files are written by `CN_WriteConfig` (0x47f930): a 4-byte checksum followed by the
-3,548-byte `CN_INFO` struct (`fwrite(param_1, 0xddc, 1, file)`). The filename is passed as a
-second parameter so the same function handles NET.DAT, MODEM.DAT, and SERIAL.DAT.
+All multi-byte integers are little-endian.
+
+Each file is 3,552 bytes (0xDE0): a 4-byte checksum + 3,548-byte `CN_INFO`
+struct, written by `CN_WriteConfig` (0x47f930) via
+`fwrite(param_1, 0xddc, 1, file)`. The filename is passed as a second
+parameter so the same function handles all three files. The struct stores all
+transport configurations simultaneously (IPX, TCP/IP, serial, modem) in one
+unified layout — the active transport is selected at runtime by field
+`[0x54]`; all sub-blocks are always persisted.
+
+**Session name is NOT stored in NET.DAT.** The multiplayer lobby session/game
+name comes from IP.CFG (`/n=` flag — see [CFG.md](CFG.md)), which is passed to
+IP.EXE at launch. NET.DAT only holds transport configuration and the Janes.net
+online identity.
+
+**Phone book in MODEM.DAT:** `RunModemConfigurationScreen` reads/writes
+MODEM.DAT separately from NET.DAT. It manages 8 phone-book slots (player name
++ phone number pairs) stored in CN_INFO `[0xd0]`–`[0x5cf]`. In NET.DAT these
+bytes are always zeroed.
 
 All file offsets below = CN_INFO struct offset + 4 (checksum header).
 
@@ -87,7 +98,7 @@ File off.  CN_INFO  Size  Field
                    ~~~~  [0x8f9]–[0xdab]: ~1,203 bytes — unknown (possibly padding / modem init strings)
 0x0DB0      [0xdac]   4   appIO callback function pointer — set by SER/MOD/NET_Initialize from CN_INFO;
                            used for status dialogs during connection setup
-0x0DB4      [0xdb0]  ?    CN_INFO_TCP sub-block start (added in v2; initialized by NetSetFactoryTCP)
+0x0DB4      [0xdb0]   ?   CN_INFO_TCP sub-block start (added in v2; initialized by NetSetFactoryTCP)
                            — first 12 bytes (3 dwords) zeroed/set via protocol vtable slot +0x66
 0x0DCA      [0xdc6]   4   local IPX/SPX network number — written by spxinit via getsockname()
 0x0DCE      [0xdca]   4   local IPX/SPX node address bytes 0–3 — written by spxinit via getsockname()
@@ -116,19 +127,21 @@ File off.  CN_INFO  Size  Field
 | v1, size 0xdb0 | Upgraded: same as v2 migration |
 | corrupt / missing | Factory defaults applied via `CN_SetFactoryDefaults` |
 
-## Confirmed Functions
+## Engine Notes
+
+### Confirmed Functions
 
 | Function | VA | Lines | Role |
 |----------|----|-------|------|
 | `CN_ReadConfig` | 0x47f7a0 | 98888 | Reads config file (NET.DAT / MODEM.DAT / SERIAL.DAT); populates CN_INFO; applies `_janesOnlineName` at `[4]` |
-| `CN_WriteConfig` | 0x47f930 | 99014 | Writes 4-byte checksum + 0xddc-byte CN_INFO to named config file (NET.DAT / MODEM.DAT / SERIAL.DAT) |
+| `CN_WriteConfig` | 0x47f930 | 99014 | Writes 4-byte checksum + 0xddc-byte CN_INFO to named config file |
 | `CN_SetFactoryDefaults` | 0x47f6d0 | 98785 | Zeroes CN_INFO; sets version=3; seeds `[4]` from `_janesOnlineName`; calls `NetSetFactoryTCP` |
 | `CfigChecksum` | 0x47f740 | 98851 | Checksums CN_INFO; length driven by version dword: 0xddc/0xdd8/0xdb0 |
 | `NetSetFactoryTCP` | 0x4b0700 | 139845 | Writes 3 zero dwords to TCP sub-block start via protocol vtable slot +0x66 |
 | `SER_Initialize` | 0x44cb20 | 57979 | Serial connection setup; reads `[0x54]`, `[0x60]`, `[0x64]` |
 | `SER_Initialize4` | 0x44c990 | 57902 | Maps `[0x60]` baud rate index → internal timing constant |
 | `MOD_InitPortAndModem` | 0x49a7d0 | — | Opens COM port at `[0x64]`; sends modem AT attention + init; called by MOD_FindModemAndInit |
-| `MOD_FindModemAndInit` | 0x49a850 | — | Scans `HKLM\System\CurrentControlSet\Services` for attached modem; writes autodetected COM port to `[0x64]`; calls MOD_InitPortAndModem |
+| `MOD_FindModemAndInit` | 0x49a850 | — | Scans `HKLM\System\CurrentControlSet\Services` for attached modem; writes autodetected COM port to `[0x64]` |
 | `MOD_FindModemAndInitPCMCIA` | 0x49a9b0 | — | Same as above but scans `HKLM\Enum\PCMCIA` for a PCMCIA modem |
 | `MOD_Initialize1` | 0x49ad00 | — | Tries MOD_InitPortAndModem (`[0xbc]`), then FindModemAndInit, then FindModemAndInitPCMCIA |
 | `MOD_DoConnect` | 0x49ad70 | — | Dials `[0x68]` phone number or waits for incoming call; decodes carrier speed → baud index |
@@ -150,13 +163,15 @@ File off.  CN_INFO  Size  Field
 | `FUN_004b23f0` | 0x4b23f0 | — | SAP packet dispatcher; handles type 0x2 (session ad), 0x14 (player ad), 0x18 (disconnect) |
 | `RunIPXOptionsDialog` | 0x493780 | — | IPX options UI; reads/writes direct-connect address at `[0xdd0]`–`[0xdda]` |
 
-## NET_PROTOCOL Struct (`spx_proto`)
+### NET_PROTOCOL Struct (`spx_proto`)
 
-The global `?spx_proto@@3UNET_PROTOCOL@@A` at `0x00501408` is the SPX protocol implementation
-selected by `NetSetProtocol` when the connection type is IPX/SPX. `_proto_ptr` points to it after
-`FUN_004b21f0` selects the matching entry from the protocol list at `PTR_PTR_0050c6cc`.
+The global `?spx_proto@@3UNET_PROTOCOL@@A` at `0x00501408` is the SPX protocol
+implementation selected by `NetSetProtocol` when the connection type is
+IPX/SPX. `_proto_ptr` points to it after `FUN_004b21f0` selects the matching
+entry from the protocol list at `PTR_PTR_0050c6cc`.
 
-The struct is a flat array of function pointers (C-style interface, not a C++ vtable):
+The struct is a flat array of function pointers (C-style interface, not a C++
+vtable):
 
 | Offset | Value | Function |
 |--------|-------|----------|
@@ -171,8 +186,22 @@ The struct is a flat array of function pointers (C-style interface, not a C++ vt
 | `+0x4e` | — | Post-query setup (called by `NET_StartQuery` after `sapopensocket`) |
 | `+0x5a` | — | Address extractor (called in SAP callback before `NETIsAddrLocal` check) |
 
-Source file (from error strings): `E:\atf95\multi\sap.cpp`, `E:\atf95\multi\ipx.cpp`
+Source file (from error strings): `E:\atf95\multi\sap.cpp`,
+`E:\atf95\multi\ipx.cpp`
+
+## Open Questions
+
+### 1. Region [0x8f9]–[0xdab]
+
+~1,203 bytes between the MAC/IPX hex string and the appIO callback pointer are
+unmapped — possibly padding or modem init strings; no traced accessor.
+
+*Status: open — re-static (#54)*
 
 ## Related
 
-- [CFG.md](CFG.md) — general game configuration file
+**Formats:** [CFG](CFG.md) — general game configuration (EA.CFG) and the
+IP.CFG launcher flags that carry the session name.
+
+**Engine:** [network.md](../network.md) — the full multiplayer protocol and
+transport documentation these files configure.

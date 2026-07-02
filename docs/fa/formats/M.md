@@ -1,10 +1,52 @@
-# Mission File (.M)
+---
+format: M
+name: Mission File
+extensions: [".M"]
+category: mission
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/mission.cpp]
+  commands: [mission]
+  tests: [tests/test_mission.cpp]
+  fuzz: []
+  gui: [gui/src/editors/mission_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [MM, MT, BRF]
+---
 
-## Overview
+# M — Mission File (.M)
 
-`.M` files define individual missions using a `[textFormat]` container with `[key value]`-style bracketed tokens. The related `.MM` theater map format is distinct — see [MM.md](MM.md).
+`.M` files define individual missions using a `[textFormat]` container with
+`[key value]`-style bracketed tokens — plain text, 517 files in FA_2.LIB. The
+related `.MM` theater map format is distinct — see [MM.md](MM.md).
 
-## File Structure
+## Tools
+
+### fx
+
+```
+fx mission info   <file.M>              # map name, time, object count
+fx mission unpack <file.M> [-o out.txt] # editable text
+fx mission pack   <in.txt>  -o out.M    # write back (byte-identical)
+```
+
+### Other Tools
+
+`.M` files require `fx mission unpack` → edit → `fx mission pack`. The
+companion `.MT` briefing files are plain ASCII and can be opened directly.
+
+- **VS Code** — free, cross-platform; multi-file search useful for tracking object names and map references across missions
+- **Notepad++** — free, Windows; lightweight for quick briefing text edits
+
+## File Layout
+
+Plain text; no binary fields.
 
 ```
 [textFormat]
@@ -26,8 +68,8 @@
 
 ### Token format
 
-- `[key value]` — single-line key-value pair; value may be a string, number, or space-
-  separated list
+- `[key value]` — single-line key-value pair; value may be a string, number,
+  or space-separated list
 - `[key\n ... \t]` — bracketed block: contents terminated by `\t]` on its own line
 - Blocks may be nested
 
@@ -62,13 +104,14 @@
 | `react` | reaction flags |
 | `searchDist` | detection range |
 
-Field list varies by object type; unknown fields are preserved verbatim on round-trip.
+Field list varies by object type; unknown fields are preserved verbatim on
+round-trip.
 
 ### Preferred target system
 
 Waypoints can designate a specific object as their attack target using
-`w_preferredTargetId2`. The value is the object's `alias` field encoded as a **negated
-unsigned 16-bit hex** value:
+`w_preferredTargetId2`. The value is the object's `alias` field encoded as a
+**negated unsigned 16-bit hex** value:
 
 ```
 hex_value = uint16_t(alias)      (equivalently: 0x10000 + alias, since alias is negative)
@@ -83,9 +126,9 @@ hex_value = uint16_t(alias)      (equivalently: 0x10000 + alias, since alias is 
 | −257 | `$feff` |
 | −288 | `$fee0` |
 
-The pattern continues linearly; alias −N = `$(10000 − N)` in hex. Up to 288 preferred
-target slots are supported (`$ffff` through `$fee0`). Does not apply to map objects or
-the player object.
+The pattern continues linearly; alias −N = `$(10000 − N)` in hex. Up to 288
+preferred target slots are supported (`$ffff` through `$fee0`). Does not apply
+to map objects or the player object.
 
 Example:
 ```
@@ -100,27 +143,13 @@ obj
 
 ## Round-Trip Notes
 
-- Parse → serialize produces byte-identical files for all 517 `.M` files in FA_2.LIB.
+- Parse → serialize produces byte-identical files for all 517 `.M` files in
+  FA_2.LIB; `tests/test_mission.cpp` asserts byte preservation.
 - Tab-indented blocks must use a real tab character, not spaces.
 - The `\t]` terminator is literally `<TAB>]` (not backslash-t).
 
-## fx commands
+## Related
 
-```
-fx mission info   <file.M>              # map name, time, object count
-fx mission unpack <file.M> [-o out.txt] # editable text
-fx mission pack   <in.txt>  -o out.M    # write back
-```
-
-## .MT — Mission Text / Briefing
-
-`.MT` files are plain ASCII companions to each `.M` file containing the mission briefing
-and debrief text displayed in-game. See [MT.md](MT.md) for the full format specification.
-
-## Applications
-
-`.M` files require `fx mission unpack` → edit → `fx mission pack`. `.MT` files
-are plain ASCII and can be opened directly.
-
-- **VS Code** — free, cross-platform; multi-file search useful for tracking object names and map references across missions
-- **Notepad++** — free, Windows; lightweight for quick briefing text edits
+**Formats:** [MM](MM.md) — the theater map format sharing the mission codec;
+[MT](MT.md) — plain ASCII briefing/debrief companion to each `.M` file;
+[BRF](BRF.md) — the `.OT`/`.PT` type definitions referenced by `type` fields.
