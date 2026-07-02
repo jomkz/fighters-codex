@@ -37,6 +37,7 @@ static void write_u16le(uint8_t* p, uint16_t v) {
 
 uint32_t audio_rate_from_ext(const std::string& ext) {
     std::string e = lower(ext);
+    if (e == ".22k") return 22050;
     if (e == ".11k") return 11025;
     if (e == ".5k")  return  5000;
     if (e == ".8k")  return  8000;
