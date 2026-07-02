@@ -10,21 +10,21 @@ implementation is the proof that a format is truly understood.
 
 **Supported games:**
 - Jane's Fighters Anthology (1998)
-- Advanced Tactical Fighters (1996) - Confirmation needed
-- U.S. Navy Fighters (1994) - Confirmation needed
+- Advanced Tactical Fighters (1996) - Confirmation needed ([verification pass planned](https://github.com/jomkz/fighters-codex/issues/57))
+- U.S. Navy Fighters (1994) - Confirmation needed ([verification pass planned](https://github.com/jomkz/fighters-codex/issues/57))
 
 **Documentation and research:**
 
-- **44 fully-documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; see [docs/fa/formats/](docs/fa/formats/README.md)
+- **44 documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; roughly half are fully closed, the rest carry tracked open questions on the [roadmap](docs/roadmap.md); see [docs/fa/formats/](docs/fa/formats/README.md)
 - **Engine architecture notes** — runtime environment, asset pipeline, physics model, renderer, AI bytecode interpreter, network protocol, and Win32 overlay DLL system; see [docs/fa/architecture.md](docs/fa/architecture.md)
 - **3,829 recovered C++ symbols** from FA.EXE and all overlay DLLs — organized by subsystem with demangled names and virtual addresses; see [docs/fa/symbols.md](docs/fa/symbols.md)
 - **Modding guides** — step-by-step recipes for textures, aircraft stats, missions, audio, and more; see [docs/fa/modding.md](docs/fa/modding.md)
 
 **Validation tools** *(proving the documentation by implementing it)*:
 
-- A **zero-dependency, statically-linked** `fx.exe` — round-trip codec coverage for all documented formats; if a format is in the docs, it can be unpacked and repacked
+- A **zero-dependency, statically-linked** `fx.exe` — byte-identical round-trip for the LIB, PIC, PAL, SEQ, audio, BRF-family, and mission codecs; inspect/decode support for most other documented formats. Closing the round-trip gap for every format (or documenting why a codec is one-way) is [Phase 4 of the roadmap](docs/roadmap.md)
 - A **graphical editor** `fx-gui.exe` — interactive codec validation against real game data; live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
-- A **static C++ library** (`fx_lib`) — all codecs in one linkable unit; embed in any host, script via ctypes, or link from C#
+- A **static C++ library** (`fx_lib`) — all codecs in one linkable unit, embeddable in any C++ host (it is what [fa-content](https://github.com/fighters-legacy/fa-content) builds on)
 - An **AIâ†’BI compiler** (`fx ai compile`) — the first working compiler for the Phar Lap PE bytecode format the game's AI interpreter loads; validates the complete AI bytecode spec
 - A **BI disassembler** (`fx bi dump`) — disassemble compiled `.BI` AI bytecode back to readable mnemonics, with cross-referenced label annotations and resolved `CALL_BY_NAME` targets
 
@@ -38,7 +38,7 @@ Reverse-engineering how these simulators squeezed so much out of mid-90s hardwar
 
 ## Platform requirements
 
-Both `fx.exe` and `fx-gui.exe` are **64-bit Windows binaries** and require Windows 7 or later.
+Both `fx.exe` and `fx-gui.exe` are currently **64-bit Windows binaries** and require Windows 7 or later. A full cross-platform port (Linux first-class, library → CLI → GUI) is Phases 1 and 3 of the [roadmap](docs/roadmap.md).
 
 Windows XP is not supported for three reasons: the build produces x64 PE only (standard XP is 32-bit); MSVC 2022+ dropped the XP-compatible toolset (`v141_xp`); and `std::filesystem` internally calls Vista-only APIs such as `GetFinalPathNameByHandleW`. Supporting XP would require downgrading to C++14, replacing `std::filesystem` with raw Win32 I/O, and using MSVC 2015 with the XP toolset — a significant regression for a negligible user base.
 
@@ -54,6 +54,7 @@ Pre-built Windows x64 binaries are on the [Releases](https://github.com/jomkz/fi
 
 ## Documentation
 
+- [docs/roadmap.md](docs/roadmap.md) — phased roadmap to 1.0, with gates and epic index
 - [docs/cli.md](docs/cli.md) — full CLI command reference with examples
 - [docs/gui.md](docs/gui.md) — fx-gui graphical editor feature reference
 - [docs/fa/modding.md](docs/fa/modding.md) — modding recipes (textures, stats, missions, models)
