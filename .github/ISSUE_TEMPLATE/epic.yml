@@ -1,0 +1,33 @@
+name: Epic
+description: Tracking issue for a group of related sub-issues
+labels: ["epic"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What this epic delivers and why it matters to the roadmap.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is in and out of scope. Sub-issues are linked natively below the description.
+    validations:
+      required: true
+
+  - type: textarea
+    id: exit
+    attributes:
+      label: Exit criteria
+      description: The observable state that closes this epic.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Roadmap phases, other epics, or external items this depends on.
