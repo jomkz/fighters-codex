@@ -1,9 +1,10 @@
 # FA Physics, Flight Model, and Collision Detection
 
-Analysis of FA.EXE physics, flight model, and collision subsystems derived from Ghidra
-decompilation with FA.SMS symbols applied. All virtual addresses are from the shipping
-binary. Fixed-point values use the engine's standard s8.8 format (divide by 256 for
-real units) unless noted.
+Analysis of FA.EXE physics, flight model, and collision subsystems. All virtual addresses
+are from the shipping binary. Fixed-point values use the engine's standard s8.8 format
+(divide by 256 for real units) unless noted.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 

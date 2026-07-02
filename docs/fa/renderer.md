@@ -1,8 +1,9 @@
 # FA 3D Rendering Pipeline
 
-Documentation of the Jane's Fighters Anthology (FA.EXE) 3D rendering pipeline, derived from Ghidra
-decompilation of FA.EXE and the FA.SMS symbol map. Functions are identified by virtual address (VA)
-and SMS name where available.
+Documentation of the Jane's Fighters Anthology (FA.EXE) 3D rendering pipeline. Functions are
+identified by virtual address (VA) and SMS name where available.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 
