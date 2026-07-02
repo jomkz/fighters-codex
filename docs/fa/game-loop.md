@@ -1,6 +1,8 @@
 # FA Game Loop Architecture
 
-Analysis of FA.EXE's main loop, initialization sequence, per-frame object dispatch, frame timing, mission init, and shutdown. Derived from Ghidra decompile output with FA.SMS symbols applied.
+Analysis of FA.EXE's main loop, initialization sequence, per-frame object dispatch, frame timing, mission init, and shutdown.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 

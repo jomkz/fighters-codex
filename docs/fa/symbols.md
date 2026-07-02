@@ -2,6 +2,8 @@
 
 FA.SMS ships with Jane's Fighters Anthology and contains 3,829 MSVC C++ mangled symbols with virtual addresses spanning `0x00401000`–`0x005937E0`. This document organizes them by address range into functional subsystems and highlights format-related entry points.
 
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; the file itself is specified in [formats/SMS.md](formats/SMS.md). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+
 ---
 
 ## Summary Table

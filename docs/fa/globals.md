@@ -1,7 +1,8 @@
 # FA.EXE Global Variable Reference
 
-Inventory of all named global variables recovered from FA.EXE via FA.SMS symbol map and
-DumpGlobals.java scan. Data sourced from `DumpGlobals.csv` (Ghidra headless run).
+Inventory of all named global variables recovered from FA.EXE.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; data sourced from `DumpGlobals.csv` (`DumpGlobals.java` headless run). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 

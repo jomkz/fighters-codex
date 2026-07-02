@@ -2,6 +2,8 @@
 
 A comprehensive overview of what is known about Jane's Fighters Anthology's runtime architecture, file formats, and subsystems. Organized by subsystem for developers picking up RE work or modding.
 
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+
 ---
 
 ## Runtime Environment
@@ -393,39 +395,18 @@ The FA entity struct (one instance per live game object, base pointer stored per
 | `+0x60` | u8  | AI state | `_CTEval_*` condition fns |
 | `+0xF0` | u32 | Target entity ID (NPC nav) | GAS init cases 0x03/0x05 |
 | `+0xF4` | u16 | Reaction parameter 1 | GAS init |
-| `+0xF6` | u16 | Reaction parameter 2 | `_Reaction_12` (0x464040), `_MaskEvents_4` |
-| `+0xF8` | u16 | Reaction parameter 3 | GAS init |
-| `+0xFA` | u8  | Mode byte | `_CTEval_tgt` / `_CTEval_p` |
-| `+0x100` | u8 | Primary per-frame state byte | `_FMFlight@0`, `_MovePlane@0`, ~15 others |
-| `+0x101` | u16 | Timeout timer | GAS init |
-| `+0x10A` | — | Speed/energy field | `_MaxSpeed@8` (0x477d50) |
-| `+0x10C` | — | Campaign/init context | `_CampaignSave`, `_CallCampaignProc@4` |
-| `+0x16F` | u32 | HUD state flags (`DAT_0050cfef`) — advisory bits, damage, ejection | `ChangePlaneType` |
-
-Full 80+ field table with all confirmed offsets is in [structs.md](structs.md).
-
-Weapon / projectile entity offsets are documented separately in [formats/JT.md](formats/JT.md) (PROJ_TYPE runtime mapping at `missile+0xA6` onward).
-
----
-
-## Runtime Entity Struct — Key Offsets
-
-The FA entity struct (one instance per live game object, base pointer stored per-object at runtime) has the following confirmed field offsets from Ghidra analysis:
-
-| Offset | Size | Role | Evidence |
-|--------|------|------|---------|
-| `+0xF0` | u32 | Target pointer / entity ID (NPC nav) | GAS init cases 0x03/0x05 |
-| `+0xF4` | u16 | Reaction parameter 1 | GAS init |
 | `+0xF6` | u16 | Reaction parameter 2 | GAS init; `_Reaction_12` (0x464040), `_MaskEvents_4` |
 | `+0xF8` | u16 | Reaction parameter 3 | GAS init |
 | `+0xFA` | u8  | Mode byte | GAS init; `_CTEval_tgt` / `_CTEval_p` |
 | `+0xFF` | — | Confirmed read by: `_Kill@0` (0x473c10), `@AmmoForClass@4` (0x474740) | `0xFF` scan |
 | `+0x100` | u8 | Primary per-frame state byte — most-polled field in flight loop | `_FMFlight@0`, `_MovePlane@0`, `_GVEventProc`, `CheckForEvents2`, and ~15 others |
 | `+0x101` | u16 | Timeout timer | GAS init |
-| `+0x10A` | — | Read by `_MaxSpeed@8` (0x477d50) | `0x10A` scan |
+| `+0x10A` | — | Speed/energy field | `_MaxSpeed@8` (0x477d50) |
 | `+0x10C` | — | Campaign/init context — read by `_CampaignSave`, `_CallCampaignProc@4`, `_MISSIONLoadCommonResources@0` | `0x10C` scan |
 | `+0x114` | — | Init handle / capability field — read by `?InitCobra@@YAGPAUGlobalData@@@Z`, `?InitVideo@@YAGPAUGlobalData@@@Z` | `0x114` scan |
 | `+0x16F` | u32 | HUD state flags word (`DAT_0050cfef`) — advisory bits, damage state, ejection triggers | `ChangePlaneType` |
+
+Full 80+ field table with all confirmed offsets is in [structs.md](structs.md).
 
 Weapon / projectile entity offsets are documented separately in [formats/JT.md](formats/JT.md) (PROJ_TYPE runtime mapping at `missile+0xA6` onward).
 

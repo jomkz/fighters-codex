@@ -1,6 +1,8 @@
 # Modding Guide
 
-Quick recipes for common FA modding tasks using `fx`.
+Quick recipes for common FA modding tasks using `fx`. Formats, field tables, and offsets
+used below are specified in [formats/](formats/README.md); per-format tooling status is in
+the [status matrix](formats/STATUS.md).
 
 Extract `PALETTE.PAL` from `FA_2.LIB` once before any paletted image work:
 

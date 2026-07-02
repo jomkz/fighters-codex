@@ -1,7 +1,8 @@
 # FA Multiplayer Networking Internals
 
-Findings from Ghidra decompilation of FA.EXE focusing on multiplayer networking.
-Source output: `AnalyzeNetwork.txt`. Companion reference: [formats/DAT.md](formats/DAT.md).
+FA.EXE's multiplayer networking internals. Companion reference: [formats/DAT.md](formats/DAT.md).
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; source output `AnalyzeNetwork.txt`. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 
