@@ -68,6 +68,13 @@ Offset  Size  Description
 6+            PKWare DCL bitstream (LSB-first)
 ```
 
+The decompressed-size field is written correctly by the game's tooling, but a
+crafted archive can claim anything up to 4 GiB. `fx_lib` treats claims above
+64 MiB as malformed and rejects the entry — the largest real FA-era entry
+decompresses to a few MiB (#168). A zero claim extracts to an empty payload
+(#169); a claim larger than the stream's actual output is tolerated (the
+output is sized by what the bitstream produces, up to the claim).
+
 ## PKWare DCL Algorithm
 
 Based on `blast.c` by Mark Adler (zlib project). See `lib/src/blast.cpp`.

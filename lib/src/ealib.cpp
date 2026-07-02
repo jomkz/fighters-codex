@@ -11,6 +11,11 @@ static const int  MAGIC_LEN = 5;
 static const int  HDR_BASE  = 7;   // 5 magic + 2 count
 static const int  ENTRY_SZ  = 18;  // 13 name + 1 flags + 4 offset
 
+// Ceiling for the flags=4 decompressed-size prefix. The prefix is
+// attacker-controlled in a crafted archive (up to 4 GiB); the largest real
+// FA-era entry decompresses to a few MiB (#168).
+static const uint32_t MAX_DECOMP = 64u << 20; // 64 MiB
+
 static uint16_t read_u16(const uint8_t* p) {
     return (uint16_t)(p[0] | (p[1] << 8));
 }
@@ -96,6 +101,7 @@ std::vector<uint8_t> ealib_extract(const uint8_t* lib_data, size_t lib_size,
     // flags==4: EA-wrapped PKWare DCL
     if (src_size < 4) return {};
     uint32_t expected = read_u32(src);
+    if (expected > MAX_DECOMP) return {};
     std::vector<uint8_t> out(expected);
     int got = blast_decompress_ea(src, src_size, out.data(), expected);
     if (got < 0) return {};

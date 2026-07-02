@@ -149,7 +149,9 @@ int blast_decompress(const uint8_t* in, size_t in_size,
 
     size_t n = buf.size();
     if (n > out_capacity) n = out_capacity;
-    memcpy(out, buf.data(), n);
+    // n can be 0 (zero-size claim in the EA prefix), where both pointers are
+    // null — memcpy's args are nonnull-attributed even for length 0 (#169)
+    if (n > 0) memcpy(out, buf.data(), n);
     return (int)n;
 }
 
