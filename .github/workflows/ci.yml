@@ -113,10 +113,14 @@ jobs:
         run: ctest --preset coverage
 
       - name: Report
+        # Search only the first-party object dirs — scanning all of
+        # build/coverage feeds gcovr the FetchContent'd Catch2 .gcda files,
+        # whose sources it cannot resolve (fatal in current gcovr)
         run: |
           pipx install gcovr
           mkdir -p coverage-report
-          gcovr -r . build/coverage -f 'lib/' -f 'cli/' -e 'lib/vendor/' \
+          gcovr -r . build/coverage/lib build/coverage/cli \
+                -f 'lib/' -f 'cli/' -e 'lib/vendor/' \
                 --txt coverage-report/summary.txt \
                 --html-details coverage-report/coverage.html \
                 --print-summary
@@ -127,7 +131,8 @@ jobs:
         # Ratchet, not target: 23% is a couple of points under the measured
         # baseline (25.7% pre-Phase-4). Epic #50 raises it; never lower it.
         run: |
-          gcovr -r . build/coverage -f 'lib/' -f 'cli/' -e 'lib/vendor/' \
+          gcovr -r . build/coverage/lib build/coverage/cli \
+                -f 'lib/' -f 'cli/' -e 'lib/vendor/' \
                 --fail-under-line 23 > /dev/null
 
       - name: Upload HTML report
