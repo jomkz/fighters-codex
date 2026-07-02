@@ -2,11 +2,14 @@
 #include "fx/pe.h"
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <vector>
 #include <string>
 
-// stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
+// stb_image_write declarations only -- implementation compiled in cmd_pic.cpp
 #include "stb_image_write.h"
+
+namespace fs = std::filesystem;
 
 static void write_png_cb(void* ctx, void* data, int size) {
     auto* buf = static_cast<std::vector<uint8_t>*>(ctx);
@@ -69,28 +72,27 @@ static int cmd_fnt_unpack(int argc, char** argv) {
 
     // Write metrics.csv
     {
-        char csv_path[512];
-        snprintf(csv_path, sizeof(csv_path), "%s/metrics.csv", out_dir);
-        FILE* fc = fopen(csv_path, "wb");  // binary: LF line endings on every platform
-        if (!fc) { fprintf(stderr, "Cannot write: %s\n", csv_path); return 1; }
+        fs::path csv_path = fs::path(out_dir) / "metrics.csv";
+        FILE* fc = fopen(csv_path.string().c_str(), "wb");  // binary: LF line endings on every platform
+        if (!fc) { fprintf(stderr, "Cannot write: %s\n", csv_path.generic_string().c_str()); return 1; }
         fprintf(fc, "ascii,char,width,height\n");
         for (const fx::FntGlyph& g : fnt.glyphs) {
             char display = (g.ch >= 32 && g.ch < 127) ? (char)g.ch : '?';
             fprintf(fc, "%d,%c,%u,%u\n", (int)g.ch, display, g.width, g.height);
         }
         fclose(fc);
-        printf("Wrote %s\n", csv_path);
+        printf("Wrote %s\n", csv_path.generic_string().c_str());
     }
 
     // Build glyph sheet: all printable glyphs in a grid
-    // 16 columns, rows as needed; each cell = max_w Ã— font_height pixels
+    // 16 columns, rows as needed; each cell = max_w x font_height pixels
     uint32_t max_w = 1;
     for (int i = 0; i < 256; ++i) if (fnt.glyph_width[i] > max_w) max_w = fnt.glyph_width[i];
     if (max_w == 0) max_w = 1;
     uint32_t fh = fnt.font_height;
     if (fh == 0) fh = 1;
 
-    // Count printable glyphs (ASCII 33â€“126)
+    // Count printable glyphs (ASCII 33-126)
     std::vector<const fx::FntGlyph*> printable;
     for (const fx::FntGlyph& g : fnt.glyphs) {
         if (g.ch >= 33 && g.ch <= 126) printable.push_back(&g);
@@ -128,14 +130,13 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     std::vector<uint8_t> png_buf;
     stbi_write_png_to_func(write_png_cb, &png_buf, sheet_w, sheet_h, 4, rgba.data(), sheet_w * 4);
 
-    char png_path[512];
-    snprintf(png_path, sizeof(png_path), "%s/glyph_sheet.png", out_dir);
-    FILE* fp = fopen(png_path, "wb");
-    if (!fp) { fprintf(stderr, "Cannot write: %s\n", png_path); return 1; }
+    fs::path png_path = fs::path(out_dir) / "glyph_sheet.png";
+    FILE* fp = fopen(png_path.string().c_str(), "wb");
+    if (!fp) { fprintf(stderr, "Cannot write: %s\n", png_path.generic_string().c_str()); return 1; }
     fwrite(png_buf.data(), 1, png_buf.size(), fp);
     fclose(fp);
     printf("Wrote %s (%dx%d, %d glyphs, font_height=%u)\n",
-           png_path, sheet_w, sheet_h, (int)printable.size(), fnt.font_height);
+           png_path.generic_string().c_str(), sheet_w, sheet_h, (int)printable.size(), fnt.font_height);
     return 0;
 }
 
