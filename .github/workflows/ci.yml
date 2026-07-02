@@ -24,6 +24,12 @@ jobs:
             os: ubuntu-latest
           - preset: clang
             os: ubuntu-latest
+          # Whole-program ASan/UBSan (incl. Catch2); UBSAN_OPTIONS comes from
+          # the test preset. If this leg ever fails with shadow-memory errors,
+          # the runner image's ASLR entropy is the usual suspect — add a
+          # `sudo sysctl vm.mmap_rnd_bits=28` step before the tests.
+          - preset: asan-ubsan
+            os: ubuntu-latest
           - preset: msvc
             os: windows-latest
     runs-on: ${{ matrix.os }}
