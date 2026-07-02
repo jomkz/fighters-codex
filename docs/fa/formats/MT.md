@@ -1,10 +1,34 @@
-# Mission Briefing Text (.MT)
+---
+format: MT
+name: Mission Briefing Text
+extensions: [".MT"]
+category: mission
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: none
+  issue: 108
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: [M, TXT]
+---
 
-FA_2.LIB contains 363 `.MT` files — roughly one per mission. Each stores the full text content for the pre-mission briefing and post-mission debrief screens. Format is **plain ASCII text** using a shared directive/markup engine with `.TXT` files.
+# MT — Mission Briefing Text (.MT)
 
-## Format
+FA_2.LIB contains 363 `.MT` files — roughly one per mission. Each stores the
+full text content for the pre-mission briefing and post-mission debrief
+screens. Format is **plain ASCII text** using a shared directive/markup engine
+with `.TXT` files.
 
-Plain ASCII text, CRLF line endings. Directives begin with `.` and may be chained on one line, separated by spaces. Plain text between directives is rendered in the current active style. Directives may also appear inline within a content line (e.g. `.header TITLE .body` renders "TITLE" in header style then switches to body).
+## File Layout
+
+Plain ASCII text, CRLF line endings. Directives begin with `.` and may be
+chained on one line, separated by spaces. Plain text between directives is
+rendered in the current active style. Directives may also appear inline within
+a content line (e.g. `.header TITLE .body` renders "TITLE" in header style
+then switches to body).
 
 ### Directives
 
@@ -19,7 +43,8 @@ Plain ASCII text, CRLF line endings. Directives begin with `.` and may be chaine
 | `..underline` | Disable underline (`..` prefix deactivates the named directive) |
 | `.page` | Page break within a section — inserts a new screen without starting a new section |
 
-Directives apply until overridden. Alignment and style are independent — `.center .underline .header` sets all three simultaneously.
+Directives apply until overridden. Alignment and style are independent —
+`.center .underline .header` sets all three simultaneously.
 
 ### Section Semantics
 
@@ -33,7 +58,8 @@ Sections 1–5 are observed across all 363 files:
 | 4 | Debrief (secondary outcome — failure, or Red success for multiplayer) |
 | 5 | Debrief (draw / objectives incomplete) |
 
-Most single-player missions use sections 1–4. Multiplayer and some campaign missions use all 5.
+Most single-player missions use sections 1–4. Multiplayer and some campaign
+missions use all 5.
 
 ### Section 1 ID Line
 
@@ -43,9 +69,10 @@ The first content line of section 1 follows the format:
 --<MISSIONID>  (<filename>)
 ```
 
-e.g. `--AB01  (bextra01)`. The `--` prefix appears to be the engine's cue to parse this line as the mission ID rather than display text.
+e.g. `--AB01  (bextra01)`. The `--` prefix is the engine's cue (inferred) to
+parse this line as the mission ID rather than display text.
 
-## Example — BEXTRA01.MT (complete section 2)
+### Example — BEXTRA01.MT (complete section 2)
 
 ```
 .section 2
@@ -70,13 +97,8 @@ GROUND  OPPOSITION :  Shoulder-launched SAMs
 AIR  OPPOSITION :  Possible U.N Rafales, Mirage 2000s
 ```
 
-## Location
-
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 363 |
-
 ## Related
 
-- [M.md](M.md) — `.M` mission files that reference these briefing texts by filename
-- [TXT.md](TXT.md) — uses the same directive engine; adds `.button` and `.picture` for UI screens
+**Formats:** [M](M.md) — `.M` mission files that reference these briefing
+texts by filename; [TXT](TXT.md) — uses the same directive engine; adds
+`.button` and `.picture` for UI screens.

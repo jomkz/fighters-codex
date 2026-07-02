@@ -1,20 +1,27 @@
-# EA Installer Script (.SSF)
+---
+format: SSF
+name: EA Installer Script
+extensions: [".SSF"]
+category: installer
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: none
+  issue: 109
+  fixtures:
+    synthetic: false
+    real_manifest: false
+related: [LIB, RGN]
+---
 
-`.SSF` files are plain-text EA installer scripts that drive the FA installation process. All three files reside in the Disc 1 root alongside the installer executable. None are packed into any LIB archive.
+# SSF — EA Installer Script (.SSF)
 
-## Location
+`.SSF` files are plain-text EA installer scripts that drive the FA
+installation process. All three files reside in the Disc 1 root alongside the
+installer executable. None are packed into any LIB archive.
 
-Disc 1 (E:) root. Not packed into any LIB archive.
-
-## Known Files
-
-| File | Role |
-|------|------|
-| `SETUP.SSF` | Master installer script — sets app metadata and references the two sub-scripts |
-| `FINSTALL.SSF` | Full install — copies all assets including `FA_4B.LIB` (digital audio) |
-| `MINSTALL.SSF` | Minimal install — omits `FA_4B.LIB`; music uses MIDI only |
-
-## Grammar (Confirmed)
+## File Layout
 
 Plain ASCII text. `#` begins a comment. Keywords are all-caps.
 
@@ -34,10 +41,20 @@ Plain ASCII text. `#` begins a comment. Keywords are all-caps.
 | `DESKTOP_ITEM` | `"name","path\exe"` | Adds a desktop shortcut |
 | `DIRECTX` | `"label",major,minor` | Invokes DirectX component install |
 
-## File Manifest (Confirmed)
+## File Inventory
+
+| File | Role |
+|------|------|
+| `SETUP.SSF` | Master installer script — sets app metadata and references the two sub-scripts |
+| `FINSTALL.SSF` | Full install — copies all assets including `FA_4B.LIB` (digital audio) |
+| `MINSTALL.SSF` | Minimal install — omits `FA_4B.LIB`; music uses MIDI only |
 
 ### SETUP.SSF
-Sets `COMPANY_NAME "Jane's Combat Simulations"`, `APP_NAME "Fighters Anthology"`, `DEFAULT_PATH "\JANES\Fighters Anthology"`, then references both sub-scripts:
+
+Sets `COMPANY_NAME "Jane's Combat Simulations"`, `APP_NAME "Fighters
+Anthology"`, `DEFAULT_PATH "\JANES\Fighters Anthology"`, then references both
+sub-scripts:
+
 ```
 INSTALL_SCRIPT "MINSTALL.SSF", ":0409:Minimal Install - Midi Music:…"
 INSTALL_SCRIPT "FINSTALL.SSF", ":0409:Full Install - Digital Music:…"
@@ -64,15 +81,19 @@ INSTALL_SCRIPT "FINSTALL.SSF", ":0409:Full Install - Digital Music:…"
 |-----------|--------------|-------------|
 | `FA_4B.LIB` | `FA_LIBS` | `[INSTALL_PATH]` |
 
-**FA_3.LIB is absent from both manifests — it is CD-resident and loaded directly from the disc at runtime.**
+**FA_3.LIB is absent from both manifests — it is CD-resident and loaded
+directly from the disc at runtime.**
 
-FA_4B.LIB contains the digital audio tracks (`.11K` music files). FA_4D.LIB contains additional assets installed in both configurations.
+FA_4B.LIB contains the digital audio tracks (`.11K` music files). FA_4D.LIB
+contains additional assets installed in both configurations.
 
 ### Files skipped during uninstall (SKIP_ON_REMOVE):
 
-`*.P` (pilot files), `*.BKP` (pilot backups), `*.M` (mission files), `*.MT` (mission text), `*.MM` (mission maps), `EA.CFG`, `MODEM.DAT`, `NET.DAT`, `SERIAL.DAT`, `*.RAW` (screen captures), `*.GID` (WinHelp temp files)
+`*.P` (pilot files), `*.BKP` (pilot backups), `*.M` (mission files), `*.MT`
+(mission text), `*.MM` (mission maps), `EA.CFG`, `MODEM.DAT`, `NET.DAT`,
+`SERIAL.DAT`, `*.RAW` (screen captures), `*.GID` (WinHelp temp files)
 
 ## Related
 
-- [LIB.md](LIB.md) — LIB archive format
-- [RGN.md](RGN.md) — installer UI region maps (POSTER.RGN, BUTTONS.RGN) on Disc 1
+**Formats:** [LIB](LIB.md) — the archives the installer copies; [RGN](RGN.md)
+— installer UI region maps (POSTER.RGN, BUTTONS.RGN) on Disc 1.

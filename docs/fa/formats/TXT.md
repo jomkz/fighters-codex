@@ -1,23 +1,36 @@
-# In-Game Text / UI Layout (.TXT)
+---
+format: TXT
+name: In-Game Text and UI Layout
+extensions: [".TXT"]
+category: text
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: none
+  issue: 104
+  gui: [gui/src/editors/txt_editor.cpp]
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: [CAM, MNU, MT, P]
+---
 
-FA_2.LIB contains 8 `.TXT` files. The extension covers three distinct uses of the same directive engine: campaign selection descriptions, interactive UI screen templates, and plain-text content (credits). All are **plain ASCII, CRLF**.
+# TXT — In-Game Text and UI Layout (.TXT)
 
-## File Inventory
+FA_2.LIB contains 8 `.TXT` files. The extension covers three distinct uses of
+the same directive engine: campaign selection descriptions, interactive UI
+screen templates, and plain-text content (credits). All are **plain ASCII,
+CRLF**.
 
-| File | Size | Type |
-|------|------|------|
-| BALTIC.TXT | 147 B | Campaign description |
-| EGYPT.TXT | 136 B | Campaign description |
-| KURILE.TXT | 171 B | Campaign description |
-| UKRAINE.TXT | 151 B | Campaign description |
-| VIETNAM.TXT | 154 B | Campaign description |
-| VLAD.TXT | 149 B | Campaign description |
-| SHWPILOT.TXT | 947 B | UI layout template (Pilot Service Record screen) |
-| CREDITS.TXT | 1036 B | Plain text (no directives) |
+## File Layout
 
-## Directive Engine
+Plain text; no binary fields.
 
-The `.TXT` format uses the same directive engine as `.MT` briefing files, plus two UI-specific additions:
+### Directive Engine
+
+The `.TXT` format uses the same directive engine as `.MT` briefing files, plus
+two UI-specific additions:
 
 | Directive | Description |
 |-----------|-------------|
@@ -32,11 +45,10 @@ The `.TXT` format uses the same directive engine as `.MT` briefing files, plus t
 | `.button <label> ..button` | Interactive button element; label text is between the open/close tags |
 | `.picture` | Image placeholder — engine renders the current context image (e.g. nose art) |
 
-## Format by Type
-
 ### Campaign Description (6 files)
 
-Two-section structure. Section 2 contains only `END` — a sentinel the engine uses to detect end-of-file.
+Two-section structure. Section 2 contains only `END` — a sentinel the engine
+uses to detect end-of-file.
 
 ```
 .section 1
@@ -62,7 +74,11 @@ END
 
 ### UI Layout Template (SHWPILOT.TXT)
 
-Defines the Pilot Service Record screen. Uses `.page` to separate tabs, `.button` for navigation controls, and `.picture` as the image render target for nose/tail art. Button content between `.button` and `..button` is the button label; an empty `.button  ..button` pair defines an editable input field.
+Defines the Pilot Service Record screen. Uses `.page` to separate tabs,
+`.button` for navigation controls, and `.picture` as the image render target
+for nose/tail art. Button content between `.button` and `..button` is the
+button label; an empty `.button  ..button` pair defines an editable input
+field.
 
 ```
 .center
@@ -86,15 +102,25 @@ CALLSIGN: .button  ..button
 
 No directives. Raw ASCII credits block rendered verbatim.
 
-## Location
+## File Inventory
 
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 8 |
+| File | Size | Type |
+|------|------|------|
+| BALTIC.TXT | 147 B | Campaign description |
+| EGYPT.TXT | 136 B | Campaign description |
+| KURILE.TXT | 171 B | Campaign description |
+| UKRAINE.TXT | 151 B | Campaign description |
+| VIETNAM.TXT | 154 B | Campaign description |
+| VLAD.TXT | 149 B | Campaign description |
+| SHWPILOT.TXT | 947 B | UI layout template (Pilot Service Record screen) |
+| CREDITS.TXT | 1036 B | Plain text (no directives) |
+
+All 8 live in FA_2.LIB.
 
 ## Related
 
-- [CAM.md](CAM.md) — campaign definitions paired with campaign description `.TXT` files
-- [MNU.md](MNU.md) — the campaign selection menu that renders these descriptions
-- [MT.md](MT.md) — mission briefing text using the same directive engine (without `.button`/`.picture`)
-- [P.md](P.md) — pilot save data displayed by SHWPILOT.TXT
+**Formats:** [CAM](CAM.md) — campaign definitions paired with campaign
+description `.TXT` files; [MNU](MNU.md) — the campaign selection menu that
+renders these descriptions; [MT](MT.md) — mission briefing text using the same
+directive engine (without `.button`/`.picture`); [P](P.md) — pilot save data
+displayed by SHWPILOT.TXT.

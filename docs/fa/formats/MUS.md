@@ -1,42 +1,61 @@
-# Music Playlist / Sequencer (.MUS)
+---
+format: MUS
+name: Music Playlist Sequencer
+extensions: [".MUS"]
+category: audio
+endianness: little
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "FA/FB sub-opcode semantics are Miles-internal; WAIL32.DLL untraced"
+codec:
+  direction: read
+  issue: 101
+  lib: []
+  commands: [mus]
+  tests: []
+  fuzz: []
+  gui: [gui/src/editors/mus_editor.cpp]
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: [XMI, SEQ, 11K]
+---
 
-FA_2.LIB contains 9 `.MUS` files (e.g. `M_AIR.MUS`). These control background music playback. Each is a **Win32 PE DLL** loaded at runtime.
+# MUS — Music Playlist Sequencer (.MUS)
 
-## Format
+FA_2.LIB contains 9 `.MUS` files (e.g. `M_AIR.MUS`). These control background
+music playback. Each is a **Win32 PE DLL** loaded at runtime whose CODE section
+holds a **bytecode script** (not compiled x86) that sequences `.XMI` track
+playback; the `.XMI` files in FA_2.LIB are the actual audio.
 
-Win32 PE DLL. All observed `.MUS` files decompress to **4608 bytes**. String analysis of `M_AIR.MUS` yields only the standard PE header strings — no embedded `.XMI` track names are visible as plain text, confirming XMI references are encoded as integer indices resolved at runtime.
+## Tools
 
-The `.XMI` files in FA_2.LIB are the actual audio sequences. Each `.MUS` file is a **bytecode script** (not compiled x86 code) that sequences XMI track playback.
-
-## Location
-
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 9 |
-
-## File Structure
-
-Each file contains a standard **DOS MZ stub** (128 bytes) followed by a **Phar Lap PE header** (`PL\0\0`) at offset `0x80` (pointed to by the `u32` at `0x3C`). The bytecode CODE section begins at offset `0x200`.
-
-## XMI Track Index Mapping
-
-XMI track index `N` maps to file `AIRnnn.XMI`, where `nnn` is the zero-padded decimal value of `N`:
+### fx
 
 ```
-index  1 → VALK01.XMI
-index  3 → AIR003.XMI
-index  4 → AIR004.XMI
-…
-index 127 → AIR127.XMI
+fx mus dump <file.MUS>    # raw opcode stream; FB <idx> resolved to XMI filenames
 ```
 
-The index space is **sparse** — many slots have no corresponding file in FA_2.LIB (e.g. indices 2, 8, 10–12, 15, 17, 20, 27, 29, 30, 32–37, etc.). The numeric suffix in the filename IS the track index; `VALK01.XMI` is the sole exception to the `AIRnnn` naming pattern and occupies index 1.
+The parser lives in `cli/cmd_mus.cpp` — no fx_lib codec exists yet; the MUS
+CODE section is consumed by Miles as-is at runtime, so #101 tracks whether a
+library codec (or a written rationale) is the right end state.
 
-All 78 XMI files are in FA_2.LIB only (FA_1.LIB contains none; FA_3.LIB is disc-2 content).
+## File Layout
 
-## Bytecode Script Format (Confirmed)
+All multi-byte integers are little-endian.
 
-### Opcode table
+Each file contains a standard **DOS MZ stub** (128 bytes) followed by a
+**Phar Lap PE header** (`PL\0\0`) at offset `0x80` (pointed to by the `u32` at
+`0x3C`). The bytecode CODE section begins at offset `0x200`. All observed
+`.MUS` files decompress to **4608 bytes**. String analysis of `M_AIR.MUS`
+yields only the standard PE header strings — no embedded `.XMI` track names
+are visible as plain text, confirming XMI references are encoded as integer
+indices resolved at runtime.
+
+### Bytecode Script Format — confirmed
 
 | Opcode | Length | Meaning |
 |--------|--------|---------|
@@ -48,21 +67,48 @@ All 78 XMI files are in FA_2.LIB only (FA_1.LIB contains none; FA_3.LIB is disc-
 | `FE <u32>` | 5 bytes | Conditional branch (game-state test) |
 | `FD <u24>` | 4 bytes | Loop / jump |
 
-The `01 02 03 02 01 02 03 02 01` byte pattern immediately following `FC` is a **state machine dispatch table** — the same pattern appears in DLG CODE sections just before JMP thunks, identifying it as a shared engine construct.
+The `01 02 03 02 01 02 03 02 01` byte pattern immediately following `FC` is a
+**state machine dispatch table** — the same pattern appears in DLG CODE
+sections just before JMP thunks, identifying it as a shared engine construct.
 
-### All 9 playlists decoded
+### XMI Track Index Mapping
 
-| File | Playlist ID | Track indices | Notes |
-|------|-------------|--------------|-------|
-| `M_AIR.MUS` | `"air"` | 4 6 107 108 109 18 110 116 117 118 119 24 **29** 21 121 122 123 125 126 127 \| 9 38 62 65 67 19 | 26 tracks in two groups split by `FE` conditional; index 29 has no file in FA_2.LIB |
-| `M_NORMAL.MUS` | `"air"` | 14 70 71 72 73 74 47 61 40 75 76 77 78 44 4 39 22 28 48 40 80 81 82 83 84 26 19 43 85 86 87 88 89 46 13 23 90 91 92 94 7 9 31 38 44 | 45 tracks; longest playlist |
-| `M_DANGER.MUS` | `"air"` | 100 101 13 48 47 61 28 39 46 43 **41** 26 102 5 18 4 45 104 19 23 21 6 | 22 tracks; index 41 has no file in FA_2.LIB |
-| `M_VALK.MUS` | `"valk"` | 1 | 1 track → VALK01.XMI; valkyrie/dogfight state |
-| `M_DECK.MUS` | `"air"` | 14 13 43 | 3 tracks; carrier deck state |
-| `M_HOME.MUS` | `"air"` | 25 26 40 | 3 tracks; return-to-base |
-| `M_LAUNCH.MUS` | `"air"` | 7 9 44 31 38 44 | 6 tracks (44 repeated); uses 3-byte `FB` form |
-| `M_EJECT.MUS` | `"air"` | *(none)* | No `FB` opcodes; contains only `FD`/`FE` control flow — eject event redirects state rather than starting a new track |
-| `M_SUCC.MUS` | `"air"` | *(none)* | No `FB` opcodes; mission-success event is state control only |
+XMI track index `N` maps to file `AIRnnn.XMI`, where `nnn` is the zero-padded
+decimal value of `N`:
+
+```
+index  1 → VALK01.XMI
+index  3 → AIR003.XMI
+index  4 → AIR004.XMI
+…
+index 127 → AIR127.XMI
+```
+
+The index space is **sparse** — many slots have no corresponding file in
+FA_2.LIB (e.g. indices 2, 8, 10–12, 15, 17, 20, 27, 29, 30, 32–37, etc.). The
+numeric suffix in the filename IS the track index; `VALK01.XMI` is the sole
+exception to the `AIRnnn` naming pattern and occupies index 1.
+
+## File Inventory
+
+The game has nine fixed music slots. Playlist decodes below are from
+`fx mus dump` over all 9 files:
+
+| File | Trigger | Playlist ID | Track indices | Notes |
+|------|---------|-------------|--------------|-------|
+| `M_AIR.MUS` | Dogfight | `"air"` | 4 6 107 108 109 18 110 116 117 118 119 24 **29** 21 121 122 123 125 126 127 \| 9 38 62 65 67 19 | 26 tracks in two groups split by `FE` conditional; index 29 has no file in FA_2.LIB |
+| `M_NORMAL.MUS` | Normal flight | `"air"` | 14 70 71 72 73 74 47 61 40 75 76 77 78 44 4 39 22 28 48 40 80 81 82 83 84 26 19 43 85 86 87 88 89 46 13 23 90 91 92 94 7 9 31 38 44 | 45 tracks; longest playlist |
+| `M_DANGER.MUS` | Enemy detected | `"air"` | 100 101 13 48 47 61 28 39 46 43 **41** 26 102 5 18 4 45 104 19 23 21 6 | 22 tracks; index 41 has no file in FA_2.LIB |
+| `M_VALK.MUS` | Ctrl+V hidden track | `"valk"` | 1 | 1 track → VALK01.XMI; valkyrie/dogfight state |
+| `M_DECK.MUS` | On the deck | `"air"` | 14 13 43 | 3 tracks; carrier deck state |
+| `M_HOME.MUS` | Almost home | `"air"` | 25 26 40 | 3 tracks; return-to-base |
+| `M_LAUNCH.MUS` | Takeoff | `"air"` | 7 9 44 31 38 44 | 6 tracks (44 repeated); uses 3-byte `FB` form |
+| `M_EJECT.MUS` | Ejected | `"air"` | *(none)* | No `FB` opcodes; contains only `FD`/`FE` control flow — eject event redirects state rather than starting a new track |
+| `M_SUCC.MUS` | Success | `"air"` | *(none)* | No `FB` opcodes; mission-success event is state control only |
+
+(The trigger column comes from the community TOOLKIT documentation of the nine
+slots; an earlier account that these slots point at `.11K` files was wrong —
+the confirmed decode below shows XMI playback via Miles.)
 
 ### M_AIR.MUS decoded (detailed)
 
@@ -73,17 +119,27 @@ Setup opcodes:
 - `FA 21 0x7E` — likely fade-out time
 - `FA 32 0x30` — likely tempo/volume
 
-Group 1 (low-intensity, 20 tracks): `4 6 107 108 109 18 110 116 117 118 119 24 29 21 121 122 123 125 126 127`
+Group 1 (low-intensity, 20 tracks):
+`4 6 107 108 109 18 110 116 117 118 119 24 29 21 121 122 123 125 126 127`
 
 `FE 0x48` conditional (game-state branch)
 
 Group 2 (high-intensity, 6 tracks): `9 38 62 65 67 19`
 
-## Playback Architecture (Confirmed via Ghidra)
+### Replacing in-game music (community workflow)
 
-Traced from `_SEQmusic` (`0x00446B70`), `?MusicOn` (`0x004329E0`), `?MusicVolume` (`0x00432B40`) in FA.EXE.
+1. Author or convert a replacement `.XMI` (see [XMI.md](XMI.md)) and name it
+   for the target track index (`AIRnnn.XMI`).
+2. Patch it into FA_2.LIB with `fx lib patch`.
+3. To change *which* tracks a slot plays, edit the slot's `FB` opcodes and
+   patch the `.MUS` back in; `fx mus dump` verifies the result.
 
-### Call chain
+## Engine Notes
+
+### Playback Architecture — confirmed via Ghidra
+
+Traced from `_SEQmusic` (`0x00446B70`), `?MusicOn` (`0x004329E0`),
+`?MusicVolume` (`0x00432B40`) in FA.EXE.
 
 ```
 _SEQmusic(name, seq_idx)
@@ -95,29 +151,36 @@ _SEQmusic(name, seq_idx)
       → _AIL_start_sequence(handle)     — begin playback
 ```
 
-**The MUS CODE section is passed directly to the Miles Sound System (AIL).** FA does not interpret the FA/FB/FC/FD/FE bytes itself — Miles processes them natively as XMIDI or MSS sequence data. The sub-opcode semantics (`FA 0x19`, `FA 0x21`, etc.) are Miles-internal and cannot be decoded from FA.EXE alone.
+**The MUS CODE section is passed directly to the Miles Sound System (AIL).**
+FA does not interpret the FA/FB/FC/FD/FE bytes itself — Miles processes them
+natively as XMIDI or MSS sequence data. The sub-opcode semantics (`FA 0x19`,
+`FA 0x21`, etc.) are Miles-internal and cannot be decoded from FA.EXE alone.
 
-### Volume
+**Volume:** `?MusicVolume(vol)` maps the 0–100 game volume scale to AIL's
+0–127 range: `AIL_set_XMIDI_master_volume(handle, vol * 127 / 100)`.
 
-`?MusicVolume(vol)` maps the 0–100 game volume scale to AIL's 0–127 range:
-```
-AIL_set_XMIDI_master_volume(handle, vol * 127 / 100)
-```
+**`_SEQfadein` / `_SEQfadeout`** (`0x00446890` / `0x00446910`) are **palette
+(screen) fades**, not music fades. They operate on a 768-byte RGB palette
+table (256 × 3 bytes at `curPalette`). They are unrelated to MUS audio.
 
-### `_SEQfadein` / `_SEQfadeout`
+**`seq_idx` parameter:** the `short param_2` passed through `_SEQmusic` →
+`MusicOn` → `_AIL_init_sequence` is the **AIL sequence index** — which section
+of the XMIDI data to start playback from. Normally 0 (first sequence).
 
-These (`0x00446890` / `0x00446910`) are **palette (screen) fades**, not music fades. They operate on a 768-byte RGB palette table (256 × 3 bytes at `curPalette`). They are unrelated to MUS audio.
+## Open Questions
 
-### `seq_idx` parameter
+### 1. FA/FB sub-opcode semantics
 
-The `short param_2` passed through `_SEQmusic` → `MusicOn` → `_AIL_init_sequence` is the **AIL sequence index** — which section of the XMIDI data to start playback from. Normally 0 (first sequence).
+The sub-opcode values (`FA 0x19`, `FA 0x21`, `FB` mode bytes, the `FC` state
+dispatch) are consumed by Miles, not FA.EXE — decoding them requires tracing
+the AIL wrapper (WAIL32.DLL), whose import surface is untraced, or consulting
+Miles Sound System XMIDI documentation.
 
-## Toolkit Roadmap
-
-- New `cli/cmd_mus.cpp` — `fx mus dump <file.MUS>` prints the raw opcode stream and resolves `FB <idx>` values to XMI filenames using the index rule above
-- No lib codec needed — MUS is passed to AIL as-is; the dump walks the byte stream
+*Status: open — re-static (#54)*
 
 ## Related
 
-- [XMI.md](XMI.md) — Extended MIDI audio tracks played by the music system
-- [SEQ.md](SEQ.md) — cutscene sequencer, which may also trigger music state changes
+**Formats:** [XMI](XMI.md) — the Extended MIDI tracks these playlists select;
+[SEQ](SEQ.md) — the cutscene sequencer whose `_SEQmusic` path triggers these
+slots; [11K](11K.md) — PCM sound effects (a music slot does *not* reference
+these — see the correction note there).

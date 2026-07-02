@@ -1,12 +1,53 @@
-# SEQ -- Sequence / Cutscene Timeline (.SEQ)
+---
+format: SEQ
+name: Cutscene Timeline
+extensions: [".SEQ"]
+category: video
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/seq.cpp]
+  commands: [seq]
+  tests: [tests/test_seq.cpp]
+  fuzz: []
+  gui: [gui/src/editors/seq_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [11K, MUS]
+---
 
-## Overview
+# SEQ — Cutscene Timeline (.SEQ)
 
-SEQ files drive in-game cutscenes (mission briefings, death screens, campaign intros).
-Each file is a plain ASCII text timeline: a sequence of timestamped commands that trigger
-bitmaps, sounds, palette changes, and fades.
+SEQ files drive in-game cutscenes (mission briefings, death screens, campaign
+intros). Each file is a plain ASCII text timeline: a sequence of timestamped
+commands that trigger bitmaps, sounds, palette changes, and fades. FA_2.LIB
+carries 126 of them.
+
+## Tools
+
+### fx
+
+```
+fx seq dump   <file.SEQ>              # pretty-print events to stdout
+fx seq unpack <file.SEQ> [-o out.txt] # write editable text
+fx seq pack   <in.txt>   -o <out.SEQ> # write binary SEQ
+```
+
+### Other Tools
+
+SEQ files are plain ASCII — open and edit directly, no conversion step needed.
+
+- **VS Code** — free; multi-file find/replace useful for batch renaming bitmap or sound references
+- **Notepad++** — free, Windows; column editing helps with tab-aligned time fields
+- **Notepad / TextEdit** — free, built-in; sufficient for small edits
 
 ## File Layout
+
+Plain text; no binary fields.
 
 ```
 ; optional comment lines
@@ -26,7 +67,8 @@ bitmaps, sounds, palette changes, and fades.
 | `5` | Absolute tick 5 |
 | `+23` | Relative: 23 ticks after the previous event |
 
-Trailing spaces after the time value (before the second tab) are legal and common.
+Trailing spaces after the time value (before the second tab) are legal and
+common.
 
 ### Command and arguments
 
@@ -48,7 +90,7 @@ Arguments are space-separated on the same line, after the command:
 | `wait` | (none) | Pause until sound/video completes |
 | `sync` | sub-command... | Execute sub-command synchronously |
 
-## Example
+### Example
 
 `KDEAD.SEQ` (92 bytes):
 
@@ -61,21 +103,12 @@ Arguments are space-separated on the same line, after the command:
 
 ## Round-Trip Notes
 
-`fx seq pack` emits files byte-identical to the originals (tabs, trailing spaces, CRLF).
-Parsed event count for KDEAD.SEQ: 4 events.
+`fx seq pack` emits files byte-identical to the originals (tabs, trailing
+spaces, CRLF); `tests/test_seq.cpp` asserts it, including comment and
+blank-line preservation. Parsed event count for KDEAD.SEQ: 4 events.
 
-## fx commands
+## Related
 
-```
-fx seq dump   <file.SEQ>              # pretty-print events to stdout
-fx seq unpack <file.SEQ> [-o out.txt] # write editable text
-fx seq pack   <in.txt>   -o <out.SEQ> # write binary SEQ
-```
-
-## Applications
-
-SEQ files are plain ASCII — open and edit directly, no conversion step needed.
-
-- **VS Code** — free; multi-file find/replace useful for batch renaming bitmap or sound references
-- **Notepad++** — free, Windows; column editing helps with tab-aligned time fields
-- **Notepad / TextEdit** — free, built-in; sufficient for small edits
+**Formats:** [11K](11K.md) — the `sound` command plays PCM clips (`^` prefix
+= looping); [MUS](MUS.md) — the engine's `_SEQmusic` path triggers music
+slots from sequence state.
