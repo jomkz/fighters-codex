@@ -37,3 +37,11 @@ add_test(NAME embed_smoke
         -DCXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCONFIG=$<CONFIG>
         -P ${CMAKE_CURRENT_SOURCE_DIR}/embed/run_embed_test.cmake)
+
+# End-to-end round-trip through the real fx binary: pack, ls, extract,
+# unpack, patch against a synthetic archive generated at test time.
+add_test(NAME cli_e2e_lib
+    COMMAND ${CMAKE_COMMAND}
+        -DFX=$<TARGET_FILE:fx>
+        -DWORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-e2e
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cli/run_cli_test.cmake)
