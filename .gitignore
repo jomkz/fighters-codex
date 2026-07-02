@@ -30,3 +30,9 @@ CMakeFiles/
 cmake_install.cmake
 install_manifest.txt
 build*/
+
+# libFuzzer findings from manual runs — reproducers stay out of history
+crash-*
+leak-*
+oom-*
+timeout-*
