@@ -1,6 +1,7 @@
 ﻿#include "fx/ealib.h"
 #include "fx/blast.h"
 #include <algorithm>
+#include <cctype>
 #include <cstring>
 
 namespace fx {
@@ -56,6 +57,19 @@ std::vector<Entry> ealib_read_dir(const uint8_t* data, size_t size) {
     }
 
     return entries;
+}
+
+const Entry* ealib_find(const std::vector<Entry>& entries, const std::string& name) {
+    for (const Entry& e : entries) {
+        const char* a = e.name;
+        const char* b = name.c_str();
+        while (*a && *b && tolower((unsigned char)*a) == tolower((unsigned char)*b)) {
+            ++a;
+            ++b;
+        }
+        if (*a == '\0' && *b == '\0') return &e;
+    }
+    return nullptr;
 }
 
 std::vector<uint8_t> ealib_extract(const uint8_t* lib_data, size_t lib_size,

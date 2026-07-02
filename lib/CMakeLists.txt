@@ -23,13 +23,12 @@
     src/ai.cpp
 )
 
-target_include_directories(fx_lib
-    PUBLIC  include
-    PRIVATE vendor
-)
+add_library(fx::lib ALIAS fx_lib)
 
-if(MSVC)
-    target_compile_options(fx_lib PRIVATE /W3 /WX-)
-else()
-    target_compile_options(fx_lib PRIVATE -Wall -Wextra)
-endif()
+target_include_directories(fx_lib PUBLIC include)
+target_include_directories(fx_lib SYSTEM PRIVATE vendor)
+
+target_link_libraries(fx_lib PRIVATE fx_warnings)
+
+# fa-content links fx_lib into a shared plugin, which needs PIC on Linux
+set_target_properties(fx_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)

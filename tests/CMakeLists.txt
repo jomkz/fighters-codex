@@ -18,12 +18,22 @@ add_executable(fx_tests
     test_plt.cpp
 )
 
-target_link_libraries(fx_tests PRIVATE fx_lib Catch2::Catch2WithMain)
-
-if(MSVC)
-    target_compile_options(fx_tests PRIVATE /W3 /WX-)
-endif()
+target_link_libraries(fx_tests PRIVATE fx_lib fx_warnings Catch2::Catch2WithMain)
 
 include(CTest)
 include(Catch)
 catch_discover_tests(fx_tests)
+
+# Embedding smoke test: proves the documented consumer contract (api.md) --
+# add_subdirectory of the repo root builds only fx_lib and links as fx::lib
+# into a shared library, offline.
+add_test(NAME embed_smoke
+    COMMAND ${CMAKE_COMMAND}
+        -DSRC_DIR=${CMAKE_CURRENT_SOURCE_DIR}/embed
+        -DBIN_DIR=${CMAKE_CURRENT_BINARY_DIR}/embed-build
+        -DREPO_DIR=${PROJECT_SOURCE_DIR}
+        -DGENERATOR=${CMAKE_GENERATOR}
+        -DPLATFORM=${CMAKE_GENERATOR_PLATFORM}
+        -DCXX_COMPILER=${CMAKE_CXX_COMPILER}
+        -DCONFIG=$<CONFIG>
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/embed/run_embed_test.cmake)

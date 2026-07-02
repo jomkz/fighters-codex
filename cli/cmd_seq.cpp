@@ -33,13 +33,9 @@ static int cmd_dump(int argc, char** argv) {
 
     auto seq = seq_parse(data.data(), data.size());
 
-    int ev_idx = 0;
     for (size_t i = 0; i < seq.lines.size(); ++i) {
         bool is_ev = (i < seq.is_event.size()) && seq.is_event[i];
-        if (!is_ev) {
-            ++ev_idx;
-            continue;
-        }
+        if (!is_ev) continue;
         const auto& ev = seq.events[i];
         // Print: ticks | cmd | args
         char tick_buf[32];
@@ -53,7 +49,6 @@ static int cmd_dump(int argc, char** argv) {
         printf("%-12s", ev.command.c_str());
         for (auto& a : ev.args) printf(" %s", a.c_str());
         printf("\n");
-        ++ev_idx;
     }
     return 0;
 }

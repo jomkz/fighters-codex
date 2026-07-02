@@ -168,7 +168,6 @@ bool PEImage::parse() {
 
             // Walk INT/IAT in parallel
             size_t int_off = rva_to_off(int_rva ? int_rva : iat_rva);
-            size_t iat_off = rva_to_off(iat_rva);
             uint32_t slot  = 0;
             while (int_off && int_off + 4 <= size) {
                 uint32_t entry = ru<uint32_t>(raw, int_off);
@@ -188,7 +187,6 @@ bool PEImage::parse() {
                 by_iat_va[iat_va] = is;
                 by_name[is.func]  = is;
                 int_off += 4;
-                iat_off += 4;
                 slot++;
             }
             imp_off += 20;
@@ -292,8 +290,7 @@ static std::string resolve_string(const PEImage& pe, uint32_t str_va) {
 // Scan all sections for occurrences of thunk_va as a u32, then decode the
 // record that follows (x, y, padding, width, str_va).
 static std::vector<CallSite> find_dispatch_entries(const PEImage& pe,
-                                                    uint32_t thunk_va,
-                                                    const std::string& func_name) {
+                                                    uint32_t thunk_va) {
     std::vector<CallSite> sites;
 
     // Search every section with data
@@ -342,7 +339,7 @@ static std::vector<CallSite> find_call_sites(const PEImage& pe,
     // Try thunk-based dispatch table
     for (auto& [thunk_va, name] : thunks) {
         if (name == func_name) {
-            auto sites = find_dispatch_entries(pe, thunk_va, func_name);
+            auto sites = find_dispatch_entries(pe, thunk_va);
             if (!sites.empty()) return sites;
         }
     }

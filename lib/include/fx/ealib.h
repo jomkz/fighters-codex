@@ -26,6 +26,10 @@ struct Entry {
 // Parse the directory of a memory-mapped LIB. Returns empty vector on error.
 std::vector<Entry> ealib_read_dir(const uint8_t* data, size_t size);
 
+// Find a directory entry by name (ASCII case-insensitive).
+// Returns nullptr if not found.
+const Entry* ealib_find(const std::vector<Entry>& entries, const std::string& name);
+
 // Extract one entry's data.
 // If decompress=true and flags==4, runs blast decompression automatically.
 // Returns empty vector on error.
