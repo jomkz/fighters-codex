@@ -13,10 +13,18 @@ fx ot      info / unpack / pack         # object type definitions
 fx pt      info / unpack / pack         # aircraft type definitions
 fx nt / jt / see / ecm / gas â€¦          # other type definitions
 fx mission info / unpack / pack         # .M / .MM mission and map files
-fx sh      info / unpack                # .SH 3D shapes â†’ Wavefront OBJ
-fx sms     dump                         # FA.SMS symbol map â†’ CSV
+fx sh      info / unpack                # .SH 3D shapes → Wavefront OBJ
+fx sms     dump                         # FA.SMS symbol map → CSV
 fx t2      info                         # .T2 terrain map grid info
-fx plt     info                         # .P pilot save file
+fx plt     info / dump                  # .P pilot save file
+fx pal     info / dump                  # .PAL VGA palettes
+fx inf     dump                         # .INF aircraft tech sheets
+fx hud     dump                         # .HUD layout overlays
+fx lay     dump / gradient              # .LAY sky/atmosphere layers
+fx fnt     info / unpack                # .FNT bitmap fonts
+fx mus     dump                         # .MUS music sequencer bytecode
+fx bi      dump                         # .BI compiled AI disassembler
+fx ai      compile                      # .AI → .BI compiler
 ```
 
 ## lib — Archive
@@ -285,6 +293,7 @@ T2 files are stored in `FA_2.LIB`; unpack the archive first.
 
 ```
 fx plt info <file.P>
+fx plt dump <file.P>
 ```
 
 #### `fx plt info <file.P>`
@@ -313,8 +322,131 @@ Ordnance:
 Sensors:    F16CSEE.SEE
 ```
 
+#### `fx plt dump <file.P>`
+
+Print the confirmed stats block (kill tallies, mission counters, weapon accuracy
+at `0x1F80`–`0x21F7`). Decoding the remaining gap regions is tracked in
+[#29](https://github.com/jomkz/fighters-codex/issues/29).
+
 Pilot save files (`.P`) are stored in the FA install directory alongside `FA.EXE`.
 The stats block (offsets 0xB0–0x0D7E) is not yet decoded; only the identity and
 campaign blocks are read.
 
 *See also: [fa/formats/P.md](fa/formats/P.md)*
+
+## pal — VGA palettes
+
+```
+fx pal info <file.PAL>
+fx pal dump <file.PAL> [-o out.png]
+```
+
+#### `fx pal info <file.PAL>`
+
+Print the entry count and header details of a 256-color 6-bit VGA palette.
+
+#### `fx pal dump <file.PAL> [-o out.png]`
+
+Render the palette as a swatch-grid PNG for visual inspection.
+
+*See also: [fa/formats/PAL.md](fa/formats/PAL.md)*
+
+## inf — Aircraft tech sheets
+
+```
+fx inf dump <file.INF>
+```
+
+#### `fx inf dump <file.INF>`
+
+Print the technical info sheet: aircraft metadata and the briefing-room scene
+data (RTF text section and scene parameters).
+
+*See also: [fa/formats/INF.md](fa/formats/INF.md)*
+
+## hud — HUD layout overlays
+
+```
+fx hud dump <file.HUD>
+```
+
+#### `fx hud dump <file.HUD>`
+
+Print the HUD overlay DLL's element table — positions, flags, and resource
+references for each HUD element.
+
+*See also: [fa/formats/HUD.md](fa/formats/HUD.md)*
+
+## lay — Sky/atmosphere layers
+
+```
+fx lay dump     <file.LAY>
+fx lay gradient <file.LAY> [-o output.png]
+```
+
+#### `fx lay dump <file.LAY>`
+
+Print the sky and atmosphere lookup-table structure of a `.LAY` overlay DLL.
+
+#### `fx lay gradient <file.LAY> [-o output.png]`
+
+Render the atmosphere gradient tables to a PNG.
+
+*See also: [fa/formats/LAY.md](fa/formats/LAY.md)*
+
+## fnt — Bitmap fonts
+
+```
+fx fnt info   <file.FNT>
+fx fnt unpack <file.FNT> [-o output_dir]
+```
+
+#### `fx fnt info <file.FNT>`
+
+Print glyph count and font metrics from a font overlay DLL.
+
+#### `fx fnt unpack <file.FNT> [-o output_dir]`
+
+Extract every glyph as an image into the output directory.
+
+*See also: [fa/formats/FNT.md](fa/formats/FNT.md)*
+
+## mus — Music sequencer bytecode
+
+```
+fx mus dump <file.MUS>
+```
+
+#### `fx mus dump <file.MUS>`
+
+Disassemble the in-flight music sequencer bytecode: playlists, transitions,
+and opcode listing.
+
+*See also: [fa/formats/MUS.md](fa/formats/MUS.md)*
+
+## bi — Compiled AI bytecode
+
+```
+fx bi dump <file.BI>
+```
+
+#### `fx bi dump <file.BI>`
+
+Disassemble compiled `.BI` AI bytecode to readable mnemonics with
+cross-referenced label annotations and resolved `CALL_BY_NAME` targets.
+
+*See also: [fa/formats/BI.md](fa/formats/BI.md)*
+
+## ai — AI script compiler
+
+```
+fx ai compile <file.AI> -o <file.BI>
+```
+
+#### `fx ai compile <file.AI> -o <file.BI>`
+
+Compile a plain-text `.AI` script to the Phar Lap PE `.BI` bytecode format the
+game's AI interpreter loads. All nine stock flight AIs compile to valid
+bytecode.
+
+*See also: [fa/formats/AI.md](fa/formats/AI.md), [fa/formats/BI.md](fa/formats/BI.md)*
