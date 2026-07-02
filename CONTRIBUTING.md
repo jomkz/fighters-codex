@@ -85,6 +85,10 @@ analysis legs. See [docs/development.md](docs/development.md#continuous-integrat
 the current leg list and what each check proves. PRs are expected to be green across the
 matrix before merge; if a leg is red, fix the change rather than the check.
 
+Changes to the format specs in `docs/fa/formats/` must conform to the template and
+front-matter schema in [docs/spec-authoring.md](docs/spec-authoring.md); the `docs-status`
+leg enforces it, and `python3 tools/check_status.py --check` runs the same checks locally.
+
 ---
 
 For the full workflow — building, releasing, and the draft-changelog script — see

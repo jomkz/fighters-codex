@@ -111,6 +111,12 @@ the path embedders use (see [api.md](api.md)).
 - **Fuzz smoke runs** (`fuzz` preset only, label `fuzz`): each libFuzzer
   harness fuzzes for 60 seconds from its committed seed corpus — see
   [Fuzzing](#fuzzing).
+- **Docs checks** (label `docs`): `check_status_selftest` and
+  `check_status_docs` run [`tools/check_status.py`](../tools/check_status.py)
+  on every preset leg, so a codec change that invalidates a format spec's
+  front-matter claims — or leaves the generated
+  [status matrix](fa/formats/STATUS.md) stale — fails `ctest` locally, not
+  just the CI `docs-status` job. See [spec-authoring.md](spec-authoring.md).
 
 ### Real-asset integration mode (FX_FA_ROOT)
 
@@ -185,6 +191,7 @@ Every PR to `main` (and every push to it) runs the
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
 | `macos (informational)` | macos-latest | AppleClang build + suite as an early-warning signal; `continue-on-error` — never blocks a PR |
 | `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
+| `docs-status` | ubuntu-latest | [`tools/check_status.py`](../tools/check_status.py) `--self-test` + `--check`: format-spec front-matter and template conformance ([spec-authoring.md](spec-authoring.md)), encoding and relative-link hygiene across all markdown, front-matter claims vs. `lib/`+`cli/`+`tests/`+`fuzz/` reality, and currency of the generated [status matrix](fa/formats/STATUS.md) — a stale matrix fails the PR |
 | `coverage` | ubuntu-latest | gcov line coverage over `lib/` + `cli/`, gcovr summary on the run's summary page + HTML artifact; enforces a floor that only ratchets **up** (raised by epic [#50](https://github.com/jomkz/fighters-codex/issues/50), never lowered) |
 | CodeQL | ubuntu-latest | Static analysis ([security-extended](../.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
 
