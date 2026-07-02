@@ -1,23 +1,70 @@
-# Compiled AI Runtime (.BI)
+---
+format: BI
+name: Compiled AI Runtime
+extensions: [".BI"]
+category: mission
+endianness: little
+spec:
+  status: complete
+codec:
+  direction: round-trip
+  byte_identical: false
+  issue: 102
+  lib: [lib/src/bi.cpp, lib/src/ai.cpp]
+  commands: [bi]
+  tests: []
+  fuzz: []
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: [AI]
+---
 
-FA_2.LIB contains 9 `.BI` files — exactly one per `.AI` script file (e.g. `AC130.BI` paired with `AC130.AI`). Each is a **Win32 PE DLL** that implements the runtime operations referenced by the paired `.AI` script.
+# BI — Compiled AI Runtime (.BI)
 
-## Role in the AI System
+FA_2.LIB contains 9 `.BI` files — exactly one per `.AI` script file (e.g.
+`AC130.BI` paired with `AC130.AI`). Each is a **Win32 PE DLL** whose CODE
+section contains only compiled AI bytecode; the runtime operations it
+references live in FA.EXE.
+
+## Tools
+
+### fx
+
+```
+fx bi dump    <file.BI>                 # disassemble bytecode to mnemonics
+fx ai compile <file.AI> -o <file.BI>    # produce a BI from AI source
+```
+
+Both directions exist (`fx ai compile` writes BI, `fx bi dump` reads it), but
+a dumped-and-recompiled BI is not asserted byte-identical to the original —
+#102 (the BI→AI decompiler) closes that loop.
+
+## File Layout
+
+All multi-byte integers are little-endian.
 
 The FA engine runs a two-part AI system:
 
-- **`.AI`** — plain-text source script compiled to bytecode at build time; defines the logic (conditions, branches, actions) in a goto-based language
-- **`.BI`** — Phar Lap PE DLL whose **CODE section contains only compiled AI bytecode** (no x86 machine code). All `_CTDo_*` and `_CTEval_*` action/condition implementations live in FA.EXE; the `.BI` imports them via its `.idata` section. The bytecode starts at the very first byte of the CODE section (raw file offset `0x400`).
+- **`.AI`** — plain-text source script compiled to bytecode at build time;
+  defines the logic (conditions, branches, actions) in a goto-based language
+- **`.BI`** — Phar Lap PE DLL whose **CODE section contains only compiled AI
+  bytecode** (no x86 machine code). All `_CTDo_*` and `_CTEval_*`
+  action/condition implementations live in FA.EXE; the `.BI` imports them via
+  its `.idata` section. The bytecode starts at the very first byte of the CODE
+  section (raw file offset `0x400`).
 
-At runtime the engine loads the `.BI`, resolves its `.idata` imports against FA.EXE, and calls `_CTExecProgram@4`, which reads bytecode from the BI CODE section and dispatches to the `_CTDo_*` and `_CTEval_*` functions in FA.EXE via `CALL_BY_NAME`/`CALL_DIRECT` opcodes.
+At runtime the engine loads the `.BI`, resolves its `.idata` imports against
+FA.EXE, and calls `_CTExecProgram@4`, which reads bytecode from the BI CODE
+section and dispatches to the `_CTDo_*` and `_CTEval_*` functions in FA.EXE
+via `CALL_BY_NAME`/`CALL_DIRECT` opcodes.
 
-## Exported Functions
+### Exported Functions
 
 All `.BI` files export two families of functions, prefixed `_CT`:
 
-### Action functions (`_CTDo_*`)
-
-Called by the bytecode interpreter when executing an action instruction:
+**Action functions (`_CTDo_*`)** — called by the bytecode interpreter when
+executing an action instruction:
 
 | Export | AI instruction |
 |--------|---------------|
@@ -38,11 +85,11 @@ Called by the bytecode interpreter when executing an action instruction:
 | `_CTDo_wm_hspacing` | (internal wingman spacing) |
 | `_CTDo_yoyo` | `yoyo` |
 
-Simpler `.BI` files (AC130.BI) export only the subset of actions used by that aircraft class.
+Simpler `.BI` files (AC130.BI) export only the subset of actions used by that
+aircraft class.
 
-### Condition functions (`_CTEval_*`)
-
-Called by the bytecode interpreter when evaluating a condition:
+**Condition functions (`_CTEval_*`)** — called by the bytecode interpreter
+when evaluating a condition:
 
 | Export | AI attribute / condition |
 |--------|--------------------------|
@@ -84,46 +131,13 @@ Called by the bytecode interpreter when evaluating a condition:
 | `_CTEval_wingcombat` | `wingCombat` |
 | `_CTEval_wm_hspacing_is` | (wingman horizontal spacing) |
 
-### Maneuver name strings
+**Maneuver name strings** — the trilingual maneuver name strings (e.g.
+`"GND ATTACK;BODENANGRIFF;ATTAQUE AU SOL"`) documented in [AI.md](AI.md) are
+embedded as data inside `F.BI` (the primary fighter AI runtime).
+`_CTDo_maneuver` reads these strings and passes the locale-appropriate segment
+to the UI.
 
-The trilingual maneuver name strings (e.g. `"GND ATTACK;BODENANGRIFF;ATTAQUE AU SOL"`) documented in [AI.md](AI.md) are embedded as data inside `F.BI` (the primary fighter AI runtime). `_CTDo_maneuver` reads these strings and passes the locale-appropriate segment to the UI.
-
-## Bytecode Interpreter
-
-### Overview
-
-The interpreter is `_CTExecProgram@4` (`CTExecProgram`). It executes at most 5000 opcodes per call, then forcibly invokes `CTDo_exit` to prevent infinite loops.
-
-**Runtime state globals:**
-
-| Global | Role |
-|--------|------|
-| `DAT_00546bea` | Instruction pointer — `char*` into the loaded BI CODE section |
-| `DAT_00546bf0` | Current script priority level (compared against `param_1` passed by caller) |
-| `DAT_00546c94` | Pointer to the current actor's live object record |
-| `DAT_00546c88` | Actor type flag: 1 if actor type is 2 or 4 (fighter/bomber) |
-| `DAT_00546c90` | Execution result returned to caller (non-zero = script performed an action) |
-| `DAT_00546c98` | Halt flag — set non-zero to stop execution early |
-| `DAT_0050cf6e` | Current actor slot index (0 = player) |
-| `DAT_0050d312` | CT system enable flag — interpreter is a no-op when this is zero |
-| `DAT_00546bc8` | Live CT state block — 128-byte (32-dword) struct; field `+0x7c`/`+0x7e` = FRAME state (`DAT_00546c44`/`DAT_00546c46`) |
-| `DAT_0050cf90` | Pointer to heap-allocated checkpoint copy of the CT state block (0x80 bytes) |
-
-**End-of-program marker:** `'%'` (0x25) — the main loop checks `*ip != '%'` as its loop condition.
-
-**State save/restore:** The interpreter maintains a 128-byte live CT state block at `DAT_00546bc8` and a heap-allocated checkpoint copy pointed to by `DAT_0050cf90`. Three functions manage this:
-
-- `FUN_004668f0` (`0x4668f0`) — **restore**: if `DAT_0050cf90 != NULL`, copies 128 bytes from checkpoint → live block; if NULL, zeroes the live block and clears `DAT_00546bf0`.
-- `FUN_00466920` (`0x466920`) — **save/push**: if `DAT_0050cf90 == NULL`, allocates 0x80 bytes via `@MMAllocPtr@8(0x80, 0x8000)`; then copies live block → checkpoint and zeroes the live block.
-- `_CTRespondToCancelCmdBuf@0` (`0x464c9d`) — **cancel handler**: when `_cg == 2 or 4` (fighter/bomber class) and `DAT_00546ca4 == 0`, orchestrates restore → `FUN_00464cd0(1)` → save. Enables preemptible script execution with re-entry on cancel events.
-
-**Opcode dispatch:** `FUN_00466a80` (0x466a80) reads one opcode byte from `*DAT_00546bea` and dispatches. Full opcode table below.
-
-**Evaluation stack:** `FUN_00466290` = push; `FUN_00465ad0` = pop. Stack base = `DAT_00546bf2`; depth = `DAT_00546c42`. Max depth = 32 dwords. `FUN_00466820` reports error codes (1=syntax error, 4=stack underflow, 5=stack overflow, 0xa=unknown opcode, 0xb=call by name to unknown proc, 0xc=stack imbalance).
-
-**Base address:** `DAT_00546be6` is the base pointer for the loaded BI CODE section; all jump offsets are relative to this base.
-
-### Opcode Table (Confirmed)
+### Opcode Table — confirmed
 
 | Opcode | IP advance | Name | Description |
 |--------|-----------|------|-------------|
@@ -169,36 +183,107 @@ The interpreter is `_CTExecProgram@4` (`CTExecProgram`). It executes at most 500
 | `0x27` | varies | CALL_BY_NAME | Look up null-terminated name, call; push return value; **self-patches to CALL_DIRECT** for subsequent calls (JIT optimization) |
 | `0x28` | 5 | FRAME | Read 2 s16 values into `DAT_00546c44`/`DAT_00546c46`; IP += 4 |
 
+## File Inventory
+
+| BI file | Size | AI source size |
+|---------|------|----------------|
+| AC130.BI, B.BI, HYDRO.BI, LARGE.BI, LINER.BI | 4,608 B | 960–3,970 B |
+| H.BI | 8,704 B | 12,412 B |
+| F.BI, F117.BI, MOTH.BI | 12,800 B | 18,423–20,616 B |
+
+For complex scripts (F, H) the bytecode is more compact than the source text.
+For simple scripts (LINER, LARGE) the PE overhead — headers, export table,
+native function bodies — exceeds the bytecode size, so the BI is larger than
+its `.AI` source. The original compiler was internal to FA's toolchain and not
+distributed; `fx ai compile` is the working reimplementation.
+
+## Engine Notes
+
+### Bytecode Interpreter
+
+The interpreter is `_CTExecProgram@4` (`CTExecProgram`). It executes at most
+5000 opcodes per call, then forcibly invokes `CTDo_exit` to prevent infinite
+loops.
+
+**Runtime state globals:**
+
+| Global | Role |
+|--------|------|
+| `DAT_00546bea` | Instruction pointer — `char*` into the loaded BI CODE section |
+| `DAT_00546bf0` | Current script priority level (compared against `param_1` passed by caller) |
+| `DAT_00546c94` | Pointer to the current actor's live object record |
+| `DAT_00546c88` | Actor type flag: 1 if actor type is 2 or 4 (fighter/bomber) |
+| `DAT_00546c90` | Execution result returned to caller (non-zero = script performed an action) |
+| `DAT_00546c98` | Halt flag — set non-zero to stop execution early |
+| `DAT_0050cf6e` | Current actor slot index (0 = player) |
+| `DAT_0050d312` | CT system enable flag — interpreter is a no-op when this is zero |
+| `DAT_00546bc8` | Live CT state block — 128-byte (32-dword) struct; field `+0x7c`/`+0x7e` = FRAME state (`DAT_00546c44`/`DAT_00546c46`) |
+| `DAT_0050cf90` | Pointer to heap-allocated checkpoint copy of the CT state block (0x80 bytes) |
+
+**End-of-program marker:** `'%'` (0x25) — the main loop checks `*ip != '%'` as
+its loop condition.
+
+**State save/restore:** the interpreter maintains a 128-byte live CT state
+block at `DAT_00546bc8` and a heap-allocated checkpoint copy pointed to by
+`DAT_0050cf90`. Three functions manage this:
+
+- `FUN_004668f0` (`0x4668f0`) — **restore**: if `DAT_0050cf90 != NULL`, copies
+  128 bytes from checkpoint → live block; if NULL, zeroes the live block and
+  clears `DAT_00546bf0`.
+- `FUN_00466920` (`0x466920`) — **save/push**: if `DAT_0050cf90 == NULL`,
+  allocates 0x80 bytes via `@MMAllocPtr@8(0x80, 0x8000)`; then copies live
+  block → checkpoint and zeroes the live block.
+- `_CTRespondToCancelCmdBuf@0` (`0x464c9d`) — **cancel handler**: when
+  `_cg == 2 or 4` (fighter/bomber class) and `DAT_00546ca4 == 0`, orchestrates
+  restore → `FUN_00464cd0(1)` → save. Enables preemptible script execution
+  with re-entry on cancel events.
+
+**Opcode dispatch:** `FUN_00466a80` (0x466a80) reads one opcode byte from
+`*DAT_00546bea` and dispatches (full opcode table above).
+
+**Evaluation stack:** `FUN_00466290` = push; `FUN_00465ad0` = pop. Stack
+base = `DAT_00546bf2`; depth = `DAT_00546c42`. Max depth = 32 dwords.
+`FUN_00466820` reports error codes (1=syntax error, 4=stack underflow,
+5=stack overflow, 0xa=unknown opcode, 0xb=call by name to unknown proc,
+0xc=stack imbalance).
+
+**Base address:** `DAT_00546be6` is the base pointer for the loaded BI CODE
+section; all jump offsets are relative to this base.
+
 ### FRAME opcode consumer (0x28) — conclusion
 
-The **writer** is confirmed: `FUN_00466a80` case `0x28` reads two s16 values from the bytecode
-stream and writes them to `DAT_00546c44` / `DAT_00546c46` (CT state block `+0x7c` / `+0x7e`).
+The **writer** is confirmed: `FUN_00466a80` case `0x28` reads two s16 values
+from the bytecode stream and writes them to `DAT_00546c44` / `DAT_00546c46`
+(CT state block `+0x7c` / `+0x7e`).
 
 **No scalar consumer exists anywhere.** Exhaustive analysis closed this item:
 
-- **BI DLLs contain bytecode, not x86 code.** The F.BI CODE section starts at `0x00001000`; its
-  first byte is `0x28` (the FRAME opcode itself). Ghidra's auto-analysis found zero functions after
-  analyzing the BI project — the code section is pure bytecode data, not native machine code. There
-  is no x86 reader in the BI DLLs.
-
+- **BI DLLs contain bytecode, not x86 code.** The F.BI CODE section starts at
+  `0x00001000`; its first byte is `0x28` (the FRAME opcode itself). Ghidra's
+  auto-analysis found zero functions after analyzing the BI project — the code
+  section is pure bytecode data, not native machine code. There is no x86
+  reader in the BI DLLs.
 - **Full FA.EXE interpreter path traced with no consumer found:**
-  - `FUN_00466a80` (opcode dispatch 0–0x28): no case reads `+0x7c`/`+0x7e`
-  - `_CTExecProgram@4` (interpreter loop): only calls `FUN_00466a80` per opcode; no field reads
-  - `FUN_00464cd0` (script loader): loads script and calls PC reset; no field reads
-  - `FUN_00464db0` (PC reset): clears `DAT_00546c42` (`+0x7a`), resets IP; no field reads
-
+  `FUN_00466a80` (opcode dispatch 0–0x28): no case reads `+0x7c`/`+0x7e`;
+  `_CTExecProgram@4` (interpreter loop): only calls `FUN_00466a80` per opcode;
+  `FUN_00464cd0` (script loader) and `FUN_00464db0` (PC reset): no field reads.
 - `DAT_00546c44` / `DAT_00546c46` have no direct read xrefs in FA.EXE.
-- All reads of `DAT_0050cf90` (checkpoint pointer) are bulk 128-byte block copies via
-  `FUN_004668f0` (restore) and `FUN_00466920` (save/push) — never field-level reads.
+- All reads of `DAT_0050cf90` (checkpoint pointer) are bulk 128-byte block
+  copies via `FUN_004668f0` (restore) and `FUN_00466920` (save/push) — never
+  field-level reads.
 
-**Conclusion:** FRAME is a save-state metadata instruction. The two s16 values it stamps into
-`+0x7c`/`+0x7e` are captured opaquely by the bulk 128-byte save/restore operations but are never
-consumed by any scalar reader. The values likely encode the current maneuver frame or animation
-phase for checkpoint purposes. This item is closed.
+**Conclusion:** FRAME is a save-state metadata instruction. The two s16 values
+it stamps into `+0x7c`/`+0x7e` are captured opaquely by the bulk 128-byte
+save/restore operations but are never consumed by any scalar reader. The
+values likely encode the current maneuver frame or animation phase for
+checkpoint purposes. This item is closed.
 
 ### Argument Readers
 
-`FUN_00465ad0` (0x465ad0) is the raw stack-pop function — pops one dword from the 32-entry eval stack at `DAT_00546bf2[DAT_00546c42 - 1]`. The `_CTDo_` handlers pop their arguments by calling higher-level wrappers that additionally validate and convert units:
+`FUN_00465ad0` (0x465ad0) is the raw stack-pop function — pops one dword from
+the 32-entry eval stack at `DAT_00546bf2[DAT_00546c42 - 1]`. The `_CTDo_`
+handlers pop their arguments by calling higher-level wrappers that
+additionally validate and convert units:
 
 | Address | Name (inferred) | Return value | Converts from |
 |---------|----------------|--------------|---------------|
@@ -216,11 +301,14 @@ Calls `MVRMove(heading, alt, roll_or_any, alt_is_any, vel_x, vel_y, speed, durat
 2. `alt` (binary degrees, ±90°) — from `read_angle`
 3. `roll` (binary degrees, ±180°, or `0x7FFFFFFF` = `any`) — from `read_alt`
 4. `alt_is_any` (bool) — derived from altitude arg being 0x7FFFFFFF (the `any` sentinel)
-5–6. velocity carry-over from previous command (`_DAT_00546c9c`, `_DAT_00546ca0`, zeroed after use)
+5–6. velocity carry-over from previous command (`_DAT_00546c9c`,
+   `_DAT_00546ca0`, zeroed after use)
 7. `speed` (binary degrees, clamped to aircraft speed range) — from `read_speed`
 8. `duration` (0–15 ticks) — from `read_duration`
 
-`MVRMove` (_MVRMove): clamps `alt` to ±0x3FFC (±90°); when `alt_is_any` = true → maneuver type 6 (any altitude) / roll target = 0; when false → type 1, roll target = `roll` arg.
+`MVRMove` (_MVRMove): clamps `alt` to ±0x3FFC (±90°); when `alt_is_any` = true
+→ maneuver type 6 (any altitude) / roll target = 0; when false → type 1, roll
+target = `roll` arg.
 
 ### `CTDo_turn` — confirmed arg sequence
 
@@ -231,22 +319,7 @@ Calls `MVRMove(heading, alt, roll_or_any, alt_is_any, vel_x, vel_y, speed, durat
 5. ctrl
 6. duration
 
-## Size
-
-| BI file | Size | AI source size |
-|---------|------|----------------|
-| AC130.BI, B.BI, HYDRO.BI, LARGE.BI, LINER.BI | 4,608 B | 960–3,970 B |
-| H.BI | 8,704 B | 12,412 B |
-| F.BI, F117.BI, MOTH.BI | 12,800 B | 18,423–20,616 B |
-
-For complex scripts (F, H) the bytecode is more compact than the source text. For simple scripts (LINER, LARGE) the PE overhead — headers, export table, native function bodies — exceeds the bytecode size, so the BI is larger than its `.AI` source. The compiler is internal to FA's toolchain and not distributed.
-
-## Location
-
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 9 |
-
 ## Related
 
-- [AI.md](AI.md) — plain-text AI script; uses the exports of the paired `.BI` as its instruction set
+**Formats:** [AI](AI.md) — plain-text AI script; uses the exports of the
+paired `.BI` as its instruction set.

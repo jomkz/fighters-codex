@@ -40,10 +40,8 @@ NON_SPEC = {"README.md", "STATUS.md"}
 # Specs not yet restructured to the template (docs/spec-authoring.md). Each
 # conversion batch removes its tokens; the mechanism is deleted when empty.
 LEGACY = {
-    "AI", "BI", "BRF", "CAM", "CFG", "DAT", "DLG",
-    "ECM", "FNT", "GAS", "HUD", "JT", "M", "MC",
-    "MNU", "NT", "OT", "P", "PT",
-    "PTS", "SEE", "SMS",
+    "BRF", "DLG", "ECM", "FNT", "GAS", "HUD", "JT",
+    "MNU", "NT", "OT", "PT", "PTS", "SEE",
 }
 
 # Canonical H2 set, in required relative order.

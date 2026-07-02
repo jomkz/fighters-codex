@@ -195,8 +195,11 @@ Every irregular shape in the corpus, so no conversion has to invent policy:
   `gui: [gui/src/editors/vdo_editor.cpp]`.
 - **One-way by design** — SH: `direction: read`,
   `rationale: "OBJ export is intentionally one-way (#48: no OBJ→SH encoder planned)"`.
-- **Encode-only** — AI: `direction: write` (the AI→BI compiler), with `issue`
-  pointing at the BI→AI decompiler work (#102).
+- **Compiler pair** — `direction` describes fx_lib's ability on *this* format:
+  AI is `read` (`fx ai compile` fully parses `.AI`; nothing writes it until
+  the #102 decompiler), while BI is `round-trip` with `byte_identical: false`
+  (`fx ai compile` writes it, `fx bi dump` reads it, dump→recompile is not
+  byte-exact — #102).
 - **Big-endian** — XMI: `endianness: big` (IFF-style chunk sizes); the File
   Layout preamble states it.
 - **Project artifact, not game data** — SMS (the recovered symbol map):

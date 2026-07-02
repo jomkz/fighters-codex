@@ -1,28 +1,58 @@
-# FA.EXE Symbol Map (FA.SMS)
+---
+format: SMS
+name: FA.EXE Symbol Map
+extensions: [".SMS"]
+category: system
+endianness: little
+spec:
+  status: complete
+codec:
+  direction: read
+  issue: 101
+  lib: [lib/src/sms.cpp]
+  commands: [sms]
+  tests: []
+  fuzz: []
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: []
+---
 
-`FA.SMS` is a binary symbol map file shipped with Jane's Fighters Anthology. It contains 3,829 MSVC-mangled C++ function and variable names paired with their virtual addresses in FA.EXE. It is the single most useful resource for FA.EXE reverse engineering.
+# SMS — FA.EXE Symbol Map (.SMS)
 
-## Location
+`FA.SMS` is a binary symbol map file shipped with Jane's Fighters Anthology —
+a loose file in the FA install directory, not packed into any LIB archive. It
+contains 3,829 MSVC-mangled C++ function and variable names paired with their
+virtual addresses in FA.EXE. It is the single most useful resource for FA.EXE
+reverse engineering.
 
-Loose file in the FA install directory — not packed into any LIB archive.
+## Tools
 
-## Binary Structure
+### fx
 
 ```
-Offset  Size  Field
-------  ----  -----
-0x0000     4  count        u32 LE — number of symbol records (3829 = 0x0EF5)
-0x0004  N×8  records      N × { str_off: u32 LE, va: u32 LE }
-0x????     *  string_table null-terminated C strings, densely packed
+fx sms dump <FA.SMS> [-o out.csv]    # symbol table → CSV (va, mangled, demangled)
 ```
+
+## File Layout
+
+All multi-byte integers are little-endian.
+
+| Offset | Size | Type | Description |
+|--------|------|------|-------------|
+| `0x0000` | 4   | u32 | count — number of symbol records (3829 = 0x0EF5) |
+| `0x0004` | N×8 |     | records: N × { str_off: u32, va: u32 } |
+| —        | *   |     | string_table — null-terminated C strings, densely packed |
 
 - `string_table` base offset = `4 + count × 8` = **30636** (0x778C)
 - Total file size: **106,706 bytes**
 - `va` — virtual address of the symbol in FA.EXE's address space (not a file offset)
 - `str_off` — byte offset into `string_table` of the null-terminated symbol name
-- Records are stored in `str_off` order (string-table insertion order), **not** sorted by VA
+- Records are stored in `str_off` order (string-table insertion order),
+  **not** sorted by VA
 
-## Address Range
+### Address Range
 
 | Boundary | VA |
 |----------|----|
@@ -31,9 +61,10 @@ Offset  Size  Field
 
 This covers the full FA.EXE image: `.text` (code), `.data`, `.rdata`, and `.bss`.
 
-## Symbol Contents
+### Symbol Contents
 
-3,829 MSVC C++ decorated names (`?`-mangled) plus C-decorated names. Calling convention breakdown:
+3,829 MSVC C++ decorated names (`?`-mangled) plus C-decorated names. Calling
+convention breakdown:
 
 | Convention | Decoration | Count |
 |------------|------------|-------|
@@ -53,11 +84,16 @@ Representative sample:
 | `?` | `?CDPATH@@3PADA` | `char * CDPATH` (global) |
 | `?` | `?CN_ReadConfig@@YAXPAUCN_INFO@@PAE@Z` | `void CN_ReadConfig(struct CN_INFO *, unsigned char *)` |
 
-Namespace prefixes seen in the symbol set include: `AP` (autopilot), `VDO` (video), `CD` (campaign/disc), `CN` (network config), and many more.
+Namespace prefixes seen in the symbol set include: `AP` (autopilot), `VDO`
+(video), `CD` (campaign/disc), `CN` (network config), and many more.
 
-## Cross-Reference Verification
+## Engine Notes
 
-Spot-checked 10 symbols across the full VA range against the shipped `FA.EXE` (ImageBase `0x00400000`). All sampled VAs contain valid x86 at their computed file offsets:
+### Cross-Reference Verification
+
+Spot-checked 10 symbols across the full VA range against the shipped `FA.EXE`
+(ImageBase `0x00400000`). All sampled VAs contain valid x86 at their computed
+file offsets:
 
 | VA | Symbol | First bytes | Notes |
 |----|--------|-------------|-------|
@@ -72,20 +108,25 @@ Spot-checked 10 symbols across the full VA range against the shipped `FA.EXE` (I
 | `0x004EC200` | `?firstMenu@@3PAUMENU@@A` | `00 00 00 00 00 00` | zero-init global |
 | `0x005937E0` | `\177wail32_NULL_THUNK_DATA` | `00 00 00 00 97 00` | Miles Sound System IAT |
 
-**Conclusion**: The symbol map matches the shipped binary. All code symbols have valid function prologues; all data symbols are in the expected sections.
+**Conclusion**: the symbol map matches the shipped binary. All code symbols
+have valid function prologues; all data symbols are in the expected sections.
 
-## Build Configuration
+### Build Configuration
 
 **Release build.** Evidence:
 
-- No `_RTC_CheckStackVars`, `_RTC_CheckEsp`, `_RTC_Shutdown`, or any other `/RTCx` runtime-check symbols — these are injected only by MSVC debug builds
+- No `_RTC_CheckStackVars`, `_RTC_CheckEsp`, `_RTC_Shutdown`, or any other
+  `/RTCx` runtime-check symbols — these are injected only by MSVC debug builds
 - No `_CrtDbgReport`, `_CrtDbgBreak`, or debug CRT entry points
-- `__chkstk` and `__crtheap` are present but both appear in release builds (stack probing for large frames; CRT heap pointer)
+- `__chkstk` and `__crtheap` are present but both appear in release builds
+  (stack probing for large frames; CRT heap pointer)
 - Mangled names show no debug-specific decorations
 
-## Key Confirmed Symbols
+### Key Confirmed Symbols
 
-A curated list of all 3,829 named symbols is maintained in [docs/fa/symbols.md](../symbols.md). Selected high-value symbols confirmed during the main Ghidra disassembly pass:
+A curated list of all 3,829 named symbols is maintained in
+[docs/fa/symbols.md](../symbols.md). Selected high-value symbols confirmed
+during the main Ghidra disassembly pass:
 
 | VA | Symbol | Notes |
 |----|--------|-------|
@@ -110,14 +151,23 @@ A curated list of all 3,829 named symbols is maintained in [docs/fa/symbols.md](
 | `0x4C5D70` | `@T_Load@4` | T2 terrain file loader entry point |
 | `0x4D22D4` | `do_ifdestroyed` | Shape bytecode opcode handler — tests destroyed state |
 
-## Usage with Ghidra
+### Usage with Ghidra
 
-A ready-to-run Java script is provided at [`scripts/ghidra/ImportFASms.java`](../../../scripts/ghidra/ImportFASms.java). See [`scripts/ghidra/README.md`](../../../scripts/ghidra/README.md) for full setup and overlay-DLL rebasing instructions.
+A ready-to-run Java script is provided at
+[`scripts/ghidra/ImportFASms.java`](../../../scripts/ghidra/ImportFASms.java).
+See [`scripts/ghidra/README.md`](../../../scripts/ghidra/README.md) for full
+setup and overlay-DLL rebasing instructions.
 
 Quick start:
 
 1. Open FA.EXE in Ghidra and let auto-analysis finish.
 2. Tools → Script Manager → run `ImportFASms`.
 3. Point the file dialog at `FA.SMS` in the FA install directory.
-4. All 3,829 functions and globals are labelled in one pass; progress bar shows in the status bar.
+4. All 3,829 functions and globals are labelled in one pass; progress bar
+   shows in the status bar.
 
+## Related
+
+**Engine:** [symbols.md](../symbols.md) — the curated, subsystem-organized
+symbol reference built from this file; every `docs/fa` engine doc cites VAs
+recovered through it.
