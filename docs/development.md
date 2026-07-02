@@ -141,6 +141,7 @@ Every PR to `main` (and every push to it) runs the
 |---|---|---|
 | `gcc` | ubuntu-latest | Linux GCC build + full test suite |
 | `clang` | ubuntu-latest | Linux Clang build + full test suite |
+| `asan-ubsan` | ubuntu-latest | Full suite under AddressSanitizer + UBSan — memory errors and UB in the binary parsers fail the PR |
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
 
 Every `uses:` in the workflows is pinned to a commit SHA (with the version in a
