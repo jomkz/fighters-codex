@@ -14,6 +14,7 @@ fx pt      info / unpack / pack         # aircraft type definitions
 fx nt / jt / see / ecm / gas ...        # other type definitions
 fx mission info / unpack / pack         # .M / .MM mission and map files
 fx sh      info / unpack                # .SH 3D shapes → Wavefront OBJ
+fx raw     info / unpack                # .RAW in-game screenshots → PNG
 fx sms     dump                         # FA.SMS symbol map → CSV
 fx t2      info                         # .T2 terrain map grid info
 fx plt     info / dump                  # .P pilot save file
@@ -247,6 +248,26 @@ applies a delta to the previous state. Output values are raw palette indices —
 apply the appropriate PAL file separately to get RGB colours.
 
 *See also: [fa/formats/CB8.md](fa/formats/CB8.md)*
+
+## raw — Screenshots
+
+```
+fx raw info   <file.RAW>
+fx raw unpack <file.RAW> [-o out.png]
+```
+
+#### `fx raw info <file.RAW>`
+
+Print the capture header: magic, dimensions (height derived from file size),
+and palette presence.
+
+#### `fx raw unpack <file.RAW> [-o out.png]`
+
+Convert an in-game screenshot (Ctrl-Alt-Shift-V, written to the install
+directory) to PNG using the file's embedded 8-bit palette. There is no pack
+command — RAW files are engine output, not game assets.
+
+*See also: [fa/formats/RAW.md](fa/formats/RAW.md)*
 
 ## sms — Symbol map
 

@@ -1,34 +1,51 @@
-# Binary Lookup Tables (.BIN)
+---
+format: BIN
+name: Binary Lookup Tables
+extensions: [".BIN"]
+variants: ["INSIGMAP.BIN", "MIX2.BIN", "MIX2L.BIN", "MIX4.BIN", "MIX4L.BIN", "VFONTPAL.BIN"]
+category: system
+endianness: none
+spec:
+  status: complete
+codec:
+  direction: none
+  issue: 107
+  gui: [gui/src/editors/bin_editor.cpp]
+  fixtures:
+    synthetic: false
+    real_manifest: true
+related: [P, PAL]
+---
 
-FA_2.LIB contains 6 `.BIN` files. All are flat lookup tables used by the engine's color blending and insignia systems.
+# BIN — Binary Lookup Tables (.BIN)
 
-## File Inventory
+FA_2.LIB contains 6 `.BIN` files. All are flat lookup tables used by the
+engine's color blending and insignia systems.
 
-| File | Size | Purpose |
-|------|------|---------|
-| INSIGMAP.BIN | 256 B | Insignia slot → palette/asset mapping |
-| MIX2.BIN | 512 B | Non-linear half-intensity reduction table (gamma-corrected) |
-| MIX2L.BIN | 512 B | Linear half-intensity table: `output = floor(input / 2)` |
-| MIX4.BIN | 1024 B | Non-linear quarter-intensity reduction table (gamma-corrected) |
-| MIX4L.BIN | 1024 B | Linear quarter-intensity table: `output = floor(input / 4)` |
-| VFONTPAL.BIN | 48 B | 16-entry VGA 6-bit palette for video briefing font rendering |
+## File Layout
 
-## MIX Tables (MIX2, MIX2L, MIX4, MIX4L)
+Single-byte tables; no multi-byte integers.
 
-Used for palette-mode transparency and color blending. When the engine blends two
-8-bit palette indices, it sums their intensity values and uses a MIX table to look
-up the resulting index.
+### MIX Tables (MIX2, MIX2L, MIX4, MIX4L)
+
+Used for palette-mode transparency and color blending. When the engine blends
+two 8-bit palette indices, it sums their intensity values and uses a MIX table
+to look up the resulting index.
 
 - **MIX2L** — 512-byte table; `output[i] = floor(i / 2)`. Exact 50% linear reduction.
 - **MIX4L** — 1024-byte table; `output[i] = floor(i / 4)`. Exact 25% linear reduction.
-- **MIX2** — 512-byte non-linear variant; applies gamma correction. Maps 0→0, 255→128, 511→255 but with a non-linear curve (square-ish at low end, linear at high end).
-- **MIX4** — 1024-byte non-linear variant; same gamma-correction approach for quarter-intensity blending.
+- **MIX2** — 512-byte non-linear variant; applies gamma correction. Maps 0→0,
+  255→128, 511→255 but with a non-linear curve (square-ish at low end, linear
+  at high end).
+- **MIX4** — 1024-byte non-linear variant; same gamma-correction approach for
+  quarter-intensity blending.
 
 The `L` suffix = **L**inear (no gamma), without `L` = perceptually-corrected.
 
-## VFONTPAL.BIN (48 bytes = 16 × 3-byte VGA RGB entries)
+### VFONTPAL.BIN (48 bytes = 16 × 3-byte VGA RGB entries)
 
-Palette for rendering text in video briefing sequences. VGA 6-bit format (values 0–63 per channel).
+Palette for rendering text in video briefing sequences. VGA 6-bit format
+(values 0–63 per channel).
 
 | Index | 6-bit RGB | 8-bit RGB | Role |
 |-------|-----------|-----------|------|
@@ -49,19 +66,35 @@ Palette for rendering text in video briefing sequences. VGA 6-bit format (values
 | 14 | `00 06 08` | (0, 24, 32)   | Cyan text — dark |
 | 15 | `3F 3F 3F` | (255, 255, 255) | White |
 
-Index 0 (magenta) is the standard VGA transparency key. Indices 1–7 render a blue gradient (likely shadow or secondary text). Indices 8–14 render a cyan gradient (primary text). Index 15 is white (highlight).
+Index 0 (magenta) is the standard VGA transparency key. Indices 1–7 render a
+blue gradient (likely shadow or secondary text). Indices 8–14 render a cyan
+gradient (primary text). Index 15 is white (highlight).
 
-## INSIGMAP.BIN (256 bytes)
+### INSIGMAP.BIN (256 bytes)
 
-Flat 256-entry byte array. Entry 0 = `0x00`; all remaining 255 entries = `0x3B` (59 decimal). The `0x3B` fill suggests a "no insignia" sentinel — most insignia slots are unused, with the actual insignia assets referenced by the pilot save file fields at offsets `0x6E`–`0x94` ([P.md](P.md)).
+Flat 256-entry byte array. Entry 0 = `0x00`; all remaining 255 entries = `0x3B`
+(59 decimal). The `0x3B` fill suggests a "no insignia" sentinel — most insignia
+slots are unused, with the actual insignia assets referenced by the pilot save
+file fields at offsets `0x6E`–`0x94` ([P.md](P.md)).
 
-## Location
+## File Inventory
 
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 6 |
+| File | Size | Purpose |
+|------|------|---------|
+| INSIGMAP.BIN | 256 B | Insignia slot → palette/asset mapping |
+| MIX2.BIN | 512 B | Non-linear half-intensity reduction table (gamma-corrected) |
+| MIX2L.BIN | 512 B | Linear half-intensity table: `output = floor(input / 2)` |
+| MIX4.BIN | 1024 B | Non-linear quarter-intensity reduction table (gamma-corrected) |
+| MIX4L.BIN | 1024 B | Linear quarter-intensity table: `output = floor(input / 4)` |
+| VFONTPAL.BIN | 48 B | 16-entry VGA 6-bit palette for video briefing font rendering |
+
+All six live in FA_2.LIB.
 
 ## Related
 
-- [P.md](P.md) — pilot save files reference insignia asset IDs cross-referenced by INSIGMAP.BIN
-- [PAL.md](PAL.md) — main VGA palette; VFONTPAL.BIN is a separate 16-color subset for video text
+**Formats:** [P](P.md) — pilot save files reference insignia asset IDs
+cross-referenced by INSIGMAP.BIN; [PAL](PAL.md) — main VGA palette;
+VFONTPAL.BIN is a separate 16-color subset for video text.
+
+**Engine:** the fx-gui BIN editor renders these tables; the fx_lib codec is
+tracked in #107.

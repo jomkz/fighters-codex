@@ -1,9 +1,49 @@
-# Theater / Map Layout (.MM)
+---
+format: MM
+name: Theater Map Layout
+extensions: [".MM"]
+category: terrain
+endianness: none
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "w_goal waypoint semantics untraced"
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/mission.cpp]
+  commands: [mm, mission]
+  tests: [tests/test_mission.cpp]
+  fuzz: []
+  gui: [gui/src/editors/mission_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [T2, LAY, M, CAM, BRF]
+---
 
-FA_2.LIB contains 75 `.MM` files. Each defines a theater — the complete scene description for a group of missions: terrain reference, weather, object placements, waypoints, and terrain tile overrides. Format is **plain ASCII text** with a keyword/argument syntax, CRLF line endings.
+# MM — Theater Map Layout (.MM)
 
-## File Structure
+FA_2.LIB contains 75 `.MM` files. Each defines a theater — the complete scene
+description for a group of missions: terrain reference, weather, object
+placements, waypoints, and terrain tile overrides. Format is **plain ASCII
+text** with a keyword/argument syntax, CRLF line endings.
 
+## Tools
+
+### fx
+
+```
+fx mm info   <file.MM>              # scene summary (alias of fx mission)
+fx mm unpack <file.MM> [-o out]     # export to editable text
+fx mm pack   <file> [-o out.MM]     # re-encode (byte-identical)
+```
+
+## File Layout
+
+Plain text; keyword/argument lines, blocks terminated by a lone `.` line.
 Sections appear in this order:
 
 1. **File header** — global scene parameters
@@ -16,7 +56,7 @@ Sections appear in this order:
 8. **`waypoint2` blocks** — AI/scripted waypoint sequences (present in some files)
 9. **`tdic` blocks** — per-tile collision/passability bitmaps
 
-## Header Keywords
+### Header Keywords
 
 | Keyword | Arguments | Description |
 |---------|-----------|-------------|
@@ -27,7 +67,7 @@ Sections appear in this order:
 | `wind` | `<speed> <direction>` | Wind speed and bearing |
 | `view` | `<x> <y> <z>` | Initial camera world-space position |
 
-## Sides Block
+### Sides Block
 
 Defines faction alignment. Four variants across all 75 files:
 
@@ -38,13 +78,21 @@ Defines faction alignment. Four variants across all 75 files:
 | `sides3` | 24 | 9 |
 | `sides4` | 64 | 25 |
 
-Each entry is a tab-indented hex byte: `$00` = neutral/friendly, `$80` = hostile to the player.
+Each entry is a tab-indented hex byte: `$00` = neutral/friendly, `$80` =
+hostile to the player.
 
-The table is a **flat array indexed by faction code**: entry *i* = hostility of side code *i*. The number suffix (2/3/4) is a format version indicating how many faction codes are defined — each version is a strict superset of the previous (`sides2[0–18]` == `sides3[0–18]` == `sides4[0–18]`; `sides3[0–23]` == `sides4[0–23]`). Theaters added in later FA versions use a higher-numbered variant to cover newly introduced faction codes.
+The table is a **flat array indexed by faction code**: entry *i* = hostility of
+side code *i*. The number suffix (2/3/4) is a format version indicating how
+many faction codes are defined — each version is a strict superset of the
+previous (`sides2[0–18]` == `sides3[0–18]` == `sides4[0–18]`;
+`sides3[0–23]` == `sides4[0–23]`). Theaters added in later FA versions use a
+higher-numbered variant to cover newly introduced faction codes.
 
-The `nationality` field in `obj` blocks is **not** an index into this table — it is a cosmetic UI code (country flag/emblem in briefings) and can exceed 162, far beyond the 64-entry maximum.
+The `nationality` field in `obj` blocks is **not** an index into this table —
+it is a cosmetic UI code (country flag/emblem in briefings) and can exceed 162,
+far beyond the 64-entry maximum.
 
-## Object Block (`obj`)
+### Object Block (`obj`)
 
 Each `obj` block defines one static scene object. Terminated by a lone `.` line.
 
@@ -70,7 +118,7 @@ Each `obj` block defines one static scene object. Terminated by a lone `.` line.
 | `w_for` | `<int>` | Waypoint owner reference |
 | `map_obj_success_flags` | `<alias> <hex>` | Looks up entity by alias, then writes the hex value into entity `ot_flags` bits 5–7: `entity+1 = (value) \| (entity+1 & 0xffffff1f)`. Used to set or restore per-object mission-objective state. The mission save handler (`FUN_00495e80`) serialises current bit 5–7 state back using this keyword. |
 
-### `flags` Bit Survey
+#### `flags` Bit Survey
 
 8 distinct values observed across all 75 files (8,373 `obj` blocks total):
 
@@ -85,16 +133,26 @@ Each `obj` block defines one static scene object. Terminated by a lone `.` line.
 | `$4003` | 0, 1, 14 | Runways (STRIP1, DTSTRP, STRIP5, STRIP7) | 906 |
 | `$4403` | 0, 1, 10, 14 | Runways (STRIP4, STRIP) | 2 |
 
-Confirmed bit meanings:
-- **Bit 0 (`$1`)** — present on all non-decorative objects; likely "active / participates in game logic"
-- **Bit 1 (`$2`)** — set on mobile units (`.NT`) and runways; "mobile or functional structure"
-- **Bit 14 (`$4000`)** — set only on runway strips; "landing surface"
+Bit meanings:
+- **Bit 0 (`$1`)** — inferred — present on all non-decorative objects; likely
+  "active / participates in game logic"
+- **Bit 1 (`$2`)** — inferred — set on mobile units (`.NT`) and runways;
+  "mobile or functional structure"
+- **Bit 14 (`$4000`)** — inferred — set only on runway strips; "landing surface"
+- **Bit 9 (`$200`)** — confirmed — `@Reaction@12` (0x464040): when set, entity
+  is immediately rejected as a valid AI target (returns `'\x1f'` rejection
+  code, same as non-targetable or dead). Only 24 objects carry this flag
+  (`$601`): carrier KING.OT, houses, and factory types. Semantics: **"protected
+  from AI targeting / not auto-targetable"** — used for mission-critical scene
+  objects enemies should not autonomously engage.
+- **Bit 10 (`$400`)** — confirmed — `_Reaction_12` (0x464040) and
+  `_MaskEvents_4` (0x463ea0): drives civilian/light-type event handling. Set on
+  fuel depots, control towers, runway strips, and flags (`$401`). Shared
+  semantic with NT.md bit 10. Semantics: **"civilian or non-combat structure"**
+  — participates in game logic (bit 0 set) but uses lighter event-system
+  dispatch paths.
 
-Confirmed bit meanings (continued):
-- **Bit 9 (`$200`)** — **Confirmed** — `@Reaction@12` (0x464040): when set, entity is immediately rejected as a valid AI target (returns `'\x1f'` rejection code, same as non-targetable or dead). Only 24 objects carry this flag (`$601`): carrier KING.OT, houses, and factory types. Semantics: **"protected from AI targeting / not auto-targetable"** — used for mission-critical scene objects enemies should not autonomously engage.
-- **Bit 10 (`$400`)** — **Confirmed** — `_Reaction_12` (0x464040) and `_MaskEvents_4` (0x463ea0): drives civilian/light-type event handling. Set on fuel depots, control towers, runway strips, and flags (`$401`). Shared semantic with NT.md bit 10. Semantics: **"civilian or non-combat structure"** — participates in game logic (bit 0 set) but uses lighter event-system dispatch paths.
-
-### Example
+#### Example
 
 ```
 obj
@@ -108,9 +166,10 @@ obj
     .
 ```
 
-## Special Block (`special`)
+### Special Block (`special`)
 
-Named geographic labels shown on the theater map (cities, seas, landmarks). Same field set as `obj` but without `type`.
+Named geographic labels shown on the theater map (cities, seas, landmarks).
+Same field set as `obj` but without `type`.
 
 ```
 special
@@ -122,11 +181,10 @@ special
     .
 ```
 
-## Terrain Tile Data
+### Terrain Tile Data
 
-### `tmap` — Sparse tile overrides
-
-Only non-default tiles appear; the grid is otherwise implied from the `.T2` terrain file.
+**`tmap` — sparse tile overrides.** Only non-default tiles appear; the grid is
+otherwise implied from the `.T2` terrain file.
 
 ```
 tmap <col> <row> <tile_id> <variant>
@@ -136,17 +194,19 @@ tmap <col> <row> <tile_id> <variant>
 - `tile_id` is an index into the terrain tile set
 - `variant` is a sub-tile selector (0–3 observed)
 
-### `tmap_named` — Named tile positions
-
-Like `tmap` but with a symbolic key encoding the position:
+**`tmap_named` — named tile positions.** Like `tmap` but with a symbolic key
+encoding the position:
 
 ```
 tmap_named k<col3><row3> <col> <row>
 ```
 
-The key `k<col3><row3>` zero-pads column and row to 3 digits each (e.g. `k000004` = col 0, row 4). The explicit `<col>` and `<row>` arguments are always identical to the values encoded in the key — they are redundant. Present in maps that reference these tiles from scripts or other systems.
+The key `k<col3><row3>` zero-pads column and row to 3 digits each (e.g.
+`k000004` = col 0, row 4). The explicit `<col>` and `<row>` arguments are
+always identical to the values encoded in the key — they are redundant.
+Present in maps that reference these tiles from scripts or other systems.
 
-## Waypoint Block (`waypoint2`)
+### Waypoint Block (`waypoint2`)
 
 ```
 waypoint2 <count>
@@ -164,13 +224,14 @@ waypoint2 <count>
     [next waypoint entry...]
 ```
 
-`count` is the number of waypoint entries that follow. Each entry begins with `w_index`. `w_pos2` has 5 arguments; the first two are always `0 0` in observed files.
+`count` is the number of waypoint entries that follow. Each entry begins with
+`w_index`. `w_pos2` has 5 arguments; the first two are always `0 0` in observed
+files.
 
-**`w_goal` values**: only `0` and `1` observed across all 75 files (192 waypoints total). `w_goal 0` always appears with `w_flags 1` and `w_speed 0` (stationary anchor/spawn point); `w_goal 1` appears with `w_flags 0`, a non-zero speed, and a `w_react` bitmask (active patrol waypoint). Exact goal-type semantics require Ghidra trace.
+### Tile Dictionary (`tdic`)
 
-## Tile Dictionary (`tdic`)
-
-Follows the `tmap` section. Each `tdic` block defines a 4×8 binary passability/collision grid for a tile variant.
+Follows the `tmap` section. Each `tdic` block defines a 4×8 binary
+passability/collision grid for a tile variant.
 
 ```
 tdic <id>
@@ -181,34 +242,57 @@ tdic <id>
 
 Values are `0` (passable) or `1` (blocked). `<id>` observed as 256 in all cases.
 
-## Location
+## Engine Notes
 
-| LIB | Count |
-|-----|-------|
-| FA_2.LIB | 75 |
+### World-Space Coordinate System — confirmed
 
-## World-Space Coordinate System (Confirmed)
-
-`?MAPWorldToScreen` (MAPWorldToScreen) maps 3D world-space positions to 2D map screen coordinates:
+`?MAPWorldToScreen` (MAPWorldToScreen) maps 3D world-space positions to 2D map
+screen coordinates:
 
 ```c
 screen_x = DAT_00536508 + (world_x  - worldCenter) / mapScale;
 screen_y = DAT_0053650a + (DAT_00536528 - world_z) / mapScale;
 ```
 
-- `world_x` / `world_z` are the first and third components of the int[3] world position vector (Y = `world_z` in the map's X/Z plane; `world_y` = altitude, not used for map display)
-- `worldCenter` / `DAT_00536528` — world-space map center (origin) for X and Z axes (set at theater load time)
+- `world_x` / `world_z` are the first and third components of the int[3] world
+  position vector (Y = `world_z` in the map's X/Z plane; `world_y` = altitude,
+  not used for map display)
+- `worldCenter` / `DAT_00536528` — world-space map center (origin) for X and Z
+  axes (set at theater load time)
 - `DAT_00536508` / `DAT_0053650a` — screen center pixel coordinates
-- `mapScale` — world-units-per-pixel scale factor (runtime zoom level); larger = more zoomed out
+- `mapScale` — world-units-per-pixel scale factor (runtime zoom level);
+  larger = more zoomed out
 
-The Z-axis inversion (`origin_z - world_z`) means positive world-Z maps to upward on screen, consistent with the engine's +Z = northward convention. `pos` and `view` values in MM files are in these same world-space integer units.
+The Z-axis inversion (`origin_z - world_z`) means positive world-Z maps to
+upward on screen, consistent with the engine's +Z = northward convention.
+`pos` and `view` values in MM files are in these same world-space integer units.
 
-**World-space unit = 1 foot (confirmed).** Calibrated via JT.md seeker-range cross-check: `AIM9X lobe 1 max ^50000` = 8.2 nm; 50,000 feet / 6,076 ft/nm ≈ 8.23 nm ✓. The FA engine uses feet throughout for all world-space coordinates.
+**World-space unit = 1 foot (confirmed).** Calibrated via JT.md seeker-range
+cross-check: `AIM9X lobe 1 max ^50000` = 8.2 nm; 50,000 feet / 6,076 ft/nm
+≈ 8.23 nm ✓. The FA engine uses feet throughout for all world-space coordinates.
+
+## Round-Trip Notes
+
+`fx mm pack` (the mission codec) re-emits the keyword stream byte-identically,
+including CRLF line endings and tab indentation; `tests/test_mission.cpp`
+asserts byte preservation over both `.M` and `.MM` inputs.
+
+## Open Questions
+
+### 1. `w_goal` semantics
+
+Only `0` and `1` observed across all 75 files (192 waypoints total). `w_goal 0`
+always appears with `w_flags 1` and `w_speed 0` (stationary anchor/spawn
+point); `w_goal 1` appears with `w_flags 0`, a non-zero speed, and a `w_react`
+bitmask (active patrol waypoint). Exact goal-type semantics need a trace of the
+waypoint consumer in FA.EXE.
+
+*Status: open — re-static (#54)*
 
 ## Related
 
-- [T2.md](T2.md) — terrain height/color/type maps referenced via `map`
-- [LAY.md](LAY.md) — cloud layer files referenced via `layer`
-- [M.md](M.md) — `.M` individual missions placed within a theater
-- [CAM.md](CAM.md) — campaign definitions that group `.MM` theaters
-- [BRF.md](BRF.md) — `.OT` object type definitions referenced by `obj` blocks
+**Formats:** [T2](T2.md) — terrain height/color/type maps referenced via
+`map`; [LAY](LAY.md) — cloud layer files referenced via `layer`; [M](M.md) —
+`.M` individual missions placed within a theater; [CAM](CAM.md) — campaign
+definitions that group `.MM` theaters; [BRF](BRF.md) — `.OT` object type
+definitions referenced by `obj` blocks.
