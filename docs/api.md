@@ -225,7 +225,7 @@ struct Cb8Info {
     uint32_t height;
     uint32_t frame_count;
     uint32_t samples_per_frame;  // sync counter ticks per frame (400)
-    uint32_t audio_sync_rate;    // sync counter ticks per second (6000 = 400 Ã— 15 fps)
+    uint32_t audio_sync_rate;    // sync counter ticks per second (6000 = 400 x 15 fps)
 };
 
 // Parse VooM header from a CB8 file in memory.
@@ -238,7 +238,7 @@ struct Cb8Decoder;  // opaque
 Cb8Decoder* cb8_open(const uint8_t* data, size_t size);
 void        cb8_close(Cb8Decoder* dec);
 
-// Decode frame `frame_idx` and return palette index bytes (width Ã— height),
+// Decode frame `frame_idx` and return palette index bytes (width x height),
 // row-major, top-to-bottom.  Seeking backward resets the canvas to frame 0.
 // Returns empty on error or out-of-range frame_idx.
 std::vector<uint8_t> cb8_decode_frame(Cb8Decoder* dec, uint32_t frame_idx);
