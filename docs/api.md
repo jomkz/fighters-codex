@@ -1,11 +1,15 @@
 ﻿# Library API
 
-`fx_lib` is a static C++17 library. Link it from CMake:
+`fx_lib` is a static C++17 library. Link it from CMake by adding the repo root:
 
 ```cmake
-add_subdirectory(fighters-codex/lib)
-target_link_libraries(your_target PRIVATE fx_lib)
+add_subdirectory(fighters-codex)   # e.g. the extern/fx_lib submodule in fa-content
+target_link_libraries(your_target PRIVATE fx::lib)
 ```
+
+When embedded this way, only the library target is built — no CLI/GUI/tools/tests
+and no test-framework fetch. The library is built position-independent, so it can
+be linked into a shared plugin.
 
 All public headers are under `lib/include/fx/`. Include them with the `fx/` prefix:
 
@@ -29,6 +33,10 @@ struct Entry {
 
 // Read the directory from a memory-mapped .LIB
 std::vector<Entry>   ealib_read_dir(const uint8_t* data, size_t size);
+
+// Find an entry by name (ASCII case-insensitive); nullptr if not found
+const Entry*         ealib_find(const std::vector<Entry>& entries,
+                                 const std::string& name);
 
 // Extract one entry (decompress if decompress=true and flags=4)
 std::vector<uint8_t> ealib_extract(const uint8_t* data, size_t size,

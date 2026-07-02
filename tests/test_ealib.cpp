@@ -183,3 +183,36 @@ TEST_CASE("ealib_patch returns empty for unrecognised archive") {
     auto result = ealib_patch(garbage.data(), garbage.size(), "x.bin", bytes({ 1 }));
     REQUIRE(result.empty());
 }
+
+// ---------------------------------------------------------------------------
+// ealib_find — case-insensitive lookup
+// ---------------------------------------------------------------------------
+
+TEST_CASE("ealib_find matches entry names case-insensitively") {
+    auto lib = ealib_build(make_files({
+        { "A.BIN", bytes({ 1 }) },
+        { "b.dat", bytes({ 2 }) },
+    }));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 2);
+
+    const Entry* e = ealib_find(entries, "a.bin");
+    REQUIRE(e != nullptr);
+    REQUIRE(strcmp(e->name, "A.BIN") == 0);
+
+    REQUIRE(ealib_find(entries, "B.DAT") == &entries[1]);
+    REQUIRE(ealib_find(entries, "b.dat") == &entries[1]);
+}
+
+TEST_CASE("ealib_find rejects prefix and missing names") {
+    auto lib = ealib_build(make_files({ { "data.bin", bytes({ 1 }) } }));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+
+    REQUIRE(ealib_find(entries, "data.bi") == nullptr);   // prefix, not a match
+    REQUIRE(ealib_find(entries, "data.bin2") == nullptr); // longer than entry
+    REQUIRE(ealib_find(entries, "missing.x") == nullptr);
+}
+
+TEST_CASE("ealib_find on empty entry list") {
+    REQUIRE(ealib_find({}, "a.bin") == nullptr);
+}

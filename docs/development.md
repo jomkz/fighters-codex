@@ -6,11 +6,19 @@ see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Prerequisites
 
+On Windows (MSVC):
+
 - **Visual Studio 2022 or 2026** (MSVC) with the following workloads:
   - Desktop development with C++
   - C++ CMake tools for Windows (installs cmake.exe into the VS directory)
-- **Git**
 - **Windows 10 or 11** recommended for development (target runtime is Windows 7+)
+
+On Linux (GCC or Clang):
+
+- **GCC or Clang** with C++17 support and **CMake 3.21+**
+  (Fedora: `sudo dnf install gcc-c++ clang cmake`)
+
+Both need **Git**.
 
 CMake ships with Visual Studio but is not added to `PATH` by default. The easiest fix is to add it manually — find `cmake.exe` under your VS install (typically `Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\`) and add that directory to your user `PATH`, or use the `$cmake` variable pattern shown below.
 
@@ -47,6 +55,19 @@ Output locations:
 | `fx-gui.exe` | `build\gui\Debug\fx-gui.exe` | `build\gui\Release\fx-gui.exe` |
 | `fx.exe` | `build\cli\Debug\fx.exe` | `build\cli\Release\fx.exe` |
 | `fx_lib.lib` | `build\lib\Debug\fx_lib.lib` | `build\lib\Release\fx_lib.lib` |
+
+### Linux (GCC/Clang)
+
+```bash
+cmake -B build                  # GCC; add -DCMAKE_CXX_COMPILER=clang++ for Clang
+cmake --build build -j
+ctest --test-dir build          # run the test suite
+```
+
+Binaries land in `build/cli/fx`, `build/lib/libfx_lib.a`, and `build/tests/fx_tests`.
+`fx-gui` is Windows-only until the Phase 3 port
+([epic #46](https://github.com/jomkz/fighters-codex/issues/46)) and is skipped on
+non-Windows configures.
 
 ## IDE Setup
 

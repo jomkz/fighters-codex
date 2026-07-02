@@ -343,7 +343,7 @@ void brf_print_info(const BrfDoc& doc, const char* format) {
 
     if (struct_type == 7 || is_jt) {
         printf("\n--- JT/Projectile Extension (struct_type=7) ---\n");
-        for (int ji = 0; fi < (int)doc.fields.size(); ++fi, ++ji) {
+        for (; fi < (int)doc.fields.size(); ++fi) {
             print_field(fi, doc.fields[fi], JT_FIELDS, JT_COUNT, doc);
         }
     } else if (struct_type >= 3 || is_nt || is_pt) {
@@ -353,7 +353,7 @@ void brf_print_info(const BrfDoc& doc, const char* format) {
         }
         if (struct_type >= 5 || is_pt) {
             printf("\n--- PT/Plane Extension (struct_type>=5) ---\n");
-            for (int pi = 0; fi < (int)doc.fields.size(); ++fi, ++pi) {
+            for (; fi < (int)doc.fields.size(); ++fi) {
                 print_field(fi, doc.fields[fi], PT_FIELDS, PT_COUNT, doc);
             }
         }

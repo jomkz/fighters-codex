@@ -89,10 +89,8 @@ static int cmd_extract(int argc, char** argv) {
 
     int ok = 0, fail = 0;
     for (const char* name : names) {
-        auto it = std::find_if(entries.begin(), entries.end(), [&](const Entry& e) {
-            return _stricmp(e.name, name) == 0;
-        });
-        if (it == entries.end()) {
+        const Entry* it = ealib_find(entries, name);
+        if (!it) {
             fprintf(stderr, "  NOT FOUND: %s\n", name);
             fail++;
             continue;

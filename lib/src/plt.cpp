@@ -29,15 +29,6 @@ static std::vector<std::string> scan_strings(const uint8_t* data, size_t size,
     return result;
 }
 
-// Returns true if the string looks like a FA asset filename (has an extension we know)
-static bool looks_like_asset(const std::string& s) {
-    auto dot = s.rfind('.');
-    if (dot == std::string::npos) return false;
-    std::string ext = s.substr(dot);
-    for (auto& c : ext) c = (char)toupper((unsigned char)c);
-    return ext == ".CAM" || ext == ".PT" || ext == ".JT" || ext == ".SEE" || ext == ".ECM";
-}
-
 bool plt_parse(const uint8_t* data, size_t size, PltInfo* info) {
     if (size < 0xB0) return false;
     if (data[0x00] != 0x0F) return false;
@@ -95,9 +86,8 @@ bool plt_parse(const uint8_t* data, size_t size, PltInfo* info) {
             else
                 info->aircraft_pool.push_back(s);
         } else if (ext == ".JT") {
-            // Next byte after this string's null terminator is the quantity
-            size_t str_abs = cam_pos; // recalculate absolute position
-            // Walk through raw data to find this JT string and its quantity byte
+            // Next byte after this string's null terminator is the quantity;
+            // walk through raw data to find this JT string and its quantity byte
             for (size_t p = cam_pos; p + s.size() < scan_end; p++) {
                 if (memcmp(data + p, s.c_str(), s.size()) == 0 && data[p + s.size()] == 0) {
                     uint8_t qty = (p + s.size() + 1 < size) ? data[p + s.size() + 1] : 0;

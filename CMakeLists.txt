@@ -1,22 +1,45 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 project(fighters-codex VERSION 0.3.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Static CRT on MSVC so the exe has zero runtime dependencies
-if(MSVC)
+# Static CRT on MSVC so the exe has zero runtime dependencies. Only when this
+# is the top-level build; embedded builds inherit the host project's CRT.
+if(MSVC AND PROJECT_IS_TOP_LEVEL)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-configure_file(
-    "${CMAKE_SOURCE_DIR}/version.h.in"
-    "${CMAKE_BINARY_DIR}/include/fx/version.h")
+# Warning policy for every target in this repo; linked PRIVATE so it never
+# propagates to consumers.
+add_library(fx_warnings INTERFACE)
+if(MSVC)
+    target_compile_options(fx_warnings INTERFACE /W3 /WX-)
+else()
+    target_compile_options(fx_warnings INTERFACE -Wall -Wextra -Wpedantic -Wshadow)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        # Catch2's TEST_CASE expands __COUNTER__, which Clang's -Wpedantic
+        # flags as a C2y extension at the expansion site in test files
+        target_compile_options(fx_warnings INTERFACE -Wno-c2y-extensions)
+    endif()
+endif()
 
-enable_testing()
-
+# The embeddable product: consumers add_subdirectory this repo and link fx::lib.
 add_subdirectory(lib)
-add_subdirectory(cli)
-add_subdirectory(gui)
-add_subdirectory(tools)
-add_subdirectory(tests)
+
+# Everything below is built only when this repo is the top-level project.
+if(PROJECT_IS_TOP_LEVEL)
+    configure_file(
+        "${CMAKE_SOURCE_DIR}/version.h.in"
+        "${CMAKE_BINARY_DIR}/include/fx/version.h")
+
+    enable_testing()
+
+    add_subdirectory(cli)
+    if(WIN32)
+        # Win32 + DX11 app until the Phase 3 cross-platform port (epic #46)
+        add_subdirectory(gui)
+    endif()
+    add_subdirectory(tools)
+    add_subdirectory(tests)
+endif()

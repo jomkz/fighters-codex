@@ -22,15 +22,8 @@
     cmd_ai.cpp
 )
 
-target_link_libraries(fx PRIVATE fx_lib)
+target_link_libraries(fx PRIVATE fx_lib fx_warnings)
 
 # stb_image needed in cli for PNG I/O
-target_include_directories(fx PRIVATE
-    ${CMAKE_SOURCE_DIR}/lib/vendor
-    ${CMAKE_BINARY_DIR}/include)
-
-if(MSVC)
-    target_compile_options(fx PRIVATE /W3 /WX-)
-else()
-    target_compile_options(fx PRIVATE -Wall -Wextra)
-endif()
+target_include_directories(fx SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/lib/vendor)
+target_include_directories(fx PRIVATE ${CMAKE_BINARY_DIR}/include)

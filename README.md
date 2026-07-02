@@ -38,7 +38,7 @@ Reverse-engineering how these simulators squeezed so much out of mid-90s hardwar
 
 ## Platform requirements
 
-Both `fx.exe` and `fx-gui.exe` are currently **64-bit Windows binaries** and require Windows 7 or later. A full cross-platform port (Linux first-class, library → CLI → GUI) is Phases 1 and 3 of the [roadmap](docs/roadmap.md).
+Pre-built releases are currently **64-bit Windows binaries** and require Windows 7 or later. The library, CLI, and test suite also build from source on Linux with GCC or Clang (see [docs/development.md](docs/development.md)); `fx-gui` remains Windows-only until Phase 3 of the [roadmap](docs/roadmap.md).
 
 Windows XP is not supported for three reasons: the build produces x64 PE only (standard XP is 32-bit); MSVC 2022+ dropped the XP-compatible toolset (`v141_xp`); and `std::filesystem` internally calls Vista-only APIs such as `GetFinalPathNameByHandleW`. Supporting XP would require downgrading to C++14, replacing `std::filesystem` with raw Win32 I/O, and using MSVC 2015 with the XP toolset — a significant regression for a negligible user base.
 
