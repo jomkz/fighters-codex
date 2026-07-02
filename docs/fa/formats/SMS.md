@@ -112,7 +112,7 @@ A curated list of all 3,829 named symbols is maintained in [docs/fa/symbols.md](
 
 ## Usage with Ghidra
 
-A ready-to-run Java script is provided at [`scripts/ghidra/ImportFASms.java`](../../scripts/ghidra/ImportFASms.java). See [`scripts/README.md`](../../scripts/README.md) for full setup and overlay-DLL rebasing instructions.
+A ready-to-run Java script is provided at [`scripts/ghidra/ImportFASms.java`](../../../scripts/ghidra/ImportFASms.java). See [`scripts/ghidra/README.md`](../../../scripts/ghidra/README.md) for full setup and overlay-DLL rebasing instructions.
 
 Quick start:
 

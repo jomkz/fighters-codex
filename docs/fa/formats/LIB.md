@@ -1,50 +1,97 @@
-# EALIB -- Archive Format (.LIB)
+---
+format: LIB
+name: EALIB Asset Archive
+extensions: [".LIB"]
+category: archive
+endianness: little
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "LZSS (flags=1) and PXPK (flags=3) payload formats undocumented"
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/ealib.cpp, lib/src/blast.cpp]
+  commands: [lib]
+  tests: [tests/test_ealib.cpp]
+  fuzz: [fuzz/fuzz_ealib.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: true
+related: [PIC, 11K]
+credits:
+  - "PKWare DCL decode based on blast.c by Mark Adler (zlib project)"
+---
 
-All game assets are packed into `.LIB` files using the EALIB container.
+# LIB — EALIB Asset Archive (.LIB)
+
+All game assets are packed into `.LIB` files using the EALIB container: a flat
+directory of named entries followed by their data blocks, with optional per-entry
+compression. The archives live in the install directory and on both game discs
+(see the [inventory](#file-inventory) below); almost every other format documented
+in this directory is stored inside one of them.
+
+## Tools
+
+### fx
+
+```
+fx lib ls      <file.LIB>                      # list entries with flags and sizes
+fx lib unpack  <file.LIB> [-o output_dir]      # extract all entries, decompressing
+fx lib extract <file.LIB> <ENTRY> [-o dir]     # extract one entry
+fx lib pack    <input_dir> <file.LIB>          # build an archive (byte-identical)
+fx lib patch   <file.LIB> <ENTRY> <new_file>   # replace one entry in place
+```
+
+`fx lib unpack` decompresses flags=0 and flags=4 automatically. Flags=1 and
+flags=3 are rare and passed through without decompression.
+
+### Other Tools
+
+- **FATK** — free (abandonware, 1998); original GUI tool with project-based LIB
+  editing; requires a compatibility layer on 64-bit Windows
 
 ## File Layout
 
-```
-Offset  Size    Description
-------  ------  -----------
-0       5       Magic: "EALIB" (ASCII, no null terminator)
-5       2       uint16 LE: number of directory entries (N)
-7+      18 x N  Directory entries (see below)
-[data]          File data blocks, immediately after the directory
-```
+All multi-byte integers are little-endian.
 
-File sizes are **not stored**. Each entry's size = next entry's offset - this entry's offset.
-Last entry's size = file_size - last entry's offset.
+| Offset | Size   | Type   | Description |
+|--------|--------|--------|-------------|
+| `0x00` | 5      | char[5] | Magic `EALIB` (ASCII, no null terminator) |
+| `0x05` | 2      | u16    | Number of directory entries (N) |
+| `0x07` | 18 × N |        | Directory entries (see below) |
+| —      |        |        | File data blocks, immediately after the directory |
 
-## Directory Entry (18 bytes)
+File sizes are **not stored**. Each entry's size = next entry's offset − this
+entry's offset. Last entry's size = file_size − last entry's offset.
 
-```
-Offset  Size  Description
-------  ----  -----------
-0       13    Filename, null-padded, 8.3 DOS format (max 12 chars + null)
-13       1    Flags byte (see table)
-14       4    uint32 LE: absolute byte offset of file data in the .LIB
-```
+### Directory Entry (18 bytes)
 
-## Flags
+| Offset | Size | Type     | Description |
+|--------|------|----------|-------------|
+| `+0x00` | 13  | char[13] | Filename, null-padded, 8.3 DOS format (max 12 chars + null) |
+| `+0x0D` | 1   | u8       | Flags byte (see table) |
+| `+0x0E` | 4   | u32      | Absolute byte offset of file data in the .LIB |
+
+### Flags
 
 | Value | Name | Description |
 |-------|------|-------------|
-| 0 | raw | Uncompressed -- data stored verbatim |
+| 0 | raw | Uncompressed — data stored verbatim |
 | 1 | lzss | LZSS compressed (4-byte decompressed-size prefix) |
 | 3 | pxpk | Raw with a 4-byte `PXPK` inline header |
-| 4 | dcl | PKWare DCL ("Blast") with 4-byte EA size prefix |
+| 4 | dcl | PKWare DCL ("Blast") with 6-byte EA prefix |
 
-`fx lib unpack` decompresses flags=0 and flags=4 automatically. Flags=1 and flags=3
-are rare and passed through without decompression.
+### Filename Conventions
 
-## Filename Notes
-
-Certain filename prefixes are engine conventions that apply to files of any type stored
-in a `.LIB`. On extraction, `fx lib unpack` maps the characters `& * ? " < > | / \ :`
-to `_` (via `ealib_safe_name`) so output filenames are legal and byte-identical on every
-platform; of the prefixes below, only `&` is affected — `^`, `$`, and `_` extract as-is.
-The original names are preserved in memory for patching operations.
+Certain filename prefixes are engine conventions that apply to files of any type
+stored in a `.LIB`. On extraction, `fx lib unpack` maps the characters
+`& * ? " < > | / \ :` to `_` (via `ealib_safe_name`) so output filenames are
+legal and byte-identical on every platform; of the prefixes below, only `&` is
+affected — `^`, `$`, and `_` extract as-is. The original names are preserved in
+memory for patching operations.
 
 | Prefix | Convention | Applies to |
 |--------|-----------|------------|
@@ -55,18 +102,16 @@ The original names are preserved in memory for patching operations.
 
 Example: `&AFTB2.11K` in the archive extracts to `_AFTB2.11K` on disk.
 
-## EA Compression Wrapper (flags=4)
+### EA Compression Wrapper (flags=4)
 
 Compressed entries prepend a 6-byte header to a standard PKWare DCL stream:
 
-```
-Offset  Size  Description
-------  ----  -----------
-0        4    uint32 LE: decompressed size
-4        1    litmode: 0x00 = binary (only mode used in FA)
-5        1    dictbits: 4=1024-byte window, 5=2048, 6=4096
-6+            PKWare DCL bitstream (LSB-first)
-```
+| Offset | Size | Type | Description |
+|--------|------|------|-------------|
+| `+0x00` | 4 | u32 | Decompressed size |
+| `+0x04` | 1 | u8  | litmode: 0x00 = binary (only mode used in FA) |
+| `+0x05` | 1 | u8  | dictbits: 4=1024-byte window, 5=2048, 6=4096 |
+| `+0x06` | — |     | PKWare DCL bitstream (LSB-first) |
 
 The decompressed-size field is written correctly by the game's tooling, but a
 crafted archive can claim anything up to 4 GiB. `fx_lib` treats claims above
@@ -75,7 +120,7 @@ decompresses to a few MiB (#168). A zero claim extracts to an empty payload
 (#169); a claim larger than the stream's actual output is tolerated (the
 output is sized by what the bitstream produces, up to the claim).
 
-## PKWare DCL Algorithm
+### PKWare DCL Algorithm
 
 Based on `blast.c` by Mark Adler (zlib project). See `lib/src/blast.cpp`.
 
@@ -123,7 +168,7 @@ static const int lenbase[]  = {3,2,4,5,6,7,8,9,10,12,16,24,40,72,136,264};
 static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 ```
 
-## Known .LIB Files (Fighters Anthology)
+## File Inventory
 
 | File | TOOLKIT ID | Location | Key Contents |
 |------|------------|----------|--------------|
@@ -183,12 +228,32 @@ Full enumeration via `fx lib ls` (FA_3.LIB excluded — Disk 2 not mounted):
 | `.8K` | 1 | 8 kHz PCM audio |
 | `.11K` | 114 | 11 kHz PCM audio |
 
-**TOOLKIT ID** is the 2-character identifier the FA TOOLKIT uses internally in its
-`CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
-`FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` — these do not match the
-filename suffix, so the IDs appear to be opaque tokens rather than derived from the name.
+## Round-Trip Notes
 
-## Applications
+`fx lib pack` rebuilds an archive byte-identically from an unpacked directory,
+and `fx lib patch` replaces a single entry while leaving every other byte of the
+archive untouched; both are asserted by `tests/test_ealib.cpp` and exercised
+end-to-end against a real install by the `fa_extract_manifest` integration test
+(`FX_FA_ROOT` mode). Extraction-side filename sanitisation (see
+[Filename Conventions](#filename-conventions)) is reversed from the in-memory
+directory, not the on-disk names, so packing survives the `&` → `_` mapping.
 
-- **fx** — the fighters-codex CLI; primary tool for all LIB operations (`unpack`, `pack`, `patch`, `ls`)
-- **FATK** — free (abandonware, 1998); original GUI tool with project-based LIB editing; requires a compatibility layer on 64-bit Windows
+## Open Questions
+
+### 1. LZSS (flags=1) and PXPK (flags=3) payload formats
+
+Both flag values are identified and `fx lib unpack` passes such entries through
+untouched, but the LZSS bitstream parameters and the `PXPK` inline header have
+no written spec — no FA archive contains either flavour, so closing this needs
+samples from the wider Fighters family (ATF/USNF).
+
+*Status: open — re-static (#54)*
+
+## Related
+
+**Formats:** [PIC](PIC.md) and [11K](11K.md) document the filename-prefix
+conventions from the consumer side; every format spec in this directory
+describes content stored in these archives.
+
+**Engine:** [architecture.md](../architecture.md) — Asset System (EALIB
+Archives) covers how FA.EXE mounts and reads them at runtime.

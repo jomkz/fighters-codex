@@ -76,7 +76,7 @@ Mission definitions, briefing text, campaign state, AI scripts, and their compil
 
 ## Type Definitions (BRF DSL)
 
-Seven file types share a plain-text assembly-like DSL that defines aircraft, weapons, objects, and sensors. See [BRF.md](BRF.md) for the format overview.
+Seven file types share a plain-text assembly-like DSL that defines aircraft, weapons, objects, and sensors. The BRF spec below is the format overview.
 
 | Format | Spec | Description |
 |--------|------|-------------|
