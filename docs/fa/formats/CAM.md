@@ -1,4 +1,4 @@
-﻿# Campaign Definition (.CAM)
+# Campaign Definition (.CAM)
 
 FA_2.LIB contains 6 `.CAM` files — one per built-in campaign. Pilot save files (`.P`) store the active campaign by this filename. Each is a **Win32 PE DLL** loaded by the FA engine at runtime.
 
@@ -65,15 +65,15 @@ Short string keys track per-mission and campaign-wide state:
 | `<pre>WON` | `UWON` | Campaign won flag |
 | `<pre>LOST` | `ULOST` | Campaign lost flag |
 
-## Reference Chain: .CAM â†’ .M â†’ .MM / .LAY / .MC
+## Reference Chain: .CAM → .M → .MM / .LAY / .MC
 
 The `.CAM` DLL holds only its own mission list (`~<prefix>NN.M` strings). It does **not** reference `.MM` theater files, `.LAY` sky files, or `.MC` condition files directly. Those references are carried by each `.M` mission file via three keywords:
 
 | Keyword | Target | Example |
 |---------|--------|---------|
-| `map` | `.MM` theater file | `map ukr.T2` â†’ loads `UKR.MM` |
+| `map` | `.MM` theater file | `map ukr.T2` → loads `UKR.MM` |
 | `layer` | `.LAY` sky file | `layer day2.LAY 0` |
-| `code` | `.MC` condition DLL | `code u01` â†’ loads `U01.MC`; `code extra01` â†’ loads `EXTRA01.MC` |
+| `code` | `.MC` condition DLL | `code u01` → loads `U01.MC`; `code extra01` → loads `EXTRA01.MC` |
 
 The `.MC` file to load is determined by the `code` directive in the `.M` file, not by the `.CAM` DLL. Most missions use a unique per-mission `.MC` (`U01.MC`, `K16.MC`, etc.); bonus missions share the generic `EXTRA01.MC` gate via `code extra01`.
 
@@ -176,11 +176,11 @@ Execution sequence:
 | `0x1166`–`0x11c9` | `F150.GAS`–`F500.GAS` (4 entries) | Fuel tank BRF files |
 | `0x11ea`–`0x141d` | `AA11.JT`–`AAS38.SEE` (18 weapon entries) | Weapon/sensor store pool |
 | `0x1477` | `"F22N"` | Second aircraft type (F-22 Night) |
-| `0x149a`–`0x158f` | `U01I`–`U50I` (50 Ã— 5 bytes) | Mission slot IDs — initial/available state keys |
-| `0x1594`–`0x16eb` | `~U01.M`–`~U50.M` (50 Ã— 7 bytes) | Mission filename list (7 bytes each, null-terminated) |
+| `0x149a`–`0x158f` | `U01I`–`U50I` (50 × 5 bytes) | Mission slot IDs — initial/available state keys |
+| `0x1594`–`0x16eb` | `~U01.M`–`~U50.M` (50 × 7 bytes) | Mission filename list (7 bytes each, null-terminated) |
 | `0x16eb`–`0x17bb` | *(0xD1 bytes — all `0x00`)* | Null padding — confirmed by direct hex dump (2026-05-19); no decoded content |
 | `0x17bc`–`0x17d2` | `UMEDAL`, `UDEAD`, `UWON`, `ULOST` | Campaign outcome state IDs |
-| `0x17e3`–`0x1873` | `U01O`, `U03O`, `U05O`, â€¦ `U49O` (25 Ã— odd missions) | Secondary mission outcome IDs (odd-numbered missions only) |
+| `0x17e3`–`0x1873` | `U01O`, `U03O`, `U05O`, … `U49O` (25 × odd missions) | Secondary mission outcome IDs (odd-numbered missions only) |
 
 The gap at `0x16eb`–`0x17bb` (209 bytes) is all-zero padding. Confirmed by direct hex dump of `UKRAINE.CAM` (2026-05-19) — no encoded data.
 

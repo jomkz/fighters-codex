@@ -1,4 +1,4 @@
-﻿# SH -- Shape / 3D Model Format (.SH)
+# SH -- Shape / 3D Model Format (.SH)
 
 ## Container: Phar Lap PE/LE Executable
 
@@ -333,7 +333,7 @@ The community uses two tools in combination to edit `.SH` vertex geometry:
 2. Open the `.SH` in FASHion; export the vertex file.
 3. Load into SketchUp 8 (install outside `Program Files` to avoid permissions issues).
 4. Reposition vertices as needed.
-5. Export from SketchUp; rebuild in FASHion â†’ overwrites the `.SH`.
+5. Export from SketchUp; rebuild in FASHion → overwrites the `.SH`.
 6. Repack with `fx lib patch`.
 
 For bulk vertex edits (e.g. scaling an entire section), the community workflow converts

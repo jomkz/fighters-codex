@@ -1,4 +1,4 @@
-﻿# Fighters Codex (`fx`)
+# Fighters Codex (`fx`)
 
 [![CI](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml)

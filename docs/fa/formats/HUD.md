@@ -1,4 +1,4 @@
-﻿# Heads-Up Display (.HUD)
+# Heads-Up Display (.HUD)
 
 FA_2.LIB contains 46 `.HUD` files — one per aircraft type (e.g. `A7.HUD`, `F22.HUD`). Each defines the cockpit HUD layout for that aircraft. Each is a **Win32 PE DLL** loaded at runtime.
 
@@ -102,13 +102,13 @@ After loading, the struct is resident at `hud`. Field offsets within the copied 
 | `0x241` | `DAT_005215a1` | Score indicator dx | i8; X offset for score/fuel threshold indicator (`FUN_004078b0`) |
 | `0x243` | `DAT_005215a3` | Score indicator dy | i8; Y offset for score/fuel threshold indicator |
 | `0x245` | `DAT_005215a5` | Advisory icon C | 8-byte icon data; drawn when `DAT_0050cfef & 0x040` |
-| `0x24D` | `DAT_005215ad` | Advisory icon A | 8-byte icon data; drawn when `DAT_0050cfef & 0x100`; `!= ' '` â†’ advisory active |
+| `0x24D` | `DAT_005215ad` | Advisory icon A | 8-byte icon data; drawn when `DAT_0050cfef & 0x100`; `!= ' '` → advisory active |
 | `0x255` | `DAT_005215b5` | Advisory icon B | 8-byte icon data; drawn when `DAT_0050cfef & 0x080` |
 | `0x25D` | `DAT_005215bd` | Advisory icon D | 8-byte icon data; drawn when `DAT_0050cfef & 0x200` or `(& 0x400) && (DAT_0050d322 & 2)` |
 | `0x265` | `DAT_005215c5` | **Warning lights** | dx from anchor (A7=65, F22=70) — `FUN_00407930` |
-| `0x267` | `DAT_005215c7` | Warning lights | dy from anchor (A7=âˆ’38, F22=âˆ’46) |
-| `0x269` | `DAT_005215c9` | **Throttle/engine readout** | dx from anchor (A7=âˆ’65, F22=âˆ’70) — `FUN_00407a00` |
-| `0x26B` | `DAT_005215cb` | Throttle/engine readout | dy from anchor (A7=âˆ’38, F22=âˆ’46) |
+| `0x267` | `DAT_005215c7` | Warning lights | dy from anchor (A7=−38, F22=−46) |
+| `0x269` | `DAT_005215c9` | **Throttle/engine readout** | dx from anchor (A7=−65, F22=−70) — `FUN_00407a00` |
+| `0x26B` | `DAT_005215cb` | Throttle/engine readout | dy from anchor (A7=−38, F22=−46) |
 | `0x26D` | `DAT_005215cd` | Weapon info | dx from anchor |
 | `0x26F` | `DAT_005215cf` | Weapon info | dy from anchor |
 | `0x271` | `DAT_005215d1` | Range info | dx from anchor |
@@ -133,12 +133,12 @@ After loading, the struct is resident at `hud`. Field offsets within the copied 
 | 10 | `0x00400` | `FUN_00407930`; set/cleared by `FMHook` (bay-door actuator) via input 0x68 | Advisory icon D active (multiplayer path, also requires `DAT_0050d322 & 2`) — weapon bay door / hook variant open |
 | 11 | `0x00800` | `HARDSetFlags` (weapon-state scan, each tick) | Active weapon lock — at least one weapon has ammo and an acquired lock |
 | 12 | `0x01000` | `FUN_00407a00`; toggled by `SetAutopilot` via input 0x61 | Flight-lock / autopilot active — replaces throttle/G readout with lock sprite (`DAT_004ebf94`) |
-| 13 | `0x02000` | `FlightKey` case 0x61 (autopilot key handler) | Autopilot ILS/ACLS sub-mode — set alongside bit 12 when flight mode is 6 and aircraft has ACLS capability (PT+0xe9 â‰  0); gates carrier-approach glide-slope computation |
+| 13 | `0x02000` | `FlightKey` case 0x61 (autopilot key handler) | Autopilot ILS/ACLS sub-mode — set alongside bit 12 when flight mode is 6 and aircraft has ACLS capability (PT+0xe9 ≠ 0); gates carrier-approach glide-slope computation |
 | 14 | `0x04000` | `?MPReceive@@YGDXZ` (0x46C980 = FUN_0046c98f, decompile failed — writes at 0x46db2b) in multiplayer; unanalyzed code at 0x4bc177/0x4bc190 may also write it in single-player. No function in FA.EXE was found to set this bit via a direct `OR [mem], 0x4000` constant — the SP writer path remains unknown. Read in `ServicePlayer` during ejection states 0x11/0x12 in conjunction with `DAT_0050d0b1` (nearest entity pointer) and entity+0xFB range comparison; also gates aerodynamic integrator reset (`stickX`/`ec`, `rudder`). | Unknown — likely a network-synced or proximity-alert advisory state |
-| 15 | `0x08000` | `PLANECheckFuel` via `FMUpdatePlaneFields` (fuel monitor, runs every 5 ticks) | **Bingo fuel** threshold reached — `@SAYLowFuelMessage@8` checks `(0x8000 set) && (0x80000 clear)` â†’ plays "Bingo fuel" voice line, then sets bits 19–20 as inhibit |
-| 16 | `0x10000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Joker fuel** threshold reached — checked `(0x10000 set)` â†’ plays "Joker fuel" voice line, sets bit 20 inhibit |
-| 17 | `0x20000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Running on fumes** threshold reached — `(0x20000 set) && (0x200000 clear)` â†’ plays "Running on fumes" voice line, sets bits 19–21 inhibit |
-| 18 | `0x40000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Out of fuel** threshold reached — `(0x40000 set) && (0x400000 clear)` â†’ plays "We're out of gas / I'm out of fuel" voice line, sets bits 19–22 inhibit |
+| 15 | `0x08000` | `PLANECheckFuel` via `FMUpdatePlaneFields` (fuel monitor, runs every 5 ticks) | **Bingo fuel** threshold reached — `@SAYLowFuelMessage@8` checks `(0x8000 set) && (0x80000 clear)` → plays "Bingo fuel" voice line, then sets bits 19–20 as inhibit |
+| 16 | `0x10000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Joker fuel** threshold reached — checked `(0x10000 set)` → plays "Joker fuel" voice line, sets bit 20 inhibit |
+| 17 | `0x20000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Running on fumes** threshold reached — `(0x20000 set) && (0x200000 clear)` → plays "Running on fumes" voice line, sets bits 19–21 inhibit |
+| 18 | `0x40000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Out of fuel** threshold reached — `(0x40000 set) && (0x400000 clear)` → plays "We're out of gas / I'm out of fuel" voice line, sets bits 19–22 inhibit |
 | 19 | `0x80000` | set by `@SAYLowFuelMessage@8` when Bingo or higher voice line plays | Bingo voice line played (inhibit) — prevents replaying |
 | 20 | `0x100000` | set by `@SAYLowFuelMessage@8` when any fuel warning voice line plays | Joker/any-warning voice line played (inhibit) |
 | 21 | `0x200000` | set by `@SAYLowFuelMessage@8` when Fumes or Out-of-fuel line plays | Fumes voice line played (inhibit) |
@@ -163,7 +163,7 @@ The command dispatcher is `FlightKey`. Each input case passes `(current_bit == 0
 
 - New `lib/src/hud.cpp` + `lib/include/fx/hud.h` — parse sprite name table and gauge parameter block
 - New `cli/cmd_hud.cpp` — `fx hud dump <file.HUD>` prints gauge table as JSON `[{gauge, dx, dy}]`
-- GUI: overlay viewer that renders gauge positions on a 640Ã—480 canvas
+- GUI: overlay viewer that renders gauge positions on a 640×480 canvas
 
 ## Related
 

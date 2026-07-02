@@ -1,4 +1,4 @@
-﻿# Screenshot -- Raw Screen Capture (.RAW)
+# Screenshot -- Raw Screen Capture (.RAW)
 
 `.RAW` files are **proprietary binary screenshots** written by the FA engine. They are
 not compatible with standard image tools and must be converted before viewing or editing.
@@ -17,17 +17,17 @@ Offset   Size      Description
 10       2         Unknown (observed: 0x0003)
 12       2         Unknown (observed: 0x0001) — possibly frame count
 14       18        Null padding
-32       768       Embedded palette: 256 Ã— RGB8 triplets (3 bytes each, 8-bit 0–255)
-800      w Ã— h     Pixel data: 8-bit palette indices, row-major, top-to-bottom
+32       768       Embedded palette: 256 × RGB8 triplets (3 bytes each, 8-bit 0–255)
+800      w × h     Pixel data: 8-bit palette indices, row-major, top-to-bottom
 ```
 
-Total size for a 1024Ã—768 screenshot: **787,232 bytes** (32 + 768 + 786,432).
+Total size for a 1024×768 screenshot: **787,232 bytes** (32 + 768 + 786,432).
 
 ## Notes
 
-**Resolution:** Observed files are 1024Ã—768, not 640Ã—480. Width is encoded at offset 6
+**Resolution:** Observed files are 1024×768, not 640×480. Width is encoded at offset 6
 as a u16 LE (0x0400 = 1024). Height is not directly visible as a standard u16 in the
-observed header; it can be derived from file size: `(filesize âˆ’ 800) / width`. The
+observed header; it can be derived from file size: `(filesize − 800) / width`. The
 values 4 and 3 at offsets 8 and 10 are likely `width / 256` and `height / 256`
 (1024/256 = 4, 768/256 = 3) but this has not been confirmed against other resolutions.
 
@@ -43,9 +43,9 @@ palette when converting screenshots.
 
 To convert a `.RAW` to a standard image:
 1. Read the 32-byte header; extract width from offset 6 (u16 LE).
-2. Read 768 bytes of embedded palette (256 Ã— R, G, B).
-3. Derive height: `(filesize âˆ’ 800) / width`.
-4. Read `width Ã— height` bytes of pixel indices.
+2. Read 768 bytes of embedded palette (256 × R, G, B).
+3. Derive height: `(filesize − 800) / width`.
+4. Read `width × height` bytes of pixel indices.
 5. Map each index through the palette to produce RGB output.
 
 ## Applications

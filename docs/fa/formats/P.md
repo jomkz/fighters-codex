@@ -1,4 +1,4 @@
-﻿# Pilot Save -- Pilot Profile (.P)
+# Pilot Save -- Pilot Profile (.P)
 
 `PLTnnn.P` files (e.g. `PLT441.P`, `PLT628.P`) are **binary pilot save files** written
 by the FA engine. They store the persistent state for each pilot slot.
@@ -54,7 +54,7 @@ Variable-length null-terminated strings packed sequentially from 0xDAE:
 
 ### Ordnance inventory (0x1C60–0x1F7F) — confirmed
 
-**50 entries Ã— 16 bytes** = 800 bytes. `DAT_004fa818 = _campaignPilot + 0x1C60`.
+**50 entries × 16 bytes** = 800 bytes. `DAT_004fa818 = _campaignPilot + 0x1C60`.
 
 | Field | Offset within entry | Size | Type |
 |-------|---------------------|------|------|
@@ -112,7 +112,7 @@ Wingman slot for each = player VA + 4.
 
 8 weapon-type groups; each group = **player slot** (0x14 bytes) + **wingman slot** (0x14 bytes) = 0x28 bytes per group.
 
-Each slot = 5 Ã— u32: `[damage_total, shots_fired, hits, type3, kills]`
+Each slot = 5 × u32: `[damage_total, shots_fired, hits, type3, kills]`
 Dispatched by `FUN_004856f0` (0x4856f0) based on `OBJ_TYPE` flags; accumulated by `FUN_004854a0` (0x4854a0).
 
 | Offset | VA | Group |
@@ -181,11 +181,11 @@ fort-assault missions. Requires a post-fort-mission save for differential analys
 ### Recommended next step
 
 All four gaps require pilot saves taken after actual gameplay:
-1. Complete 5+ standard missions â†’ diff PLT for gaps 0xCF–0x5AE and 0x2018–0x20B7
-2. Complete a fort-assault mission â†’ diff for gap 0x21F8–0x25DF
-3. Advance pilot rank (enough missions/score) â†’ diff for gap 0xB0–0xC1
+1. Complete 5+ standard missions → diff PLT for gaps 0xCF–0x5AE and 0x2018–0x20B7
+2. Complete a fort-assault mission → diff for gap 0x21F8–0x25DF
+3. Advance pilot rank (enough missions/score) → diff for gap 0xB0–0xC1
 
-Tools: **HxD** (side-by-side compare â†’ Differ) or **010 Editor** with the template from
+Tools: **HxD** (side-by-side compare → Differ) or **010 Editor** with the template from
 the confirmed fields above.
 
 ## Confirmed Engine Functions (FA.SMS)

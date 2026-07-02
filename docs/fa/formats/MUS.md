@@ -1,4 +1,4 @@
-﻿# Music Playlist / Sequencer (.MUS)
+# Music Playlist / Sequencer (.MUS)
 
 FA_2.LIB contains 9 `.MUS` files (e.g. `M_AIR.MUS`). These control background music playback. Each is a **Win32 PE DLL** loaded at runtime.
 
@@ -23,11 +23,11 @@ Each file contains a standard **DOS MZ stub** (128 bytes) followed by a **Phar L
 XMI track index `N` maps to file `AIRnnn.XMI`, where `nnn` is the zero-padded decimal value of `N`:
 
 ```
-index  1 â†’ VALK01.XMI
-index  3 â†’ AIR003.XMI
-index  4 â†’ AIR004.XMI
-â€¦
-index 127 â†’ AIR127.XMI
+index  1 → VALK01.XMI
+index  3 → AIR003.XMI
+index  4 → AIR004.XMI
+…
+index 127 → AIR127.XMI
 ```
 
 The index space is **sparse** — many slots have no corresponding file in FA_2.LIB (e.g. indices 2, 8, 10–12, 15, 17, 20, 27, 29, 30, 32–37, etc.). The numeric suffix in the filename IS the track index; `VALK01.XMI` is the sole exception to the `AIRnnn` naming pattern and occupies index 1.
@@ -57,7 +57,7 @@ The `01 02 03 02 01 02 03 02 01` byte pattern immediately following `FC` is a **
 | `M_AIR.MUS` | `"air"` | 4 6 107 108 109 18 110 116 117 118 119 24 **29** 21 121 122 123 125 126 127 \| 9 38 62 65 67 19 | 26 tracks in two groups split by `FE` conditional; index 29 has no file in FA_2.LIB |
 | `M_NORMAL.MUS` | `"air"` | 14 70 71 72 73 74 47 61 40 75 76 77 78 44 4 39 22 28 48 40 80 81 82 83 84 26 19 43 85 86 87 88 89 46 13 23 90 91 92 94 7 9 31 38 44 | 45 tracks; longest playlist |
 | `M_DANGER.MUS` | `"air"` | 100 101 13 48 47 61 28 39 46 43 **41** 26 102 5 18 4 45 104 19 23 21 6 | 22 tracks; index 41 has no file in FA_2.LIB |
-| `M_VALK.MUS` | `"valk"` | 1 | 1 track â†’ VALK01.XMI; valkyrie/dogfight state |
+| `M_VALK.MUS` | `"valk"` | 1 | 1 track → VALK01.XMI; valkyrie/dogfight state |
 | `M_DECK.MUS` | `"air"` | 14 13 43 | 3 tracks; carrier deck state |
 | `M_HOME.MUS` | `"air"` | 25 26 40 | 3 tracks; return-to-base |
 | `M_LAUNCH.MUS` | `"air"` | 7 9 44 31 38 44 | 6 tracks (44 repeated); uses 3-byte `FB` form |
@@ -87,12 +87,12 @@ Traced from `_SEQmusic` (`0x00446B70`), `?MusicOn` (`0x004329E0`), `?MusicVolume
 
 ```
 _SEQmusic(name, seq_idx)
-  â†’ appends name to base path (DAT_004f4f6c) to form "M_AIR.MUS" etc.
-  â†’ calls MusicOn(filename, seq_idx)
-      â†’ RMAccess(filename, 0x10c)   — loads MUS DLL from LIB archive
-      â†’ _AIL_allocate_sequence_handle   — allocate Miles Sound System handle
-      â†’ _AIL_init_sequence(handle, mus_data, seq_idx)  — pass MUS CODE section to AIL
-      â†’ _AIL_start_sequence(handle)     — begin playback
+  → appends name to base path (DAT_004f4f6c) to form "M_AIR.MUS" etc.
+  → calls MusicOn(filename, seq_idx)
+      → RMAccess(filename, 0x10c)   — loads MUS DLL from LIB archive
+      → _AIL_allocate_sequence_handle   — allocate Miles Sound System handle
+      → _AIL_init_sequence(handle, mus_data, seq_idx)  — pass MUS CODE section to AIL
+      → _AIL_start_sequence(handle)     — begin playback
 ```
 
 **The MUS CODE section is passed directly to the Miles Sound System (AIL).** FA does not interpret the FA/FB/FC/FD/FE bytes itself — Miles processes them natively as XMIDI or MSS sequence data. The sub-opcode semantics (`FA 0x19`, `FA 0x21`, etc.) are Miles-internal and cannot be decoded from FA.EXE alone.
@@ -106,11 +106,11 @@ AIL_set_XMIDI_master_volume(handle, vol * 127 / 100)
 
 ### `_SEQfadein` / `_SEQfadeout`
 
-These (`0x00446890` / `0x00446910`) are **palette (screen) fades**, not music fades. They operate on a 768-byte RGB palette table (256 Ã— 3 bytes at `curPalette`). They are unrelated to MUS audio.
+These (`0x00446890` / `0x00446910`) are **palette (screen) fades**, not music fades. They operate on a 768-byte RGB palette table (256 × 3 bytes at `curPalette`). They are unrelated to MUS audio.
 
 ### `seq_idx` parameter
 
-The `short param_2` passed through `_SEQmusic` â†’ `MusicOn` â†’ `_AIL_init_sequence` is the **AIL sequence index** — which section of the XMIDI data to start playback from. Normally 0 (first sequence).
+The `short param_2` passed through `_SEQmusic` → `MusicOn` → `_AIL_init_sequence` is the **AIL sequence index** — which section of the XMIDI data to start playback from. Normally 0 (first sequence).
 
 ## Toolkit Roadmap
 

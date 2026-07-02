@@ -1,4 +1,4 @@
-﻿# Contributing
+# Contributing
 
 This file covers commit message and branch naming conventions — the things that affect
 everyone working on the repo. For the full developer reference (building, IDE setup,

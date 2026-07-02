@@ -1,4 +1,4 @@
-﻿# CLI Reference
+# CLI Reference
 
 All commands follow the pattern `fx <subsystem> <subcommand> [args]`.
 
@@ -121,7 +121,7 @@ Encode to a dense PIC (format 0) with a full 256-color inline palette. Pixels wi
 alpha < 128 map to transparent (index 0xFF). Always provide the same `PALETTE.PAL`
 used during unpack.
 
-*See also: [fa/formats/PIC.md](fa/formats/PIC.md) Â· [fa/formats/PAL.md](fa/formats/PAL.md)*
+*See also: [fa/formats/PIC.md](fa/formats/PIC.md) · [fa/formats/PAL.md](fa/formats/PAL.md)*
 
 ## seq — Cutscene timelines
 
@@ -183,7 +183,7 @@ Ceiling:     50000 ft
 Fuel:        6972 lb
 ```
 
-*See also: [fa/formats/BRF.md](fa/formats/BRF.md) Â· [fa/formats/OT.md](fa/formats/OT.md) Â· [fa/formats/NT.md](fa/formats/NT.md) Â· [fa/formats/PT.md](fa/formats/PT.md) Â· [fa/formats/JT.md](fa/formats/JT.md) Â· [fa/formats/SEE.md](fa/formats/SEE.md) Â· [fa/formats/ECM.md](fa/formats/ECM.md) Â· [fa/formats/GAS.md](fa/formats/GAS.md)*
+*See also: [fa/formats/BRF.md](fa/formats/BRF.md) · [fa/formats/OT.md](fa/formats/OT.md) · [fa/formats/NT.md](fa/formats/NT.md) · [fa/formats/PT.md](fa/formats/PT.md) · [fa/formats/JT.md](fa/formats/JT.md) · [fa/formats/SEE.md](fa/formats/SEE.md) · [fa/formats/ECM.md](fa/formats/ECM.md) · [fa/formats/GAS.md](fa/formats/GAS.md)*
 
 ## mission / mm — Mission and map files
 
@@ -196,7 +196,7 @@ fx mission pack   <in.txt>     -o <out.M|.MM>
 `fx mm` is an alias for `.MM` map files. Round-trips byte-identically for all 592
 mission files in FA_2.LIB.
 
-*See also: [fa/formats/M.md](fa/formats/M.md) Â· [fa/formats/MM.md](fa/formats/MM.md)*
+*See also: [fa/formats/M.md](fa/formats/M.md) · [fa/formats/MM.md](fa/formats/MM.md)*
 
 ## sh — 3D shapes
 

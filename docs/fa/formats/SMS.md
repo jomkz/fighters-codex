@@ -1,4 +1,4 @@
-﻿# FA.EXE Symbol Map (FA.SMS)
+# FA.EXE Symbol Map (FA.SMS)
 
 `FA.SMS` is a binary symbol map file shipped with Jane's Fighters Anthology. It contains 3,829 MSVC-mangled C++ function and variable names paired with their virtual addresses in FA.EXE. It is the single most useful resource for FA.EXE reverse engineering.
 
@@ -12,11 +12,11 @@ Loose file in the FA install directory — not packed into any LIB archive.
 Offset  Size  Field
 ------  ----  -----
 0x0000     4  count        u32 LE — number of symbol records (3829 = 0x0EF5)
-0x0004  NÃ—8  records      N Ã— { str_off: u32 LE, va: u32 LE }
+0x0004  N×8  records      N × { str_off: u32 LE, va: u32 LE }
 0x????     *  string_table null-terminated C strings, densely packed
 ```
 
-- `string_table` base offset = `4 + count Ã— 8` = **30636** (0x778C)
+- `string_table` base offset = `4 + count × 8` = **30636** (0x778C)
 - Total file size: **106,706 bytes**
 - `va` — virtual address of the symbol in FA.EXE's address space (not a file offset)
 - `str_off` — byte offset into `string_table` of the null-terminated symbol name
@@ -117,7 +117,7 @@ A ready-to-run Java script is provided at [`scripts/ghidra/ImportFASms.java`](..
 Quick start:
 
 1. Open FA.EXE in Ghidra and let auto-analysis finish.
-2. Tools â†’ Script Manager â†’ run `ImportFASms`.
+2. Tools → Script Manager → run `ImportFASms`.
 3. Point the file dialog at `FA.SMS` in the FA install directory.
 4. All 3,829 functions and globals are labelled in one pass; progress bar shows in the status bar.
 

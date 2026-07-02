@@ -1,4 +1,4 @@
-﻿# BRF -- Brent's Relocatable Format (.OT / .NT / .PT / .JT / .SEE / .ECM / .GAS)
+# BRF -- Brent's Relocatable Format (.OT / .NT / .PT / .JT / .SEE / .ECM / .GAS)
 
 ## Overview
 
@@ -140,7 +140,7 @@ Example: `$4591` = ATG datalink + full 3D thrust vectoring.
 
 ```
 carrier_flags       dword   see table above
-env                 ptr     â†’ G-envelope section
+env                 ptr     → G-envelope section
 neg_g_count         word    number of negative-G envelope entries (negative number)
 pos_g_count         word    number of positive-G envelope entries
 max_speed_sl        word    mph at sea level
@@ -156,7 +156,7 @@ military_thrust     dword   lbf
 afterburner_thrust  dword   lbf
 throttle_accel      word    percent/sec
 throttle_decel      word    percent/sec
-tv_min_angle        word    thrust-vectoring min angle (âˆ’60 = 60Â°)
+tv_min_angle        word    thrust-vectoring min angle (−60 = 60°)
 tv_max_angle        word    thrust-vectoring max down-angle
 tv_speed            word    deg/sec
 fuel_consumption_mil word   at military power
@@ -209,7 +209,7 @@ defining the aircraft's performance boundary at that G.
 
 ```
 [env_entry]
-gload               word    e.g. -4, -3, â€¦ 9
+gload               word    e.g. -4, -3, … 9
 count               word    number of valid speed/altitude pairs
 stall_lift          word    index of stall boundary in data[]
 max_speed           word    index of max-speed boundary in data[]
@@ -229,7 +229,7 @@ hld                 word    Hardpoint Loading Data flags (see table below)
 offset_x            word    right/left offset, feet (positive = right)
 offset_y            word    up/down offset, feet
 offset_z            word    fore/aft offset, feet
-slew_heading        word    1 deg = 182 (e.g. 364 = 2Â°)
+slew_heading        word    1 deg = 182 (e.g. 364 = 2°)
 slew_pitch          word    1 deg = 182
 slew_limit_heading  word    1 deg = 182
 slew_limit_pitch    word    1 deg = 182
@@ -272,7 +272,7 @@ protected), `148`/`150` (moderately armored), `36` (structural), `6` (critical s
 
 ## Round-Trip Notes
 
-- Parse â†’ serialize produces byte-identical files for all OT/NT/PT files in FA_2.LIB.
+- Parse → serialize produces byte-identical files for all OT/NT/PT files in FA_2.LIB.
 - Null pointers are written as `ptr NULL`.
 - Integer field sign interpretation must match the type assignments in the spec; wrong signedness
   produces visually wrong values in `info` output.
@@ -293,7 +293,7 @@ fx ecm info / unpack / pack
 fx gas info / unpack / pack
 ```
 
-Example: `fx pt info F16C.PT` â†’ thrust, max_speed, fuel, stall speed, ceiling.
+Example: `fx pt info F16C.PT` → thrust, max_speed, fuel, stall speed, ceiling.
 
 ## Confirmed Engine Functions (FA.SMS)
 

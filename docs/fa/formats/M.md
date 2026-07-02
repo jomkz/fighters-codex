@@ -1,4 +1,4 @@
-﻿# Mission File (.M)
+# Mission File (.M)
 
 ## Overview
 
@@ -76,14 +76,14 @@ hex_value = uint16_t(alias)      (equivalently: 0x10000 + alias, since alias is 
 
 | Alias | `w_preferredTargetId2` |
 |-------|----------------------|
-| âˆ’1 | `$ffff` |
-| âˆ’2 | `$fffe` |
-| âˆ’255 | `$ff01` |
-| âˆ’256 | `$ff00` |
-| âˆ’257 | `$feff` |
-| âˆ’288 | `$fee0` |
+| −1 | `$ffff` |
+| −2 | `$fffe` |
+| −255 | `$ff01` |
+| −256 | `$ff00` |
+| −257 | `$feff` |
+| −288 | `$fee0` |
 
-The pattern continues linearly; alias âˆ’N = `$(10000 âˆ’ N)` in hex. Up to 288 preferred
+The pattern continues linearly; alias −N = `$(10000 − N)` in hex. Up to 288 preferred
 target slots are supported (`$ffff` through `$fee0`). Does not apply to map objects or
 the player object.
 
@@ -100,7 +100,7 @@ obj
 
 ## Round-Trip Notes
 
-- Parse â†’ serialize produces byte-identical files for all 517 `.M` files in FA_2.LIB.
+- Parse → serialize produces byte-identical files for all 517 `.M` files in FA_2.LIB.
 - Tab-indented blocks must use a real tab character, not spaces.
 - The `\t]` terminator is literally `<TAB>]` (not backslash-t).
 
@@ -119,7 +119,7 @@ and debrief text displayed in-game. See [MT.md](MT.md) for the full format speci
 
 ## Applications
 
-`.M` files require `fx mission unpack` â†’ edit â†’ `fx mission pack`. `.MT` files
+`.M` files require `fx mission unpack` → edit → `fx mission pack`. `.MT` files
 are plain ASCII and can be opened directly.
 
 - **VS Code** — free, cross-platform; multi-file search useful for tracking object names and map references across missions

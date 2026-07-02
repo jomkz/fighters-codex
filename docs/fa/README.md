@@ -1,4 +1,4 @@
-﻿# Fighters Anthology
+# Fighters Anthology
 
 Jane's Fighters Anthology (1998, Electronic Arts) is a combat flight simulator covering over 80 aircraft across multiple theaters. This directory contains reverse-engineering notes, format specifications, and modding guides built up from binary analysis of the game's assets and executable.
 
