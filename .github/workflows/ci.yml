@@ -76,3 +76,42 @@ jobs:
             build/fuzz/fuzz/*-work/timeout-*
             build/fuzz/fuzz/*-work/leak-*
           if-no-files-found: ignore
+
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Configure
+        run: cmake --preset coverage
+
+      - name: Build
+        run: cmake --build --preset coverage
+
+      - name: Test
+        run: ctest --preset coverage
+
+      - name: Report
+        run: |
+          pipx install gcovr
+          mkdir -p coverage-report
+          gcovr -r . build/coverage -f 'lib/' -f 'cli/' -e 'lib/vendor/' \
+                --txt coverage-report/summary.txt \
+                --html-details coverage-report/coverage.html \
+                --print-summary
+          { echo '### Line coverage — lib/ + cli/'; echo '```'; \
+            cat coverage-report/summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce coverage floor
+        # Ratchet, not target: 23% is a couple of points under the measured
+        # baseline (25.7% pre-Phase-4). Epic #50 raises it; never lower it.
+        run: |
+          gcovr -r . build/coverage -f 'lib/' -f 'cli/' -e 'lib/vendor/' \
+                --fail-under-line 23 > /dev/null
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-report
+          path: coverage-report/
