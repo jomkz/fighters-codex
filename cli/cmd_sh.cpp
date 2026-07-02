@@ -25,9 +25,9 @@ static bool write_text(const char* path, const std::string& s) {
     return f.good();
 }
 
-// ft sh info <file.SH>
+// fx sh info <file.SH>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft sh info <file.SH>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx sh info <file.SH>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -49,9 +49,9 @@ static int cmd_info(int argc, char** argv) {
     return 0;
 }
 
-// ft sh unpack <file.SH> [-o out.obj]
+// fx sh unpack <file.SH> [-o out.obj]
 static int cmd_unpack(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft sh unpack <file.SH> [-o out.obj]\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx sh unpack <file.SH> [-o out.obj]\n"); return 1; }
     const char* src = argv[1];
     const char* dst = nullptr;
     for (int i = 2; i < argc - 1; ++i)
@@ -79,7 +79,7 @@ static int cmd_unpack(int argc, char** argv) {
 
 int cmd_sh(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft sh <info|unpack> ...\n");
+        fprintf(stderr, "Usage: fx sh <info|unpack> ...\n");
         return 1;
     }
     const char* sub = argv[1];

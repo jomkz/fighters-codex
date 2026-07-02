@@ -36,7 +36,7 @@ static std::string ext_format(const char* path) {
 
 // ot/pt/nt/jt/see/ecm/gas  info  <file>
 static int cmd_info(int argc, char** argv, const char* /*format_hint*/) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft <ot|pt|jt|...> info <file>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx <ot|pt|jt|...> info <file>\n"); return 1; }
 
     const char* src = argv[1];
     auto data = read_file(src);
@@ -57,7 +57,7 @@ static int cmd_info(int argc, char** argv, const char* /*format_hint*/) {
 // ot/pt/...  unpack  <file>  [-o out.txt]
 // Since BRF is already plain text, unpack just copies the file.
 static int cmd_unpack(int argc, char** argv, const char* /*format_hint*/) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft <ot|pt|...> unpack <file> [-o out.txt]\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx <ot|pt|...> unpack <file> [-o out.txt]\n"); return 1; }
 
     const char* src = argv[1];
     const char* dst = nullptr;
@@ -82,7 +82,7 @@ static int cmd_unpack(int argc, char** argv, const char* /*format_hint*/) {
 // ot/pt/...  pack  <in.txt>  -o <out>
 // Validates the file is parseable BRF, then writes it out.
 static int cmd_pack(int argc, char** argv, const char* /*format_hint*/) {
-    if (argc < 4) { fprintf(stderr, "Usage: ft <ot|pt|...> pack <in.txt> -o <out>\n"); return 1; }
+    if (argc < 4) { fprintf(stderr, "Usage: fx <ot|pt|...> pack <in.txt> -o <out>\n"); return 1; }
 
     const char* src = argv[1];
     const char* dst = nullptr;
@@ -108,7 +108,7 @@ static int cmd_pack(int argc, char** argv, const char* /*format_hint*/) {
 // Generic dispatcher: called with the command name (ot/pt/nt/jt/see/ecm/gas)
 int cmd_ot(int argc, char** argv, const char* format) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft %s <info|unpack|pack> ...\n", format);
+        fprintf(stderr, "Usage: fx %s <info|unpack|pack> ...\n", format);
         return 1;
     }
     const char* sub = argv[1];

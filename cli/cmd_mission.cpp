@@ -27,7 +27,7 @@ static bool write_file(const char* path, const std::vector<uint8_t>& data) {
 
 // mission/mm  info  <file>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft mission info <file.M|.MM>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx mission info <file.M|.MM>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -49,7 +49,7 @@ static int cmd_info(int argc, char** argv) {
 
 // mission/mm  unpack  <file>  [-o out.txt]
 static int cmd_unpack(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft mission unpack <file.M|.MM> [-o out.txt]\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx mission unpack <file.M|.MM> [-o out.txt]\n"); return 1; }
     const char* src = argv[1];
     const char* dst = nullptr;
     for (int i = 2; i < argc - 1; ++i)
@@ -67,7 +67,7 @@ static int cmd_unpack(int argc, char** argv) {
 
 // mission/mm  pack  <in.txt>  -o <out>
 static int cmd_pack(int argc, char** argv) {
-    if (argc < 4) { fprintf(stderr, "Usage: ft mission pack <in.txt> -o <out.M|.MM>\n"); return 1; }
+    if (argc < 4) { fprintf(stderr, "Usage: fx mission pack <in.txt> -o <out.M|.MM>\n"); return 1; }
     const char* src = argv[1];
     const char* dst = nullptr;
     for (int i = 2; i < argc - 1; ++i)
@@ -85,7 +85,7 @@ static int cmd_pack(int argc, char** argv) {
 
 int cmd_mission(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft mission <info|unpack|pack> ...\n");
+        fprintf(stderr, "Usage: fx mission <info|unpack|pack> ...\n");
         return 1;
     }
     const char* sub = argv[1];

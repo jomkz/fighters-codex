@@ -51,7 +51,7 @@ static const char* flag_name(uint8_t flags) {
 
 // lib ls <file.LIB>
 static int cmd_ls(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft lib ls <file.LIB>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx lib ls <file.LIB>\n"); return 1; }
     auto lib = read_file(argv[1]);
     if (lib.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -69,7 +69,7 @@ static int cmd_ls(int argc, char** argv) {
 // lib extract <file.LIB> <NAME> [NAME ...] [-o output_dir]
 static int cmd_extract(int argc, char** argv) {
     if (argc < 3) {
-        fprintf(stderr, "Usage: ft lib extract <file.LIB> <NAME> [NAME ...] [-o dir]\n");
+        fprintf(stderr, "Usage: fx lib extract <file.LIB> <NAME> [NAME ...] [-o dir]\n");
         return 1;
     }
     auto lib = read_file(argv[1]);
@@ -118,7 +118,7 @@ static int cmd_extract(int argc, char** argv) {
 
 // lib unpack <file.LIB> [output_dir]
 static int cmd_unpack(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft lib unpack <file.LIB> [output_dir]\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx lib unpack <file.LIB> [output_dir]\n"); return 1; }
     auto lib = read_file(argv[1]);
     if (lib.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -151,7 +151,7 @@ static int cmd_unpack(int argc, char** argv) {
 
 // lib pack <dir> <output.LIB>
 static int cmd_pack(int argc, char** argv) {
-    if (argc < 3) { fprintf(stderr, "Usage: ft lib pack <dir> <output.LIB>\n"); return 1; }
+    if (argc < 3) { fprintf(stderr, "Usage: fx lib pack <dir> <output.LIB>\n"); return 1; }
     fs::path src_dir = argv[1];
     if (!fs::is_directory(src_dir)) { fprintf(stderr, "Not a directory: %s\n", argv[1]); return 1; }
 
@@ -174,7 +174,7 @@ static int cmd_pack(int argc, char** argv) {
 // lib patch <src.LIB> <name> <file> <output.LIB>
 static int cmd_patch(int argc, char** argv) {
     if (argc < 5) {
-        fprintf(stderr, "Usage: ft lib patch <src.LIB> <name> <file> <output.LIB>\n");
+        fprintf(stderr, "Usage: fx lib patch <src.LIB> <name> <file> <output.LIB>\n");
         return 1;
     }
     auto lib = read_file(argv[1]);
@@ -192,7 +192,7 @@ static int cmd_patch(int argc, char** argv) {
 
 int cmd_lib(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft lib <ls|unpack|extract|pack|patch> ...\n");
+        fprintf(stderr, "Usage: fx lib <ls|unpack|extract|pack|patch> ...\n");
         return 1;
     }
     const char* sub = argv[1];

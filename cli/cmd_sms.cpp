@@ -19,7 +19,7 @@ static std::vector<uint8_t> read_file(const char* path) {
 // sms dump <FA.SMS> [-o out.csv]
 static int cmd_dump(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft sms dump <FA.SMS> [-o out.csv]\n");
+        fprintf(stderr, "Usage: fx sms dump <FA.SMS> [-o out.csv]\n");
         return 1;
     }
     const char* sms_path = argv[1];
@@ -59,7 +59,7 @@ static int cmd_dump(int argc, char** argv) {
 
 int cmd_sms(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft sms <dump> ...\n");
+        fprintf(stderr, "Usage: fx sms <dump> ...\n");
         return 1;
     }
     if (strcmp(argv[1], "dump") == 0) return cmd_dump(argc - 1, argv + 1);

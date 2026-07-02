@@ -36,7 +36,7 @@ static bool write_file(const char* path, const std::vector<uint8_t>& data) {
 
 // pic info <file.PIC>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft pic info <file.PIC>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx pic info <file.PIC>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -69,7 +69,7 @@ static int cmd_info(int argc, char** argv) {
 // pic unpack <file.PIC> [-p PALETTE.PAL] [-o output.png]
 static int cmd_unpack(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft pic unpack <file.PIC> [-p PALETTE.PAL] [-o out.png]\n");
+        fprintf(stderr, "Usage: fx pic unpack <file.PIC> [-p PALETTE.PAL] [-o out.png]\n");
         return 1;
     }
     const char* pic_path = argv[1];
@@ -131,7 +131,7 @@ static int cmd_unpack(int argc, char** argv) {
 // pic pack <file.png> [-p PALETTE.PAL] [-o output.PIC]
 static int cmd_pack(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft pic pack <file.png> [-p PALETTE.PAL] [-o out.PIC]\n");
+        fprintf(stderr, "Usage: fx pic pack <file.png> [-p PALETTE.PAL] [-o out.PIC]\n");
         return 1;
     }
     const char* png_path = argv[1];
@@ -175,7 +175,7 @@ static int cmd_pack(int argc, char** argv) {
 
 int cmd_pic(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft pic <info|unpack|pack> ...\n");
+        fprintf(stderr, "Usage: fx pic <info|unpack|pack> ...\n");
         return 1;
     }
     const char* sub = argv[1];

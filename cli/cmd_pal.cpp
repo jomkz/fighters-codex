@@ -22,9 +22,9 @@ static std::vector<uint8_t> read_file(const char* path) {
     return buf;
 }
 
-// ft pal info <file.PAL>
+// fx pal info <file.PAL>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft pal info <file.PAL>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx pal info <file.PAL>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
     if (data.size() < 768) {
@@ -44,10 +44,10 @@ static int cmd_info(int argc, char** argv) {
     return 0;
 }
 
-// ft pal dump <file.PAL> [-o out.png]
+// fx pal dump <file.PAL> [-o out.png]
 // Writes a 256x256 color swatch: 16x16 grid of 16x16 cells, one cell per palette entry.
 static int cmd_dump(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft pal dump <file.PAL> [-o out.png]\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx pal dump <file.PAL> [-o out.png]\n"); return 1; }
     const char* pal_path = argv[1];
     const char* out_path = nullptr;
 
@@ -94,7 +94,7 @@ static int cmd_dump(int argc, char** argv) {
 
 int cmd_pal(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft pal <info|dump> ...\n");
+        fprintf(stderr, "Usage: fx pal <info|dump> ...\n");
         return 1;
     }
     const char* sub = argv[1];

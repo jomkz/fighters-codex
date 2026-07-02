@@ -31,7 +31,7 @@ static bool write_pgm(const char* path, const uint8_t* pixels, uint32_t w, uint3
 
 static int cmd_info(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft cb8 info <file.CB8>\n");
+        fprintf(stderr, "Usage: fx cb8 info <file.CB8>\n");
         return 1;
     }
     auto data = read_file(argv[1]);
@@ -63,7 +63,7 @@ static int cmd_frames(int argc, char** argv) {
             input = argv[i];
     }
     if (!input) {
-        fprintf(stderr, "Usage: ft cb8 frames <file.CB8> [-o output_dir]\n");
+        fprintf(stderr, "Usage: fx cb8 frames <file.CB8> [-o output_dir]\n");
         return 1;
     }
 
@@ -103,9 +103,9 @@ static int cmd_frames(int argc, char** argv) {
 
 int cmd_cb8(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft cb8 <subcommand> ...\n");
-        fprintf(stderr, "  ft cb8 info   <file.CB8>\n");
-        fprintf(stderr, "  ft cb8 frames <file.CB8> [-o output_dir]\n");
+        fprintf(stderr, "Usage: fx cb8 <subcommand> ...\n");
+        fprintf(stderr, "  fx cb8 info   <file.CB8>\n");
+        fprintf(stderr, "  fx cb8 frames <file.CB8> [-o output_dir]\n");
         return 1;
     }
     const char* sub = argv[1];
