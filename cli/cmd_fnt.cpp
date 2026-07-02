@@ -104,7 +104,7 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     int sheet_h = (int)fh * n_rows;
     if (sheet_w <= 0 || sheet_h <= 0) { printf("No printable glyphs.\n"); return 0; }
 
-    std::vector<uint8_t> sheet(sheet_w * sheet_h, 0);
+    std::vector<uint8_t> sheet((size_t)sheet_w * sheet_h, 0);
 
     for (int gi = 0; gi < (int)printable.size(); ++gi) {
         const fx::FntGlyph* g = printable[gi];
@@ -121,7 +121,7 @@ static int cmd_fnt_unpack(int argc, char** argv) {
     }
 
     // Convert 1-channel mask to RGBA so pixels show as white on black
-    std::vector<uint8_t> rgba(sheet_w * sheet_h * 4);
+    std::vector<uint8_t> rgba((size_t)sheet_w * sheet_h * 4);
     for (int i = 0; i < sheet_w * sheet_h; ++i) {
         uint8_t v = sheet[i];
         rgba[i*4+0] = v; rgba[i*4+1] = v; rgba[i*4+2] = v; rgba[i*4+3] = 0xFF;

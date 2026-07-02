@@ -7,7 +7,7 @@
 using namespace fx;
 
 static std::vector<uint8_t> make_rgba(int w, int h, uint8_t r, uint8_t g, uint8_t b) {
-    std::vector<uint8_t> buf(w * h * 4);
+    std::vector<uint8_t> buf((size_t)w * h * 4);
     for (int i = 0; i < w * h; i++) {
         buf[i*4+0] = r;
         buf[i*4+1] = g;
