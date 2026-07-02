@@ -24,4 +24,5 @@ documentation-first reverse-engineering project.
 ## Hardening roadmap
 
 Parser fuzzing (libFuzzer harnesses per codec), sanitizer CI legs, and CodeQL are tracked
-as Phases 1 and 4 of the [roadmap](docs/roadmap.md) (epics #43 and #51).
+as Phases 1 and 4 of the [roadmap](docs/roadmap.md) (epics #43 and #51). Local
+ASan/UBSan builds are available today via `cmake --preset asan-ubsan` (Linux).
