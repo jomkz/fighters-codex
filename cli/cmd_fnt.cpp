@@ -16,8 +16,8 @@ static void write_png_cb(void* ctx, void* data, int size) {
 
 static void usage_fnt() {
     puts("Usage:");
-    puts("  ft fnt info   <file.FNT>");
-    puts("  ft fnt unpack <file.FNT> [-o output_dir]");
+    puts("  fx fnt info   <file.FNT>");
+    puts("  fx fnt unpack <file.FNT> [-o output_dir]");
 }
 
 static int cmd_fnt_info(const char* path) {

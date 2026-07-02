@@ -24,7 +24,7 @@ static std::vector<uint8_t> read_file(const char* path) {
 
 // raw info <file.RAW>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft raw info <file.RAW>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx raw info <file.RAW>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -43,7 +43,7 @@ static int cmd_info(int argc, char** argv) {
 // raw unpack <file.RAW> [-o output.png]
 static int cmd_unpack(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft raw unpack <file.RAW> [-o out.png]\n");
+        fprintf(stderr, "Usage: fx raw unpack <file.RAW> [-o out.png]\n");
         return 1;
     }
     const char* raw_path = argv[1];
@@ -81,7 +81,7 @@ static int cmd_unpack(int argc, char** argv) {
 
 int cmd_raw(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft raw <info|unpack> ...\n");
+        fprintf(stderr, "Usage: fx raw <info|unpack> ...\n");
         return 1;
     }
     const char* sub = argv[1];

@@ -6,7 +6,7 @@
 
 static void usage_ai() {
     puts("Usage:");
-    puts("  ft ai compile <file.AI> -o <file.BI>");
+    puts("  fx ai compile <file.AI> -o <file.BI>");
 }
 
 static int cmd_ai_compile(const char* src_path, const char* out_path) {

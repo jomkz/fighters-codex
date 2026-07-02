@@ -27,7 +27,7 @@ static bool write_file(const char* path, const std::vector<uint8_t>& data) {
 
 // seq dump <file.SEQ>
 static int cmd_dump(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft seq dump <file.SEQ>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx seq dump <file.SEQ>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -60,7 +60,7 @@ static int cmd_dump(int argc, char** argv) {
 
 // seq unpack <file.SEQ> [-o out.txt]
 static int cmd_unpack(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft seq unpack <file.SEQ> [-o out.txt]\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx seq unpack <file.SEQ> [-o out.txt]\n"); return 1; }
 
     const char* src = argv[1];
     const char* dst = nullptr;
@@ -90,7 +90,7 @@ static int cmd_unpack(int argc, char** argv) {
 
 // seq pack <in.txt> -o <out.SEQ>
 static int cmd_pack(int argc, char** argv) {
-    if (argc < 4) { fprintf(stderr, "Usage: ft seq pack <in.txt> -o <out.SEQ>\n"); return 1; }
+    if (argc < 4) { fprintf(stderr, "Usage: fx seq pack <in.txt> -o <out.SEQ>\n"); return 1; }
 
     const char* src = argv[1];
     const char* dst = nullptr;
@@ -111,7 +111,7 @@ static int cmd_pack(int argc, char** argv) {
 
 int cmd_seq(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft seq <dump|unpack|pack> ...\n");
+        fprintf(stderr, "Usage: fx seq <dump|unpack|pack> ...\n");
         return 1;
     }
     const char* sub = argv[1];

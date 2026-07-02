@@ -13,7 +13,7 @@ static std::string xmi_name(uint8_t idx) {
 
 static void usage_mus() {
     puts("Usage:");
-    puts("  ft mus dump <file.MUS>");
+    puts("  fx mus dump <file.MUS>");
 }
 
 static int cmd_mus_dump(const char* path) {

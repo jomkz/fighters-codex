@@ -29,9 +29,9 @@ static void json_str(const std::string& s) {
     putchar('"');
 }
 
-// ft inf dump <file.INF>
+// fx inf dump <file.INF>
 static int cmd_dump(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft inf dump <file.INF>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx inf dump <file.INF>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -75,7 +75,7 @@ static int cmd_dump(int argc, char** argv) {
 
 int cmd_inf(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft inf <dump> ...\n");
+        fprintf(stderr, "Usage: fx inf <dump> ...\n");
         return 1;
     }
     if (strcmp(argv[1], "dump") == 0) return cmd_dump(argc - 1, argv + 1);
