@@ -689,7 +689,10 @@ def check_claims(specs):
     sink = errs
     def unclaimed(kind, paths):
         for p in sorted(paths):
-            rel = str(p.relative_to(ROOT))
+            # as_posix(): front-matter claims always use forward slashes, and
+            # relative_to() yields backslashes on Windows (caught by the msvc
+            # ctest leg the first time reverse coverage became a hard error).
+            rel = p.relative_to(ROOT).as_posix()
             if rel not in claimed[kind]:
                 sink.append("unclaimed %s (no spec's codec.%s lists it): %s"
                             % (kind, kind, rel))
