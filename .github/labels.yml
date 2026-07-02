@@ -1,15 +1,15 @@
-﻿# Component labels
+# Component labels
 - name: "fx-lib"
   color: "0075ca"
-  description: "Affects the ft_lib static library"
+  description: "Affects the fx_lib static library"
 
 - name: "fx-cli"
   color: "0075ca"
-  description: "Affects the ft command-line tool"
+  description: "Affects the fx command-line tool"
 
 - name: "fx-gui"
   color: "0075ca"
-  description: "Affects the ft-gui application"
+  description: "Affects the fx-gui application"
 
 # Type labels
 - name: "bug"
@@ -28,6 +28,35 @@
   color: "d876e3"
   description: "Further information is requested"
 
+# Roadmap labels
+- name: "epic"
+  color: "5319e7"
+  description: "Tracking issue for a group of sub-issues"
+
+- name: "format-spec"
+  color: "1d76db"
+  description: "Format specification documentation work"
+
+- name: "re-static"
+  color: "b60205"
+  description: "Reverse engineering via static analysis (Ghidra)"
+
+- name: "re-gameplay"
+  color: "e99695"
+  description: "Needs the Windows bench and a running game"
+
+- name: "testing"
+  color: "0e8a16"
+  description: "Test coverage and fixtures"
+
+- name: "fuzzing"
+  color: "fbca04"
+  description: "Fuzz harnesses and fuzzing infrastructure"
+
+- name: "cross-platform"
+  color: "c2e0c6"
+  description: "Linux/Windows portability work"
+
 # Status labels
 - name: "duplicate"
   color: "cfd3d7"
@@ -40,6 +69,10 @@
 - name: "needs-info"
   color: "e4e669"
   description: "Waiting for more information from the reporter"
+
+- name: "blocked"
+  color: "d93f0b"
+  description: "Blocked on an external dependency"
 
 - name: "good first issue"
   color: "7057ff"

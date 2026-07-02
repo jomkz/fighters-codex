@@ -1,0 +1,38 @@
+name: RE Task
+description: A reverse-engineering work item against FA.EXE, an overlay DLL, or a file format
+labels: ["re-static"]
+body:
+  - type: input
+    id: target
+    attributes:
+      label: Target
+      description: Binary, format, or subsystem (e.g. FA.EXE 0x456300–0x45D090, PT aero block)
+    validations:
+      required: true
+
+  - type: textarea
+    id: known
+    attributes:
+      label: Current knowledge
+      description: What is already documented, with links to the relevant spec/doc sections.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: method
+    attributes:
+      label: Method
+      options:
+        - static (Ghidra)
+        - gameplay (Windows bench)
+        - both
+    validations:
+      required: true
+
+  - type: textarea
+    id: deliverable
+    attributes:
+      label: Deliverable
+      description: Which doc section(s) this closes or creates, and any codec/tool follow-up.
+    validations:
+      required: true

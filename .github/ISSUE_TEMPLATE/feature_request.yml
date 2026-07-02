@@ -7,9 +7,9 @@ body:
     attributes:
       label: Component
       options:
-        - ft (CLI)
-        - ft-gui
-        - ft_lib
+        - fx (CLI)
+        - fx-gui
+        - fx_lib
         - new component / unsure
     validations:
       required: true
