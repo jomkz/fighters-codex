@@ -1,0 +1,13 @@
+name: fighters-codex CodeQL config
+
+# security-extended: this is a library whose whole job is parsing untrusted
+# binary files — the lower-severity memory-safety queries are on-target.
+queries:
+  - uses: security-extended
+
+# First-party code only: build/ covers FetchContent'd Catch2, the vendor
+# directories are stb and Dear ImGui.
+paths-ignore:
+  - build
+  - lib/vendor
+  - gui/vendor
