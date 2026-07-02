@@ -95,7 +95,7 @@ the path embedders use (see [api.md](api.md)).
 
 ## Testing
 
-`ctest --preset <name>` runs three layers:
+`ctest --preset <name>` runs several layers:
 
 - **Unit suite** (`fx_tests`): Catch2 codec tests against in-memory fixtures.
   Catch2 is fetched with FetchContent on the *first configure of each preset
