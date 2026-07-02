@@ -1,10 +1,13 @@
-﻿{
+{
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build fx_lib",
+            "label": "Configure",
             "type": "shell",
-            "command": "cmake --build build --target fx_lib --config Debug",
+            "command": "cmake --preset gcc",
+            "windows": {
+                "command": "cmake --preset msvc"
+            },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -13,40 +16,17 @@
                 "reveal": "always",
                 "panel": "shared"
             },
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Build ft",
-            "type": "shell",
-            "command": "cmake --build build --target ft --config Debug",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": "build",
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            },
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Build fx-gui",
-            "type": "shell",
-            "command": "cmake --build build --target fx-gui --config Debug",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": "build",
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            },
-            "problemMatcher": "$msCompile"
+            "problemMatcher": []
         },
         {
             "label": "Build all",
             "type": "shell",
-            "command": "cmake --build build --config Debug",
+            "command": "cmake --build --preset gcc",
+            "problemMatcher": "$gcc",
+            "windows": {
+                "command": "cmake --build --preset msvc-debug",
+                "problemMatcher": "$msCompile"
+            },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -57,13 +37,17 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
-            },
-            "problemMatcher": "$msCompile"
+            }
         },
         {
-            "label": "Build fx_tests",
+            "label": "Build fx (CLI)",
             "type": "shell",
-            "command": "cmake --build build --target fx_tests --config Release",
+            "command": "cmake --build --preset gcc --target fx",
+            "problemMatcher": "$gcc",
+            "windows": {
+                "command": "cmake --build --preset msvc-debug --target fx",
+                "problemMatcher": "$msCompile"
+            },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -71,14 +55,33 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
+            }
+        },
+        {
+            "label": "Build fx_tests",
+            "type": "shell",
+            "command": "cmake --build --preset gcc --target fx_tests",
+            "problemMatcher": "$gcc",
+            "windows": {
+                "command": "cmake --build --preset msvc --target fx_tests",
+                "problemMatcher": "$msCompile"
             },
-            "problemMatcher": "$msCompile"
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
         },
         {
             "label": "Run tests",
             "type": "shell",
-            "command": "ctest --test-dir build -C Release --output-on-failure",
-            "dependsOn": "Build fx_tests",
+            "command": "ctest --preset gcc",
+            "windows": {
+                "command": "ctest --preset msvc"
+            },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -86,6 +89,7 @@
                 "kind": "test",
                 "isDefault": true
             },
+            "dependsOn": "Build all",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -95,10 +99,16 @@
         {
             "label": "Run fx-gui",
             "type": "shell",
-            "command": "${workspaceFolder}/build/gui/Debug/fx-gui.exe",
-            "dependsOn": "Build fx-gui",
+            "command": "echo fx-gui is Windows-only until Phase 3 (epic #46)",
+            "windows": {
+                "command": "${workspaceFolder}\\build\\gui\\Debug\\fx-gui.exe"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Build all",
             "presentation": {
-                "reveal": "silent",
+                "reveal": "always",
                 "panel": "shared"
             },
             "problemMatcher": []
