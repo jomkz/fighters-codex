@@ -27,8 +27,11 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
   `ctest --test-dir build` (or run `build/tests/fx_tests` directly).
 - **Windows bench** (kept for validation): has the licensed FA install. Anything needing
   the *running game* is labeled `re-gameplay` and batched for bench campaigns (see epic
-  #56). Real-game asset validation on either bench uses the git-ignored `FX_FA_ROOT`
-  integration mode (Phase 4). Never commit game assets (`*.LIB`, `*.PIC`, `*.PAL`, …).
+  #56). Real-game asset validation on either bench uses `FX_FA_ROOT` integration mode:
+  configure with `-DFX_FA_ROOT=<FA install>` (or the env var) to register the
+  `fa_extract_manifest` CTest, which checks every extracted byte against
+  tests/integration/fa-extract.sha256 (hashes are facts; the assets stay outside git).
+  Never commit game assets (`*.LIB`, `*.PIC`, `*.PAL`, …).
 - Ghidra work runs on Fedora once #120 (workbench migration) lands; headless scripts are
   in `scripts/ghidra/`.
 
