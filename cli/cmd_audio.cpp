@@ -27,7 +27,7 @@ static bool write_file(const char* path, const std::vector<uint8_t>& data) {
 
 // audio info <file>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft audio info <file.11K|.5K|.8K>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx audio info <file.11K|.5K|.8K>\n"); return 1; }
 
     const char* src = argv[1];
     auto data = read_file(src);
@@ -59,7 +59,7 @@ static int cmd_info(int argc, char** argv) {
 // audio unpack <file.11K> [-o out.wav] [-r rate]
 static int cmd_unpack(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft audio unpack <file.11K|.5K|.8K> [-o out.wav] [-r hz]\n");
+        fprintf(stderr, "Usage: fx audio unpack <file.11K|.5K|.8K> [-o out.wav] [-r hz]\n");
         return 1;
     }
 
@@ -99,7 +99,7 @@ static int cmd_unpack(int argc, char** argv) {
 // audio pack <in.wav> -o <out.11K>
 static int cmd_pack(int argc, char** argv) {
     if (argc < 4) {
-        fprintf(stderr, "Usage: ft audio pack <in.wav> -o <out.11K|.5K|.8K> [-r hz]\n");
+        fprintf(stderr, "Usage: fx audio pack <in.wav> -o <out.11K|.5K|.8K> [-r hz]\n");
         return 1;
     }
 
@@ -139,7 +139,7 @@ static int cmd_pack(int argc, char** argv) {
 
 int cmd_audio(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft audio <info|unpack|pack> ...\n");
+        fprintf(stderr, "Usage: fx audio <info|unpack|pack> ...\n");
         return 1;
     }
     const char* sub = argv[1];

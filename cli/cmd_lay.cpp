@@ -26,8 +26,8 @@ static void write_png_cb(void* ctx, void* data, int size) {
 
 static void usage_lay() {
     puts("Usage:");
-    puts("  ft lay dump     <file.LAY>");
-    puts("  ft lay gradient <file.LAY> [-o output.png]");
+    puts("  fx lay dump     <file.LAY>");
+    puts("  fx lay gradient <file.LAY> [-o output.png]");
 }
 
 static int cmd_lay_dump(const char* path) {

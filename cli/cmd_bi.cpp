@@ -5,7 +5,7 @@
 
 static void usage_bi() {
     puts("Usage:");
-    puts("  ft bi dump <file.BI>");
+    puts("  fx bi dump <file.BI>");
 }
 
 static int cmd_bi_dump(const char* path) {

@@ -17,7 +17,7 @@ static std::vector<uint8_t> read_file(const char* path) {
 
 // plt info <file.P>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft plt info <file.P>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx plt info <file.P>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -73,7 +73,7 @@ static int cmd_info(int argc, char** argv) {
 
 // plt dump <file.P>  -- print confirmed stats block
 static int cmd_dump(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft plt dump <file.P>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx plt dump <file.P>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -144,7 +144,7 @@ static int cmd_dump(int argc, char** argv) {
 
 int cmd_plt(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft plt <info|dump> ...\n");
+        fprintf(stderr, "Usage: fx plt <info|dump> ...\n");
         return 1;
     }
     if (strcmp(argv[1], "info") == 0) return cmd_info(argc - 1, argv + 1);

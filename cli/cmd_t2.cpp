@@ -19,7 +19,7 @@ static std::vector<uint8_t> read_file(const char* path) {
 
 // t2 info <file.T2>
 static int cmd_info(int argc, char** argv) {
-    if (argc < 2) { fprintf(stderr, "Usage: ft t2 info <file.T2>\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Usage: fx t2 info <file.T2>\n"); return 1; }
     auto data = read_file(argv[1]);
     if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
 
@@ -60,7 +60,7 @@ static int cmd_info(int argc, char** argv) {
 
 int cmd_t2(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: ft t2 <info> ...\n");
+        fprintf(stderr, "Usage: fx t2 <info> ...\n");
         return 1;
     }
     if (strcmp(argv[1], "info") == 0) return cmd_info(argc - 1, argv + 1);
