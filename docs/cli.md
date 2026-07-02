@@ -58,35 +58,41 @@ Flags: `raw` = uncompressed, `lzss` = LZSS, `pxpk` = PxPk, `dcl` = PKWare DCL.
 
 Extract and decompress all files. Output defaults to the archive stem.
 
-```powershell
-fx lib unpack FA_2.LIB out\FA_2
-fx lib unpack FA_3.LIB          # extracts to .\FA_3\
+```
+fx lib unpack FA_2.LIB out/FA_2
+fx lib unpack FA_3.LIB          # extracts to ./FA_3/
 ```
 
-Audio files whose names begin with `&` in the archive extract as `_` (e.g. `&AFTB2.11K` â†’
-`_AFTB2.11K`) because Windows rejects `&` in filenames.
+Entry names are written through `ealib_safe_name`: the characters
+`& * ? " < > | / \ :` each become `_` (e.g. the looping-audio prefix in
+`&AFTB2.11K` extracts as `_AFTB2.11K`), so output filenames are identical on
+every platform and a crafted archive cannot write outside the output
+directory. File paths on the command line follow the operating system's case
+rules (exact case required on Linux); entry names inside archives are
+case-insensitive everywhere.
 
 #### `fx lib extract <file.LIB> <NAME> [NAME ...] [-o output_dir]`
 
 Extract one or more named entries. Output defaults to the current directory;
 use `-o` to redirect. Name matching is case-insensitive.
 
-```powershell
+```
 fx lib extract FA_2.LIB BALTIC.TXT
-fx lib extract FA_2.LIB F16C_0.PIC F15C_0.PIC -o pics\
+fx lib extract FA_2.LIB F16C_0.PIC F15C_0.PIC -o pics
 ```
 
 #### `fx lib pack <dir> <output.LIB>`
 
-Pack all files in `dir` into a new `.LIB`. Files are stored uncompressed (flags=0).
-The game accepts both raw and compressed entries.
+Pack all files in `dir` into a new `.LIB`. Files are stored uncompressed (flags=0)
+and ordered by name, so the same input directory produces a byte-identical
+archive on every platform. The game accepts both raw and compressed entries.
 
 #### `fx lib patch <src.LIB> <name> <file> <output.LIB>`
 
 Replace one named entry without touching the rest of the archive.
 
-```powershell
-fx lib patch FA_2.LIB BALTIC.TXT edits\BALTIC.TXT FA_2_mod.LIB
+```
+fx lib patch FA_2.LIB BALTIC.TXT edits/BALTIC.TXT FA_2_mod.LIB
 fx lib patch FA_3.LIB F16C_0.PIC F16C_mod.PIC FA_3_mod.LIB
 ```
 

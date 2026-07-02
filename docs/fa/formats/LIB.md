@@ -41,8 +41,10 @@ are rare and passed through without decompression.
 ## Filename Notes
 
 Certain filename prefixes are engine conventions that apply to files of any type stored
-in a `.LIB`. Windows rejects these characters, so `fx lib unpack` maps them to `_` on
-extraction. The original names are preserved in memory for patching operations.
+in a `.LIB`. On extraction, `fx lib unpack` maps the characters `& * ? " < > | / \ :`
+to `_` (via `ealib_safe_name`) so output filenames are legal and byte-identical on every
+platform; of the prefixes below, only `&` is affected — `^`, `$`, and `_` extract as-is.
+The original names are preserved in memory for patching operations.
 
 | Prefix | Convention | Applies to |
 |--------|-----------|------------|

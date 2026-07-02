@@ -1,4 +1,5 @@
 ﻿#include "fx/ealib.h"
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -25,18 +26,6 @@ static bool write_file(const char* path, const std::vector<uint8_t>& data) {
     if (!f) return false;
     f.write((const char*)data.data(), (std::streamsize)data.size());
     return f.good();
-}
-
-// Replace characters illegal in Windows filenames with '_'.
-// The game uses '&' as a prefix for looping audio files; Windows rejects it.
-static std::string sanitize_filename(const char* name) {
-    std::string s = name;
-    for (char& c : s) {
-        if (c == '&' || c == '*' || c == '?' || c == '"' ||
-            c == '<' || c == '>' || c == '|')
-            c = '_';
-    }
-    return s;
 }
 
 static const char* flag_name(uint8_t flags) {
@@ -101,9 +90,9 @@ static int cmd_extract(int argc, char** argv) {
             fail++;
             continue;
         }
-        fs::path dest = fs::path(out_path) / sanitize_filename(it->name);
+        fs::path dest = fs::path(out_path) / ealib_safe_name(it->name);
         if (write_file(dest.string().c_str(), data)) {
-            printf("  %s -> %s (%zu bytes)\n", it->name, dest.string().c_str(), data.size());
+            printf("  %s -> %s (%zu bytes)\n", it->name, dest.generic_string().c_str(), data.size());
             ok++;
         } else {
             fprintf(stderr, "  FAIL %s: write error\n", it->name);
@@ -134,9 +123,9 @@ static int cmd_unpack(int argc, char** argv) {
             fail++;
             continue;
         }
-        fs::path dest = out_dir / sanitize_filename(e.name);
+        fs::path dest = out_dir / ealib_safe_name(e.name);
         if (write_file(dest.string().c_str(), data)) {
-            printf("  %s -> %s (%zu bytes)\n", e.name, dest.string().c_str(), data.size());
+            printf("  %s -> %s (%zu bytes)\n", e.name, dest.generic_string().c_str(), data.size());
             ok++;
         } else {
             fprintf(stderr, "  FAIL %s: write error\n", e.name);
@@ -159,9 +148,14 @@ static int cmd_pack(int argc, char** argv) {
         std::string name = entry.path().filename().string();
         if (name.size() > 12) { fprintf(stderr, "  WARN: '%s' exceeds 12 chars, truncating\n", name.c_str()); name.resize(12); }
         auto data = read_file(entry.path().string().c_str());
-        printf("  + %s (%zu bytes)\n", name.c_str(), data.size());
         files.push_back({ name, std::move(data) });
     }
+    // Directory iteration order is unspecified; sort so the packed archive
+    // is byte-identical regardless of platform or filesystem.
+    std::sort(files.begin(), files.end(),
+              [](const auto& a, const auto& b) { return a.first < b.first; });
+    for (auto& f : files)
+        printf("  + %s (%zu bytes)\n", f.first.c_str(), f.second.size());
 
     auto lib = ealib_build(files);
     if (!write_file(argv[2], lib)) { fprintf(stderr, "Cannot write: %s\n", argv[2]); return 1; }
