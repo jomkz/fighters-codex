@@ -7,7 +7,7 @@ project structure, and release workflow) see [docs/development.md](docs/developm
 ## Commit Messages
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit
-messages drive the automated changelog — `scripts/draft-changelog.ps1` parses them to
+messages drive the automated changelog — `scripts/draft-changelog.py` parses them to
 populate `CHANGELOG.md` before each release.
 
 ### Format
