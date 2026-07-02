@@ -17,8 +17,8 @@ it checks three layers:
                   README index membership.
   2. claims:      every lib/cli/test/fuzz/gui pointer resolves to a real file;
                   every fx command token is a live dispatch literal.
-  3. coverage:    (once all specs are converted) every codec, CLI command,
-                  test, fuzz harness, and GUI editor is claimed by a spec.
+  3. coverage:    every codec, CLI command, test, fuzz harness, and GUI
+                  editor in the repository is claimed by a spec.
 
 Stdlib-only; Python 3.8+.
 """
@@ -36,13 +36,6 @@ MANIFEST = ROOT / "tests" / "integration" / "fa-extract.sha256"
 CLI_MAIN = ROOT / "cli" / "main.cpp"
 CLI_DOC = ROOT / "docs" / "cli.md"
 NON_SPEC = {"README.md", "STATUS.md"}
-
-# Specs not yet restructured to the template (docs/spec-authoring.md). Each
-# conversion batch removes its tokens; the mechanism is deleted when empty.
-LEGACY = {
-    "BRF", "DLG", "ECM", "FNT", "GAS", "HUD", "JT",
-    "MNU", "NT", "OT", "PT", "PTS", "SEE",
-}
 
 # Canonical H2 set, in required relative order.
 CANONICAL_H2 = [
@@ -601,20 +594,14 @@ def spec_paths():
 
 
 def load_specs():
-    """Return ({token: front-matter}, errors) for converted (non-LEGACY) specs."""
+    """Return ({token: front-matter}, errors) for every spec."""
     specs = {}
     errs = []
     for path in spec_paths():
         stem = path.stem
         rel = path.relative_to(ROOT)
         text = path.read_bytes().decode("utf-8", errors="replace")
-        has_fm = text.startswith("---\n")
-        if stem in LEGACY:
-            if has_fm:
-                errs.append("%s: has front-matter but is still in LEGACY — remove "
-                            "the token from LEGACY in tools/check_status.py" % rel)
-            continue
-        if not has_fm:
+        if not text.startswith("---\n"):
             errs.append("%s: missing front-matter (see docs/spec-authoring.md)" % rel)
             continue
         try:
@@ -698,11 +685,14 @@ def check_claims(specs):
             errs.append("%s: fixtures.real_manifest is %s but the extract manifest "
                         "says %s" % (where, have_real, want_real))
 
-    # Reverse coverage: enforced once every spec is converted, advisory before.
-    sink = errs if not LEGACY else warns
+    # Reverse coverage: every codec/test/fuzz/GUI file must be claimed by a spec.
+    sink = errs
     def unclaimed(kind, paths):
         for p in sorted(paths):
-            rel = str(p.relative_to(ROOT))
+            # as_posix(): front-matter claims always use forward slashes, and
+            # relative_to() yields backslashes on Windows (caught by the msvc
+            # ctest leg the first time reverse coverage became a hard error).
+            rel = p.relative_to(ROOT).as_posix()
             if rel not in claimed[kind]:
                 sink.append("unclaimed %s (no spec's codec.%s lists it): %s"
                             % (kind, kind, rel))
@@ -850,10 +840,8 @@ def run_checks(write_matrix):
         print("note: %s" % w)
     for e in errs:
         print("error: %s" % e, file=sys.stderr)
-    converted = len(specs)
-    total = len(spec_paths())
-    print("%d/%d specs converted; %d error(s), %d advisory note(s)"
-          % (converted, total, len(errs), len(warns)))
+    print("%d/%d specs valid; %d error(s)"
+          % (len(specs), len(spec_paths()), len(errs)))
     return 1 if errs else 0
 
 

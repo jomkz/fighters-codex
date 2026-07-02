@@ -166,9 +166,10 @@ are examples, not layout tables.
 | Related / Related Formats | `## Related` |
 
 Restructuring is content-preserving: no sentence is deleted unless it is
-duplicated or migrated to a quoted issue. Review batch diffs with
-`git diff --color-moved=dimmed-zebra`. After converting a spec, delete its token
-from `LEGACY` in `tools/check_status.py` and run `--write-matrix` — CI fails
+duplicated or migrated to a quoted issue. Review such diffs with
+`git diff --color-moved=dimmed-zebra`. All 44 specs conform as of epic #44;
+every spec (and any new one) must carry valid front-matter, and
+`--write-matrix` must be re-run whenever front-matter changes — CI fails
 otherwise, in both directions.
 
 ## Worked front-matter for the odd cases

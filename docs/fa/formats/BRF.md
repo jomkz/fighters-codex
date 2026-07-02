@@ -1,18 +1,46 @@
-# BRF -- Brent's Relocatable Format (.OT / .NT / .PT / .JT / .SEE / .ECM / .GAS)
+---
+format: BRF
+name: Brent's Relocatable Format
+extensions: []
+family: BRF
+category: typedef
+endianness: none
+spec:
+  status: partial
+  gaps:
+    - kind: re-static
+      issue: 54
+      note: "PT section name after the NT block unverified"
+codec:
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/brf.cpp]
+  commands: []
+  tests: [tests/test_brf.cpp]
+  fuzz: []
+  gui: [gui/src/editors/brf_editor.cpp]
+  fixtures:
+    synthetic: true
+    real_manifest: false
+related: [OT, NT, PT, JT, SEE, ECM, GAS]
+---
 
-## Overview
+# BRF — Brent's Relocatable Format
 
-BRF is a **plain ASCII text** container for all game type definitions. Seven file
-extensions share the same tokenizer; the `struct_type` field distinguishes them.
+BRF is a **plain ASCII text** container for all game type definitions. Seven
+file extensions share the same tokenizer; the `struct_type` field
+distinguishes them. This page is the family overview — each member format has
+its own spec (see Related).
 
-The "Relocatable" in the name refers to pointer relocation. Each BRF file opens with
-a pointer table — the `:name` lines before the first `\tend` — that enumerates every
-`ptr` field in the record by symbolic name. This is a relocation table: in the plain-text
-format, `ptr` fields hold quoted filename strings or `NULL`; in the engine's in-memory
-representation they become actual pointers. At load time the engine walks the pointer
-table and resolves each named field to a memory address, making the loaded record
-independent of where it was placed — relocatable. The mechanism is the same concept as
-relocation entries in a linker object file, applied to game data.
+The "Relocatable" in the name refers to pointer relocation. Each BRF file
+opens with a pointer table — the `:name` lines before the first `\tend` — that
+enumerates every `ptr` field in the record by symbolic name. This is a
+relocation table: in the plain-text format, `ptr` fields hold quoted filename
+strings or `NULL`; in the engine's in-memory representation they become actual
+pointers. At load time the engine walks the pointer table and resolves each
+named field to a memory address, making the loaded record independent of where
+it was placed — relocatable. The mechanism is the same concept as relocation
+entries in a linker object file, applied to game data.
 
 | Extension | struct_type | Contents |
 |-----------|-------------|----------|
@@ -24,7 +52,39 @@ relocation entries in a linker object file, applied to game data.
 | `.ECM` | 9 | ECM pod definition |
 | `.GAS` | 8 | Gas / fuel tank definition |
 
-## File Structure
+## Tools
+
+### fx
+
+```
+# Same pattern for all seven extensions:
+fx ot  info   <file.OT>              # human-readable field dump
+fx ot  unpack <file.OT>  [-o out.txt] # editable text
+fx ot  pack   <in.txt>   -o out.OT   # write back (byte-identical)
+
+fx nt  info / unpack / pack
+fx pt  info / unpack / pack
+fx jt  info / unpack / pack
+fx see info / unpack / pack
+fx ecm info / unpack / pack
+fx gas info / unpack / pack
+```
+
+Example: `fx pt info F16C.PT` → thrust, max_speed, fuel, stall speed, ceiling.
+
+### Other Tools
+
+BRF files are plain ASCII — open and edit directly after `fx unpack`, no
+further conversion needed.
+
+- **VS Code** — free; multi-file search useful when cross-referencing `.PT` hardpoint names against `.JT` definitions
+- **Notepad++** — free, Windows; lightweight for quick field edits
+- **Notepad / TextEdit** — free, built-in; sufficient for small edits
+
+## File Layout
+
+Plain text; no binary fields. (Hex values use the `$XX` prefix; fixed-point /
+relative values use the `^XXXXX` prefix.)
 
 ```
 [brent's_relocatable_format]
@@ -55,10 +115,10 @@ relocation entries in a linker object file, applied to game data.
 | `symbol` | `NAME` | `std::string` |
 | `string` | `"text"` | `std::string` |
 
-`\tend` terminates each block. The pointer table (`:name` lines) comes first, then the
-main field block, then optional named subsections.
+`\tend` terminates each block. The pointer table (`:name` lines) comes first,
+then the main field block, then optional named subsections.
 
-## OT Fields (Object Type)
+### OT Fields (Object Type)
 
 OT versioning is determined by field count: V0=49, V1=51, V2=63, V3=64.
 
@@ -68,9 +128,10 @@ Key fields (abridged):
 struct_type         byte    1=OT, 3=NT, 5=PT, 7=JT, 8=GAS, 9=ECM, 10=SEE
 type_size           word
 instance_size       word
-short_name          ptr     e.g. "F-16C"
-long_name           ptr     e.g. "General Dynamics F-16C Fighting Falcon"
-file_name           ptr     e.g. "F16C"
+ot_names            ptr     single ptr to the name record, which holds the
+                            short name, long name, and filename strings
+                            (e.g. "F-16C" / "General Dynamics F-16C Fighting
+                            Falcon" / "F16C.OT")
 ot_flags            dword   see ot_flags table below
 obj_class           word    see obj_class table below
 shape               ptr     3D model filename (no extension)
@@ -95,7 +156,12 @@ dmg_type            dword
 year_available      dword   earliest campaign year this object appears
 ```
 
-### `ot_flags` values
+(An earlier version of this list showed `short_name`/`long_name`/`file_name`
+as three separate `ptr` fields; the binary struct confirmed by
+[PT.md](PT.md) byte-counting holds a **single** `ot_names` ptr to the name
+record, and the filename is the LIB lookup key, not a stored field.)
+
+**`ot_flags` values:**
 
 | Value | Meaning |
 |-------|---------|
@@ -103,7 +169,7 @@ year_available      dword   earliest campaign year this object appears
 | `$2bf3` | Non-flyable (AI-only) |
 | `$8xxxxxx` prefix | Hidden from in-game reference library |
 
-### `obj_class` values
+**`obj_class` values:**
 
 | Value | Meaning |
 |-------|---------|
@@ -113,15 +179,14 @@ year_available      dword   earliest campaign year this object appears
 | `$1000` | Structure |
 | `$0800` | Vehicle / armor |
 
-## PT Fields (Plane Type)
+### PT Fields (Plane Type)
 
-PT extends OT with ~80 additional aerodynamic and avionics fields, beginning immediately
-after the NT section in the BRF file (section name unverified — needs confirmation against
-a live `.PT` file).
+PT extends OT with ~80 additional aerodynamic and avionics fields, beginning
+immediately after the NT section in the BRF file (section name unverified —
+see Open Questions).
 
-### Carrier / datalink / thrust-vectoring dword
-
-The first dword of the PT section is a flag word controlling several systems:
+**Carrier / datalink / thrust-vectoring dword** — the first dword of the PT
+section is a flag word controlling several systems:
 
 | Value | Meaning |
 |-------|---------|
@@ -136,7 +201,7 @@ The first dword of the PT section is a flag word controlling several systems:
 
 Example: `$4591` = ATG datalink + full 3D thrust vectoring.
 
-### Core aerodynamic fields
+**Core aerodynamic fields:**
 
 ```
 carrier_flags       dword   see table above
@@ -185,7 +250,7 @@ misc_per_flight     word    maintenance man-hours per flight
 repair_multiplier   word    repair cost multiplier
 ```
 
-### Stall / spin fields
+**Stall / spin fields:**
 
 ```
 stall_warn_delay    word    clocks (1 clock = 1/256 sec)
@@ -202,10 +267,9 @@ spin_bank_low       word    degrees
 spin_bank_high      word
 ```
 
-### G-envelope section
-
-Each envelope entry covers one G-load level and lists up to 16 speed/altitude pairs
-defining the aircraft's performance boundary at that G.
+**G-envelope section** — each envelope entry covers one G-load level and lists
+up to 16 speed/altitude pairs defining the aircraft's performance boundary at
+that G:
 
 ```
 [env_entry]
@@ -218,11 +282,12 @@ data[0..15]:
   altitude          dword   feet
 ```
 
-Unused slots are zeroed. A typical FA aircraft has 4 negative-G and 9 positive-G entries.
+Unused slots are zeroed. A typical FA aircraft has 4 negative-G and 9
+positive-G entries.
 
-### Hardpoints
-
-Each PT has up to 9 hardpoints (count varies by aircraft; F16C has 9, MiG-29 has 8, some light aircraft have fewer). Per-hardpoint fields:
+**Hardpoints** — each PT has up to 9 hardpoints (count varies by aircraft;
+F16C has 9, MiG-29 has 8, some light aircraft have fewer). Per-hardpoint
+fields:
 
 ```
 hld                 word    Hardpoint Loading Data flags (see table below)
@@ -239,7 +304,7 @@ quantity            word    number of items on this hardpoint
 location            byte    see location codes below
 ```
 
-### Hardpoint Loading Data (HLD) flags
+**Hardpoint Loading Data (HLD) flags:**
 
 | Value | Meaning |
 |-------|---------|
@@ -253,7 +318,7 @@ location            byte    see location codes below
 | `$17e5` | External HP, symmetrical load, multi-role (bombs + missiles + stores) |
 | `$5e5` | External HP, symmetrical load, bombs + missiles |
 
-### Hardpoint location codes
+**Hardpoint location codes:**
 
 | Code | Location |
 |------|----------|
@@ -264,40 +329,15 @@ location            byte    see location codes below
 | `4` | Wing |
 | `5` | Wingtip |
 
-### `systemDamage` array
+**`systemDamage` array** — 48-byte array immediately after the MTOW field.
+Each byte is a threshold controlling how much damage a subsystem can sustain
+before failing. Common values: `20`/`22` (lightly protected), `148`/`150`
+(moderately armored), `36` (structural), `6` (critical systems).
 
-48-byte array immediately after the MTOW field. Each byte is a threshold controlling how
-much damage a subsystem can sustain before failing. Common values: `20`/`22` (lightly
-protected), `148`/`150` (moderately armored), `36` (structural), `6` (critical systems).
+## Engine Notes
 
-## Round-Trip Notes
-
-- Parse → serialize produces byte-identical files for all OT/NT/PT files in FA_2.LIB.
-- Null pointers are written as `ptr NULL`.
-- Integer field sign interpretation must match the type assignments in the spec; wrong signedness
-  produces visually wrong values in `info` output.
-
-## fx commands
-
-```
-# Same pattern for all seven extensions:
-fx ot  info   <file.OT>              # human-readable field dump
-fx ot  unpack <file.OT>  [-o out.txt] # editable text
-fx ot  pack   <in.txt>   -o out.OT   # write back
-
-fx nt  info / unpack / pack
-fx pt  info / unpack / pack
-fx jt  info / unpack / pack
-fx see info / unpack / pack
-fx ecm info / unpack / pack
-fx gas info / unpack / pack
-```
-
-Example: `fx pt info F16C.PT` → thrust, max_speed, fuel, stall speed, ceiling.
-
-## Confirmed Engine Functions (FA.SMS)
-
-BRF type initialisation entry points confirmed from FA.SMS (called during game startup to load each type array into memory):
+BRF type initialisation entry points confirmed from FA.SMS (called during game
+startup to load each type array into memory):
 
 | VA | Symbol | BRF type loaded |
 |----|--------|-----------------|
@@ -306,12 +346,29 @@ BRF type initialisation entry points confirmed from FA.SMS (called during game s
 | `0x4A71C0` | `SetupPT` | PLANE_TYPE (`.PT` aircraft) |
 | `0x4A7230` | `SetupJT` | PROJ_TYPE (`.JT` weapons) |
 
-These four are the canonical entry points for tracing how BRF fields map to in-memory struct layouts (confirmed at `_SetupPT` VA from the FA.SMS cross-reference table in SMS.md).
+These four are the canonical entry points for tracing how BRF fields map to
+in-memory struct layouts; [PT.md](PT.md) carries the fully byte-counted
+PLANE_TYPE binary layout.
 
-## Applications
+## Round-Trip Notes
 
-BRF files are plain ASCII — open and edit directly after `fx unpack`, no further conversion needed.
+- Parse → serialize produces byte-identical files for all OT/NT/PT files in
+  FA_2.LIB; `tests/test_brf.cpp` asserts raw-byte preservation.
+- Null pointers are written as `ptr NULL`.
+- Integer field sign interpretation must match the type assignments in the
+  spec; wrong signedness produces visually wrong values in `info` output.
 
-- **VS Code** — free; multi-file search useful when cross-referencing `.PT` hardpoint names against `.JT` definitions
-- **Notepad++** — free, Windows; lightweight for quick field edits
-- **Notepad / TextEdit** — free, built-in; sufficient for small edits
+## Open Questions
+
+### 1. PT section name
+
+The PT extension block begins immediately after the NT section, but the
+bracketed section name that introduces it has not been verified against a live
+`.PT` file.
+
+*Status: open — re-static (#54)*
+
+## Related
+
+**Formats:** the seven member specs — [OT](OT.md), [NT](NT.md), [PT](PT.md),
+[JT](JT.md), [SEE](SEE.md), [ECM](ECM.md), [GAS](GAS.md).
