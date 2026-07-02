@@ -216,3 +216,32 @@ TEST_CASE("ealib_find rejects prefix and missing names") {
 TEST_CASE("ealib_find on empty entry list") {
     REQUIRE(ealib_find({}, "a.bin") == nullptr);
 }
+
+// ---------------------------------------------------------------------------
+// ealib_safe_name — platform-identical output filenames
+// ---------------------------------------------------------------------------
+
+TEST_CASE("ealib_safe_name passes legitimate 8.3 names through unchanged") {
+    REQUIRE(ealib_safe_name("BALTIC.TXT") == "BALTIC.TXT");
+    REQUIRE(ealib_safe_name("f16c_0.pic") == "f16c_0.pic");
+    REQUIRE(ealib_safe_name("") == "");
+}
+
+TEST_CASE("ealib_safe_name replaces each special character with underscore") {
+    REQUIRE(ealib_safe_name("&AFTB2.11K") == "_AFTB2.11K");
+    REQUIRE(ealib_safe_name("A*B.BIN") == "A_B.BIN");
+    REQUIRE(ealib_safe_name("A?B.BIN") == "A_B.BIN");
+    REQUIRE(ealib_safe_name("A\"B.BIN") == "A_B.BIN");
+    REQUIRE(ealib_safe_name("A<B>.BIN") == "A_B_.BIN");
+    REQUIRE(ealib_safe_name("A|B.BIN") == "A_B.BIN");
+}
+
+TEST_CASE("ealib_safe_name replaces path characters from crafted archives") {
+    REQUIRE(ealib_safe_name("../EVIL.BIN") == ".._EVIL.BIN");
+    REQUIRE(ealib_safe_name("..\\EVIL.BIN") == ".._EVIL.BIN");
+    REQUIRE(ealib_safe_name("C:EVIL.BIN") == "C_EVIL.BIN");
+}
+
+TEST_CASE("ealib_safe_name on all-special input") {
+    REQUIRE(ealib_safe_name("&*?\"<>|/\\:") == "__________");
+}

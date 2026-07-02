@@ -72,6 +72,17 @@ const Entry* ealib_find(const std::vector<Entry>& entries, const std::string& na
     return nullptr;
 }
 
+std::string ealib_safe_name(const char* name) {
+    std::string s = name;
+    for (char& c : s) {
+        if (c == '&' || c == '*' || c == '?' || c == '"' ||
+            c == '<' || c == '>' || c == '|' ||
+            c == '/' || c == '\\' || c == ':')
+            c = '_';
+    }
+    return s;
+}
+
 std::vector<uint8_t> ealib_extract(const uint8_t* lib_data, size_t lib_size,
                                     const Entry& entry, bool decompress) {
     if (entry.offset + entry.size > lib_size) return {};

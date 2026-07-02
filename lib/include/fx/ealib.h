@@ -30,6 +30,12 @@ std::vector<Entry> ealib_read_dir(const uint8_t* data, size_t size);
 // Returns nullptr if not found.
 const Entry* ealib_find(const std::vector<Entry>& entries, const std::string& name);
 
+// Map an entry name to a filename that is legal and identical on every
+// platform: & * ? " < > | / \ : are each replaced with '_'. The game uses
+// '&' as a prefix for looping audio files; the path characters guard
+// against crafted archives. Legitimate 8.3 names pass through unchanged.
+std::string ealib_safe_name(const char* name);
+
 // Extract one entry's data.
 // If decompress=true and flags==4, runs blast decompression automatically.
 // Returns empty vector on error.
