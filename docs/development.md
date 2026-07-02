@@ -143,6 +143,7 @@ Every PR to `main` (and every push to it) runs the
 | `clang` | ubuntu-latest | Linux Clang build + full test suite |
 | `asan-ubsan` | ubuntu-latest | Full suite under AddressSanitizer + UBSan — memory errors and UB in the binary parsers fail the PR |
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
+| CodeQL | ubuntu-latest | Static analysis ([security-extended](../.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
 
 Every `uses:` in the workflows is pinned to a commit SHA (with the version in a
 trailing comment); [Dependabot](../.github/dependabot.yml) keeps the pins current.
