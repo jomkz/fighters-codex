@@ -80,8 +80,12 @@ the path embedders use (see [api.md](api.md)).
 
 ### Platform notes
 
-- **macOS** is untested and unsupported; the presets are deliberately
-  Linux/Windows-only. A plain `cmake -B build` may work but is unverified.
+- **macOS** is unsupported and ships no release artifacts; the presets are
+  deliberately Linux/Windows-only. CI does compile and run the suite on
+  macOS as an informational, never-blocking check (a plain `cmake -B`
+  build with `continue-on-error` — see the CI table below), so gross
+  portability breaks surface early even though the platform stays
+  unsupported.
 - The `msvc` preset assumes the platform-default generator is Visual Studio;
   a `CMAKE_GENERATOR` environment override (e.g. to Ninja) conflicts with its
   `x64` architecture setting.
@@ -179,6 +183,7 @@ Every PR to `main` (and every push to it) runs the
 | `clang` | ubuntu-latest | Linux Clang build + full test suite |
 | `asan-ubsan` | ubuntu-latest | Full suite under AddressSanitizer + UBSan — memory errors and UB in the binary parsers fail the PR |
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
+| `macos (informational)` | macos-latest | AppleClang build + suite as an early-warning signal; `continue-on-error` — never blocks a PR |
 | `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
 | `coverage` | ubuntu-latest | gcov line coverage over `lib/` + `cli/`, gcovr summary on the run's summary page + HTML artifact; enforces a floor that only ratchets **up** (raised by epic [#50](https://github.com/jomkz/fighters-codex/issues/50), never lowered) |
 | CodeQL | ubuntu-latest | Static analysis ([security-extended](../.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
