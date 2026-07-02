@@ -6,8 +6,10 @@ queries:
   - uses: security-extended
 
 # First-party code only: build/ covers FetchContent'd Catch2, the vendor
-# directories are stb and Dear ImGui.
+# directories are stb and Dear ImGui. The patterns need the explicit /**
+# suffix — bare directory names did not filter alerts in files below them
+# (observed on the first main-branch analysis).
 paths-ignore:
-  - build
-  - lib/vendor
-  - gui/vendor
+  - build/**
+  - lib/vendor/**
+  - gui/vendor/**
