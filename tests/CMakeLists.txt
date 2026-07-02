@@ -45,3 +45,27 @@ add_test(NAME cli_e2e_lib
         -DFX=$<TARGET_FILE:fx>
         -DWORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-e2e
         -P ${CMAKE_CURRENT_SOURCE_DIR}/cli/run_cli_test.cmake)
+
+# Real-asset integration mode: registered only when FX_FA_ROOT points at a
+# licensed FA install (cache variable or environment). Verifies every
+# extracted byte against the committed manifest; a manifest generated on one
+# OS and verified on the other proves cross-platform byte-identity (epic #42).
+# Python3 lookup stays inside this block — machines without the assets (or
+# Python) must configure cleanly.
+set(FX_FA_ROOT "" CACHE PATH "Licensed FA install for real-asset integration tests")
+if(NOT FX_FA_ROOT AND DEFINED ENV{FX_FA_ROOT})
+    set(FX_FA_ROOT "$ENV{FX_FA_ROOT}")
+endif()
+if(FX_FA_ROOT)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    add_test(NAME fa_extract_manifest
+        COMMAND Python3::Interpreter
+            "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa_manifest.py" verify
+            --fx "$<TARGET_FILE:fx>"
+            --fa-root "${FX_FA_ROOT}"
+            --manifest "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa-extract.sha256"
+            --work-dir "${CMAKE_CURRENT_BINARY_DIR}/fa-extract-work")
+    set_tests_properties(fa_extract_manifest PROPERTIES
+        LABELS "integration"
+        TIMEOUT 3600)
+endif()
