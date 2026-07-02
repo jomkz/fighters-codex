@@ -47,6 +47,25 @@ add_test(NAME cli_e2e_lib
         -DWORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-e2e
         -P ${CMAKE_CURRENT_SOURCE_DIR}/cli/run_cli_test.cmake)
 
+# The release workflow builds its GitHub Release body with
+# scripts/extract-changelog.py; exercising it here keeps it from rotting
+# between tags. 0.3.0 is a frozen section; 0.1.0 is the oldest (its section
+# ends at the link definitions, the parsing edge case). Python3 lookup is
+# QUIET — machines without Python must configure cleanly.
+find_package(Python3 QUIET COMPONENTS Interpreter)
+if(Python3_FOUND)
+    add_test(NAME changelog_extract
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/scripts/extract-changelog.py" "0.3.0")
+    set_tests_properties(changelog_extract PROPERTIES
+        PASS_REGULAR_EXPRESSION "fighters-codex")
+    add_test(NAME changelog_extract_oldest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/scripts/extract-changelog.py" "0.1.0")
+    set_tests_properties(changelog_extract_oldest PROPERTIES
+        PASS_REGULAR_EXPRESSION "Initial release")
+endif()
+
 # Real-asset integration mode: registered only when FX_FA_ROOT points at a
 # licensed FA install (cache variable or environment). Verifies every
 # extracted byte against the committed manifest; a manifest generated on one
