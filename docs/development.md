@@ -258,7 +258,8 @@ fighters-codex/
 ## What still needs the Windows bench
 
 - **fx-gui** build, run, and debugging (Win32/DX11 until epic #46)
-- **Release packaging** verification (`release.yml` artifacts are Windows x64)
+- **Release packaging** verification for the Windows zips (the Linux tarballs
+  are exercised by the release workflow's Linux leg and its dry-run mode)
 - **`re-gameplay` work**: anything requiring the running game, batched into
   bench campaigns (epic #56)
 - The **Windows-side `fa_extract_manifest` verify run** that closes the
@@ -320,9 +321,15 @@ git push origin main --tags
 4. After the release workflow publishes, bump fa-content's `extern/fx_lib`
    submodule to the new tag.
 
-Pushing the tag triggers the GitHub Actions release workflow, which builds the
-artifacts and publishes the GitHub Release using the new CHANGELOG entry as the
-release body.
+Pushing the tag triggers the GitHub Actions release workflow: it builds **and
+tests** on both OSes, packages the Windows zips and Linux tarballs, extracts
+the release body with `scripts/extract-changelog.py` (run it locally with a
+version argument; the `changelog_extract` ctest exercises it on every run),
+and publishes the GitHub Release.
+
+To validate packaging without tagging, run the workflow manually
+(**Actions → Release → Run workflow**): the dry run builds, tests, and
+uploads the packages as workflow artifacts but skips the publish job.
 
 ## Vendored Dependencies
 
