@@ -117,8 +117,8 @@ fighters-codex/
 
 0. Optionally draft changelog entries from conventional commits since the last tag:
 
-```powershell
-.\scripts\draft-changelog.ps1
+```bash
+python3 scripts/draft-changelog.py
 ```
 
 Review and edit `CHANGELOG.md` (the script drafts; you refine), then commit any
@@ -128,8 +128,8 @@ message format that drives this.
 1. Ensure `CHANGELOG.md` has the desired content under `## [Unreleased]`.
 2. When ready to ship, run the release script with the new version:
 
-```powershell
-.\scripts\release.ps1 0.2.0
+```bash
+python3 scripts/release.py 0.2.0
 ```
 
 This will:
@@ -140,9 +140,12 @@ This will:
 
 3. Review the commit (`git log --oneline -2`, `git diff HEAD~1`), then push:
 
-```powershell
+```bash
 git push origin main --tags
 ```
+
+4. After the release workflow publishes, bump fa-content's `extern/fx_lib`
+   submodule to the new tag.
 
 Pushing the tag triggers the GitHub Actions release workflow, which builds the artifacts and publishes the GitHub Release using the new CHANGELOG entry as the release body.
 
