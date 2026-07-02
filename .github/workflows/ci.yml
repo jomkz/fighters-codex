@@ -1,23 +1,43 @@
 name: CI
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-    runs-on: windows-latest
+  test:
+    name: ${{ matrix.preset }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: gcc
+            os: ubuntu-latest
+          - preset: clang
+            os: ubuntu-latest
+          - preset: msvc
+            os: windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure
-        # The msvc preset uses the runner's default Visual Studio generator —
-        # no pinned generator, because the image's default VS moves
-        # (VS 17 2022 is gone from windows-latest as of mid-2026)
-        run: cmake --preset msvc
+        # msvc uses the runner's default Visual Studio generator — nothing
+        # pinned, because the image's default VS moves (VS 17 2022 is gone
+        # from windows-latest as of mid-2026)
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
-        run: cmake --build --preset msvc
+        run: cmake --build --preset ${{ matrix.preset }}
 
       - name: Test
-        run: ctest --preset msvc
+        run: ctest --preset ${{ matrix.preset }}

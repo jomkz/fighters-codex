@@ -78,6 +78,13 @@ Use the same type prefix as your commit (`feat/`, `fix/`, `docs/`, `refactor/`, 
 followed by a short lowercase kebab-case description. See
 [docs/development.md](docs/development.md#branch-names) for the full table and rules.
 
+## Pull Request Checks
+
+Every PR runs the CI workflow — a build-and-test matrix across Linux and Windows plus
+analysis legs. See [docs/development.md](docs/development.md#continuous-integration) for
+the current leg list and what each check proves. PRs are expected to be green across the
+matrix before merge; if a leg is red, fix the change rather than the check.
+
 ---
 
 For the full workflow — building, releasing, and the draft-changelog script — see
