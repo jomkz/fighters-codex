@@ -1,5 +1,8 @@
 ﻿# Fighters Codex (`fx`)
 
+[![CI](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml)
+
 A reverse-engineering effort to fully understand and document the game engine and file
 formats of the "Fighters" combat simulator family. The documentation — format specs,
 architecture notes, recovered symbols — is the primary output. The `fx_lib` library,
