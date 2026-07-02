@@ -25,7 +25,7 @@ implementation is the proof that a format is truly understood.
 - A **zero-dependency, statically-linked** `fx.exe` — byte-identical round-trip for the LIB, PIC, PAL, SEQ, audio, BRF-family, and mission codecs; inspect/decode support for most other documented formats. Closing the round-trip gap for every format (or documenting why a codec is one-way) is [Phase 4 of the roadmap](docs/roadmap.md)
 - A **graphical editor** `fx-gui.exe` — interactive codec validation against real game data; live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
 - A **static C++ library** (`fx_lib`) — all codecs in one linkable unit, embeddable in any C++ host (it is what [fa-content](https://github.com/fighters-legacy/fa-content) builds on)
-- An **AIâ†’BI compiler** (`fx ai compile`) — the first working compiler for the Phar Lap PE bytecode format the game's AI interpreter loads; validates the complete AI bytecode spec
+- An **AI→BI compiler** (`fx ai compile`) — the first working compiler for the Phar Lap PE bytecode format the game's AI interpreter loads; validates the complete AI bytecode spec
 - A **BI disassembler** (`fx bi dump`) — disassemble compiled `.BI` AI bytecode back to readable mnemonics, with cross-referenced label annotations and resolved `CALL_BY_NAME` targets
 
 ## Why this exists

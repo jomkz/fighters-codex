@@ -23,8 +23,9 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 
 ## Environments
 
-- **Primary development: Fedora Linux.** Configure with `cmake -B build`, run tests with
-  `ctest --test-dir build` (or run `build/tests/fx_tests` directly).
+- **Primary development: Fedora Linux.** Configure with `cmake --preset gcc`, build with
+  `cmake --build --preset gcc`, run tests with `ctest --preset gcc` (presets: gcc, clang,
+  asan-ubsan, release on Linux; msvc on Windows — see docs/development.md).
 - **Windows bench** (kept for validation): has the licensed FA install. Anything needing
   the *running game* is labeled `re-gameplay` and batched for bench campaigns (see epic
   #56). Real-game asset validation on either bench uses `FX_FA_ROOT` integration mode:

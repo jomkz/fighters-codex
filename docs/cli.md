@@ -11,7 +11,7 @@ fx seq     dump / unpack / pack         # .SEQ cutscene timelines
 fx audio   info / unpack / pack         # .11K / .5K / .8K raw PCM audio
 fx ot      info / unpack / pack         # object type definitions
 fx pt      info / unpack / pack         # aircraft type definitions
-fx nt / jt / see / ecm / gas â€¦          # other type definitions
+fx nt / jt / see / ecm / gas ...        # other type definitions
 fx mission info / unpack / pack         # .M / .MM mission and map files
 fx sh      info / unpack                # .SH 3D shapes → Wavefront OBJ
 fx sms     dump                         # FA.SMS symbol map → CSV
@@ -265,7 +265,7 @@ uses LF line endings on every platform (previously CRLF on Windows).
 FA.SMS -> symbols.csv (3829 symbols)
 ```
 
-The CSV can be imported directly into Ghidra (Script Manager â†’ ImportSymbolsScript)
+The CSV can be imported directly into Ghidra (Script Manager -> ImportSymbolsScript)
 or IDA Pro to auto-label all known functions and data symbols.
 
 *See also: [fa/formats/SMS.md](fa/formats/SMS.md)*
