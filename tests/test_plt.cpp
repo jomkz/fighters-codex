@@ -1,9 +1,20 @@
 ﻿#include <catch2/catch_test_macros.hpp>
 #include <fx/plt.h>
+#include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <vector>
 
 using namespace fx;
+
+// Copy at most max_chars characters; the buffer is pre-zeroed so the
+// string stays null-terminated (portable stand-in for MSVC strncpy_s).
+static void copy_field(std::vector<uint8_t>& buf, size_t off,
+                       const char* src, size_t max_chars)
+{
+    std::memcpy(buf.data() + off, src,
+                std::min(std::strlen(src), max_chars));
+}
 
 // Build a minimal PLT identity block (0xB0 bytes).
 static std::vector<uint8_t> make_plt_identity(
@@ -13,9 +24,9 @@ static std::vector<uint8_t> make_plt_identity(
 {
     std::vector<uint8_t> buf(0xB0, 0);
     buf[0x00] = 0x0F; // version tag
-    strncpy_s((char*)buf.data() + 0x01, 63, name,     62);
-    strncpy_s((char*)buf.data() + 0x40, 32, callsign, 31);
-    strncpy_s((char*)buf.data() + 0xA2, 14, rank,     13);
+    copy_field(buf, 0x01, name,     62);
+    copy_field(buf, 0x40, callsign, 31);
+    copy_field(buf, 0xA2, rank,     13);
     return buf;
 }
 
