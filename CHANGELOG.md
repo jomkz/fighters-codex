@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-02
+
 ### Changed
 - **BREAKING** Project renamed from fighters-toolkit to fighters-codex; binaries renamed `ft.exe` / `ft-gui.exe` → `fx.exe` / `fx-gui.exe` (#34)
 - Project purpose restated: the RE documentation is the primary output; the tools are the validation layer (#33)
@@ -51,6 +53,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.1.0
