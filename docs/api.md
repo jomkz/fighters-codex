@@ -38,6 +38,10 @@ std::vector<Entry>   ealib_read_dir(const uint8_t* data, size_t size);
 const Entry*         ealib_find(const std::vector<Entry>& entries,
                                  const std::string& name);
 
+// Map an entry name to an output filename that is legal and identical on
+// every platform: & * ? " < > | / \ : each become '_'
+std::string          ealib_safe_name(const char* name);
+
 // Extract one entry (decompress if decompress=true and flags=4)
 std::vector<uint8_t> ealib_extract(const uint8_t* data, size_t size,
                                     const Entry& entry, bool decompress = true);
