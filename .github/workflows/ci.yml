@@ -11,9 +11,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Configure
-        # No pinned generator — the runner image's default Visual Studio moves
+        # The msvc preset uses the runner's default Visual Studio generator —
+        # no pinned generator, because the image's default VS moves
         # (VS 17 2022 is gone from windows-latest as of mid-2026)
-        run: cmake -B build -A x64
+        run: cmake --preset msvc
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build --preset msvc
+
+      - name: Test
+        run: ctest --preset msvc

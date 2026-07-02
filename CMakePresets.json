@@ -102,24 +102,28 @@
             "configurePreset": "msvc",
             "configuration": "Release",
             "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" },
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
         },
         {
             "name": "gcc",
             "configurePreset": "gcc",
             "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" },
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         },
         {
             "name": "clang",
             "configurePreset": "clang",
             "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" },
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         },
         {
             "name": "asan-ubsan",
             "configurePreset": "asan-ubsan",
             "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" },
             "environment": { "UBSAN_OPTIONS": "print_stacktrace=1" },
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         },
@@ -127,6 +131,7 @@
             "name": "release",
             "configurePreset": "release",
             "output": { "outputOnFailure": true },
+            "execution": { "noTestsAction": "error" },
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         }
     ]
