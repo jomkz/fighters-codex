@@ -48,7 +48,10 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 ## The docs-currency rule
 
 Every codec/CLI/GUI change updates, **in the same PR**: the format spec it validates,
-the relevant reference doc (docs/cli.md, docs/api.md, docs/gui.md), and (once Phase 2
-lands) the per-format status matrix. CI enforces the matrix; the rule covers the rest.
-The truth-pass lesson: claims that aren't mechanically checked drift — don't add
-unchecked claims to README.
+the relevant reference doc (docs/cli.md, docs/api.md, docs/gui.md), and the generated
+per-format status matrix (docs/fa/formats/STATUS.md — regenerate with
+`python3 tools/check_status.py --write-matrix`). Specs follow docs/spec-authoring.md;
+`tools/check_status.py --check` enforces the template, the front-matter claims, and
+matrix currency in CI (`docs-status` job) and in ctest (label `docs`); the rule covers
+the rest. The truth-pass lesson: claims that aren't mechanically checked drift — don't
+add unchecked claims to README.

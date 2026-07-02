@@ -1,4 +1,4 @@
-﻿# Documentation
+# Documentation
 
 The primary output of this project is the reverse-engineering documentation: format specifications, engine architecture notes, and modding guides for Jane's Fighters Anthology and related titles, built up from binary analysis of the game's assets and executable. The toolkit software exists to exercise and validate that documentation — a working codec is the proof of understanding.
 
@@ -14,6 +14,7 @@ Reverse-engineering notes, format specifications, and modding guides for Jane's 
 | [fa/architecture.md](fa/architecture.md) | Runtime environment, asset system, and subsystem architecture |
 | [fa/modding.md](fa/modding.md) | Step-by-step modding recipes |
 | [fa/formats/README.md](fa/formats/README.md) | All 44 file format specifications, categorized |
+| [fa/formats/STATUS.md](fa/formats/STATUS.md) | Generated per-format status matrix — spec completeness, codec direction, tests, fuzzing (CI-enforced) |
 
 Outstanding research is tracked on the [roadmap](roadmap.md) and the
 [issue tracker](https://github.com/jomkz/fighters-codex/issues) — there is no
@@ -30,3 +31,4 @@ Reference documentation for the validation tools.
 | [gui.md](gui.md) | fx-gui graphical editor feature reference |
 | [api.md](api.md) | C++ library API reference |
 | [development.md](development.md) | Building, IDE setup, and project structure |
+| [spec-authoring.md](spec-authoring.md) | Format-spec template, front-matter schema, and vocabularies (CI-enforced) |

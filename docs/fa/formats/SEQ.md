@@ -1,4 +1,4 @@
-﻿# SEQ -- Sequence / Cutscene Timeline (.SEQ)
+# SEQ -- Sequence / Cutscene Timeline (.SEQ)
 
 ## Overview
 

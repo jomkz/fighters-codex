@@ -1,4 +1,4 @@
-﻿# FA Physics, Flight Model, and Collision Detection
+# FA Physics, Flight Model, and Collision Detection
 
 Analysis of FA.EXE physics, flight model, and collision subsystems derived from Ghidra
 decompilation with FA.SMS symbols applied. All virtual addresses are from the shipping
@@ -44,13 +44,13 @@ FA.SMS name: `_FMFlight@0`
 Main per-frame flight update for the player aircraft. Called from the flying loop.
 Entry sequence:
 
-1. `_FMAircraftSetup_0()` — copies PT type fields to the working globals (see Â§7).
-2. `_F24ToPA_4(DAT_0050d013)` â†’ `DAT_0050ce9f` — converts stick pitch to pitch angle.
+1. `_FMAircraftSetup_0()` — copies PT type fields to the working globals (see §7).
+2. `_F24ToPA_4(DAT_0050d013)` → `DAT_0050ce9f` — converts stick pitch to pitch angle.
 3. `_SetThrottle_4(_throttle)` — applies throttle input.
 4. `_BurnFuel_0()` — deducts fuel for this tick.
 5. Gear, gear pitch, weapon bay, thrust vector, and wing sweep update calls.
 6. Stall detection: compares `DAT_0050ceb4 >> 8` against `_oneGStallSpeed__3JA`.
-   State machine transitions through `DAT_0050d08c` values 0â†’1â†’2â†’4; state 2 applies
+   State machine transitions through `DAT_0050d08c` values 0→1→2→4; state 2 applies
    control authority reduction proportional to `(stallSpeed - currentSpeed) / stallSpeed`.
 7. Stick inputs fed through `_StickInput_28` for pitch (`DAT_0050d01b`), roll
    (`DAT_0050cfff`), yaw (`DAT_0050d007`), and thrust-vector nozzle
@@ -65,7 +65,7 @@ int _FMFuelConsumption_4(int throttle_pct)
 {
     if (100 < throttle_pct)
         return (int)DAT_0050d3cb << 8;      // afterburner fuel flow (PT field)
-    return (DAT_0050d3c9 * throttle_pct * 0x100) / 100;  // mil power flow Ã— pct
+    return (DAT_0050d3c9 * throttle_pct * 0x100) / 100;  // mil power flow × pct
 }
 ```
 
@@ -245,7 +245,7 @@ clearance = altitude - iVar1 - DAT_0050d2dd;
 
 Computes the pitch command needed to avoid terrain. Projects a point 250 ft ahead
 using `_Rotate2_8` and the current heading `DAT_0050ce9d`, then queries `_T_Info_24`.
-The required pitch-up is iterated from âˆ’90Â° to +90Â° (âˆ’0x3FFC to +0x3FFC in engine
+The required pitch-up is iterated from −90° to +90° (−0x3FFC to +0x3FFC in engine
 units) in 0x38E increments until vertical clearance is positive. Returns the cached
 pitch value `DAT_0050ceda`; the cache expires based on whether the aircraft is in a
 critical regime (`DAT_0050ce9f < -0x71C` or terrain clearance < 0xBB800 = ~3 nm),
@@ -374,7 +374,7 @@ The following offsets are confirmed read by named FM or CO functions:
 | `DAT_0050d32a` | (PT +?) | `_FMUpdatePlaneFields@0` | Min flight-envelope altitude band index |
 | `DAT_0050d32c` | (PT +?) | `_FMUpdatePlaneFields@0` | Max flight-envelope altitude band index |
 | `DAT_0050d322` | (PT +?) | `_FMInitPlane@8`, `_FMUpdatePlaneFields@0` | PT capability flags (bit 3 = carrier, bit 0x1C = TVC mode, bit 0x400 = snap stall) |
-| `DAT_0050d3a8` | (PT +?) | `_FMUpdateGearPitch@0` | Gear-pitch authority factor (Ã— 0xB6) |
+| `DAT_0050d3a8` | (PT +?) | `_FMUpdateGearPitch@0` | Gear-pitch authority factor (× 0xB6) |
 
 The flight-envelope data (`_GetFlightEnvelope_4`, `_EnvelopeSpeedLimits_16`,
 `_StallSpeed@4`) is indexed by altitude band (integer 0–`DAT_0050d32c`). Each
@@ -403,7 +403,7 @@ Notable functions found:
 
 | VA | Internal name | Role |
 |----|--------------|------|
-| `0x4D028C` | `FUN_004d028c` | Polygon clip / projection kernel. Takes a packed shift word; applies the 3Ã—3 rotation matrix (`m1`–`m9`, `_scaled_matrix`) to a scaled vertex and tests all six clip planes. Returns a signed distance for the determining clip edge. |
+| `0x4D028C` | `FUN_004d028c` | Polygon clip / projection kernel. Takes a packed shift word; applies the 3×3 rotation matrix (`m1`–`m9`, `_scaled_matrix`) to a scaled vertex and tests all six clip planes. Returns a signed distance for the determining clip edge. |
 | `0x4D0494` | `get_sort_dist` | Painter's-algorithm sort key. Computes `|xv32| + |yv32| + |zv32|` using abs-and-add approximation plus a per-object size bias from `*(ushort*)(EDI - 0xC) * 0x100`. |
 | `0x4D057C` | `_GRAddBrentObj@40` | Adds a BRF object to the render list. Transforms object-relative position to viewer-relative, scales, calls `FUN_004d028c` for the clip test, calls `get_sort_dist`, then writes a 0x30-byte sort entry to `obj_ptr` / `cur_sort_ptr`. |
 | `0x4D0798` | `FUN_004d0798` | BRF shape renderer. Saves the rotation matrix and viewer-relative components (`_xv`, `_yv`, `_zv`), calls `_WRSetRemaps_8` for palette remapping, calls `FUN_004ce784` for the perspective divide, dispatches to the shape-type draw routine via `vector_table`, then restores state. |
@@ -414,7 +414,7 @@ Key renderer globals in this range:
 
 | Global | Role |
 |--------|------|
-| `_scaled_matrix`, `m2`–`m9` | Current 3Ã—3 rotation matrix (s16 fixed-point) |
+| `_scaled_matrix`, `m2`–`m9` | Current 3×3 rotation matrix (s16 fixed-point) |
 | `_xv`, `_yv`, `_zv` | Current vertex in viewer space (s16) |
 | `_xv32`, `_yv32`, `_zv32` | Same in s32 for high-precision paths |
 | `__viewer_x/y/z` | Camera world position |
@@ -435,27 +435,27 @@ function that builds a terrain command buffer before dispatching through `vector
 
 | VA | FA.SMS name | Section |
 |----|------------|---------|
-| `0x42DF80` | `@COLPitchToAvoidTerrain@0` | Â§4 |
-| `0x42B800` | `_Collision@56` | Â§6 |
-| `0x447970` | `?IntersectT@@YAJPAUF24_POINT@@JJ@Z` | Â§6 |
-| `0x451E50` | `@FMFuelConsumption@4` | Â§1 |
-| `0x451E80` | `_BurnFuel@0` | Â§1 |
-| `0x452050` | `@FMBurnNPCFuel@4` | Â§1 |
-| `0x47AF20` | `_GetGround@0` | Â§4 |
-| `0x47AF70` | `_FMSetTV@8` | Â§4 |
-| `0x47B020` | `_FMFlight@0` | Â§1 |
-| `0x478090` | `_COBankRate@0` | Â§2 |
-| `0x4780D0` | `_COTurnRate@0` | Â§2 |
-| `0x478190` | `@COThrust@4` | Â§2 |
-| `0x4784A0` | `_COGPullDrag@0` | Â§2 |
-| `0x4515E0` | `_FMUpdateWingSweep@0` | Â§2 |
-| `0x4ABAB0` | `_T_Info@24` | Â§4 |
-| `0x49D1D0` | `_StallSpeed@4` | Â§7 |
-| `0x49FB70` | `_PLANECheckFuel@0` | Â§1 |
-| `0x4C1120` | `_PROJSpeed@8` | Â§3 |
-| `0x4C1170` | `_PROJEngineState@0` | Â§3 |
-| `0x4C1F10` | `FUN_004c1f10` (PROJ wrapper) | Â§3 |
-| `0x4D028C` | `FUN_004d028c` (clip kernel) | Â§8 |
-| `0x4D0494` | `get_sort_dist` | Â§8 |
-| `0x4D057C` | `_GRAddBrentObj@40` | Â§8 |
-| `0x4D0798` | `FUN_004d0798` (shape renderer) | Â§8 |
+| `0x42DF80` | `@COLPitchToAvoidTerrain@0` | §4 |
+| `0x42B800` | `_Collision@56` | §6 |
+| `0x447970` | `?IntersectT@@YAJPAUF24_POINT@@JJ@Z` | §6 |
+| `0x451E50` | `@FMFuelConsumption@4` | §1 |
+| `0x451E80` | `_BurnFuel@0` | §1 |
+| `0x452050` | `@FMBurnNPCFuel@4` | §1 |
+| `0x47AF20` | `_GetGround@0` | §4 |
+| `0x47AF70` | `_FMSetTV@8` | §4 |
+| `0x47B020` | `_FMFlight@0` | §1 |
+| `0x478090` | `_COBankRate@0` | §2 |
+| `0x4780D0` | `_COTurnRate@0` | §2 |
+| `0x478190` | `@COThrust@4` | §2 |
+| `0x4784A0` | `_COGPullDrag@0` | §2 |
+| `0x4515E0` | `_FMUpdateWingSweep@0` | §2 |
+| `0x4ABAB0` | `_T_Info@24` | §4 |
+| `0x49D1D0` | `_StallSpeed@4` | §7 |
+| `0x49FB70` | `_PLANECheckFuel@0` | §1 |
+| `0x4C1120` | `_PROJSpeed@8` | §3 |
+| `0x4C1170` | `_PROJEngineState@0` | §3 |
+| `0x4C1F10` | `FUN_004c1f10` (PROJ wrapper) | §3 |
+| `0x4D028C` | `FUN_004d028c` (clip kernel) | §8 |
+| `0x4D0494` | `get_sort_dist` | §8 |
+| `0x4D057C` | `_GRAddBrentObj@40` | §8 |
+| `0x4D0798` | `FUN_004d0798` (shape renderer) | §8 |

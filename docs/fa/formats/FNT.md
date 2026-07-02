@@ -1,4 +1,4 @@
-﻿# Font Bitmap (.FNT)
+# Font Bitmap (.FNT)
 
 FA_1.LIB contains 15 `.FNT` files. These define the bitmapped fonts used for HUD text, menus, and briefing screens. Each is a **Win32 PE DLL** loaded at runtime.
 
@@ -12,23 +12,23 @@ Win32 PE DLL. File sizes vary — `4X12.FNT` decompresses to **12800 bytes** (0x
 
 | File | font_height | Decompressed size | Context |
 |------|-------------|-------------------|---------|
-| `4X6.FNT` | **7** | 8704 | Tiny fixed-pitch text (4 wide Ã— 6 glyph rows + 1 spacing = 7) |
-| `4X12.FNT` | **12** | 12800 | Fixed-pitch 4Ã—12 text |
-| `HUD00.FNT` | **5** | 8704 | HUD text — 320Ã—200 mode |
+| `4X6.FNT` | **7** | 8704 | Tiny fixed-pitch text (4 wide × 6 glyph rows + 1 spacing = 7) |
+| `4X12.FNT` | **12** | 12800 | Fixed-pitch 4×12 text |
+| `HUD00.FNT` | **5** | 8704 | HUD text — 320×200 mode |
 | `HUD01.FNT` | **10** | 12800 | HUD text — hi-res mode A |
 | `HUD11.FNT` | **10** | 12800 | HUD text — hi-res mode B |
-| `HUDSYM00.FNT` | **15** | 12800 | HUD symbols — 320Ã—200 mode |
+| `HUDSYM00.FNT` | **15** | 12800 | HUD symbols — 320×200 mode |
 | `HUDSYM01.FNT` | **29** | 16896 | HUD symbols — hi-res mode A |
 | `HUDSYM11.FNT` | **31** | 20992 | HUD symbols — hi-res mode B |
 | `HUI11.FNT` | **10** | 12800 | HUD interface text |
 | `HUISYM11.FNT` | **31** | 16896 | HUD interface symbols |
 | `MAPFONT.FNT` | **10** | 12800 | Theater map labels |
 | `WII11.FNT` | **10** | 12800 | Window interface text |
-| `WIN00.FNT` | **6** | 12800 | Window/dialog text — 320Ã—200 mode |
+| `WIN00.FNT` | **6** | 12800 | Window/dialog text — 320×200 mode |
 | `WIN01.FNT` | **12** | 16896 | Window/dialog text — hi-res mode A |
 | `WIN11.FNT` | **10** | 12800 | Window/dialog text — hi-res mode B |
 
-**Suffix semantics confirmed**: `00` = 320Ã—200 (small font, short `font_height`), `01`/`11` = higher-resolution display modes (larger `font_height`). The `01` vs `11` distinction likely targets different colour depths or renderer paths — both are hi-res but `01` fonts are taller than their `11` counterparts for the `WIN`/`HUDSYM` families.
+**Suffix semantics confirmed**: `00` = 320×200 (small font, short `font_height`), `01`/`11` = higher-resolution display modes (larger `font_height`). The `01` vs `11` distinction likely targets different colour depths or renderer paths — both are hi-res but `01` fonts are taller than their `11` counterparts for the `WIN`/`HUDSYM` families.
 
 ## Location
 

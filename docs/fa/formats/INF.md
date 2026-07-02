@@ -1,4 +1,4 @@
-﻿# Technical Info -- Aircraft Tech Sheet (.INF)
+# Technical Info -- Aircraft Tech Sheet (.INF)
 
 `.INF` files contain the technical information sheet for an aircraft, displayed in-game on the aircraft selection screen and in the mission planner. One `.INF` per aircraft; not all aircraft have one.
 

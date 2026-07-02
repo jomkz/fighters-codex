@@ -1,4 +1,4 @@
-﻿# Modding Guide
+# Modding Guide
 
 Quick recipes for common FA modding tasks using `fx`.
 
@@ -117,7 +117,7 @@ See [formats/M.md](formats/M.md) for the section and directive syntax.
 The community has produced G-envelope spreadsheets for 70+ real aircraft
 (F-4, F-14, F-15, F-16, F/A-18, F-22, MiG-25, Rafale, Typhoon, and many more),
 measuring stall and max speeds in KTAS at altitude breakpoints from sea level to 65,000 ft
-across âˆ’4 G to +9 G. These map directly to the `env` section in `.PT` files.
+across −4 G to +9 G. These map directly to the `env` section in `.PT` files.
 
 The [Fighters Anthology Resource Center](http://jkpeterson.net/fa/) and [USNRaptor](http://myplace.frontier.com/~usnraptor/) community archives include spreadsheets
 covering dozens of airframes. They use KTAS at altitude breakpoints — convert to `.PT`
@@ -166,7 +166,7 @@ For FA audio files (after `fx audio unpack` to WAV).
 
 | Tool | Platform | Notes |
 |------|----------|-------|
-| [Audacity](https://www.audacityteam.org/) | Win / Mac / Linux | Free; can also import raw PCM directly (*File â†’ Import â†’ Raw Data*: signed 8-bit, mono) |
+| [Audacity](https://www.audacityteam.org/) | Win / Mac / Linux | Free; can also import raw PCM directly (*File → Import → Raw Data*: signed 8-bit, mono) |
 | [Adobe Audition](https://www.adobe.com/products/audition.html) `$` | Win / Mac | Paid; professional mastering and spectral repair |
 
 ### 3D editors

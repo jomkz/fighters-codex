@@ -1,4 +1,4 @@
-﻿# Fighters Codex (`fx`)
+# Fighters Codex (`fx`)
 
 [![CI](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml)
@@ -18,7 +18,7 @@ implementation is the proof that a format is truly understood.
 
 **Documentation and research:**
 
-- **44 documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; roughly half are fully closed, the rest carry tracked open questions on the [roadmap](docs/roadmap.md); see [docs/fa/formats/](docs/fa/formats/README.md)
+- **44 documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; per-format completeness, codec direction, and test coverage are tracked in the CI-enforced [status matrix](docs/fa/formats/STATUS.md); see [docs/fa/formats/](docs/fa/formats/README.md)
 - **Engine architecture notes** — runtime environment, asset pipeline, physics model, renderer, AI bytecode interpreter, network protocol, and Win32 overlay DLL system; see [docs/fa/architecture.md](docs/fa/architecture.md)
 - **3,829 recovered C++ symbols** from FA.EXE and all overlay DLLs — organized by subsystem with demangled names and virtual addresses; see [docs/fa/symbols.md](docs/fa/symbols.md)
 - **Modding guides** — step-by-step recipes for textures, aircraft stats, missions, audio, and more; see [docs/fa/modding.md](docs/fa/modding.md)

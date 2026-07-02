@@ -1,4 +1,4 @@
-﻿# In-Game Menu Layout (.MNU)
+# In-Game Menu Layout (.MNU)
 
 FA_2.LIB contains 12 `.MNU` files. Each defines one top-level in-game menu screen. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded by the FA engine at runtime; they import rendering functions from `main.dll` (= FA.EXE — see [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and embed their label strings directly in the PE data section.
 
@@ -33,7 +33,7 @@ Campaign: **Campaign, Replay This Mission, Exit Campaign**
 
 ### CHOOSEM.MNU — Mission Selection + Preferences
 Mission types: **Airbase Assault** (plus others surfaced via DLG dialogs)
-Graphics prefs: **Screen resolution** — 320Ã—200, 640Ã—480, 800Ã—600, 1024Ã—768
+Graphics prefs: **Screen resolution** — 320×200, 640×480, 800×600, 1024×768
 Network: **Serial, Modem, IPX/SPX Network, TCP/IP Network, Disconnect**
 
 ### FMENUD.MNU — In-Flight Menu
@@ -44,11 +44,11 @@ Network: **Serial, Modem, IPX/SPX Network, TCP/IP Network, Disconnect**
 - Rudder: Keyboard, Rudder pedals
 - Throttle: Keyboard, Throttle stick, Slews view, Vectors thrust
 
-**Pref â†’ Graphics:** HUD pitch ladder, Dim/Brighten HUD (Shift-[/]), cockpit, rear-view mirrors, large windows, authentic radar CRT, target info (Ctrl-T), IR/Laser targeting, radio silence (Alt-S)
+**Pref → Graphics:** HUD pitch ladder, Dim/Brighten HUD (Shift-[/]), cockpit, rear-view mirrors, large windows, authentic radar CRT, target info (Ctrl-T), IR/Laser targeting, radio silence (Alt-S)
 
-**Pref â†’ Time:** Paused (Ctrl-P), Slow-motion (Shift-C), Accelerated time
+**Pref → Time:** Paused (Ctrl-P), Slow-motion (Shift-C), Accelerated time
 
-**View:** Front, Back, Track, Playerâ†”Missile, Playerâ†”Wingman, Playerâ†”Target, Targetâ†”Player, Fly-by, External, Missile; View transitions toggle
+**View:** Front, Back, Track, Player↔Missile, Player↔Wingman, Player↔Target, Target↔Player, Fly-by, External, Missile; View transitions toggle
 
 **Window:** Envelope, Forward/IR-Laser (Shift-2), Other (Shift-3), Target/Radar (Shift-4/5), Navigation (Shift-6), System Status (Shift-7), Weapon Status (Shift-8), Radar (Shift-9), Radar Cross Section (Shift-0)
 

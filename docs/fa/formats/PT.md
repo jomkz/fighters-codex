@@ -1,4 +1,4 @@
-﻿# Aircraft Flight Model (.PT)
+# Aircraft Flight Model (.PT)
 
 `.PT` files are the per-aircraft aerodynamics and avionics records. There are 145+ `.PT` files
 in FA_2.LIB, one per aircraft variant. They use [BRF](BRF.md) (Brent's Relocatable Format) —
@@ -17,7 +17,7 @@ G-envelope section, hardpoints, `systemDamage` array).
 
 ## In-Memory Struct: PLANE_TYPE
 
-At game startup `_SetupPT` (`0x4A7220`) chains through `_SetupNT` â†’ `_SetupOT` â†’
+At game startup `_SetupPT` (`0x4A7220`) chains through `_SetupNT` → `_SetupOT` →
 `FUN_004a6b10` to load each `.PT` file and lock its binary data into memory.
 The binary layout is needed for runtime patching, network-sync analysis, and AI parameter
 extraction.
@@ -26,16 +26,16 @@ extraction.
 
 ```
 _SetupPT  (0x4A7220)  -- thin wrapper
-  â””â”€ _SetupNT  (0x4A7200)  -- NT-layer init
-       â”œâ”€ FUN_004a6b10(param_1)  -- MM handle â†’ raw data ptr
-       â””â”€ _SetupOT  (0x4A6EB0)  -- OT-layer init: resolves shape ptrs via RMAccess_8
-            â””â”€ FUN_004a71e0(ptr)  -- loads one SH file: *ptr = _RMAccess_8(*ptr, 0x8000)
+  └─ _SetupNT  (0x4A7200)  -- NT-layer init
+       ├─ FUN_004a6b10(param_1)  -- MM handle → raw data ptr
+       └─ _SetupOT  (0x4A6EB0)  -- OT-layer init: resolves shape ptrs via RMAccess_8
+            └─ FUN_004a71e0(ptr)  -- loads one SH file: *ptr = _RMAccess_8(*ptr, 0x8000)
 
 FUN_004a71c0  (0x4A71C0)  -- single-object variant; calls FUN_004a71e0 on shape fields
 ```
 
 `_SetupOT` reads six shape ptr fields in the binary struct and resolves each via
-`_RMAccess_8` (load from LIB).  For flying objects (`obj_class & 0xc000 â‰  0`) it
+`_RMAccess_8` (load from LIB).  For flying objects (`obj_class & 0xc000 ≠ 0`) it
 also derives four damage-state shape names (_a / _b / _c / _d suffix) from
 `shadow_shape`, writes them into the struct, and resolves them.
 
@@ -50,7 +50,7 @@ All others are inferred from packing (BRF fields written sequentially, no alignm
 implies); it points to a name-record holding all name strings.
 
 Total layout: OBJ_TYPE 166 B (0x00–0xA5) + NPC_TYPE 20 B (0xA6–0xB9) + PLANE_TYPE
-main 258 B (0xBA–0x1BB) + 9 hardpoints Ã— 24 B (0x1BC–0x293) = **660 B** âœ“
+main 258 B (0xBA–0x1BB) + 9 hardpoints × 24 B (0x1BC–0x293) = **660 B** ✓
 
 #### OBJ_TYPE section (0x00–0xA5, 166 B)
 
@@ -93,15 +93,15 @@ main 258 B (0xBA–0x1BB) + 9 hardpoints Ã— 24 B (0x1BC–0x293) = **660 B** 
 | `0x56` | 1    | crater_size        | byte     | F16C = 0 |
 | `0x57` | 4    | empty_weight       | dword    | F16C = 14,567 lbs (matches real F-16C) |
 | `0x5B` | 2    | (unknown)          | word     | F16C = 199 |
-| `0x5D` | 16   | movement info      | 8Ã—word   | speed/accel params; F16C = 0,16380,14560,âˆ’14560,16380,0,0,0 |
-| `0x6D` | 16   | movement dwords    | 4Ã—dword  | F16C = ^0,^0,^300,^60000 |
+| `0x5D` | 16   | movement info      | 8×word   | speed/accel params; F16C = 0,16380,14560,−14560,16380,0,0,0 |
+| `0x6D` | 16   | movement dwords    | 4×dword  | F16C = ^0,^0,^300,^60000 |
 | `0x7D` | 4    | utilProc           | symbol   | F16C = `_PLANEProc` |
 | `0x81` | 4    | loopSound          | ptr      | |
 | `0x85` | 4    | secondSound        | ptr      | |
 | `0x89` | 4    | engineOnSound      | ptr      | |
 | `0x8D` | 4    | engineOffSound     | ptr      | |
 | `0x91` | 1    | (byte)             | byte     | F16C = 1 |
-| `0x92` | 16   | sound params       | 8Ã—word   | F16C = 15000,320,160,20,1600,0,20,60 |
+| `0x92` | 16   | sound params       | 8×word   | F16C = 15000,320,160,20,1600,0,20,60 |
 | `0xA2` | 4    | hudName            | ptr      | |
 
 #### NPC_TYPE section (0xA6–0xB9, 20 B)
@@ -116,22 +116,22 @@ main 258 B (0xBA–0x1BB) + 9 hardpoints Ã— 24 B (0x1BC–0x293) = **660 B** 
 | `0xB1` | 2    | (word)  | word     | F16C = 32767 |
 | `0xB3` | 2    | (word)  | word     | F16C = 0 |
 | `0xB5` | 1    | (byte)  | byte     | F16C = 9 (hardpoint count) |
-| `0xB6` | 4    | hards   | ptr      | â†’ hardpoints array |
+| `0xB6` | 4    | hards   | ptr      | → hardpoints array |
 
 #### PLANE_TYPE section (0xBA–0x1BB, 258 B)
 
 | Offset | Size | Field               | BRF type | Notes |
 |--------|------|---------------------|----------|-------|
 | `0xBA` | 4    | carrier_flags       | dword    | F16C = `$11` (land-based); see BRF.md carrier_flags table |
-| `0xBE` | 4    | env                 | ptr      | â†’ G-envelope section in same file |
-| `0xC2` | 2    | neg_g_count         | word     | F16C = âˆ’4 (number of negative-G envelope entries) |
+| `0xBE` | 4    | env                 | ptr      | → G-envelope section in same file |
+| `0xC2` | 2    | neg_g_count         | word     | F16C = −4 (number of negative-G envelope entries) |
 | `0xC4` | 2    | pos_g_count         | word     | F16C = 9 |
 | `0xC6` | 2    | max_speed_sl        | word     | F16C = 1342 mph (sea level) |
 | `0xC8` | 2    | max_speed_36k       | word     | F16C = 1934 mph (36,000 ft) |
-| `0xCA` | 130  | (aero params)       | 65Ã—word  | aerodynamic control-surface and flight-model parameters; first named fields per BRF.md: accel_runway (0xCA), decel_runway (0xCC), roll_speed_min (0xCE), roll_speed_max (0xD0), pull_rate (0xD2), neg_g_limit (0xD4); remaining 59 names TBD |
+| `0xCA` | 130  | (aero params)       | 65×word  | aerodynamic control-surface and flight-model parameters; first named fields per BRF.md: accel_runway (0xCA), decel_runway (0xCC), roll_speed_min (0xCE), roll_speed_max (0xD0), pull_rate (0xD2), neg_g_limit (0xD4); remaining 59 names TBD |
 | `0x14C` | 1   | num_engines         | byte     | F16C = 1 |
 | `0x14D` | 2   | (unknown)           | word     | F16C = 0; unlisted in BRF.md |
-| `0x14F` | 4   | military_thrust     | dword    | F16C = 17,687 lbf (â‰ˆ F100-PW-229 dry) |
+| `0x14F` | 4   | military_thrust     | dword    | F16C = 17,687 lbf (≈ F100-PW-229 dry) |
 | `0x153` | 4   | afterburner_thrust  | dword    | F16C = 32,000 lbf |
 | `0x157` | 2   | throttle_accel      | word     | F16C = 40 %/sec |
 | `0x159` | 2   | throttle_decel      | word     | F16C = 60 %/sec |
@@ -156,15 +156,15 @@ main 258 B (0xBA–0x1BB) + 9 hardpoints Ã— 24 B (0x1BC–0x293) = **660 B** 
 | `0x181` | 2   | max_side_speed      | word     | F16C = 40 ft/sec |
 | `0x183` | 2   | max_sink_rate       | word     | F16C = 2560 ft/sec |
 | `0x185` | 2   | max_landing_pitch   | word     | F16C = 5120 |
-| `0x187` | 45  | systemDamage[]      | byteÃ—45  | subsystem hit thresholds; F16C values range 6–150 |
+| `0x187` | 45  | systemDamage[]      | byte×45  | subsystem hit thresholds; F16C values range 6–150 |
 | `0x1B4` | 2   | misc_per_flight     | word     | F16C = 10 (maintenance man-hours) |
 | `0x1B6` | 2   | repair_multiplier   | word     | F16C = 10 |
 | `0x1B8` | 4   | mtow                | dword    | F16C = 33,000 lbs |
 
-#### Hardpoints section (0x1BC–0x293, 9 Ã— 24 B)
+#### Hardpoints section (0x1BC–0x293, 9 × 24 B)
 
 F16C.PT has **9** hardpoints (not 10 as BRF.md states — BRF.md needs correction).
-Each hardpoint is 24 bytes: 8Ã—word + ptr (4B) + byte + word + byte.
+Each hardpoint is 24 bytes: 8×word + ptr (4B) + byte + word + byte.
 
 | Offset | Size | Field         | Notes |
 |--------|------|---------------|-------|
@@ -172,7 +172,7 @@ Each hardpoint is 24 bytes: 8Ã—word + ptr (4B) + byte + word + byte.
 | +0x02  | 2    | offset_x      | ft right/left |
 | +0x04  | 2    | offset_y      | ft up/down |
 | +0x06  | 2    | offset_z      | ft fore/aft |
-| +0x08  | 2    | slew_heading  | 1Â° = 182 |
+| +0x08  | 2    | slew_heading  | 1° = 182 |
 | +0x0A  | 2    | slew_pitch    | |
 | +0x0C  | 2    | slew_limit_heading | |
 | +0x0E  | 2    | slew_limit_pitch   | |
@@ -205,8 +205,8 @@ a second PT file comparison to confirm.
 | `0x4A71C0` | `FUN_004a71c0` | Single-object shape loader; calls `FUN_004a71e0` on shape fields |
 | `0x4A6EB0` | `_SetupOT`     | OT-layer shape resolver; patches +0x0f/+0x13/+0x17/+0x1b/+0x25/+0x29 |
 | `0x4A71E0` | `FUN_004a71e0` | Resolves one shape ptr: `*ptr = _RMAccess_8(*ptr, 0x8000)` |
-| `0x4A6B10` | `FUN_004a6b10` | MM handle â†’ raw data ptr (`*(int*)(param+0xf)`, with MM lock if bit 1 of `+0xe`) |
-| `0x4A6B30` | `FUN_004a6b30` | BRF record lookup + stringâ†’binary conversion via `_RMType_4` / `_RMFind_4` |
+| `0x4A6B10` | `FUN_004a6b10` | MM handle → raw data ptr (`*(int*)(param+0xf)`, with MM lock if bit 1 of `+0xe`) |
+| `0x4A6B30` | `FUN_004a6b30` | BRF record lookup + string→binary conversion via `_RMType_4` / `_RMFind_4` |
 
 ## Location
 

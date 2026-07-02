@@ -1,4 +1,4 @@
-﻿# PIC -- Palettized Image (.PIC)
+# PIC -- Palettized Image (.PIC)
 
 Custom image format used for aircraft skins, HUD overlays, instruments, and backgrounds.
 Three sub-formats share the same 64-byte header, identified by the `format` field.
@@ -87,8 +87,8 @@ The `$` and `_` prefixes are engine conventions embedded in the filenames stored
 ## FA_3.LIB Naming Convention (Encyclopedia Reference Images)
 
 `FA_3.LIB` (Disc 2) contains 700+ JPEG-format PIC files used by the in-game aircraft
-encyclopedia viewer. All are 512Ã—384 pixels except the five bare-name thumbnail files
-(640Ã—480). They are never referenced by the 3D engine.
+encyclopedia viewer. All are 512×384 pixels except the five bare-name thumbnail files
+(640×480). They are never referenced by the 3D engine.
 
 ### Numeric suffix `<AC>_<N>.PIC` (N = 0–9)
 
@@ -112,7 +112,7 @@ AF1, ASTOVL, AV8, B747, CMCHE, E2000, E3, F117, F16C, F22, F260, F29, F31, GRIPE
 
 ### Bare name `<AC>.PIC` (no suffix)
 
-Five files — A6, F15, F15J, F18C, TU160 — at 640Ã—480 pixels. These are aircraft selection
+Five files — A6, F15, F15J, F18C, TU160 — at 640×480 pixels. These are aircraft selection
 screen / hangar thumbnails. The aircraft image is composited against a white background.
 All other aircraft use the `_0` exterior photo in contexts where a thumbnail is needed.
 

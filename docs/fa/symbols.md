@@ -1,4 +1,4 @@
-﻿# FA.EXE Symbol Map — Organized Reference
+# FA.EXE Symbol Map — Organized Reference
 
 FA.SMS ships with Jane's Fighters Anthology and contains 3,829 MSVC C++ mangled symbols with virtual addresses spanning `0x00401000`–`0x005937E0`. This document organizes them by address range into functional subsystems and highlights format-related entry points.
 
@@ -44,29 +44,29 @@ FA.SMS ships with Jane's Fighters Anthology and contains 3,829 MSVC C++ mangled 
 Low addresses are NET slave/master negotiation and high-level wrappers; UDP/TCP/SPX factories and serial modem code are in 0x44xxx–0x4Bxxx.
 
 Key functions:
-- `0x4016C0` — `NET_SlaveInit(CN_INFO*, NET_ADDRESS*, â€¦)`
+- `0x4016C0` — `NET_SlaveInit(CN_INFO*, NET_ADDRESS*, …)`
 - `0x401780` — `NET_SlaveShutdown()`
-- `0x4017B0` — `NET_RequestPlayerList(â€¦)`
+- `0x4017B0` — `NET_RequestPlayerList(…)`
 - `0x401850` — `NET_CancelPlayerList()`
-- `0x401880` — `PlayerListQueryEvents(â€¦)`
-- `0x401B20` — `slave_events(â€¦)`
+- `0x401880` — `PlayerListQueryEvents(…)`
+- `0x401B20` — `slave_events(…)`
 - `0x401EB0` — `slave_process_pkt(NET_PKT*, socket_state*)`
 - `0x402320` — `state_func_slave_connecting()`
-- `0x40AE50` — `NET_MasterInit(â€¦)`
+- `0x40AE50` — `NET_MasterInit(…)`
 - `0x40AF40` — `state_func_master_query()`
 - `0x40AFF0` — `NET_MasterRejectPlayer(NET_ADDRESS*, char*)`
 - `0x40B080` — `NET_MasterShutdown()`
 - `0x44BAF0` — `SER_EnterCriticalCodeForeground()`
-- `0x44BB70` — `SER_ForegroundCheckConnection(â€¦)`
+- `0x44BB70` — `SER_ForegroundCheckConnection(…)`
 - `0x44C470` — `SER_Initialize(CN_INFO*, long)` (+ Init1–5)
 - `0x44CCA0` — `SER_Shutdown()`
 - `0x4B0830` — `NET_Initialize(CN_INFO*, long)`
 - `0x4B0A10` — `NET_Shutdown()`
 - `0x4B0AC0` — `NET_Often()`
 - `0x4B0BD0` — `NET_Synchronize()`
-- `0x4B0CF0` — `NET_Write(â€¦)` / `NET_Read(â€¦)` / `NET_Flush(â€¦)`
+- `0x4B0CF0` — `NET_Write(…)` / `NET_Read(…)` / `NET_Flush(…)`
 - `0x4B1350` — `NET_SendMessageAll(char*)`
-- `0x4B1540` — `NETProcessEvent(â€¦)`
+- `0x4B1540` — `NETProcessEvent(…)`
 
 ---
 
@@ -74,11 +74,11 @@ Key functions:
 
 - `0x405E30` — `HUDInitMessages()`
 - `0x405E50` — `HUDDrawMessages(char)`
-- `0x405F50` — `HUDMessage(â€¦)`
+- `0x405F50` — `HUDMessage(…)`
 - `0x406040` — `HUDInit()`
 - `0x406950` — `HUDShutdown()`
 - `0x406A50` — `HUDDraw(char)`
-- `0x4077B0` — `HUDSetWarning(â€¦)`
+- `0x4077B0` — `HUDSetWarning(…)`
 - `0x407B60` — `HUDDrawHeading()`
 - `0x407EE0` — `HUDDrawSpeed()`
 - `0x408420` — `HUDDrawAlt()`
@@ -86,7 +86,7 @@ Key functions:
 - `0x409030` — `HUDDrawWeaponInfo()`
 - `0x4092D0` — `HUDDrawRangeInfo()`
 - `0x40A450` — `HUDSquawk()`
-- `0x40A530` — `HUDFindNearest(â€¦)`
+- `0x40A530` — `HUDFindNearest(…)`
 - `0x40ABB0` — `HUDDrawDisrupt()`
 - `0x40AC80` — `HUDSetStability(long)`
 - `0x40ACE0` — `HUDDrawStability()`
@@ -100,33 +100,33 @@ Shell setup, menu creation, mouse handling, view slew, damage system.
 
 - `0x40B8A0` — `MouseLoadPtr()`
 - `0x40BA10` — `ShellSetup()`
-- `0x40BD30` — `MenuStartUp(â€¦)`
+- `0x40BD30` — `MenuStartUp(…)`
 - `0x40C1F0` — `MenuCreateRemaps()`
 - `0x40C290` — `ShellOff()`
 - `0x40C310` — `MenuShutDown(char)`
 - `0x40C4F0` — `MenuUpdate()`
 - `0x40CFE0` — `ShadowBox(long,long,long,long)`
-- `0x40D7A0` — `VIEWSlew(â€¦)`
+- `0x40D7A0` — `VIEWSlew(…)`
 - `0x40F6B0` — `DAMAGEInit2()` / `0x40F760` — `DAMAGEInit()`
-- `0x40F970` — `DAMAGEDoHit(â€¦)`
+- `0x40F970` — `DAMAGEDoHit(…)`
 - `0x4113C0` — `DAMAGEAutopilotAvail()`
-- `0x411A40` — `Angles(â€¦)` / `AngleOffNose(â€¦)` / `AnglesOffNose(â€¦)`
-- `0x411BD0` — `Clock(â€¦)`
-- `0x4120C0` — `Move3d(â€¦)`
+- `0x411A40` — `Angles(…)` / `AngleOffNose(…)` / `AnglesOffNose(…)`
+- `0x411BD0` — `Clock(…)`
+- `0x4120C0` — `Move3d(…)`
 - `0x412C10` — `PlaySeq(char*, long, long)`
-- `0x413120` — `CHATInit()` / `CHATKey(â€¦)` / `CHATEndMission()`
-- `0x4140A0` — `SetPlayerTarget(â€¦)` / `TargetNearestTo(â€¦)`
-- `0x414690` — `FlightKey(â€¦)`
-- `0x416380` — `SetAutopilot(â€¦)` / `ForceAutopilot(â€¦)`
+- `0x413120` — `CHATInit()` / `CHATKey(…)` / `CHATEndMission()`
+- `0x4140A0` — `SetPlayerTarget(…)` / `TargetNearestTo(…)`
+- `0x414690` — `FlightKey(…)`
+- `0x416380` — `SetAutopilot(…)` / `ForceAutopilot(…)`
 - `0x4164B0` — `ServicePlayer()`
 - `0x417760` — `InitPlayerControl()`
-- `0x418070` — `MSGInit()` / `MSGSend(â€¦)` / `MSGReceive(â€¦)`
-- `0x419800` — `ArmPlane(â€¦)`
-- `0x41D740` — `CDirDraw::CreateSingleton()` / `CDirDraw::Create(â€¦)`
+- `0x418070` — `MSGInit()` / `MSGSend(…)` / `MSGReceive(…)`
+- `0x419800` — `ArmPlane(…)`
+- `0x41D740` — `CDirDraw::CreateSingleton()` / `CDirDraw::Create(…)`
 - `0x41E8F0` — `IsBrentDLL(void*)` — tests Phar Lap PE signature
-- `0x41E910` — `IsDLL(â€¦)`
-- `0x41EB60` — `LoadDLL(â€¦)` — generic overlay DLL loader
-- `0x41F240` — `LoadBrentDLL(â€¦)` — loads Phar Lap PE overlay
+- `0x41E910` — `IsDLL(…)`
+- `0x41EB60` — `LoadDLL(…)` — generic overlay DLL loader
+- `0x41F240` — `LoadBrentDLL(…)` — loads Phar Lap PE overlay
 
 ---
 
@@ -138,11 +138,11 @@ Shell setup, menu creation, mouse handling, view slew, damage system.
 - `0x432F80` — `ShellMusicUpdate(long)` / `ShellMusic(char)`
 - `0x433180` — `InitSound()` / `ShutDownSndDriver()` / `InitMixer()`
 - `0x433480` — `SoundPoints()`
-- `0x433580` — `SingleSound(char*, float, â€¦)`
-- `0x433680` — `SoundOn(â€¦)` — full parameter sound trigger
+- `0x433580` — `SingleSound(char*, float, …)`
+- `0x433680` — `SoundOn(…)` — full parameter sound trigger
 - `0x433CE0` — `SoundOff(short)`
 - `0x433D40` — `SoundAllOff()`
-- `0x434800` — `MaybeLoopSound(â€¦)` / `UpdateLoopSounds()`
+- `0x434800` — `MaybeLoopSound(…)` / `UpdateLoopSounds()`
 - `0x4349D0` — `ServiceSounds()`
 - `0x435480` — `StopGameSounds()`
 - `0x435980` — `StartVoice(MODSPEC*, short)`
@@ -152,35 +152,35 @@ Shell setup, menu creation, mouse handling, view slew, damage system.
 
 ### Memory Manager (MM) (0x435C60–0x436320)
 
-- `0x435C60` — `MMInit(â€¦)` / `MMShutdown()`
-- `0x435D80` — `MMAllocHandle(â€¦)` / `MMMapFile(â€¦)` / `MMFreeHandle(â€¦)`
-- `0x435F80` — `MMFreePtr(â€¦)` / `MMReallocHandle(â€¦)` / `MMReallocPtr(â€¦)`
-- `0x436170` — `MMPushAllocId(â€¦)` / `MMPopAllocId()` / `MMFreeAllId(â€¦)`
-- `0x436210` — `MMLock(â€¦)` / `MMUnlock(â€¦)` / `MMAccessR(â€¦)` / `MMAccessW(â€¦)`
+- `0x435C60` — `MMInit(…)` / `MMShutdown()`
+- `0x435D80` — `MMAllocHandle(…)` / `MMMapFile(…)` / `MMFreeHandle(…)`
+- `0x435F80` — `MMFreePtr(…)` / `MMReallocHandle(…)` / `MMReallocPtr(…)`
+- `0x436170` — `MMPushAllocId(…)` / `MMPopAllocId()` / `MMFreeAllId(…)`
+- `0x436210` — `MMLock(…)` / `MMUnlock(…)` / `MMAccessR(…)` / `MMAccessW(…)`
 - `0x4362C0` — `MMAreaFree()`
 
 ---
 
 ### Campaign Map (MAP/ZONE) (0x421C70–0x42B800)
 
-- `0x421C70` — `ZONEInit()` / `ZONEAdd(â€¦)` / `ZONEForGV()` / `ZONEUpdate()`
-- `0x4221D0` — `MAPObjAlts(â€¦)` / `MAPSetSide(â€¦)` / `MAPMaybeSetControl(â€¦)`
+- `0x421C70` — `ZONEInit()` / `ZONEAdd(…)` / `ZONEForGV()` / `ZONEUpdate()`
+- `0x4221D0` — `MAPObjAlts(…)` / `MAPSetSide(…)` / `MAPMaybeSetControl(…)`
 - `0x422380` — `MAPWorldToScreen(F24_POINT3*, WORD_POINT*)`
 - `0x4223BE` — `MAPDrawGrid()`
 - `0x4224EE` — `MAPDrawBG()`
-- `0x42267F` — `MAPUpdateWPPtrs(â€¦)` / `MAPSetNewWP(â€¦)`
-- `0x422851` — `MAPDrawSpecials()` / `MAPOnSpecial(â€¦)`
+- `0x42267F` — `MAPUpdateWPPtrs(…)` / `MAPSetNewWP(…)`
+- `0x422851` — `MAPDrawSpecials()` / `MAPOnSpecial(…)`
 
 ---
 
 ### Collision (COL) (0x42B800–0x42E690)
 
-- `0x42B800` — `Collision(â€¦)` — main collision check
-- `0x42BD30` — `COLSetAngle(â€¦)`
-- `0x42DDA0` — `COLFlatGround(â€¦)`
+- `0x42B800` — `Collision(…)` — main collision check
+- `0x42BD30` — `COLSetAngle(…)`
+- `0x42DDA0` — `COLFlatGround(…)`
 - `0x42DF80` — `COLPitchToAvoidTerrain()`
-- `0x42E0C0` — `COLGetInfo(â€¦)` / `COLGetBox(â€¦)`
-- `0x42E4E0` — `COLTerrainBlocking(â€¦)`
+- `0x42E0C0` — `COLGetInfo(…)` / `COLGetBox(…)`
+- `0x42E4E0` — `COLTerrainBlocking(…)`
 - `0x42E530` — `COLInit()` / `COLAddObj()` / `COLRemoveCurObj()`
 
 ---
@@ -189,18 +189,18 @@ Shell setup, menu creation, mouse handling, view slew, damage system.
 
 - `0x4514C0` — `FMUpdateGearPitch()` / `FMUpdateGear()` / `FMUpdateWingSweep()`
 - `0x4516B0` — `FMGetWeight()`
-- `0x4518A0` — `FMInitPlane(â€¦)`
-- `0x451B00` — `SetThrottle(â€¦)` / `FMFlaps(â€¦)` / `FMGear(â€¦)` / `FMBrakes(â€¦)`
-- `0x451E50` — `FMFuelConsumption(â€¦)` / `BurnFuel()`
+- `0x4518A0` — `FMInitPlane(…)`
+- `0x451B00` — `SetThrottle(…)` / `FMFlaps(…)` / `FMGear(…)` / `FMBrakes(…)`
+- `0x451E50` — `FMFuelConsumption(…)` / `BurnFuel()`
 - `0x452140` — `FMUpdatePlaneFields()`
-- `0x452770` — `HARDPtrs(â€¦)` — hardpoint pointer resolver
-- `0x4527F0` — `HARDUnload(â€¦)` / `HARDLoad(â€¦)` / `HARDLoadAll()` / `HARDUnloadAll()`
-- `0x452D90` — `HARDBestSeekers(â€¦)` / `HARDBestSeeker(â€¦)` / `HARDFindJammer(â€¦)`
-- `0x452F80` — `HARDFindStore(â€¦)` / `HARDFindProj(â€¦)`
+- `0x452770` — `HARDPtrs(…)` — hardpoint pointer resolver
+- `0x4527F0` — `HARDUnload(…)` / `HARDLoad(…)` / `HARDLoadAll()` / `HARDUnloadAll()`
+- `0x452D90` — `HARDBestSeekers(…)` / `HARDBestSeeker(…)` / `HARDFindJammer(…)`
+- `0x452F80` — `HARDFindStore(…)` / `HARDFindProj(…)`
 - `0x453440` — `HARDGunsOnlyAll()`
-- `0x453AC0` — `HARDNumLoaded(â€¦)` / `HARDTotalFuel()`
+- `0x453AC0` — `HARDNumLoaded(…)` / `HARDTotalFuel()`
 - `0x453B90` — `HARDRearmTest()` / `HARDRearmHumanLoad()`
-- `0x454140` — `ChangePlaneType(â€¦)` / `RepairTime(â€¦)` / `SelectRepairPlane(â€¦)`
+- `0x454140` — `ChangePlaneType(…)` / `RepairTime(…)` / `SelectRepairPlane(…)`
 
 ---
 
@@ -226,17 +226,17 @@ Selected `CTDo_*` (action executors):
 - `0x466052` — `CTDo_yoyo` / `CTDo_circle` / `CTDo_homeangle` / `CTDo_homepos`
 - `0x4663F0` — `CTDo_jink` / `CTDo_invert` / `CTDo_btoh` / `CTDo_immelman`
 - `0x4665E0` — `CTDo_wm_break` / `CTDo_wm_approach` / `CTDo_wm_formation`
-- `0x466970` — `CTExecProgram(â€¦)` — `.AI` interpreter loop
+- `0x466970` — `CTExecProgram(…)` — `.AI` interpreter loop
 
 ---
 
 ### Pilot / Mission / Campaign (0x467110–0x490000)
 
 - `0x467180` — `PilotSave(PILOT*, short)` / `PilotPhoto(PILOT*)`
-- `0x467310` — `CallsignChoose(PILOT*, long)` / `EditPilot(â€¦)`
-- `0x468020` — `PilotScreen(â€¦)`
-- `0x4692D0` — `EJECTProc` / `EJECTAdd(â€¦)` / `EJECTRemove()`
-- `0x4754B0` — `PilotSave(â€¦)` — save pilot to .PLT file
+- `0x467310` — `CallsignChoose(PILOT*, long)` / `EditPilot(…)`
+- `0x468020` — `PilotScreen(…)`
+- `0x4692D0` — `EJECTProc` / `EJECTAdd(…)` / `EJECTRemove()`
+- `0x4754B0` — `PilotSave(…)` — save pilot to .PLT file
 - `0x480750` — `_MISSIONInit1()` / `_MISSIONInit2()`
 - `0x480B40` — `MISSIONInit1()` / `MISSIONInit2()` / `MISSIONInit3()`
 - `0x480C20` — `LoadCampaignProc`
@@ -246,63 +246,63 @@ Selected `CTDo_*` (action executors):
 - `0x480DF0` — `UkraineAddA7` — per-theater campaign hook
 - `0x481150` — `AtFriendlyAP()`
 - `0x481320` — `CampaignSave` / `CampaignOff`
-- `0x481440` — `CallCampaignProc(â€¦)` / `CallMissionProc(â€¦)`
+- `0x481440` — `CallCampaignProc(…)` / `CallMissionProc(…)`
 - `0x4819F0` — `MISSIONShutdown()` / `MISSIONSuccess()`
-- `0x4851C0` — `MISSIONFortDestroyed(â€¦)` — fort destruction logic
-- `0x485260` — `MISSIONFortDestroyedByFort(â€¦)`
+- `0x4851C0` — `MISSIONFortDestroyed(…)` — fort destruction logic
+- `0x485260` — `MISSIONFortDestroyedByFort(…)`
 - `0x486010` — `MISSIONLoadCommonResources()`
 - `0x486160` — `MISSIONEndScenario()`
 - `0x486860` — `MISSIONCheckSuccess()`
-- `0x4869A0` — `TIMESystemTime()` / `TIMEInit(â€¦)` / `TIMEUpdate()`
+- `0x4869A0` — `TIMESystemTime()` / `TIMEInit(…)` / `TIMEUpdate()`
 
 ---
 
 ### Object System / Entity Chain (0x462600–0x464C80)
 
 - `0x462600` — `InitChain()` / `RemoveFromChains()` / `ImmediateService()`
-- `0x4627B0` — `RemoveCurObj()` / `GetCurObj(â€¦)` / `PutCurObj()`
-- `0x4629E0` — `PushCurObj(â€¦)` / `PopCurObj()`
+- `0x4627B0` — `RemoveCurObj()` / `GetCurObj(…)` / `PutCurObj()`
+- `0x4629E0` — `PushCurObj(…)` / `PopCurObj()`
 - `0x462A50` — `ServiceObjects`
 - `0x462E70` — `Service()` — main per-frame service
-- `0x463980` — `MaybeCallEventProc(â€¦)` / `CallEventProc(â€¦)`
-- `0x463A20` — `CreateMove(â€¦)` / `CreateMoveGoal(â€¦)`
+- `0x463980` — `MaybeCallEventProc(…)` / `CallEventProc(…)`
+- `0x463A20` — `CreateMove(…)` / `CreateMoveGoal(…)`
 - `0x463F60` — `CallUtilProc` — dispatches to OBJ/GV/PROJ proc
-- `0x464040` — `Reaction(â€¦)` / `EnterState(â€¦)`
+- `0x464040` — `Reaction(…)` / `EnterState(…)`
 - `0x473A40` — `OBJEventProc` / `OBJDamageProc(HIT_OBJ_DATA*)`
 - `0x473BE0` — `OBJProc` — static object update
 - `0x473C10` — `Kill()`
 - `0x473DB0` — `GVProc` — ground vehicle update
-- `0x491240` — `OBJGet(â€¦)` / `OBJInit(â€¦)` / `OBJShutdown()`
-- `0x491300` — `OBJAlloc(â€¦)` / `OBJAdd(â€¦)` / `OBJSubtract()`
-- `0x4914C0` — `OBJAlias(â€¦)` — alias lookup (used by .MC DLLs)
+- `0x491240` — `OBJGet(…)` / `OBJInit(…)` / `OBJShutdown()`
+- `0x491300` — `OBJAlloc(…)` / `OBJAdd(…)` / `OBJSubtract()`
+- `0x4914C0` — `OBJAlias(…)` — alias lookup (used by .MC DLLs)
 
 ---
 
 ### Wingman / Group AI (WNG/GRP) (0x45E460–0x460FB0)
 
-- `0x45E460` — `WNGInit()` / `WNGAdd(â€¦)` / `WNGWingmen(â€¦)` / `WNGPart(â€¦)`
-- `0x45E8F0` — `WNGLeaderLanding()` / `WNGFormationMove(â€¦)` / `WNGSendWM(â€¦)`
-- `0x45F190` — `GRPInit()` / `GRPAdd(â€¦)` / `GRPRemove()`
-- `0x45F360` — `GRPLeader(â€¦)` / `GRPWingman(â€¦)` / `GRPWingmenNearby(â€¦)`
-- `0x45F580` — `GRPSetWaypoints(â€¦)` / `GRPControl(â€¦)` / `GRPLeaderLanding()`
-- `0x45F7F0` — `GRPSetControl(â€¦)` / `GRPSetType(â€¦)` / `GRPSetSpacingH/V(â€¦)`
-- `0x45FE30` — `GRPName(â€¦)`
+- `0x45E460` — `WNGInit()` / `WNGAdd(…)` / `WNGWingmen(…)` / `WNGPart(…)`
+- `0x45E8F0` — `WNGLeaderLanding()` / `WNGFormationMove(…)` / `WNGSendWM(…)`
+- `0x45F190` — `GRPInit()` / `GRPAdd(…)` / `GRPRemove()`
+- `0x45F360` — `GRPLeader(…)` / `GRPWingman(…)` / `GRPWingmenNearby(…)`
+- `0x45F580` — `GRPSetWaypoints(…)` / `GRPControl(…)` / `GRPLeaderLanding()`
+- `0x45F7F0` — `GRPSetControl(…)` / `GRPSetType(…)` / `GRPSetSpacingH/V(…)`
+- `0x45FE30` — `GRPName(…)`
 - `0x45FEC0` — `INFO2Draw()`
-- `0x46A370` — `SMInit()` / `SMShutdown()` / `SMAddress(â€¦)` / `SMCallByName`
+- `0x46A370` — `SMInit()` / `SMShutdown()` / `SMAddress(…)` / `SMCallByName`
 
 ---
 
 ### Airport / Carrier (AP) (0x4BA750–0x4BEE60)
 
-- `0x4BA750` — `APInit()` / `APAdd(â€¦)` / `APDelete(â€¦)` / `APNearest(â€¦)`
-- `0x4BAA10` — `APTakeoffType(â€¦)` / `APLandingType(â€¦)`
+- `0x4BA750` — `APInit()` / `APAdd(…)` / `APDelete(…)` / `APNearest(…)`
+- `0x4BAA10` — `APTakeoffType(…)` / `APLandingType(…)`
 - `0x4BADB0` — `APTakeoff()`
 - `0x4BC210` — `APStartFinalApproach()` / `APEndArrestorCatch()` / `APLanding()`
-- `0x4BD2D0` — `APFind(â€¦)` / `APClearParks()` / `APGetPark()` / `APAssignPark()`
+- `0x4BD2D0` — `APFind(…)` / `APClearParks()` / `APGetPark()` / `APAssignPark()`
 - `0x4BD5B0` — `CARRIERProc`
-- `0x4BE640` — `STRIPProc` / `APApproachPath(â€¦)` / `APTeleport`
-- `0x4BEB00` — `APAddToCarrier(â€¦)` / `APRemoveFromCarrier()` / `APCheckCarrier()`
-- `0x4BED70` — `APHomeAirport()` / `APObjOnShip(â€¦)`
+- `0x4BE640` — `STRIPProc` / `APApproachPath(…)` / `APTeleport`
+- `0x4BEB00` — `APAddToCarrier(…)` / `APRemoveFromCarrier()` / `APCheckCarrier()`
+- `0x4BED70` — `APHomeAirport()` / `APObjOnShip(…)`
 
 ---
 
@@ -310,35 +310,35 @@ Selected `CTDo_*` (action executors):
 
 See architecture.md for the full per-frame update pipeline. These functions implement the atmosphere/sky system that consumes loaded `.LAY` DLL data.
 
-- `0x4B3190` — `WRGetLayer(â€¦)` / `WRSetRemaps(â€¦)`
-- `0x4B3480` — `WRUpdate(â€¦)` — transition atmosphere parameters
+- `0x4B3190` — `WRGetLayer(…)` / `WRSetRemaps(…)`
+- `0x4B3480` — `WRUpdate(…)` — transition atmosphere parameters
 - `0x4B3D90` — `WRUpdatePalette()` — per-frame palette smooth-transition (= `UpdateSkyState`)
 - `0x4B4170` — `WRLightUpdate()`
 - `0x4B4320` — `WRFogLayerUpdate` — per-frame fog density jitter
-- `0x4B4370` — `WRInit(â€¦)` — loads LAY DLL, sets up atmosphere (= `ParseLayerFile`)
+- `0x4B4370` — `WRInit(…)` — loads LAY DLL, sets up atmosphere (= `ParseLayerFile`)
 - `0x4B46D0` — `WRShutdown()`
 - `0x4B4720` — `WRWeatherEffects`
 - `0x4B47B0` — `SetTmapRemaps()`
-- `0x4B4990` — `WRLensFlare()` / `WRCanSee(â€¦)`
-- `0x4C8E20` — `WRBlackenPalette(â€¦)` / `WRWhitenPalette(â€¦)` / `WRReddenPalette(â€¦)` / `WRColorPalette(â€¦)`
+- `0x4B4990` — `WRLensFlare()` / `WRCanSee(…)`
+- `0x4C8E20` — `WRBlackenPalette(…)` / `WRWhitenPalette(…)` / `WRReddenPalette(…)` / `WRColorPalette(…)`
 
 ---
 
 ### Projectile / Weapons (PROJ) (0x4C0690–0x4C5D30)
 
-- `0x4C06A0` — `PROJInit()` / `PROJGetTargetPos(â€¦)` / `PROJAccurateHardPos(â€¦)`
-- `0x4C0870` — `PROJSetTarget(â€¦)` / `PROJLockUpdate()`
-- `0x4C0A90` — `PROJAdd(â€¦)` — spawn projectile
+- `0x4C06A0` — `PROJInit()` / `PROJGetTargetPos(…)` / `PROJAccurateHardPos(…)`
+- `0x4C0870` — `PROJSetTarget(…)` / `PROJLockUpdate()`
+- `0x4C0A90` — `PROJAdd(…)` — spawn projectile
 - `0x4C1170` — `PROJEngineState()`
 - `0x4C11B0` — `PROJMoveProc(char)` / `PROJDamageProc(HIT_OBJ_DATA*)`
 - `0x4C1F50` — `PROJProc`
-- `0x4C20C0` — `PROJHit(â€¦)` / `PROJFire(â€¦)` / `PROJFireSound(â€¦)`
-- `0x4C2860` — `PROJInFOV(â€¦)` / `PROJRadarIsOn(â€¦)` / `PROJLock(â€¦)`
-- `0x4C3380` — `PROJHitChance(â€¦)` / `PROJLaunchDevice(â€¦)`
-- `0x4C3CA0` — `PROJRemove()` / `PROJRetargetMissiles(â€¦)`
-- `0x4C3EB0` — `PROJMakeBombEq(â€¦)` / `PROJChangeBombEq(â€¦)` / `PROJBombPos(â€¦)`
-- `0x4C4100` — `PROJSelectTarget()` / `PROJServiceWeapon(â€¦)`
-- `0x4C5670` — `PROJSendCollateralDamages(â€¦)`
+- `0x4C20C0` — `PROJHit(…)` / `PROJFire(…)` / `PROJFireSound(…)`
+- `0x4C2860` — `PROJInFOV(…)` / `PROJRadarIsOn(…)` / `PROJLock(…)`
+- `0x4C3380` — `PROJHitChance(…)` / `PROJLaunchDevice(…)`
+- `0x4C3CA0` — `PROJRemove()` / `PROJRetargetMissiles(…)`
+- `0x4C3EB0` — `PROJMakeBombEq(…)` / `PROJChangeBombEq(…)` / `PROJBombPos(…)`
+- `0x4C4100` — `PROJSelectTarget()` / `PROJServiceWeapon(…)`
+- `0x4C5670` — `PROJSendCollateralDamages(…)`
 
 ---
 
@@ -346,33 +346,33 @@ See architecture.md for the full per-frame update pipeline. These functions impl
 
 - `0x4A6E50` — `LoadPIC` — bitmap load dispatcher
 - `0x4A6EB0` — `SetupOT` / `SetupNT` / `SetupPT` / `SetupJT` — BRF object type setup
-- `0x4A7310` — `T_InitPlane(â€¦)` / `T_AddObj(â€¦)` / `T_AddYourObjs()`
-- `0x4A7D70` — `T_ImmediateVisibility(â€¦)` / `T_ObjList(â€¦)` / `T_Render(â€¦)`
+- `0x4A7310` — `T_InitPlane(…)` / `T_AddObj(…)` / `T_AddYourObjs()`
+- `0x4A7D70` — `T_ImmediateVisibility(…)` / `T_ObjList(…)` / `T_Render(…)`
 - `0x4A7F20` — `T_InitForestProc` / `T_ForestProc(long)`
 - `0x4A8660` — `T_InitFarmProc` / `T_FarmProc(long)` / `T_InitMooseProc` / `T_MooseProc(long)`
 - `0x4A8870` — `T_InitVietRicePaddy1–3Proc` / `T_VietPalms1–3Proc` / `T_VietTrees1–3Proc`
 - `0x4A8A70` — `T_InitWaterProc` / `T_WaterProc(long)` / `T_InitCloudProc` / `T_CloudProc(long)`
-- `0x4A8D30` — `T_Normal(â€¦)` / `T_LeafOp(â€¦)` / `T_Make(â€¦)`
-- `0x4AA620` — `T_InitDictionary()` / `T_InitDictionaryEntry(â€¦)` / `T_NamedTmaps()`
+- `0x4A8D30` — `T_Normal(…)` / `T_LeafOp(…)` / `T_Make(…)`
+- `0x4AA620` — `T_InitDictionary()` / `T_InitDictionaryEntry(…)` / `T_NamedTmaps()`
 - `0x4AACF0` — `T_DefaultHorizon` / `T_HorizonProc` — exported as `T_HorizonProc` from FA.EXE
-- `0x4C5D60` — `T_Init()` / `T_Load(â€¦)` / `T_Init2()` / `T_Shutdown()` / `T_StopAdding()`
-- `0x4C6040` — `T_GetLeaf(â€¦)`
+- `0x4C5D60` — `T_Init()` / `T_Load(…)` / `T_Init2()` / `T_Shutdown()` / `T_StopAdding()`
+- `0x4C6040` — `T_GetLeaf(…)`
 
 ---
 
 ### 3D Renderer (GR/render) (0x4C5D70–0x4D5C00)
 
-- `0x4D5B64` — `GRInit3d(â€¦)` / `GRRender(â€¦)` / `GRSinCos(â€¦)` / `GRTo2d(â€¦)`
-- `0x4D5E58` — `MakeObjRotationMatrix(â€¦)` / `MakeViewRotationMatrix(â€¦)` / `MultPointByMatrix(â€¦)`
-- `0x4D6348` — `GRSaveContext()` / `GRRestoreContext()` / `GRExec(â€¦)`
-- `0x4D64D8` — `MultF24PointByMatrix(â€¦)` / `Sqrt(â€¦)`
-- `0x4D057C` — `GRAddBrentObj(â€¦)` — add BRF object to render queue
-- `0x4CD834` — `GRSetLightSource(â€¦)` / `SetShading`
+- `0x4D5B64` — `GRInit3d(…)` / `GRRender(…)` / `GRSinCos(…)` / `GRTo2d(…)`
+- `0x4D5E58` — `MakeObjRotationMatrix(…)` / `MakeViewRotationMatrix(…)` / `MultPointByMatrix(…)`
+- `0x4D6348` — `GRSaveContext()` / `GRRestoreContext()` / `GRExec(…)`
+- `0x4D64D8` — `MultF24PointByMatrix(…)` / `Sqrt(…)`
+- `0x4D057C` — `GRAddBrentObj(…)` — add BRF object to render queue
+- `0x4CD834` — `GRSetLightSource(…)` / `SetShading`
 - `0x4CD8B0` — `Sun` — sun direction update
 - `0x4CDCB8` — `render_3d` — main 3D render entry
 - `0x4CE980` — `dmxmul` / `dmxmul2` — matrix multiply helpers
 - `0x4CC4B4` — `SetShadingTable` (= `SetActiveLayerByAngle`)
-- `0x4CCB88` — `ArcTan(â€¦)`
+- `0x4CCB88` — `ArcTan(…)`
 
 Low-level shape dispatch opcodes (interpreter for .SH bytecode):
 - `0x4D2180` — `must_clip_3d`
@@ -388,10 +388,10 @@ Low-level shape dispatch opcodes (interpreter for .SH bytecode):
 
 ### Dialog / UI Shell (0x487A3A–0x48D200)
 
-- `0x487A63` — `DialogSetup(â€¦)` / `DialogShow()` / `DialogShutDown(â€¦)` / `DialogDone()`
-- `0x488470` — `DialogUpdate(â€¦)` / `DialogWhatItem()`
-- `0x4892E0` — `DialogGetPtr(â€¦)` / `DialogGetValue(â€¦)` / `DialogSetValue`
-- `0x489400` — `DialogSetRocker(â€¦)` / `DialogSetString(â€¦)` / `DialogGetString(â€¦)`
+- `0x487A63` — `DialogSetup(…)` / `DialogShow()` / `DialogShutDown(…)` / `DialogDone()`
+- `0x488470` — `DialogUpdate(…)` / `DialogWhatItem()`
+- `0x4892E0` — `DialogGetPtr(…)` / `DialogGetValue(…)` / `DialogSetValue`
+- `0x489400` — `DialogSetRocker(…)` / `DialogSetString(…)` / `DialogGetString(…)`
 - `0x489AC0` — `DrawText` — imported by .MNU/.DLG overlays as `main.dll::_DrawText`
 - `0x489B90` — `DrawAction` — imported by overlays as `main.dll::_DrawAction`
 - `0x48A730` — `DrawLight` / `DrawFormattedText` / `DrawMissList` / `DrawCampaignList`
@@ -403,32 +403,32 @@ Low-level shape dispatch opcodes (interpreter for .SH bytecode):
 ### SAY / Voice Callout (0x48D2B0–0x491240)
 
 - `0x48D2B0` — `SAYInit()` / `SAYInit2()` / `SAYShutdown()`
-- `0x48D350` — `SAYMsg(â€¦)` / `SAYDefaultSayProc`
+- `0x48D350` — `SAYMsg(…)` / `SAYDefaultSayProc`
 - `0x48D780` — `PLANESayProc`
 - `0x48E8D0` — `OBJSayProc`
-- `0x48E920` — `SAYRearmMessage(â€¦)` / `SAYSuppRadarMessage(â€¦)` / `SAYLowFuelMessage(â€¦)`
+- `0x48E920` — `SAYRearmMessage(…)` / `SAYSuppRadarMessage(…)` / `SAYLowFuelMessage(…)`
 - `0x48EC40` — `PLANECommentProc`
 - `0x48F6A0` — `APCommentProc`
-- `0x490F30` — `SAYTranslate(â€¦)` / `SAYFortAircraft` / `SAYFortStatus`
+- `0x490F30` — `SAYTranslate(…)` / `SAYFortAircraft` / `SAYFortStatus`
 
 ---
 
 ### Graphics Low-Level (G_/GG) (0x45DBD0–0x499380)
 
 - `0x45DBD0` — `GG_InitMode()` / `GG_ShutdownMode()` / `GG_GetMode()`
-- `0x45DE70` — `GG_SetPalette(â€¦)` / `GG_Shake()` / `GG_Flush(â€¦)`
+- `0x45DE70` — `GG_SetPalette(…)` / `GG_Shake()` / `GG_Flush(…)`
 - `0x497340` — `G_Init()` / `G_Shutdown()`
-- `0x4974E0` — `G_SetBitmap(â€¦)` / `G_SetClipBox(â€¦)` / `G_SetColor(â€¦)`
-- `0x497700` — `G_UHline(â€¦)` / `G_Hline(â€¦)` / `G_Vline(â€¦)` / `G_Line(â€¦)`
-- `0x497D40` — `G_UBox(â€¦)` / `G_Box(â€¦)` / `G_Rect(â€¦)`
-- `0x4983E0` — `G_DrawYLR(â€¦)` / `G_Flush(â€¦)` / `G_Flip(â€¦)`
-- `0x4986A0` — `G_SetFont(â€¦)` / `G_Print(â€¦)` / `G_Printf`
-- `0x498A30` — `G_LoadDriver(â€¦)` / `G_UnloadDriver()`
-- `0x4B7930` — `G_RelocBitmap(â€¦)` / `G_AllocBitmap(â€¦)` / `G_AllocSurfaceBitmap(â€¦)`
-- `0x4B7CD0` — `G_LoadBitmap(â€¦)` — load PIC from LIB
-- `0x4B7FA0` — `G_BlitToScreen(â€¦)` / `G_Blit(â€¦)`
-- `0x4B87C0` — `G_Texture(â€¦)` / `G_AcTexture(â€¦)` / `G_PerspectiveFlip(â€¦)`
-- `0x4B9430` — `NPM_FlatTri(â€¦)` / `NPM_TextureLinearTri(â€¦)` / `NPM_TexturePerspectiveTri(â€¦)`
+- `0x4974E0` — `G_SetBitmap(…)` / `G_SetClipBox(…)` / `G_SetColor(…)`
+- `0x497700` — `G_UHline(…)` / `G_Hline(…)` / `G_Vline(…)` / `G_Line(…)`
+- `0x497D40` — `G_UBox(…)` / `G_Box(…)` / `G_Rect(…)`
+- `0x4983E0` — `G_DrawYLR(…)` / `G_Flush(…)` / `G_Flip(…)`
+- `0x4986A0` — `G_SetFont(…)` / `G_Print(…)` / `G_Printf`
+- `0x498A30` — `G_LoadDriver(…)` / `G_UnloadDriver()`
+- `0x4B7930` — `G_RelocBitmap(…)` / `G_AllocBitmap(…)` / `G_AllocSurfaceBitmap(…)`
+- `0x4B7CD0` — `G_LoadBitmap(…)` — load PIC from LIB
+- `0x4B7FA0` — `G_BlitToScreen(…)` / `G_Blit(…)`
+- `0x4B87C0` — `G_Texture(…)` / `G_AcTexture(…)` / `G_PerspectiveFlip(…)`
+- `0x4B9430` — `NPM_FlatTri(…)` / `NPM_TextureLinearTri(…)` / `NPM_TexturePerspectiveTri(…)`
 
 ---
 
@@ -440,9 +440,9 @@ Cross-reference of symbols that directly load, initialize, or parse named file f
 
 | Address | Symbol | Role |
 |---------|--------|------|
-| `0x47A090` | `LibSeek(â€¦)` | Seek within open LIB entry |
-| `0x47A130` | `LibFileExists(â€¦)` | Test for named entry |
-| `0x479BD0` | `LibOpen(â€¦)` | Open a named LIB entry |
+| `0x47A090` | `LibSeek(…)` | Seek within open LIB entry |
+| `0x47A130` | `LibFileExists(…)` | Test for named entry |
+| `0x479BD0` | `LibOpen(…)` | Open a named LIB entry |
 | `0x479C80` | `LibRead` | Read bytes from open entry |
 | `0x479D20` | `LibClose` | Close entry handle |
 | `0x479D40` | `LibFileSize` | Query entry size |
@@ -457,10 +457,10 @@ Cross-reference of symbols that directly load, initialize, or parse named file f
 | Address | Symbol | Role |
 |---------|--------|------|
 | `0x41E8F0` | `IsBrentDLL(void*)` | Detect Phar Lap `PL\0\0` signature |
-| `0x41E910` | `IsDLL(â€¦)` | Generic DLL validity check |
-| `0x41EB60` | `LoadDLL(â€¦)` | Load and IAT-patch an overlay DLL |
-| `0x41F240` | `LoadBrentDLL(â€¦)` | Load Phar Lap PE overlay (CAM/BI/MC) |
-| `0x4B4370` | `WRInit(â€¦)` | Load `.LAY` file via `LoadLibrary` + IAT patch |
+| `0x41E910` | `IsDLL(…)` | Generic DLL validity check |
+| `0x41EB60` | `LoadDLL(…)` | Load and IAT-patch an overlay DLL |
+| `0x41F240` | `LoadBrentDLL(…)` | Load Phar Lap PE overlay (CAM/BI/MC) |
+| `0x4B4370` | `WRInit(…)` | Load `.LAY` file via `LoadLibrary` + IAT patch |
 | `0x4A6E50` | `LoadPIC` | Load `.PIC` bitmap (also via LIB) |
 | `0x4A7220` | `SetupPT` | Init `.PT` (playable aircraft BRF type) |
 | `0x4A6EB0` | `SetupOT` | Init `.OT` (static object BRF type) |
@@ -494,30 +494,30 @@ Cross-reference of symbols that directly load, initialize, or parse named file f
 
 | Address | Symbol | Role |
 |---------|--------|------|
-| `0x4AE440` | `PlayVDOString(char*, â€¦)` | Play FMV by filename |
-| `0x4AE406` | `PlayVDOFile(char*, â€¦)` | Play FMV from open file |
+| `0x4AE440` | `PlayVDOString(char*, …)` | Play FMV by filename |
+| `0x4AE406` | `PlayVDOFile(char*, …)` | Play FMV from open file |
 | `0x4AF070` | `StartVDOAudio(char*)` | Start audio stream for VDO |
 | `0x4AF1B0` | `OpenVDOFile(char*)` | Open a `.VDO` file |
-| `0x4AF200` | `ReadVDOHeader(â€¦)` | Parse `.VDO` file header |
+| `0x4AF200` | `ReadVDOHeader(…)` | Parse `.VDO` file header |
 | `0x4AF2D0` | `ReadFrameSizesFile(char*)` | Read `.FBC` companion sizes |
-| `0x4AF320` | `ReadVDOPalette(â€¦)` | Extract palette from VDO header |
+| `0x4AF320` | `ReadVDOPalette(…)` | Extract palette from VDO header |
 | `0x4AF3A0` | `AllocVDO(VDO*)` | Allocate VDO playback context |
 | `0x4AE4E0` | `BuildVDOList(char*)` | Build linked list of VDO files |
 | `0x4AED50` | `VDOSetMode(VDO*)` | Set video decode mode |
-| `0x442360` | `InitMovieContext(MovieContext*, â€¦)` | Init Cobra codec context |
-| `0x442370` | `DecodeFrame(MovieContext*, â€¦)` | Decode one Cobra video frame |
+| `0x442360` | `InitMovieContext(MovieContext*, …)` | Init Cobra codec context |
+| `0x442370` | `DecodeFrame(MovieContext*, …)` | Decode one Cobra video frame |
 
 ### Terrain (.T2)
 
 | Address | Symbol | Role |
 |---------|--------|------|
 | `0x4C5D60` | `T_Init()` | Initialize terrain database |
-| `0x4C5D70` | `T_Load(â€¦)` | Load `.T2` terrain file |
+| `0x4C5D70` | `T_Load(…)` | Load `.T2` terrain file |
 | `0x4C5D50` | `T_ShutdownDatabase()` / `T_Init2()` / `T_Shutdown()` | Lifecycle |
 | `0x4AA620` | `T_InitDictionary()` | Set up terrain tile dictionary |
-| `0x4AA680` | `T_InitDictionaryEntry(â€¦)` | Add `.T2` tile entry |
-| `0x4AA7E0` | `T_CompareTlist(â€¦)` / `T_SortTmapList()` | Sort terrain tmap list |
-| `0x4C6040` | `T_GetLeaf(â€¦)` | Get terrain leaf node at position |
+| `0x4AA680` | `T_InitDictionaryEntry(…)` | Add `.T2` tile entry |
+| `0x4AA7E0` | `T_CompareTlist(…)` / `T_SortTmapList()` | Sort terrain tmap list |
+| `0x4C6040` | `T_GetLeaf(…)` | Get terrain leaf node at position |
 
 ### Music / Sequencer (.MUS, .XMI)
 
@@ -526,7 +526,7 @@ Cross-reference of symbols that directly load, initialize, or parse named file f
 | `0x432920` | `InitMusic()` / `ShutDownMidi()` | Miles Sound System MIDI init/shutdown |
 | `0x4329A0` | `DMusicOn(char*, float)` | Load and start `.MUS` playlist |
 | `0x432A90` | `MusicOn(char*, float)` | Load and start music by name |
-| `0x432B40` — `0x432C00` | `MusicVolume(â€¦)` / `DMusicOff()` / `MusicOff()` | Volume / stop |
+| `0x432B40` — `0x432C00` | `MusicVolume(…)` / `DMusicOff()` / `MusicOff()` | Volume / stop |
 | `0x432C30` | `ScoreOn(void*, char)` | Start `.XMI` sequence via AIL |
 | `0x446B70` | `SEQmusic` | SEQ script music command dispatcher |
 
@@ -542,22 +542,22 @@ Cross-reference of symbols that directly load, initialize, or parse named file f
 | `0x446A50` | `SEQfont` | SEQ font command |
 | `0x446BE0` | `SEQpalette` | SEQ palette command |
 | `0x447090` | `SEQvideo` | SEQ video command |
-| `0x4454D0` | `SeqSubstitute(â€¦)` | Variable substitution in SEQ text |
+| `0x4454D0` | `SeqSubstitute(…)` | Variable substitution in SEQ text |
 
 ### Mission Map (.MM)
 
 | Address | Symbol | Role |
 |---------|--------|------|
 | `0x47A130` | (Ghidra: `LibFileExists`) | MM text keyword parser |
-| `0x4B4370` | `WRInit(â€¦)` | Dispatcher for `.LAY` lines in `.MM` |
-| `0x4A7D70` | `T_ImmediateVisibility(â€¦)` | Terrain visibility update from MM |
+| `0x4B4370` | `WRInit(…)` | Dispatcher for `.LAY` lines in `.MM` |
+| `0x4A7D70` | `T_ImmediateVisibility(…)` | Terrain visibility update from MM |
 
 ### Modem DB / Serial config
 
 | Address | Symbol | Role |
 |---------|--------|------|
 | `0x4B9BA0` | `ReadModemDB()` | Read modem database file |
-| `0x4B9BD6` | `WriteModemEntry(â€¦)` | Write modem entry to file |
+| `0x4B9BD6` | `WriteModemEntry(…)` | Write modem entry to file |
 | `0x4B9DC0` | `SelectModemFromDB(CN_INFO*)` | Select modem from parsed DB |
 | `0x4B9BF0` | `WriteModemFile(CN_INFO*)` | Write modem config file |
 

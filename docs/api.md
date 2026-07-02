@@ -1,4 +1,4 @@
-﻿# Library API
+# Library API
 
 `fx_lib` is a static C++17 library. Link it from CMake by adding the repo root:
 

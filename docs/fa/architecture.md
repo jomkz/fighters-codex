@@ -1,4 +1,4 @@
-﻿# FA Game Architecture
+# FA Game Architecture
 
 A comprehensive overview of what is known about Jane's Fighters Anthology's runtime architecture, file formats, and subsystems. Organized by subsystem for developers picking up RE work or modding.
 
@@ -8,7 +8,7 @@ A comprehensive overview of what is known about Jane's Fighters Anthology's runt
 
 FA.EXE is a Win32 application built for Windows 95/98, approximately 1.2 MB in size. It runs on modern Windows through the compatibility layer without significant modification.
 
-A binary symbol map, **FA.SMS**, ships with the game and is a gold mine for RE work. It contains 3,829 MSVC C++ mangled function and variable names with their virtual addresses, spanning the range `0x00401000`–`0x005937E0`. Loading this map into Ghidra or IDA auto-names nearly every significant function in the executable with no manual effort required. See [formats/SMS.md](formats/SMS.md) for the file structure (4-byte count + N Ã— 8-byte `[VA, strOffset]` records + null-terminated string table).
+A binary symbol map, **FA.SMS**, ships with the game and is a gold mine for RE work. It contains 3,829 MSVC C++ mangled function and variable names with their virtual addresses, spanning the range `0x00401000`–`0x005937E0`. Loading this map into Ghidra or IDA auto-names nearly every significant function in the executable with no manual effort required. See [formats/SMS.md](formats/SMS.md) for the file structure (4-byte count + N × 8-byte `[VA, strOffset]` records + null-terminated string table).
 
 ---
 
@@ -240,9 +240,9 @@ PCM files use filename prefixes: `&` for looping ambient, `^` for one-shot voice
 3. `_OBJUpdate` — iterates `_objPtrs` array, calls each entity's `utilProc` dispatcher.
 4. `_MISSIONCheckSuccess@0` (`0x486860`) — polls active `.MC` DLL each tick.
 5. `_NetworkFrame` / `?MPReceive@@YGDXZ` — if multiplayer, synchronizes entity state.
-6. `render_3d` â†’ `T_DefaultHorizon` â†’ HUD overlay composite.
+6. `render_3d` → `T_DefaultHorizon` → HUD overlay composite.
 
-**Mission init:** `?_MISSIONInit1@@YGXXZ` allocates the 300,000-byte object pool and chains 19 subsystem inits in order: TIME â†’ OBJ â†’ TERRAIN â†’ NETWORK â†’ AUDIO â†’ HUD â†’ ... â†’ MISSION. Called by `FUN_00428412` (the mission/campaign loader) immediately after DLL setup.
+**Mission init:** `?_MISSIONInit1@@YGXXZ` allocates the 300,000-byte object pool and chains 19 subsystem inits in order: TIME → OBJ → TERRAIN → NETWORK → AUDIO → HUD → ... → MISSION. Called by `FUN_00428412` (the mission/campaign loader) immediately after DLL setup.
 
 **Object pool:** `_objPtrs` (`0x553848`) is the entity list. `_nextObjId` (`0x553838`) is the free-ID counter. `_cg` (`0x50CE80`) holds the current object context byte (set by `_T_AddObj@12`); `_curId` (`0x4F6FBC`) holds the ID of the object currently being updated.
 
@@ -274,10 +274,10 @@ See [physics.md](physics.md) for the full flight model equations, stall paramete
 
 16 `.T2` files — one per theater map. See [formats/T2.md](formats/T2.md).
 
-**Structure:** `BIT2` magic, 128-byte header, then N_tiles Ã— 195 bytes. Each tile contains 65 Ã— 3-byte records:
+**Structure:** `BIT2` magic, 128-byte header, then N_tiles × 195 bytes. Each tile contains 65 × 3-byte records:
 
 - Record 0: tile summary
-- Records 1–64: 8Ã—8 sub-tile grid
+- Records 1–64: 8×8 sub-tile grid
 
 Each 3-byte record encodes `[surface_class, elevation_band, texture_variant]`. `0xFF` = water.
 
@@ -302,7 +302,7 @@ Each 3-byte record encodes `[surface_class, elevation_band, texture_variant]`. `
 
 1. `ParseLayerFile` (`0x004b4370`) — loads LAY DLL (via `LoadLibrary` with import resolution disabled — see Overlay System note above), copies header block to `hdr`, initialises active-layer pointers to the DLL's default LAYER entry, calls `FindNearestColorEntry` (`0x004b3ad0`) for each LAYER entry to populate `colour_entry_ptr`, then loads cloud/sky PIC wildcards.
 2. `UpdateSkyState` (`0x004b3d90`) — per-frame: smooth-transitions all atmosphere parameters and applies the result to the working palette.
-3. `WRFogLayerUpdate` (`0x004b4320`) — per-frame: adds random jitter (Â±25, clamped to [217, 235]) to each LAYER's `fog_density` field.
+3. `WRFogLayerUpdate` (`0x004b4320`) — per-frame: adds random jitter (±25, clamped to [217, 235]) to each LAYER's `fog_density` field.
 4. `SetActiveLayerByAngle` (`0x004cc4b4`) — per-frame: reads camera elevation angle from AX, multiplies by `sky_angle_scale` or `below_angle_scale` (from the header block), and writes the indexed LAYER pointer into `currentShadeTable`.
 5. `GetFogColour` (`0x004b3410`) — linearly interpolates the fog visibility ramp (`vis_lo`/`vis_hi` over `fog_alt_low`/`fog_alt_high`) and returns a palette colour from the LAYER's colour array.
 
@@ -433,7 +433,7 @@ Weapon / projectile entity offsets are documented separately in [formats/JT.md](
 
 ## RE Resources
 
-**FA.SMS** — Binary symbol map shipping with the game. 3,829 MSVC-mangled C++ symbols with virtual addresses. Load into Ghidra or IDA to auto-name all functions. Structure: `u32` count + N Ã— `[VA u32, strOffset u32]` + null-terminated string table (string table base at byte offset 30,636). See [formats/SMS.md](formats/SMS.md).
+**FA.SMS** — Binary symbol map shipping with the game. 3,829 MSVC-mangled C++ symbols with virtual addresses. Load into Ghidra or IDA to auto-name all functions. Structure: `u32` count + N × `[VA u32, strOffset u32]` + null-terminated string table (string table base at byte offset 30,636). See [formats/SMS.md](formats/SMS.md).
 
 **symbols.md** — Organized reference of all 3,829 FA.SMS symbols, grouped by subsystem with demangled names. See [symbols.md](symbols.md).
 

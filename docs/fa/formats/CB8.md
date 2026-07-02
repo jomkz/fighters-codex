@@ -1,4 +1,4 @@
-﻿# CB8 -- FMV Container Format (.CB8)
+# CB8 -- FMV Container Format (.CB8)
 
 Multiplexed audio/video container for full-motion video. Used for intros,
 cutscenes, and per-aircraft presentation clips. Each `.CB8` is paired with a
@@ -57,43 +57,43 @@ Offset  Size  Description
 24    7350    Raw 8-bit unsigned PCM samples at 11025 Hz
 ```
 
-7350 samples Ã· 11025 Hz = 666.7 ms = exactly 10 video frames at 15 fps.
+7350 samples ÷ 11025 Hz = 666.7 ms = exactly 10 video frames at 15 fps.
 
 ## Chunk Type: MRFI — Inter Video Frame
 
 A single delta-coded (P-frame) video frame. The chunk carries a skip map
-identifying which 4Ã—4 pixel blocks changed, followed by the new block data.
+identifying which 4×4 pixel blocks changed, followed by the new block data.
 
 ```
 Offset  Size  Description
 ------  ----  -----------
 0        4    Magic: "MRFI"
 4        4    uint32 LE: chunk size (variable, minimum 8240)
-8       16    Payload header: 4 Ã— uint32 LE (purpose unknown, constant across frames)
-24     600    Skip map: 4800 bits, one bit per 4Ã—4 block (LSB-first per byte)
+8       16    Payload header: 4 × uint32 LE (purpose unknown, constant across frames)
+24     600    Skip map: 4800 bits, one bit per 4×4 block (LSB-first per byte)
              Bit = 1: block changed; bit = 0: block unchanged
-624+   var    Block data (chunk_size âˆ’ 624 bytes; see below)
+624+   var    Block data (chunk_size − 624 bytes; see below)
 ```
 
 ### Block grid
 
-Video is divided into non-overlapping 4Ã—4 pixel blocks. For 320Ã—240 video:
-80 columns Ã— 60 rows = 4800 blocks. Block index `b` maps to pixel coordinates
+Video is divided into non-overlapping 4×4 pixel blocks. For 320×240 video:
+80 columns × 60 rows = 4800 blocks. Block index `b` maps to pixel coordinates
 `((b % 80) * 4, (b / 80) * 4)`.
 
 ### Block data — two sections
 
-Let `bdSize = chunk_size âˆ’ 624` and `n_changed` = number of set bits in the
+Let `bdSize = chunk_size − 624` and `n_changed` = number of set bits in the
 skip map.
 
-**Section 1** (bytes `0 .. n_changedÃ—16 âˆ’ 1`):
+**Section 1** (bytes `0 .. n_changed×16 − 1`):
 Delta blocks for each changed position, stored in skip-map order (ascending
-block index). Each entry is 16 raw 8-bit palette index bytes covering the 4Ã—4
+block index). Each entry is 16 raw 8-bit palette index bytes covering the 4×4
 pixel block in row-major order.
 
-**Section 2** (bytes `n_changedÃ—16 .. bdSize âˆ’ 1`, present when
-`bdSize > n_changedÃ—16`):
-Full-state overwrite starting from block 0. `âŒŠ(bdSize âˆ’ n_changedÃ—16) / 16âŒ‹`
+**Section 2** (bytes `n_changed×16 .. bdSize − 1`, present when
+`bdSize > n_changed×16`):
+Full-state overwrite starting from block 0. `⌊(bdSize − n_changed×16) / 16⌋`
 complete blocks replace the canvas from block 0 upward. Any trailing bytes
 (< 16) are ignored. Trailing zero bytes may be omitted from the end of
 section 2.
@@ -101,7 +101,7 @@ section 2.
 ### Decode algorithm
 
 ```
-canvas  = uint8_t[4800 Ã— 16]   // persistent across frames; init to 0x00
+canvas  = uint8_t[4800 × 16]   // persistent across frames; init to 0x00
 changed = [b for b in 0..4799 if skip_map bit b is set]
 
 // Section 1: apply delta blocks
@@ -114,7 +114,7 @@ for i in 0..extra-1:
     canvas[i * 16 .. +15] = block_data[len(changed)*16 + i*16 .. +15]
 ```
 
-To render frame: for each block `b`, copy `canvas[b*16..+15]` to the 4Ã—4
+To render frame: for each block `b`, copy `canvas[b*16..+15]` to the 4×4
 pixel area at `((b%80)*4, (b/80)*4)` in row-major order.
 
 ## Chunk Type: VooM — Video Index / Key Frame
@@ -131,8 +131,8 @@ Offset  Size  Description
 4        4    uint32 LE: chunk size
 8        4    uint32 LE: video width in pixels (observed: 320)
 12       4    uint32 LE: video height in pixels (observed: 240)
-16       4    uint32 LE: audio sync rate = samples_per_frame Ã— fps (observed: 6000 = 400 Ã— 15)
-20+    16Ã—N   Index entries (N = (chunk_size âˆ’ 20) / 16)
+16       4    uint32 LE: audio sync rate = samples_per_frame × fps (observed: 6000 = 400 × 15)
+20+    16×N   Index entries (N = (chunk_size − 20) / 16)
 ```
 
 Index entry (16 bytes each):
@@ -141,7 +141,7 @@ Offset  Size  Description
 ------  ----  -----------
 0        4    uint32 LE: absolute file offset of this MRFI chunk
 4        4    uint32 LE: byte size of this MRFI chunk
-8        4    uint32 LE: cumulative audio sample count at this frame (frame_index Ã— samples_per_frame)
+8        4    uint32 LE: cumulative audio sample count at this frame (frame_index × samples_per_frame)
 12       4    uint32 LE: audio samples per frame (constant: 400)
 ```
 
@@ -163,13 +163,13 @@ MRFA  — trailing audio
 
 | File | Video | Audio | Source LIB |
 |------|-------|-------|------------|
-| ATF.CB8 | VooM 320Ã—240 | .11K (external) | FA_4C.LIB |
-| C_INTRO.CB8 | VooM 320Ã—240 | .11K (external) | FA_4C.LIB |
+| ATF.CB8 | VooM 320×240 | .11K (external) | FA_4C.LIB |
+| C_INTRO.CB8 | VooM 320×240 | .11K (external) | FA_4C.LIB |
 | JANELOGO.CB8 | 466 MRFI frames | MRFA blocks (11025 Hz) | FA_4C.LIB |
 | B2_D.CB8 | MRFI delta frames | MRFA blocks (11025 Hz) | FA_10.LIB |
 
 JANELOGO.CB8 (6,496,064 bytes): VooM at offset 14812 with 466 index entries
-(chunk_size 7476 = 20 + 466Ã—16). Frame 0 offset: 22288, duration: ~31.1 s @ 15 fps.
+(chunk_size 7476 = 20 + 466×16). Frame 0 offset: 22288, duration: ~31.1 s @ 15 fps.
 
 ## Palette and Colour
 
@@ -193,7 +193,7 @@ palette is recovered.
 `fx cb8 frames` extracts individual frames as PNG images. There is no repack command —
 frame-level edits only.
 
-- **GIMP** — free, cross-platform; batch script (`File â†’ Script-Fu`) useful for processing many frames
+- **GIMP** — free, cross-platform; batch script (`File → Script-Fu`) useful for processing many frames
 - **Paint.NET** — free, Windows
 - **Photoshop** `$` — industry standard; *Image Processor* script for batch frame edits
 - **Affinity Photo** `$` — one-time purchase alternative to Photoshop

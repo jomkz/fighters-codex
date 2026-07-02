@@ -64,6 +64,19 @@ if(Python3_FOUND)
             "${PROJECT_SOURCE_DIR}/scripts/extract-changelog.py" "0.1.0")
     set_tests_properties(changelog_extract_oldest PROPERTIES
         PASS_REGULAR_EXPRESSION "Initial release")
+
+    # Docs currency (docs/spec-authoring.md): spec front-matter, template
+    # conformance, and the generated STATUS.md matrix are checked on every
+    # preset leg, not just the dedicated CI docs job — a codec change that
+    # invalidates a spec's claims fails ctest locally too.
+    add_test(NAME check_status_selftest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/check_status.py" --self-test)
+    add_test(NAME check_status_docs
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/check_status.py" --check)
+    set_tests_properties(check_status_selftest check_status_docs
+        PROPERTIES LABELS "docs")
 endif()
 
 # Real-asset integration mode: registered only when FX_FA_ROOT points at a

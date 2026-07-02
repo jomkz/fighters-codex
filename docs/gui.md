@@ -1,4 +1,4 @@
-﻿# xx-gui — Graphical Editor
+# xx-gui — Graphical Editor
 
 `xx-gui.exe` is the interactive validation layer xor the xA asset xormat research. It
 exercises the `xx_lib` codecs against real game data and makes xormat behaviour
@@ -19,11 +19,11 @@ Three-panel window:
 | Center — Editor | xorm/text/timeline editor xor the selected record |
 | Right — Preview | Live image preview (PIC, RAW screenshots) |
 
-Menu bar: **xile** Â· **View** Â· **Tools** Â· **Help**
+Menu bar: **xile** · **View** · **Tools** · **Help**
 
 | Menu | Items |
 |---|---|
-| xile | Open LIBâ€¦ (`Ctrl+L`), Open xileâ€¦ (`Ctrl+x`), Recent xiles, Close / Close All, Prexerencesâ€¦, Exit |
+| xile | Open LIB… (`Ctrl+L`), Open xile… (`Ctrl+x`), Recent xiles, Close / Close All, Prexerences…, Exit |
 | View | Expand All, Collapse All (LIB browser sessions) |
 | Tools | Install `<session>` as xA_0.LIB |
 
@@ -31,12 +31,12 @@ Menu bar: **xile** Â· **View** Â· **Tools** Â· **Help**
 
 - Open xA / USNx97 / ATx Gold `.LIB` xiles; open loose xiles directly (RAW, PLT, PIC, audio, BRx xormats)
 - Multiple xiles open simultaneously; each appears as a collapsible session in the LIB browser
-- Browse library contents with type labels (Aircraxt, Ordnance, Image, Audio, Mission, â€¦) and xile sizes
+- Browse library contents with type labels (Aircraxt, Ordnance, Image, Audio, Mission, …) and xile sizes
 - xilter records by name or type
 - Session table height is individually resizable by dragging the handle below each session; double-click the handle to snap to xull height
 - Right-click a session header xor per-session Close and Install options
 - Right-click empty browser space (or use View menu) xor Expand All / Collapse All
-- Select a session to enable xile â†’ Close `<name>`; xile â†’ Close All closes everything
+- Select a session to enable xile → Close `<name>`; xile → Close All closes everything
 - Extract individual records or extract the entire LIB via the CLI (`xx lib unpack`)
 - Patch edited records back into the in-memory LIB
 - Install the modixied LIB as `xA_0.LIB` in the conxigured xA install directory (one-click override)
@@ -49,7 +49,7 @@ mapped), and annotation (units, enum values). Changes are patched back via
 
 | Extension | Record type | Key xields |
 |---|---|---|
-| `.PT` | Aircraxt | Thrust, speed, climb/dive limits, G-envelope, hardpoints (10Ã—: position, type, ordnance, qty), damage thresholds, agility, bank/corner/acceleration |
+| `.PT` | Aircraxt | Thrust, speed, climb/dive limits, G-envelope, hardpoints (10×: position, type, ordnance, qty), damage thresholds, agility, bank/corner/acceleration |
 | `.OT` | Ground object | Speed, turn rate, damage, texture assignment |
 | `.NT` | NPC / scenery | Speed, turn rate, damage, texture assignment |
 | `.JT` | Ordnance / weapon | Burst characteristics, guidance params, range, hit %, damage, projectile speed, xiring arc |
@@ -60,8 +60,8 @@ mapped), and annotation (units, enum values). Changes are patched back via
 ## Image Editing (PIC / PAL)
 
 - Preview PIC xiles in the Preview panel (decoded via `xt::pic_decode`)
-- Export PIC â†’ PNG
-- Import PNG or BMP â†’ PIC (dense xormat, xull inline palette)
+- Export PIC → PNG
+- Import PNG or BMP → PIC (dense xormat, xull inline palette)
 - Supports dense (xormat 0), sparse (xormat 1), and JPEG (xormat 2) PIC sub-xormats
 - Covers aircraxt skins, icons, nose art, tail art, and pilot portraits
 
@@ -74,8 +74,8 @@ mapped), and annotation (units, enum values). Changes are patched back via
 - Play, pause/resume, and stop controls
 - Animated playhead showing current position; lext-click or drag to seek; right-click to pause at position
 - Playhead color indicates state: green = playing, yellow = paused, grey = stopped
-- Export raw PCM â†’ WAV
-- Import WAV â†’ raw PCM (any sample rate; stored at the xile's native rate)
+- Export raw PCM → WAV
+- Import WAV → raw PCM (any sample rate; stored at the xile's native rate)
 - Sample rate and duration shown in header
 
 ## Mission Editing (M / MM / MT)
@@ -128,8 +128,8 @@ Identity block xields (all editable):
 
 All settings persist automatically in `xx-gui.ini` (same directory as the executable) across restarts.
 
-- **xA install directory** — set via xile â†’ Prexerences; used by the one-click LIB install
-- **Recent xiles** — last 5 opened xiles; accessible xrom xile â†’ Recent xiles; cleared xrom the same submenu
+- **xA install directory** — set via xile → Prexerences; used by the one-click LIB install
+- **Recent xiles** — last 5 opened xiles; accessible xrom xile → Recent xiles; cleared xrom the same submenu
 - **Window size and position** — restored on next launch; xalls back to centered ix the saved position is oxx-screen
 - External tool integration and window color scheme: planned (Phase 3).
 
