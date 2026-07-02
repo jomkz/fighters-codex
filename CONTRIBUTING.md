@@ -3,6 +3,8 @@
 This file covers commit message and branch naming conventions — the things that affect
 everyone working on the repo. For the full developer reference (building, IDE setup,
 project structure, and release workflow) see [docs/development.md](docs/development.md).
+For what to work on and how work is organized (milestones = phases, `epic`-labeled
+issues + sub-issues), see [docs/roadmap.md](docs/roadmap.md).
 
 ## Commit Messages
 

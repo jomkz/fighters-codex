@@ -13,8 +13,11 @@ Reverse-engineering notes, format specifications, and modding guides for Jane's 
 | [fa/README.md](fa/README.md) | FA knowledge base index |
 | [fa/architecture.md](fa/architecture.md) | Runtime environment, asset system, and subsystem architecture |
 | [fa/modding.md](fa/modding.md) | Step-by-step modding recipes |
-| [fa/todo.md](fa/todo.md) | Outstanding research and implementation backlog |
 | [fa/formats/README.md](fa/formats/README.md) | All 44 file format specifications, categorized |
+
+Outstanding research is tracked on the [roadmap](roadmap.md) and the
+[issue tracker](https://github.com/jomkz/fighters-codex/issues) — there is no
+standalone TODO file.
 
 ## Toolkit
 
@@ -22,6 +25,7 @@ Reference documentation for the validation tools.
 
 | Document | Description |
 |----------|-------------|
+| [roadmap.md](roadmap.md) | Phased roadmap to 1.0 — gates, epics, and the 1.0 definition |
 | [cli.md](cli.md) | Full CLI command reference |
 | [gui.md](gui.md) | fx-gui graphical editor feature reference |
 | [api.md](api.md) | C++ library API reference |
