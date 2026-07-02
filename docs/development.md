@@ -41,6 +41,7 @@ All builds go through [CMake presets](../CMakePresets.json):
 | `gcc` | Linux | g++ | Debug | `build/gcc/` |
 | `clang` | Linux | clang++ | Debug | `build/clang/` |
 | `asan-ubsan` | Linux | clang++ + ASan/UBSan | Debug | `build/asan-ubsan/` |
+| `coverage` | Linux | g++ + gcov (`--coverage`) | Debug | `build/coverage/` |
 | `fuzz` | Linux | clang++ + libFuzzer/ASan/UBSan | Debug | `build/fuzz/` |
 | `release` | Linux | default | Release | `build/release/` |
 | `msvc` | Windows | MSVC x64 | multi-config | `build/` |
@@ -179,6 +180,7 @@ Every PR to `main` (and every push to it) runs the
 | `asan-ubsan` | ubuntu-latest | Full suite under AddressSanitizer + UBSan — memory errors and UB in the binary parsers fail the PR |
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
 | `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
+| `coverage` | ubuntu-latest | gcov line coverage over `lib/` + `cli/`, gcovr summary on the run's summary page + HTML artifact; enforces a floor that only ratchets **up** (raised by epic [#50](https://github.com/jomkz/fighters-codex/issues/50), never lowered) |
 | CodeQL | ubuntu-latest | Static analysis ([security-extended](../.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
 
 Every `uses:` in the workflows is pinned to a commit SHA (with the version in a
