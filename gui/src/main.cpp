@@ -202,6 +202,11 @@ int main(int argc, char** argv) {
                 if (g_app->themePref == ThemePreference::Auto)
                     platform::ApplyTheme(ThemePreference::Auto);
                 break;
+            case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+                // ApplyTheme rebuilds the style from scratch and re-scales
+                // to the new display scale.
+                platform::ApplyTheme(g_app->themePref);
+                break;
             case SDL_EVENT_WINDOW_MOVED:
                 if (!(SDL_GetWindowFlags(platform::Window()) & SDL_WINDOW_MAXIMIZED)) {
                     s_normalRect.x = ev.window.data1;

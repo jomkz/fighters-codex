@@ -376,7 +376,10 @@ void App::OpenStandaloneFile(const std::string& path) {
     }
 
     for (const auto& s : sessions) {
-        if (fs::equivalent(fs::path(s.path), fs::path(path))) {
+        // error_code overload: fs::equivalent throws when either path does
+        // not exist (e.g. a stale recent-files entry from another OS).
+        std::error_code ec;
+        if (fs::equivalent(fs::path(s.path), fs::path(path), ec)) {
             m_dupLibPath = fs::path(path).filename().string();
             return;
         }
@@ -411,7 +414,8 @@ void App::OpenStandaloneFile(const std::string& path) {
 
 void App::OpenLib(const std::string& path) {
     for (const auto& s : sessions) {
-        if (fs::equivalent(fs::path(s.path), fs::path(path))) {
+        std::error_code ec;
+        if (fs::equivalent(fs::path(s.path), fs::path(path), ec)) {
             m_dupLibPath = fs::path(path).filename().string();
             return;
         }

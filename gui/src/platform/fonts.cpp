@@ -18,11 +18,11 @@ void LoadFonts(float sizePx) {
         candidates.push_back(std::string(windir) + "\\Fonts\\tahoma.ttf");
     }
     // Fedora
+    candidates.push_back("/usr/share/fonts/liberation-mono-fonts/LiberationMono-Regular.ttf");
     candidates.push_back("/usr/share/fonts/dejavu-sans-mono-fonts/DejaVuSansMono.ttf");
-    candidates.push_back("/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf");
     // Debian/Ubuntu (CI images)
-    candidates.push_back("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
     candidates.push_back("/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf");
+    candidates.push_back("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
 
     for (const auto& path : candidates) {
         std::error_code ec;
