@@ -373,7 +373,7 @@ The raw data was produced by `RecoverStructs.java`, a Ghidra headless script tha
 
 **Known limitations:**
 
-- The scan cannot distinguish between two different struct types that happen to use the same pointer argument convention. The `entity`, `OT_TYPE`, `NT_TYPE`, and `PT_TYPE` scans share access patterns in the `0x00`–`0x4F` range because many engine functions are generic and accept any object pointer.
+- The scan cannot distinguish between two different struct types that happen to use the same pointer argument convention. The `entity`, `OT_TYPE`, `NT_TYPE`, and `PT_TYPE` scans share access patterns in the `0x00`–`0x4F` range because many engine functions are generic and accept any object pointer. The type record's shape-pointer fields (`+0x0F`/`+0x17`/`+0x1B`/`+0x25`/`+0x29`) and their runtime use are documented in [shape-selection.md](shape-selection.md).
 - `PROJ_TYPE` and `GV_TYPE` were isolated by restricting the scan to subsystem-specific code blocks, which removes the shared-header noise but may miss cross-subsystem accesses.
 - Fields accessed only once or twice are often incidental (e.g., CRT helper functions scanning memory). Treat single-access entries as tentative.
 - Size column values are inferred from the next observed offset; actual padding may differ.

@@ -72,6 +72,7 @@ nav:
       - Architecture: fa/architecture.md
       - Game Loop: fa/game-loop.md
       - Renderer: fa/renderer.md
+      - Shape Selection: fa/shape-selection.md
       - Physics: fa/physics.md
       - Network: fa/network.md
       - Globals: fa/globals.md
