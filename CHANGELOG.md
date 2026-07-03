@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-03
+
 ### Added
 - `fx_lib`, the `fx` CLI, and the full test suite build and run natively on Linux (GCC and Clang) alongside Windows, from the same tree — MSVC-isms replaced with portable seams, and CMake presets (`msvc`, `gcc`, `clang`, `asan-ubsan`, `release`) with a rewritten development.md covering both workflows (#65, #66, #67, #68, #69)
 - `FX_FA_ROOT` integration mode: pointing the build at a real FA install registers the `fa_extract_manifest` test, which verifies every extracted byte against a committed SHA-256 manifest — extraction proven byte-identical across platforms; a CLI end-to-end round-trip test joins the suite
@@ -77,7 +79,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.1.0
