@@ -34,9 +34,11 @@ static int cmd_dump(int argc, char** argv) {
     auto syms = sms_parse(data.data(), data.size());
     if (syms.empty()) { fprintf(stderr, "No symbols parsed from: %s\n", sms_path); return 1; }
 
-    // Sort by VA
+    // Sort by VA, ties by name — aliased symbols (e.g. _stricmp/_strcmpi at
+    // one VA) must dump byte-identically on every platform's std::sort.
     std::sort(syms.begin(), syms.end(),
-              [](const SmsSymbol& a, const SmsSymbol& b){ return a.va < b.va; });
+              [](const SmsSymbol& a, const SmsSymbol& b){
+                  return a.va != b.va ? a.va < b.va : a.name < b.name; });
 
     FILE* out = stdout;
     if (out_path) {
