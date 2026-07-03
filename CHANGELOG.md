@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-07-03
+
 ### Added
 - **fx-gui** full-row SEQ event editing: time (`N`/`+N`), command, sync, and args are all editable per row, completing the add/insert/delete buttons that shipped half-usable in #30. Edited rows are rebuilt tab-separated and re-parsed through `fx::seq_parse` (retiring the editor's quote-stripping inline tokenizer), insert inherits the row's addressing mode so relative `+` chains keep resolving, and append lands after the resolved timeline end rather than a plain max over ticks (#92)
 
@@ -95,7 +97,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.3
 [0.4.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.2
 [0.4.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.1
 [0.4.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.0
