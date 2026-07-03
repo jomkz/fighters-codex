@@ -34,3 +34,4 @@ Reference documentation for the validation tools.
 | [api.md](api.md) | C++ library API reference |
 | [development.md](development.md) | Building, IDE setup, and project structure |
 | [spec-authoring.md](spec-authoring.md) | Format-spec template, front-matter schema, and vocabularies (CI-enforced) |
+| [adr/README.md](adr/README.md) | Architecture decision records for the toolkit |
