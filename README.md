@@ -28,7 +28,7 @@ implementation is the proof that a format is truly understood.
 **Validation tools** *(proving the documentation by implementing it)*:
 
 - A **zero-dependency, statically-linked** `fx.exe` — byte-identical round-trip for the LIB, PAL, SEQ, audio, BRF-family, and mission codecs (PIC re-encodes losslessly for the engine but not yet byte-exact — [#175](https://github.com/jomkz/fighters-codex/issues/175)); inspect/decode support for most other documented formats. Closing the round-trip gap for every format (or documenting why a codec is one-way) is [Phase 4 of the roadmap](docs/roadmap.md)
-- A **graphical editor** `fx-gui.exe` — interactive codec validation against real game data; live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
+- A **graphical editor** `fx-gui` (Linux and Windows) — interactive codec validation against real game data; live LIB browser, form-based type editors, image import/export, audio waveform playback, mission and cutscene text editing, pilot identity editing, and screenshot preview
 - A **static C++ library** (`fx_lib`) — all codecs in one linkable unit, embeddable in any C++ host (it is what [fa-content](https://github.com/fighters-legacy/fa-content) builds on)
 - An **AI→BI compiler** (`fx ai compile`) — the first working compiler for the Phar Lap PE bytecode format the game's AI interpreter loads; validates the complete AI bytecode spec
 - A **BI disassembler** (`fx bi dump`) — disassemble compiled `.BI` AI bytecode back to readable mnemonics, with cross-referenced label annotations and resolved `CALL_BY_NAME` targets
@@ -43,7 +43,7 @@ Reverse-engineering how these simulators squeezed so much out of mid-90s hardwar
 
 ## Platform requirements
 
-Pre-built releases are **64-bit Windows binaries** (Windows 7 or later) and, starting with v0.4.0, **Linux x64 tarballs** of `fx` and `fx_lib` (glibc 2.35+ — Ubuntu 22.04, Fedora 36, or newer equivalents; libstdc++ is statically linked). `fx-gui` remains Windows-only until Phase 3 of the [roadmap](docs/roadmap.md). The library, CLI, and test suite also build from source on Linux with GCC or Clang (see [docs/development.md](docs/development.md)).
+Pre-built releases are **64-bit Windows binaries** (Windows 7 or later; `fx-gui` needs OpenGL 3.3, so Vista-era GPUs or newer) and **Linux x64 tarballs** (glibc 2.35+ — Ubuntu 22.04, Fedora 36, or newer equivalents; libstdc++ is statically linked). Starting with v0.5.0 all three components ship for both OSes — `fx-gui` runs natively on Linux and Windows via SDL3 + OpenGL 3.3 ([Phase 3 of the roadmap](docs/roadmap.md)); earlier Linux releases (v0.4.0) carried `fx` and `fx_lib` only. Everything also builds from source on Linux with GCC or Clang (see [docs/development.md](docs/development.md)).
 
 Windows XP is not supported for three reasons: the build produces x64 PE only (standard XP is 32-bit); MSVC 2022+ dropped the XP-compatible toolset (`v141_xp`); and `std::filesystem` internally calls Vista-only APIs such as `GetFinalPathNameByHandleW`. Supporting XP would require downgrading to C++14, replacing `std::filesystem` with raw Win32 I/O, and using MSVC 2015 with the XP toolset — a significant regression for a negligible user base.
 
@@ -57,6 +57,7 @@ Pre-built binaries are on the [Releases](https://github.com/jomkz/fighters-codex
 | `fx-gui-vX.X.X-windows-x64.zip` | Modders — unzip and run `fx-gui.exe` from anywhere |
 | `fx-lib-vX.X.X-windows-x64.zip` | C++ developers — static library and headers |
 | `fx-vX.X.X-linux-x64.tar.gz` (v0.4.0+) | Modders and scripters on Linux — untar and run `fx` from anywhere |
+| `fx-gui-vX.X.X-linux-x64.tar.gz` (v0.5.0+) | Modders on Linux — untar and run `fx-gui` from anywhere |
 | `fx-lib-vX.X.X-linux-x64.tar.gz` (v0.4.0+) | C++ developers on Linux — static library and headers |
 
 ## Documentation

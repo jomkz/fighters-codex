@@ -112,6 +112,10 @@ Seeded here; finalized with findings from the port itself.
    capture-by-value, revalidate state on arrival.
 6. **Audio.** A control-plane (main thread) / data-plane (realtime callback) split
    with atomics-only crossings ports cleanly between audio APIs; track playback
-   position from the submission cursor, not device queries.
+   position from the submission cursor, not device queries. Found empirically
+   during the port: device start-up prefill can consume a sub-period clip
+   synchronously, so `isPlaying()` may legitimately be false immediately after a
+   successful play — consumers must treat play-then-finished as a normal
+   sequence, not an error.
 7. **Theme** is a platform concern (query + change event); `IGui` receives it rather
    than detecting it.

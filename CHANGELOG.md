@@ -9,6 +9,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 - Linux x64 release artifacts: `fx` and the `fx_lib` developer SDK ship as tar.gz alongside the Windows zips (glibc 2.35+, libstdc++ statically linked) (#75)
+- `fx-gui` runs natively on Linux and Windows: SDL3 + OpenGL 3.3 host, native file dialogs, system-theme detection with live switching, DPI scaling, and a `--smoke` headless self-check; settings move to the per-user preferences path (#86, #88)
+- Audio preview via miniaudio, replacing the Windows `waveOut` path (#87)
+- Linux `fx-gui` tarball joins the release artifacts; CI builds and smoke-tests the GUI on both OSes, and the new `gui_tests` suite covers the dialog queue, preview math, and audio player state machine on every leg (#90)
+- ADR-0001 records the GUI backend selection (SDL3 + OpenGL 3.3 + miniaudio) and the SDL3 acquisition policy — system-first with a pinned, checksummed FetchContent fallback (#85)
+
+### Changed
+- The SH 3D preview renders through a GL 3.3 FBO pipeline (GLSL port of the DX11 shaders); the Win32/DX11 backend and its vendored ImGui backends are removed (#86)
 
 ### Fixed
 - LIB extraction rejects flags=4 entries whose decompressed-size prefix exceeds 64 MiB — a crafted archive could previously force multi-GiB allocations (#168)

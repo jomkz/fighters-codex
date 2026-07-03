@@ -99,7 +99,7 @@
         {
             "label": "Run fx-gui",
             "type": "shell",
-            "command": "echo fx-gui is Windows-only until Phase 3 (epic #46)",
+            "command": "${workspaceFolder}/build/gcc/gui/fx-gui",
             "windows": {
                 "command": "${workspaceFolder}\\build\\gui\\Debug\\fx-gui.exe"
             },
