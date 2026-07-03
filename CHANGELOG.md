@@ -7,6 +7,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-07-03
+
+### Changed
+- All `fa-content` references updated to **fa-bridge**, following the plugin repo's rename — the roadmap, README, api.md embedding example, CLAUDE.md, two CMake comments, and the release script's post-release reminder (#161)
+
+### Fixed
+- The release flow no longer tags before the release PR merges — v0.4.0's tag initially pointed at a commit that could never land on protected `main`. `scripts/release.py` is branch-aware: it commits on `chore/release-vX.Y.Z` (created automatically when run from `main`, refused anywhere else), never tags, guards against leftover tags/branches and double changelog rotation, and prints the push → PR → squash-merge → retag steps now documented in development.md § Releasing (#188)
+
 ## [0.4.0] - 2026-07-03
 
 ### Added
@@ -79,7 +87,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.1
 [0.4.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.2.0
