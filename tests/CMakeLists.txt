@@ -13,6 +13,7 @@ add_executable(fx_tests
     test_pal.cpp
     test_audio.cpp
     test_seq.cpp
+    test_inf.cpp
     test_brf.cpp
     test_mission.cpp
     test_sh.cpp

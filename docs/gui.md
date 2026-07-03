@@ -154,10 +154,11 @@ mapped), and annotation (units, enum values). Changes are patched back via
 
 ## Technical Info Editing (INF)
 
-- Raw dot-command source (see [fa/formats/INF.md](fa/formats/INF.md) — plain text, not RTF) displayed in a scrollable multi-line editor
+- **Styled** tab: each directive section (see [fa/formats/INF.md](fa/formats/INF.md) — plain text dot-commands, not RTF) rendered with its in-game alignment (`.left`/`.center`/`.right`) and title/body weight
+- Per-section editing: text (Edit → Apply/Cancel), alignment and title/body style buttons, insert-after and delete, plus **+ Add Section**
+- **Source** tab: the raw dot-command text in a scrollable editor; both tabs edit the same record
+- Edited sections are recomposed via `fx::inf_rebuild_section` (CRLF, corpus blank-line convention); untouched sections keep their exact source bytes, so saves round-trip byte-identically outside the edit
 - Save commits the INF bytes back into the LIB session
-
-> Full WYSIWYG rendering of the directive markup: planned (Phase 3).
 
 ## Screenshot Viewer (RAW)
 
