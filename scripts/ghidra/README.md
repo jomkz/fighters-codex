@@ -226,6 +226,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `ImportFASmsHeadless.java` | Import FA.SMS symbols (path from arg/env/default) | Yes |
 | `DumpOverlayDLL.java` | Per-DLL dump for overlay/secondary projects | Yes |
 | `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` / `AnalyzeBIFRAME.java` | Deep dives on overlay projects | Yes |
+| `AnalyzeSHHeader.java` | SH header field consumption — radius/radius_world evidence (#124) | Yes |
 
 ### Launchers (Linux `.sh` / Windows `.bat`)
 

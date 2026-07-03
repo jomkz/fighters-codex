@@ -117,14 +117,28 @@ section. Always named `CODE`. `PointerToRawData` is the file offset;
 
 ```
 [FF FF]              2-byte signature
-[unk0 i16]           unknown
-[unk1 i16]           unknown (sometimes encodes a file ID)
+[radius_world i16]   authored bounding radius, world units — engine-unused
+[radius i16]         approximate bounding-sphere radius, shape units
 [scale i16]          coordinate scale (bytes 6..8): see table below
 [ext[0] i16]         bounding extent X (half-width)
 [ext[1] i16]         bounding extent Y (half-depth)
 [ext[2] i16]         bounding extent Z (half-height)
 [instruction stream] variable-length opcodes
 ```
+
+**radius** (bytes 4..6) is an authored, approximate bounding-sphere radius in
+shape units: across all 1275 FA_2.LIB shapes it is always positive (min 10) and
+correlates 0.996 with `‖ext‖₂`, sitting anywhere between the true max vertex
+norm and the (loosely padded) header extents. The engine folds it into the
+projection-shift computation, where only its magnitude (leading bit) matters —
+see [Engine Notes](#engine-notes).
+
+**radius_world** (bytes 2..4) is the same radius expressed in world units:
+where nonzero it equals `radius * 2^(scale-8)` exactly in 93/134 files, with
+authoring drift in the rest (ratios 1.4–4.8). It is zero in 1141/1275 shapes —
+every aircraft and weapon — and nonzero only for ground/naval scenery (ships,
+runways, cities, rocks, SAM sites). No FA.EXE code reads it: it is authoring
+residue — see [Engine Notes](#engine-notes) for the tracing evidence.
 
 **Scale table** (`world_coord_feet = raw_i16 * scale_factor`):
 
@@ -325,6 +339,28 @@ Confirmed from FA.SMS:
 | VA | Symbol | Description |
 |----|--------|-------------|
 | `0x4D22D4` | `do_ifdestroyed` | Tests whether the entity is in destroyed state; skips or follows a conditional branch in the shape bytecode stream |
+| `0x4D057C` | `GRAddBrentObj` | Registers a shape instance for rendering: consumes the header (`radius`, `scale`), culls, computes the projection shift, and queues a render-sort record whose stream pointer starts at header+0xe |
+
+### Header field consumption (traced)
+
+`GRAddBrentObj(shape, x, y, z)` is the only FA.EXE code that touches the raw
+14-byte header:
+
+- **`scale` (+6)** shifts the viewer-relative Δx/Δy/Δz into shape units.
+- **`radius` (+4)** is OR-ed with those shifted magnitudes before the
+  `_shift_table` leading-bit lookup that selects the projection/precision
+  shift — flooring the shift so the whole shape stays in 16-bit range — and is
+  copied into the render-sort record (+0x10). Only the leading bit matters,
+  which is why authored values need not be exact radii.
+- **`radius_world` (+2) is never read.** Evidence: the interpreter receives
+  the stream pointer already advanced to header+0xe; a scan of every
+  decompiled FA.EXE function found no 16-bit or 32-bit read of header+2
+  co-occurring with other header-field access; and a raw-listing scan of the
+  hand-written interpreter region (0x4CD000–0x4D7000, including 5342
+  instructions outside Ghidra functions) shows all 467 `[reg+0x2]` accesses
+  are word-magic operand fetches and zero negative-displacement reads that
+  could reach back from the stream start
+  ([`AnalyzeSHHeader.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/AnalyzeSHHeader.java)).
 
 ## Round-Trip Notes
 
