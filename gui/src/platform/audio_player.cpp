@@ -10,6 +10,7 @@
 // FX_AUDIO_NULL=1 in the environment forces miniaudio's null backend —
 // no audio hardware, realtime consumption simulated — which is how the
 // gui_tests exercise the state machine in CI.
+#define NOMINMAX // miniaudio includes windows.h (WASAPI); keep std::min/max
 #define MINIAUDIO_IMPLEMENTATION
 #define MA_NO_DECODING
 #define MA_NO_ENCODING
