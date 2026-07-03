@@ -15,10 +15,10 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 
 - **fighters-legacy/fighters-legacy** — clean-room GPL engine reimplementation (separate
   roadmap; no codex work is tracked there).
-- **fighters-legacy/fa-content** — FA bridge plugin; consumes `fx_lib` as the
+- **fighters-legacy/fa-bridge** — FA bridge plugin; consumes `fx_lib` as the
   `extern/fx_lib` submodule. RE documentation lives *here*; implementations that consume it
   live *there*. Bump its submodule after each release.
-- **License boundary:** this repo is MIT; OpenFA and fa-content are GPL. Document facts
+- **License boundary:** this repo is MIT; OpenFA and fa-bridge are GPL. Document facts
   with attribution; never transcribe code across the boundary.
 
 ## Environments

@@ -3,7 +3,7 @@
 `fx_lib` is a static C++17 library. Link it from CMake by adding the repo root:
 
 ```cmake
-add_subdirectory(fighters-codex)   # e.g. the extern/fx_lib submodule in fa-content
+add_subdirectory(fighters-codex)   # e.g. the extern/fx_lib submodule in fa-bridge
 target_link_libraries(your_target PRIVATE fx::lib)
 ```
 

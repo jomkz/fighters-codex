@@ -49,7 +49,7 @@ ATF/USNF acquisition (#144) is external — start immediately.
 | **2 — Documentation System** | [Phase 2](https://github.com/jomkz/fighters-codex/milestone/3) | #38 executed: one spec template, all 44 specs restructured, status matrix CI-enforced, docs site published | Site live; matrix drift fails CI |
 | **3 — fx-gui Port** | [Phase 3](https://github.com/jomkz/fighters-codex/milestone/4) | SDL3 + OpenGL3 + miniaudio backends; ready-now validation features | Parity on Fedora + Windows; in CI + releases |
 | **4 — Codec & Test Completeness** | [Phase 4](https://github.com/jomkz/fighters-codex/milestone/5) | Round-trip upgrades, codecs for the 16 uncovered formats, full test/fixture coverage, fuzzing rollout | Matrix: every format round-trips or carries a rationale, with tests + fixtures + fuzz target |
-| **5 — Deep Static RE** | [Phase 5](https://github.com/jomkz/fighters-codex/milestone/6) | SH/renderer semantics (pulled in from fa-content), format-unknown closure, VDO/Cobra decoded | Static analysis exhausted; fa-content implementable from the docs alone |
+| **5 — Deep Static RE** | [Phase 5](https://github.com/jomkz/fighters-codex/milestone/6) | SH/renderer semantics (pulled in from fa-bridge), format-unknown closure, VDO/Cobra decoded | Static analysis exhausted; fa-bridge implementable from the docs alone |
 | **6 — Gameplay, Multi-Game & 1.0** | [Phase 6](https://github.com/jomkz/fighters-codex/milestone/7) | PLT gap campaign on the Windows bench, ATF/USNF verification, 1.0 audit | The 1.0 definition above; v1.0.0 tagged |
 
 ## Epic index
@@ -80,15 +80,15 @@ Standalone Phase 5 prerequisite: [#120](https://github.com/jomkz/fighters-codex/
 
 ## Relationship to fighters-legacy
 
-[fa-content](https://github.com/fighters-legacy/fa-content) implements the engine's
+[fa-bridge](https://github.com/fighters-legacy/fa-bridge) implements the engine's
 `IContentPack` using `fx_lib` as a submodule. Per the charter, **reverse-engineering
-documentation lives here; implementations that consume it live there** — fa-content's former
+documentation lives here; implementations that consume it live there** — fa-bridge's former
 RE issues (C.1–C.5) moved into Phase 5 epics #52/#53, and its interpreter/rasterizer issues
-are blocked on those docs. Phase 1 (fx_lib on Linux) is what unblocks fa-content's bridge
-work. After each release, fa-content's `extern/fx_lib` submodule is bumped to the tag
+are blocked on those docs. Phase 1 (fx_lib on Linux) is what unblocks fa-bridge's
+work. After each release, fa-bridge's `extern/fx_lib` submodule is bumped to the tag
 (the release script prints the reminder).
 
-**License boundary:** fighters-codex is MIT; OpenFA and fa-content are GPL. RE facts are
+**License boundary:** fighters-codex is MIT; OpenFA and fa-bridge are GPL. RE facts are
 documented here with attribution where verified against other projects' findings; code is
 never transcribed across the boundary.
 

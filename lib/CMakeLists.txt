@@ -30,5 +30,5 @@ target_include_directories(fx_lib SYSTEM PRIVATE vendor)
 
 target_link_libraries(fx_lib PRIVATE fx_warnings)
 
-# fa-content links fx_lib into a shared plugin, which needs PIC on Linux
+# fa-bridge links fx_lib into a shared plugin, which needs PIC on Linux
 set_target_properties(fx_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
