@@ -1,3 +1,3 @@
 #pragma once
-struct App;
+class App;
 void DrawMusEditor(App& app);

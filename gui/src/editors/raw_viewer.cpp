@@ -1,38 +1,12 @@
 ﻿#include "raw_viewer.h"
 #include "../app.h"
+#include "../platform/dialogs.h"
 #include "imgui.h"
 #include "fx/raw.h"
 #include "stb_image_write.h"
-#include <commdlg.h>
 #include <string>
 #include <filesystem>
 namespace fs = std::filesystem;
-
-static std::string SavePngDialog(const std::string& defaultPath) {
-    fs::path def(defaultPath);
-    std::wstring wdef = def.wstring();
-    std::wstring initDir = def.parent_path().wstring();
-
-    wchar_t buf[MAX_PATH] = {};
-    if (wdef.size() < MAX_PATH)
-        wcscpy_s(buf, wdef.c_str());
-
-    OPENFILENAMEW ofn = {};
-    ofn.lStructSize     = sizeof(ofn);
-    ofn.hwndOwner       = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
-    ofn.lpstrFilter     = L"PNG Image\0*.png\0All Files\0*.*\0";
-    ofn.lpstrFile       = buf;
-    ofn.nMaxFile        = MAX_PATH;
-    ofn.lpstrDefExt     = L"png";
-    ofn.lpstrInitialDir = initDir.empty() ? nullptr : initDir.c_str();
-    ofn.Flags           = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
-    if (!GetSaveFileNameW(&ofn)) return {};
-
-    int len = WideCharToMultiByte(CP_UTF8, 0, buf, -1, nullptr, 0, nullptr, nullptr);
-    std::string s(len - 1, 0);
-    WideCharToMultiByte(CP_UTF8, 0, buf, -1, s.data(), len, nullptr, nullptr);
-    return s;
-}
 
 void DrawRawViewer(App& app) {
     auto& ed = app.editor;
@@ -59,19 +33,24 @@ void DrawRawViewer(App& app) {
             }
         }
 
-        std::string out = SavePngDialog(defaultPath);
-        if (!out.empty()) {
-            auto rgba = fx::raw_decode(ed.data.data(), ed.data.size());
-            if (!rgba.empty()) {
-                if (stbi_write_png(out.c_str(), (int)info.width, (int)info.height,
-                                   4, rgba.data(), (int)info.width * 4)) {
-                    app.statusMsg  = "Exported " + fs::path(out).filename().string();
-                    app.statusKind = App::StatusKind::Info;
-                } else {
-                    app.statusMsg  = "PNG write failed: " + out;
-                    app.statusKind = App::StatusKind::Error;
-                }
-            }
+        // Decode before the dialog opens — the continuation runs frames
+        // later, when the selection may have changed.
+        auto rgba = fx::raw_decode(ed.data.data(), ed.data.size());
+        if (!rgba.empty()) {
+            platform::SaveFileDialog(
+                {{"PNG image", "png;PNG"}, {"All files", "*"}}, "png",
+                defaultPath.empty() ? nullptr : defaultPath.c_str(),
+                [&app, rgba = std::move(rgba), w = (int)info.width,
+                 h = (int)info.height](std::string out) {
+                    if (out.empty()) return;
+                    if (stbi_write_png(out.c_str(), w, h, 4, rgba.data(), w * 4)) {
+                        app.statusMsg  = "Exported " + fs::path(out).filename().string();
+                        app.statusKind = App::StatusKind::Info;
+                    } else {
+                        app.statusMsg  = "PNG write failed: " + out;
+                        app.statusKind = App::StatusKind::Error;
+                    }
+                });
         }
     }
 

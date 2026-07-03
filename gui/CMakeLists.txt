@@ -1,17 +1,51 @@
-﻿set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
+# SDL3 acquisition: system package first (Fedora: SDL3-devel), else a pinned,
+# checksummed release tarball built as a static library — see ADR-0001.
+# FX_SDL3_VENDORED=ON (CI/release) forces the pinned path so shipped artifacts
+# never silently pick up a system SDL3.
+if(NOT FX_SDL3_VENDORED)
+    find_package(SDL3 QUIET CONFIG)
+endif()
+if(NOT TARGET SDL3::SDL3)
+    include(FetchContent)
+    set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+    set(SDL_STATIC ON  CACHE BOOL "" FORCE)
+    set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(SDL3
+        URL https://github.com/libsdl-org/SDL/releases/download/release-3.4.12/SDL3-3.4.12.tar.gz
+        URL_HASH SHA256=f07b958a9ac5020fb7a44cadb957f658b2149c3c8abb4f63145fac9303249db7
+    )
+    FetchContent_MakeAvailable(SDL3)
+endif()
 
-set(IMGUI_SOURCES
+set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
+
+# Vendored code compiled without the repo warning policy.
+add_library(fx_gui_vendor STATIC
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
     ${IMGUI_DIR}/imgui_tables.cpp
     ${IMGUI_DIR}/imgui_widgets.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_win32.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_dx11.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+    src/platform/gl.cpp
 )
+target_include_directories(fx_gui_vendor PUBLIC
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor
+)
+target_link_libraries(fx_gui_vendor PUBLIC SDL3::SDL3)
 
 add_executable(fx-gui WIN32
     src/main.cpp
     src/app.cpp
+    src/platform/audio_player.cpp
+    src/platform/dialog_queue.cpp
+    src/platform/dialogs.cpp
+    src/platform/fonts.cpp
+    src/platform/texture.cpp
+    src/platform/theme.cpp
+    src/platform/window.cpp
     src/panels/lib_browser.cpp
     src/panels/editor_host.cpp
     src/panels/preview.cpp
@@ -35,31 +69,20 @@ add_executable(fx-gui WIN32
     src/editors/xmi_editor.cpp
     src/editors/vdo_editor.cpp
     src/editors/cam_editor.cpp
-    ${IMGUI_SOURCES}
 )
 
 target_include_directories(fx-gui PRIVATE
     src
-    ${IMGUI_DIR}
-    ${IMGUI_DIR}/backends
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/miniaudio
     ${CMAKE_SOURCE_DIR}/lib/include
-    ${CMAKE_SOURCE_DIR}/lib/vendor
     ${CMAKE_BINARY_DIR}/include
+)
+target_include_directories(fx-gui SYSTEM PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib/vendor
 )
 
 target_link_libraries(fx-gui PRIVATE
     fx_lib
-    d3d11.lib
-    dxgi.lib
-    d3dcompiler.lib
-    dwmapi.lib
-    advapi32.lib
+    fx_gui_vendor
+    fx_warnings
 )
-
-if(MSVC)
-    target_compile_options(fx-gui PRIVATE /W3 /WX-)
-    # Enable large address awareness and set subsystem to Windows
-    set_target_properties(fx-gui PROPERTIES
-        LINK_FLAGS "/SUBSYSTEM:WINDOWS"
-    )
-endif()

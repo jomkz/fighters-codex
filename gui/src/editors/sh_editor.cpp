@@ -1,8 +1,8 @@
 ﻿#include "sh_editor.h"
 #include "../app.h"
+#include "../platform/dialogs.h"
 #include "imgui.h"
 #include "fx/sh.h"
-#include <commdlg.h>
 #include <fstream>
 #include <string>
 
@@ -41,29 +41,22 @@ void DrawShEditor(App& app) {
         ImGui::TextColored({1.0f, 0.8f, 0.0f, 1.0f},
             "x86-only geometry â€” no OBJ export available.");
     } else if (ImGui::Button("Export OBJ...")) {
-        wchar_t buf[MAX_PATH] = {};
-        OPENFILENAMEW ofn     = {};
-        ofn.lStructSize  = sizeof(ofn);
-        ofn.hwndOwner    = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
-        ofn.lpstrFilter  = L"Wavefront OBJ\0*.obj\0All Files\0*.*\0";
-        ofn.lpstrFile    = buf;
-        ofn.nMaxFile     = MAX_PATH;
-        ofn.lpstrDefExt  = L"obj";
-        ofn.Flags        = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
-        if (GetSaveFileNameW(&ofn)) {
-            int len = WideCharToMultiByte(CP_UTF8, 0, buf, -1, nullptr, 0, nullptr, nullptr);
-            std::string path(len - 1, 0);
-            WideCharToMultiByte(CP_UTF8, 0, buf, -1, path.data(), len, nullptr, nullptr);
-            std::ofstream f(path);
-            if (f) {
-                f << fx::sh_to_obj(s_shMesh);
-                app.statusMsg  = "Exported to " + path;
-                app.statusKind = App::StatusKind::Info;
-            } else {
-                app.statusMsg  = "Cannot write: " + path;
-                app.statusKind = App::StatusKind::Error;
-            }
-        }
+        // Serialize before the dialog opens — the continuation runs frames
+        // later, when the selection may have changed.
+        platform::SaveFileDialog(
+            {{"Wavefront OBJ", "obj;OBJ"}, {"All files", "*"}}, "obj", nullptr,
+            [&app, obj = fx::sh_to_obj(s_shMesh)](std::string path) {
+                if (path.empty()) return;
+                std::ofstream f(path);
+                if (f) {
+                    f << obj;
+                    app.statusMsg  = "Exported to " + path;
+                    app.statusKind = App::StatusKind::Info;
+                } else {
+                    app.statusMsg  = "Cannot write: " + path;
+                    app.statusKind = App::StatusKind::Error;
+                }
+            });
     }
 
     ImGui::TextDisabled("3D preview shown in the Preview panel.");

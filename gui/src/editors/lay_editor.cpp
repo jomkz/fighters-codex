@@ -74,7 +74,7 @@ void DrawLayEditor(App& app) {
                 ImVec4 col(lay.zenith_grad[gi].r / 255.0f,
                            lay.zenith_grad[gi].g / 255.0f,
                            lay.zenith_grad[gi].b / 255.0f, 1.0f);
-                char cid[16]; snprintf(cid, sizeof(cid), "##zg%d_%d", li, gi);
+                char cid[24]; snprintf(cid, sizeof(cid), "##zg%d_%d", li, gi);
                 ImGui::ColorButton(cid, col,
                     ImGuiColorEditFlags_NoTooltip |
                     ImGuiColorEditFlags_NoPicker  |
@@ -90,7 +90,7 @@ void DrawLayEditor(App& app) {
                 ImVec4 col(lay.horizon_grad[gi].r / 255.0f,
                            lay.horizon_grad[gi].g / 255.0f,
                            lay.horizon_grad[gi].b / 255.0f, 1.0f);
-                char cid[16]; snprintf(cid, sizeof(cid), "##hg%d_%d", li, gi);
+                char cid[24]; snprintf(cid, sizeof(cid), "##hg%d_%d", li, gi);
                 ImGui::ColorButton(cid, col,
                     ImGuiColorEditFlags_NoTooltip |
                     ImGuiColorEditFlags_NoPicker  |

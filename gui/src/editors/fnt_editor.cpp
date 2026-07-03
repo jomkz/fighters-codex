@@ -1,5 +1,6 @@
 ﻿#include "fnt_editor.h"
 #include "../app.h"
+#include "../platform/texture.h"
 #include "imgui.h"
 #include "fx/fnt.h"
 #include "fx/pe.h"
@@ -14,7 +15,7 @@ static int          s_lastEntry = -2;
 
 // Build an RGBA atlas of all rendered glyphs arranged in a 16Ã—16 grid.
 // Each cell is cellWÃ—cellH pixels.  White glyph on dark background.
-static GpuTexture BuildGlyphAtlas(App& app, const fx::FntFile& fnt) {
+static GpuTexture BuildGlyphAtlas(const fx::FntFile& fnt) {
     // Determine cell size from the widest / tallest glyph.
     uint32_t cellW = 8, cellH = fnt.font_height ? fnt.font_height : 8;
     for (const auto& g : fnt.glyphs) {
@@ -55,7 +56,7 @@ static GpuTexture BuildGlyphAtlas(App& app, const fx::FntFile& fnt) {
         }
     }
 
-    return app.UploadTexture(rgba.data(), atlasW, atlasH);
+    return platform::UploadTexture(rgba.data(), atlasW, atlasH);
 }
 
 void DrawFntEditor(App& app) {
@@ -72,7 +73,7 @@ void DrawFntEditor(App& app) {
             fx::CodeSection cs = fx::pe_code_section(ed.data.data(), ed.data.size());
             if (cs.data)
                 fx::fnt_render_glyphs(s_fnt, cs.data, cs.size, cs.vma);
-            s_tex = BuildGlyphAtlas(app, s_fnt);
+            s_tex = BuildGlyphAtlas(s_fnt);
         }
     }
 
@@ -89,7 +90,7 @@ void DrawFntEditor(App& app) {
                         s_fnt.font_height, renderedCount);
     ImGui::Separator();
 
-    if (!s_tex.srv) {
+    if (!s_tex.id) {
         ImGui::TextDisabled("(no glyph data to display)");
         return;
     }
@@ -107,7 +108,7 @@ void DrawFntEditor(App& app) {
     ImGui::PopStyleVar();
 
     ImVec2 pos = ImGui::GetCursorScreenPos();
-    ImGui::Image((ImTextureID)(intptr_t)s_tex.srv, ImVec2(dispW, dispH));
+    ImGui::Image((ImTextureID)(intptr_t)s_tex.id, ImVec2(dispW, dispH));
 
     // Tooltip showing character info on hover
     if (ImGui::IsItemHovered()) {

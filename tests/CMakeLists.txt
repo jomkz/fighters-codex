@@ -26,6 +26,19 @@ include(CTest)
 include(Catch)
 catch_discover_tests(fx_tests)
 
+# Display-free gui units (string helpers, dialog completion queue): no SDL3
+# linkage, no window — runs on every leg, unlike the gui_smoke ctest.
+if(FX_BUILD_GUI)
+    add_executable(gui_tests
+        gui/test_util.cpp
+        gui/test_dialog_queue.cpp
+        ${PROJECT_SOURCE_DIR}/gui/src/platform/dialog_queue.cpp
+    )
+    target_include_directories(gui_tests PRIVATE ${PROJECT_SOURCE_DIR}/gui/src)
+    target_link_libraries(gui_tests PRIVATE fx_warnings Catch2::Catch2WithMain)
+    catch_discover_tests(gui_tests PROPERTIES LABELS "gui")
+endif()
+
 # Embedding smoke test: proves the documented consumer contract (api.md) --
 # add_subdirectory of the repo root builds only fx_lib and links as fx::lib
 # into a shared library, offline.

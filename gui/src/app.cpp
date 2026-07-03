@@ -1,19 +1,14 @@
 ﻿#include "app.h"
 #include "fx/version.h"
-
-// Defined in main.cpp â€” applies the correct ImGui colour scheme based on
-// App::themePref (and re-applies rounding).
-void ApplySystemTheme();
 #include "panels/lib_browser.h"
 #include "panels/editor_host.h"
 #include "panels/preview.h"
+#include "platform/dialogs.h"
+#include "platform/window.h"
 #include "util.h"
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "imgui_impl_dx11.h"
 #include <fstream>
-#include <shlobj.h>
-#include <commdlg.h>
 #include <string>
 #include <algorithm>
 #include <filesystem>
@@ -22,9 +17,7 @@ namespace fs = std::filesystem;
 
 static constexpr int kMaxRecent = 5;
 
-App::App(ID3D11Device* device, ID3D11DeviceContext* ctx)
-    : m_device(device), m_ctx(ctx) {
-
+App::App() {
     // Persist app settings (e.g. installDir) inside fx-gui.ini.
     ImGuiSettingsHandler h = {};
     h.TypeName   = "FightersToolkit";
@@ -35,10 +28,10 @@ App::App(ID3D11Device* device, ID3D11DeviceContext* ctx)
     };
     h.ReadLineFn = [](ImGuiContext*, ImGuiSettingsHandler* handler, void*, const char* line) {
         App* app = static_cast<App*>(handler->UserData);
-        auto readVal = [](const char* line, const char* prefix, std::string& out) -> bool {
+        auto readVal = [](const char* ln, const char* prefix, std::string& out) -> bool {
             size_t plen = strlen(prefix);
-            if (strncmp(line, prefix, plen) != 0) return false;
-            out = line + plen;
+            if (strncmp(ln, prefix, plen) != 0) return false;
+            out = ln + plen;
             while (!out.empty() && (out.back() == '\n' || out.back() == '\r'))
                 out.pop_back();
             return true;
@@ -214,7 +207,7 @@ void App::DrawMenuBar() {
             if (ImGui::MenuItem("Preferences...")) openPrefs = true;
             ImGui::Separator();
             if (ImGui::MenuItem("Exit", "Alt+F4"))
-                PostQuitMessage(0);
+                platform::RequestQuit();
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Tools")) {
@@ -273,21 +266,26 @@ void App::DrawMenuBar() {
 
     // Preferences popup
     if (ImGui::BeginPopupModal("##Prefs", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        static char dirBuf[1024] = {};
-        if (ImGui::IsWindowAppearing())
+        static char        dirBuf[1024] = {};
+        static std::string dirApplied;
+        // Refresh the edit buffer when installDir changes underneath it —
+        // the folder dialog completes asynchronously, frames later.
+        if (ImGui::IsWindowAppearing() ||
+            (dirApplied != installDir && !ImGui::IsAnyItemActive())) {
             fxg::copy_str(dirBuf, sizeof(dirBuf), installDir);
+            dirApplied = installDir;
+        }
 
         ImGui::Text("FA Install Directory");
         ImGui::SetNextItemWidth(360.0f);
         if (ImGui::InputText("##installDir", dirBuf, sizeof(dirBuf))) {
             installDir = dirBuf;
+            dirApplied = installDir;
             ImGui::MarkIniSettingsDirty();
         }
         ImGui::SameLine();
-        if (ImGui::Button("Browse...")) {
+        if (ImGui::Button("Browse..."))
             ChooseInstallDir();
-            fxg::copy_str(dirBuf, sizeof(dirBuf), installDir);
-        }
 
         ImGui::Separator();
         ImGui::Text("Theme");
@@ -300,7 +298,7 @@ void App::DrawMenuBar() {
         themeChanged |= ImGui::RadioButton("Light", &tp, (int)ThemePreference::Light);
         if (themeChanged) {
             themePref = static_cast<ThemePreference>(tp);
-            ApplySystemTheme();
+            platform::ApplyTheme(themePref);
             ImGui::MarkIniSettingsDirty();
         }
 
@@ -325,67 +323,37 @@ void App::DrawMenuBar() {
         ImGui::Text("Fighters Codex GUI  v" FX_VERSION_STRING);
         ImGui::Text("Modern replacement for FATK (DuoSoft 1998)");
         ImGui::Separator();
-        ImGui::Text("Backend: ft_lib (C++17)");
-        ImGui::Text("GUI: Dear ImGui + DirectX 11");
+        ImGui::Text("Backend: fx_lib (C++17)");
+        ImGui::Text("GUI: Dear ImGui + SDL3 / OpenGL 3.3");
         if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
     }
 }
 
 // ---------- File dialogs ----------
-
-static std::string WideToUtf8(const wchar_t* ws) {
-    int len = WideCharToMultiByte(CP_UTF8, 0, ws, -1, nullptr, 0, nullptr, nullptr);
-    std::string s(len - 1, 0);
-    WideCharToMultiByte(CP_UTF8, 0, ws, -1, s.data(), len, nullptr, nullptr);
-    return s;
-}
-
-static std::vector<std::string> Win32OpenFiles(const wchar_t* filter,
-                                               const wchar_t* title) {
-    std::vector<wchar_t> buf(32768, 0);
-    OPENFILENAMEW ofn    = {};
-    ofn.lStructSize      = sizeof(ofn);
-    ofn.hwndOwner        = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
-    ofn.lpstrFilter      = filter;
-    ofn.lpstrFile        = buf.data();
-    ofn.nMaxFile         = (DWORD)buf.size();
-    ofn.lpstrTitle       = title;
-    ofn.Flags            = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST |
-                           OFN_ALLOWMULTISELECT | OFN_EXPLORER;
-    if (!GetOpenFileNameW(&ofn)) return {};
-
-    std::vector<std::string> result;
-    const wchar_t* p = buf.data();
-    std::wstring first(p);
-    p += first.size() + 1;
-
-    if (*p == L'\0') {
-        // Single selection: first string is the full path.
-        result.push_back(WideToUtf8(first.c_str()));
-    } else {
-        // Multi selection: first string is directory, rest are filenames.
-        if (!first.empty() && first.back() != L'\\') first += L'\\';
-        while (*p != L'\0') {
-            std::wstring fname(p);
-            result.push_back(WideToUtf8((first + fname).c_str()));
-            p += fname.size() + 1;
-        }
-    }
-    return result;
-}
+// Async: the continuation runs frames later on the main thread. `this` is
+// safe to capture — the single App outlives the dialog system (dialogs shut
+// down before App teardown in main).
 
 void App::OpenLibDialog() {
-    for (const auto& path : Win32OpenFiles(
-            L"LIB Files\0*.LIB\0All Files\0*.*\0", L"Open LIB File"))
-        OpenLib(path);
+    platform::OpenFilesDialog(
+        {{"LIB archives", "LIB;lib"}, {"All files", "*"}}, true,
+        [this](std::vector<std::string> paths) {
+            for (const auto& path : paths)
+                OpenLib(path);
+        });
 }
 
 void App::OpenFileDialog() {
-    for (const auto& path : Win32OpenFiles(
-            L"Game Files\0*.P;*.RAW;*.PIC;*.SH;*.11K;*.5K;*.8K;*.22K\0",
-            L"Open File"))
-        OpenStandaloneFile(path);
+    platform::OpenFilesDialog(
+        {{"Game files",
+          "P;p;RAW;raw;PIC;pic;SH;sh;11K;11k;5K;5k;8K;8k;22K;22k"},
+         {"All files", "*"}},
+        true,
+        [this](std::vector<std::string> paths) {
+            for (const auto& path : paths)
+                OpenStandaloneFile(path);
+        });
 }
 
 static const char* kStandaloneExts[] = {
@@ -477,21 +445,13 @@ void App::AddRecentFile(const std::string& path) {
 
 
 void App::ChooseInstallDir() {
-    wchar_t buf[MAX_PATH] = {};
-    BROWSEINFOW bi = {};
-    bi.hwndOwner = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
-    bi.lpszTitle = L"Select FA install directory";
-    bi.ulFlags   = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-    LPITEMIDLIST pidl = SHBrowseForFolderW(&bi);
-    if (!pidl) return;
-    SHGetPathFromIDListW(pidl, buf);
-    CoTaskMemFree(pidl);
-    int len = WideCharToMultiByte(CP_UTF8, 0, buf, -1, nullptr, 0, nullptr, nullptr);
-    installDir.assign(len - 1, 0);
-    WideCharToMultiByte(CP_UTF8, 0, buf, -1, installDir.data(), len, nullptr, nullptr);
-    ImGui::MarkIniSettingsDirty();
-    statusMsg  = "Install dir: " + installDir;
-    statusKind = StatusKind::Info;
+    platform::ChooseFolderDialog([this](std::string dir) {
+        if (dir.empty()) return;
+        installDir = std::move(dir);
+        ImGui::MarkIniSettingsDirty();
+        statusMsg  = "Install dir: " + installDir;
+        statusKind = StatusKind::Info;
+    });
 }
 
 // ---------- Entry open / commit ----------
@@ -605,38 +565,3 @@ void App::InstallToGame(int libIdx) {
     statusKind = StatusKind::Info;
 }
 
-// ---------- GPU texture upload ----------
-
-GpuTexture App::UploadTexture(const uint8_t* rgba, int w, int h) {
-    GpuTexture t;
-    if (!rgba || w <= 0 || h <= 0) return t;
-
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width              = (UINT)w;
-    desc.Height             = (UINT)h;
-    desc.MipLevels          = 1;
-    desc.ArraySize          = 1;
-    desc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.SampleDesc.Count   = 1;
-    desc.Usage              = D3D11_USAGE_DEFAULT;
-    desc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-
-    D3D11_SUBRESOURCE_DATA init = {};
-    init.pSysMem     = rgba;
-    init.SysMemPitch = (UINT)(w * 4);
-
-    ID3D11Texture2D* tex = nullptr;
-    if (FAILED(m_device->CreateTexture2D(&desc, &init, &tex))) return t;
-
-    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format                    = DXGI_FORMAT_R8G8B8A8_UNORM;
-    srvDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels       = 1;
-    if (FAILED(m_device->CreateShaderResourceView(tex, &srvDesc, &t.srv))) {
-        tex->Release(); return t;
-    }
-    tex->Release();
-    t.width  = w;
-    t.height = h;
-    return t;
-}

@@ -36,10 +36,15 @@ if(PROJECT_IS_TOP_LEVEL)
     enable_testing()
 
     add_subdirectory(cli)
-    if(WIN32)
-        # Win32 + DX11 app until the Phase 3 cross-platform port (epic #46)
+
+    # fx-gui: SDL3 + OpenGL 3.3 + miniaudio on Linux and Windows (ADR-0001).
+    # OFF in the coverage/fuzz presets — no value in instrumented SDL3 builds.
+    option(FX_BUILD_GUI "Build the fx-gui editor" ON)
+    option(FX_SDL3_VENDORED "Force the pinned FetchContent SDL3 (static)" OFF)
+    if(FX_BUILD_GUI)
         add_subdirectory(gui)
     endif()
+
     add_subdirectory(tools)
     add_subdirectory(tests)
 

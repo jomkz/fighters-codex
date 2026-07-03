@@ -207,7 +207,7 @@ void DrawPltEditor(App& app) {
             ImGui::TextDisabled("(file too small â€” %d bytes needed)", base + len);
             return false;
         }
-        bool changed = false;
+        bool edited = false;
         const int COLS = 8;
         for (int i = 0; i < len; i += COLS) {
             ImGui::Text("%04X", base + i);
@@ -221,11 +221,11 @@ void DrawPltEditor(App& app) {
                 if (ImGui::InputScalar(lbl, ImGuiDataType_U8, &v, nullptr, nullptr, "%02X",
                                        ImGuiInputTextFlags_CharsHexadecimal)) {
                     ed.data[idx] = v;
-                    changed = true;
+                    edited = true;
                 }
             }
         }
-        return changed;
+        return edited;
     };
 
     // Renders just the non-zero bytes (offset + value) to quickly spot prior edits.
