@@ -331,6 +331,46 @@ The binary format is identical — parse with the same SH parser. The
 name; the `.PTS` rename is a distribution artifact only. (Unrelated to the
 in-LIB **PTS overlay DLL** format documented in [PTS.md](PTS.md).)
 
+### Cross-validation against OpenFA — audited
+
+The instruction inventory above was audited against the
+[OpenFA](https://gitlab.com/openfa/openfa) `sh` crate (GPLv3; commit
+`7507fef5`, 2024-10-29). **Attribution:** the mnemonic names used here
+(Header, Pad, Unmask, XformUnmask, JumpToFrame/Detail/Damage/LOD,
+VertexBuffer, VertexInfo, SourceName, TextureFile/Index, PtrToObjEnd,
+EndObject/EndShape, X86Code, and the `Unk*` scheme) originate from OpenFA's
+reverse engineering. Facts are documented here with attribution; no code
+crosses the license boundary — sizes and formulas were independently
+re-validated by `fx_lib`'s parser walking all 1275 FA_2.LIB shapes with zero
+errors.
+
+**Agreement** — the two inventories are identical on every checkable fact:
+
+- Same 55 opcodes; neither project knows an opcode the other lacks.
+- All fixed sizes match, including the full `Unk*` set (0x08…0xEE).
+- All variable-size formulas match: `0x06 = 16 + u16@[14]`,
+  `0x0C/0x0E/0x10 = 12 + u16@[10]`, `0x40 = 4 + u16@[2]*2`,
+  `0x42 = 2 + strlen + 1`, `0x82 = 6 + u16@[2]*6`, and the 0x6C flag arms
+  (`0x38→13, 0x48→14, 0x50→16`).
+- Face content/layout flag bits, the header layout, the scale table
+  (including USNF97-only `7 → 0.5` and `0 → 1.0`), and the
+  `push_at % 8 == 0` vertex-pool constraint all match.
+
+**Recorded differences** (both inert for our export-only parser):
+
+| Topic | This spec | OpenFA | Note |
+|---|---|---|---|
+| `0xF0` magic class | byte-magic | word-magic (`F0 00`) | both immediately delegate to x86 handling, so no parse divergence; not yet adjudicated against the engine |
+| `EndObject` extent | consumes all remaining input, with the [PtrToObjEnd/EndObject skip protocol](#x86unknown-region) for x86 regions | 18-byte errata heuristic, because OpenFA parses *through* x86 regions via trampolines instead of skipping them | different models of the same stream behavior; ours is validated by the 1275/1275 walk |
+
+Where this spec now exceeds OpenFA: the two header fields OpenFA marks
+unknown ("probably super important, but I don't know what they mean") are
+resolved as `radius` / `radius_world` by engine tracing — see
+[Engine Notes](#engine-notes). OpenFA's in-source hypotheses for still-open
+opcodes (`0x6C`/`0xC8` as low-detail fast-forwards; the Unmask family as
+manual backface culling) are recorded as leads for the #52 tracing work, not
+as facts.
+
 ## Engine Notes
 
 Shape opcodes that branch on entity state are handled by FA.EXE functions.
