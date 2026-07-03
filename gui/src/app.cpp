@@ -7,6 +7,7 @@ void ApplySystemTheme();
 #include "panels/lib_browser.h"
 #include "panels/editor_host.h"
 #include "panels/preview.h"
+#include "util.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_dx11.h"
@@ -272,9 +273,9 @@ void App::DrawMenuBar() {
 
     // Preferences popup
     if (ImGui::BeginPopupModal("##Prefs", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        static char dirBuf[MAX_PATH + 1] = {};
+        static char dirBuf[1024] = {};
         if (ImGui::IsWindowAppearing())
-            strncpy_s(dirBuf, installDir.c_str(), sizeof(dirBuf) - 1);
+            fxg::copy_str(dirBuf, sizeof(dirBuf), installDir);
 
         ImGui::Text("FA Install Directory");
         ImGui::SetNextItemWidth(360.0f);
@@ -285,7 +286,7 @@ void App::DrawMenuBar() {
         ImGui::SameLine();
         if (ImGui::Button("Browse...")) {
             ChooseInstallDir();
-            strncpy_s(dirBuf, installDir.c_str(), sizeof(dirBuf) - 1);
+            fxg::copy_str(dirBuf, sizeof(dirBuf), installDir);
         }
 
         ImGui::Separator();
@@ -423,10 +424,11 @@ void App::OpenStandaloneFile(const std::string& path) {
     s.data.resize((size_t)sz);
     f.read((char*)s.data.data(), sz);
 
-    // Synthetic single-entry directory for the editor pipeline.
+    // Synthetic single-entry directory for the editor pipeline. The name is
+    // sanitized like a real archive entry so downstream code can trust it.
     fx::Entry e = {};
     std::string fname = fs::path(path).filename().string();
-    strncpy_s(e.name, fname.c_str(), sizeof(e.name) - 1);
+    fxg::copy_str(e.name, sizeof(e.name), fx::ealib_safe_name(fname.c_str()));
     e.flags  = 0;
     e.offset = 0;
     e.size   = (uint32_t)sz;
@@ -594,7 +596,7 @@ void App::CloseAllSessions() {
 void App::InstallToGame(int libIdx) {
     if (libIdx < 0 || libIdx >= (int)sessions.size()) return;
     if (installDir.empty()) { statusMsg = "Set FA install dir first."; statusKind = StatusKind::Warning; return; }
-    std::string dest = installDir + "\\FA_0.LIB";
+    std::string dest = (fs::path(installDir) / "FA_0.LIB").string();
     std::ofstream f(dest, std::ios::binary);
     if (!f) { statusMsg = "Cannot write: " + dest; statusKind = StatusKind::Error; return; }
     const auto& data = sessions[libIdx].data;

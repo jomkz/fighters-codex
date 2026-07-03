@@ -29,18 +29,11 @@ static int        s_previewEntry = -2;
 // or a greyscale fallback if not found.
 static fx::Palette FindSysPalette(const App& app) {
     for (const auto& sess : app.sessions) {
-        for (size_t ei = 0; ei < sess.entries.size(); ++ei) {
-            const auto& entry = sess.entries[ei];
-            // Case-insensitive match for "PALETTE.PAL"
-            std::string name = entry.name;
-            for (auto& c : name) c = (char)toupper((unsigned char)c);
-            if (name == "PALETTE.PAL") {
-                // Decompress and load
-                auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
-                                             entry);
-                if (!raw.empty())
-                    return fx::pal_load(raw.data(), raw.size());
-            }
+        if (const fx::Entry* entry = fx::ealib_find(sess.entries, "PALETTE.PAL")) {
+            auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
+                                         *entry);
+            if (!raw.empty())
+                return fx::pal_load(raw.data(), raw.size());
         }
     }
     return fx::pal_load(nullptr, 0); // greyscale fallback

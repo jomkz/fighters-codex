@@ -38,7 +38,9 @@ static void ReadField(const std::vector<uint8_t>& data, int off, char* buf, int 
 static void WriteField(std::vector<uint8_t>& data, int off, const char* buf, int len) {
     if (off + len > (int)data.size()) return;
     memset(data.data() + off, 0, (size_t)len);
-    strncpy_s((char*)data.data() + off, (size_t)len, buf, (size_t)(len - 1));
+    size_t n = strlen(buf);
+    if (n > (size_t)(len - 1)) n = (size_t)(len - 1);
+    memcpy(data.data() + off, buf, n);
 }
 
 static void ShowKillRow(const char* label, const PltKill& k) {

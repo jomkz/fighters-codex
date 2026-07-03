@@ -1,5 +1,6 @@
 ﻿#include "brf_editor.h"
 #include "../app.h"
+#include "../util.h"
 #include "imgui.h"
 #include "fx/brf.h"
 #include "fx/ot.h"
@@ -21,7 +22,7 @@ static fx::BrfDoc s_doc;
 static void RebuildBuffers(const fx::BrfDoc& doc) {
     s_bufs.resize(doc.fields.size());
     for (size_t i = 0; i < doc.fields.size(); i++) {
-        strncpy_s(s_bufs[i].buf, doc.fields[i].value.c_str(), 127);
+        fxg::copy_str(s_bufs[i].buf, sizeof(s_bufs[i].buf), doc.fields[i].value);
         s_bufs[i].changed = false;
     }
 }

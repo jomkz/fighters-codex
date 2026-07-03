@@ -75,19 +75,13 @@ void DrawPicEditor(App& app) {
             // Find PALETTE.PAL in any open session for correct colour rendering.
             fx::Palette sysPal = fx::pal_load(nullptr, 0);
             for (const auto& sess : app.sessions) {
-                for (size_t ei = 0; ei < sess.entries.size(); ++ei) {
-                    std::string n = sess.entries[ei].name;
-                    for (auto& c : n) c = (char)toupper((unsigned char)c);
-                    if (n == "PALETTE.PAL") {
-                        auto raw = fx::ealib_extract(sess.data.data(),
-                                                    sess.data.size(),
-                                                    sess.entries[ei]);
-                        if (!raw.empty()) { sysPal = fx::pal_load(raw.data(), raw.size()); }
-                        goto pal_found;
-                    }
-                }
+                const fx::Entry* pal = fx::ealib_find(sess.entries, "PALETTE.PAL");
+                if (!pal) continue;
+                auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
+                                             *pal);
+                if (!raw.empty()) sysPal = fx::pal_load(raw.data(), raw.size());
+                break;
             }
-            pal_found:
             auto rgba = fx::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
             if (!rgba.empty() && valid)
                 stbi_write_png(path.c_str(), (int)info.width, (int)info.height,

@@ -1,4 +1,5 @@
-﻿#include "app.h"
+﻿#define NOMINMAX
+#include "app.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_win32.h"
@@ -6,6 +7,7 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include <tchar.h>
+#include <algorithm>
 #include <string>
 
 // Forward declaration of ImGui Win32 message handler
@@ -138,8 +140,8 @@ static LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         SystemParametersInfoW(SPI_GETWORKAREA, 0, &work, 0);
         int workW = work.right  - work.left;
         int workH = work.bottom - work.top;
-        int minW  = min(max(800, workW * 2 / 5), workW);
-        int minH  = min(max(500, workH * 2 / 5), workH);
+        int minW  = std::min(std::max(800, workW * 2 / 5), workW);
+        int minH  = std::min(std::max(500, workH * 2 / 5), workH);
         auto* mmi = reinterpret_cast<MINMAXINFO*>(lp);
         mmi->ptMinTrackSize = { minW, minH };
         return 0;
@@ -273,11 +275,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
         };
         wh.ReadLineFn = [](ImGuiContext*, ImGuiSettingsHandler*, void*, const char* line) {
             int v;
-            if      (sscanf_s(line, "Left=%d",   &v) == 1) s_winRect.left   = v;
-            else if (sscanf_s(line, "Top=%d",    &v) == 1) s_winRect.top    = v;
-            else if (sscanf_s(line, "Right=%d",  &v) == 1) s_winRect.right  = v;
-            else if (sscanf_s(line, "Bottom=%d", &v) == 1) s_winRect.bottom = v;
-            else if (sscanf_s(line, "Show=%d",   &v) == 1) { s_winShow = v; s_winValid = true; }
+            if      (sscanf(line, "Left=%d",   &v) == 1) s_winRect.left   = v;
+            else if (sscanf(line, "Top=%d",    &v) == 1) s_winRect.top    = v;
+            else if (sscanf(line, "Right=%d",  &v) == 1) s_winRect.right  = v;
+            else if (sscanf(line, "Bottom=%d", &v) == 1) s_winRect.bottom = v;
+            else if (sscanf(line, "Show=%d",   &v) == 1) { s_winShow = v; s_winValid = true; }
         };
         wh.WriteAllFn = [](ImGuiContext*, ImGuiSettingsHandler* h, ImGuiTextBuffer* buf) {
             WINDOWPLACEMENT wp = {}; wp.length = sizeof(wp);
