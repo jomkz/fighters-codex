@@ -31,6 +31,22 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   exercising extraction, every parser, and the GPU upload paths against real
   game data.
 
+On Windows, `fx-gui.exe` is a `WIN32`-subsystem (GUI) binary, so shells launch
+it detached: a bare `--smoke` invocation from PowerShell prints nothing,
+returns immediately, and never sets `$LASTEXITCODE`, while the sweep runs
+invisibly in the background. Pipe the output so the shell attaches stdout and
+waits for the exit code:
+
+```powershell
+$fa = "C:\path\to\Fighters Anthology"
+build\gui\Release\fx-gui.exe --smoke (Get-ChildItem "$fa\*.lib").FullName | Out-Host
+echo $LASTEXITCODE   # expect 0, with one "swept" line per LIB
+```
+
+FA installs mix filename case (`FA_1.LIB`, `fa_7.lib`). `Get-ChildItem`
+matches case-insensitively; a case-sensitive POSIX glob like `*.LIB` silently
+misses the lowercase ones.
+
 ## Layout
 
 Three-panel window:

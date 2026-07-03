@@ -102,6 +102,10 @@ the path embedders use (see [api.md](api.md)).
 - `fx` reads arguments through narrow `argv`, so non-ASCII file paths on
   Windows depend on the active code page. FA's data is 8.3 ASCII throughout,
   so this doesn't bite in practice.
+- `fx-gui.exe` builds as a `WIN32`-subsystem app (no console window), so
+  PowerShell launches it detached without waiting. For the headless `--smoke`
+  sweep, pipe the output so the shell waits and reports `$LASTEXITCODE` — see
+  [gui.md](gui.md#platforms).
 
 ## Testing
 
