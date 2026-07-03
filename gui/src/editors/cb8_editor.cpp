@@ -33,7 +33,7 @@ static GpuTexture DecodeToTexture(uint32_t frameIdx) {
 
     int w = (int)s_info.width;
     int h = (int)s_info.height;
-    std::vector<uint8_t> rgba(w * h * 4);
+    std::vector<uint8_t> rgba((size_t)w * h * 4);
     for (int i = 0; i < w * h; i++) {
         uint8_t v = indices[i];   // greyscale: index maps to its own value as brightness
         rgba[i*4+0] = v;
@@ -101,7 +101,7 @@ void DrawCb8Editor(App& app) {
             [&app, data = ed.data, info = s_info](std::string dir) {
                 if (dir.empty()) return;
                 int w = (int)info.width, h = (int)info.height;
-                std::vector<uint8_t> rgba(w * h * 4);
+                std::vector<uint8_t> rgba((size_t)w * h * 4);
 
                 // Sequential export with a fresh decoder over the snapshot
                 fx::Cb8Decoder* expDec = fx::cb8_open(data.data(), data.size());

@@ -29,7 +29,9 @@ TEST_CASE("continuation runs on Pump after Complete, not before", "[gui][dialogs
     CHECK_FALSE(q.Busy());
 }
 
-TEST_CASE("one dialog at a time — Begin while busy is refused", "[gui][dialogs]") {
+// Test names stay ASCII: catch_discover_tests round-trips them through
+// ctest, and non-ASCII bytes mangle under Windows console codepages.
+TEST_CASE("one dialog at a time: Begin while busy is refused", "[gui][dialogs]") {
     DialogQueue q;
     REQUIRE(q.Begin([](std::vector<std::string>) {}));
     CHECK_FALSE(q.Begin([](std::vector<std::string>) {}));
