@@ -55,7 +55,7 @@ Three-panel window:
 |---|---|
 | Left — LIB Browser | Tree of open LIB files; filterable list of records by name or type |
 | Center — Editor | Form/text/timeline editor for the selected record |
-| Right — Preview | Live image preview (PIC, RAW screenshots) |
+| Right — Preview | Live preview: images (PIC with palette switcher, RAW screenshots) and the SH 3D orbit view |
 
 Menu bar: **File** · **View** · **Tools** · **Help**
 
@@ -67,7 +67,7 @@ Menu bar: **File** · **View** · **Tools** · **Help**
 
 ## Library & Project Management
 
-- Open FA / USNF97 / ATF Gold `.LIB` files; open loose files directly (RAW, PLT, PIC, audio, BRF formats)
+- Open FA / USNF97 / ATF Gold `.LIB` files; open loose files directly (BRF type records, PIC, RAW, audio, missions, SEQ, INF, SH, PLT, PAL)
 - Multiple files open simultaneously; each appears as a collapsible session in the LIB browser
 - Browse library contents with type labels (Aircraft, Ordnance, Image, Audio, Mission, …) and file sizes
 - Filter records by name or type
@@ -193,7 +193,6 @@ directory (`~/.local/share/jomkz/fx-gui/` on Linux,
 - **Theme** — Auto (follow the system), Dark, or Light; set via File → Preferences
 - **Recent files** — last 5 opened files; accessible from File → Recent Files; cleared from the same submenu
 - **Window size and position** — restored on next launch; falls back to centered if the saved position is off-screen (position persistence is unavailable on Wayland)
-- External tool integration: planned (Phase 3).
 
 ## Building
 
