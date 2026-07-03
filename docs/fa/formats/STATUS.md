@@ -45,7 +45,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [RGN](RGN.md) | installer | complete | — | none [#108](https://github.com/jomkz/fighters-codex/issues/108) | — | — | — | — | — |
 | [SEE](SEE.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx see` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [SEQ](SEQ.md) | video | complete | — | round-trip (byte-identical) | `fx seq` | `tests/test_seq.cpp` | syn/real | — | `gui/src/editors/seq_editor.cpp` |
-| [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52)<br>re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | — | `gui/src/editors/sh_editor.cpp` |
+| [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | — | `gui/src/editors/sh_editor.cpp` |
 | [SMS](SMS.md) | system | complete | — | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx sms` | — | real | — | — |
 | [SSF](SSF.md) | installer | complete | — | none [#109](https://github.com/jomkz/fighters-codex/issues/109) | — | — | — | — | — |
 | [T2](T2.md) | terrain | partial | re-gameplay [#56](https://github.com/jomkz/fighters-codex/issues/56)<br>re-gameplay [#56](https://github.com/jomkz/fighters-codex/issues/56) | read-only [#98](https://github.com/jomkz/fighters-codex/issues/98) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | — |

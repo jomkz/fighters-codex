@@ -228,6 +228,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` / `AnalyzeBIFRAME.java` | Deep dives on overlay projects | Yes |
 | `AnalyzeSHHeader.java` | SH header field consumption — radius/radius_world evidence (#124) | Yes |
 | `AnalyzeSHDispatch.java` | SH interpreter vector_table map; materializes handler functions (#52) | Yes |
+| `AnalyzeSHX86.java` | SH X86Unknown entry contract — do_start_asm/do_start_interp (#125) | Yes |
 
 ### Launchers (Linux `.sh` / Windows `.bat`)
 
