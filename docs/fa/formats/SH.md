@@ -360,7 +360,7 @@ errors.
 
 | Topic | This spec | OpenFA | Note |
 |---|---|---|---|
-| `0xF0` magic class | byte-magic | word-magic (`F0 00`) | both immediately delegate to x86 handling, so no parse divergence; not yet adjudicated against the engine |
+| `0xF0` magic class | byte-magic | word-magic (`F0 00`) | both immediately delegate to x86 handling, so no parse divergence; adjudicated: the engine has no magic-class concept at all — dispatch is uniform `vector_table[opcode*2]` (see [Engine Notes](#engine-notes)) |
 | `EndObject` extent | consumes all remaining input, with the [PtrToObjEnd/EndObject skip protocol](#x86unknown-region) for x86 regions | 18-byte errata heuristic, because OpenFA parses *through* x86 regions via trampolines instead of skipping them | different models of the same stream behavior; ours is validated by the 1275/1275 walk |
 
 Where this spec now exceeds OpenFA: the two header fields OpenFA marks
@@ -401,6 +401,72 @@ Confirmed from FA.SMS:
   are word-magic operand fetches and zero negative-displacement reads that
   could reach back from the stream start
   ([`AnalyzeSHHeader.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/AnalyzeSHHeader.java)).
+
+### Interpreter dispatch — vector_table (traced)
+
+The shape interpreter is hand-written **threaded code**: there is no central
+decode loop. Every handler ends by fetching and dispatching the next
+instruction inline (150+ dispatch sites across 0x4C9581–0x4D6F42):
+
+```asm
+mov   ax, [esi]                  ; AL = opcode, AH = first operand byte
+lea   esi, [esi+2]               ; consume 2 bytes
+movzx ebx, al
+jmp   [vector_table + ebx*2]     ; 4-byte entries at opcode*2
+```
+
+`vector_table` (the FA.SMS name; `.data`, `0x5183A0`) holds 128 dword handler
+pointers addressed at `opcode*2` — so **only even opcodes dispatch cleanly**,
+and the parser-side byte-magic/word-magic distinction dissolves at engine
+level: every fetch consumes `[op][first-operand-byte]`, and handlers whose
+operands start at byte 1 back up themselves (the 3-byte `0x38` handler begins
+with `DEC ESI`). `0xFF`/`0x01` never reach the table in well-formed streams
+(the header is consumed at queue time by `GRAddBrentObj`).
+
+Handler symbols recovered from FA.SMS (the full 128-entry map is reproduced by
+[`AnalyzeSHDispatch.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/AnalyzeSHDispatch.java),
+which also materializes the handlers as Ghidra functions):
+
+| Op | Spec name | Handler | FA.SMS symbol |
+|----|-----------|---------|---------------|
+| `0x1E` | Pad | `0x4D17F4` | `do_short_eof` |
+| `0x38` | Unk38 | `0x4D30E4` | `do_short_ijmp` — `DEC ESI`, then falls into the `0x48` Jump handler |
+| `0x40` | JumpToFrame | `0x4D3134` | `do_anim_jmp` |
+| `0x42` | SourceName | `0x4D17BC` | `do_shape_name` |
+| `0x44` | Unk44 | `0x4D42EC` | `do_setcoarse` |
+| `0x46` | Unk46 | `0x4D478C` | `do_force_no_pmap` |
+| `0x50` | Unk50 | `0x4D3100` | `do_ijmp_long` — `[50 00][rel32]`, unconditional `esi += rel32` |
+| `0x6E` | UnmaskLong | `0x4D22A8` | `do_sfcal_long` |
+| `0xA6` | JumpToDetail | `0x4D2318` | (unnamed) — skips `rel16` when detail global `0x515EEE` ≥ operand threshold |
+| `0xAC` | JumpToDamage | `0x4D22D4` | `do_ifdestroyed` — `esi += rel16` when `_destroyed` (`0x50C39C`, set per entity by `ShapeSetup`) is non-zero |
+| `0xB2` | UnkB2 | `0x4D2344` | `do_use_terrain_detail` |
+| `0xB8` | UnkB8 | `0x4D22FC` | `do_no_overlap` |
+| `0xC6` | XformUnmaskLong | `0x4D33D8` | `do_icall_long` |
+| `0xC8` | JumpToLOD | `0x4D416C` | `do_jumpfar4` — skips its 6-byte operand when flag `0x515EF0 & 0x20000`; otherwise computes a view-space depth dot product for the distance test |
+| `0xCE` | UnkCE | `0x4D47A4` | `do_streamer_def` |
+| `0xD0` | UnkD0 | `0x4D47B8` | `do_streamer_draw` |
+| `0xD2` | UnkD2 | `0x4D4894` | `do_screen_coords` |
+| `0xDA` | UnkDA | `0x4D42C8` | `do_setlight` |
+| `0xE4` | UnkE4 | `0x4D4A47` | `do_brush_area` |
+| `0xE6` | UnkE6 | `0x4D4A6D` | `do_brush_area_full` |
+| `0xE8` | UnkE8 | `0x4D5475` | `do_new_smap` |
+| `0xEA` | UnkEA | `0x4D5644` | `do_new_rmap` |
+| `0xEE` | UnkEE | `0x4D4A30` | `do_brush_trans` |
+| `0xF0` | X86Code | `0x4D4254` | `do_start_asm` |
+| `0xF2` | PtrToObjEnd | `0x4D4258` | `do_collision_info` |
+| `0xF6` | VertexInfo | `0x4D4308` | `do_set_point_color` |
+| `0xFC` | Face | `0x4D43DC` | `do_new_poly` |
+
+Engine-only opcodes (handlers exist; absent from the 1275-file FA corpus):
+`0x34` → `do_nop`, `0x36`/`0x3E` → `do_new_pmap_or_tmap`, `0x5C` →
+`do_setcolor2`, `0xEC` → `do_brush_solid`, `0xF4` → `do_set_gouraud`,
+`0xF8` → `do_drawobj000`, `0xFA` → `do_fullpntg16`, `0xFE` → `do_nt`.
+Six slots (`0x14`, `0x16`, `0x3C`, `0xA8`, `0xAA`, `0xC0`) share
+`do_if_not_effect` — a conditional skip keyed on the effects setting — and
+ten unassigned slots point at a common stub (`0x4D17E0`).
+
+These handler names are FA.SMS facts; full operand/runtime semantics for the
+animation and LOD/damage families are the subject of #122/#123.
 
 ## Round-Trip Notes
 
