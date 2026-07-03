@@ -133,3 +133,6 @@ nav:
   - Project:
       - Roadmap: roadmap.md
       - Spec Authoring: spec-authoring.md
+      - Decisions:
+          - Index: adr/README.md
+          - "ADR-0001: fx-gui backend": adr/0001-fx-gui-sdl3-opengl3-miniaudio.md
