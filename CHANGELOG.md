@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- **re** SH header: the two unknown header words are named and traced — `radius` (approximate bounding-sphere magnitude, read by `GRAddBrentObj` to floor the projection/precision shift) and `radius_world` (shown engine-unused, present only on ground/naval scenery), replacing the incorrect "file ID" guess (#124)
+- **re** SH opcode table cross-validated against the OpenFA `sh` crate (GPLv3): full agreement on all 55 opcodes, sizes, and formulas; two inert modeling differences recorded; mnemonic provenance attributed per the MIT/GPL boundary (#121)
+- **re** SH interpreter dispatch recovered: the hand-written threaded-code `vector_table` (128 handlers indexed by `opcode×2`) names a dozen former `Unk*` handlers and shows the byte/word-magic split is a parser-side model the engine does not have (#123)
+- **re** SH animation and LOD/damage opcodes fully specified — `JumpToFrame` free-running frame selection against the global frame counter, and the `JumpToDamage`/`JumpToDetail`/`JumpToLOD` conditional geometry switches — enough to implement playback and LOD/damage-state selection from the doc (#122, #123)
+- **re** SH X86Unknown region specified: the embedded-x86 blocks are trampoline-based conditional selectors (the `0xF0 → push esi; ret` entry, `FF25` reads of the `_PL*` articulation state, `do_start_interp` re-entry, and a per-shape inventory), making the fa-bridge x86-effect interpreter implementable from the doc (#125)
+
+### Notes
+- **v0.5.1 is a documentation release** completing epic #52 (SH engine-behavior semantics), pulled forward ahead of Phase 4. It carries no runtime-code changes — `fx_lib`, `fx`, and `fx-gui` binaries are byte-identical to v0.5.0, and no fa-bridge submodule bump is required. With it, the SH format spec is sufficient for the fa-bridge bytecode (#19) and x86-effect (#21) interpreters to be built from documentation alone. The Linux Ghidra workbench port that enabled this work landed in the same window (#199).
+
 ## [0.5.0] - 2026-07-03
 
 ### Added
