@@ -2,8 +2,8 @@
 
 This is the full developer reference — build setup, IDE configuration, project
 structure, and release workflow. For commit message conventions, see
-[CONTRIBUTING.md](../CONTRIBUTING.md); branch naming rules are
-[below](#branch-names).
+[CONTRIBUTING.md](https://github.com/jomkz/fighters-codex/blob/main/CONTRIBUTING.md);
+branch naming rules are [below](#branch-names).
 
 Primary development happens on Fedora Linux; the Windows bench is kept for the
 tasks listed in [What still needs the Windows bench](#what-still-needs-the-windows-bench).
@@ -22,8 +22,8 @@ Ninja, Python 3 (release scripts and the real-asset test harness), and Git.
 On Windows (MSVC):
 
 - **Visual Studio 2022 or 2026** with the following workloads:
-  - Desktop development with C++
-  - C++ CMake tools for Windows (installs cmake.exe into the VS directory)
+    - Desktop development with C++
+    - C++ CMake tools for Windows (installs cmake.exe into the VS directory)
 - **Windows 10 or 11** recommended for development (target runtime is Windows 7+)
 - **Git**, and **Python 3** for the release scripts and real-asset harness
 
@@ -34,7 +34,7 @@ directory to your user `PATH`.
 
 ## Building
 
-All builds go through [CMake presets](../CMakePresets.json):
+All builds go through [CMake presets](https://github.com/jomkz/fighters-codex/blob/main/CMakePresets.json):
 
 | Preset | OS | Compiler | Config | Binary dir |
 |---|---|---|---|---|
@@ -112,7 +112,8 @@ the path embedders use (see [api.md](api.md)).
   harness fuzzes for 60 seconds from its committed seed corpus — see
   [Fuzzing](#fuzzing).
 - **Docs checks** (label `docs`): `check_status_selftest` and
-  `check_status_docs` run [`tools/check_status.py`](../tools/check_status.py)
+  `check_status_docs` run
+  [`tools/check_status.py`](https://github.com/jomkz/fighters-codex/blob/main/tools/check_status.py)
   on every preset leg, so a codec change that invalidates a format spec's
   front-matter claims — or leaves the generated
   [status matrix](fa/formats/STATUS.md) stale — fails `ctest` locally, not
@@ -131,7 +132,7 @@ ctest --preset gcc -R fa_extract_manifest
 
 The test unpacks every `.LIB` in the install and verifies each extracted
 file's SHA-256 against the committed manifest
-([tests/integration/fa-extract.sha256](../tests/integration/fa-extract.sha256)).
+([tests/integration/fa-extract.sha256](https://github.com/jomkz/fighters-codex/blob/main/tests/integration/fa-extract.sha256)).
 A manifest generated on one OS and verified on the other proves the extraction
 pipeline is byte-identical across platforms. To regenerate after an intended
 output change:
@@ -148,7 +149,7 @@ the repository (`*.LIB`, `*.PIC`, `*.PAL`, … are gitignored — keep it that w
 
 ## Fuzzing
 
-libFuzzer harnesses live in [fuzz/](../fuzz/) and build only under the `fuzz`
+libFuzzer harnesses live in [fuzz/](https://github.com/jomkz/fighters-codex/tree/main/fuzz) and build only under the `fuzz`
 preset (Clang; the whole tree gets coverage instrumentation plus ASan/UBSan):
 
 ```bash
@@ -180,7 +181,7 @@ before merging.
 ## Continuous Integration
 
 Every PR to `main` (and every push to it) runs the
-[CI workflow](../.github/workflows/ci.yml): a matrix that runs
+[CI workflow](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/ci.yml): a matrix that runs
 `cmake --preset <p>`, `cmake --build --preset <p>`, `ctest --preset <p>` per leg.
 
 | Check | Runner | Proves |
@@ -191,14 +192,44 @@ Every PR to `main` (and every push to it) runs the
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
 | `macos (informational)` | macos-latest | AppleClang build + suite as an early-warning signal; `continue-on-error` — never blocks a PR |
 | `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
-| `docs-status` | ubuntu-latest | [`tools/check_status.py`](../tools/check_status.py) `--self-test` + `--check`: format-spec front-matter and template conformance ([spec-authoring.md](spec-authoring.md)), encoding and relative-link hygiene across all markdown, front-matter claims vs. `lib/`+`cli/`+`tests/`+`fuzz/` reality, and currency of the generated [status matrix](fa/formats/STATUS.md) — a stale matrix fails the PR |
+| `docs-status` | ubuntu-latest | [`tools/check_status.py`](https://github.com/jomkz/fighters-codex/blob/main/tools/check_status.py) `--self-test` + `--check`: format-spec front-matter and template conformance ([spec-authoring.md](spec-authoring.md)), encoding and link hygiene across all markdown — relative links resolve case-exactly, links in `docs/` stay inside the docs tree, repo `blob`/`tree` URLs point at real `main` paths — front-matter claims vs. `lib/`+`cli/`+`tests/`+`fuzz/` reality, and currency of the generated [status matrix](fa/formats/STATUS.md) — a stale matrix fails the PR |
 | `coverage` | ubuntu-latest | gcov line coverage over `lib/` + `cli/`, gcovr summary on the run's summary page + HTML artifact; enforces a floor that only ratchets **up** (raised by epic [#50](https://github.com/jomkz/fighters-codex/issues/50), never lowered) |
-| CodeQL | ubuntu-latest | Static analysis ([security-extended](../.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
+| CodeQL | ubuntu-latest | Static analysis ([security-extended](https://github.com/jomkz/fighters-codex/blob/main/.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
+| Docs | ubuntu-latest | [`mkdocs build --strict`](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/docs.yml) over the whole docs tree — a broken link, broken anchor, or page missing from the site nav fails the PR; on push to `main` it also deploys the [published site](https://jomkz.github.io/fighters-codex/) (runs only when docs or site config change) |
 
 Every `uses:` in the workflows is pinned to a commit SHA (with the version in a
-trailing comment); [Dependabot](../.github/dependabot.yml) keeps the pins current.
-Test presets are configured with `noTestsAction: error`, so a leg that discovers
-zero tests fails instead of passing vacuously.
+trailing comment); [Dependabot](https://github.com/jomkz/fighters-codex/blob/main/.github/dependabot.yml)
+keeps the pins current. Test presets are configured with `noTestsAction: error`,
+so a leg that discovers zero tests fails instead of passing vacuously.
+
+## Documentation Site
+
+The `docs/` tree is published as <https://jomkz.github.io/fighters-codex/> —
+an mkdocs-material site built from the same markdown sources GitHub renders.
+The [Docs workflow](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/docs.yml)
+builds the site with `mkdocs build --strict` on every PR that touches docs or
+site config, and deploys to GitHub Pages on push to `main`. Strict mode plus
+the `validation:` block in
+[mkdocs.yml](https://github.com/jomkz/fighters-codex/blob/main/mkdocs.yml)
+means a broken link, a broken `#anchor`, or a page missing from the nav fails
+the build — site health is CI-enforced, not aspirational.
+
+To preview locally (the site toolchain is the repo's only pip dependency,
+pinned in
+[requirements-docs.txt](https://github.com/jomkz/fighters-codex/blob/main/requirements-docs.txt)):
+
+```bash
+python3 -m venv ~/.venvs/fx-docs
+~/.venvs/fx-docs/bin/pip install -r requirements-docs.txt
+~/.venvs/fx-docs/bin/mkdocs serve    # live preview at http://127.0.0.1:8000/
+~/.venvs/fx-docs/bin/mkdocs build --strict   # what CI runs
+```
+
+Two conventions keep GitHub and the site rendering identically: heading
+anchors use GitHub-style slugs (configured via `pymdownx.slugs.slugify`), and
+links from `docs/` to files outside the docs tree (source, workflows, repo
+meta) are written as absolute `github.com/...` URLs — `check_status.py`
+verifies those URLs point at real paths, so they can't silently rot.
 
 ## IDE Setup
 
@@ -279,7 +310,7 @@ fighters-codex/
 ```
 
 The type prefix matches the Conventional Commit type of the work
-(see [CONTRIBUTING.md](../CONTRIBUTING.md)):
+(see [CONTRIBUTING.md](https://github.com/jomkz/fighters-codex/blob/main/CONTRIBUTING.md)):
 
 | Prefix | Use for | Example |
 |---|---|---|
@@ -303,8 +334,9 @@ python3 scripts/draft-changelog.py
 ```
 
 Review and edit `CHANGELOG.md` (the script drafts; you refine), then commit any
-changes before releasing. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the commit
-message format that drives this.
+changes before releasing. See
+[CONTRIBUTING.md](https://github.com/jomkz/fighters-codex/blob/main/CONTRIBUTING.md)
+for the commit message format that drives this.
 
 1. Ensure `CHANGELOG.md` has the desired content under `## [Unreleased]`.
 2. When ready to ship, run the release script with the new version:

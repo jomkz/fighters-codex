@@ -13,8 +13,10 @@ This script is the single source of truth for the canonical vocabularies, and
 it checks three layers:
 
   1. docs-only:   front-matter schema, section skeleton, encoding (UTF-8, no
-                  BOM, no mojibake), relative-link integrity (case-exact),
-                  README index membership.
+                  BOM, no mojibake), relative-link integrity (case-exact,
+                  and links in docs/ must stay inside the docs tree so the
+                  published site renders them), repo blob/tree URLs point at
+                  real main-branch paths, README index membership.
   2. claims:      every lib/cli/test/fuzz/gui pointer resolves to a real file;
                   every fx command token is a live dispatch literal.
   3. coverage:    every codec, CLI command, test, fuzz harness, and GUI
@@ -73,6 +75,11 @@ TOKEN_RE = re.compile(r"^[A-Z0-9]+$")
 EXT_RE = re.compile(r"^\.[A-Z0-9]+$")
 KEY_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_-]*):(.*)$")
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
+# File/directory links into this repository (docs/ uses these instead of
+# relative links that would escape the published site's docs tree).
+REPO_FILE_URL_RE = re.compile(
+    r"^https://github\.com/jomkz/fighters-codex/(?:blob|tree)/([^/#?]+)/([^#?]*)"
+)
 STRCMP_RE = re.compile(r'strcmp\(cmd,\s*"(\w+)"\)\s*==\s*0')
 RETURN_CMD_RE = re.compile(r"return\s+(cmd_\w+)\(")
 
@@ -538,8 +545,8 @@ def exists_case_exact(path):
     return True
 
 
-def iter_links(text):
-    """Relative link targets outside code fences and inline code spans."""
+def _iter_link_targets(text):
+    """Raw link targets outside code fences and inline code spans."""
     fence = False
     for line in text.splitlines():
         if line.lstrip().startswith("```"):
@@ -549,12 +556,26 @@ def iter_links(text):
             continue
         line = re.sub(r"`[^`]*`", "", line)
         for m in LINK_RE.finditer(line):
-            target = m.group(1)
-            if re.match(r"^[a-z][a-z0-9+.-]*:", target):  # http:, mailto:, ...
-                continue
-            target = target.split("#", 1)[0]
-            if target:
-                yield target
+            yield m.group(1)
+
+
+def iter_links(text):
+    """Relative link targets outside code fences and inline code spans."""
+    for target in _iter_link_targets(text):
+        if re.match(r"^[a-z][a-z0-9+.-]*:", target):  # http:, mailto:, ...
+            continue
+        target = target.split("#", 1)[0]
+        if target:
+            yield target
+
+
+def iter_repo_file_urls(text):
+    """(ref, repo-relative path) per blob/tree URL into this repository."""
+    for target in _iter_link_targets(text):
+        m = REPO_FILE_URL_RE.match(target)
+        if m:
+            path = m.group(2).split("#", 1)[0].split("?", 1)[0]
+            yield m.group(1), path.rstrip("/")
 
 
 def docs_files():
@@ -565,6 +586,7 @@ def docs_files():
 
 def check_docs_hygiene():
     errs = []
+    docs_dir = (ROOT / "docs").resolve()
     for path in docs_files():
         rel = path.relative_to(ROOT)
         raw = path.read_bytes()
@@ -578,11 +600,33 @@ def check_docs_hygiene():
             continue
         for hit in find_mojibake(text):
             errs.append("%s: mojibake %r (cp1252 double-encoding)" % (rel, hit))
+        in_docs = rel.parts[0] == "docs"
         for target in iter_links(text):
             resolved = (path.parent / target).resolve()
             if not exists_case_exact(resolved):
                 errs.append("%s: broken or wrong-case link: %s" % (rel, target))
+            elif in_docs and not _under(resolved, docs_dir):
+                # Escaping links 404 on the published docs site; point at
+                # https://github.com/jomkz/fighters-codex/blob/main/... instead.
+                errs.append("%s: link escapes docs/ (breaks the docs site; "
+                            "use a repo blob/tree URL): %s" % (rel, target))
+        for ref, target in iter_repo_file_urls(text):
+            if ref != "main":
+                errs.append("%s: repo file URL pins ref %r (link main): %s"
+                            % (rel, ref, target))
+            elif not target or not exists_case_exact(ROOT / target):
+                errs.append("%s: repo file URL points at a missing or "
+                            "wrong-case path: %s" % (rel, target))
     return errs
+
+
+def _under(path, ancestor):
+    """True if resolved path lies under ancestor (Python 3.8-safe)."""
+    try:
+        path.relative_to(ancestor)
+        return True
+    except ValueError:
+        return False
 
 
 # ---------------------------------------------------------------------------
@@ -985,6 +1029,22 @@ def self_test():
 
     links = list(iter_links("[a](B.md) [b](http://x) ![i](img.png#frag) `[c](skip.md)`"))
     expect(links == ["B.md", "img.png"], "links: scheme/anchor/code-span handling")
+
+    urls = list(iter_repo_file_urls(
+        "[a](https://github.com/jomkz/fighters-codex/blob/main/README.md) "
+        "[b](https://github.com/jomkz/fighters-codex/tree/main/fuzz/) "
+        "[c](https://github.com/jomkz/fighters-codex/blob/v0.3.0/README.md#L5) "
+        "[d](https://github.com/jomkz/fighters-codex/issues/45) "
+        "`[e](https://github.com/jomkz/fighters-codex/blob/main/skip.md)`"))
+    expect(urls == [("main", "README.md"), ("main", "fuzz"),
+                    ("v0.3.0", "README.md")],
+           "repo-urls: blob/tree parsing, ref/fragment/code-span handling")
+
+    docs_dir = (ROOT / "docs").resolve()
+    expect(_under((ROOT / "docs" / "cli.md").resolve(), docs_dir),
+           "containment: docs file is under docs/")
+    expect(not _under((ROOT / "README.md").resolve(), docs_dir),
+           "containment: root file is not under docs/")
 
     row = _matrix_row("ZZZ", fm)
     expect("round-trip (byte-identical)" in row and "re-static" in row,
