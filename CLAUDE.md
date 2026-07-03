@@ -41,7 +41,10 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 - Conventional Commits + branch names per [CONTRIBUTING.md](CONTRIBUTING.md)
   (`<type>/<kebab-description>`; scopes `fx-lib`/`fx-cli`/`fx-gui`).
 - Releases: `python3 scripts/draft-changelog.py` to draft, curate CHANGELOG.md, then
-  `python3 scripts/release.py X.Y.Z` and push with tags. Then bump fa-content's submodule.
+  `python3 scripts/release.py X.Y.Z` — main is protected, so the script commits on a
+  `chore/release-vX.Y.Z` branch and never tags; land the PR (squash-merge), tag the
+  squash commit, push the tag (the script prints the steps; runbook in
+  docs/development.md § Releasing). Then bump fa-bridge's submodule if fx_lib changed.
 - C++17, zero external runtime dependencies; vendored libs only (`lib/vendor/`,
   `gui/vendor/`), with one exception per ADR-0001: SDL3 resolves system-first
   (`find_package`) with a pinned, checksummed FetchContent fallback; CI and

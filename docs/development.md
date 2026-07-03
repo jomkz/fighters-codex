@@ -348,7 +348,7 @@ The type prefix matches the Conventional Commit type of the work
 | `refactor/` | Restructuring without behavior change | `refactor/split-cmd-lib` |
 | `build/` | Build system and tooling | `build/cmake-presets` |
 | `test/` | Test-only additions | `test/fnt-fixtures` |
-| `chore/` | Maintenance, releases, CI | `chore/release-0-4-0` |
+| `chore/` | Maintenance, releases, CI | `chore/release-v0.5.0` |
 
 Rules: lowercase kebab-case after the slash, keep it short, one logical change
 per branch. Branches merge to `main` via PR.
@@ -367,26 +367,44 @@ changes before releasing. See
 for the commit message format that drives this.
 
 1. Ensure `CHANGELOG.md` has the desired content under `## [Unreleased]`.
-2. When ready to ship, run the release script with the new version:
+2. When ready to ship, run the release script with the new version — from
+   `main` (the script creates the `chore/release-vX.Y.Z` branch) or from that
+   release branch if the changelog curation already lives there:
 
 ```bash
-python3 scripts/release.py 0.4.0
+python3 scripts/release.py 0.5.0
 ```
 
 This will:
+- Switch to `chore/release-v0.5.0` when starting from `main`
 - Bump the version in `CMakeLists.txt`
 - Rotate `CHANGELOG.md` — promotes `[Unreleased]` to the new version with today's date and updates the comparison links
-- Commit both files as `chore: release v0.4.0`
-- Create the tag `v0.4.0`
+- Commit both files as `chore: release v0.5.0`
 
-3. Review the commit (`git log --oneline -2`, `git diff HEAD~1`), then push:
+The script never tags: `main` is protected, so the release commit lands via
+PR squash-merge, and the local commit's SHA never appears on `main` — a tag
+created now would point at an unreachable commit (the v0.4.0 misfire).
+
+3. Review the commit (`git show --stat HEAD`), push the branch, and open the
+   PR:
 
 ```bash
-git push origin main --tags
+git push -u origin chore/release-v0.5.0
+gh pr create --fill
 ```
 
-4. After the release workflow publishes, bump fa-content's `extern/fx_lib`
-   submodule to the new tag.
+4. After CI is green, squash-merge the PR, then tag the squash commit:
+
+```bash
+git switch main && git pull
+git log -1 --oneline   # must show: chore: release v0.5.0 (#<PR>)
+git tag v0.5.0 && git push origin v0.5.0
+```
+
+5. After the release workflow publishes, verify all six artifacts (`fx`,
+   `fx-gui`, and `fx-lib` — one Windows zip and one Linux tarball each) and
+   bump fa-bridge's `extern/fx_lib` submodule to the new tag when the release
+   changed `fx_lib`.
 
 Pushing the tag triggers the GitHub Actions release workflow: it builds **and
 tests** on both OSes, packages the Windows zips and Linux tarballs, extracts
