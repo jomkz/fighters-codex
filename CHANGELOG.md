@@ -7,6 +7,9 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **fx-gui** palette viewer and switcher: `.PAL` records (previously unopenable) show a 16×16 swatch grid with per-index RGB tooltips, and one shared palette selection — Auto, Greyscale, or any `.PAL` across open sessions — applies live to PIC previews and CB8 frames. Auto keeps the established defaults (PALETTE.PAL for PIC, greyscale for CB8, whose engine palette ships in no LIB); PIC → PNG and CB8 frame exports follow the selection, and the PIC editor shows its inline palette fragment (#91)
+
 ## [0.4.1] - 2026-07-03
 
 ### Changed
