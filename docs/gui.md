@@ -1,6 +1,6 @@
 # fx-gui — Graphical Editor
 
-`fx-gui.exe` is the interactive validation layer for the FA asset format research. It
+`fx-gui` is the interactive validation layer for the FA asset format research. It
 exercises the `fx_lib` codecs against real game data and makes format behaviour
 directly observable — loading a LIB archive, editing a type definition, or previewing
 a decoded image confirms that the underlying format understanding is correct.
@@ -8,6 +8,44 @@ a decoded image confirms that the underlying format understanding is correct.
 FATK (DuoSoft 1998), the original FA editor, is a 16-bit/32-bit VB6 application that
 does not run on 64-bit Windows. `fx-gui` covers the same ground and more, but
 replacing FATK is a byproduct rather than the goal.
+
+## Platforms
+
+`fx-gui` runs natively on Linux and Windows from the same code: SDL3 windowing with
+an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
+(backend rationale in [ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md)).
+
+- **Theming** — Auto follows the desktop's dark/light preference (via
+  `SDL_GetSystemTheme`) and switches live; Dark/Light can be forced in
+  Preferences. On bare X11 without a desktop portal the system preference is
+  unknown and Auto falls back to dark.
+- **DPI** — UI metrics and fonts scale to the window's display scale, and
+  rescale live when the window moves to a display with a different scale.
+- **Wayland** — window *position* cannot be saved or restored (a Wayland
+  design decision); size and maximized state still persist.
+- **`--smoke [LIB ...]`** — headless self-check: with no arguments, renders
+  three frames without showing a window (falling back to SDL's offscreen
+  driver when no display server exists) and exits 0; CI runs it as the
+  `gui_smoke` ctest. Given LIB paths, it opens each archive and cycles every
+  entry through its editor and the preview — one rendered frame per record —
+  exercising extraction, every parser, and the GPU upload paths against real
+  game data.
+
+On Windows, `fx-gui.exe` is a `WIN32`-subsystem (GUI) binary, so shells launch
+it detached: a bare `--smoke` invocation from PowerShell prints nothing,
+returns immediately, and never sets `$LASTEXITCODE`, while the sweep runs
+invisibly in the background. Pipe the output so the shell attaches stdout and
+waits for the exit code:
+
+```powershell
+$fa = "C:\path\to\Fighters Anthology"
+build\gui\Release\fx-gui.exe --smoke (Get-ChildItem "$fa\*.lib").FullName | Out-Host
+echo $LASTEXITCODE   # expect 0, with one "swept" line per LIB
+```
+
+FA installs mix filename case (`FA_1.LIB`, `fa_7.lib`). `Get-ChildItem`
+matches case-insensitively; a case-sensitive POSIX glob like `*.LIB` silently
+misses the lowercase ones.
 
 ## Layout
 
@@ -70,7 +108,7 @@ mapped), and annotation (units, enum values). Changes are patched back via
 ## Audio Editing (11K / 5K / 8K)
 
 - Waveform display (downsampled to 512 points for performance)
-- In-app playback via Windows `waveOut` API with real-time position tracking
+- In-app playback via miniaudio with real-time position tracking
 - Play, pause/resume, and stop controls
 - Animated playhead showing current position; left-click or drag to seek; right-click to pause at position
 - Playhead color indicates state: green = playing, yellow = paused, grey = stopped
@@ -126,12 +164,15 @@ Identity block fields (all editable):
 
 ## Settings / Preferences
 
-All settings persist automatically in `fx-gui.ini` (same directory as the executable) across restarts.
+All settings persist automatically in `fx-gui.ini` in the per-user preferences
+directory (`~/.local/share/jomkz/fx-gui/` on Linux,
+`%APPDATA%\jomkz\fx-gui\` on Windows) across restarts.
 
 - **FA install directory** — set via File → Preferences; used by the one-click LIB install
+- **Theme** — Auto (follow the system), Dark, or Light; set via File → Preferences
 - **Recent files** — last 5 opened files; accessible from File → Recent Files; cleared from the same submenu
-- **Window size and position** — restored on next launch; falls back to centered if the saved position is off-screen
-- External tool integration and window color scheme: planned (Phase 3).
+- **Window size and position** — restored on next launch; falls back to centered if the saved position is off-screen (position persistence is unavailable on Wayland)
+- External tool integration: planned (Phase 3).
 
 ## Building
 

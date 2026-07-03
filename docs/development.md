@@ -13,11 +13,15 @@ tasks listed in [What still needs the Windows bench](#what-still-needs-the-windo
 On Linux (GCC or Clang):
 
 ```bash
-sudo dnf install gcc-c++ clang cmake ninja-build python3 git
+sudo dnf install gcc-c++ clang cmake ninja-build python3 git SDL3-devel
 ```
 
 Any distribution works with the equivalents: a C++17 compiler, CMake 3.21+,
 Ninja, Python 3 (release scripts and the real-asset test harness), and Git.
+`SDL3-devel` serves the `fx-gui` build; where no system SDL3 exists, the
+build automatically compiles a pinned, checksummed SDL3 from source instead
+(see [Vendored Dependencies](#vendored-dependencies) and
+[ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md)).
 
 On Windows (MSVC):
 
@@ -56,10 +60,16 @@ ctest --preset gcc            # run the test suite
 
 Swap `gcc` for `clang`, `asan-ubsan` (sanitized build), or `release`
 (optimized). Single targets: `cmake --build --preset gcc --target fx`.
-Binaries land in `build/<preset>/cli/fx`, `build/<preset>/lib/libfx_lib.a`,
-and `build/<preset>/tests/fx_tests`. `fx-gui` is Windows-only until the
-Phase 3 port ([epic #46](https://github.com/jomkz/fighters-codex/issues/46))
-and is skipped on non-Windows configures.
+Binaries land in `build/<preset>/cli/fx`, `build/<preset>/gui/fx-gui`,
+`build/<preset>/lib/libfx_lib.a`, and `build/<preset>/tests/fx_tests`.
+
+Two options steer the GUI build:
+
+- `FX_BUILD_GUI` (default `ON`; `OFF` in the `coverage` and `fuzz` presets) —
+  build `fx-gui` and its tests.
+- `FX_SDL3_VENDORED` (default `OFF`) — skip `find_package(SDL3)` and always
+  build the pinned FetchContent SDL3 statically; CI and the release workflow
+  set it so shipped binaries stay self-contained.
 
 Windows:
 
@@ -92,6 +102,10 @@ the path embedders use (see [api.md](api.md)).
 - `fx` reads arguments through narrow `argv`, so non-ASCII file paths on
   Windows depend on the active code page. FA's data is 8.3 ASCII throughout,
   so this doesn't bite in practice.
+- `fx-gui.exe` builds as a `WIN32`-subsystem app (no console window), so
+  PowerShell launches it detached without waiting. For the headless `--smoke`
+  sweep, pipe the output so the shell waits and reports `$LASTEXITCODE` — see
+  [gui.md](gui.md#platforms).
 
 ## Testing
 
@@ -108,6 +122,11 @@ the path embedders use (see [api.md](api.md)).
   test validates the consumer contract, not instrumentation).
 - **`cli_e2e_lib`**: round-trips a synthetic archive through the real `fx`
   binary — pack, ls, extract, unpack, patch — byte-comparing every output.
+- **GUI tests** (label `gui`): `gui_tests` covers the display-free gui units
+  (string helpers, async-dialog completion queue, preview matrix math, and
+  the audio player state machine on miniaudio's null backend via
+  `FX_AUDIO_NULL=1`) on every leg; `gui_smoke` runs `fx-gui --smoke` — three
+  frames rendered headlessly — on Linux (CI wraps it in `xvfb-run`).
 - **Fuzz smoke runs** (`fuzz` preset only, label `fuzz`): each libFuzzer
   harness fuzzes for 60 seconds from its committed seed corpus — see
   [Fuzzing](#fuzzing).
@@ -251,7 +270,7 @@ OS (gcc preset on Linux, msvc on Windows):
 | Build fx (CLI) | — | Build all, restricted to the `fx` target |
 | Build fx_tests | — | Build the test binary |
 | Run tests | — | `ctest --preset gcc` / `ctest --preset msvc` |
-| Run fx-gui | — | Launches the GUI (Windows; prints a Phase 3 note on Linux) |
+| Run fx-gui | — | Launches the GUI (both OSes) |
 
 If cmake is not in `PATH` on Windows, add it via `terminal.integrated.env.windows`
 in your user `settings.json`.
@@ -272,13 +291,14 @@ fighters-codex/
 │   ├── src/                # codec implementations
 │   └── vendor/             # stb (vendored)
 ├── cli/                    # fx CLI frontend
-├── gui/                    # fx-gui ImGui/DX11 frontend (Windows until Phase 3)
+├── gui/                    # fx-gui ImGui frontend (SDL3 + OpenGL 3.3, Linux + Windows)
 │   ├── src/
-│   │   ├── main.cpp        # Win32 + DX11 host, window placement, ImGui init
+│   │   ├── main.cpp        # SDL3 + GL host, event loop, window placement, ImGui init
 │   │   ├── app.h / app.cpp # App class, session management, menu bar
+│   │   ├── platform/       # window, texture, dialogs, theme, fonts, audio player
 │   │   ├── panels/         # lib_browser, editor_host, preview
 │   │   └── editors/        # per-format editors (audio, mission, brf, pic, ...)
-│   └── vendor/             # Dear ImGui (vendored)
+│   └── vendor/             # Dear ImGui, glad, miniaudio (vendored)
 ├── tests/                  # Catch2 suite, embed smoke, CLI e2e, FA integration
 ├── tools/                  # dll_info and other RE utilities
 ├── scripts/                # release tooling, Ghidra headless scripts
@@ -293,9 +313,17 @@ fighters-codex/
 4. Call `Draw<Format>Editor(app)` from `DrawEditorHost()` in `gui/src/panels/editor_host.cpp`
 5. Add the `.cpp` to `gui/CMakeLists.txt`
 
+Editors never touch SDL or GL directly — file dialogs, GPU textures, and
+audio go through `gui/src/platform/`. Dialogs are asynchronous: the
+continuation runs frames later, so capture inputs by value at request time
+and re-validate `app.editor` state on arrival (see
+`gui/src/platform/dialogs.h`).
+
 ## What still needs the Windows bench
 
-- **fx-gui** build, run, and debugging (Win32/DX11 until epic #46)
+- **fx-gui interactive verification on Windows** — CI compiles it and runs
+  the display-free `gui_tests`, but Windows runners expose no GL 3.3, so
+  rendering, native dialogs, and theming need eyes on the bench
 - **Release packaging** verification for the Windows zips (the Linux tarballs
   are exercised by the release workflow's Linux leg and its dry-run mode)
 - **`re-gameplay` work**: anything requiring the running game, batched into
@@ -372,13 +400,19 @@ uploads the packages as workflow artifacts but skips the publish job.
 
 ## Vendored Dependencies
 
-All runtime dependencies are checked in — the library, CLI, and GUI build
-without a package manager. The only network fetch is Catch2 for the test
-suite (see [Testing](#testing)).
+Runtime dependencies are checked in — the library, CLI, and GUI build without
+a package manager. Two network fetches exist: Catch2 for the test suite (see
+[Testing](#testing)), and SDL3 for the GUI *only when no system SDL3 is
+found* — `find_package(SDL3)` first, then a pinned, SHA-256-checksummed
+release tarball built statically (the decision record is
+[ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md); the pin lives in
+[gui/CMakeLists.txt](https://github.com/jomkz/fighters-codex/blob/main/gui/CMakeLists.txt)).
 
 | Library | Location | License |
 |---|---|---|
-| Dear ImGui | `gui/vendor/imgui/` | MIT |
+| Dear ImGui (+ SDL3/OpenGL3 backends) | `gui/vendor/imgui/` | MIT |
+| glad (GL 3.3 core loader) | `gui/vendor/glad/` | CC0 / Apache-2.0 (generated) |
+| miniaudio | `gui/vendor/miniaudio/` | MIT-0 / Public Domain |
 | stb_image | `lib/vendor/` | MIT / Public Domain |
 | stb_image_write | `lib/vendor/` | MIT / Public Domain |
 | blast (PKWare DCL) | `lib/src/blast.cpp` | zlib/libpng (Mark Adler) |

@@ -1,5 +1,6 @@
 #include "lib_browser.h"
 #include "../app.h"
+#include "../util.h"
 #include "imgui.h"
 #include <filesystem>
 #include <string>
@@ -7,77 +8,71 @@
 
 namespace fs = std::filesystem;
 
-static bool ci_contains(const char* hay, const char* needle) {
-    if (!needle || needle[0] == '\0') return true;
-    size_t nl = strlen(needle);
-    for (const char* h = hay; *h; h++)
-        if (_strnicmp(h, needle, nl) == 0) return true;
-    return false;
-}
+using fxg::ci_contains;
 
 static const char* EntryTypeLabel(const char* name) {
     const char* dot = strrchr(name, '.');
     if (!dot) return "DAT";
     const char* e = dot + 1;
     // Entity / BRF types
-    if (_stricmp(e,"PT")==0)  return "Aircraft";
-    if (_stricmp(e,"OT")==0)  return "Object";
-    if (_stricmp(e,"NT")==0)  return "NPC";
-    if (_stricmp(e,"JT")==0)  return "Ordnance";
-    if (_stricmp(e,"SEE")==0) return "Seeker";
-    if (_stricmp(e,"ECM")==0) return "ECM";
-    if (_stricmp(e,"GAS")==0) return "Gas";
+    if (fxg::ci_equal(e,"PT"))  return "Aircraft";
+    if (fxg::ci_equal(e,"OT"))  return "Object";
+    if (fxg::ci_equal(e,"NT"))  return "NPC";
+    if (fxg::ci_equal(e,"JT"))  return "Ordnance";
+    if (fxg::ci_equal(e,"SEE")) return "Seeker";
+    if (fxg::ci_equal(e,"ECM")) return "ECM";
+    if (fxg::ci_equal(e,"GAS")) return "Gas";
     // Image / pixel data
-    if (_stricmp(e,"PIC")==0) return "Image";
-    if (_stricmp(e,"PAL")==0) return "Palette";
-    if (_stricmp(e,"RAW")==0) return "Screenshot";
-    if (_stricmp(e,"ICO")==0) return "Icon";
+    if (fxg::ci_equal(e,"PIC")) return "Image";
+    if (fxg::ci_equal(e,"PAL")) return "Palette";
+    if (fxg::ci_equal(e,"RAW")) return "Screenshot";
+    if (fxg::ci_equal(e,"ICO")) return "Icon";
     // 3D geometry
-    if (_stricmp(e,"SH")==0)  return "Shape";
-    if (_stricmp(e,"T2")==0)  return "Terrain";
+    if (fxg::ci_equal(e,"SH"))  return "Shape";
+    if (fxg::ci_equal(e,"T2"))  return "Terrain";
     // Audio
-    if (_stricmp(e,"11K")==0||_stricmp(e,"5K")==0||
-        _stricmp(e,"8K")==0||_stricmp(e,"22K")==0) return "Audio";
-    if (_stricmp(e,"XMI")==0) return "MIDI";
+    if (fxg::ci_equal(e,"11K")||fxg::ci_equal(e,"5K")||
+        fxg::ci_equal(e,"8K")||fxg::ci_equal(e,"22K")) return "Audio";
+    if (fxg::ci_equal(e,"XMI")) return "MIDI";
     // Video / FMV
-    if (_stricmp(e,"CB8")==0) return "FMV";
-    if (_stricmp(e,"VDO")==0) return "Video";
-    if (_stricmp(e,"FBC")==0) return "FrameIdx";
+    if (fxg::ci_equal(e,"CB8")) return "FMV";
+    if (fxg::ci_equal(e,"VDO")) return "Video";
+    if (fxg::ci_equal(e,"FBC")) return "FrameIdx";
     // Animation
-    if (_stricmp(e,"SEQ")==0) return "Sequence";
+    if (fxg::ci_equal(e,"SEQ")) return "Sequence";
     // Mission data
-    if (_stricmp(e,"M")==0)   return "Mission";
-    if (_stricmp(e,"MM")==0)  return "Map";
-    if (_stricmp(e,"MT")==0)  return "Briefing";
+    if (fxg::ci_equal(e,"M"))   return "Mission";
+    if (fxg::ci_equal(e,"MM"))  return "Map";
+    if (fxg::ci_equal(e,"MT"))  return "Briefing";
     // Entity metadata
-    if (_stricmp(e,"INF")==0) return "TechInfo";
+    if (fxg::ci_equal(e,"INF")) return "TechInfo";
     // AI / behaviour scripts
-    if (_stricmp(e,"AI")==0)  return "AI Script";
-    if (_stricmp(e,"BI")==0)  return "AI Lib";
+    if (fxg::ci_equal(e,"AI"))  return "AI Script";
+    if (fxg::ci_equal(e,"BI"))  return "AI Lib";
     // Overlay DLLs (Phar Lap PE)
-    if (_stricmp(e,"HUD")==0) return "HUD";
-    if (_stricmp(e,"FNT")==0) return "Font";
-    if (_stricmp(e,"LAY")==0) return "Atmosphere";
-    if (_stricmp(e,"CAM")==0) return "Campaign";
-    if (_stricmp(e,"MC")==0)  return "Condition";
-    if (_stricmp(e,"MNU")==0) return "Menu";
-    if (_stricmp(e,"DLG")==0) return "Dialog";
-    if (_stricmp(e,"HGR")==0) return "Hangar";
-    if (_stricmp(e,"PTS")==0) return "Icon Data";
-    if (_stricmp(e,"MUS")==0) return "Music";
+    if (fxg::ci_equal(e,"HUD")) return "HUD";
+    if (fxg::ci_equal(e,"FNT")) return "Font";
+    if (fxg::ci_equal(e,"LAY")) return "Atmosphere";
+    if (fxg::ci_equal(e,"CAM")) return "Campaign";
+    if (fxg::ci_equal(e,"MC"))  return "Condition";
+    if (fxg::ci_equal(e,"MNU")) return "Menu";
+    if (fxg::ci_equal(e,"DLG")) return "Dialog";
+    if (fxg::ci_equal(e,"HGR")) return "Hangar";
+    if (fxg::ci_equal(e,"PTS")) return "Icon Data";
+    if (fxg::ci_equal(e,"MUS")) return "Music";
     // Pilot save
-    if (_stricmp(e,"P")==0)   return "Pilot";
+    if (fxg::ci_equal(e,"P"))   return "Pilot";
     // Binary lookup / symbol tables
-    if (_stricmp(e,"BIN")==0) return "Binary";
-    if (_stricmp(e,"SMS")==0) return "Symbols";
+    if (fxg::ci_equal(e,"BIN")) return "Binary";
+    if (fxg::ci_equal(e,"SMS")) return "Symbols";
     // Text / help / config
-    if (_stricmp(e,"TXT")==0) return "Text";
-    if (_stricmp(e,"WRI")==0) return "Document";
-    if (_stricmp(e,"HLP")==0) return "Help";
-    if (_stricmp(e,"CNT")==0) return "Help TOC";
-    if (_stricmp(e,"INI")==0) return "Config";
+    if (fxg::ci_equal(e,"TXT")) return "Text";
+    if (fxg::ci_equal(e,"WRI")) return "Document";
+    if (fxg::ci_equal(e,"HLP")) return "Help";
+    if (fxg::ci_equal(e,"CNT")) return "Help TOC";
+    if (fxg::ci_equal(e,"INI")) return "Config";
     // Executable
-    if (_stricmp(e,"EXE")==0) return "Executable";
+    if (fxg::ci_equal(e,"EXE")) return "Executable";
     return "File";
 }
 

@@ -20,8 +20,10 @@ jobs:
 
       - name: Configure
         # The msvc preset uses the runner's default Visual Studio generator —
-        # nothing pinned, because the image's default VS moves
-        run: cmake --preset msvc
+        # nothing pinned, because the image's default VS moves.
+        # FX_SDL3_VENDORED pins SDL3 (static) so fx-gui.exe stays a single
+        # self-contained executable (ADR-0001).
+        run: cmake --preset msvc -DFX_SDL3_VENDORED=ON
 
       - name: Build
         run: cmake --build --preset msvc
@@ -30,18 +32,23 @@ jobs:
         # A release never ships untested binaries
         run: ctest --preset msvc
 
+      - name: Set artifact ref
+        # Dry runs use the branch name; slashes in it would become
+        # nonexistent directories in the artifact paths. Tags pass through.
+        run: echo "REF=$($env:GITHUB_REF_NAME -replace '/','-')" >> $env:GITHUB_ENV
+
       - name: Package fx (CLI)
-        run: Compress-Archive -Path build/cli/Release/fx.exe -DestinationPath "fx-${{ github.ref_name }}-windows-x64.zip"
+        run: Compress-Archive -Path build/cli/Release/fx.exe -DestinationPath "fx-${{ env.REF }}-windows-x64.zip"
 
       - name: Package fx-gui
-        run: Compress-Archive -Path build/gui/Release/fx-gui.exe -DestinationPath "fx-gui-${{ github.ref_name }}-windows-x64.zip"
+        run: Compress-Archive -Path build/gui/Release/fx-gui.exe -DestinationPath "fx-gui-${{ env.REF }}-windows-x64.zip"
 
       - name: Package fx_lib (developer SDK)
         run: |
           New-Item -ItemType Directory -Path fx-lib-sdk/include -Force | Out-Null
           Copy-Item build/lib/Release/fx_lib.lib fx-lib-sdk/
           Copy-Item -Recurse lib/include/fx fx-lib-sdk/include/
-          Compress-Archive -Path fx-lib-sdk/* -DestinationPath "fx-lib-${{ github.ref_name }}-windows-x64.zip"
+          Compress-Archive -Path fx-lib-sdk/* -DestinationPath "fx-lib-${{ env.REF }}-windows-x64.zip"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -55,29 +62,50 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Install GUI build deps
+        # FetchContent SDL3 needs the X11/Wayland dev headers at compile
+        # time; xvfb + llvmpipe give gui_smoke a GL 3.3 context
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \
+            libxfixes-dev libxss-dev libxtst-dev libxkbcommon-dev libwayland-dev libdecor-0-dev \
+            libegl1-mesa-dev libgl1-mesa-dev libdbus-1-dev \
+            xvfb libgl1-mesa-dri
+
       - name: Configure
         # Static libstdc++/libgcc is a packaging property of the shipped
         # artifacts, applied here rather than in the preset so local release
         # builds don't require the static library packages; glibc stays the
-        # binary's only runtime coupling
-        run: cmake --preset release -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc"
+        # binary's only runtime coupling. FX_SDL3_VENDORED pins SDL3 (static)
+        # so the fx-gui tarball is self-contained — SDL resolves X11/Wayland/
+        # audio via dlopen at runtime (ADR-0001).
+        run: cmake --preset release -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc" -DFX_SDL3_VENDORED=ON
 
       - name: Build
         run: cmake --build --preset release
 
       - name: Test
         # A release never ships untested binaries
-        run: ctest --preset release
+        run: xvfb-run -a ctest --preset release
+
+      - name: Set artifact ref
+        # Dry runs use the branch name; slashes in it would become
+        # nonexistent directories in the artifact paths. Tags pass through.
+        run: echo "REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_ENV"
 
       - name: Package fx (CLI)
-        run: tar -czf "fx-${{ github.ref_name }}-linux-x64.tar.gz" -C build/release/cli fx
+        run: tar -czf "fx-${{ env.REF }}-linux-x64.tar.gz" -C build/release/cli fx
+
+      - name: Package fx-gui
+        run: tar -czf "fx-gui-${{ env.REF }}-linux-x64.tar.gz" -C build/release/gui fx-gui
 
       - name: Package fx_lib (developer SDK)
         run: |
           mkdir -p fx-lib-sdk/include
           cp build/release/lib/libfx_lib.a fx-lib-sdk/
           cp -r lib/include/fx fx-lib-sdk/include/
-          tar -czf "fx-lib-${{ github.ref_name }}-linux-x64.tar.gz" -C fx-lib-sdk .
+          tar -czf "fx-lib-${{ env.REF }}-linux-x64.tar.gz" -C fx-lib-sdk .
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -114,4 +142,5 @@ jobs:
             fx-gui-${{ github.ref_name }}-windows-x64.zip
             fx-lib-${{ github.ref_name }}-windows-x64.zip
             fx-${{ github.ref_name }}-linux-x64.tar.gz
+            fx-gui-${{ github.ref_name }}-linux-x64.tar.gz
             fx-lib-${{ github.ref_name }}-linux-x64.tar.gz

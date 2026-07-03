@@ -1,12 +1,14 @@
-﻿#pragma once
+#pragma once
 #include "imgui.h"
 #include "fx/ealib.h"
-#include <d3d11.h>
+#include "platform/texture.h"
+#include "platform/theme.h"
 #include <string>
 #include <vector>
 #include <functional>
 
-enum class ThemePreference { Auto = 0, Dark = 1, Light = 2 };
+// Texture handle for image preview (GL texture behind an opaque id).
+using GpuTexture = platform::GpuTexture;
 
 // A single open LIB file, or a standalone loose file.
 struct LibSession {
@@ -53,22 +55,17 @@ struct EditorState {
     bool         modified = false;
 };
 
-// Texture handle for image preview.
-struct GpuTexture {
-    ID3D11ShaderResourceView* srv = nullptr;
-    int width  = 0;
-    int height = 0;
-    void Release() { if (srv) { srv->Release(); srv = nullptr; } }
-};
-
 class App {
 public:
-    App(ID3D11Device* device, ID3D11DeviceContext* ctx);
+    App();
     ~App();
     void Draw();
 
     // Called by panels/editors to open a record for editing.
     void OpenEntry(int libIdx, int entryIdx);
+
+    // Open a LIB from a path (recent-files menu and the --smoke sweep).
+    void OpenLib(const std::string& path);
 
     // Save modified record back into the session (patches in memory).
     void CommitEntry(const std::vector<uint8_t>& newData);
@@ -79,12 +76,6 @@ public:
     // Close one session by index, or all sessions.
     void CloseSession(int idx);
     void CloseAllSessions();
-
-    // Upload RGBA pixels to a DX11 texture for display in ImGui.
-    GpuTexture UploadTexture(const uint8_t* rgba, int w, int h);
-
-    ID3D11Device*        GetDevice() const { return m_device; }
-    ID3D11DeviceContext* GetCtx()    const { return m_ctx; }
 
     enum class StatusKind { Info, Warning, Error };
 
@@ -102,14 +93,10 @@ private:
 
     void OpenLibDialog();
     void OpenFileDialog();
-    void OpenLib(const std::string& path);  // shared by dialog + recent files
     void OpenStandaloneFile(const std::string& path);
-    void SaveSessionDialog(int libIdx);
     void ChooseInstallDir();
     void AddRecentFile(const std::string& path);
 
-    ID3D11Device*        m_device;
-    ID3D11DeviceContext* m_ctx;
     std::string          m_dupLibPath;
     std::vector<std::string> m_recentFiles; // up to 5, most recent first
 };

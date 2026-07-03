@@ -1,5 +1,6 @@
 #include "bin_editor.h"
 #include "../app.h"
+#include "../util.h"
 #include "imgui.h"
 #include <cstdio>
 #include <cstring>
@@ -7,9 +8,9 @@
 #include <string>
 
 static const char* BinHint(const char* name) {
-    if (_strnicmp(name, "MIX2",    4) == 0) return "Half-intensity mixing table (256\xc3\x97""256 bytes)";
-    if (_strnicmp(name, "VFONTPAL",8) == 0) return "16-color VGA font palette";
-    if (_strnicmp(name, "BITMAPV", 7) == 0) return "Bitmap variant table";
+    if (fxg::ci_prefix(name, "MIX2"))     return "Half-intensity mixing table (256\xc3\x97""256 bytes)";
+    if (fxg::ci_prefix(name, "VFONTPAL")) return "16-color VGA font palette";
+    if (fxg::ci_prefix(name, "BITMAPV"))  return "Bitmap variant table";
     return nullptr;
 }
 

@@ -20,26 +20,13 @@ static bool s_compiled  = false;
 static int FindBiEntry(const App& app) {
     if (app.editor.libIdx < 0) return -1;
     const auto& sess = app.sessions[app.editor.libIdx];
-    // Base name: "F15.AI" -> "F15"
-    std::string aiName = sess.entries[app.editor.entryIdx].name;
-    auto dot = aiName.rfind('.');
-    std::string base = (dot != std::string::npos) ? aiName.substr(0, dot) : aiName;
-    // Upper-case for comparison
-    std::string baseUp = base;
-    for (auto& c : baseUp) c = (char)toupper((unsigned char)c);
-
-    for (int ei = 0; ei < (int)sess.entries.size(); ei++) {
-        std::string n = sess.entries[ei].name;
-        // Check for base.BI (case-insensitive)
-        auto d2 = n.rfind('.');
-        if (d2 == std::string::npos) continue;
-        std::string stem = n.substr(0, d2);
-        std::string ext  = n.substr(d2 + 1);
-        for (auto& c : stem) c = (char)toupper((unsigned char)c);
-        for (auto& c : ext)  c = (char)toupper((unsigned char)c);
-        if (stem == baseUp && ext == "BI") return ei;
-    }
-    return -1;
+    // Companion name: "F15.AI" -> "F15.BI"
+    std::string biName = sess.entries[app.editor.entryIdx].name;
+    auto dot = biName.rfind('.');
+    if (dot != std::string::npos) biName.resize(dot);
+    biName += ".BI";
+    const fx::Entry* e = fx::ealib_find(sess.entries, biName);
+    return e ? (int)(e - sess.entries.data()) : -1;
 }
 
 void DrawAiEditor(App& app) {

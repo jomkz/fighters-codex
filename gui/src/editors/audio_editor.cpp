@@ -1,49 +1,15 @@
-﻿#define NOMINMAX
-#include "audio_editor.h"
+﻿#include "audio_editor.h"
 #include "../app.h"
+#include "../platform/audio_player.h"
+#include "../platform/dialogs.h"
 #include "imgui.h"
 #include "fx/audio.h"
-#include <windows.h>
-#include <mmsystem.h>
-#pragma comment(lib, "winmm.lib")
-#include <commdlg.h>
 #include <algorithm>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <filesystem>
 namespace fs = std::filesystem;
-
-static std::string Win32SaveFile(const wchar_t* filter, const wchar_t* defExt) {
-    wchar_t buf[MAX_PATH] = {};
-    OPENFILENAMEW ofn = {};
-    ofn.lStructSize  = sizeof(ofn);
-    ofn.hwndOwner    = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
-    ofn.lpstrFilter  = filter;
-    ofn.lpstrFile    = buf;
-    ofn.nMaxFile     = MAX_PATH;
-    ofn.lpstrDefExt  = defExt;
-    ofn.Flags        = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
-    if (!GetSaveFileNameW(&ofn)) return {};
-    int len = WideCharToMultiByte(CP_UTF8,0,buf,-1,nullptr,0,nullptr,nullptr);
-    std::string s(len-1,0); WideCharToMultiByte(CP_UTF8,0,buf,-1,s.data(),len,nullptr,nullptr);
-    return s;
-}
-static std::string Win32OpenFile(const wchar_t* filter, const wchar_t* title) {
-    wchar_t buf[MAX_PATH] = {};
-    OPENFILENAMEW ofn = {};
-    ofn.lStructSize  = sizeof(ofn);
-    ofn.hwndOwner    = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
-    ofn.lpstrFilter  = filter;
-    ofn.lpstrFile    = buf;
-    ofn.nMaxFile     = MAX_PATH;
-    ofn.lpstrTitle   = title;
-    ofn.Flags        = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-    if (!GetOpenFileNameW(&ofn)) return {};
-    int len = WideCharToMultiByte(CP_UTF8,0,buf,-1,nullptr,0,nullptr,nullptr);
-    std::string s(len-1,0); WideCharToMultiByte(CP_UTF8,0,buf,-1,s.data(),len,nullptr,nullptr);
-    return s;
-}
 
 static int InferRate(const std::string& ext) {
     if (ext == "5k")  return 5000;
@@ -54,108 +20,7 @@ static int InferRate(const std::string& ext) {
 
 // ---------- playback state ----------
 
-enum class PlayState { Stopped, Playing, Paused };
-
-struct AudioPlayer {
-    HWAVEOUT             wo           = nullptr;
-    WAVEHDR              hdr          = {};
-    std::vector<uint8_t> buf;
-    int                  startSample  = 0;
-    int                  totalSamples = 0;
-    int                  rate         = 0;
-    PlayState            state        = PlayState::Stopped;
-    int                  resumeFrom   = 0;  // where Play/Resume starts from
-
-    bool IsPlaying() const { return state == PlayState::Playing && wo && !(hdr.dwFlags & WHDR_DONE); }
-    bool IsPaused()  const { return state == PlayState::Paused; }
-
-    // Call once per frame to catch natural end-of-playback.
-    void Update() {
-        if (state == PlayState::Playing && wo && (hdr.dwFlags & WHDR_DONE)) {
-            CloseDevice();
-            state      = PlayState::Stopped;
-            resumeFrom = 0;
-        }
-    }
-
-    // Current sample for display.
-    int Position() const {
-        if (state == PlayState::Playing && wo) {
-            MMTIME t = {};
-            t.wType = TIME_BYTES; // 8-bit mono: bytes == samples
-            waveOutGetPosition(wo, &t, sizeof(t));
-            return startSample + (int)t.u.cb;
-        }
-        return resumeFrom;
-    }
-
-    bool Play(const uint8_t* pcm, int samples, int rate_, int fromSample) {
-        CloseDevice();
-        fromSample = std::clamp(fromSample, 0, (std::max)(0, samples - 1));
-        int n = samples - fromSample;
-        if (n <= 0) { state = PlayState::Stopped; return false; }
-
-        WAVEFORMATEX wfx    = {};
-        wfx.wFormatTag      = WAVE_FORMAT_PCM;
-        wfx.nChannels       = 1;
-        wfx.nSamplesPerSec  = (DWORD)rate_;
-        wfx.wBitsPerSample  = 8;
-        wfx.nBlockAlign     = 1;
-        wfx.nAvgBytesPerSec = (DWORD)rate_;
-        if (waveOutOpen(&wo, WAVE_MAPPER, &wfx, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR) {
-            state = PlayState::Stopped;
-            return false;
-        }
-
-        buf.assign(pcm + fromSample, pcm + samples);
-        hdr               = {};
-        hdr.lpData         = (LPSTR)buf.data();
-        hdr.dwBufferLength = (DWORD)buf.size();
-        waveOutPrepareHeader(wo, &hdr, sizeof(hdr));
-        waveOutWrite(wo, &hdr, sizeof(hdr));
-
-        startSample  = fromSample;
-        totalSamples = samples;
-        rate         = rate_;
-        resumeFrom   = fromSample;
-        state        = PlayState::Playing;
-        return true;
-    }
-
-    // Pause at current position.
-    void Pause() {
-        if (state != PlayState::Playing) return;
-        resumeFrom = Position();
-        CloseDevice();
-        state = PlayState::Paused;
-    }
-
-    // Right-click seek: stop audio, park the playhead at a specific sample.
-    void PauseAt(int sample) {
-        CloseDevice();
-        resumeFrom = sample;
-        state      = PlayState::Paused;
-    }
-
-    void Stop() {
-        CloseDevice();
-        resumeFrom = 0;
-        state      = PlayState::Stopped;
-    }
-
-private:
-    void CloseDevice() {
-        if (wo) {
-            waveOutReset(wo);
-            waveOutUnprepareHeader(wo, &hdr, sizeof(hdr));
-            waveOutClose(wo);
-            wo = nullptr;
-        }
-        buf.clear();
-    }
-};
-
-static AudioPlayer s_player;
+static platform::AudioPlayer s_player;
 
 // ---------- waveform cache ----------
 
@@ -269,22 +134,29 @@ void DrawAudioEditor(App& app) {
     ImGui::Separator();
 
     if (ImGui::Button("Export WAV...")) {
-        std::string path = Win32SaveFile(L"WAV Audio\0*.wav\0All Files\0*.*\0", L"wav");
-        if (!path.empty()) {
-            auto wav = fx::audio_to_wav(ed.data.data(), ed.data.size(), (uint32_t)rate);
-            if (!wav.empty()) {
-                std::ofstream f(path, std::ios::binary);
-                if (f) f.write((const char*)wav.data(), (std::streamsize)wav.size());
-            }
+        // Serialize before the dialog opens — the continuation runs frames
+        // later, when the selection may have changed.
+        auto wav = fx::audio_to_wav(ed.data.data(), ed.data.size(), (uint32_t)rate);
+        if (!wav.empty()) {
+            platform::SaveFileDialog(
+                {{"WAV audio", "wav;WAV"}, {"All files", "*"}}, "wav", nullptr,
+                [wav = std::move(wav)](std::string path) {
+                    if (path.empty()) return;
+                    std::ofstream f(path, std::ios::binary);
+                    if (f) f.write((const char*)wav.data(), (std::streamsize)wav.size());
+                });
         }
     }
     ImGui::SameLine();
     if (ImGui::Button("Import WAV...")) {
-        std::string path = Win32OpenFile(L"WAV Audio\0*.wav\0All Files\0*.*\0",
-                                         L"Import WAV");
-        if (!path.empty()) {
-            std::ifstream f(path, std::ios::binary | std::ios::ate);
-            if (f) {
+        platform::OpenFilesDialog(
+            {{"WAV audio", "wav;WAV"}, {"All files", "*"}}, false,
+            [&app](std::vector<std::string> paths) {
+                // Re-validate: the audio editor must still be the active one.
+                if (paths.empty() || app.editor.kind != EditorKind::Audio) return;
+                const std::string& path = paths[0];
+                std::ifstream f(path, std::ios::binary | std::ios::ate);
+                if (!f) return;
                 auto sz = f.tellg(); f.seekg(0);
                 std::vector<uint8_t> wav((size_t)sz);
                 f.read((char*)wav.data(), (std::streamsize)sz);
@@ -292,13 +164,12 @@ void DrawAudioEditor(App& app) {
                 auto pcm = fx::wav_to_pcm(wav.data(), wav.size(), &outRate);
                 if (!pcm.empty()) {
                     s_player.Stop();
-                    ed.data     = std::move(pcm);
-                    ed.modified = true;
-                    BuildWaveform(ed.data.data(), (int)ed.data.size());
+                    app.editor.data     = std::move(pcm);
+                    app.editor.modified = true;
+                    BuildWaveform(app.editor.data.data(), (int)app.editor.data.size());
                     app.statusMsg  = "Imported " + fs::path(path).filename().string();
                     app.statusKind = App::StatusKind::Info;
                 }
-            }
-        }
+            });
     }
 }

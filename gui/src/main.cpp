@@ -1,336 +1,305 @@
-﻿#include "app.h"
+#include "app.h"
+#include "platform/dialogs.h"
+#include "platform/fonts.h"
+#include "platform/theme.h"
+#include "platform/window.h"
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
-#include <d3d11.h>
-#include <dxgi.h>
-#include <tchar.h>
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_opengl3.h"
+#include <glad/gl.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <cstdio>
+#include <cstring>
 #include <string>
+#include <vector>
 
-// Forward declaration of ImGui Win32 message handler
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
+static App* g_app = nullptr;
 
-// ---------- DX11 globals ----------
-static ID3D11Device*            g_device      = nullptr;
-static ID3D11DeviceContext*     g_context     = nullptr;
-static IDXGISwapChain*          g_swapChain   = nullptr;
-static ID3D11RenderTargetView*  g_mainRTV     = nullptr;
-static App*                     g_app         = nullptr;
-static HWND                     g_hwnd        = nullptr;
-
-static bool CreateDeviceD3D(HWND hwnd) {
-    DXGI_SWAP_CHAIN_DESC sd = {};
-    sd.BufferCount                        = 2;
-    sd.BufferDesc.Width                   = 0;
-    sd.BufferDesc.Height                  = 0;
-    sd.BufferDesc.Format                  = DXGI_FORMAT_R8G8B8A8_UNORM;
-    sd.BufferDesc.RefreshRate.Numerator   = 60;
-    sd.BufferDesc.RefreshRate.Denominator = 1;
-    sd.Flags                              = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-    sd.BufferUsage                        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    sd.OutputWindow                       = hwnd;
-    sd.SampleDesc.Count                   = 1;
-    sd.SwapEffect                         = DXGI_SWAP_EFFECT_DISCARD;
-    sd.Windowed                           = TRUE;
-
-    D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0 };
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(
-        nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0,
-        featureLevels, 2, D3D11_SDK_VERSION,
-        &sd, &g_swapChain, &g_device, nullptr, &g_context);
-    if (FAILED(hr)) return false;
-
-    ID3D11Texture2D* backBuffer = nullptr;
-    g_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-    g_device->CreateRenderTargetView(backBuffer, nullptr, &g_mainRTV);
-    backBuffer->Release();
-    return true;
-}
-
-static void CleanupDeviceD3D() {
-    if (g_mainRTV) { g_mainRTV->Release(); g_mainRTV = nullptr; }
-    if (g_swapChain) { g_swapChain->Release(); g_swapChain = nullptr; }
-    if (g_context)  { g_context->Release();  g_context  = nullptr; }
-    if (g_device)   { g_device->Release();   g_device   = nullptr; }
-}
-
-static void CreateRenderTarget() {
-    ID3D11Texture2D* backBuffer = nullptr;
-    g_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-    g_device->CreateRenderTargetView(backBuffer, nullptr, &g_mainRTV);
-    backBuffer->Release();
-}
-
-static void CleanupRenderTarget() {
-    if (g_mainRTV) { g_mainRTV->Release(); g_mainRTV = nullptr; }
-}
+static constexpr int kDefaultW = 1400;
+static constexpr int kDefaultH = 900;
+static constexpr int kMinW     = 800;
+static constexpr int kMinH     = 500;
 
 // ---------- Render ----------
+
+// Guarded against re-entry: the resize event watch can fire while a frame is
+// already being built (live-resize on Windows runs a modal loop).
+static bool s_inFrame = false;
+
 static void RenderFrame() {
-    if (!g_app || !g_swapChain) return;
+    if (!g_app || s_inFrame) return;
+    s_inFrame = true;
 
-    // Sync swap chain to current client size before rendering.
-    RECT cr = {};
-    GetClientRect(g_hwnd, &cr);
-    UINT newW = (UINT)(cr.right  - cr.left);
-    UINT newH = (UINT)(cr.bottom - cr.top);
-    if (newW > 0 && newH > 0) {
-        DXGI_SWAP_CHAIN_DESC desc = {};
-        g_swapChain->GetDesc(&desc);
-        if (desc.BufferDesc.Width != newW || desc.BufferDesc.Height != newH) {
-            CleanupRenderTarget();
-            g_swapChain->ResizeBuffers(0, newW, newH, DXGI_FORMAT_UNKNOWN, 0);
-            CreateRenderTarget();
-        }
-    }
-
-    if (!g_mainRTV) return;
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
     g_app->Draw();
     ImGui::Render();
-    const float clearColor[4] = { 0.12f, 0.12f, 0.12f, 1.0f };
-    g_context->OMSetRenderTargets(1, &g_mainRTV, nullptr);
-    g_context->ClearRenderTargetView(g_mainRTV, clearColor);
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-    g_swapChain->Present(1, 0);
+
+    int w = 0, h = 0;
+    SDL_GetWindowSizeInPixels(platform::Window(), &w, &h);
+    glViewport(0, 0, w, h);
+    glClearColor(0.12f, 0.12f, 0.12f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    SDL_GL_SwapWindow(platform::Window());
+
+    s_inFrame = false;
 }
 
-// ---------- Theme ----------
-// Applies the correct ImGui colour scheme based on App::themePref (when the
-// App exists) or falls back to the system setting (Auto behaviour).
-// Also re-applies rounding so it survives mid-session theme switches.
-// Not static â€” called from app.cpp via forward declaration.
-void ApplySystemTheme() {
-    ThemePreference pref = g_app ? g_app->themePref : ThemePreference::Auto;
-    bool dark = true;
-    if (pref == ThemePreference::Auto) {
-        DWORD useLightTheme = 0;
-        DWORD sz = sizeof(useLightTheme);
-        RegGetValueW(
-            HKEY_CURRENT_USER,
-            L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-            L"AppsUseLightTheme",
-            RRF_RT_DWORD, nullptr, &useLightTheme, &sz);
-        dark = (useLightTheme == 0);
-    } else {
-        dark = (pref == ThemePreference::Dark);
-    }
-    if (dark)
-        ImGui::StyleColorsDark();
-    else
-        ImGui::StyleColorsLight();
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding    = 4.0f;
-    style.FrameRounding     = 3.0f;
-    style.GrabRounding      = 3.0f;
-    style.ScrollbarRounding = 3.0f;
-}
-
-// ---------- Win32 window proc ----------
-static LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
-    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wp, lp)) return true;
-    switch (msg) {
-    case WM_GETMINMAXINFO: {
-        RECT work = {};
-        SystemParametersInfoW(SPI_GETWORKAREA, 0, &work, 0);
-        int workW = work.right  - work.left;
-        int workH = work.bottom - work.top;
-        int minW  = min(max(800, workW * 2 / 5), workW);
-        int minH  = min(max(500, workH * 2 / 5), workH);
-        auto* mmi = reinterpret_cast<MINMAXINFO*>(lp);
-        mmi->ptMinTrackSize = { minW, minH };
-        return 0;
-    }
-    case WM_SIZE:
-        if (wp == SIZE_MINIMIZED) return 0;
-        return 0;
-    case WM_PAINT:
+// Keep rendering while SDL is blocked in a modal resize/expose loop
+// (replaces the WM_PAINT redraw path of the old Win32 host).
+static bool SDLCALL ResizeWatch(void*, SDL_Event* ev) {
+    if (ev->type == SDL_EVENT_WINDOW_EXPOSED ||
+        ev->type == SDL_EVENT_WINDOW_RESIZED)
         RenderFrame();
-        ValidateRect(hwnd, nullptr);
-        return 0;
-    case WM_SYSCOMMAND:
-        if ((wp & 0xfff0) == SC_KEYMENU) return 0;
-        break;
-    case WM_SETTINGCHANGE:
-        if (lp && wcscmp(reinterpret_cast<LPCWSTR>(lp), L"ImmersiveColorSet") == 0)
-            if (!g_app || g_app->themePref == ThemePreference::Auto)
-                ApplySystemTheme();
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    }
-    return DefWindowProcW(hwnd, msg, wp, lp);
+    return true;
 }
 
 // ---------- Window placement (via ini handler) ----------
 
-static constexpr int kDefaultW = 1400;
-static constexpr int kDefaultH = 900;
+// Placement read back from the ini at startup.
+struct SavedPlacement {
+    int  x = 0, y = 0, w = 0, h = 0;
+    bool maximized = false;
+    bool valid     = false;
+};
+static SavedPlacement s_saved;
 
-// Populated by the ini handler's ReadLineFn.
-static RECT s_winRect  = {};
-static int  s_winShow  = SW_SHOWNORMAL;
-static bool s_winValid = false;
+// Last known non-maximized rect, tracked from MOVED/RESIZED events — SDL
+// reports the maximized geometry from SDL_GetWindowPosition/Size, so the
+// normal rect has to be cached while the window is unmaximized.
+struct TrackedRect {
+    int  x = 0, y = 0, w = kDefaultW, h = kDefaultH;
+    bool valid = false;
+};
+static TrackedRect s_normalRect;
 
-static void CenterWindow(HWND hwnd) {
-    RECT work = {};
-    SystemParametersInfoW(SPI_GETWORKAREA, 0, &work, 0);
-    int x = work.left + ((work.right  - work.left) - kDefaultW) / 2;
-    int y = work.top  + ((work.bottom - work.top)  - kDefaultH) / 2;
-    SetWindowPos(hwnd, nullptr, x, y, kDefaultW, kDefaultH, SWP_NOZORDER | SWP_NOACTIVATE);
-}
+static bool ApplySavedPlacement() {
+    if (!s_saved.valid) return false;
+    if (s_saved.w < 400 || s_saved.h < 300 || s_saved.w > 7680 || s_saved.h > 4320)
+        return false;
+    SDL_Point center = {s_saved.x + s_saved.w / 2, s_saved.y + s_saved.h / 2};
+    if (SDL_GetDisplayForPoint(&center) == 0) return false; // display went away
 
-static bool ApplyWindowPlacement(HWND hwnd) {
-    if (!s_winValid) return false;
-    int w = s_winRect.right - s_winRect.left;
-    int h = s_winRect.bottom - s_winRect.top;
-    if (w < 400 || h < 300 || w > 7680 || h > 4320) return false;
-    if (!MonitorFromRect(&s_winRect, MONITOR_DEFAULTTONULL)) return false;
-    WINDOWPLACEMENT wp = {};
-    wp.length           = sizeof(wp);
-    wp.rcNormalPosition = s_winRect;
-    wp.showCmd = (s_winShow == SW_SHOWMAXIMIZED) ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
-    SetWindowPlacement(hwnd, &wp);
+    SDL_Window* win = platform::Window();
+    SDL_SetWindowSize(win, s_saved.w, s_saved.h);
+    SDL_SetWindowPosition(win, s_saved.x, s_saved.y);
+    if (s_saved.maximized) SDL_MaximizeWindow(win);
     return true;
 }
 
-// ---------- WinMain ----------
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
-    WNDCLASSEXW wc = {};
-    wc.cbSize        = sizeof(wc);
-    wc.style         = CS_CLASSDC;
-    wc.lpfnWndProc   = WndProc;
-    wc.hInstance     = hInst;
-    wc.hCursor       = LoadCursor(nullptr, IDC_ARROW);
-    wc.lpszClassName = L"FT_GUI";
-    wc.hIcon         = LoadIcon(nullptr, IDI_APPLICATION);
-    RegisterClassExW(&wc);
+static void RegisterWindowSettingsHandler() {
+    ImGuiSettingsHandler wh = {};
+    wh.TypeName   = "FightersToolkitWindow";
+    wh.TypeHash   = ImHashStr("FightersToolkitWindow");
+    wh.ReadOpenFn = [](ImGuiContext*, ImGuiSettingsHandler*, const char*) -> void* {
+        return (void*)1;
+    };
+    wh.ReadLineFn = [](ImGuiContext*, ImGuiSettingsHandler*, void*, const char* line) {
+        int v = 0;
+        if      (sscanf(line, "X=%d",   &v) == 1) s_saved.x = v;
+        else if (sscanf(line, "Y=%d",   &v) == 1) s_saved.y = v;
+        else if (sscanf(line, "W=%d",   &v) == 1) s_saved.w = v;
+        else if (sscanf(line, "H=%d",   &v) == 1) s_saved.h = v;
+        else if (sscanf(line, "Max=%d", &v) == 1) { s_saved.maximized = v != 0; s_saved.valid = true; }
+    };
+    wh.WriteAllFn = [](ImGuiContext*, ImGuiSettingsHandler* h, ImGuiTextBuffer* buf) {
+        SDL_Window* win = platform::Window();
+        if (!win) return;
+        bool maxed = (SDL_GetWindowFlags(win) & SDL_WINDOW_MAXIMIZED) != 0;
+        int x, y, w, hgt;
+        if (s_normalRect.valid) {
+            x = s_normalRect.x; y = s_normalRect.y;
+            w = s_normalRect.w; hgt = s_normalRect.h;
+        } else {
+            SDL_GetWindowPosition(win, &x, &y);
+            SDL_GetWindowSize(win, &w, &hgt);
+        }
+        buf->appendf("[%s][Data]\n", h->TypeName);
+        buf->appendf("X=%d\nY=%d\nW=%d\nH=%d\nMax=%d\n", x, y, w, hgt, maxed ? 1 : 0);
+        buf->append("\n");
+    };
+    ImGui::AddSettingsHandler(&wh);
+}
 
-    // Position is set after ini load via ApplyWindowPlacement / CenterWindow.
-    HWND hwnd = CreateWindowW(L"FT_GUI", L"Fighters Toolkit",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, kDefaultW, kDefaultH,
-        nullptr, nullptr, hInst, nullptr);
+// ---------- Smoke sweep ----------
 
-    g_hwnd = hwnd;
+// Headless acceptance sweep (#89): open each LIB, cycle every entry through
+// its editor and the preview — one rendered frame per entry — exercising
+// extraction, every format parser, and the GL upload paths against real
+// game data. Returns the number of LIBs that failed to open.
+static int RunSmokeSweep(App& app, const std::vector<std::string>& libs) {
+    int failures = 0;
+    for (const auto& path : libs) {
+        size_t before = app.sessions.size();
+        app.OpenLib(path);
+        if (app.sessions.size() == before) {
+            std::fprintf(stderr, "smoke: FAILED to open %s (%s)\n",
+                         path.c_str(), app.statusMsg.c_str());
+            failures++;
+            continue;
+        }
+        RenderFrame();
+        const bool verbose = std::getenv("FX_SMOKE_VERBOSE") != nullptr;
+        int entries = (int)app.sessions[0].entries.size();
+        for (int ei = 0; ei < entries; ++ei) {
+            if (verbose)
+                std::fprintf(stderr, "smoke: entry %d %s\n", ei,
+                             app.sessions[0].entries[ei].name);
+            app.OpenEntry(0, ei);
+            RenderFrame();
+        }
+        std::printf("smoke: %s — %d entries swept\n", path.c_str(), entries);
+        app.CloseAllSessions();
+    }
+    return failures;
+}
 
-    if (!CreateDeviceD3D(hwnd)) {
-        CleanupDeviceD3D();
-        UnregisterClassW(wc.lpszClassName, hInst);
-        return 1;
+// ---------- main ----------
+
+int main(int argc, char** argv) {
+    bool smoke = false;
+    std::vector<std::string> smokeLibs;
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--smoke") == 0)
+            smoke = true;
+        else
+            smokeLibs.push_back(argv[i]); // LIB paths for the smoke sweep
     }
 
-    // Init ImGui before creating App so all handlers are registered before
-    // we call LoadIniSettingsFromDisk â€” window placement needs to be read
-    // before ShowWindow.
+    platform::WindowConfig cfg = {"Fighters Toolkit", kDefaultW, kDefaultH,
+                                  kMinW, kMinH, smoke};
+    if (!platform::CreateWindowGL(cfg)) {
+        if (!smoke) return 1;
+        // Headless smoke run without a display server: retry offscreen.
+        platform::DestroyWindowGL();
+        SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "offscreen");
+        if (!platform::CreateWindowGL(cfg)) return 1;
+    }
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.IniFilename = "fx-gui.ini";
+
+    // Settings live in the per-user preferences path, not the CWD.
+    static std::string iniPath;
+    if (!smoke) {
+        if (char* pref = SDL_GetPrefPath("jomkz", "fx-gui")) {
+            iniPath = std::string(pref) + "fx-gui.ini";
+            SDL_free(pref);
+        } else {
+            iniPath = "fx-gui.ini";
+        }
+        io.IniFilename = iniPath.c_str();
+    } else {
+        io.IniFilename = nullptr;
+    }
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-    ApplySystemTheme();
+    platform::ApplyTheme(ThemePreference::Auto);
+    platform::LoadFonts(14.0f);
 
-    // Load a crisper font from the Windows system font directory.
-    // Consolas (monospace) is ideal for data/code editing; Tahoma as fallback.
-    {
-        wchar_t winDir[MAX_PATH] = {};
-        GetWindowsDirectoryW(winDir, MAX_PATH);
-        // Convert to UTF-8
-        int len = WideCharToMultiByte(CP_UTF8, 0, winDir, -1, nullptr, 0, nullptr, nullptr);
-        std::string winDirA(len - 1, '\0');
-        WideCharToMultiByte(CP_UTF8, 0, winDir, -1, winDirA.data(), len, nullptr, nullptr);
+    ImGui_ImplSDL3_InitForOpenGL(platform::Window(), SDL_GL_GetCurrentContext());
+    ImGui_ImplOpenGL3_Init("#version 330");
 
-        const char* candidates[] = {
-            "\\Fonts\\consola.ttf",   // Consolas Regular
-            "\\Fonts\\tahoma.ttf",    // Tahoma (fallback)
-            nullptr
-        };
-        bool loaded = false;
-        for (int ci = 0; candidates[ci] && !loaded; ci++) {
-            std::string fontPath = winDirA + candidates[ci];
-            if (io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 14.0f))
-                loaded = true;
-        }
-        if (!loaded)
-            io.Fonts->AddFontDefault();
-    }
-
-    ImGui_ImplWin32_Init(hwnd);
-    ImGui_ImplDX11_Init(g_device, g_context);
-
-    // Register window placement handler.
-    {
-        ImGuiSettingsHandler wh = {};
-        wh.TypeName   = "FightersToolkitWindow";
-        wh.TypeHash   = ImHashStr("FightersToolkitWindow");
-        wh.ReadOpenFn = [](ImGuiContext*, ImGuiSettingsHandler*, const char*) -> void* {
-            return (void*)1;
-        };
-        wh.ReadLineFn = [](ImGuiContext*, ImGuiSettingsHandler*, void*, const char* line) {
-            int v;
-            if      (sscanf_s(line, "Left=%d",   &v) == 1) s_winRect.left   = v;
-            else if (sscanf_s(line, "Top=%d",    &v) == 1) s_winRect.top    = v;
-            else if (sscanf_s(line, "Right=%d",  &v) == 1) s_winRect.right  = v;
-            else if (sscanf_s(line, "Bottom=%d", &v) == 1) s_winRect.bottom = v;
-            else if (sscanf_s(line, "Show=%d",   &v) == 1) { s_winShow = v; s_winValid = true; }
-        };
-        wh.WriteAllFn = [](ImGuiContext*, ImGuiSettingsHandler* h, ImGuiTextBuffer* buf) {
-            WINDOWPLACEMENT wp = {}; wp.length = sizeof(wp);
-            if (!GetWindowPlacement(g_hwnd, &wp)) return;
-            const RECT& r = wp.rcNormalPosition;
-            buf->appendf("[%s][Data]\n", h->TypeName);
-            buf->appendf("Left=%d\nTop=%d\nRight=%d\nBottom=%d\nShow=%d\n",
-                         r.left, r.top, r.right, r.bottom, (int)wp.showCmd);
-            buf->append("\n");
-        };
-        ImGui::AddSettingsHandler(&wh);
-    }
-
-    // Create App â€” registers the FightersToolkit handler (installDir, recent files).
-    App app(g_device, g_context);
+    // Register all settings handlers before LoadIniSettingsFromDisk —
+    // window placement must be applied before the window is shown.
+    RegisterWindowSettingsHandler();
+    App app; // registers the FightersToolkit handler (installDir, recent files)
     g_app = &app;
+    platform::DialogsInit(platform::Window());
 
-    // Load ini now that all handlers are registered.
-    ImGui::LoadIniSettingsFromDisk(io.IniFilename);
+    if (io.IniFilename)
+        ImGui::LoadIniSettingsFromDisk(io.IniFilename);
 
     // Re-apply theme now that App::themePref has been populated from the ini.
-    // (The earlier call at context init used Auto because g_app wasn't set yet.)
-    ApplySystemTheme();
+    platform::ApplyTheme(app.themePref);
 
-    // Position window from saved placement, or center if none / invalid.
-    if (!ApplyWindowPlacement(hwnd))
-        CenterWindow(hwnd);
-    ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
+    if (!smoke) {
+        if (!ApplySavedPlacement())
+            SDL_SetWindowPosition(platform::Window(),
+                                  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_ShowWindow(platform::Window());
+    }
+    SDL_AddEventWatch(ResizeWatch, nullptr);
 
-    bool done = false;
-    while (!done) {
-        MSG msg;
-        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
-            TranslateMessage(&msg);
-            DispatchMessageW(&msg);
-            if (msg.message == WM_QUIT) done = true;
+    int  exitCode    = 0;
+    bool done        = false;
+    int  smokeFrames = smoke ? 3 : -1;
+
+    if (smoke) {
+        SDL_GL_SetSwapInterval(0); // don't vsync-throttle the sweep
+        if (!smokeLibs.empty()) {
+            exitCode = RunSmokeSweep(app, smokeLibs) ? 1 : 0;
+            done = true; // sweep replaces the interactive loop
         }
-        if (done) break;
-        RenderFrame();
     }
 
+    while (!done) {
+        SDL_Event ev;
+        while (SDL_PollEvent(&ev)) {
+            ImGui_ImplSDL3_ProcessEvent(&ev);
+            switch (ev.type) {
+            case SDL_EVENT_QUIT:
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                done = true;
+                break;
+            case SDL_EVENT_SYSTEM_THEME_CHANGED:
+                if (g_app->themePref == ThemePreference::Auto)
+                    platform::ApplyTheme(ThemePreference::Auto);
+                break;
+            case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+                // ApplyTheme rebuilds the style from scratch and re-scales
+                // to the new display scale.
+                platform::ApplyTheme(g_app->themePref);
+                break;
+            case SDL_EVENT_WINDOW_MOVED:
+                if (!(SDL_GetWindowFlags(platform::Window()) & SDL_WINDOW_MAXIMIZED)) {
+                    s_normalRect.x = ev.window.data1;
+                    s_normalRect.y = ev.window.data2;
+                    s_normalRect.valid = true;
+                }
+                break;
+            case SDL_EVENT_WINDOW_RESIZED:
+                if (!(SDL_GetWindowFlags(platform::Window()) & SDL_WINDOW_MAXIMIZED)) {
+                    s_normalRect.w = ev.window.data1;
+                    s_normalRect.h = ev.window.data2;
+                    s_normalRect.valid = true;
+                }
+                break;
+            }
+        }
+        if (done) break;
+
+        platform::PumpDialogResults();
+
+        if (SDL_GetWindowFlags(platform::Window()) & SDL_WINDOW_MINIMIZED) {
+            SDL_Delay(10);
+            continue;
+        }
+        RenderFrame();
+
+        if (smokeFrames > 0 && --smokeFrames == 0)
+            done = true;
+    }
+
+    SDL_RemoveEventWatch(ResizeWatch, nullptr);
+    platform::DialogsShutdown();
+
+    // Flush final window state to ini before shutdown (App must still be
+    // alive — its settings handler runs here too).
+    if (io.IniFilename) {
+        ImGui::MarkIniSettingsDirty();
+        ImGui::SaveIniSettingsToDisk(io.IniFilename);
+    }
     g_app = nullptr;
 
-    // Flush final window state to ini before shutdown.
-    ImGui::MarkIniSettingsDirty();
-    ImGui::SaveIniSettingsToDisk(io.IniFilename);
-
-    ImGui_ImplDX11_Shutdown();
-    ImGui_ImplWin32_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
-    CleanupDeviceD3D();
-    DestroyWindow(hwnd);
-    UnregisterClassW(wc.lpszClassName, hInst);
-    return 0;
+    platform::DestroyWindowGL();
+    return exitCode;
 }

@@ -38,14 +38,14 @@ static void DrawMMSummary(const std::string& text) {
     std::istringstream ss(text);
     std::string line;
     std::string mapName, layerName, timeStr, codeStr;
-    bool hasBrief = false, hasMap = false;
+    bool hasBrief = false;
     int objCount = 0;
 
     while (std::getline(ss, line)) {
         std::string tok = FirstToken(line);
         if (tok.empty() || tok[0] == ';') continue;
         std::string val = RestAfterToken(line);
-        if (tok == "map")      { mapName   = val; hasMap = true; }
+        if (tok == "map")      { mapName   = val; }
         else if (tok == "layer")     { layerName  = val; }
         else if (tok == "time")      { timeStr    = val; }
         else if (tok == "code")      { codeStr    = val; }
@@ -58,7 +58,7 @@ static void DrawMMSummary(const std::string& text) {
             ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp,
             ImVec2(0, 0))) {
         ImGui::TableSetupColumn("Key",  ImGuiTableColumnFlags_WidthFixed, 90);
-        ImGui::TableSetupColumn("Val",  ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("Val",  ImGuiTableColumnFlags_WidthStretch, 1.0f);
 
         auto Row = [](const char* k, const char* v) {
             ImGui::TableNextRow();

@@ -1,6 +1,7 @@
-﻿#define NOMINMAX
 #include "preview.h"
 #include "../app.h"
+#include "../platform/math3d.h"
+#include "../platform/texture.h"
 #include "imgui.h"
 #include "fx/pic.h"
 #include "fx/pal.h"
@@ -8,14 +9,11 @@
 #include "fx/raw.h"
 #include "fx/sh.h"
 
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include <DirectXMath.h>
+#include <glad/gl.h>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <vector>
-
-using namespace DirectX;
 
 // ---------------------------------------------------------------------------
 // Image preview (PIC / RAW)
@@ -29,69 +27,54 @@ static int        s_previewEntry = -2;
 // or a greyscale fallback if not found.
 static fx::Palette FindSysPalette(const App& app) {
     for (const auto& sess : app.sessions) {
-        for (size_t ei = 0; ei < sess.entries.size(); ++ei) {
-            const auto& entry = sess.entries[ei];
-            // Case-insensitive match for "PALETTE.PAL"
-            std::string name = entry.name;
-            for (auto& c : name) c = (char)toupper((unsigned char)c);
-            if (name == "PALETTE.PAL") {
-                // Decompress and load
-                auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
-                                             entry);
-                if (!raw.empty())
-                    return fx::pal_load(raw.data(), raw.size());
-            }
+        if (const fx::Entry* entry = fx::ealib_find(sess.entries, "PALETTE.PAL")) {
+            auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
+                                         *entry);
+            if (!raw.empty())
+                return fx::pal_load(raw.data(), raw.size());
         }
     }
     return fx::pal_load(nullptr, 0); // greyscale fallback
 }
 
 // ---------------------------------------------------------------------------
-// SH 3D preview
+// SH 3D preview — offscreen GL 3.3 FBO pipeline
 // ---------------------------------------------------------------------------
 
 struct Vtx3D { float x, y, z, r, g, b; };
 
-static const char* kVS = R"hlsl(
-cbuffer CB : register(b0) { float4x4 mvp; };
-struct VI { float3 pos : POSITION; float3 col : TEXCOORD0; };
-struct VO { float4 pos : SV_POSITION; float3 col : TEXCOORD0; };
-VO main(VI v) {
-    VO o;
-    o.pos = mul(mvp, float4(v.pos, 1.0f));
-    o.col = v.col;
-    return o;
+static const char* kVS = R"glsl(
+#version 330 core
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aCol;
+uniform mat4 uMvp;
+out vec3 vCol;
+void main() {
+    gl_Position = uMvp * vec4(aPos, 1.0);
+    vCol = aCol;
 }
-)hlsl";
+)glsl";
 
-static const char* kPS = R"hlsl(
-struct PI { float4 pos : SV_POSITION; float3 col : TEXCOORD0; };
-float4 main(PI p) : SV_TARGET { return float4(p.col, 1.0f); }
-)hlsl";
-
-static const char* kPS_wire = R"hlsl(
-struct PI { float4 pos : SV_POSITION; float3 col : TEXCOORD0; };
-float4 main(PI p) : SV_TARGET { return float4(0.7f, 0.7f, 0.7f, 1.0f); }
-)hlsl";
+static const char* kFS = R"glsl(
+#version 330 core
+in vec3 vCol;
+uniform bool uWire;
+out vec4 FragColor;
+void main() {
+    FragColor = uWire ? vec4(0.7, 0.7, 0.7, 1.0) : vec4(vCol, 1.0);
+}
+)glsl";
 
 struct ShPreview {
-    ID3D11Texture2D*           colorTex  = nullptr;
-    ID3D11RenderTargetView*    rtv       = nullptr;
-    ID3D11ShaderResourceView*  srv       = nullptr;
-    ID3D11Texture2D*           depthTex  = nullptr;
-    ID3D11DepthStencilView*    dsv       = nullptr;
-    ID3D11VertexShader*        vs        = nullptr;
-    ID3D11PixelShader*         ps        = nullptr;
-    ID3D11InputLayout*         il        = nullptr;
-    ID3D11Buffer*              vb        = nullptr;
-    ID3D11Buffer*              grid_vb   = nullptr;
-    ID3D11Buffer*              cb        = nullptr;
-    ID3D11RasterizerState*     rs        = nullptr;
-    ID3D11RasterizerState*     rs_wire   = nullptr;
-    ID3D11PixelShader*         ps_wire   = nullptr;
-    ID3D11DepthStencilState*   dss       = nullptr;
-    ID3D11DepthStencilState*   dss_wire  = nullptr;
-    int vtx_count   = 0;
+    GLuint fbo      = 0;
+    GLuint colorTex = 0;
+    GLuint depthRbo = 0;
+    GLuint prog     = 0;
+    GLuint vaoMesh  = 0, vboMesh = 0;
+    GLuint vaoGrid  = 0, vboGrid = 0;
+    GLint  locMvp   = -1;
+    GLint  locWire  = -1;
+    int vtx_count      = 0;
     int grid_vtx_count = 0;
     int rt_w = 0, rt_h = 0;
     int cached_lib   = -2;
@@ -101,143 +84,127 @@ struct ShPreview {
     float distance   = 100.0f;
     float model_span = 1.0f;
     float target[3]  = {};
-    bool  shaders_ok = false;
+    bool  prog_ok    = false;
 
     void ReleaseRT() {
-        if (colorTex)  { colorTex->Release();  colorTex  = nullptr; }
-        if (rtv)       { rtv->Release();       rtv       = nullptr; }
-        if (srv)       { srv->Release();       srv       = nullptr; }
-        if (depthTex)  { depthTex->Release();  depthTex  = nullptr; }
-        if (dsv)       { dsv->Release();       dsv       = nullptr; }
+        if (fbo)      { glDeleteFramebuffers(1, &fbo);   fbo = 0; }
+        if (colorTex) { glDeleteTextures(1, &colorTex);  colorTex = 0; }
+        if (depthRbo) { glDeleteRenderbuffers(1, &depthRbo); depthRbo = 0; }
         rt_w = rt_h = 0;
     }
     void ReleaseMesh() {
-        if (vb)      { vb->Release();      vb      = nullptr; }
-        if (grid_vb) { grid_vb->Release(); grid_vb = nullptr; }
+        if (vaoMesh) { glDeleteVertexArrays(1, &vaoMesh); vaoMesh = 0; }
+        if (vboMesh) { glDeleteBuffers(1, &vboMesh);      vboMesh = 0; }
+        if (vaoGrid) { glDeleteVertexArrays(1, &vaoGrid); vaoGrid = 0; }
+        if (vboGrid) { glDeleteBuffers(1, &vboGrid);      vboGrid = 0; }
         vtx_count = grid_vtx_count = 0;
-    }
-    void ReleaseAll() {
-        ReleaseRT();
-        ReleaseMesh();
-        if (vs)  { vs->Release();  vs  = nullptr; }
-        if (ps)  { ps->Release();  ps  = nullptr; }
-        if (il)  { il->Release();  il  = nullptr; }
-        if (cb)  { cb->Release();  cb  = nullptr; }
-        if (rs)       { rs->Release();       rs       = nullptr; }
-        if (rs_wire)  { rs_wire->Release();  rs_wire  = nullptr; }
-        if (ps_wire)  { ps_wire->Release();  ps_wire  = nullptr; }
-        if (dss)      { dss->Release();      dss      = nullptr; }
-        if (dss_wire) { dss_wire->Release(); dss_wire = nullptr; }
-        shaders_ok = false;
     }
 } s_sh;
 
-static bool EnsureShaders(ID3D11Device* device) {
-    if (s_sh.shaders_ok) return true;
-
-    ID3DBlob* vsBlob = nullptr, *psBlob = nullptr, *errBlob = nullptr;
-
-    if (FAILED(D3DCompile(kVS, strlen(kVS), "vs", nullptr, nullptr,
-                          "main", "vs_4_0", 0, 0, &vsBlob, &errBlob))) {
-        if (errBlob) errBlob->Release();
-        return false;
-    }
-    if (FAILED(D3DCompile(kPS, strlen(kPS), "ps", nullptr, nullptr,
-                          "main", "ps_4_0", 0, 0, &psBlob, &errBlob))) {
-        vsBlob->Release();
-        if (errBlob) errBlob->Release();
-        return false;
-    }
-
-    device->CreateVertexShader(vsBlob->GetBufferPointer(),
-                               vsBlob->GetBufferSize(), nullptr, &s_sh.vs);
-    device->CreatePixelShader (psBlob->GetBufferPointer(),
-                               psBlob->GetBufferSize(), nullptr, &s_sh.ps);
-
-    D3D11_INPUT_ELEMENT_DESC layout[] = {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-    };
-    device->CreateInputLayout(layout, 2,
-                              vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &s_sh.il);
-    vsBlob->Release(); psBlob->Release();
-
-    D3D11_BUFFER_DESC cbd = {};
-    cbd.ByteWidth      = sizeof(XMFLOAT4X4);
-    cbd.Usage          = D3D11_USAGE_DYNAMIC;
-    cbd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-    cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    device->CreateBuffer(&cbd, nullptr, &s_sh.cb);
-
-    ID3DBlob* wireBlob = nullptr;
-    if (SUCCEEDED(D3DCompile(kPS_wire, strlen(kPS_wire), "ps_wire", nullptr, nullptr,
-                             "main", "ps_4_0", 0, 0, &wireBlob, &errBlob)))
-    {
-        device->CreatePixelShader(wireBlob->GetBufferPointer(),
-                                  wireBlob->GetBufferSize(), nullptr, &s_sh.ps_wire);
-        wireBlob->Release();
-    }
-
-    D3D11_RASTERIZER_DESC rd = {};
-    rd.FillMode        = D3D11_FILL_SOLID;
-    rd.CullMode        = D3D11_CULL_NONE;
-    rd.DepthClipEnable = TRUE;
-    device->CreateRasterizerState(&rd, &s_sh.rs);
-
-    rd.FillMode              = D3D11_FILL_WIREFRAME;
-    rd.DepthBias             = -2000;
-    rd.SlopeScaledDepthBias  = -1.0f;
-    device->CreateRasterizerState(&rd, &s_sh.rs_wire);
-
-    D3D11_DEPTH_STENCIL_DESC dsd = {};
-    dsd.DepthEnable    = TRUE;
-    dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    dsd.DepthFunc      = D3D11_COMPARISON_LESS;
-    device->CreateDepthStencilState(&dsd, &s_sh.dss);
-
-    dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    dsd.DepthFunc      = D3D11_COMPARISON_LESS_EQUAL;
-    device->CreateDepthStencilState(&dsd, &s_sh.dss_wire);
-
-    s_sh.shaders_ok = s_sh.vs && s_sh.ps && s_sh.il && s_sh.cb && s_sh.rs && s_sh.dss;
-    return s_sh.shaders_ok;
+static GLuint CompileShader(GLenum type, const char* src) {
+    GLuint sh = glCreateShader(type);
+    glShaderSource(sh, 1, &src, nullptr);
+    glCompileShader(sh);
+    GLint ok = GL_FALSE;
+    glGetShaderiv(sh, GL_COMPILE_STATUS, &ok);
+    if (!ok) { glDeleteShader(sh); return 0; }
+    return sh;
 }
 
-static bool EnsureRT(ID3D11Device* device, int w, int h) {
-    if (s_sh.rt_w == w && s_sh.rt_h == h && s_sh.srv) return true;
+static bool EnsureProgram() {
+    if (s_sh.prog_ok) return true;
+
+    GLuint vs = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    if (!vs || !fs) {
+        if (vs) glDeleteShader(vs);
+        if (fs) glDeleteShader(fs);
+        return false;
+    }
+    s_sh.prog = glCreateProgram();
+    glAttachShader(s_sh.prog, vs);
+    glAttachShader(s_sh.prog, fs);
+    glLinkProgram(s_sh.prog);
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    GLint linked = GL_FALSE;
+    glGetProgramiv(s_sh.prog, GL_LINK_STATUS, &linked);
+    if (!linked) {
+        glDeleteProgram(s_sh.prog);
+        s_sh.prog = 0;
+        return false;
+    }
+    s_sh.locMvp  = glGetUniformLocation(s_sh.prog, "uMvp");
+    s_sh.locWire = glGetUniformLocation(s_sh.prog, "uWire");
+    s_sh.prog_ok = true;
+    return true;
+}
+
+static bool EnsureRT(int w, int h) {
+    if (s_sh.rt_w == w && s_sh.rt_h == h && s_sh.fbo) return true;
     s_sh.ReleaseRT();
     if (w <= 0 || h <= 0) return false;
 
-    D3D11_TEXTURE2D_DESC td = {};
-    td.Width  = (UINT)w; td.Height = (UINT)h;
-    td.MipLevels = 1; td.ArraySize = 1;
-    td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    td.SampleDesc.Count = 1;
-    td.Usage     = D3D11_USAGE_DEFAULT;
-    td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    if (FAILED(device->CreateTexture2D(&td, nullptr, &s_sh.colorTex))) return false;
-    device->CreateRenderTargetView(s_sh.colorTex,    nullptr, &s_sh.rtv);
-    device->CreateShaderResourceView(s_sh.colorTex,  nullptr, &s_sh.srv);
+    glGenTextures(1, &s_sh.colorTex);
+    glBindTexture(GL_TEXTURE_2D, s_sh.colorTex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-    td.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    if (FAILED(device->CreateTexture2D(&td, nullptr, &s_sh.depthTex))) {
-        s_sh.ReleaseRT(); return false;
-    }
-    device->CreateDepthStencilView(s_sh.depthTex, nullptr, &s_sh.dsv);
+    glGenRenderbuffers(1, &s_sh.depthRbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, s_sh.depthRbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, w, h);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    s_sh.rt_w = w; s_sh.rt_h = h;
-    return s_sh.rtv && s_sh.srv && s_sh.dsv;
+    glGenFramebuffers(1, &s_sh.fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, s_sh.fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, s_sh.colorTex, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                              GL_RENDERBUFFER, s_sh.depthRbo);
+    bool complete =
+        glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (!complete) { s_sh.ReleaseRT(); return false; }
+
+    s_sh.rt_w = w;
+    s_sh.rt_h = h;
+    return true;
 }
 
-static void BuildMeshVB(ID3D11Device* device, const fx::ShMesh& mesh) {
+// Upload interleaved pos+colour vertices into a fresh VAO/VBO pair.
+static void UploadVertexBuffer(GLuint* vao, GLuint* vbo,
+                               const std::vector<Vtx3D>& verts) {
+    glGenVertexArrays(1, vao);
+    glGenBuffers(1, vbo);
+    glBindVertexArray(*vao);
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (GLsizeiptr)(verts.size() * sizeof(Vtx3D)),
+                 verts.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vtx3D),
+                          (const void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vtx3D),
+                          (const void*)(3 * sizeof(float)));
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+static void BuildMeshVB(const fx::ShMesh& mesh) {
     s_sh.ReleaseMesh();
     if (mesh.vertices.empty() || mesh.faces.empty()) return;
 
     std::vector<Vtx3D> verts;
     verts.reserve(mesh.faces.size() * 6);
 
-    // Fixed directional light â€” upper-left-front in render space (X=right, Y=up, Z=fwd)
+    // Fixed directional light — upper-left-front in render space (X=right, Y=up, Z=fwd)
     const float Lx = 0.577f, Ly = 0.577f, Lz = -0.577f;
     const float ambient = 0.15f, diffuse = 0.85f;
 
@@ -270,7 +237,7 @@ static void BuildMeshVB(ID3D11Device* device, const fx::ShMesh& mesh) {
                 shade = ambient + diffuse * 0.3f;
             }
 
-            // SH uses Z-up (X=right, Y=forward, Z=up); remap to DX Y-up
+            // SH uses Z-up (X=right, Y=forward, Z=up); remap to render Y-up
             verts.push_back({v0.x, v0.z, v0.y, shade, shade, shade});
             verts.push_back({v1.x, v1.z, v1.y, shade, shade, shade});
             verts.push_back({v2.x, v2.z, v2.y, shade, shade, shade});
@@ -278,14 +245,7 @@ static void BuildMeshVB(ID3D11Device* device, const fx::ShMesh& mesh) {
     }
 
     if (verts.empty()) return;
-
-    D3D11_BUFFER_DESC bd = {};
-    bd.ByteWidth = (UINT)(verts.size() * sizeof(Vtx3D));
-    bd.Usage     = D3D11_USAGE_IMMUTABLE;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    D3D11_SUBRESOURCE_DATA sd = {};
-    sd.pSysMem = verts.data();
-    device->CreateBuffer(&bd, &sd, &s_sh.vb);
+    UploadVertexBuffer(&s_sh.vaoMesh, &s_sh.vboMesh, verts);
     s_sh.vtx_count = (int)verts.size();
 }
 
@@ -293,7 +253,7 @@ static void BuildMeshVB(ID3D11Device* device, const fx::ShMesh& mesh) {
 // Room is a cube of half-size = max_span*2, centred on the model bbox centre.
 // Camera orbits at <= max_span*1.6, so it is always INSIDE the room.
 // All coordinates are in render space: X=FA_X, Y=FA_Z(up), Z=FA_Y(fwd).
-static void BuildBoxGridVB(ID3D11Device* device, const fx::ShInfo& info, float max_span) {
+static void BuildBoxGridVB(const fx::ShInfo& info, float max_span) {
     float cx = (info.bbox[0] + info.bbox[3]) * 0.5f;
     float cy = (info.bbox[2] + info.bbox[5]) * 0.5f; // render_Y = FA_Z centre
     float cz = (info.bbox[1] + info.bbox[4]) * 0.5f; // render_Z = FA_Y centre
@@ -344,8 +304,8 @@ static void BuildBoxGridVB(ID3D11Device* device, const fx::ShInfo& info, float m
         }
     };
 
-    faceXZ(ylo, 0.22f);   // floor  â€” slightly brighter
-    faceXZ(yhi, 0.14f);   // ceiling â€” dimmer
+    faceXZ(ylo, 0.22f);   // floor  — slightly brighter
+    faceXZ(yhi, 0.14f);   // ceiling — dimmer
     faceYZ(xlo, 0.17f);   // left wall
     faceYZ(xhi, 0.17f);   // right wall
     faceXY(zlo, 0.17f);   // rear wall
@@ -364,86 +324,82 @@ static void BuildBoxGridVB(ID3D11Device* device, const fx::ShInfo& info, float m
     edge(xhi,ylo,zhi, xhi,yhi,zhi); edge(xlo,ylo,zhi, xlo,yhi,zhi);
 
     if (lines.empty()) return;
-    D3D11_BUFFER_DESC bd = {};
-    bd.ByteWidth = (UINT)(lines.size() * sizeof(Vtx3D));
-    bd.Usage     = D3D11_USAGE_IMMUTABLE;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    D3D11_SUBRESOURCE_DATA sd = { lines.data(), 0, 0 };
-    if (SUCCEEDED(device->CreateBuffer(&bd, &sd, &s_sh.grid_vb)))
-        s_sh.grid_vtx_count = (int)lines.size();
+    UploadVertexBuffer(&s_sh.vaoGrid, &s_sh.vboGrid, lines);
+    s_sh.grid_vtx_count = (int)lines.size();
 }
 
-static void RenderSh(ID3D11Device* device, ID3D11DeviceContext* ctx, int w, int h) {
-    if (!EnsureRT(device, w, h))      return;
-    if (!EnsureShaders(device))       return;
+static void RenderSh(int w, int h) {
+    if (!EnsureRT(w, h))   return;
+    if (!EnsureProgram())  return;
 
-    static const float kClear[4] = {0.08f, 0.08f, 0.12f, 1.0f};
-    ctx->ClearRenderTargetView(s_sh.rtv, kClear);
-    ctx->ClearDepthStencilView(s_sh.dsv, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, s_sh.fbo);
+    glViewport(0, 0, w, h);
+    glClearColor(0.08f, 0.08f, 0.12f, 1.0f);
+    glClearDepth(1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (!s_sh.vb || s_sh.vtx_count == 0) return; // empty model â€” just show dark bg
+    if (!s_sh.vaoMesh || s_sh.vtx_count == 0) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return; // empty model — just show dark bg
+    }
 
-    // Build MVP
-    float azRad = s_sh.azimuth   * XM_PI / 180.0f;
-    float elRad = s_sh.elevation * XM_PI / 180.0f;
-    float eyeX  = s_sh.target[0] + s_sh.distance * cosf(elRad) * sinf(azRad);
-    float eyeY  = s_sh.target[1] + s_sh.distance * sinf(elRad);
-    float eyeZ  = s_sh.target[2] + s_sh.distance * cosf(elRad) * cosf(azRad);
+    // Build MVP. Same orbit math as the DX11 build; the RH look_at may
+    // mirror the model relative to the old LH view — verify side-by-side on
+    // the Windows bench and negate the azimuth here if it does.
+    const float kPi = 3.14159265358979f;
+    float azRad = s_sh.azimuth   * kPi / 180.0f;
+    float elRad = s_sh.elevation * kPi / 180.0f;
+    float eye[3] = {
+        s_sh.target[0] + s_sh.distance * cosf(elRad) * sinf(azRad),
+        s_sh.target[1] + s_sh.distance * sinf(elRad),
+        s_sh.target[2] + s_sh.distance * cosf(elRad) * cosf(azRad),
+    };
+    float up[3] = {0.0f, 1.0f, 0.0f};
 
-    XMVECTOR eye = XMVectorSet(eyeX, eyeY, eyeZ, 0);
-    XMVECTOR tgt = XMVectorSet(s_sh.target[0], s_sh.target[1], s_sh.target[2], 0);
-    XMVECTOR up  = XMVectorSet(0, 1, 0, 0);
-
-    XMMATRIX view = XMMatrixLookAtLH(eye, tgt, up);
+    platform::Mat4 view = platform::mat4_look_at(eye, s_sh.target, up);
     float near_p = std::max(1.0f, s_sh.distance * 0.01f);
     float far_p  = s_sh.distance + s_sh.model_span * 10.0f;
-    XMMATRIX proj = XMMatrixPerspectiveFovLH(
-        60.0f * XM_PI / 180.0f,
-        (float)w / (float)h,
-        near_p, far_p);
-    XMMATRIX mvp = XMMatrixTranspose(view * proj);
+    platform::Mat4 proj = platform::mat4_perspective(
+        60.0f * kPi / 180.0f, (float)w / (float)h, near_p, far_p);
+    platform::Mat4 mvp = platform::mat4_mul(proj, view);
 
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    ctx->Map(s_sh.cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-    XMStoreFloat4x4((XMFLOAT4X4*)mapped.pData, mvp);
-    ctx->Unmap(s_sh.cb, 0);
+    glUseProgram(s_sh.prog);
+    glUniformMatrix4fv(s_sh.locMvp, 1, GL_FALSE, mvp.m);
+    glUniform1i(s_sh.locWire, 0);
 
-    ctx->OMSetRenderTargets(1, &s_sh.rtv, s_sh.dsv);
-    D3D11_VIEWPORT vp = {0, 0, (float)w, (float)h, 0.0f, 1.0f};
-    ctx->RSSetViewports(1, &vp);
-    ctx->VSSetShader(s_sh.vs, nullptr, 0);
-    ctx->PSSetShader(s_sh.ps, nullptr, 0);
-    ctx->IASetInputLayout(s_sh.il);
-    ctx->VSSetConstantBuffers(0, 1, &s_sh.cb);
-    ctx->RSSetState(s_sh.rs);
-    ctx->OMSetDepthStencilState(s_sh.dss, 0);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_CULL_FACE); // parity with D3D11_CULL_NONE
 
-    UINT stride = sizeof(Vtx3D), offset = 0;
-
-    // Floor grid â€” draw first so model depth writes occlude it naturally
-    if (s_sh.grid_vb && s_sh.grid_vtx_count > 0) {
-        ctx->IASetVertexBuffers(0, 1, &s_sh.grid_vb, &stride, &offset);
-        ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-        ctx->RSSetState(s_sh.rs);
-        ctx->OMSetDepthStencilState(s_sh.dss, 0);
-        ctx->Draw((UINT)s_sh.grid_vtx_count, 0);
+    // Room grid first so model depth writes occlude it naturally
+    if (s_sh.vaoGrid && s_sh.grid_vtx_count > 0) {
+        glBindVertexArray(s_sh.vaoGrid);
+        glDrawArrays(GL_LINES, 0, s_sh.grid_vtx_count);
     }
 
-    ctx->IASetVertexBuffers(0, 1, &s_sh.vb, &stride, &offset);
-    ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    ctx->Draw((UINT)s_sh.vtx_count, 0);
+    glBindVertexArray(s_sh.vaoMesh);
+    glDrawArrays(GL_TRIANGLES, 0, s_sh.vtx_count);
 
-    // Wireframe overlay â€” dark lines on top of the solid mesh
-    if (s_sh.rs_wire && s_sh.ps_wire && s_sh.dss_wire) {
-        ctx->RSSetState(s_sh.rs_wire);
-        ctx->PSSetShader(s_sh.ps_wire, nullptr, 0);
-        ctx->OMSetDepthStencilState(s_sh.dss_wire, 0);
-        ctx->Draw((UINT)s_sh.vtx_count, 0);
-    }
+    // Wireframe overlay — grey lines on top of the solid mesh (the DX build
+    // used a depth-bias rasterizer state; polygon offset is the GL analogue)
+    glUniform1i(s_sh.locWire, 1);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    glPolygonOffset(-1.0f, -1.0f);
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_LEQUAL);
+    glDrawArrays(GL_TRIANGLES, 0, s_sh.vtx_count);
 
-    // Unbind our RT so ImGui can reclaim the output RT
-    ID3D11RenderTargetView* nullRTV = nullptr;
-    ctx->OMSetRenderTargets(1, &nullRTV, nullptr);
+    // Restore state for the ImGui backend
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_POLYGON_OFFSET_LINE);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+    glDisable(GL_DEPTH_TEST);
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -467,16 +423,16 @@ void DrawPreview(App& app) {
                     fx::Palette sysPal = FindSysPalette(app);
                     auto rgba = fx::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
                     if (!rgba.empty())
-                        s_preview = app.UploadTexture(rgba.data(),
-                                                      (int)info.width, (int)info.height);
+                        s_preview = platform::UploadTexture(rgba.data(),
+                                                            (int)info.width, (int)info.height);
                 }
             } else if (ed.kind == EditorKind::Raw) {
                 fx::RawInfo info;
                 if (fx::raw_info(ed.data.data(), ed.data.size(), &info)) {
                     auto rgba = fx::raw_decode(ed.data.data(), ed.data.size());
                     if (!rgba.empty())
-                        s_preview = app.UploadTexture(rgba.data(),
-                                                      (int)info.width, (int)info.height);
+                        s_preview = platform::UploadTexture(rgba.data(),
+                                                            (int)info.width, (int)info.height);
                 }
             }
         }
@@ -484,10 +440,7 @@ void DrawPreview(App& app) {
 
     // ---- SH 3D preview -------------------------------------------------------
     if (ed.kind == EditorKind::Sh) {
-        ID3D11Device*        device = app.GetDevice();
-        ID3D11DeviceContext* ctx    = app.GetCtx();
-
-        // Rebuild mesh VB when selection changes
+        // Rebuild mesh buffers when selection changes
         if (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry) {
             s_sh.cached_lib   = ed.libIdx;
             s_sh.cached_entry = ed.entryIdx;
@@ -496,7 +449,7 @@ void DrawPreview(App& app) {
             fx::ShMesh mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size());
 
             // Reset camera to fit the model.
-            // SH bbox is (X, Y, Z) = (right, forward, up); remap target to DX Y-up.
+            // SH bbox is (X, Y, Z) = (right, forward, up); remap target to render Y-up.
             s_sh.target[0] = (info.bbox[0] + info.bbox[3]) * 0.5f; // X unchanged
             s_sh.target[1] = (info.bbox[2] + info.bbox[5]) * 0.5f; // render Y = model Z (up)
             s_sh.target[2] = (info.bbox[1] + info.bbox[4]) * 0.5f; // render Z = model Y (fwd)
@@ -510,8 +463,8 @@ void DrawPreview(App& app) {
             s_sh.azimuth    = 45.0f;
             s_sh.elevation  = 25.0f;
 
-            BuildMeshVB(device, mesh);
-            BuildBoxGridVB(device, info, s_sh.model_span);
+            BuildMeshVB(mesh);
+            BuildBoxGridVB(info, s_sh.model_span);
         }
 
         float  txt_h   = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;
@@ -520,16 +473,18 @@ void DrawPreview(App& app) {
         canvas.y = std::max(4.0f, canvas.y - txt_h);
 
         int iw = (int)canvas.x, ih = (int)canvas.y;
-        RenderSh(device, ctx, iw, ih);
+        RenderSh(iw, ih);
 
-        if (s_sh.srv) {
+        if (s_sh.fbo && s_sh.vtx_count > 0) {
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImGui::InvisibleButton("##sh3d", canvas);
             bool held    = ImGui::IsItemActive();
             bool hovered = ImGui::IsItemHovered();
+            // FBO content is bottom-up in GL — flip V when displaying.
             ImGui::GetWindowDrawList()->AddImage(
-                (ImTextureID)(void*)s_sh.srv,
-                pos, {pos.x + canvas.x, pos.y + canvas.y});
+                (ImTextureID)(intptr_t)s_sh.colorTex,
+                pos, {pos.x + canvas.x, pos.y + canvas.y},
+                ImVec2(0, 1), ImVec2(1, 0));
 
             if (held) {
                 ImVec2 delta = ImGui::GetIO().MouseDelta;
@@ -559,11 +514,11 @@ void DrawPreview(App& app) {
     }
 
     // ---- Static image preview -----------------------------------------------
-    if (s_preview.srv) {
+    if (s_preview.id) {
         float avail = ImGui::GetContentRegionAvail().x;
         float scale = avail / (float)s_preview.width;
         float dispH = s_preview.height * scale;
-        ImGui::Image((ImTextureID)(void*)s_preview.srv, ImVec2(avail, dispH));
+        ImGui::Image((ImTextureID)(intptr_t)s_preview.id, ImVec2(avail, dispH));
         ImGui::TextDisabled("%dx%d", s_preview.width, s_preview.height);
     } else if (ed.kind != EditorKind::None) {
         ImGui::TextDisabled("No preview for .%s", ed.ext.c_str());
