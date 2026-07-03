@@ -227,6 +227,7 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `DumpOverlayDLL.java` | Per-DLL dump for overlay/secondary projects | Yes |
 | `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` / `AnalyzeBIFRAME.java` | Deep dives on overlay projects | Yes |
 | `AnalyzeSHHeader.java` | SH header field consumption — radius/radius_world evidence (#124) | Yes |
+| `AnalyzeSHDispatch.java` | SH interpreter vector_table map; materializes handler functions (#52) | Yes |
 
 ### Launchers (Linux `.sh` / Windows `.bat`)
 
