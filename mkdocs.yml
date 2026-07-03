@@ -1,0 +1,135 @@
+# Documentation site for the fighters-codex docs tree (docs/).
+# Built strictly in CI (.github/workflows/docs.yml) and deployed to GitHub Pages
+# on push to main. Local preview: see docs/development.md § Documentation site.
+site_name: Fighters Codex
+site_description: >-
+  Reverse-engineering documentation for Jane's Fighters Anthology (1998) —
+  format specifications, engine architecture notes, and modding guides,
+  validated by byte-identical codecs.
+site_url: https://jomkz.github.io/fighters-codex/
+repo_url: https://github.com/jomkz/fighters-codex
+repo_name: jomkz/fighters-codex
+edit_uri: edit/main/docs/
+copyright: >-
+  MIT licensed. The formats documented here were determined independently by
+  reverse engineering for interoperability. Jane's Fighters Anthology and
+  related titles are trademarks of their respective owners; no copyrighted
+  game content is included.
+
+theme:
+  name: material
+  icon:
+    logo: material/airplane
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  # GitHub-compatible heading slugs so #anchor links work identically on
+  # GitHub and the site (e.g. em-dash headings slug to double hyphens).
+  - toc:
+      permalink: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+
+# Broken links, broken anchors, or a page missing from nav fail the strict
+# CI build — docs claims stay mechanically checked.
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+nav:
+  - Home: README.md
+  - Fighters Anthology:
+      - Overview: fa/README.md
+      - Architecture: fa/architecture.md
+      - Game Loop: fa/game-loop.md
+      - Renderer: fa/renderer.md
+      - Physics: fa/physics.md
+      - Network: fa/network.md
+      - Globals: fa/globals.md
+      - Structs: fa/structs.md
+      - Symbols: fa/symbols.md
+      - Modding: fa/modding.md
+      - Formats:
+          - Index: fa/formats/README.md
+          - Status Matrix: fa/formats/STATUS.md
+          - 11K: fa/formats/11K.md
+          - AI: fa/formats/AI.md
+          - BI: fa/formats/BI.md
+          - BIN: fa/formats/BIN.md
+          - BRF: fa/formats/BRF.md
+          - CAM: fa/formats/CAM.md
+          - CB8: fa/formats/CB8.md
+          - CFG: fa/formats/CFG.md
+          - DAT: fa/formats/DAT.md
+          - DLG: fa/formats/DLG.md
+          - ECM: fa/formats/ECM.md
+          - FBC: fa/formats/FBC.md
+          - FNT: fa/formats/FNT.md
+          - GAS: fa/formats/GAS.md
+          - HGR: fa/formats/HGR.md
+          - HUD: fa/formats/HUD.md
+          - INF: fa/formats/INF.md
+          - JT: fa/formats/JT.md
+          - LAY: fa/formats/LAY.md
+          - LIB: fa/formats/LIB.md
+          - M: fa/formats/M.md
+          - MC: fa/formats/MC.md
+          - MM: fa/formats/MM.md
+          - MNU: fa/formats/MNU.md
+          - MT: fa/formats/MT.md
+          - MUS: fa/formats/MUS.md
+          - NT: fa/formats/NT.md
+          - OT: fa/formats/OT.md
+          - P: fa/formats/P.md
+          - PAL: fa/formats/PAL.md
+          - PIC: fa/formats/PIC.md
+          - PT: fa/formats/PT.md
+          - PTS: fa/formats/PTS.md
+          - RAW: fa/formats/RAW.md
+          - RGN: fa/formats/RGN.md
+          - SEE: fa/formats/SEE.md
+          - SEQ: fa/formats/SEQ.md
+          - SH: fa/formats/SH.md
+          - SMS: fa/formats/SMS.md
+          - SSF: fa/formats/SSF.md
+          - T2: fa/formats/T2.md
+          - TXT: fa/formats/TXT.md
+          - VDO: fa/formats/VDO.md
+          - XMI: fa/formats/XMI.md
+  - Toolkit:
+      - CLI: cli.md
+      - GUI: gui.md
+      - API: api.md
+      - Development: development.md
+  - Project:
+      - Roadmap: roadmap.md
+      - Spec Authoring: spec-authoring.md
