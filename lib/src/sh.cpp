@@ -47,7 +47,7 @@ static CodeSection find_code_section(const uint8_t* data, size_t size) {
 
 // ---- scale factor -------------------------------------------------------
 
-// Header layout: [FF FF][unk0 i16][unk1 i16][scale i16][ext[3] i16]  = 14 bytes
+// Header layout: [FF FF][radius_world i16][radius i16][scale i16][ext[3] i16]  = 14 bytes
 static float read_scale(const uint8_t* code, size_t sz) {
     if (sz < 14 || code[0] != 0xFF) return 1.0f;
     int16_t s = (int16_t)u16le(code + 6);
