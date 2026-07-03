@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-03
+
 ### Changed
 - **re** SH header: the two unknown header words are named and traced — `radius` (approximate bounding-sphere magnitude, read by `GRAddBrentObj` to floor the projection/precision shift) and `radius_world` (shown engine-unused, present only on ground/naval scenery), replacing the incorrect "file ID" guess (#124)
 - **re** SH opcode table cross-validated against the OpenFA `sh` crate (GPLv3): full agreement on all 55 opcodes, sizes, and formulas; two inert modeling differences recorded; mnemonic provenance attributed per the MIT/GPL boundary (#121)
@@ -118,7 +120,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.1
 [0.5.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.0
 [0.4.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.3
 [0.4.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.2
