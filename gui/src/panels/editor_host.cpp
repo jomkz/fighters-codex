@@ -20,6 +20,7 @@
 #include "../editors/xmi_editor.h"
 #include "../editors/vdo_editor.h"
 #include "../editors/cam_editor.h"
+#include "../editors/pal_editor.h"
 #include "imgui.h"
 
 void DrawEditorHost(App& app) {
@@ -67,6 +68,7 @@ void DrawEditorHost(App& app) {
     case EditorKind::Xmi:     DrawXmiEditor(app);     break;
     case EditorKind::Vdo:     DrawVdoEditor(app);     break;
     case EditorKind::Cam:     DrawCamEditor(app);     break;
+    case EditorKind::Pal:     DrawPalEditor(app);     break;
     default:
         ImGui::TextDisabled("No editor for .%s files.", app.editor.ext.c_str());
         break;

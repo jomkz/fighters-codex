@@ -98,12 +98,26 @@ mapped), and annotation (units, enum values). Changes are patched back via
 ## Image Editing (PIC / PAL)
 
 - Preview PIC files in the Preview panel (decoded via `fx::pic_decode`)
-- Export PIC → PNG
+- Export PIC → PNG (uses the active preview palette, so the file matches the preview)
 - Import PNG or BMP → PIC (dense format, full inline palette)
 - Supports dense (format 0), sparse (format 1), and JPEG (format 0xD8FF) PIC sub-formats
 - Covers aircraft skins, icons, nose art, tail art, and pilot portraits
 
-> Palette viewer/switcher (ICON.PAL, PALETTE.PAL, inline): planned.
+### Palette viewer and switcher
+
+- Opening any `.PAL` record (ICON.PAL, PALETTE.PAL, or a standalone file)
+  shows a 16×16 swatch grid with per-index RGB tooltips and a **Use as
+  preview palette** button
+- A PIC's inline palette fragment appears as an **Inline palette**
+  collapsible in the PIC editor
+- The preview palette applies live to PIC previews (Preview panel combo) and
+  CB8 frames (CB8 editor combo); one selection is shared by both
+- **Auto** keeps the default behavior: PIC previews use PALETTE.PAL from any
+  open session; CB8 renders greyscale, because the palette its videos expect
+  is engine-internal and not stored in any LIB (PALETTE.PAL garbles it) —
+  the switcher exists to experiment anyway
+- Choosing a palette also drives PIC → PNG and CB8 frame exports; inline PIC
+  palette fragments still overlay whichever base palette is selected
 
 ## Audio Editing (11K / 5K / 8K)
 

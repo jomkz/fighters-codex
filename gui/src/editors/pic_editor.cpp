@@ -1,5 +1,6 @@
 ﻿#include "pic_editor.h"
 #include "../app.h"
+#include "../palettes.h"
 #include "../platform/dialogs.h"
 #include "imgui.h"
 #include "fx/pic.h"
@@ -27,6 +28,18 @@ void DrawPicEditor(App& app) {
             info.width, info.height);
         ImGui::Text("Palette: %u colors  |  Pixels: %u bytes",
             info.palette_size / 3, info.pixels_size);
+
+        // Inline palette fragment — overlays the preview's base palette from
+        // index 0, same as pic_decode.
+        uint32_t count = info.palette_size / 3;
+        if (count > 0 && (size_t)info.palette_offset + info.palette_size
+                             <= ed.data.size()) {
+            if (ImGui::CollapsingHeader("Inline palette")) {
+                fx::Palette inlinePal = fx::pal_load(
+                    ed.data.data() + info.palette_offset, info.palette_size);
+                fxg::DrawPaletteSwatches("pic-inline", inlinePal, (int)count);
+            }
+        }
     } else if (valid) {
         ImGui::Text("Format: JPEG");
     } else {
@@ -37,16 +50,9 @@ void DrawPicEditor(App& app) {
 
     if (ImGui::Button("Export PNG...")) {
         // Decode before the dialog opens — the continuation runs frames
-        // later, when the selection may have changed.
-        fx::Palette sysPal = fx::pal_load(nullptr, 0);
-        for (const auto& sess : app.sessions) {
-            const fx::Entry* pal = fx::ealib_find(sess.entries, "PALETTE.PAL");
-            if (!pal) continue;
-            auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
-                                         *pal);
-            if (!raw.empty()) sysPal = fx::pal_load(raw.data(), raw.size());
-            break;
-        }
+        // later, when the selection may have changed. Uses the preview
+        // palette selection, so the export matches what the Preview shows.
+        fx::Palette sysPal = fxg::ResolvePreviewPalette(app);
         auto rgba = fx::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
         if (!rgba.empty() && valid) {
             platform::SaveFileDialog(

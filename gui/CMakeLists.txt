@@ -39,6 +39,7 @@ target_link_libraries(fx_gui_vendor PUBLIC SDL3::SDL3)
 add_executable(fx-gui WIN32
     src/main.cpp
     src/app.cpp
+    src/palettes.cpp
     src/platform/audio_player.cpp
     src/platform/dialog_queue.cpp
     src/platform/dialogs.cpp
@@ -69,6 +70,7 @@ add_executable(fx-gui WIN32
     src/editors/xmi_editor.cpp
     src/editors/vdo_editor.cpp
     src/editors/cam_editor.cpp
+    src/editors/pal_editor.cpp
 )
 
 target_include_directories(fx-gui PRIVATE
