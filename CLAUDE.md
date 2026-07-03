@@ -33,8 +33,9 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
   `fa_extract_manifest` CTest, which checks every extracted byte against
   tests/integration/fa-extract.sha256 (hashes are facts; the assets stay outside git).
   Never commit game assets (`*.LIB`, `*.PIC`, `*.PAL`, …).
-- Ghidra work runs on Fedora once #120 (workbench migration) lands; headless scripts are
-  in `scripts/ghidra/`.
+- Ghidra work runs on Fedora (workbench migrated per #120): Ghidra 12.1 + a JDK under
+  `~/tools/`, project + corpus under `~/src/fa/`, headless launchers in `scripts/ghidra/`
+  (`.sh` on Linux; `.bat` kept for the Windows bench).
 
 ## Conventions
 
