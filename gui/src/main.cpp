@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <vector>
 
 static App* g_app = nullptr;
 
@@ -124,12 +125,50 @@ static void RegisterWindowSettingsHandler() {
     ImGui::AddSettingsHandler(&wh);
 }
 
+// ---------- Smoke sweep ----------
+
+// Headless acceptance sweep (#89): open each LIB, cycle every entry through
+// its editor and the preview — one rendered frame per entry — exercising
+// extraction, every format parser, and the GL upload paths against real
+// game data. Returns the number of LIBs that failed to open.
+static int RunSmokeSweep(App& app, const std::vector<std::string>& libs) {
+    int failures = 0;
+    for (const auto& path : libs) {
+        size_t before = app.sessions.size();
+        app.OpenLib(path);
+        if (app.sessions.size() == before) {
+            std::fprintf(stderr, "smoke: FAILED to open %s (%s)\n",
+                         path.c_str(), app.statusMsg.c_str());
+            failures++;
+            continue;
+        }
+        RenderFrame();
+        const bool verbose = std::getenv("FX_SMOKE_VERBOSE") != nullptr;
+        int entries = (int)app.sessions[0].entries.size();
+        for (int ei = 0; ei < entries; ++ei) {
+            if (verbose)
+                std::fprintf(stderr, "smoke: entry %d %s\n", ei,
+                             app.sessions[0].entries[ei].name);
+            app.OpenEntry(0, ei);
+            RenderFrame();
+        }
+        std::printf("smoke: %s — %d entries swept\n", path.c_str(), entries);
+        app.CloseAllSessions();
+    }
+    return failures;
+}
+
 // ---------- main ----------
 
 int main(int argc, char** argv) {
     bool smoke = false;
-    for (int i = 1; i < argc; ++i)
-        if (std::strcmp(argv[i], "--smoke") == 0) smoke = true;
+    std::vector<std::string> smokeLibs;
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--smoke") == 0)
+            smoke = true;
+        else
+            smokeLibs.push_back(argv[i]); // LIB paths for the smoke sweep
+    }
 
     platform::WindowConfig cfg = {"Fighters Toolkit", kDefaultW, kDefaultH,
                                   kMinW, kMinH, smoke};
@@ -187,8 +226,18 @@ int main(int argc, char** argv) {
     }
     SDL_AddEventWatch(ResizeWatch, nullptr);
 
+    int  exitCode    = 0;
     bool done        = false;
     int  smokeFrames = smoke ? 3 : -1;
+
+    if (smoke) {
+        SDL_GL_SetSwapInterval(0); // don't vsync-throttle the sweep
+        if (!smokeLibs.empty()) {
+            exitCode = RunSmokeSweep(app, smokeLibs) ? 1 : 0;
+            done = true; // sweep replaces the interactive loop
+        }
+    }
+
     while (!done) {
         SDL_Event ev;
         while (SDL_PollEvent(&ev)) {
@@ -252,5 +301,5 @@ int main(int argc, char** argv) {
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
     platform::DestroyWindowGL();
-    return 0;
+    return exitCode;
 }

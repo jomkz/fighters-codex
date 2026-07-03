@@ -23,9 +23,13 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   rescale live when the window moves to a display with a different scale.
 - **Wayland** — window *position* cannot be saved or restored (a Wayland
   design decision); size and maximized state still persist.
-- **`--smoke`** — headless self-check: renders three frames without showing a
-  window (falling back to SDL's offscreen driver when no display server
-  exists) and exits 0. CI runs it as the `gui_smoke` ctest.
+- **`--smoke [LIB ...]`** — headless self-check: with no arguments, renders
+  three frames without showing a window (falling back to SDL's offscreen
+  driver when no display server exists) and exits 0; CI runs it as the
+  `gui_smoke` ctest. Given LIB paths, it opens each archive and cycles every
+  entry through its editor and the preview — one rendered frame per record —
+  exercising extraction, every parser, and the GPU upload paths against real
+  game data.
 
 ## Layout
 

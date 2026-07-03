@@ -58,7 +58,7 @@ static void DrawMMSummary(const std::string& text) {
             ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp,
             ImVec2(0, 0))) {
         ImGui::TableSetupColumn("Key",  ImGuiTableColumnFlags_WidthFixed, 90);
-        ImGui::TableSetupColumn("Val",  ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("Val",  ImGuiTableColumnFlags_WidthStretch, 1.0f);
 
         auto Row = [](const char* k, const char* v) {
             ImGui::TableNextRow();

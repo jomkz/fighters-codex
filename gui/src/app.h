@@ -64,6 +64,9 @@ public:
     // Called by panels/editors to open a record for editing.
     void OpenEntry(int libIdx, int entryIdx);
 
+    // Open a LIB from a path (recent-files menu and the --smoke sweep).
+    void OpenLib(const std::string& path);
+
     // Save modified record back into the session (patches in memory).
     void CommitEntry(const std::vector<uint8_t>& newData);
 
@@ -90,7 +93,6 @@ private:
 
     void OpenLibDialog();
     void OpenFileDialog();
-    void OpenLib(const std::string& path);  // shared by dialog + recent files
     void OpenStandaloneFile(const std::string& path);
     void ChooseInstallDir();
     void AddRecentFile(const std::string& path);
