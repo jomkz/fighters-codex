@@ -209,9 +209,19 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
             auto& v1 = mesh.vertices[i1];
             auto& v2 = mesh.vertices[i2];
 
-            // Compute face normal in render space (SH Y/Z swapped: render Y=SH Z, render Z=SH Y)
-            float ax = v1.x - v0.x, ay = v1.z - v0.z, az = v1.y - v0.y;
-            float bx = v2.x - v0.x, by = v2.z - v0.z, bz = v2.y - v0.y;
+            // Remap SH (Z-up, right-handed) into render Y-up space with a
+            // proper rotation; a plain Y/Z swap here mirrored the model.
+            float r0[3], r1[3], r2[3];
+            const float p0[3] = {v0.x, v0.y, v0.z};
+            const float p1[3] = {v1.x, v1.y, v1.z};
+            const float p2[3] = {v2.x, v2.y, v2.z};
+            platform::sh_to_render(p0, r0);
+            platform::sh_to_render(p1, r1);
+            platform::sh_to_render(p2, r2);
+
+            // Face normal in render space (from the remapped positions).
+            float ax = r1[0]-r0[0], ay = r1[1]-r0[1], az = r1[2]-r0[2];
+            float bx = r2[0]-r0[0], by = r2[1]-r0[1], bz = r2[2]-r0[2];
             float nx = ay * bz - az * by;
             float ny = az * bx - ax * bz;
             float nz = ax * by - ay * bx;
@@ -225,10 +235,9 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
                 shade = ambient + diffuse * 0.3f;
             }
 
-            // SH uses Z-up (X=right, Y=forward, Z=up); remap to render Y-up
-            verts.push_back({v0.x, v0.z, v0.y, shade, shade, shade});
-            verts.push_back({v1.x, v1.z, v1.y, shade, shade, shade});
-            verts.push_back({v2.x, v2.z, v2.y, shade, shade, shade});
+            verts.push_back({r0[0], r0[1], r0[2], shade, shade, shade});
+            verts.push_back({r1[0], r1[1], r1[2], shade, shade, shade});
+            verts.push_back({r2[0], r2[1], r2[2], shade, shade, shade});
         }
     }
 
@@ -240,11 +249,18 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
 // Build a 6-wall room around the model.
 // Room is a cube of half-size = max_span*2, centred on the model bbox centre.
 // Camera orbits at <= max_span*1.6, so it is always INSIDE the room.
-// All coordinates are in render space: X=FA_X, Y=FA_Z(up), Z=FA_Y(fwd).
+// All coordinates are in render space via sh_to_render: X=FA_X, Y=FA_Z(up),
+// Z=-FA_Y(forward maps to -Z).
 static void BuildBoxGridVB(const fx::ShInfo& info, float max_span) {
-    float cx = (info.bbox[0] + info.bbox[3]) * 0.5f;
-    float cy = (info.bbox[2] + info.bbox[5]) * 0.5f; // render_Y = FA_Z centre
-    float cz = (info.bbox[1] + info.bbox[4]) * 0.5f; // render_Z = FA_Y centre
+    // Room center = model bbox center, mapped SH -> render Y-up.
+    float shCenter[3] = {
+        (info.bbox[0] + info.bbox[3]) * 0.5f,
+        (info.bbox[1] + info.bbox[4]) * 0.5f,
+        (info.bbox[2] + info.bbox[5]) * 0.5f,
+    };
+    float rc[3];
+    platform::sh_to_render(shCenter, rc);
+    float cx = rc[0], cy = rc[1], cz = rc[2];
 
     float half = max_span * 2.0f;
     float xlo = cx - half,  xhi = cx + half;
@@ -331,9 +347,9 @@ static void RenderSh(int w, int h) {
         return; // empty model — just show dark bg
     }
 
-    // Build MVP. Same orbit math as the DX11 build; the RH look_at may
-    // mirror the model relative to the old LH view — verify side-by-side on
-    // the Windows bench and negate the azimuth here if it does.
+    // Build MVP. Orbit camera in the renderer's right-handed Y-up space; the
+    // SH mesh is mapped there by platform::sh_to_render (proper rotation, no
+    // mirror), so look_at/perspective are used as-is.
     const float kPi = 3.14159265358979f;
     float azRad = s_sh.azimuth   * kPi / 180.0f;
     float elRad = s_sh.elevation * kPi / 180.0f;
@@ -438,11 +454,14 @@ void DrawPreview(App& app) {
             fx::ShInfo info = fx::sh_parse_info(ed.data.data(), ed.data.size());
             fx::ShMesh mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size());
 
-            // Reset camera to fit the model.
-            // SH bbox is (X, Y, Z) = (right, forward, up); remap target to render Y-up.
-            s_sh.target[0] = (info.bbox[0] + info.bbox[3]) * 0.5f; // X unchanged
-            s_sh.target[1] = (info.bbox[2] + info.bbox[5]) * 0.5f; // render Y = model Z (up)
-            s_sh.target[2] = (info.bbox[1] + info.bbox[4]) * 0.5f; // render Z = model Y (fwd)
+            // Reset camera to fit the model. SH bbox is (X, Y, Z) =
+            // (right, forward, up); map its center to render Y-up.
+            float shCenter[3] = {
+                (info.bbox[0] + info.bbox[3]) * 0.5f,
+                (info.bbox[1] + info.bbox[4]) * 0.5f,
+                (info.bbox[2] + info.bbox[5]) * 0.5f,
+            };
+            platform::sh_to_render(shCenter, s_sh.target);
             float spanX = info.bbox[3] - info.bbox[0];
             float spanY = info.bbox[4] - info.bbox[1];
             float spanZ = info.bbox[5] - info.bbox[2];

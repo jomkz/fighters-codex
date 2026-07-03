@@ -17,6 +17,19 @@ inline Mat4 mat4_identity() {
     return r;
 }
 
+// Map a right-handed SH coordinate (X=right, Y=forward, Z=up) into the
+// renderer's right-handed Y-up space: a -90° rotation about X, render =
+// (x, z, -y). This is orientation-preserving (determinant +1). A plain Y/Z
+// swap (x, z, y) is a reflection (determinant -1) and mirrors the model
+// against the right-handed camera — the SH-preview mirror bug. Apply this
+// to every SH position that reaches render space (mesh, normals, camera
+// target, grid) so they stay consistent. See tests/gui/test_math3d.cpp.
+inline void sh_to_render(const float sh[3], float out[3]) {
+    out[0] =  sh[0]; // right   -> +X
+    out[1] =  sh[2]; // up      -> +Y
+    out[2] = -sh[1]; // forward -> -Z
+}
+
 // r = a * b (b is applied to a vector first).
 inline Mat4 mat4_mul(const Mat4& a, const Mat4& b) {
     Mat4 r = {};
