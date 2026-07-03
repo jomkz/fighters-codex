@@ -140,11 +140,17 @@ mapped), and annotation (units, enum values). Changes are patched back via
 
 ## Cutscene Editing (SEQ)
 
-- Timeline table showing each event's command name and raw line text
-- Inline editing of any event line
-- Changes are serialized back via `fx::seq_serialize` (CRLF round-trip)
-
-> Add/delete events: planned.
+- Timeline table with fully editable rows: time (`N` absolute or `+N`
+  relative), command (colored by type; free text — unknown commands stay
+  editable), arguments, and a sync checkbox
+- Add events: **+ Add Event** appends 100 ticks after the resolved timeline
+  end; each row's **+** inserts after that row, inheriting its addressing
+  mode (a `+1` neighbour after a relative row, so `+` chains keep resolving)
+- Delete events with the row's **x** button
+- Edited rows are rebuilt tab-separated per the SEQ layout and re-parsed
+  through `fx::seq_parse`, so the table always shows what the codec sees;
+  comment and untouched lines round-trip byte-identically via
+  `fx::seq_serialize` (CRLF)
 
 ## Technical Info Editing (INF)
 
