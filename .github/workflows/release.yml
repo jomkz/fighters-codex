@@ -32,18 +32,23 @@ jobs:
         # A release never ships untested binaries
         run: ctest --preset msvc
 
+      - name: Set artifact ref
+        # Dry runs use the branch name; slashes in it would become
+        # nonexistent directories in the artifact paths. Tags pass through.
+        run: echo "REF=$($env:GITHUB_REF_NAME -replace '/','-')" >> $env:GITHUB_ENV
+
       - name: Package fx (CLI)
-        run: Compress-Archive -Path build/cli/Release/fx.exe -DestinationPath "fx-${{ github.ref_name }}-windows-x64.zip"
+        run: Compress-Archive -Path build/cli/Release/fx.exe -DestinationPath "fx-${{ env.REF }}-windows-x64.zip"
 
       - name: Package fx-gui
-        run: Compress-Archive -Path build/gui/Release/fx-gui.exe -DestinationPath "fx-gui-${{ github.ref_name }}-windows-x64.zip"
+        run: Compress-Archive -Path build/gui/Release/fx-gui.exe -DestinationPath "fx-gui-${{ env.REF }}-windows-x64.zip"
 
       - name: Package fx_lib (developer SDK)
         run: |
           New-Item -ItemType Directory -Path fx-lib-sdk/include -Force | Out-Null
           Copy-Item build/lib/Release/fx_lib.lib fx-lib-sdk/
           Copy-Item -Recurse lib/include/fx fx-lib-sdk/include/
-          Compress-Archive -Path fx-lib-sdk/* -DestinationPath "fx-lib-${{ github.ref_name }}-windows-x64.zip"
+          Compress-Archive -Path fx-lib-sdk/* -DestinationPath "fx-lib-${{ env.REF }}-windows-x64.zip"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -84,18 +89,23 @@ jobs:
         # A release never ships untested binaries
         run: xvfb-run -a ctest --preset release
 
+      - name: Set artifact ref
+        # Dry runs use the branch name; slashes in it would become
+        # nonexistent directories in the artifact paths. Tags pass through.
+        run: echo "REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_ENV"
+
       - name: Package fx (CLI)
-        run: tar -czf "fx-${{ github.ref_name }}-linux-x64.tar.gz" -C build/release/cli fx
+        run: tar -czf "fx-${{ env.REF }}-linux-x64.tar.gz" -C build/release/cli fx
 
       - name: Package fx-gui
-        run: tar -czf "fx-gui-${{ github.ref_name }}-linux-x64.tar.gz" -C build/release/gui fx-gui
+        run: tar -czf "fx-gui-${{ env.REF }}-linux-x64.tar.gz" -C build/release/gui fx-gui
 
       - name: Package fx_lib (developer SDK)
         run: |
           mkdir -p fx-lib-sdk/include
           cp build/release/lib/libfx_lib.a fx-lib-sdk/
           cp -r lib/include/fx fx-lib-sdk/include/
-          tar -czf "fx-lib-${{ github.ref_name }}-linux-x64.tar.gz" -C fx-lib-sdk .
+          tar -czf "fx-lib-${{ env.REF }}-linux-x64.tar.gz" -C fx-lib-sdk .
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
