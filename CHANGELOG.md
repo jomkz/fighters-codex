@@ -7,19 +7,31 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-03
+
 ### Added
-- Linux x64 release artifacts: `fx` and the `fx_lib` developer SDK ship as tar.gz alongside the Windows zips (glibc 2.35+, libstdc++ statically linked) (#75)
+- `fx_lib`, the `fx` CLI, and the full test suite build and run natively on Linux (GCC and Clang) alongside Windows, from the same tree — MSVC-isms replaced with portable seams, and CMake presets (`msvc`, `gcc`, `clang`, `asan-ubsan`, `release`) with a rewritten development.md covering both workflows (#65, #66, #67, #68, #69)
+- `FX_FA_ROOT` integration mode: pointing the build at a real FA install registers the `fa_extract_manifest` test, which verifies every extracted byte against a committed SHA-256 manifest — extraction proven byte-identical across platforms; a CLI end-to-end round-trip test joins the suite
 - `fx-gui` runs natively on Linux and Windows: SDL3 + OpenGL 3.3 host, native file dialogs, system-theme detection with live switching, DPI scaling, and a `--smoke` headless self-check; settings move to the per-user preferences path (#86, #88)
 - Audio preview via miniaudio, replacing the Windows `waveOut` path (#87)
-- Linux `fx-gui` tarball joins the release artifacts; CI builds and smoke-tests the GUI on both OSes, and the new `gui_tests` suite covers the dialog queue, preview math, and audio player state machine on every leg (#90)
 - ADR-0001 records the GUI backend selection (SDL3 + OpenGL 3.3 + miniaudio) and the SDL3 acquisition policy — system-first with a pinned, checksummed FetchContent fallback (#85)
+- `fx::ealib_safe_name` joins the `fx_lib` API — portable sanitization of standalone-file entry names
+- CI runs the test suite on every leg and gains Linux GCC/Clang legs, an ASan/UBSan job, CodeQL for C++, a coverage ratchet, and a libFuzzer scaffold with smoke run; all actions pinned by SHA (#70, #71, #72, #73, #74)
+- Linux x64 release artifacts: `fx` and the `fx_lib` developer SDK ship as tar.gz alongside the Windows zips (glibc 2.35+, libstdc++ statically linked) (#75)
+- Linux `fx-gui` tarball joins the release artifacts; CI builds and smoke-tests the GUI on both OSes, and the new `gui_tests` suite covers the dialog queue, preview math, and audio player state machine on every leg (#90)
+- Format-spec template with front-matter schema, the `tools/check_status.py` checker, and a generated per-format status matrix, enforced in CI (#174)
+- The docs tree is published as an mkdocs-material site at <https://jomkz.github.io/fighters-codex/>, with a strict build that fails on broken links, missing nav pages, or non-blob links out of the docs tree (#181)
 
 ### Changed
+- All format specs restructured to the template in four batches; engine docs normalized with uniform provenance and shared vocabulary (#176, #177, #178, #179, #180)
 - The SH 3D preview renders through a GL 3.3 FBO pipeline (GLSL port of the DX11 shaders); the Win32/DX11 backend and its vendored ImGui backends are removed (#86)
 
 ### Fixed
 - LIB extraction rejects flags=4 entries whose decompressed-size prefix exceeds 64 MiB — a crafted archive could previously force multi-GiB allocations (#168)
 - A zero decompressed-size claim in a flags=4 entry no longer triggers undefined behavior in the DCL decompressor (#169)
+- The `fx` CLI packs LIB archives in deterministic order, handles paths portably, and writes CSV exports in binary mode so line endings are LF on every platform
+- Glyph-sheet size math is widened before allocation in the FNT path
+- `lib extract` is documented in the CLI usage text
 
 ## [0.3.0] - 2026-07-02
 
@@ -67,7 +79,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.1.0
