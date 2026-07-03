@@ -11,15 +11,15 @@ spec:
       issue: 54
       note: "directive set may be incomplete; footer parsing by engine unconfirmed"
 codec:
-  direction: read
-  issue: 101
+  direction: round-trip
+  byte_identical: true
   lib: [lib/src/inf.cpp]
   commands: [inf]
-  tests: []
+  tests: [tests/test_inf.cpp]
   fuzz: []
   gui: [gui/src/editors/inf_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: false
 related: [BRF, PIC, LIB]
 ---
@@ -41,6 +41,15 @@ fx inf dump <file.INF>     # parsed directive/body listing
 
 Extract via `fx lib unpack` first. Edit in any plain text editor, re-pack into
 a custom LIB, and configure FA to load it.
+
+### fx-gui
+
+Opening an `.INF` record shows a **Styled** tab — each directive section
+rendered with its in-game alignment and title/body weight, editable per
+section (text, alignment, title/body style, insert/delete) — and a **Source**
+tab with the raw dot-command text. Edited sections are recomposed through
+`fx::inf_rebuild_section`; untouched sections keep their exact source bytes.
+See [gui.md](../../gui.md#technical-info-editing-inf).
 
 ## File Layout
 
@@ -96,6 +105,16 @@ World's Aircraft*):
    ```
    These key-value pairs are likely parsed by the engine to populate the stat
    display.
+
+## Round-Trip Notes
+
+`inf_parse` keeps each section's exact source bytes (`InfSection::raw`);
+`inf_serialize` concatenates them, so parse → serialize is byte-identical by
+construction — line endings, blank-line runs, stat-footer separators (both
+`: ` and space formats), and unterminated or DOS-EOF tails all survive.
+`tests/test_inf.cpp` asserts it on synthetic samples; verified across all
+**269/269** `.INF` entries in FA_3.LIB (Disc 2). The stats map is a derived
+view — extraction no longer removes footer lines from section text.
 
 ## Open Questions
 
