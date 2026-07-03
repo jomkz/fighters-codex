@@ -11,6 +11,7 @@ codec:
   byte_identical: true
   lib: [lib/src/pal.cpp]
   commands: [pal]
+  gui: [gui/src/editors/pal_editor.cpp]
   tests: [tests/test_pal.cpp]
   fuzz: []
   fixtures:
@@ -33,6 +34,12 @@ No header. `PALETTE.PAL`, the game's primary palette, is stored compressed
 fx pal info <file.PAL>     # summary
 fx pal dump <file.PAL>     # entry-by-entry listing
 ```
+
+### fx-gui
+
+Opening a `.PAL` record (in a LIB or standalone) shows a 16×16 swatch grid
+with per-index RGB tooltips, and can set the palette applied to PIC/CB8
+previews — see [gui.md](../../gui.md#palette-viewer-and-switcher).
 
 ### Other Tools
 

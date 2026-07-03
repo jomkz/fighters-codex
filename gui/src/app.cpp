@@ -359,7 +359,7 @@ void App::OpenFileDialog() {
 static const char* kStandaloneExts[] = {
     "p","raw","pic","11k","5k","8k","22k",
     "ot","nt","pt","jt","see","ecm","gas",
-    "m","mm","mt","seq","inf","sh", nullptr
+    "m","mm","mt","seq","inf","sh","pal", nullptr
 };
 
 void App::OpenStandaloneFile(const std::string& path) {
@@ -503,6 +503,7 @@ void App::OpenEntry(int libIdx, int entryIdx) {
     else if (es.ext == "xmi")                      es.kind = EditorKind::Xmi;
     else if (es.ext == "vdo" || es.ext == "fbc")   es.kind = EditorKind::Vdo;
     else if (es.ext == "cam")                      es.kind = EditorKind::Cam;
+    else if (es.ext == "pal")                      es.kind = EditorKind::Pal;
 
     if (es.kind == EditorKind::None) {
         statusMsg  = "No editor for ." + es.ext + " files";
@@ -549,12 +550,22 @@ void App::CloseSession(int idx) {
         selectedSession = -1;
     else if (selectedSession > idx)
         selectedSession--;
+    if (palLib == idx) {
+        palLib   = -1; // back to Auto
+        palEntry = -1;
+        palGen++;
+    } else if (palLib > idx) {
+        palLib--;
+    }
 }
 
 void App::CloseAllSessions() {
     sessions.clear();
     editor          = EditorState{};
     selectedSession = -1;
+    palLib          = -1;
+    palEntry        = -1;
+    palGen++;
 }
 
 void App::InstallToGame(int libIdx) {

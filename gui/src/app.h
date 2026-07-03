@@ -44,6 +44,7 @@ enum class EditorKind {
     Xmi,        // XMI MIDI metadata
     Vdo,        // VDO/FBC video metadata
     Cam,        // CAM campaign
+    Pal,        // PAL palette swatch viewer
 };
 
 struct EditorState {
@@ -87,6 +88,13 @@ public:
     StatusKind              statusKind      = StatusKind::Info;
     int                     selectedSession = -1;
     ThemePreference         themePref       = ThemePreference::Auto;
+
+    // Preview palette selection (palettes.h): palLib is a session index or
+    // fxg::kPalAuto / fxg::kPalGreyscale; palGen invalidates palettized
+    // preview caches on every change.
+    int                     palLib   = -1;
+    int                     palEntry = -1;
+    int                     palGen   = 0;
 
 private:
     void DrawMenuBar();

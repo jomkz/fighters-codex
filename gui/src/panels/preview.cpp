@@ -1,5 +1,6 @@
 #include "preview.h"
 #include "../app.h"
+#include "../palettes.h"
 #include "../platform/math3d.h"
 #include "../platform/texture.h"
 #include "imgui.h"
@@ -20,22 +21,9 @@
 // ---------------------------------------------------------------------------
 
 static GpuTexture s_preview;
-static int        s_previewLib   = -2;
-static int        s_previewEntry = -2;
-
-// Locate PALETTE.PAL across all open sessions. Returns a loaded Palette,
-// or a greyscale fallback if not found.
-static fx::Palette FindSysPalette(const App& app) {
-    for (const auto& sess : app.sessions) {
-        if (const fx::Entry* entry = fx::ealib_find(sess.entries, "PALETTE.PAL")) {
-            auto raw = fx::ealib_extract(sess.data.data(), sess.data.size(),
-                                         *entry);
-            if (!raw.empty())
-                return fx::pal_load(raw.data(), raw.size());
-        }
-    }
-    return fx::pal_load(nullptr, 0); // greyscale fallback
-}
+static int        s_previewLib    = -2;
+static int        s_previewEntry  = -2;
+static int        s_previewPalGen = -1;
 
 // ---------------------------------------------------------------------------
 // SH 3D preview — offscreen GL 3.3 FBO pipeline
@@ -411,16 +399,18 @@ void DrawPreview(App& app) {
     const auto& ed = app.editor;
 
     // ---- Image preview (PIC / RAW) -----------------------------------------
-    if (ed.libIdx != s_previewLib || ed.entryIdx != s_previewEntry) {
+    if (ed.libIdx != s_previewLib || ed.entryIdx != s_previewEntry ||
+        app.palGen != s_previewPalGen) {
         s_preview.Release();
-        s_previewLib   = ed.libIdx;
-        s_previewEntry = ed.entryIdx;
+        s_previewLib    = ed.libIdx;
+        s_previewEntry  = ed.entryIdx;
+        s_previewPalGen = app.palGen;
 
         if (!ed.data.empty() && ed.kind != EditorKind::Sh) {
             if (ed.kind == EditorKind::Pic) {
                 fx::PicInfo info;
                 if (fx::pic_info(ed.data.data(), ed.data.size(), &info)) {
-                    fx::Palette sysPal = FindSysPalette(app);
+                    fx::Palette sysPal = fxg::ResolvePreviewPalette(app);
                     auto rgba = fx::pic_decode(ed.data.data(), ed.data.size(), &sysPal);
                     if (!rgba.empty())
                         s_preview = platform::UploadTexture(rgba.data(),
@@ -515,6 +505,17 @@ void DrawPreview(App& app) {
 
     // ---- Static image preview -----------------------------------------------
     if (s_preview.id) {
+        fx::PicInfo pi;
+        if (ed.kind == EditorKind::Pic &&
+            fx::pic_info(ed.data.data(), ed.data.size(), &pi) &&
+            pi.format != 0xD8FF) { // JPEG PICs ignore the palette
+            // Switching re-decodes on the next frame; the inline palette
+            // fragment (if any) still overlays the chosen base palette.
+            ImGui::TextUnformatted("Palette:");
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            fxg::DrawPaletteCombo(app, "Auto (PALETTE.PAL)");
+        }
         float avail = ImGui::GetContentRegionAvail().x;
         float scale = avail / (float)s_preview.width;
         float dispH = s_preview.height * scale;
