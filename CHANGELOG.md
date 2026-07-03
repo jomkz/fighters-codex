@@ -7,6 +7,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **fx-gui** INF styled editor: directive sections rendered with their in-game alignment and title/body weight, editable per section (text, alignment, style, insert/delete) alongside a raw-source tab. Underneath it, the INF codec is upgraded to a **byte-identical round-trip** — sections keep their exact source bytes, proven against all 269 tech sheets in FA_3.LIB — delivering the INF slice of #101 early (#93)
+
+### Changed
+- docs/gui.md is fully current with the ported, cross-platform GUI: every #47 feature documented in its own PR, the last stale planned items pruned, panel and loose-file claims matched to the code (#94)
+
+### Notes
+- **v0.5.0 marks the Phase 2 + Phase 3 roadmap gates** (#185): documentation system (spec template, CI-enforced status matrix, published site) and the fx-gui cross-platform port with the #47 validation feature set — palette viewer/switcher (v0.4.2), full-row SEQ editing (v0.4.3), and the INF editor above. P2/P3 content that shipped in v0.4.0–v0.4.3 is not re-announced here.
+
 ## [0.4.3] - 2026-07-03
 
 ### Added
