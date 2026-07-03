@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-03
+
 ### Added
 - **fx-gui** INF styled editor: directive sections rendered with their in-game alignment and title/body weight, editable per section (text, alignment, style, insert/delete) alongside a raw-source tab. Underneath it, the INF codec is upgraded to a **byte-identical round-trip** — sections keep their exact source bytes, proven against all 269 tech sheets in FA_3.LIB — delivering the INF slice of #101 early (#93)
 
@@ -106,7 +108,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.0
 [0.4.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.3
 [0.4.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.2
 [0.4.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.1
