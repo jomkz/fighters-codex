@@ -35,6 +35,8 @@ public:
     int resumeFrom = 0;     // where Play resumes from; the UI seeks by writing it
 
 private:
+    struct Impl;
+    Impl*     m_impl  = nullptr;
     PlayState m_state = PlayState::Stopped;
 };
 

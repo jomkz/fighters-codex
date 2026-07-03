@@ -26,18 +26,28 @@ include(CTest)
 include(Catch)
 catch_discover_tests(fx_tests)
 
-# Display-free gui units (string helpers, dialog completion queue): no SDL3
-# linkage, no window — runs on every leg, unlike the gui_smoke ctest.
+# Display-free gui units (string helpers, dialog completion queue, preview
+# math, audio player state machine): no SDL3 linkage, no window — runs on
+# every leg, unlike the gui_smoke ctest. FX_AUDIO_NULL forces miniaudio's
+# null backend so the audio tests need no hardware.
 if(FX_BUILD_GUI)
+    find_package(Threads REQUIRED)
     add_executable(gui_tests
         gui/test_util.cpp
         gui/test_dialog_queue.cpp
         gui/test_math3d.cpp
+        gui/test_audio_player.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/dialog_queue.cpp
+        ${PROJECT_SOURCE_DIR}/gui/src/platform/audio_player.cpp
     )
     target_include_directories(gui_tests PRIVATE ${PROJECT_SOURCE_DIR}/gui/src)
-    target_link_libraries(gui_tests PRIVATE fx_warnings Catch2::Catch2WithMain)
-    catch_discover_tests(gui_tests PROPERTIES LABELS "gui")
+    target_include_directories(gui_tests SYSTEM PRIVATE
+        ${PROJECT_SOURCE_DIR}/gui/vendor/miniaudio)
+    target_link_libraries(gui_tests PRIVATE fx_warnings Threads::Threads
+        Catch2::Catch2WithMain ${CMAKE_DL_LIBS})
+    catch_discover_tests(gui_tests PROPERTIES
+        LABELS "gui"
+        ENVIRONMENT "FX_AUDIO_NULL=1")
 endif()
 
 # Embedding smoke test: proves the documented consumer contract (api.md) --
