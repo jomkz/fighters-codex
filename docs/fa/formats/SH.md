@@ -9,10 +9,7 @@ spec:
   gaps:
     - kind: re-static
       issue: 52
-      note: "render-state/attribute opcode semantics (sizes known, behavior untraced; animation + LOD/damage families traced)"
-    - kind: re-static
-      issue: 52
-      note: "x86-embedded geometry regions (65/1275 files) undecoded"
+      note: "render-state/attribute opcode semantics (sizes known, behavior untraced; animation, LOD/damage, dispatch, and X86Unknown families traced)"
 codec:
   direction: read
   rationale: "OBJ export only; OBJ→SH is intentionally out of scope (animation/LOD/damage states make the inverse impractical — roadmap 1.0 definition)"
@@ -310,17 +307,118 @@ Variable-length polygon face instruction.
 
 ### X86Unknown Region
 
-Some models (main aircraft like A10.SH, AC130.SH) use x86 machine code to drive
-face rendering. These regions are detected and skipped:
+Some shapes embed native **x86 machine code** in the instruction stream, entered
+by the `0xF0` X86Code opcode. These blocks are not procedural geometry
+generators — they are **conditional selectors**: each reads a piece of live game
+state and re-enters the bytecode interpreter on the sub-stream that matches. They
+exist because the bytecode's own conditionals cannot read arbitrary engine
+globals; the authoring tool emitted a small x86 `switch` instead. 208 of the
+1275 FA_2.LIB shapes carry them.
+
+The `fx` read codec detects and skips these regions (below); this section
+specifies the **runtime contract** so the effect can be reimplemented — see
+[Round-Trip Notes](#round-trip-notes) for why the static codec cannot render
+their output, and fa-bridge#21 for the interpreter that can.
+
+#### Skip protocol (read codec)
+
+The parser bounds and skips each region without executing it:
 
 1. **PtrToObjEnd (0xF2)** seen: record `obj_end_off = offset_field`.
 2. **EndObject (0x00)** seen while `current_pos < obj_end_off`: the range
-   `[current_pos .. obj_end_off)` is x86 machine code mixed with embedded SH
-   face instructions. Skip to `obj_end_off` and continue.
+   `[current_pos .. obj_end_off)` is the x86 region (native code plus the
+   sub-stream geometry it guards). Skip to `obj_end_off` and continue.
 3. **EndObject (0x00)** seen while `current_pos >= obj_end_off`: real end of
    object; stop parsing.
 
-Models with x86-only geometry cannot be exported to OBJ without x86 disassembly.
+#### Entry contract (`0xF0` → native)
+
+`do_start_asm` (`0x4D4254`), the `0xF0` handler, is two instructions:
+
+```asm
+push esi        ; esi = the bytecode pointer, now just past the F0 00 opcode —
+ret             ; i.e. the address of the embedded x86 itself. RET jumps to it.
+```
+
+So the interpreter transfers to the payload by `push esi; ret`, entering native
+execution **at the current stream position with `esi` pointing at the payload**.
+The x86 inherits the interpreter's register and memory state (the shared vertex
+pool, view matrix, and viewer-relative position globals used elsewhere in
+[Engine Notes](#engine-notes)); it uses `esi` for position-independent access to
+the sub-streams that follow it.
+
+#### External references (trampolines)
+
+The payload reaches FA.EXE globals and functions through **trampolines** —
+6-byte indirect jumps `[FF 25][target u32]` whose `target` the shape's Phar Lap
+PE relocations bind to a FA.EXE export **by name** at load time. Two kinds:
+
+- **Inputs** — a global the block reads. Across the corpus these are dominated by
+  the `_PL*` articulation-state block that
+  [`ShapeSetup`](#engine-notes) initializes (independently confirmed: the same
+  symbols appear as writers there and as trampoline reads here):
+
+  | Trampoline | Shapes | Selects |
+  |------------|-------:|---------|
+  | `_PLgearDown` / `_PLgearPos` | 126 / 103 | landing-gear geometry |
+  | `_PLrightFlap` / `_PLleftFlap` | 104 / 104 | flap geometry per side |
+  | `_PLafterBurner` | 85 | exhaust/afterburner geometry |
+  | `_PLbrake` | 75 | airbrake geometry |
+  | `_PLrudder` | 73 | rudder deflection geometry |
+  | `_PLhook` | 17 | arrestor-hook geometry |
+  | `_PLswingWing` | 15 | variable-sweep wing geometry |
+  | `_PLcanardPos` | 14 | canard geometry |
+  | `_PLbayOpen` / `_PLbayDoorPos` | 10 / 6 | weapons-bay doors |
+  | `_PLvtOn` / `_PLvtAngle` | 4 / 1 | thrust-vectoring nozzles |
+  | `_PLslats` | 3 | leading-edge slats |
+  | `_effects` / `_effectsAllowed` | 23 / 31 | render-effect gating |
+  | `brentObjId`, `_SAMcount`, `@HARDNumLoaded@8` | 12, — , 4 | effect shapes (e.g. `FIRE.SH`): draw driven by object id / live counts |
+
+- **Callback** — `do_start_interp` (`0x4D4240`), the bytecode entry. **All 208
+  blocks reference it.** The payload sets `esi` to the selected sub-stream and
+  jumps here to resume interpreting that geometry.
+
+#### Runtime behavior (switch → re-enter)
+
+Each block is therefore:
+
+```
+read  <input global>                 ; via an FF25 trampoline
+switch on its value:
+  case k0: esi = &substream_0
+  case k1: esi = &substream_1
+  ...
+goto do_start_interp                 ; interpret the selected sub-stream
+```
+
+The value→variant mapping is per-shape (e.g. `_PLgearDown`: `0` = retracted,
+`1` = extended, with `4` = strut on `F117.SH`). The exhaustive decode of those
+case values is documented by the [OpenFA](https://gitlab.com/openfa/openfa)
+project's `sh` crate (GPLv3) as a symbol→state table
+(`_PLgearDown`/`_PLrightFlap`/`_PLslats`/`_PLbayOpen`/`_PLbrake`/`_PLhook`/…);
+the *mechanism, trampoline inventory, and entry contract here are independently
+derived* (Ghidra on FA.EXE plus a structural parse of all 1275 shapes) and the
+per-shape case values are attributed to OpenFA per the license boundary — never
+transcribed.
+
+*Implementing this (fa-bridge#21, clean-room):* for each block, read the named
+global, map its value to a sub-stream via the state tables, and interpret that
+sub-stream. The original x86 need never execute — the switch is what matters.
+
+#### Inventory
+
+| Metric | Count | Source |
+|--------|------:|--------|
+| Shapes embedding x86 blocks (reference `do_start_interp`) | 208 | structural parse |
+| …reading `_PL*` articulation state | 134 | structural parse |
+| …reading effect state (`brentObjId`/`_SAMcount`/`@HARDNumLoaded@8`) | 12 | structural parse |
+| Shapes producing **no** static OBJ geometry (x86 gates everything) | 65 | `fx` codec ([Round-Trip Notes](#round-trip-notes)) |
+
+The 65 fully-gated shapes are procedural effects (`FIRE.SH`, `FLARE.SH`,
+`DEBRIS.SH`, `EXP.SH`, `CLOUD*.SH`, …) and a few complex models (`AC130.SH`);
+the rest are articulated aircraft whose base mesh extracts normally but whose
+moving-part variants sit behind these switches. The evidence script is
+[`AnalyzeSHX86.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/AnalyzeSHX86.java).
 
 ### .PTS distribution files
 
@@ -626,12 +724,16 @@ animation/LOD/damage playback contract.
 
 ### 2. x86-embedded geometry regions
 
-65/1275 files drive some or all rendering through embedded x86 machine code
-(detected and skipped via the PtrToObjEnd/EndObject protocol). Extracting
-their geometry requires disassembling those regions and modeling what the
-engine executes.
+The runtime contract of these regions is specified in
+[X86Unknown Region](#x86unknown-region): the `0xF0 → push esi; ret` entry, the
+`FF25` trampoline reads of `_PL*`/effect globals, and the `do_start_interp`
+re-entry that selects a geometry sub-stream. What remains is not a spec gap but
+a **codec limitation**: the static `fx` read path skips these regions, so the
+65 fully-gated shapes still export no OBJ (see [Round-Trip Notes](#round-trip-notes)),
+and the exhaustive per-shape case-value tables are carried with attribution to
+OpenFA rather than re-derived here.
 
-*Status: open — re-static (#52)*
+*Status: specified — implementable by fa-bridge#21 (closed #125)*
 
 ## Related
 
