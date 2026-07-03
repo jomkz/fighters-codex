@@ -36,6 +36,20 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Install GUI build deps
+        # Ubuntu runners ship no libsdl3-dev, so the gui always exercises the
+        # pinned FetchContent SDL3 (ADR-0001), which needs the X11/Wayland
+        # dev headers at compile time; xvfb + llvmpipe give gui_smoke a
+        # GL 3.3 context.
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \
+            libxfixes-dev libxkbcommon-dev libwayland-dev libdecor-0-dev \
+            libegl1-mesa-dev libgl1-mesa-dev libdbus-1-dev \
+            xvfb libgl1-mesa-dri
+
       - name: Configure
         # msvc uses the runner's default Visual Studio generator — nothing
         # pinned, because the image's default VS moves (VS 17 2022 is gone
@@ -45,7 +59,13 @@ jobs:
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }}
 
-      - name: Test
+      - name: Test (Linux)
+        # xvfb-run provides the X server gui_smoke renders against
+        if: runner.os == 'Linux'
+        run: xvfb-run -a ctest --preset ${{ matrix.preset }}
+
+      - name: Test (Windows)
+        if: runner.os == 'Windows'
         run: ctest --preset ${{ matrix.preset }}
 
   docs:
@@ -74,8 +94,10 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure
-        # Deliberately no preset: presets stay Linux/Windows-only by policy
-        run: cmake -B build-macos -DCMAKE_BUILD_TYPE=Debug
+        # Deliberately no preset: presets stay Linux/Windows-only by policy.
+        # FX_BUILD_GUI=OFF — this job sanity-checks fx_lib/cli portability;
+        # FetchContent would otherwise compile all of SDL3 here for nothing.
+        run: cmake -B build-macos -DCMAKE_BUILD_TYPE=Debug -DFX_BUILD_GUI=OFF
 
       - name: Build
         run: cmake --build build-macos

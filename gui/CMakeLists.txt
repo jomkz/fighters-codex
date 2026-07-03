@@ -86,3 +86,15 @@ target_link_libraries(fx-gui PRIVATE
     fx_gui_vendor
     fx_warnings
 )
+
+# Headless render smoke: three frames under Xvfb/llvmpipe in CI (offscreen
+# driver as fallback). Linux-only — GitHub's Windows runners expose no
+# GL 3.3; Windows gui coverage is the build plus the display-free gui_tests.
+if(UNIX)
+    add_test(NAME gui_smoke COMMAND fx-gui --smoke)
+    set_tests_properties(gui_smoke PROPERTIES
+        LABELS "gui"
+        TIMEOUT 60
+        # X11/dbus allocations at exit are noise on the asan-ubsan leg
+        ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0")
+endif()
