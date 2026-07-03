@@ -93,3 +93,34 @@ TEST_CASE("perspective maps near/far planes to GL clip z = -1/+1", "[gui][math3d
 
     CHECK_THAT(out[3], WithinAbs(1.0f, 1e-5f));   // w = -z_view
 }
+
+TEST_CASE("sh_to_render maps Z-up onto Y-up without mirroring", "[gui][math3d]") {
+    // SH is right-handed (X=right, Y=forward, Z=up); render is right-handed
+    // Y-up. The remap must be a proper rotation (determinant +1). A plain Y/Z
+    // swap would be a reflection (determinant -1) and mirror the model — the
+    // SH-preview bug this replaced.
+    float ex[3], ey[3], ez[3];
+    const float in_x[3] = {1.0f, 0.0f, 0.0f};
+    const float in_y[3] = {0.0f, 1.0f, 0.0f};
+    const float in_z[3] = {0.0f, 0.0f, 1.0f};
+    platform::sh_to_render(in_x, ex); // right   -> +X
+    platform::sh_to_render(in_y, ey); // forward -> -Z
+    platform::sh_to_render(in_z, ez); // up      -> +Y
+
+    CHECK_THAT(ex[0], WithinAbs(1.0f, 1e-6f));
+    CHECK_THAT(ex[1], WithinAbs(0.0f, 1e-6f));
+    CHECK_THAT(ex[2], WithinAbs(0.0f, 1e-6f));
+    CHECK_THAT(ey[0], WithinAbs(0.0f, 1e-6f));
+    CHECK_THAT(ey[1], WithinAbs(0.0f, 1e-6f));
+    CHECK_THAT(ey[2], WithinAbs(-1.0f, 1e-6f)); // forward -> -Z, not +Z
+    CHECK_THAT(ez[0], WithinAbs(0.0f, 1e-6f));
+    CHECK_THAT(ez[1], WithinAbs(1.0f, 1e-6f));  // up stays up
+    CHECK_THAT(ez[2], WithinAbs(0.0f, 1e-6f));
+
+    // Determinant of the mapped basis (columns ex, ey, ez) must be +1.
+    float det =
+        ex[0] * (ey[1] * ez[2] - ey[2] * ez[1]) -
+        ey[0] * (ex[1] * ez[2] - ex[2] * ez[1]) +
+        ez[0] * (ex[1] * ey[2] - ex[2] * ey[1]);
+    CHECK_THAT(det, WithinAbs(1.0f, 1e-6f)); // proper rotation, not a reflection
+}
