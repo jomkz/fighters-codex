@@ -9,7 +9,7 @@ spec:
   gaps:
     - kind: re-static
       issue: 52
-      note: "40+ Unk* opcode semantics (sizes known, behavior untraced)"
+      note: "render-state/attribute opcode semantics (sizes known, behavior untraced; animation + LOD/damage families traced)"
     - kind: re-static
       issue: 52
       note: "x86-embedded geometry regions (65/1275 files) undecoded"
@@ -164,7 +164,7 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
 | `0x00` | EndObject | all remaining | Triggers X86Unknown skip if `obj_end_off` set |
 | `0x01` | EndShape | all remaining | Terminates the shape |
 | `0x1E` | Pad | 1+ | Run of `0x1E` NOP bytes |
-| `0x38` | Unk38 | 3 | |
+| `0x38` | ShortJump | 3 | `[38][rel16]`; see [Engine Notes](#animation-opcodes-traced) |
 | `0xBC` | UnkBC | 2 | |
 | `0xF0` | X86Code | variable | Bail out -- x86 machine code |
 | `0xF6` | VertexInfo | 7 | `[F6][idx u16][color u8][normal i8[3]]` |
@@ -188,7 +188,7 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
 | `0x46` | Unk46 | 2 |
 | `0x48` | Jump | 4 |
 | `0x4E` | Unk4E | 2 |
-| `0x50` | Unk50 | 6 |
+| `0x50` | LongJump | 6 |
 | `0x66` | Unk66 | 10 |
 | `0x68` | Unk68 | 8 |
 | `0x6C` | Unk6C | 13/14/16 (flag@[10]: 0x38=13, 0x48=14, 0x50=16) |
@@ -430,12 +430,12 @@ which also materializes the handlers as Ghidra functions):
 | Op | Spec name | Handler | FA.SMS symbol |
 |----|-----------|---------|---------------|
 | `0x1E` | Pad | `0x4D17F4` | `do_short_eof` |
-| `0x38` | Unk38 | `0x4D30E4` | `do_short_ijmp` — `DEC ESI`, then falls into the `0x48` Jump handler |
+| `0x38` | ShortJump | `0x4D30E4` | `do_short_ijmp` — `DEC ESI`, then falls into the `0x48` Jump handler |
 | `0x40` | JumpToFrame | `0x4D3134` | `do_anim_jmp` |
 | `0x42` | SourceName | `0x4D17BC` | `do_shape_name` |
 | `0x44` | Unk44 | `0x4D42EC` | `do_setcoarse` |
 | `0x46` | Unk46 | `0x4D478C` | `do_force_no_pmap` |
-| `0x50` | Unk50 | `0x4D3100` | `do_ijmp_long` — `[50 00][rel32]`, unconditional `esi += rel32` |
+| `0x50` | LongJump | `0x4D3100` | `do_ijmp_long` — `[50 00][rel32]`, unconditional `esi += rel32` |
 | `0x6E` | UnmaskLong | `0x4D22A8` | `do_sfcal_long` |
 | `0xA6` | JumpToDetail | `0x4D2318` | (unnamed) — skips `rel16` when detail global `0x515EEE` ≥ operand threshold |
 | `0xAC` | JumpToDamage | `0x4D22D4` | `do_ifdestroyed` — `esi += rel16` when `_destroyed` (`0x50C39C`, set per entity by `ShapeSetup`) is non-zero |
@@ -465,8 +465,108 @@ Six slots (`0x14`, `0x16`, `0x3C`, `0xA8`, `0xAA`, `0xC0`) share
 `do_if_not_effect` — a conditional skip keyed on the effects setting — and
 ten unassigned slots point at a common stub (`0x4D17E0`).
 
-These handler names are FA.SMS facts; full operand/runtime semantics for the
-animation and LOD/damage families are the subject of #122/#123.
+These handler names are FA.SMS facts. The animation and LOD/damage families
+are specified below.
+
+### Animation opcodes (traced)
+
+Shapes animate by **free-running frame selection** against a single global
+counter — there is no per-entity animation clock, start trigger, or authored
+playback rate.
+
+**`0x40` JumpToFrame — `do_anim_jmp` (0x4D3134).** Layout
+`[40 00][nframes u16][rel16 × nframes]` (total `4 + nframes*2`, matching the
+skip-table formula). Runtime:
+
+```
+idx    = _frameCounter mod nframes
+target = &frame_table[idx] + (int16)frame_table[idx]   ; rel16 is relative
+                                                        ; to its own slot
+```
+
+`_frameCounter` (`0x4EB738`) is a global incremented once per rendered frame in
+the main flight loop (`FlyingLoop`, `0x404C70`) as
+`_frameCounter = (_frameCounter + 1) & 0x7FFF`, and reset to 0 on screen
+transitions. Because selection is `_frameCounter mod nframes`, every animated
+model is **phase-locked to the same counter**: a shape with `nframes = 8`
+advances one frame per rendered frame and repeats every 8 frames, independent
+of which entity draws it. Used by 510/1275 shapes (5610 opcodes).
+
+*Playback (for fa-bridge#19):* keep a render-tick counter masked to 15 bits; at
+each JumpToFrame compute `counter % nframes`, read that slot's signed `rel16`,
+and branch to `slot_address + rel16`.
+
+**Control-flow primitives** (shared by the animation and LOD/damage families —
+each advances the instruction pointer `esi`; `rel` is signed and, except where
+noted, relative to the end of its own operand):
+
+| Op | Name | Layout | Behavior | Corpus |
+|----|------|--------|----------|--------|
+| `0x48` | Jump (`0x4D30E5`) | `[48 00][rel16]` | `esi += rel16` | 533 files |
+| `0x38` | ShortJump — `do_short_ijmp` (`0x4D30E4`) | `[38][rel16]` (3 bytes) | identical to Jump; handler does `DEC ESI` then shares the `0x48` body | 724 files |
+| `0x50` | LongJump — `do_ijmp_long` (`0x4D3100`) | `[50 00][rel32]` | `esi += rel32` | **0** (engine-only) |
+
+*Sub-model draw (articulated parts).* `Unmask` (`0x12`, 728 files) and
+`UnmaskLong` (`0x6E`, unused) invoke a referenced sub-stream via the dispatch
+table's **call** form (`FF 14`, versus `FF 24` for the normal tail jump) with
+`esi` pushed, so the sub-stream renders and control resumes after the opcode.
+`XformUnmask` (`0xC4`, 2 files) / `XformUnmaskLong` (`0xC6`, unused) first save
+the view matrix and object-position globals and apply the operand offsets to the
+object position, so the sub-stream renders at a relative transform — the
+attached-part mechanism. Their per-operand layout is only partially traced and
+stays in [Open Questions](#1-remaining-unk-opcode-semantics); they are not part
+of frame playback.
+
+### LOD and damage-state opcodes (traced)
+
+Three conditional branches choose which geometry block renders. Each jumps
+**forward** to an alternative block when its condition selects it; the
+fall-through (default) block is the primary geometry. All `rel16` are signed and
+relative to the end of the operand.
+
+**`0xAC` JumpToDamage — `do_ifdestroyed` (0x4D22D4).** Layout `[AC 00][rel16]`.
+
+```
+if (_destroyed != 0) esi += rel16     ; branch to the damaged sub-model
+                                       ; else fall through to intact geometry
+```
+
+`_destroyed` (`0x50C39C`) is set per entity by `ShapeSetup` (`0x4AB450`) as the
+shape is queued: it is `(health_word == 0)` read from the object record (`+0xE`),
+with a `_forceDestroyed` override forcing 1. So the damaged geometry is authored
+inline after the opcode and reached only for destroyed entities. Rare — 62/1275
+shapes (65 opcodes), almost all ground/naval targets (e.g. `BARKSA.SH`).
+
+**`0xA6` JumpToDetail (0x4D2318).** Layout `[A6 00][rel16][threshold u16]`.
+
+```
+if (_detail < threshold) esi += rel16  ; branch to the lower-detail block
+                                        ; else fall through to full detail
+```
+
+A **static quality switch** on the user's detail preference `_detail`
+(`0x515EEE`), independent of distance. Near-universal: 1094/1275 shapes.
+
+**`0xC8` JumpToLOD — `do_jumpfar4` (0x4D416C).** Layout
+`[C8 00][size u16][pixel_threshold u16][rel16]` (6-byte operand → total 8).
+**Distance-based.** When the force-max-detail flag `_effects & 0x20000` is set,
+the operand is skipped and the block always renders; otherwise the handler
+compares the object's projected on-screen size against the threshold:
+
+```
+depth     = -(xv·m3 + yv·m6 + zv·m9)              ; view-space Z, clamped >= 20
+projected = (size * aspecty * scrh) / depth / 2   ; ~ vertical pixels on screen
+threshold = (pixel_threshold * sizeAdjust) >> 8
+if (projected < threshold) esi += rel16           ; too small -> next (coarser) LOD
+                                                   ; else fall through to this LOD
+```
+
+with `xv/yv/zv` (`0x51CDAA/AC/AE`) the object's viewer-relative position,
+`m3/m6/m9` (`0x515F48/4E/54`) the view-matrix depth row, `aspecty`
+(`0x51837C`), `scrh` (`0x5182F4`) the screen height, and `sizeAdjust`
+(`0x51D125`) a global tuning factor. LOD blocks chain: each JumpToLOD renders
+its block when the object is large enough on screen, else jumps past it to the
+next, coarser block. Near-universal: 1098/1275 shapes (2064 opcodes).
 
 ## Round-Trip Notes
 
@@ -506,12 +606,21 @@ single OBJ.
 
 ## Open Questions
 
-### 1. Unk* opcode semantics
+### 1. Remaining Unk* opcode semantics
 
-40+ opcodes have confirmed sizes (the parser walks every FA shape without
-error) but untraced behavior — the Unk06…UnkEE word-magic set, Unk38/UnkBC,
-and the unknown Face flag bits. Decoding them is the core of the Phase 5 SH
-engine-behavior work.
+All opcodes have confirmed sizes (the parser walks every FA shape without
+error). The control-flow families are now traced — animation (`0x40`, `0x48`,
+`0x38`, `0x50`; see [Animation opcodes](#animation-opcodes-traced)) and
+LOD/damage (`0xA6`, `0xAC`, `0xC8`; see
+[LOD and damage-state opcodes](#lod-and-damage-state-opcodes-traced)) — as is
+the [dispatch mechanism](#interpreter-dispatch--vector_table-traced) that named
+a dozen render-state handlers. What remains untraced is the **render-state /
+attribute** set (`do_setcoarse`, `do_setlight`, the `do_brush_*` and
+`do_new_smap`/`do_new_rmap` family, the streamer pair, and the still-unnamed
+`Unk06…UnkEE` word-magic entries), the exact per-operand layout of the
+`Xform`/`Unmask` sub-model calls (`0xC4`/`0xC6`/`0x12`/`0x6E`), and the unknown
+Face flag bits. These affect surface appearance, not geometry or the
+animation/LOD/damage playback contract.
 
 *Status: open — re-static (#52)*
 
