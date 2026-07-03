@@ -30,6 +30,15 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   entry through its editor and the preview — one rendered frame per record —
   exercising extraction, every parser, and the GPU upload paths against real
   game data.
+- **`--render <LIB> <ENTRY> [--out file.png] [--size WxH]`** — headless PNG
+  snapshot: opens the archive, selects the entry (by 8.3 name like `A10.SH`
+  or numeric index), settles the preview, and writes a PNG of the whole
+  window through the same render path the interactive app uses. Like
+  `--smoke` it needs no visible window (offscreen fallback when there is no
+  display server). `--out` defaults to `render.png`; `--size` defaults to the
+  standard window size and is clamped to the minimum (the compositor may scale
+  the actual pixel dimensions on HiDPI). Intended for automated visual review
+  of rendering changes — SH 3D orbit, PIC/RAW/CB8 images, and the editors.
 
 On Windows, `fx-gui.exe` is a `WIN32`-subsystem (GUI) binary, so shells launch
 it detached: a bare `--smoke` invocation from PowerShell prints nothing,

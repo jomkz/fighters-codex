@@ -7,9 +7,11 @@
 #include "imgui_internal.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
+#include "stb_image_write.h" // implementation lives in pic_editor.cpp
 #include <glad/gl.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <cctype>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -158,23 +160,114 @@ static int RunSmokeSweep(App& app, const std::vector<std::string>& libs) {
     return failures;
 }
 
+// ---------- Headless PNG snapshot ----------
+
+// Build one frame and read the back buffer into a PNG (top-left origin), for
+// automated visual review of the preview (SH 3D, PIC/RAW/CB8, editors). Uses
+// the same render path as the interactive app, so the image is faithful.
+static bool CaptureFrame(const std::string& outPath) {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+    g_app->Draw();
+    ImGui::Render();
+
+    int w = 0, h = 0;
+    SDL_GetWindowSizeInPixels(platform::Window(), &w, &h);
+    glViewport(0, 0, w, h);
+    glClearColor(0.12f, 0.12f, 0.12f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    std::vector<unsigned char> px((size_t)w * h * 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadBuffer(GL_BACK);
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, px.data());
+    SDL_GL_SwapWindow(platform::Window());
+
+    // GL reads bottom-up; PNG is top-down.
+    std::vector<unsigned char> flip((size_t)w * h * 4);
+    for (int y = 0; y < h; ++y)
+        std::memcpy(&flip[(size_t)(h - 1 - y) * w * 4],
+                    &px[(size_t)y * w * 4], (size_t)w * 4);
+
+    return stbi_write_png(outPath.c_str(), w, h, 4, flip.data(), w * 4) != 0;
+}
+
+// Open a LIB, select an entry (by 8.3 name or numeric index), let the preview
+// settle, and write a PNG. Returns 0 on success.
+static int RunRender(App& app, const std::string& lib, const std::string& entry,
+                     const std::string& out) {
+    size_t before = app.sessions.size();
+    app.OpenLib(lib);
+    if (app.sessions.size() == before) {
+        std::fprintf(stderr, "render: FAILED to open %s (%s)\n",
+                     lib.c_str(), app.statusMsg.c_str());
+        return 1;
+    }
+    const auto& entries = app.sessions[0].entries;
+
+    int idx = -1;
+    bool numeric = !entry.empty();
+    for (char c : entry) numeric = numeric && (std::isdigit((unsigned char)c) != 0);
+    if (numeric) {
+        idx = std::atoi(entry.c_str());
+    } else {
+        for (int i = 0; i < (int)entries.size(); ++i)
+            if (SDL_strcasecmp(entries[i].name, entry.c_str()) == 0) { idx = i; break; }
+    }
+    if (idx < 0 || idx >= (int)entries.size()) {
+        std::fprintf(stderr, "render: entry '%s' not found in %s\n",
+                     entry.c_str(), lib.c_str());
+        return 1;
+    }
+
+    app.OpenEntry(0, idx);
+    // Settle: the SH mesh builds on the first frame after selection and the
+    // docked layout needs a couple of frames to resolve panel sizes.
+    for (int i = 0; i < 4; ++i) RenderFrame();
+
+    if (!CaptureFrame(out)) {
+        std::fprintf(stderr, "render: failed to write %s\n", out.c_str());
+        return 1;
+    }
+    std::printf("render: %s [%s] -> %s\n", lib.c_str(), entries[idx].name, out.c_str());
+    return 0;
+}
+
 // ---------- main ----------
 
 int main(int argc, char** argv) {
     bool smoke = false;
-    std::vector<std::string> smokeLibs;
+    bool render = false;
+    std::string renderOut, renderSize;
+    std::vector<std::string> positionals; // LIB paths (smoke) or LIB + ENTRY (render)
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--smoke") == 0)
             smoke = true;
+        else if (std::strcmp(argv[i], "--render") == 0)
+            render = true;
+        else if (std::strcmp(argv[i], "--out") == 0 && i + 1 < argc)
+            renderOut = argv[++i];
+        else if (std::strcmp(argv[i], "--size") == 0 && i + 1 < argc)
+            renderSize = argv[++i];
         else
-            smokeLibs.push_back(argv[i]); // LIB paths for the smoke sweep
+            positionals.push_back(argv[i]);
+    }
+    const bool headless = smoke || render; // hidden window, no ini, offscreen fallback
+
+    int winW = kDefaultW, winH = kDefaultH;
+    if (render && !renderSize.empty()) {
+        int rw = 0, rh = 0;
+        if (std::sscanf(renderSize.c_str(), "%dx%d", &rw, &rh) == 2 &&
+            rw >= kMinW && rh >= kMinH) { winW = rw; winH = rh; }
     }
 
-    platform::WindowConfig cfg = {"Fighters Toolkit", kDefaultW, kDefaultH,
-                                  kMinW, kMinH, smoke};
+    platform::WindowConfig cfg = {"Fighters Toolkit", winW, winH,
+                                  kMinW, kMinH, headless};
     if (!platform::CreateWindowGL(cfg)) {
-        if (!smoke) return 1;
-        // Headless smoke run without a display server: retry offscreen.
+        if (!headless) return 1;
+        // Headless run without a display server: retry offscreen.
         platform::DestroyWindowGL();
         SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "offscreen");
         if (!platform::CreateWindowGL(cfg)) return 1;
@@ -186,7 +279,7 @@ int main(int argc, char** argv) {
 
     // Settings live in the per-user preferences path, not the CWD.
     static std::string iniPath;
-    if (!smoke) {
+    if (!headless) {
         if (char* pref = SDL_GetPrefPath("jomkz", "fx-gui")) {
             iniPath = std::string(pref) + "fx-gui.ini";
             SDL_free(pref);
@@ -218,7 +311,7 @@ int main(int argc, char** argv) {
     // Re-apply theme now that App::themePref has been populated from the ini.
     platform::ApplyTheme(app.themePref);
 
-    if (!smoke) {
+    if (!headless) {
         if (!ApplySavedPlacement())
             SDL_SetWindowPosition(platform::Window(),
                                   SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -230,10 +323,25 @@ int main(int argc, char** argv) {
     bool done        = false;
     int  smokeFrames = smoke ? 3 : -1;
 
-    if (smoke) {
+    if (render) {
+        SDL_GL_SetSwapInterval(0);
+        std::string lib   = positionals.size() > 0 ? positionals[0] : "";
+        std::string entry = positionals.size() > 1 ? positionals[1] : "";
+        if (lib.empty() || entry.empty()) {
+            std::fprintf(stderr,
+                "usage: fx-gui --render <LIB> <ENTRY> [--out file.png] [--size WxH]\n");
+            exitCode = 2;
+        } else {
+            std::string out = renderOut.empty() ? "render.png" : renderOut;
+            exitCode = RunRender(app, lib, entry, out);
+        }
+        done = true;
+    }
+
+    if (smoke && !render) {
         SDL_GL_SetSwapInterval(0); // don't vsync-throttle the sweep
-        if (!smokeLibs.empty()) {
-            exitCode = RunSmokeSweep(app, smokeLibs) ? 1 : 0;
+        if (!positionals.empty()) {
+            exitCode = RunSmokeSweep(app, positionals) ? 1 : 0;
             done = true; // sweep replaces the interactive loop
         }
     }
