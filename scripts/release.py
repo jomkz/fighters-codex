@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Prepare a release: bump the version in CMakeLists.txt, rotate CHANGELOG.md,
-commit both files, and create the release tag.
+and commit both files on a chore/release-vX.Y.Z branch.
+
+main is protected, so the release commit lands via PR (squash-merge) and the
+tag goes on the squash commit afterwards — this script never tags. Run it from
+main (it creates the release branch) or from the release branch itself; it
+refuses to commit anywhere else.
 
 Usage:
-    python3 scripts/release.py 0.3.0
+    python3 scripts/release.py 0.5.0
 
 Stdlib-only; runs anywhere git and Python 3.8+ exist.
 """
@@ -46,7 +51,27 @@ def main() -> int:
         return fail("Working tree has uncommitted changes. "
                     "Commit or stash them before releasing.")
     if git("tag", "--list", tag).stdout.strip():
-        return fail(f"Tag '{tag}' already exists.")
+        return fail(f"Tag '{tag}' already exists. If it is a leftover from an "
+                    f"aborted release, delete it: git tag -d {tag}")
+    if f"## [{version}]" in read_text(CHANGELOG)[0]:
+        return fail(f"CHANGELOG.md already has a [{version}] section — "
+                    f"this release looks prepared. Re-running would rotate "
+                    f"the changelog twice.")
+
+    # main is protected: the release commit must land via PR, so work happens
+    # on the release branch — created here when starting from main.
+    branch = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+    release_branch = f"chore/release-{tag}"
+    if branch == "main":
+        if git("rev-parse", "--verify", "--quiet", release_branch).returncode == 0:
+            return fail(f"Branch '{release_branch}' already exists. Switch to "
+                        f"it or delete it before re-running.")
+        r = git("switch", "-c", release_branch)
+        if r.returncode != 0:
+            return fail(r.stderr.strip() or "git switch -c failed")
+    elif branch != release_branch:
+        return fail(f"On branch '{branch}'. Releases are cut from main or "
+                    f"from '{release_branch}'.")
 
     today = datetime.date.today().isoformat()
 
@@ -77,21 +102,30 @@ def main() -> int:
                        new_chlog, count=1)
     CHANGELOG.write_bytes(new_chlog.encode(chlog_enc))
 
-    # --- Commit and tag ---
+    # --- Commit (no tag: under squash-merge this commit's SHA never lands
+    # on main, so the tag goes on the squash commit after the PR merges) ---
     for cmd in (["add", str(CMAKE), str(CHANGELOG)],
-                ["commit", "-m", f"chore: release {tag}"],
-                ["tag", tag]):
+                ["commit", "-m", f"chore: release {tag}"]):
         r = git(*cmd)
         if r.returncode != 0:
             return fail(r.stderr.strip() or f"git {cmd[0]} failed")
 
     print(f"""
-Release {tag} prepared. Review the commit, then push:
-  git push origin main --tags
+Release {tag} prepared on '{release_branch}'. Review the commit
+(git show --stat HEAD), then land it via PR:
+
+  git push -u origin {release_branch}
+  gh pr create --fill
+
+After CI is green, squash-merge the PR, then tag the squash commit:
+
+  git switch main && git pull
+  git log -1 --oneline   # must show: chore: release {tag} (#<PR>)
+  git tag {tag} && git push origin {tag}
 
 Post-release checklist:
-  - Verify the Release workflow published the artifacts
-  - Bump fa-content's extern/fx_lib submodule to {tag}
+  - Verify the Release workflow published all six artifacts
+  - Bump fa-bridge's extern/fx_lib submodule to {tag} (when fx_lib changed)
 """)
     return 0
 
