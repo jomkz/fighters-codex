@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 762" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="FA.EXE shape-selection flow: object-type setup generates damage-model variants, and the per-frame render passes select them by destroyed state.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .setup { fill: #e8f0fb; stroke: #3d6aa8; }
+    .run   { fill: #eaf4ec; stroke: #3f7d4f; }
+    .dmg   { fill: #fbecea; stroke: #b25548; }
+    .dec   { fill: #fdf4e3; stroke: #b8892f; }
+    .lane  { fill: none; stroke: #9aa7b2; stroke-width: 1.2; stroke-dasharray: 6 5; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 12px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .lanetitle { fill: #33424e; font-size: 15px; font-weight: 600; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    .edgelbl { fill: #4a5a67; font-size: 11px; }
+    @media (prefers-color-scheme: dark) {
+      .box   { fill: #232a31; stroke: #7f8f9d; }
+      .setup { fill: #1e2c3e; stroke: #6f9bd6; }
+      .run   { fill: #1d2c22; stroke: #6fae7f; }
+      .dmg   { fill: #33221f; stroke: #d98a7c; }
+      .dec   { fill: #322a1a; stroke: #d9b45f; }
+      .lane  { stroke: #55636e; }
+      .lbl   { fill: #dce4ea; } .sub { fill: #a6b3bd; }
+      .lanetitle { fill: #c7d2da; } .edge { stroke: #8a99a5; }
+      .edgelbl { fill: #a6b3bd; }
+    }
+    :root[data-theme="dark"] .box  { fill: #232a31; stroke: #7f8f9d; }
+    :root[data-theme="dark"] .setup{ fill: #1e2c3e; stroke: #6f9bd6; }
+    :root[data-theme="dark"] .run  { fill: #1d2c22; stroke: #6fae7f; }
+    :root[data-theme="dark"] .dmg  { fill: #33221f; stroke: #d98a7c; }
+    :root[data-theme="dark"] .dec  { fill: #322a1a; stroke: #d9b45f; }
+    :root[data-theme="dark"] .lane { stroke: #55636e; }
+    :root[data-theme="dark"] .lbl  { fill: #dce4ea; } :root[data-theme="dark"] .sub { fill: #a6b3bd; }
+    :root[data-theme="dark"] .lanetitle { fill: #c7d2da; } :root[data-theme="dark"] .edge { stroke: #8a99a5; }
+    :root[data-theme="dark"] .edgelbl { fill: #a6b3bd; }
+    :root[data-theme="light"] .box  { fill: #f4f6f8; stroke: #5b6b7a; }
+    :root[data-theme="light"] .setup{ fill: #e8f0fb; stroke: #3d6aa8; }
+    :root[data-theme="light"] .run  { fill: #eaf4ec; stroke: #3f7d4f; }
+    :root[data-theme="light"] .dmg  { fill: #fbecea; stroke: #b25548; }
+    :root[data-theme="light"] .dec  { fill: #fdf4e3; stroke: #b8892f; }
+    :root[data-theme="light"] .lane { stroke: #9aa7b2; }
+    :root[data-theme="light"] .lbl  { fill: #22303c; } :root[data-theme="light"] .sub { fill: #4a5a67; }
+    :root[data-theme="light"] .lanetitle { fill: #33424e; } :root[data-theme="light"] .edge { stroke: #5b6b7a; }
+    :root[data-theme="light"] .edgelbl { fill: #4a5a67; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/>
+    </marker>
+  </defs>
+
+  <!-- ===================== SETUP LANE ===================== -->
+  <rect class="lane" x="20" y="20" width="500" height="722" rx="10"/>
+  <text class="lanetitle" x="40" y="48">Type load — <tspan class="mono">_SetupOT</tspan> (0x4A6EB0)</text>
+
+  <rect class="box setup" x="120" y="66" width="300" height="46" rx="6"/>
+  <text class="lbl" x="270" y="86" text-anchor="middle">Type record loaded (OT / NT / PT / JT)</text>
+  <text class="sub mono" x="270" y="103" text-anchor="middle">_SetupPT → _SetupNT → _SetupOT</text>
+
+  <path class="edge" d="M270,112 L270,146" marker-end="url(#arrow)"/>
+
+  <rect class="box setup" x="90" y="146" width="360" height="60" rx="6"/>
+  <text class="lbl" x="270" y="170" text-anchor="middle">Read obj_class (type +0x0D) — pick model family</text>
+  <text class="sub mono" x="270" y="190" text-anchor="middle">$8000 Fighter · $4000 Bomber · $2000 Ship · …</text>
+
+  <path class="edge" d="M270,206 L270,240" marker-end="url(#arrow)"/>
+
+  <polygon class="dec" points="270,236 400,278 270,320 140,278"/>
+  <text class="lbl" x="270" y="274" text-anchor="middle">Fighter / Bomber?</text>
+  <text class="sub" x="270" y="292" text-anchor="middle">(obj_class &amp; 0xC000)</text>
+
+  <!-- non-aircraft branch -->
+  <path class="edge" d="M140,278 L70,278 L70,360" marker-end="url(#arrow)"/>
+  <text class="edgelbl" x="104" y="270" text-anchor="middle">no</text>
+  <rect class="box setup" x="30" y="360" width="180" height="96" rx="6"/>
+  <text class="lbl" x="120" y="384" text-anchor="middle">Generic / proxy shape</text>
+  <text class="sub mono" x="120" y="404" text-anchor="middle">Ship → &lt;name&gt;_a.SH</text>
+  <text class="sub mono" x="120" y="420" text-anchor="middle">Tank → TANK_A.SH</text>
+  <text class="sub mono" x="120" y="436" text-anchor="middle">SAM/AAA/Vehi → *_A.SH</text>
+  <text class="sub" x="120" y="452" text-anchor="middle">slot +0x17 (·+0x1B if flagged)</text>
+
+  <!-- aircraft branch -->
+  <path class="edge" d="M270,320 L270,360" marker-end="url(#arrow)"/>
+  <text class="edgelbl" x="286" y="340" text-anchor="middle">yes</text>
+  <rect class="box setup" x="250" y="360" width="240" height="150" rx="6"/>
+  <text class="lbl" x="370" y="384" text-anchor="middle">Generate 4 variants</text>
+  <text class="sub" x="370" y="402" text-anchor="middle">copy base filename; overwrite the</text>
+  <text class="sub" x="370" y="418" text-anchor="middle">last stem char with a / b / c / d:</text>
+  <text class="sub mono" x="370" y="440" text-anchor="middle">_a → +0x17    _b → +0x1B</text>
+  <text class="sub mono" x="370" y="458" text-anchor="middle">_c → +0x25    _d → +0x29</text>
+  <text class="sub" x="370" y="480" text-anchor="middle">e.g. a10.SH → a10_a … a10_d.SH</text>
+  <text class="sub" x="370" y="498" text-anchor="middle">(base kept in +0x0F)</text>
+
+  <path class="edge" d="M120,456 L120,540 L270,540" marker-end="url(#arrow)"/>
+  <path class="edge" d="M370,510 L370,540 L290,540" marker-end="url(#arrow)"/>
+
+  <rect class="box setup" x="150" y="540" width="240" height="60" rx="6"/>
+  <text class="lbl" x="270" y="564" text-anchor="middle">Resolve each slot to a shape</text>
+  <text class="sub mono" x="270" y="584" text-anchor="middle">FUN_004a71e0 → _RMAccess (load from LIB)</text>
+
+  <text class="sub" x="270" y="640" text-anchor="middle" font-style="italic">Type record now holds loaded shape pointers in</text>
+  <text class="sub mono" x="270" y="658" text-anchor="middle">+0x0F (base) · +0x17 · +0x1B · +0x25 · +0x29</text>
+
+  <!-- ===================== RUNTIME LANE ===================== -->
+  <rect class="lane" x="540" y="20" width="340" height="722" rx="10"/>
+  <text class="lanetitle" x="560" y="48">Per-frame render (per object)</text>
+
+  <rect class="box run" x="580" y="66" width="260" height="60" rx="6"/>
+  <text class="lbl" x="710" y="90" text-anchor="middle">Object enqueued for draw</text>
+  <text class="sub mono" x="710" y="110" text-anchor="middle">T_AddYourObjs · GRAPHICAddYourObjs</text>
+
+  <path class="edge" d="M710,126 L710,158" marker-end="url(#arrow)"/>
+
+  <rect class="box run" x="590" y="158" width="240" height="52" rx="6"/>
+  <text class="lbl" x="710" y="180" text-anchor="middle">Draw base shape (+0x0F)</text>
+  <text class="sub mono" x="710" y="199" text-anchor="middle">GRAddBrentObj(shape, x, y, z)</text>
+
+  <path class="edge" d="M710,210 L710,246" marker-end="url(#arrow)"/>
+
+  <polygon class="dec" points="710,242 838,286 710,330 582,286"/>
+  <text class="lbl" x="710" y="282" text-anchor="middle">Destroyed?</text>
+  <text class="sub" x="710" y="300" text-anchor="middle">entity +0x0E == 0</text>
+
+  <path class="edge" d="M582,286 L556,286 L556,360" marker-end="url(#arrow)"/>
+  <text class="edgelbl" x="545" y="330" text-anchor="middle">no</text>
+  <rect class="box run" x="540" y="360" width="90" height="44" rx="6"/>
+  <text class="sub" x="585" y="387" text-anchor="middle">base only</text>
+
+  <path class="edge" d="M710,330 L710,368" marker-end="url(#arrow)"/>
+  <text class="edgelbl" x="726" y="352" text-anchor="middle">yes</text>
+
+  <polygon class="dec" points="710,364 838,410 710,456 582,410"/>
+  <text class="lbl" x="710" y="404" text-anchor="middle">Damage set?</text>
+  <text class="sub mono" x="710" y="422" text-anchor="middle">type +0x33 == 2</text>
+
+  <path class="edge" d="M628,410 L610,410 L610,500" marker-end="url(#arrow)"/>
+  <text class="edgelbl" x="600" y="452" text-anchor="middle">no</text>
+  <path class="edge" d="M792,410 L810,410 L810,500" marker-end="url(#arrow)"/>
+  <text class="edgelbl" x="820" y="452" text-anchor="middle">yes</text>
+
+  <rect class="box dmg" x="556" y="500" width="120" height="86" rx="6"/>
+  <text class="lbl" x="616" y="524" text-anchor="middle">Set {A,B}</text>
+  <text class="sub mono" x="616" y="546" text-anchor="middle">world: _A +0x17</text>
+  <text class="sub mono" x="616" y="564" text-anchor="middle">gfx:   _B +0x1B</text>
+  <text class="sub" x="616" y="580" text-anchor="middle">(e.g. A10_A/_B)</text>
+
+  <rect class="box dmg" x="748" y="500" width="120" height="86" rx="6"/>
+  <text class="lbl" x="808" y="524" text-anchor="middle">Set {C,D}</text>
+  <text class="sub mono" x="808" y="546" text-anchor="middle">world: _C +0x25</text>
+  <text class="sub mono" x="808" y="564" text-anchor="middle">gfx:   _D +0x29</text>
+  <text class="sub" x="808" y="580" text-anchor="middle">(e.g. A10_C/_D)</text>
+
+  <path class="edge" d="M616,586 L616,628 L710,628" marker-end="url(#arrow)"/>
+  <path class="edge" d="M808,586 L808,628 L730,628" marker-end="url(#arrow)"/>
+
+  <rect class="box run" x="590" y="628" width="240" height="52" rx="6"/>
+  <text class="lbl" x="710" y="650" text-anchor="middle">Draw selected damage model</text>
+  <text class="sub mono" x="710" y="669" text-anchor="middle">GRAddBrentObj(variant, …)</text>
+
+  <!-- footnote linking the two lanes -->
+  <text class="sub" x="450" y="720" text-anchor="middle" font-style="italic">Intra-shape LOD and damage (JumpToLOD / JumpToDamage opcodes) live inside one .SH — see SH.md.</text>
+  <text class="sub" x="450" y="740" text-anchor="middle" font-style="italic">This diagram is the inter-shape, whole-model damage swap.</text>
+</svg>

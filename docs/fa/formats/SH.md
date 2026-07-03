@@ -742,6 +742,9 @@ OpenFA rather than re-derived here.
 flight-model records whose `shadow_shape` field names the `_S.SH` shadow
 shapes.
 
-**Engine:** [renderer.md](../renderer.md) — the shape interpreter and
+**Engine:** [shape-selection.md](../shape-selection.md) — how the engine picks
+*which* `.SH` to draw (the whole-model damage swap and per-class `_A`…`_D`
+variant set), the inter-shape counterpart to this file's intra-shape LOD/damage
+opcodes; [renderer.md](../renderer.md) — the shape interpreter and
 rasterizer pipeline; [architecture.md](../architecture.md) — Phar Lap overlay
 loading.

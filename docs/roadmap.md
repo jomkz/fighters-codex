@@ -71,12 +71,25 @@ ATF/USNF acquisition (#144) is external — start immediately.
 | 5 | [#53](https://github.com/jomkz/fighters-codex/issues/53) | Renderer & effects internals |
 | 5 | [#54](https://github.com/jomkz/fighters-codex/issues/54) | Format unknown closure (static) |
 | 5 | [#55](https://github.com/jomkz/fighters-codex/issues/55) | VDO/Cobra video — the long pole |
+| 5 | [#209](https://github.com/jomkz/fighters-codex/issues/209) | Complete FA.EXE reconstruction — name & document every function/variable |
 | 6 | [#56](https://github.com/jomkz/fighters-codex/issues/56) | Gameplay-gated RE (Windows bench) |
 | 6 | [#57](https://github.com/jomkz/fighters-codex/issues/57) | ATF/USNF verification pass |
 | 6 | [#58](https://github.com/jomkz/fighters-codex/issues/58) | v1.0 audit, release, maintenance mode |
 
 Standalone Phase 5 prerequisite: [#120](https://github.com/jomkz/fighters-codex/issues/120)
 — migrate the RE workbench (Ghidra project + FA corpus) to Fedora.
+
+### Program: Complete FA.EXE Reconstruction
+
+Milestone [FA.EXE — Complete Reconstruction](https://github.com/jomkz/fighters-codex/milestones)
+(epic [#209](https://github.com/jomkz/fighters-codex/issues/209)) is the long-horizon
+goal of a *complete understanding* of the executable: every function and variable named
+in the Ghidra project, and every subsystem documented in `docs/fa/` with recovered
+symbols, struct maps, and an SVG flow diagram. It runs alongside Phase 5 as a
+per-subsystem lens over the same code (naming + documentation + diagrams), not a
+duplicate decode effort. The definition of done is exemplified by
+[shape-selection.md](fa/shape-selection.md); each subsystem in the epic's map is a
+sub-issue.
 
 ## Relationship to fighters-legacy
 
