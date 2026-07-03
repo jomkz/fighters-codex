@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/codeql.yml)
+[![Docs](https://github.com/jomkz/fighters-codex/actions/workflows/docs.yml/badge.svg)](https://github.com/jomkz/fighters-codex/actions/workflows/docs.yml)
+[![Release](https://img.shields.io/github/v/release/jomkz/fighters-codex)](https://github.com/jomkz/fighters-codex/releases)
 
 A reverse-engineering effort to fully understand and document the game engine and file
 formats of the "Fighters" combat simulator family. The documentation — format specs,
@@ -58,6 +60,10 @@ Pre-built binaries are on the [Releases](https://github.com/jomkz/fighters-codex
 | `fx-lib-vX.X.X-linux-x64.tar.gz` (v0.4.0+) | C++ developers on Linux — static library and headers |
 
 ## Documentation
+
+All documentation is published as a browsable site with navigation and search:
+**<https://jomkz.github.io/fighters-codex/>**. The same content is readable
+in-repo:
 
 - [docs/roadmap.md](docs/roadmap.md) — phased roadmap to 1.0, with gates and epic index
 - [docs/cli.md](docs/cli.md) — full CLI command reference with examples

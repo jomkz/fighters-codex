@@ -1,0 +1,7 @@
+# Docs-site toolchain (.github/workflows/docs.yml; local preview per
+# docs/development.md). Exact pins, kept current by Dependabot (pip ecosystem).
+# mkdocs and pymdown-extensions are direct dependencies of mkdocs.yml
+# (validation config, pymdownx.slugs.slugify), not just transitives.
+mkdocs==1.6.1
+mkdocs-material==9.7.6
+pymdown-extensions==11.0.1

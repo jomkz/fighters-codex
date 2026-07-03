@@ -9,3 +9,10 @@ updates:
       interval: weekly
     labels:
       - dependencies
+  # Docs-site toolchain (requirements-docs.txt) — the repo's only pip deps.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies

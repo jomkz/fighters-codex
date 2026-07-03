@@ -154,9 +154,9 @@ during the main Ghidra disassembly pass:
 ### Usage with Ghidra
 
 A ready-to-run Java script is provided at
-[`scripts/ghidra/ImportFASms.java`](../../../scripts/ghidra/ImportFASms.java).
-See [`scripts/ghidra/README.md`](../../../scripts/ghidra/README.md) for full
-setup and overlay-DLL rebasing instructions.
+[`scripts/ghidra/ImportFASms.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/ImportFASms.java).
+See [`scripts/ghidra/README.md`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/README.md)
+for full setup and overlay-DLL rebasing instructions.
 
 Quick start:
 

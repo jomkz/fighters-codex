@@ -89,6 +89,10 @@ Changes to the format specs in `docs/fa/formats/` must conform to the template a
 front-matter schema in [docs/spec-authoring.md](docs/spec-authoring.md); the `docs-status`
 leg enforces it, and `python3 tools/check_status.py --check` runs the same checks locally.
 
+Docs changes also build the published site strictly (`Docs` leg): a broken link, broken
+anchor, or a page missing from the site nav fails the PR. See
+[docs/development.md](docs/development.md#documentation-site) for local preview.
+
 ---
 
 For the full workflow — building, releasing, and the draft-changelog script — see

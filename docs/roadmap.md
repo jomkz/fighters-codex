@@ -9,7 +9,8 @@ This document is the map; the tracker is the source of truth for status.
 The RE documentation is the primary output — format specs, architecture notes, recovered
 symbols. The `fx_lib` library, `fx` CLI, and `fx-gui` are the validation layer: a working,
 byte-identical codec is the proof that a format is truly understood. (Restated in
-[#33](https://github.com/jomkz/fighters-codex/pull/33); see [README](../README.md).)
+[#33](https://github.com/jomkz/fighters-codex/pull/33); see
+[README](https://github.com/jomkz/fighters-codex/blob/main/README.md).)
 
 ## The 1.0 definition
 
@@ -103,5 +104,6 @@ v0.6.0 (P4) · v0.7–v0.9 (P5, as RE lands) · **v1.0.0** (P6).
 - Gaps discovered during RE are tagged `re-static` (Ghidra can answer it) or `re-gameplay`
   (needs the Windows bench + running game); Phase 6's bench campaign batches the latter.
 - The status matrix (#82) is updated in the same PR as the change it reflects
-  (see the docs-currency rule in [CLAUDE.md](../CLAUDE.md)).
+  (see the docs-currency rule in
+  [CLAUDE.md](https://github.com/jomkz/fighters-codex/blob/main/CLAUDE.md)).
 - No standalone TODO files — if it's worth doing, it's an issue.
