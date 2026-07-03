@@ -32,6 +32,7 @@ if(FX_BUILD_GUI)
     add_executable(gui_tests
         gui/test_util.cpp
         gui/test_dialog_queue.cpp
+        gui/test_math3d.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/dialog_queue.cpp
     )
     target_include_directories(gui_tests PRIVATE ${PROJECT_SOURCE_DIR}/gui/src)
