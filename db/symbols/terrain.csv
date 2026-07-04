@@ -1,0 +1,200 @@
+va,kind,name,display,source,confidence,notes
+0x004A7310,func,_T_InitPlane@4,T_InitPlane,sms,confirmed,spawns player plane on terrain at mission start (FMInitPlane/FMUpdatePlaneFields/EnterState/PLANESetFeetWet); writes _cg mirror fields
+0x004A73B0,func,_T_AddObj@12,T_AddObj,sms,confirmed,add a static object/building to the terrain object database (1642 B)
+0x004A7A40,func,_T_AddYourObjs@0,T_AddYourObjs,sms,confirmed,"terrain ""add your objects"" service pass"
+0x004A7D70,func,_T_ImmediateVisibility@4,T_ImmediateVisibility,sms,confirmed,
+0x004A7DF0,func,_T_ObjList@8,T_ObjList,sms,confirmed,
+0x004A7E50,func,_T_Render@4,T_Render,sms,confirmed,
+0x004A7F20,func,_T_InitForestProc,T_InitForestProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes (0x20 B setup preceding T_ResolveDecorShapes)
+0x004A7F40,func,T_ResolveDecorShapes,,re,inferred,walk a decoration brush-list (stride 0x1a) resolving each entry's SH via _RMAccess into +2; called by T_InitWaterProc(&_waterList) / T_InitCloudProc(&_cloudList)
+0x004A7F70,func,?T_ForestProc@@YAXJ@Z,T_ForestProc,sms,confirmed,scatters forest decoration (desert vs _forestList) via T_ScatterGrid
+0x004A8090,func,T_ScatterGrid,,re,inferred,2^n x 2^n tiling loop invoking T_ScatterDecorTile; called by every T_*Proc (evidence: T_ForestProc/T_MooseProc/T_WaterProc)
+0x004A8130,func,T_ScatterDecorTile,,re,inferred,"place one decoration cluster per tile: per-band distance LOD, T_GetLeaf gate, T_Info altitude, T_QueueDecor"
+0x004A83E0,func,_T_InitForest1Proc,T_InitForest1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8400,func,?T_Forest1Proc@@YAXJ@Z,T_Forest1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8520,func,_T_InitForest2Proc,T_InitForest2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8540,func,?T_Forest2Proc@@YAXJ@Z,T_Forest2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8660,func,_T_InitFarmProc,T_InitFarmProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8670,func,?T_FarmProc@@YAXJ@Z,T_FarmProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8730,func,_T_InitMooseProc,T_InitMooseProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8750,func,?T_MooseProc@@YAXJ@Z,T_MooseProc,sms,confirmed,"scatters ""moose"" decoration (desert vs _mooseList)"
+0x004A8870,func,?T_InitVietRicePaddy1Proc@@YAXXZ,T_InitVietRicePaddy1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8880,func,?T_VietRicePaddy1Proc@@YAXJ@Z,T_VietRicePaddy1Proc,sms,confirmed,Vietnam theater rice-paddy decoration proc
+0x004A8950,func,?T_InitVietRicePaddy2Proc@@YAXXZ,T_InitVietRicePaddy2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8960,func,?T_VietRicePaddy2Proc@@YAXJ@Z,T_VietRicePaddy2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8970,func,?T_InitVietRicePaddy3Proc@@YAXXZ,T_InitVietRicePaddy3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8980,func,?T_VietRicePaddy3Proc@@YAXJ@Z,T_VietRicePaddy3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8990,func,?T_InitVietPalms1Proc@@YAXXZ,T_InitVietPalms1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A89A0,func,?T_VietPalms1Proc@@YAXJ@Z,T_VietPalms1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A89B0,func,?T_InitVietPalms2Proc@@YAXXZ,T_InitVietPalms2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A89C0,func,?T_VietPalms2Proc@@YAXJ@Z,T_VietPalms2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A89D0,func,?T_InitVietPalms3Proc@@YAXXZ,T_InitVietPalms3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A89E0,func,?T_VietPalms3Proc@@YAXJ@Z,T_VietPalms3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A89F0,func,?T_InitVietTrees1Proc@@YAXXZ,T_InitVietTrees1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A00,func,?T_VietTrees1Proc@@YAXJ@Z,T_VietTrees1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A10,func,?T_InitVietTrees2Proc@@YAXXZ,T_InitVietTrees2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A20,func,?T_VietTrees2Proc@@YAXJ@Z,T_VietTrees2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A30,func,?T_InitVietTrees3Proc@@YAXXZ,T_InitVietTrees3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A40,func,?T_VietTrees3Proc@@YAXJ@Z,T_VietTrees3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A50,func,?T_InitVietWaterBuffaloProc@@YAXXZ,T_InitVietWaterBuffaloProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A60,func,?T_VietWaterBuffaloProc@@YAXJ@Z,T_VietWaterBuffaloProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes
+0x004A8A70,func,_T_InitWaterProc,T_InitWaterProc,sms,confirmed,copies _waterCfg string then resolves _waterList via T_ResolveDecorShapes
+0x004A8AB0,func,?T_WaterProc@@YAXJ@Z,T_WaterProc,sms,confirmed,scatters water-surface decoration; lazy-inits via T_InitWaterProc
+0x004A8B90,func,_T_InitCloudProc,T_InitCloudProc,sms,confirmed,resolves _cloudList via T_ResolveDecorShapes(&_cloudList 0x50C298)
+0x004A8BA0,func,?T_CloudProc@@YAXJ@Z,T_CloudProc,sms,confirmed,label-only; the global ambient proc (set in T_Init2)
+0x004A8C30,func,T_QueueDecor,,re,inferred,append an entry (short id + 0x17-B record) to the per-frame decor/comment list at _decorListEnd (DAT_0057336c); dedupes by id
+0x004A8CC0,func,T_ObjIsVisible,,re,inferred,per-object render-flag/type visibility test (DAT_00573396 flags vs type table at 0x50A6B8); used by T_AddVisibleObjs
+0x004A8D30,func,_T_Normal@16,T_Normal,sms,confirmed,
+0x004A8E50,func,?T_LeafOp@@YGXDPAULEAF_LIST@@PAUWORD_POINT3@@PAULONG_POINT@@J11@Z,T_LeafOp,sms,confirmed,emit one terrain leaf's geometry; 14-B entry + split body FUN_004a8e5e
+0x004A8E5E,func,,,waiver,confirmed,Ghidra mid-function split: body of ?T_LeafOp@@YGXD...@Z (entry 0x4A8E50 +0xE); the 2042-B leaf-emit worker
+0x004A9660,func,_T_Make@12,T_Make,sms,confirmed,build terrain scene: pick LOD tile size (_lodTileSize 0x20-0x100) + detail (_lodDetail 1/2/4/8) by view distance/DAT_00573394; quadtree tessellate into _cellArray; run ambient/object passes; emit leaf list
+0x004A9BB0,func,T_RunAmbientProcs,,re,confirmed,iterate _ambientProcs[0..0x10] (17 decoration procs) calling each with its index; gated by DAT_00573396&0x8000 and _ambientSuppress
+0x004A9C20,func,T_AddVisibleObjs,,re,inferred,iterate _objPtrs[1.._nextObjId]; for visible in-bounds objects run ImmediateService and T_QueueDecor (via GetCurObj/PutCurObj)
+0x004A9D00,func,T_BuildQuadCell,,re,inferred,"build one quad cell in _cellArray (sample T_GetLeaf at 4 corners, T_QuadAltitude/SetFlags)"
+0x004A9D0E,func,,,waiver,confirmed,Ghidra split re-entry/body of T_BuildQuadCell (0x4A9D00 +0xE); decompiles with phantom in_EAX/in_SF/in_OF (loop-back target)
+0x004A9E20,func,T_QuadAltitude,,re,inferred,representative altitude of a cell (clamped min/max blend of corner heights scaled by DAT_00573392)
+0x004A9EA0,func,T_QuadSetFlags,,re,inferred,set leaf flat-bit (+0xF|1) vs sloped-bit (+0xE|0x80) from corner-delta bytes
+0x004A9ED0,func,T_ViewBounds,,re,inferred,rotate view box by heading (_Rotate2) to compute cell-space AABB DAT_0057334a..DAT_00573350
+0x004AA070,func,T_SubdivideCells,,re,inferred,"LOD pass: walk _cellArray, subdivide cells finer than _lodDetail via 4x T_BuildQuadCell; T_CellScreenBounds cull; caps at 500 cells"
+0x004AA260,func,T_CellScreenBounds,,re,inferred,cell world extent (<<5) AND'd with view bounds via _BoundsAnd (cull test)
+0x004AA2B0,func,T_CompactCells,,re,inferred,compact _cellArray dropping dead (0xffff) cells; rewrites _cellCount and optional carried index
+0x004AA380,func,T_SortCells,,re,inferred,in-place quicksort of _cellArray (stride 0x16) via comparator (*_cellCompare 0x580B9C) and _Swapmem
+0x004AA430,func,,,waiver,confirmed,empty stub (single RET); reserved ambient/sort hook invoked by T_Make after T_SortCells
+0x004AA440,func,T_CountCells,,re,inferred,tally cells into front/back counts (returns front count); drives T_Make's subdivide-again loop
+0x004AA4A0,func,T_EmitCells,,re,inferred,"per live cell: T_CellTmapLookup + optional T_Normal, then T_LeafOp to emit geometry"
+0x004AA620,func,_T_InitDictionary@0,T_InitDictionary,sms,confirmed,init the tmap dictionary (_tdic)
+0x004AA680,func,@T_InitDictionaryEntry@8,T_InitDictionaryEntry,sms,confirmed,
+0x004AA790,func,_T_NamedTmaps@0,T_NamedTmaps,sms,confirmed,build named-tmap list (_tlist) from dictionary
+0x004AA7E0,func,?T_CompareTlist@@YAJPAX0@Z,T_CompareTlist,sms,confirmed,qsort comparator for _tlist (label-only; xref-only in globals.csv)
+0x004AA820,func,@T_SortTmapList@0,T_SortTmapList,sms,confirmed,sort _tlist for binary search
+0x004AA840,func,T_CellTmapLookup,,re,inferred,binary-search _tlist by packed cell coord ((y&~3)<<16|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2
+0x004AACA0,func,_T_InitHorizonProc@0,T_InitHorizonProc,sms,confirmed,RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH
+0x004AACE0,func,_T_HorizonProc,T_HorizonProc,sms,confirmed,1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label
+0x004AACF0,data,_T_DefaultHorizon,T_DefaultHorizon,sms,confirmed,default horizon descriptor (14 B) embedded after T_HorizonProc; pushed into leaf list by T_Make
+0x004AACFE,func,T_DrawHorizon,,re,inferred,"horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol"
+0x004AB860,func,@BrushFromIndex@4,BrushFromIndex,sms,confirmed,
+0x004ABAB0,func,_T_Info@24,T_Info,sms,confirmed,
+0x004C5D30,func,_T_InitDatabase@0,T_InitDatabase,sms,confirmed,set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB)
+0x004C5D50,func,_T_ShutdownDatabase@0,T_ShutdownDatabase,sms,confirmed,zero _dbDynamicLow/High
+0x004C5D60,func,_T_Init@0,T_Init,sms,confirmed,
+0x004C5D70,func,@T_Load@4,T_Load,sms,confirmed,
+0x004C5F40,func,T_StripTildes,,re,inferred,remove '~' chars from a filename in place; used twice by T_Load
+0x004C5F60,func,_T_Init2@0,T_Init2,sms,confirmed,
+0x004C5FA0,func,_T_Shutdown@0,T_Shutdown,sms,confirmed,mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change)
+0x004C6020,func,_T_StopAdding@0,T_StopAdding,sms,confirmed,OBJStopAdding (unless _curScreen==3) + OBJFindHumans
+0x004C6040,func,@T_GetLeaf@12,T_GetLeaf,sms,confirmed,"return 3-byte leaf ptr: fine grid (th+0x91,stride th+0x89) if size<th+0x79 else coarse grid (th+0x85,stride th+0x7d); OOB -> _borderLeaf (0x50CE4C)"
+0x004C9624,func,_T_InterpAltNW@16,T_InterpAltNW,sms,confirmed,barycentric altitude interpolation in the NW triangle of a leaf quad (64-bit divide of corner heights)
+0x004C9770,func,_T_InterpAltSE@16,T_InterpAltSE,sms,confirmed,label-only in FA.SMS import; SE-triangle counterpart (folded into InterpAltNW tail today)
+0x004EE6DC,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem
+0x004EE6DD,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem
+0x004EE6DE,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem
+0x004EE6DF,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem
+0x004F09B0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
+0x004F3890,data,,,waiver,confirmed,interior of / adjacent to ?NationGroundForces@@3PAGA; named at its base or owned by that subsystem
+0x004F3898,data,,,waiver,confirmed,interior of / adjacent to ?NationGroundForces@@3PAGA; named at its base or owned by that subsystem
+0x004F8C26,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
+0x004F8C33,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
+0x004F8C40,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
+0x0050A6A8,data,,,waiver,confirmed,interior of / adjacent to ?fixupShape@@3DA; named at its base or owned by that subsystem
+0x0050C298,data,,,waiver,confirmed,interior of / adjacent to _cloudAlt; named at its base or owned by that subsystem
+0x0050C2A8,data,,,waiver,confirmed,interior of / adjacent to _cloudAlt; named at its base or owned by that subsystem
+0x0050C2B2,data,,,waiver,confirmed,interior of / adjacent to _cloudAlt; named at its base or owned by that subsystem
+0x0050C2C2,data,,,waiver,confirmed,interior of / adjacent to _cloudAlt; named at its base or owned by that subsystem
+0x0050C2CC,data,,,waiver,confirmed,interior of / adjacent to _cloudAlt; named at its base or owned by that subsystem
+0x0050C3A4,data,,,waiver,confirmed,interior of / adjacent to _ambientInitProcs; named at its base or owned by that subsystem
+0x0050C3EC,data,,,waiver,confirmed,interior of / adjacent to _ambientProcs; named at its base or owned by that subsystem
+0x0050C42C,data,,,waiver,confirmed,interior of / adjacent to _ambientProcs; named at its base or owned by that subsystem
+0x0050C434,data,,,waiver,confirmed,interior of / adjacent to _ambientProcs; named at its base or owned by that subsystem
+0x0050C43C,data,,,waiver,confirmed,interior of / adjacent to _ambientProcs; named at its base or owned by that subsystem
+0x0050C448,data,,,waiver,confirmed,interior of / adjacent to _ambientProcs; named at its base or owned by that subsystem
+0x0050CE50,data,,,waiver,confirmed,interior of / adjacent to ?reduceLookDown@@3DA; named at its base or owned by that subsystem
+0x0050CE86,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050CFF3,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D074,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0B5,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0BC,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0BE,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D26B,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv
+0x0050FE60,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x0050FE64,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x0050FE68,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x0050FE6C,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x0050FE70,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x0050FE98,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x0050FE9C,data,,,waiver,confirmed,interior of / adjacent to _amtMoveHorizon; named at its base or owned by that subsystem
+0x00573300,data,,,waiver,confirmed,interior of / adjacent to _hackHorizonDown; named at its base or owned by that subsystem
+0x0057330C,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573324,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573328,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057332C,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573330,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573334,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573338,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057333A,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057334A,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057334C,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057334E,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573350,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573352,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573354,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573358,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057335A,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057335C,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573360,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573364,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573368,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057336C,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573370,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573388,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057338A,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x0057338C,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573392,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573394,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x00573396,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x005733C8,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x005733D0,data,,,waiver,confirmed,interior of / adjacent to _v; named at its base or owned by that subsystem
+0x005733E4,data,,,waiver,confirmed,interior of / adjacent to _tlist; named at its base or owned by that subsystem
+0x0057A174,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A17A,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A17E,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A182,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A184,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A185,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A186,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A187,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A189,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A18A,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A198,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057A19F,data,,,waiver,confirmed,interior of / adjacent to _PLleftFlap; named at its base or owned by that subsystem
+0x0057CCD4,data,,,waiver,confirmed,interior of / adjacent to _visibleTargetIds; named at its base or owned by that subsystem
+0x0057CCD8,data,,,waiver,confirmed,interior of / adjacent to _visibleTargetIds; named at its base or owned by that subsystem
+0x0057CCDC,data,,,waiver,confirmed,interior of / adjacent to _visibleTargetIds; named at its base or owned by that subsystem
+0x0057CCE0,data,,,waiver,confirmed,interior of / adjacent to _visibleTargetIds; named at its base or owned by that subsystem
+0x0057CD08,data,,,waiver,confirmed,interior of / adjacent to _PLthrustPitch; named at its base or owned by that subsystem
+0x0057CD0C,data,,,waiver,confirmed,interior of / adjacent to _PLthrustPitch; named at its base or owned by that subsystem
+0x0057CD10,data,,,waiver,confirmed,interior of / adjacent to _PLthrustPitch; named at its base or owned by that subsystem
+0x0057CD5C,data,,,waiver,confirmed,interior of / adjacent to _PLvtOn; named at its base or owned by that subsystem
+0x0057CD6C,data,,,waiver,confirmed,interior of / adjacent to _tdic; named at its base or owned by that subsystem
+0x0057CD99,data,,,waiver,confirmed,interior of / adjacent to _tdic; named at its base or owned by that subsystem
+0x0057CD9D,data,,,waiver,confirmed,interior of / adjacent to _tdic; named at its base or owned by that subsystem
+0x0057CDCE,data,,,waiver,confirmed,interior of / adjacent to _tdic; named at its base or owned by that subsystem
+0x00580B89,data,,,waiver,confirmed,interior of / adjacent to _terFileName; named at its base or owned by that subsystem
+0x00580B8A,data,,,waiver,confirmed,interior of / adjacent to _terFileName; named at its base or owned by that subsystem
+0x00580B9C,data,,,waiver,confirmed,interior of / adjacent to _hackGround; named at its base or owned by that subsystem
+0x00580BA8,data,,,waiver,confirmed,interior of / adjacent to _PLhook; named at its base or owned by that subsystem
+0x00580BB0,data,,,waiver,confirmed,interior of / adjacent to ?computerFlight@@3DA; named at its base or owned by that subsystem
+0x00580BD0,data,,,waiver,confirmed,interior of / adjacent to _PLrightStabilizer; named at its base or owned by that subsystem
+0x00580BE0,data,,,waiver,confirmed,interior of / adjacent to _PLrightStabilizer; named at its base or owned by that subsystem
+0x00583962,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A42,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A50,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A54,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A58,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A66,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A6A,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A7A,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A7E,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A80,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A82,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A86,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem
+0x00583A93,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem

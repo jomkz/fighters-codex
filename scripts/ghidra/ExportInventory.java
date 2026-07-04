@@ -70,7 +70,10 @@ public class ExportInventory extends GhidraScript {
         // range membership for every other subsystem.
         Map<Long, String> claims = readClaims(new File(dbDir, "symbols"));
 
-        File outDir = new File(dbDir, "inventory");
+        // Optional 2nd arg: alternate output directory (used by the reproducibility
+        // audit to export a fresh-project inventory without clobbering db/inventory/).
+        File outDir = (args.length >= 2 && !args[1].isEmpty())
+                ? new File(args[1]) : new File(dbDir, "inventory");
         outDir.mkdirs();
 
         FunctionManager fm = currentProgram.getFunctionManager();

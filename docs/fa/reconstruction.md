@@ -19,14 +19,14 @@ Ghidra inventory by CI (`--check`).
 | Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) | `0x421C70–0x42B800`<br>`0x467110–0x490000` | — | — | — | — | [#218](https://github.com/jomkz/fighters-codex/issues/218) | planned |
 | Network / multiplayer (NET/SER/UDP/MP) | `0x401000–0x405E30`<br>`0x45D090–0x45DBD0`<br>`0x46ADE0–0x473680` | — | — | — | — | [#219](https://github.com/jomkz/fighters-codex/issues/219) | planned |
 | Sound / music (incl. WAIL32) | `0x4328B0–0x435C60` | 53/53 (100%) | 5 named · 179 waived | [doc](sound.md) | ✓ | [#220](https://github.com/jomkz/fighters-codex/issues/220) | complete |
-| Terrain (T_) | `0x4A6E50–0x4C5D70` | — | — | — | — | [#221](https://github.com/jomkz/fighters-codex/issues/221) | planned |
+| Terrain (T_) | `0x4A7310–0x4ABBE2`<br>`0x4C5D30–0x4C60E8` | 85/85 (100%) | 1 named · 113 waived | [doc](terrain.md) | ✓ | [#221](https://github.com/jomkz/fighters-codex/issues/221) | complete |
 | Collision (COL) | `0x42B800–0x42E680` | 21/21 (100%) | 38 named · 6 waived | [doc](collision.md) | ✓ | [#222](https://github.com/jomkz/fighters-codex/issues/222) | complete |
-| Memory & resource managers (MM/RM) | `0x435C60–0x436320`<br>`0x4A67F0–0x4A6E50` | — | — | — | — | [#223](https://github.com/jomkz/fighters-codex/issues/223) | planned |
+| Memory & resource managers (MM/RM) | `0x435C60–0x43631C`<br>`0x4A67F0–0x4A6E46` | 50/50 (100%) | 12 named · 22 waived | [doc](memory-resource.md) | ✓ | [#223](https://github.com/jomkz/fighters-codex/issues/223) | complete |
 | Input — joystick / serial / modem | `0x494270–0x4AC510` | — | — | — | — | [#224](https://github.com/jomkz/fighters-codex/issues/224) | planned |
 | Core shell / menu / dialog UI | `0x40AE50–0x421C70`<br>`0x487A3A–0x48D200` | — | — | — | — | [#225](https://github.com/jomkz/fighters-codex/issues/225) | planned |
 | Startup / Phar Lap DOS extender / config | `0x4D5C00–0x4E8B66` | — | — | — | — | [#226](https://github.com/jomkz/fighters-codex/issues/226) | planned |
-| Video decode (FMV/Cobra) | `0x456300–0x45D090` | — | — | — | — | [#227](https://github.com/jomkz/fighters-codex/issues/227) | planned |
-| 3D render core / SH interpreter (GR) | `0x4C5D70–0x4D6C00` | — | — | — | — | [#228](https://github.com/jomkz/fighters-codex/issues/228) | planned |
+| Video decode (FMV/Cobra) | `0x456300–0x45CDA0` | 23/23 (100%) | 0 named · 0 waived | [doc](video-decode.md) | ✓ | [#227](https://github.com/jomkz/fighters-codex/issues/227) | complete |
+| 3D render core / SH interpreter (GR) | `0x4CD588–0x4D6C00` | 163/163 (100%) | 0 named · 349 waived | [doc](render-core.md) | ✓ | [#228](https://github.com/jomkz/fighters-codex/issues/228) | complete |
 
-**Program totals:** 9/18 subsystems complete; 607/2914 in-scope functions named; 965/8195 referenced globals resolved.
+**Program totals:** 13/18 subsystems complete; 928/2581 in-scope functions named; 1462/7500 referenced globals resolved.
 
