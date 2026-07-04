@@ -346,9 +346,11 @@ not). The codec (`lib/src/sh.cpp`, `collect_reloc_targets` + `harvest_target`):
 
 1. Parses the `.reloc` table; keeps targets that point into the code section and
    are **not** `FF 25` trampolines (those reach the game executable's exports).
-2. From each target, walks a **pure geometry run** (VertexBuffer / Face /
-   TextureFile, plus Pad/VertexInfo), stopping at the first control/attribute
-   opcode — the sub-stream boundary.
+2. From each target, walks the geometry (VertexBuffer / Face / TextureFile, plus
+   Pad/VertexInfo) and **follows `Unmask`/`UnmaskLong` sub-model calls** into
+   their referenced sub-streams (bounded by a visited-set + recursion depth),
+   stopping at any other control/attribute opcode. This recovers articulated
+   parts — e.g. an F-16's landing gear renders deployed.
 3. Writes vertices **append-only** (never below the base pool count) so
    state-variant sub-streams that reuse low pool slots cannot corrupt the base
    mesh; faces reference the shared pool.
