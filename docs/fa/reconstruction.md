@@ -43,5 +43,13 @@ Ghidra inventory by CI (`--check`).
 
 **WAIL32.DLL totals:** 1/1 subsystems complete; 503/503 in-scope functions named; 577/756 referenced globals resolved.
 
-**Program totals (all binaries):** 20/20 subsystems complete; 2212/2212 in-scope functions named; 3053/5320 referenced globals resolved.
+## IP.EXE
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| IP.EXE — EA system-info & tech-support tool (MFC) | `0x401000–0x4BD800` | 5/1805 (0%) | 0 named · 0 waived | [doc](ip-tool.md) | · | [#254](https://github.com/jomkz/fighters-codex/issues/254) | active |
+
+**IP.EXE totals:** 0/1 subsystems complete; 5/1805 in-scope functions named; 0/1737 referenced globals resolved.
+
+**Program totals (all binaries):** 20/21 subsystems complete; 2217/4017 in-scope functions named; 3053/7057 referenced globals resolved.
 
