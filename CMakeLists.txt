@@ -27,6 +27,10 @@ endif()
 # The embeddable product: consumers add_subdirectory this repo and link fx::lib.
 add_subdirectory(lib)
 
+# fx_render: the shared renderer (software backend always; OpenGL backend added
+# in fx_render #289). Embeddable like fx::lib — fx-gui and fxc both link it.
+add_subdirectory(render)
+
 # Everything below is built only when this repo is the top-level project.
 if(PROJECT_IS_TOP_LEVEL)
     configure_file(

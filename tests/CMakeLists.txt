@@ -19,9 +19,10 @@ add_executable(fx_tests
     test_sh.cpp
     test_t2.cpp
     test_plt.cpp
+    render/test_render.cpp
 )
 
-target_link_libraries(fx_tests PRIVATE fx_lib fx_warnings Catch2::Catch2WithMain)
+target_link_libraries(fx_tests PRIVATE fx_lib fx_render fx_warnings Catch2::Catch2WithMain)
 
 include(CTest)
 include(Catch)
