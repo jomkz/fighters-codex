@@ -9,7 +9,7 @@ spec:
   gaps:
     - kind: re-static
       issue: 54
-      note: "record types 1/3/4/5/7/8 field layouts undocumented"
+      note: "type-4 list / type-7 scrollbar: a few engine-managed interior bytes unmapped"
 codec:
   direction: none
   issue: 105
@@ -73,10 +73,10 @@ Record types and sizes (from `_DialogSetup` switch):
 | 1 | — | 0x1F (31) | Button variant |
 | 2 | `_DrawEditBox` | 0x18 (24) | Edit box; first type-2 record tracked as focused edit box in dialog state |
 | 3 | — | 0x17 (23) | Checkbox / toggle |
-| 4 | — | 0x26 (38) | Scrollable list container; anchor record ptr stored in dialog state +0x22 |
-| 5 | — | 0x19 (25) | |
+| 4 | `_DrawListBox` | 0x26 (38) | Scrollable list container; anchor record ptr stored in dialog state +0x22 (`_DrawMissList` is the mission-list variant) |
+| 5 | — | 0x19 (25) | Radio button (toggleable) — same field layout as type 1 + `type_flags` bit 0x8000 = selected |
 | 6 | `_DrawRocker` | 0x27 (39) | Rocker switch; two independent hit zones (up and down halves) |
-| 7 | — | 0x30 (48) | Scrollbar; `FUN_004891a0` called on show for thumb-position init |
+| 7 | — | 0x30 (48) | Scrollbar; `DialogScrollThumbInit` (`0x4891A0`) called on show for thumb-position init |
 | 8 | — | 0x1F (31) | Two-state button (selected / deselected, each has its own hit zone) |
 | 9 | `_DrawText` / `_DrawFormattedText` | 0x16 (22) | Static label / formatted text |
 | 10 | — | — | End-of-list sentinel |
@@ -194,6 +194,73 @@ Render logic differs: rows are campaign entries with a highlight sprite from
 | `+0x10` | i16 | `pixel_width` — engine-managed: `char_count × 10 + 16`; written at render time |
 | `+0x12` | i16 | `height` — always written as 24 (0x18) at render time |
 | `+0x14` | u32 | `text_buffer` — `char*` to editable text |
+
+The six interactive types below were mapped from the `DialogUpdate` event switch
+(`case 1/3/4/5/7/8`, keyed on `type_flags & 0x7FFF`), the `_DrawListBox` renderer, and the
+scrollbar helpers (`DialogScrollThumbInit` `0x4891A0`, `DialogClampThumb` `0x489220`,
+`DialogScrollbarHit` `0x488FD0`). `x`/`y` at `+0x0A`/`+0x0C` follow the common pattern; the
+hit-box fields are the render-coordinate rectangles passed to `_PointInBox`.
+
+**Type 1 — button variant (radio group member), 31 bytes:**
+
+| Offset | Type | Field |
+|--------|------|-------|
+| `+0x0A` | i16 | `x` |
+| `+0x0C` | i16 | `y` |
+| `+0x0E` | i16×4 | hit box (`_PointInBox`) |
+| `+0x16` | u8 | `pressed` — set to 1 on click; cleared by `DialogRadioGroupClear` |
+| `+0x17` | i16 | `radio_group` — group id; peers with the same id are cleared on select |
+
+**Type 3 — checkbox / toggle, 23 bytes:**
+
+| Offset | Type | Field |
+|--------|------|-------|
+| `+0x0A` | i16 | `x` |
+| `+0x0C` | i16 | `y` |
+| `+0x0E` | i16×4 | hit box (`_PointInBox`) |
+| `+0x16` | u8 | `state` — XOR-toggled (`state ^= 1`) on each click |
+
+**Type 4 — scrollable list container, 38 bytes:**
+
+| Offset | Type | Field |
+|--------|------|-------|
+| `+0x0A` | i16×4 | hit box (`_PointInBox`); a click computes the row from the y within it |
+| `+0x0C` | i16 | `x` |
+| `+0x0E` | i16 | `y` |
+| `+0x10` | i16 | `pixel_height` — engine-managed; `visible_rows × 0x12` |
+| `+0x16` | i16 | `visible_rows` — rows per page (row height `0x12` = 18 px) |
+| `+0x18` | i16 | engine scroll/selection state |
+| `+0x1A` | i16 | `total_items` |
+| `+0x1C` | i16 | `top_index` — top/selected row; `1000` sentinel = none |
+| `+0x20` | u32 | `rows_ptr` — `char**` row-string array |
+
+**Type 5 — radio button (toggleable), 25 bytes:** same as type 1 (`pressed` `+0x16`,
+`radio_group` `+0x17`), plus the `type_flags` bit `0x8000` carries the *selected* state — when
+already selected, clicking calls `DialogRadioGroupClear(radio_group)` to release the group.
+
+**Type 7 — scrollbar, 48 bytes:**
+
+| Offset | Type | Field |
+|--------|------|-------|
+| `+0x0B` | u8 | `orientation` — 0 = vertical, non-0 = horizontal (flips the value axis) |
+| `+0x0C` | i16 | `value` — current scroll value (engine-written from thumb position) |
+| `+0x0E` | i16 | `value_max` — value range (thumb-to-value divisor) |
+| `+0x10` | i16 | `thumb_x` — engine-computed thumb pixel X |
+| `+0x12` | i16 | `thumb_y` — engine-computed thumb pixel Y |
+| `+0x14` | i16 | track X reference (paired with `+0x1C`) |
+| `+0x16` | i16 | track Y reference (paired with `+0x1E`) |
+| `+0x18` | i16×4 | track rectangle = the hit box (`x0=+0x18, y0=+0x1A, x1=+0x1C, y1=+0x1E`) |
+| `+0x24` | u32 | `on_scroll` — callback invoked on a track hit (`DialogScrollbarHit`) |
+
+**Type 8 — two-state button, 31 bytes:**
+
+| Offset | Type | Field |
+|--------|------|-------|
+| `+0x0A` | i16 | `x` |
+| `+0x0C` | i16 | `y` |
+| `+0x0E` | i16×4 | hit box A — pressed while `state == 0` → sets `state = 1` |
+| `+0x16` | i16×4 | hit box B — pressed while `state == 1` → sets `state = 0` |
+| `+0x1E` | u8 | `state` — 0/1; selects which hit zone is live |
 
 ### JMP thunks and state dispatch table
 
@@ -418,13 +485,19 @@ before any campaign or mission is active.
 
 ### 1. Record types 1, 3, 4, 5, 7, 8 field layouts
 
-The common header, sizes, draw dispatch, and hit zones are confirmed for all
-ten record types, and full field layouts exist for types 0, 2, 6, and 9 (plus
-the FormattedText/CampaignList variants) — but the per-field layouts of the
-remaining six types (button variant, checkbox, list container, type 5,
-scrollbar, two-state button) have not been mapped.
+**Mapped ([#258](https://github.com/jomkz/fighters-codex/issues/258)).** All ten record types
+now have per-field layouts (see § Per-type record fields), recovered from the `DialogUpdate`
+event switch, `_DrawListBox`, and the scrollbar helpers: types 1/5 are radio group members
+(`pressed` `+0x16`, `radio_group` `+0x17`; type 5 also carries the *selected* state in
+`type_flags` bit `0x8000`), type 3 is a toggle checkbox (`state` `+0x16`), type 4 the scrollable
+list container, type 7 the scrollbar (value/range/thumb/track + `on_scroll` callback), and type 8
+a two-state button (two hit zones + `state` `+0x1E`).
 
-*Status: open — re-static (#54)*
+**Residual:** a few engine-managed interior bytes of the two largest records (type-4 list,
+type-7 scrollbar) are not individually named — the same scratch-field level left unmapped in the
+already-documented types. Behaviourally complete.
+
+*Status: open — re-static (#54; interactive layouts mapped, minor scratch fields remain)*
 
 ## Related
 
