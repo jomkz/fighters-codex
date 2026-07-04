@@ -1,304 +1,304 @@
-va,kind,name,display,source,confidence,notes
-0x004016C0,func,?NET_SlaveInit@@YADPAUCN_INFO@@PAUNET_ADDRESS@@PADPAXP6AX3W4PLAYER_ACTION@@21J@Z3P6AX3W4NET_CONNECTED_STATE@@@ZH@Z,NET_SlaveInit,sms,confirmed,client: open connection to master at NET_ADDRESS; registers PLAYER_ACTION/NET_CONNECTED_STATE callbacks
-0x00401780,func,?NET_SlaveShutdown@@YAXXZ,NET_SlaveShutdown,sms,confirmed,client leave/teardown
-0x004017B0,func,?NET_RequestPlayerList@@YADPAUNET_ADDRESS@@PAXP6AX1W4PLAYER_ACTION@@PAD0J@Z1P6AX1W4NET_CONNECTED_STATE@@@Z@Z,NET_RequestPlayerList,sms,confirmed,query lobby for player list (async)
-0x00401850,func,?NET_CancelPlayerList@@YAXXZ,NET_CancelPlayerList,sms,confirmed,cancel pending player-list query
-0x004019A0,func,?player_list_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,player_list_process_pkt,sms,confirmed,dispatch player-list-query reply packets
-0x00401A60,func,NETSlaveConnect,,re,inferred,"slave connect helper: proto_ptr->open (vtbl+0x56), register slave_events (0x401B20) via socket_add_state_func, seed socket_state addr fields; net_set_often_state(5). Body @0x401A60 cited"
-0x00401CD0,func,?handle_slave_connection_failed@@YAXPAUsocket_state@@@Z,handle_slave_connection_failed,sms,confirmed,"retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0)"
-0x00401E30,func,NETSlaveLostConn,,re,inferred,"slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30"
-0x00401EB0,func,?slave_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,slave_process_pkt,sms,confirmed,"slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected"
-0x00402330,func,NETArmKeepalive,,re,inferred,arm socket send timer (state+8 = timerTicks+0x400; state+4 = 4 unless already ready). Body @0x402330
-0x00402360,func,NETResetTimer,,re,inferred,reset socket send timer to now (state+8 = timerTicks; state+4 = 4). Body @0x402360
-0x004024D0,func,NETProcessPlayerList,,re,inferred,"process NET_PLAYER_LIST: find self via NETIsAddrLocal, net_add_self, connect to every other listed peer (mesh) via proto vtbl+0x56 + socket_add_state_func(...,0x401B20); if all ready -> pkt_send_ready. Called from slave_process_pkt case 4. Body @0x4024D0"
-0x00405360,func,NETWaitMasterScreen,,re,inferred,"slave: spin polling MPReceive/MPCheckDisconnect while _masterNextScreen==-1, then adopt it as _curScreen (thisComputer>0). Body @0x405360"
-0x004053A0,func,NETApplyMasterScreen,,re,inferred,slave: apply pending _masterNextScreen to _curScreen once (non-blocking). Body @0x4053A0
-0x004054F0,func,?netDialogAppIO@@YAJJPAD@Z,netDialogAppIO,sms,confirmed,"net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse"
-0x00405CD0,func,NETFormatIP,,re,inferred,format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0
-0x00405D10,func,?ip2long@@YADPADPAK@Z,ip2long,sms,confirmed,parse dotted-quad string -> packed u32 (strchr('.')+atoi x4)
-0x00405DF0,func,?RunNetConfigurationScreen@@YGXJ@Z,RunNetConfigurationScreen,sms,confirmed,net config screen entry; calls doConfigurationScreen(1|4)
-0x0045D090,func,?pkt_send_can_i_play@@YADHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play,sms,confirmed,client->host join request
-0x0045D120,func,?pkt_send_can_i_play_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play_player,sms,confirmed,join request naming a player slot
-0x0045D1B0,func,?pkt_send_sync@@YADH@Z,pkt_send_sync,sms,confirmed,send sync request
-0x0045D1C0,func,?pkt_send_type@@YADHH@Z,pkt_send_type,sms,confirmed,send a bare typed packet to peer index
-0x0045D200,func,?pkt_sock_send_type@@YADIH@Z,pkt_sock_send_type,sms,confirmed,send bare typed packet to a socket
-0x0045D240,func,?pkt_sock_send_message@@YADIGPAD@Z,pkt_sock_send_message,sms,confirmed,send text message packet to a socket
-0x0045D280,func,?pkt_build_message@@YAXPAUNET_PKT@@GPAD@Z,pkt_build_message,sms,confirmed,fill NET_PKT message body
-0x0045D2D0,func,?pkt_send_you_can_play@@YADHPAD@Z,pkt_send_you_can_play,sms,confirmed,host->client accept
-0x0045D320,func,?pkt_send_ready@@YADHH@Z,pkt_send_ready,sms,confirmed,ready handshake
-0x0045D360,func,?pkt_send_error@@YADHJ@Z,pkt_send_error,sms,confirmed,send error code to peer
-0x0045D3A0,func,?pkt_send_new_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_new_player,sms,confirmed,announce new player to peer
-0x0045D440,func,?pkt_sock_send_new_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_new_player,sms,confirmed,announce new player over socket
-0x0045D580,func,?pkt_sock_send_lost_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_lost_player,sms,confirmed,announce lost player over socket
-0x0045D700,func,?pkt_sock_send_error@@YADJI@Z,pkt_sock_send_error,sms,confirmed,send error over socket
-0x0045D760,func,?pkt_build_sync_reply@@YAXPAUNET_PKT@@@Z,pkt_build_sync_reply,sms,confirmed,fill sync-reply header
-0x0045D780,func,?pkt_build_play_game@@YAXPAUNET_PKT@@@Z,pkt_build_play_game,sms,confirmed,fill play-game (start) header
-0x0045D810,func,?pkt_send_player_info@@YADHGPAUNET_PLAYER_LIST@@@Z,pkt_send_player_info,sms,confirmed,send NET_PLAYER_LIST entry
-0x0045D890,func,?pkt_build_player_info@@YAXPAUNET_PKT@@GPAUNET_PLAYER_LIST@@@Z,pkt_build_player_info,sms,confirmed,serialize NET_PLAYER_LIST into NET_PKT
-0x0045D940,func,?pkt_sock_send@@YADPAUNET_PKT@@I@Z,pkt_sock_send,sms,confirmed,low-level: send NET_PKT to one socket
-0x0045D970,func,?pkt_send@@YADPAUNET_PKT@@H@Z,pkt_send,sms,confirmed,low-level: send NET_PKT to peer index
-0x0045DA10,func,?pkt_set_header@@YAXHPAUNET_PKT@@H@Z,pkt_set_header,sms,confirmed,fill NET_PKT header (type/len)
-0x0045DA30,func,pkt_queue_write,,re,inferred,"append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30"
-0x0045DB00,func,?pkt_sock_read@@YADPAUNET_PKT@@I@Z,pkt_sock_read,sms,confirmed,read one NET_PKT from a socket
-0x0046BD90,func,,,waiver,confirmed,FOREIGN Cobra input poll (see Part 1 exclusions) — NOT network
-0x0046C0A0,func,MPEnqueue,,re,confirmed,"core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper')"
-0x0046C28C,func,,,waiver,confirmed,Ghidra split tail of ?MPMissionInit1@@YGXXZ (0x46C280)
-0x0046C680,func,MPInterpPosAxis,,re,inferred,interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680
-0x0046C780,func,MPUpdateInterval,,re,inferred,"per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780"
-0x0046C860,func,MPInterpAngleAxis,,re,inferred,interpolate one angle axis (uses MPWrapAngle). Body @0x46C860
-0x0046C980,func,?MPReceive@@YGDXZ,MPReceive,sms,confirmed,per-frame inbound dispatcher (entry; body=FUN_0046C98F). Keepalive/timeout scan + 0x10-0x51 dispatch + MP_Often tail
-0x0046C98F,func,,,waiver,confirmed,Ghidra split tail of ?MPReceive@@YGDXZ (0x46C980) — the 0x10-0x51 dispatch body
-0x0046EC40,func,MPRelToAbsTime,,re,inferred,resolve relative packet timestamp to absolute (+currentT; skips sentinels 0/0x7FFF). Body @0x46EC40
-0x0046EC60,func,MPResolveAlias,,re,confirmed,map network alias <-> local object id via entity +0x74; walks _objPtrs[1.._nextObjId]. Body @0x46EC60 (the OBJ/net bridge)
-0x0046ECD0,func,MPReadAlloc,,re,inferred,MMAllocPtr(n) then MP_Read n bytes from peer 0 (bulk payloads: file/waypoint sync). Body @0x46ECD0
-0x0046ED10,func,MPDecodeState16,,re,inferred,decode packed pos(+angle) delta scaled by hdr+3 into int[3]/short[3] (packet 0x16). Body @0x46ED10
-0x0046EDB0,func,MPDecodePos,,re,inferred,decode packed position delta bytes*0x1000 into int[3] (packet 0x14/0x15). Body @0x46EDB0
-0x0046EE00,func,MPGetType,,re,confirmed,peek/pull next packet type byte from peer (MP_PeekByte/MP_Read); -0x100 on EOF. Body @0x46EE00 (docs cite as FUN_0046EE00)
-0x0046EE40,func,MPReadPayload,,re,inferred,read param_3 bytes iff fully available (MP_ReadAvail then MP_Read). Body @0x46EE40
-0x0046EE90,func,MPClearDeadStatus,,re,inferred,zero _mpStatus[peer] for peers no longer in MP_Info connected_mask. Body @0x46EE90
-0x0046EEDF,func,,,waiver,confirmed,Ghidra split tail of ?MPSend@@YGXXZ (0x46EED0) — the per-object encode/enqueue body
-0x0046FA40,func,MPAbsToRelTime,,re,inferred,encode absolute time to relative packet timestamp (-currentT; skips sentinels). Body @0x46FA40
-0x0046FA60,func,MPEncodeState14,,re,inferred,"encode packet 0x14: quantized pos delta (auto-exponent) + BAM angle delta /0xB6, writes alias +0x74. Body @0x46FA60"
-0x0046FBF0,func,MPEncodeState15,,re,inferred,encode packet 0x15: small position-only delta (>>0xC). Body @0x46FBF0
-0x0046FD50,func,MPSendSyncOnce,,re,inferred,broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50
-0x0046FF20,func,MPSendScenarioEndTime,,re,inferred,broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20
-0x0047001C,func,,,waiver,confirmed,Ghidra split tail of ?MPProjAdd@@YGXXZ (0x470010)
-0x004701AC,func,,,waiver,confirmed,Ghidra split tail of ?MPManAdd@@YGXGPADEPAUF24_POINT3@@1J@Z (0x4701A0)
-0x0047025C,func,,,waiver,confirmed,Ghidra split tail of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z (0x470250)
-0x00470780,func,MPMsgRemapAliases,,re,inferred,"remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780"
-0x004715BC,func,,,waiver,confirmed,Ghidra split tail of ?MPStatusDraw@@YIXD@Z (0x4715B0)
-0x00471880,func,MPChatChecksum,,re,inferred,checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880
-0x004718F0,func,MPDrawStatusLine,,re,inferred,truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0
-0x00471A90,func,MPWaitStatus,,re,confirmed,"modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status)"
-0x00471B80,func,MPAllPeersAtStatus,,re,inferred,test whether every connected peer's _mpStatus == param_1. Body @0x471B80
-0x00471BDF,func,,,waiver,confirmed,Ghidra split tail of ?MPAssignPlayers@@YGXXZ (0x471BD0)
-0x00471FA0,func,MPAssignPlanePlayers,,re,inferred,"per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers"
-0x00472130,func,MPBuildSpawnPayload,,re,inferred,apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130
-0x00472670,func,MPRevive,,re,inferred,apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670
-0x0047267C,func,,,waiver,confirmed,Ghidra split tail of the 0x472670 (MPRevive) function; decompile failed
-0x004735D0,func,MPChatStore,,re,inferred,"append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey"
-0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild)
-0x00493780,func,?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunIPXOptionsDialog,sms,confirmed,IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild
-0x00493CB0,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table
-0x00493CB4,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table
-0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST
-0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO
-0x00497010,func,?spxlisten@@YAIXZ,spxlisten,sms,confirmed,open+bind an IPX socket and start SPX listening (backlog 5)
-0x004970C0,func,spxopensocket,,re,inferred,open an SPX socket - socket(6) then SPX ioctl 0x8004667e; sibling of sapopensocket
-0x00497150,func,?spxconnect@@YAIPAUNET_ADDRESS@@@Z,spxconnect,sms,confirmed,SPX connect to a NET_ADDRESS
-0x004971D0,func,?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z,convert_addr_ipx2usnf,sms,confirmed,convert an IPX sockaddr to the engine NET_ADDRESS
-0x00497210,func,?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2ipx,sms,confirmed,convert an engine NET_ADDRESS to an IPX sockaddr
-0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO
-0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3)
-0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type
-0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC()
-0x0049A070,func,?assignPacketCRC@@YAXAAUSERIAL_PACKET@@@Z,assignPacketCRC,sms,confirmed,store computed CRC into byte1 (+byte10 for type0/3)
-0x0049A0A0,func,?SER_EnterCriticalCodeBackground@@YAXXZ,SER_EnterCriticalCodeBackground,sms,confirmed,spin-acquire Ctrl busy flag (DAT_00570bb4) under critical section w/ Sleep(0)
-0x0049A100,func,?SER_LeaveCriticalCodeBackground@@YAXXZ,SER_LeaveCriticalCodeBackground,sms,confirmed,clear Ctrl busy flag under critical section
-0x0049A120,func,?SER_CheckDisconnect@@YADXZ,SER_CheckDisconnect,sms,confirmed,detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags
-0x0049A1B0,func,?SER_GetOutholdingLimit@@YAXXZ,SER_GetOutholdingLimit,sms,confirmed,transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window)
-0x0049A3E0,func,?updateQueueHead@@YAXAAUSERIAL_QUEUE@@J@Z,updateQueueHead,sms,confirmed,head = seq % capacity; returns seq / capacity (wrap count)
-0x0049A400,func,?insertQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,insertQueue,sms,confirmed,copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count
-0x0049A460,func,?overwriteQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,overwriteQueue,sms,confirmed,overwrite slot by wrapper seq without count bump (history record)
-0x0049A4A0,func,?retrieveFromQueue@@YAXAAUSERIAL_QUEUE@@JAAUSERIAL_PACKET_WRAPPER@@@Z,retrieveFromQueue,sms,confirmed,copy out slot at (idx%cap)*0x30
-0x0049A4D0,func,?fetchFromQueueTail@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,fetchFromQueueTail,sms,confirmed,pop tail slot then zero it; advance tail; returns wrap count
-0x0049A660,func,?SER_InitializeLowLevel@@YAXXZ,SER_InitializeLowLevel,sms,confirmed,init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers
-0x0049A6B0,func,?SER_ShutdownLowLevel@@YAXXZ,SER_ShutdownLowLevel,sms,confirmed,mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag
-0x0049A700,func,?strToCom@@YAJPAE@Z,strToCom,sms,confirmed,"map ""COM1""..""COM8"" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none"
-0x0049A7D0,func,?MOD_InitPortAndModem@@YAJPAUCN_INFO@@J@Z,MOD_InitPortAndModem,sms,confirmed,SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc
-0x0049A9B0,func,?MOD_FindModemAndInitPCMCIA@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInitPCMCIA,sms,confirmed,enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem
-0x0049AC00,func,?MOD_WaitForCall@@YAJXZ,MOD_WaitForCall,sms,confirmed,"answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO ""Ring..."""
-0x0049AD00,func,?MOD_Initialize1@@YAJPAUCN_INFO@@J@Z,MOD_Initialize1,sms,confirmed,dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail
-0x0049AF30,func,?MOD_InitializeAndConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_InitializeAndConnect,sms,confirmed,MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure
-0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce
-0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3
-0x004AC180,func,?SER_SendBytes@@YAXPAEJ@Z,SER_SendBytes,sms,confirmed,append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba
-0x004AC1D0,func,?SER_SendHoldingBuffer@@YAXXZ,SER_SendHoldingBuffer,sms,confirmed,flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel
-0x004AC210,func,?SER_OkToSendPacket@@YADXZ,SER_OkToSendPacket,sms,confirmed,budget check (>0x17=23 bytes free); set pending flag DAT_00570edc
-0x004AC230,func,?SER_SendPacket@@YADAAUSERIAL_PACKET_WRAPPER@@D@Z,SER_SendPacket,sms,confirmed,per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters
-0x004AC2E0,func,?SER_SendRequests@@YAXXZ,SER_SendRequests,sms,confirmed,scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket
-0x004AC480,func,?SER_SendStatus@@YAXXZ,SER_SendStatus,sms,confirmed,send status/ACK packet (type0) carrying last-tx seq + per-player state
-0x004EB4D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB4F8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB50C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB52C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB54C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB564,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB56C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB580,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB5A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EB954,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004EBC14,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004EBCC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004EBCFC,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem
-0x004F7754,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
-0x004F7778,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
-0x004F777A,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
-0x004F777C,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
-0x004F777E,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
-0x004F779C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatus@@3PAJA; named at its base or owned by that subsystem
-0x004F77A0,data,,,waiver,confirmed,interior of / adjacent to ?mpStatus@@3PAJA; named at its base or owned by that subsystem
-0x004F77BC,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F77D8,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F7858,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F785C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F7878,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F787C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F7898,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F789C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem
-0x004F78BC,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F78C0,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F78C8,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F78CC,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F79A1,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F79A8,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F79C0,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F79D8,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F79E4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F79F4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004F7AA4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
-0x004FC998,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004FC9C4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004FC9C8,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004FC9DC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004FC9EC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x004FFFF0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00500008,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00500034,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x0050008C,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x005000E0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00500104,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x005002E4,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x005002E8,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x005002EC,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x005002F0,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x005002F4,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x005002FC,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x00500304,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x0050030C,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
-0x0050149C,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
-0x005014B4,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
-0x005014C0,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
-0x005014CC,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
-0x005014DC,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
-0x005014F0,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
-0x00501668,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501688,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501694,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050169C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005016A4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005016B8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005016C8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005016D4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050CF00,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF04,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF08,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF0C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF10,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF24,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF28,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF2C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF30,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF34,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF38,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF3C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF40,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF44,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF48,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF4C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF50,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF52,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF54,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF56,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF58,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050CF5C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050D01F,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050D10A,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x0050D111,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
-0x005209D0,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem
-0x005209D8,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem
-0x00520A2C,data,,,waiver,confirmed,interior of / adjacent to _humanChoseSide; named at its base or owned by that subsystem
-0x00529494,data,,,waiver,confirmed,interior of / adjacent to _fortSizes; named at its base or owned by that subsystem
-0x005382AE,data,,,waiver,confirmed,interior of / adjacent to ?frontV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem
-0x00539C96,data,,,waiver,confirmed,interior of / adjacent to ?otherV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem
-0x0053BDEE,data,,,waiver,confirmed,interior of / adjacent to ?targetV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem
-0x00546D58,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546D60,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546D64,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546D68,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546D6C,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546D70,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546D74,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546DD4,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546DD8,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem
-0x00546E08,data,,,waiver,confirmed,interior of / adjacent to ?packetTicksAdjust@@3PAJA; named at its base or owned by that subsystem
-0x00546E30,data,,,waiver,confirmed,interior of / adjacent to ?slowComm@@3DA; named at its base or owned by that subsystem
-0x00546E34,data,,,waiver,confirmed,interior of / adjacent to ?slowComm@@3DA; named at its base or owned by that subsystem
-0x00546E70,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00546E78,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00546E98,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00546EA0,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00546F19,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00546F1A,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547178,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547180,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547182,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547187,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547189,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547324,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547328,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00547334,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
-0x00552E98,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552E9C,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552EA0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552EA2,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552EB8,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552EBC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552EC0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00552EC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
-0x00560F54,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem
-0x00560F58,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem
-0x00560F64,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem
-0x00570BB4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570BBA,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570BBE,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CBC,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CC1,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CC2,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CC3,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CC4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CC5,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570CF6,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D26,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D28,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D34,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D38,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D50,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D64,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D7C,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D90,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570D94,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570DB0,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570DC0,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570DCC,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x00570ED4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem
-0x0057256C,data,,,waiver,confirmed,interior of / adjacent to ?socket_list@@3USOCKET_STATE_LIST@@A; named at its base or owned by that subsystem
-0x00572570,data,,,waiver,confirmed,interior of / adjacent to ?socket_list@@3USOCKET_STATE_LIST@@A; named at its base or owned by that subsystem
-0x00580C70,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem
-0x00580C74,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem
-0x00580C9E,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem
-0x00580CAA,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CAE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CB2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CB6,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CC2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CC6,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CCE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580CD2,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem
-0x00580CDA,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem
-0x00580CE2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
-0x00580D14,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
-0x00580D18,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
-0x00580D1C,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
-0x00580D66,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
-0x00580D6A,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
+va,kind,name,display,source,confidence,notes,type
+0x004016C0,func,?NET_SlaveInit@@YADPAUCN_INFO@@PAUNET_ADDRESS@@PADPAXP6AX3W4PLAYER_ACTION@@21J@Z3P6AX3W4NET_CONNECTED_STATE@@@ZH@Z,NET_SlaveInit,sms,confirmed,client: open connection to master at NET_ADDRESS; registers PLAYER_ACTION/NET_CONNECTED_STATE callbacks,
+0x00401780,func,?NET_SlaveShutdown@@YAXXZ,NET_SlaveShutdown,sms,confirmed,client leave/teardown,
+0x004017B0,func,?NET_RequestPlayerList@@YADPAUNET_ADDRESS@@PAXP6AX1W4PLAYER_ACTION@@PAD0J@Z1P6AX1W4NET_CONNECTED_STATE@@@Z@Z,NET_RequestPlayerList,sms,confirmed,query lobby for player list (async),
+0x00401850,func,?NET_CancelPlayerList@@YAXXZ,NET_CancelPlayerList,sms,confirmed,cancel pending player-list query,
+0x004019A0,func,?player_list_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,player_list_process_pkt,sms,confirmed,dispatch player-list-query reply packets,
+0x00401A60,func,NETSlaveConnect,,re,inferred,"slave connect helper: proto_ptr->open (vtbl+0x56), register slave_events (0x401B20) via socket_add_state_func, seed socket_state addr fields; net_set_often_state(5). Body @0x401A60 cited",
+0x00401CD0,func,?handle_slave_connection_failed@@YAXPAUsocket_state@@@Z,handle_slave_connection_failed,sms,confirmed,"retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0)",
+0x00401E30,func,NETSlaveLostConn,,re,inferred,"slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30",
+0x00401EB0,func,?slave_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,slave_process_pkt,sms,confirmed,"slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected",
+0x00402330,func,NETArmKeepalive,,re,inferred,arm socket send timer (state+8 = timerTicks+0x400; state+4 = 4 unless already ready). Body @0x402330,
+0x00402360,func,NETResetTimer,,re,inferred,reset socket send timer to now (state+8 = timerTicks; state+4 = 4). Body @0x402360,
+0x004024D0,func,NETProcessPlayerList,,re,inferred,"process NET_PLAYER_LIST: find self via NETIsAddrLocal, net_add_self, connect to every other listed peer (mesh) via proto vtbl+0x56 + socket_add_state_func(...,0x401B20); if all ready -> pkt_send_ready. Called from slave_process_pkt case 4. Body @0x4024D0",
+0x00405360,func,NETWaitMasterScreen,,re,inferred,"slave: spin polling MPReceive/MPCheckDisconnect while _masterNextScreen==-1, then adopt it as _curScreen (thisComputer>0). Body @0x405360",
+0x004053A0,func,NETApplyMasterScreen,,re,inferred,slave: apply pending _masterNextScreen to _curScreen once (non-blocking). Body @0x4053A0,
+0x004054F0,func,?netDialogAppIO@@YAJJPAD@Z,netDialogAppIO,sms,confirmed,"net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse",
+0x00405CD0,func,NETFormatIP,,re,inferred,format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0,
+0x00405D10,func,?ip2long@@YADPADPAK@Z,ip2long,sms,confirmed,parse dotted-quad string -> packed u32 (strchr('.')+atoi x4),
+0x00405DF0,func,?RunNetConfigurationScreen@@YGXJ@Z,RunNetConfigurationScreen,sms,confirmed,net config screen entry; calls doConfigurationScreen(1|4),
+0x0045D090,func,?pkt_send_can_i_play@@YADHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play,sms,confirmed,client->host join request,
+0x0045D120,func,?pkt_send_can_i_play_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play_player,sms,confirmed,join request naming a player slot,
+0x0045D1B0,func,?pkt_send_sync@@YADH@Z,pkt_send_sync,sms,confirmed,send sync request,
+0x0045D1C0,func,?pkt_send_type@@YADHH@Z,pkt_send_type,sms,confirmed,send a bare typed packet to peer index,
+0x0045D200,func,?pkt_sock_send_type@@YADIH@Z,pkt_sock_send_type,sms,confirmed,send bare typed packet to a socket,
+0x0045D240,func,?pkt_sock_send_message@@YADIGPAD@Z,pkt_sock_send_message,sms,confirmed,send text message packet to a socket,
+0x0045D280,func,?pkt_build_message@@YAXPAUNET_PKT@@GPAD@Z,pkt_build_message,sms,confirmed,fill NET_PKT message body,
+0x0045D2D0,func,?pkt_send_you_can_play@@YADHPAD@Z,pkt_send_you_can_play,sms,confirmed,host->client accept,
+0x0045D320,func,?pkt_send_ready@@YADHH@Z,pkt_send_ready,sms,confirmed,ready handshake,
+0x0045D360,func,?pkt_send_error@@YADHJ@Z,pkt_send_error,sms,confirmed,send error code to peer,
+0x0045D3A0,func,?pkt_send_new_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_new_player,sms,confirmed,announce new player to peer,
+0x0045D440,func,?pkt_sock_send_new_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_new_player,sms,confirmed,announce new player over socket,
+0x0045D580,func,?pkt_sock_send_lost_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_lost_player,sms,confirmed,announce lost player over socket,
+0x0045D700,func,?pkt_sock_send_error@@YADJI@Z,pkt_sock_send_error,sms,confirmed,send error over socket,
+0x0045D760,func,?pkt_build_sync_reply@@YAXPAUNET_PKT@@@Z,pkt_build_sync_reply,sms,confirmed,fill sync-reply header,
+0x0045D780,func,?pkt_build_play_game@@YAXPAUNET_PKT@@@Z,pkt_build_play_game,sms,confirmed,fill play-game (start) header,
+0x0045D810,func,?pkt_send_player_info@@YADHGPAUNET_PLAYER_LIST@@@Z,pkt_send_player_info,sms,confirmed,send NET_PLAYER_LIST entry,
+0x0045D890,func,?pkt_build_player_info@@YAXPAUNET_PKT@@GPAUNET_PLAYER_LIST@@@Z,pkt_build_player_info,sms,confirmed,serialize NET_PLAYER_LIST into NET_PKT,
+0x0045D940,func,?pkt_sock_send@@YADPAUNET_PKT@@I@Z,pkt_sock_send,sms,confirmed,low-level: send NET_PKT to one socket,
+0x0045D970,func,?pkt_send@@YADPAUNET_PKT@@H@Z,pkt_send,sms,confirmed,low-level: send NET_PKT to peer index,
+0x0045DA10,func,?pkt_set_header@@YAXHPAUNET_PKT@@H@Z,pkt_set_header,sms,confirmed,fill NET_PKT header (type/len),
+0x0045DA30,func,pkt_queue_write,,re,inferred,"append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30",
+0x0045DB00,func,?pkt_sock_read@@YADPAUNET_PKT@@I@Z,pkt_sock_read,sms,confirmed,read one NET_PKT from a socket,
+0x0046BD90,func,,,waiver,confirmed,FOREIGN Cobra input poll (see Part 1 exclusions) — NOT network,
+0x0046C0A0,func,MPEnqueue,,re,confirmed,"core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper')",
+0x0046C28C,func,,,waiver,confirmed,Ghidra split tail of ?MPMissionInit1@@YGXXZ (0x46C280),
+0x0046C680,func,MPInterpPosAxis,,re,inferred,interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680,
+0x0046C780,func,MPUpdateInterval,,re,inferred,"per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780",
+0x0046C860,func,MPInterpAngleAxis,,re,inferred,interpolate one angle axis (uses MPWrapAngle). Body @0x46C860,
+0x0046C980,func,?MPReceive@@YGDXZ,MPReceive,sms,confirmed,per-frame inbound dispatcher (entry; body=FUN_0046C98F). Keepalive/timeout scan + 0x10-0x51 dispatch + MP_Often tail,
+0x0046C98F,func,,,waiver,confirmed,Ghidra split tail of ?MPReceive@@YGDXZ (0x46C980) — the 0x10-0x51 dispatch body,
+0x0046EC40,func,MPRelToAbsTime,,re,inferred,resolve relative packet timestamp to absolute (+currentT; skips sentinels 0/0x7FFF). Body @0x46EC40,
+0x0046EC60,func,MPResolveAlias,,re,confirmed,map network alias <-> local object id via entity +0x74; walks _objPtrs[1.._nextObjId]. Body @0x46EC60 (the OBJ/net bridge),
+0x0046ECD0,func,MPReadAlloc,,re,inferred,MMAllocPtr(n) then MP_Read n bytes from peer 0 (bulk payloads: file/waypoint sync). Body @0x46ECD0,
+0x0046ED10,func,MPDecodeState16,,re,inferred,decode packed pos(+angle) delta scaled by hdr+3 into int[3]/short[3] (packet 0x16). Body @0x46ED10,
+0x0046EDB0,func,MPDecodePos,,re,inferred,decode packed position delta bytes*0x1000 into int[3] (packet 0x14/0x15). Body @0x46EDB0,
+0x0046EE00,func,MPGetType,,re,confirmed,peek/pull next packet type byte from peer (MP_PeekByte/MP_Read); -0x100 on EOF. Body @0x46EE00 (docs cite as FUN_0046EE00),
+0x0046EE40,func,MPReadPayload,,re,inferred,read param_3 bytes iff fully available (MP_ReadAvail then MP_Read). Body @0x46EE40,
+0x0046EE90,func,MPClearDeadStatus,,re,inferred,zero _mpStatus[peer] for peers no longer in MP_Info connected_mask. Body @0x46EE90,
+0x0046EEDF,func,,,waiver,confirmed,Ghidra split tail of ?MPSend@@YGXXZ (0x46EED0) — the per-object encode/enqueue body,
+0x0046FA40,func,MPAbsToRelTime,,re,inferred,encode absolute time to relative packet timestamp (-currentT; skips sentinels). Body @0x46FA40,
+0x0046FA60,func,MPEncodeState14,,re,inferred,"encode packet 0x14: quantized pos delta (auto-exponent) + BAM angle delta /0xB6, writes alias +0x74. Body @0x46FA60",
+0x0046FBF0,func,MPEncodeState15,,re,inferred,encode packet 0x15: small position-only delta (>>0xC). Body @0x46FBF0,
+0x0046FD50,func,MPSendSyncOnce,,re,inferred,broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50,
+0x0046FF20,func,MPSendScenarioEndTime,,re,inferred,broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20,
+0x0047001C,func,,,waiver,confirmed,Ghidra split tail of ?MPProjAdd@@YGXXZ (0x470010),
+0x004701AC,func,,,waiver,confirmed,Ghidra split tail of ?MPManAdd@@YGXGPADEPAUF24_POINT3@@1J@Z (0x4701A0),
+0x0047025C,func,,,waiver,confirmed,Ghidra split tail of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z (0x470250),
+0x00470780,func,MPMsgRemapAliases,,re,inferred,"remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780",
+0x004715BC,func,,,waiver,confirmed,Ghidra split tail of ?MPStatusDraw@@YIXD@Z (0x4715B0),
+0x00471880,func,MPChatChecksum,,re,inferred,checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880,
+0x004718F0,func,MPDrawStatusLine,,re,inferred,truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0,
+0x00471A90,func,MPWaitStatus,,re,confirmed,"modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status)",
+0x00471B80,func,MPAllPeersAtStatus,,re,inferred,test whether every connected peer's _mpStatus == param_1. Body @0x471B80,
+0x00471BDF,func,,,waiver,confirmed,Ghidra split tail of ?MPAssignPlayers@@YGXXZ (0x471BD0),
+0x00471FA0,func,MPAssignPlanePlayers,,re,inferred,"per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers",
+0x00472130,func,MPBuildSpawnPayload,,re,inferred,apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130,
+0x00472670,func,MPRevive,,re,inferred,apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670,
+0x0047267C,func,,,waiver,confirmed,Ghidra split tail of the 0x472670 (MPRevive) function; decompile failed,
+0x004735D0,func,MPChatStore,,re,inferred,"append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey",
+0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),
+0x00493780,func,?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunIPXOptionsDialog,sms,confirmed,IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild,
+0x00493CB0,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table,
+0x00493CB4,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table,
+0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST,
+0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO,
+0x00497010,func,?spxlisten@@YAIXZ,spxlisten,sms,confirmed,open+bind an IPX socket and start SPX listening (backlog 5),
+0x004970C0,func,spxopensocket,,re,inferred,open an SPX socket - socket(6) then SPX ioctl 0x8004667e; sibling of sapopensocket,
+0x00497150,func,?spxconnect@@YAIPAUNET_ADDRESS@@@Z,spxconnect,sms,confirmed,SPX connect to a NET_ADDRESS,
+0x004971D0,func,?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z,convert_addr_ipx2usnf,sms,confirmed,convert an IPX sockaddr to the engine NET_ADDRESS,
+0x00497210,func,?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2ipx,sms,confirmed,convert an engine NET_ADDRESS to an IPX sockaddr,
+0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO,
+0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3),
+0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type,
+0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC(),
+0x0049A070,func,?assignPacketCRC@@YAXAAUSERIAL_PACKET@@@Z,assignPacketCRC,sms,confirmed,store computed CRC into byte1 (+byte10 for type0/3),
+0x0049A0A0,func,?SER_EnterCriticalCodeBackground@@YAXXZ,SER_EnterCriticalCodeBackground,sms,confirmed,spin-acquire Ctrl busy flag (DAT_00570bb4) under critical section w/ Sleep(0),
+0x0049A100,func,?SER_LeaveCriticalCodeBackground@@YAXXZ,SER_LeaveCriticalCodeBackground,sms,confirmed,clear Ctrl busy flag under critical section,
+0x0049A120,func,?SER_CheckDisconnect@@YADXZ,SER_CheckDisconnect,sms,confirmed,detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags,
+0x0049A1B0,func,?SER_GetOutholdingLimit@@YAXXZ,SER_GetOutholdingLimit,sms,confirmed,transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window),
+0x0049A3E0,func,?updateQueueHead@@YAXAAUSERIAL_QUEUE@@J@Z,updateQueueHead,sms,confirmed,head = seq % capacity; returns seq / capacity (wrap count),
+0x0049A400,func,?insertQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,insertQueue,sms,confirmed,copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count,
+0x0049A460,func,?overwriteQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,overwriteQueue,sms,confirmed,overwrite slot by wrapper seq without count bump (history record),
+0x0049A4A0,func,?retrieveFromQueue@@YAXAAUSERIAL_QUEUE@@JAAUSERIAL_PACKET_WRAPPER@@@Z,retrieveFromQueue,sms,confirmed,copy out slot at (idx%cap)*0x30,
+0x0049A4D0,func,?fetchFromQueueTail@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,fetchFromQueueTail,sms,confirmed,pop tail slot then zero it; advance tail; returns wrap count,
+0x0049A660,func,?SER_InitializeLowLevel@@YAXXZ,SER_InitializeLowLevel,sms,confirmed,init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers,
+0x0049A6B0,func,?SER_ShutdownLowLevel@@YAXXZ,SER_ShutdownLowLevel,sms,confirmed,mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag,
+0x0049A700,func,?strToCom@@YAJPAE@Z,strToCom,sms,confirmed,"map ""COM1""..""COM8"" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none",
+0x0049A7D0,func,?MOD_InitPortAndModem@@YAJPAUCN_INFO@@J@Z,MOD_InitPortAndModem,sms,confirmed,SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc,
+0x0049A9B0,func,?MOD_FindModemAndInitPCMCIA@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInitPCMCIA,sms,confirmed,enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem,
+0x0049AC00,func,?MOD_WaitForCall@@YAJXZ,MOD_WaitForCall,sms,confirmed,"answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO ""Ring...""",
+0x0049AD00,func,?MOD_Initialize1@@YAJPAUCN_INFO@@J@Z,MOD_Initialize1,sms,confirmed,dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail,
+0x0049AF30,func,?MOD_InitializeAndConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_InitializeAndConnect,sms,confirmed,MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure,
+0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce,
+0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3,
+0x004AC180,func,?SER_SendBytes@@YAXPAEJ@Z,SER_SendBytes,sms,confirmed,append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba,
+0x004AC1D0,func,?SER_SendHoldingBuffer@@YAXXZ,SER_SendHoldingBuffer,sms,confirmed,flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel,
+0x004AC210,func,?SER_OkToSendPacket@@YADXZ,SER_OkToSendPacket,sms,confirmed,budget check (>0x17=23 bytes free); set pending flag DAT_00570edc,
+0x004AC230,func,?SER_SendPacket@@YADAAUSERIAL_PACKET_WRAPPER@@D@Z,SER_SendPacket,sms,confirmed,per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters,
+0x004AC2E0,func,?SER_SendRequests@@YAXXZ,SER_SendRequests,sms,confirmed,scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket,
+0x004AC480,func,?SER_SendStatus@@YAXXZ,SER_SendStatus,sms,confirmed,send status/ACK packet (type0) carrying last-tx seq + per-player state,
+0x004EB4D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB4F8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB50C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB52C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB54C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB564,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB56C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB580,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB5A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB954,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004EBC14,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004EBCC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004EBCFC,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
+0x004F7754,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
+0x004F7778,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
+0x004F777A,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
+0x004F777C,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
+0x004F777E,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
+0x004F779C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatus@@3PAJA; named at its base or owned by that subsystem,
+0x004F77A0,data,,,waiver,confirmed,interior of / adjacent to ?mpStatus@@3PAJA; named at its base or owned by that subsystem,
+0x004F77BC,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F77D8,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F7858,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F785C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F7878,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F787C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F7898,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F789C,data,,,waiver,confirmed,interior of / adjacent to ?mpStatusToDraw@@3PAJA; named at its base or owned by that subsystem,
+0x004F78BC,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F78C0,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F78C8,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F78CC,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F79A1,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F79A8,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F79C0,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F79D8,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F79E4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F79F4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004F7AA4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem,
+0x004FC998,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004FC9C4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004FC9C8,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004FC9DC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004FC9EC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004FFFF0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00500008,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00500034,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x0050008C,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x005000E0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00500104,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x005002E4,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x005002E8,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x005002EC,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x005002F0,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x005002F4,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x005002FC,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x00500304,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x0050030C,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem,
+0x0050149C,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp),
+0x005014B4,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp),
+0x005014C0,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp),
+0x005014CC,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp),
+0x005014DC,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp),
+0x005014F0,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp),
+0x00501668,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501688,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501694,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050169C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005016A4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005016B8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005016C8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005016D4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050CF00,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF04,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF08,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF0C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF10,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF24,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF28,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF2C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF30,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF34,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF38,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF3C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF40,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF44,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF48,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF4C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF50,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF52,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF54,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF56,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF58,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050CF5C,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050D01F,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050D10A,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x0050D111,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
+0x005209D0,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem,
+0x005209D8,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem,
+0x00520A2C,data,,,waiver,confirmed,interior of / adjacent to _humanChoseSide; named at its base or owned by that subsystem,
+0x00529494,data,,,waiver,confirmed,interior of / adjacent to _fortSizes; named at its base or owned by that subsystem,
+0x005382AE,data,,,waiver,confirmed,interior of / adjacent to ?frontV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
+0x00539C96,data,,,waiver,confirmed,interior of / adjacent to ?otherV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
+0x0053BDEE,data,,,waiver,confirmed,interior of / adjacent to ?targetV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
+0x00546D58,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546D60,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546D64,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546D68,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546D6C,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546D70,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546D74,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546DD4,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546DD8,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
+0x00546E08,data,,,waiver,confirmed,interior of / adjacent to ?packetTicksAdjust@@3PAJA; named at its base or owned by that subsystem,
+0x00546E30,data,,,waiver,confirmed,interior of / adjacent to ?slowComm@@3DA; named at its base or owned by that subsystem,
+0x00546E34,data,,,waiver,confirmed,interior of / adjacent to ?slowComm@@3DA; named at its base or owned by that subsystem,
+0x00546E70,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00546E78,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00546E98,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00546EA0,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00546F19,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00546F1A,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547178,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547180,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547182,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547187,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547189,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547324,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547328,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00547334,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem,
+0x00552E98,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552E9C,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552EA0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552EA2,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552EB8,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552EBC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552EC0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00552EC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x00560F54,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem,
+0x00560F58,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem,
+0x00560F64,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem,
+0x00570BB4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570BBA,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570BBE,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CBC,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CC1,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CC2,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CC3,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CC4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CC5,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CF6,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D26,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D28,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D34,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D38,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D50,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D64,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D7C,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D90,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570D94,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570DB0,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570DC0,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570DCC,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570ED4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x0057256C,data,,,waiver,confirmed,interior of / adjacent to ?socket_list@@3USOCKET_STATE_LIST@@A; named at its base or owned by that subsystem,
+0x00572570,data,,,waiver,confirmed,interior of / adjacent to ?socket_list@@3USOCKET_STATE_LIST@@A; named at its base or owned by that subsystem,
+0x00580C70,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem,
+0x00580C74,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem,
+0x00580C9E,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem,
+0x00580CAA,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CAE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CB2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CB6,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CC2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CC6,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CCE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580CD2,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem,
+0x00580CDA,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem,
+0x00580CE2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580D14,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
+0x00580D18,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
+0x00580D1C,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
+0x00580D66,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
+0x00580D6A,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,

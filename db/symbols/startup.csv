@@ -1,560 +1,560 @@
-va,kind,name,display,source,confidence,notes
-0x004D715A,func,_DirectDrawCreate@12,,sms,confirmed,"IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7220,func,_ser_rs232_getpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7226,func,_ser_rs232_block@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D722C,func,_ser_rs232_flush@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7232,func,_ser_rs232_getbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7238,func,_ser_rs232_putbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D723E,func,_ser_rs232_getstatus@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7244,func,_ser_rs232_putpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D724A,func,_FlushTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7250,func,_FlushReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7256,func,_SetFlowControlThreshold@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D725C,func,_SetPaceTime@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7262,func,_SetTimeout@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7268,func,_UnInitializePort@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D726E,func,_SetPortCharacteristics@24,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7274,func,_InitializePort@36,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D727A,func,_IsPortAvailable@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7280,func,_BytesInReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7286,func,_BytesInTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D728C,func,_GetByte@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7292,func,_PeekChar@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7298,func,_CdrvCrc16@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D729E,func,_IsCarrierDetect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72A4,func,_ModemInit@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72AA,func,_ModemAttention@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72B0,func,_ModemWaitForCall@16,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72B6,func,_IsRing@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72BC,func,_GetString@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72C2,func,_ModemAnswerMode@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72C8,func,_ModemGetCarrierSpeed@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72CE,func,_ModemConnect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72D4,func,_Dial@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72DA,func,_ModemModifyValue@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72E0,func,_ModemHangup@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D72FE,func,_closeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7304,func,_getMSdatafile,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D730A,func,_getMSdatafilesize,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7310,func,_initializeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7316,func,_connectMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D731C,func,_sendMSresults,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004D7330,func,_strncpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7430,func,__cinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7460,func,_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7480,func,__exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D74C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: doexit
-0x004D7580,func,__lockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7590,func,__unlockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D75A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __initterm
-0x004D75C0,func,_strrchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D75F0,func,_atol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D76A0,func,_atoi,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D76B0,func,__atoi64,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7790,func,_sprintf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7810,func,_strchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D78D0,func,_memmove,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7A30,func,_tolower,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7AA0,func,__tolower_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7B90,func,_fclose,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7BD0,func,__fclose_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fsopen
-0x004D7C70,func,_fopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7C90,func,_strstr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7DB0,func,_isdigit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7E20,func,_isspace,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7E80,func,_isalnum,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D7EC0,func,_isprint,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D81E0,func,?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8220,func,?_CallMemberFunction0@@YGXPAX0@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8230,func,?_CallMemberFunction1@@YGXPAX00@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8240,func,?_CallMemberFunction2@@YGXPAX00H@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8250,func,?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D82B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___CxxFrameHandler
-0x004D8310,func,?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D83B0,func,?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: TranslatorGuardHandler
-0x004D8500,func,,,waiver,confirmed,CRT C++ EH exception-object free thunk (calls _free); unwind funclet helper
-0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8552,func,__local_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D85AA,data,__NLG_Return2,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x004D85BA,func,__abnormal_termination,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D85DD,func,__NLG_Notify1,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D85E6,func,__NLG_Notify,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: operator_new
-0x004D8610,func,_strncmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8648,func,__ftol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8670,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fpmath
-0x004D86A0,func,__cfltcvt_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D86F8,data,__except_handler3,,sms,confirmed,MSVC CRT global (xrefs=7)
-0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8910,func,__alldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D89C0,func,__allmul,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8A00,func,_qsort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8B70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: shortsort
-0x004D8BD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: swap
-0x004D8C00,func,__chdir,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8CB0,func,__fullpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8D90,func,__splitpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8EF0,func,__getcwd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D8F60,func,__getdcwd_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D90A0,func,__validdrive,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D90F0,func,_strupr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9250,func,_bsearch,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9300,func,_fread,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9340,func,__fread_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9490,func,_fwrite,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D94D0,func,__fwrite_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9660,func,_stricmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9730,func,_strlen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D97B0,func,_strcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D97C0,func,_strcat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D98B0,func,_rand,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9A10,func,_sscanf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9A60,func,_getenv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9A90,func,__getenv_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9B70,func,__fflush_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9BB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flush
-0x004D9C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: flsall
-0x004D9D00,func,_WinMainCRTStartup,WinMainCRTStartup,sms,confirmed,"PE entry point / MSVC CRT startup: GetVersion, __heap_init, __mtinit, __ioinit, ___initmbctable, __setargv/__setenvp/__cinit, then _WinMain@16 (0x476120, outside range), _exit. THE one true startup element in range"
-0x004D9EB0,func,__amsg_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004D9EE0,func,__strlwr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA040,func,_strnicmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA140,func,__mtinitlocks,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA170,func,__mtdeletelocks,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA1E0,func,__lock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA250,func,__unlock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA270,func,__lock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA2B0,func,__lock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA2E0,func,__unlock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA320,func,__unlock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA370,func,__isctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DA410,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flsbuf
-0x004DA560,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __output
-0x004DAE10,data,,,waiver,confirmed,interior of / adjacent to __isctype; named at its base or owned by that subsystem
-0x004DAF10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: write_char
-0x004DAF60,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: write_multi_char
-0x004DAFA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: write_string
-0x004DAFE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int_arg
-0x004DAFF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int64_arg
-0x004DB010,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_short_arg
-0x004DB900,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringW
-0x004DBB10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt
-0x004DBB50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringA
-0x004DBD80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _strncnt
-0x004DBDB0,func,_free,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DBE20,func,__close,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DBE90,func,__close_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DBF20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __freebuf
-0x004DBF60,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __openfile
-0x004DC170,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __getstream
-0x004DC260,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___InternalCxxFrameHandler
-0x004DC320,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: FindHandler
-0x004DC5C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: FindHandlerForForeignException
-0x004DC6A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: GetRangeOfTrysToCheck
-0x004DC740,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___FrameUnwindToState
-0x004DC830,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: CatchIt
-0x004DC8D0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: CallCatchBlock
-0x004DC99D,func,,,waiver,confirmed,"CRT C++ EH catch-cleanup funclet (restores ptd locale, checks EH magic 0x19930520, calls DestructExceptionObject)"
-0x004DCA20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: BuildCatchObject
-0x004DCC20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: DestructExceptionObject
-0x004DCCA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: AdjustPointer
-0x004DCCD0,func,__CallSettingFrame@12,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCD20,func,__mtinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCDB0,func,__initptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCDD0,func,__getptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCF10,func,_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCF30,func,__nh_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCF80,func,__heap_alloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DCFE0,func,__setdefaultprecision,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD000,func,__ms_p5_test_fdiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD050,func,__ms_p5_mp_test_fdiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD080,data,__forcdecpt,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x004DD0F0,data,__cropzeros,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x004DD150,data,__positive,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x004DD170,data,__fassign,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x004DD1C0,func,__cftoe,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD240,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftoe2
-0x004DD330,func,__cftof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD3A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftof2
-0x004DD460,func,__cftog,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD510,data,__cfltcvt,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x004DD580,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __shift
-0x004DD5B0,func,__dosmaperr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD630,func,__errno,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD640,func,,,waiver,confirmed,CRT ___doserrno: returns &ptd->_tdoserrno (per-thread DOS error); sits beside __errno
-0x004DD650,func,__mbctoupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD6E0,func,__mbsnbcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD790,func,__setmbcp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DD9C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: getSystemCP
-0x004DDA10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _CPtoLCID
-0x004DDA70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: setSBCS
-0x004DDAB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___initmbctable
-0x004DDAC0,func,__filbuf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DDBC0,func,__read,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DDC40,func,__read_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DDE70,func,__write,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DDEF0,func,__write_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DE1D0,func,__input,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DEDED,data,,,waiver,confirmed,interior of / adjacent to __input; named at its base or owned by that subsystem
-0x004DEE70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hextodec
-0x004DEEB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __inc
-0x004DEEE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __un_inc
-0x004DEF00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __whiteout
-0x004DEF30,func,__mbsnbicoll,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DEF70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___wtomb_environ
-0x004DF000,func,__commit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DF1A0,func,__XcptFilter,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DF2F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: xcptlookup
-0x004DF420,func,__ismbblead,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DF490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x_ismbbtype
-0x004DF4D0,func,__setenvp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DF5C0,func,__setargv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DF660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: parse_cmdline
-0x004DFA30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetEnvironmentStringsA
-0x004DFBC0,func,__ioinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DFDA0,func,__ioterm,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DFE00,func,__heap_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DFE80,func,__FF_MSGBANNER,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004DFEC0,func,__NMSG_WRITE,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E00F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeW
-0x004E02B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeA
-0x004E03E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __lseek
-0x004E0460,func,__lseek_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E04F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __getbuf
-0x004E0540,func,__isatty,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E0570,func,_wctomb,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E05D0,func,__wctomb_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E0670,func,__aulldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E06E0,func,__aullrem,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E0810,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __get_lc_time
-0x004E0B90,func,,,waiver,confirmed,CRT locale __free_lc_time: frees the __lc_time_data pointer table (~0x27 entries)
-0x004E0DD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: storeTimeFmt
-0x004E0ED0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___init_numeric
-0x004E10F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: fix_grouping
-0x004E1230,func,,,waiver,confirmed,CRT locale ___init_monetary: fills lconv monetary struct via ___getlocaleinfo x16
-0x004E1380,func,,,waiver,confirmed,"CRT locale grouping-string normalizer (subtract '0', collapse ';'); twin of fix_grouping"
-0x004E13D0,func,,,waiver,confirmed,CRT locale __free_lconv_mon: frees monetary lconv strings unless default (&DAT_00520584)
-0x004E1440,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___init_ctype
-0x004E1700,func,_strcspn,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E1740,func,_strpbrk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E1A80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_lang_lang
-0x004E1AE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_ctry_ctry
-0x004E1C70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_new_region
-0x004E1DE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_release_region
-0x004E1E40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_decommit_pages
-0x004E1F20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_find_block
-0x004E1F80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_free_block
-0x004E1FD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_alloc_block
-0x004E2250,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_alloc_block_from_page
-0x004E23D0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_resize_block
-0x004E24A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_heap_check
-0x004E2680,func,__alloc_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E27C0,func,__set_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2870,func,__free_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2910,func,__get_osfhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2A20,func,__lock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2A90,func,__unlock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2AE0,func,__sopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2EF8,data,,,waiver,confirmed,interior of / adjacent to __sopen; named at its base or owned by that subsystem
-0x004E2F70,func,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E2FE0,func,?terminate@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3055,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _abort
-0x004E3080,func,?_inconsistency@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E30ED,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: terminate
-0x004E3100,func,?_ValidateRead@@YAHPBXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3120,func,?_ValidateWrite@@YAHPAXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3140,func,?_ValidateExecute@@YAHP6GHXZ@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3160,func,_calloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3250,func,__callnewh,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3290,func,__statusfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E32B0,func,__clearfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E32D0,func,__control87,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3310,func,__controlfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3370,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __abstract_cw
-0x004E3420,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hw_cw
-0x004E34B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __abstract_sw
-0x004E34F0,func,,,waiver,confirmed,CRT __amsg_exit(2) fatal-error stub (runtime error R6002-class)
-0x004E3500,func,__ZeroTail,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3570,func,__IncMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E35E0,func,__RoundMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3690,func,__CopyMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E36B0,func,__FillZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E36C0,func,__IsZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E36E0,func,__ShrMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3790,func,__ld12cvt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3960,func,__ld12tod,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3980,func,__ld12tof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3A30,func,__atodbl,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3AB0,func,__atoflt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3AF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fptostr
-0x004E3B80,func,__fltout2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3C10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___dtold
-0x004E3CD0,func,_mbtowc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3D30,func,__mbtowc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3E70,func,__ungetc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E3F00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringW
-0x004E4140,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt
-0x004E4180,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringA
-0x004E4470,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _strncnt
-0x004E44A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtsetenv
-0x004E46F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: findenv
-0x004E4750,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: copy_environ
-0x004E47C0,func,__fcloseall,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E4860,func,_wcslen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E4880,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtMessageBoxA
-0x004E4920,func,__Getdays,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E4A10,func,__Getmonths,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E4FA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __expandtime
-0x004E5540,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_str
-0x004E5570,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_num
-0x004E5600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_number
-0x004E5660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_winword
-0x004E5980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___getlocaleinfo
-0x004E5C80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x64toa
-0x004E5D40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoW
-0x004E5E70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoA
-0x004E6270,func,__chsize_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E63B0,func,__onexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E6440,func,_atexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E64A0,func,_abort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E6730,func,_raise,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E6910,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: siglookup
-0x004E6970,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___addl
-0x004E69A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___add_12
-0x004E6A10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___shl_12
-0x004E6A50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___shr_12
-0x004E6A90,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___mtold12
-0x004E6B80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___strgtold12
-0x004E71D4,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem
-0x004E7219,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem
-0x004E7269,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem
-0x004E7320,func,_$I10_OUTPUT,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E76C0,func,_realloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E7890,func,__mbschr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E7950,func,__strdup,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E7980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___tzset
-0x004E79E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __tzset_lk
-0x004E8160,func,__towupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E8200,func,_iswctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E8310,func,__setmode_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E8380,func,__msize,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E83F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___ld12mul
-0x004E86A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___multtenpow12
-0x004E8720,func,_wcstombs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E8780,func,__wcstombs_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol
-0x004E89F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt
-0x004E8A2E,func,_RtlUnwind@16,,sms,confirmed,"IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem"
-0x004E95C0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E95C4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E95C6,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E95D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E95D5,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E970C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9720,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9724,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9930,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E99B0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E99D8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E99DC,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E99F8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9B40,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9BC0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9DF0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9EA4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9FD8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9FEC,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004E9FFC,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA008,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA0A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA0D0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA0D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA114,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA130,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA134,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA13C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA144,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA148,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA14A,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA14C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA150,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA154,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA158,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA15C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA160,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EA162,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
-0x004EEAB8,data,,,waiver,confirmed,interior of / adjacent to _items; named at its base or owned by that subsystem
-0x004F44D4,data,,,waiver,confirmed,interior of / adjacent to ?ifmShow@@3GA; named at its base or owned by that subsystem
-0x0051E750,data,__umaskval,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E754,data,,,waiver,confirmed,interior of / adjacent to __umaskval; named at its base or owned by that subsystem
-0x0051E758,data,__winver,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E75C,data,__winmajor,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E760,data,__winminor,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051E764,data,,,waiver,confirmed,interior of / adjacent to __winminor; named at its base or owned by that subsystem
-0x0051E768,data,,,waiver,confirmed,interior of / adjacent to __winminor; named at its base or owned by that subsystem
-0x0051E770,data,__environ,,sms,confirmed,MSVC CRT global (xrefs=15)
-0x0051E774,data,,,waiver,confirmed,interior of / adjacent to __environ; named at its base or owned by that subsystem
-0x0051E778,data,__wenviron,,sms,confirmed,MSVC CRT global (xrefs=6)
-0x0051E788,data,__exitflag,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E78C,data,__C_Termination_Done,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E790,data,__C_Exit_Done,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051E7A0,data,__NLG_Destination,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051E7A4,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem
-0x0051E7A8,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem
-0x0051E7AC,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem
-0x0051E7BC,data,__adjust_fdiv,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E7C0,data,__FPinit,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E7D0,data,__aenvptr,,sms,confirmed,MSVC CRT global (xrefs=5)
-0x0051E7D8,data,__aexit_rtn,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051E7DC,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem
-0x0051E7E0,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem
-0x0051E7F0,data,__locktable,,sms,confirmed,MSVC CRT global (xrefs=9)
-0x0051E7F4,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem
-0x0051E814,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem
-0x0051E824,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem
-0x0051E834,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem
-0x0051E8B0,data,__pctype,,sms,confirmed,MSVC CRT global (xrefs=38)
-0x0051E8B4,data,__pwctype,,sms,confirmed,MSVC CRT global (xrefs=3)
-0x0051EABC,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EAC0,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EAC8,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EACC,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC48,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC50,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC58,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC5C,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC60,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC70,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem
-0x0051EC78,data,__cfltcvt_tab,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051EC7C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC80,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC84,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC88,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC8C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC90,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC98,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EC9C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem
-0x0051EDF8,data,__mbctype,,sms,confirmed,MSVC CRT global (xrefs=7)
-0x0051EDFC,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EEFC,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF00,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF08,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF0C,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF10,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF14,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF18,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF19,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF20,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051EF50,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem
-0x0051F010,data,__stdbuf,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051F018,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem
-0x0051F028,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem
-0x0051F2A8,data,__cflush,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051F2B0,data,__XcptActTab,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x0051F328,data,__First_FPE_Indx,,sms,confirmed,MSVC CRT global (xrefs=4)
-0x0051F32C,data,__Num_FPE,,sms,confirmed,MSVC CRT global (xrefs=4)
-0x0051F334,data,__XcptActTabCount,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051F33C,data,,,waiver,confirmed,interior of / adjacent to __XcptActTabCount; named at its base or owned by that subsystem
-0x0051F344,data,,,waiver,confirmed,interior of / adjacent to __XcptActTabCount; named at its base or owned by that subsystem
-0x0051F368,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem
-0x0051F370,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem
-0x0051F378,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem
-0x0051F37C,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem
-0x0051F3F8,data,__adbgmsg,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x0051F3FC,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F400,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F414,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F418,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F41C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F424,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F428,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F43C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F444,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F44A,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F44E,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F450,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F518,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F5E0,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F5E4,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F818,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F8C8,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051F8CC,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC50,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC54,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC58,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC5C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC60,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC61,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0051FC62,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0052005E,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0052005F,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x00520060,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x00520061,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x00520460,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x00520464,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x00520468,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x0052046C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem
-0x00520470,data,__commode,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x00520474,data,?__pInconsistency@@3P6AXXZA,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x00520478,data,__newmode,,sms,confirmed,MSVC CRT global (xrefs=3)
-0x005204B0,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204B4,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204B8,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204BC,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204C0,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204C8,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204CC,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x005204E4,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x00520500,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x00520504,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x00520530,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x00520574,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem
-0x00520578,data,__alternate_form,,sms,confirmed,MSVC CRT global (xrefs=17)
-0x0052057C,data,__no_lead_zeros,,sms,confirmed,MSVC CRT global (xrefs=20)
-0x00520588,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x0052058C,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x00520590,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205B8,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205BC,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205C0,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205C4,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205C8,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205CC,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205D0,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205D4,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem
-0x005205E0,data,__timezone,,sms,confirmed,MSVC CRT global (xrefs=7)
-0x005205E4,data,__daylight,,sms,confirmed,MSVC CRT global (xrefs=3)
-0x005205E8,data,__dstbias,,sms,confirmed,MSVC CRT global (xrefs=2)
-0x005205F3,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem
-0x0052062F,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem
-0x00520630,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem
-0x00520633,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem
-0x0052066F,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem
-0x00520670,data,__tzname,,sms,confirmed,MSVC CRT global (xrefs=4)
-0x00520674,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem
-0x00520678,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem
-0x0052069C,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem
-0x00591A5C,data,,,waiver,confirmed,interior of / adjacent to ?dbaseLow@@3PAEA; named at its base or owned by that subsystem
-0x00591A60,data,?_pnhHeap@@3P6AHI@ZA,,sms,confirmed,MSVC CRT global (xrefs=1)
-0x00591A68,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591A6A,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591A78,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591ABE,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591ACC,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591B12,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591B20,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem
-0x00591B24,data,__crtheap,,sms,confirmed,MSVC CRT global (xrefs=11)
-0x00591B30,data,,,waiver,confirmed,interior of / adjacent to __crtheap; named at its base or owned by that subsystem
-0x00591B34,data,,,waiver,confirmed,interior of / adjacent to __crtheap; named at its base or owned by that subsystem
-0x00591C30,data,__nhandle,,sms,confirmed,MSVC CRT global (xrefs=18)
-0x00591C34,data,,,waiver,confirmed,interior of / adjacent to __nhandle; named at its base or owned by that subsystem
-0x00592C40,data,__nstream,,sms,confirmed,MSVC CRT global (xrefs=6)
-0x00592C44,data,,,waiver,confirmed,interior of / adjacent to __nstream; named at its base or owned by that subsystem
-0x00592C4C,data,__acmdln,,sms,confirmed,MSVC CRT global (xrefs=5)
-0x00592C50,data,,,waiver,confirmed,interior of / adjacent to __acmdln; named at its base or owned by that subsystem
-0x00592C54,data,,,waiver,confirmed,interior of / adjacent to __acmdln; named at its base or owned by that subsystem
+va,kind,name,display,source,confidence,notes,type
+0x004D715A,func,_DirectDrawCreate@12,,sms,confirmed,"IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7220,func,_ser_rs232_getpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7226,func,_ser_rs232_block@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D722C,func,_ser_rs232_flush@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7232,func,_ser_rs232_getbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7238,func,_ser_rs232_putbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D723E,func,_ser_rs232_getstatus@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7244,func,_ser_rs232_putpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D724A,func,_FlushTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7250,func,_FlushReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7256,func,_SetFlowControlThreshold@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D725C,func,_SetPaceTime@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7262,func,_SetTimeout@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7268,func,_UnInitializePort@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D726E,func,_SetPortCharacteristics@24,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7274,func,_InitializePort@36,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D727A,func,_IsPortAvailable@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7280,func,_BytesInReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7286,func,_BytesInTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D728C,func,_GetByte@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7292,func,_PeekChar@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7298,func,_CdrvCrc16@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D729E,func,_IsCarrierDetect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72A4,func,_ModemInit@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72AA,func,_ModemAttention@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72B0,func,_ModemWaitForCall@16,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72B6,func,_IsRing@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72BC,func,_GetString@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72C2,func,_ModemAnswerMode@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72C8,func,_ModemGetCarrierSpeed@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72CE,func,_ModemConnect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72D4,func,_Dial@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72DA,func,_ModemModifyValue@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72E0,func,_ModemHangup@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D72FE,func,_closeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7304,func,_getMSdatafile,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D730A,func,_getMSdatafilesize,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7310,func,_initializeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7316,func,_connectMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D731C,func,_sendMSresults,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D7330,func,_strncpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7430,func,__cinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7460,func,_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7480,func,__exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D74C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: doexit,
+0x004D7580,func,__lockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7590,func,__unlockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D75A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __initterm,
+0x004D75C0,func,_strrchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D75F0,func,_atol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D76A0,func,_atoi,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D76B0,func,__atoi64,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7790,func,_sprintf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7810,func,_strchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D78D0,func,_memmove,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7A30,func,_tolower,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7AA0,func,__tolower_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7B90,func,_fclose,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7BD0,func,__fclose_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fsopen,
+0x004D7C70,func,_fopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7C90,func,_strstr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7DB0,func,_isdigit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7E20,func,_isspace,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7E80,func,_isalnum,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7EC0,func,_isprint,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D81E0,func,?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8220,func,?_CallMemberFunction0@@YGXPAX0@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8230,func,?_CallMemberFunction1@@YGXPAX00@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8240,func,?_CallMemberFunction2@@YGXPAX00H@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8250,func,?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D82B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___CxxFrameHandler,
+0x004D8310,func,?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D83B0,func,?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: TranslatorGuardHandler,
+0x004D8500,func,,,waiver,confirmed,CRT C++ EH exception-object free thunk (calls _free); unwind funclet helper,
+0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8552,func,__local_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D85AA,data,__NLG_Return2,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004D85BA,func,__abnormal_termination,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D85DD,func,__NLG_Notify1,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D85E6,func,__NLG_Notify,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: operator_new,
+0x004D8610,func,_strncmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8648,func,__ftol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8670,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fpmath,
+0x004D86A0,func,__cfltcvt_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D86F8,data,__except_handler3,,sms,confirmed,MSVC CRT global (xrefs=7),
+0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8910,func,__alldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D89C0,func,__allmul,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8A00,func,_qsort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8B70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: shortsort,
+0x004D8BD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: swap,
+0x004D8C00,func,__chdir,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8CB0,func,__fullpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8D90,func,__splitpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8EF0,func,__getcwd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8F60,func,__getdcwd_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D90A0,func,__validdrive,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D90F0,func,_strupr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9250,func,_bsearch,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9300,func,_fread,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9340,func,__fread_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9490,func,_fwrite,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D94D0,func,__fwrite_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9660,func,_stricmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9730,func,_strlen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D97B0,func,_strcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D97C0,func,_strcat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D98B0,func,_rand,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9A10,func,_sscanf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9A60,func,_getenv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9A90,func,__getenv_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9B70,func,__fflush_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9BB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flush,
+0x004D9C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: flsall,
+0x004D9D00,func,_WinMainCRTStartup,WinMainCRTStartup,sms,confirmed,"PE entry point / MSVC CRT startup: GetVersion, __heap_init, __mtinit, __ioinit, ___initmbctable, __setargv/__setenvp/__cinit, then _WinMain@16 (0x476120, outside range), _exit. THE one true startup element in range",
+0x004D9EB0,func,__amsg_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9EE0,func,__strlwr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA040,func,_strnicmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA140,func,__mtinitlocks,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA170,func,__mtdeletelocks,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA1E0,func,__lock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA250,func,__unlock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA270,func,__lock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA2B0,func,__lock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA2E0,func,__unlock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA320,func,__unlock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA370,func,__isctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA410,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flsbuf,
+0x004DA560,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __output,
+0x004DAE10,data,,,waiver,confirmed,interior of / adjacent to __isctype; named at its base or owned by that subsystem,
+0x004DAF10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: write_char,
+0x004DAF60,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: write_multi_char,
+0x004DAFA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: write_string,
+0x004DAFE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int_arg,
+0x004DAFF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int64_arg,
+0x004DB010,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_short_arg,
+0x004DB900,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringW,
+0x004DBB10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
+0x004DBB50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringA,
+0x004DBD80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _strncnt,
+0x004DBDB0,func,_free,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DBE20,func,__close,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DBE90,func,__close_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DBF20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __freebuf,
+0x004DBF60,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __openfile,
+0x004DC170,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __getstream,
+0x004DC260,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___InternalCxxFrameHandler,
+0x004DC320,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: FindHandler,
+0x004DC5C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: FindHandlerForForeignException,
+0x004DC6A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: GetRangeOfTrysToCheck,
+0x004DC740,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___FrameUnwindToState,
+0x004DC830,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: CatchIt,
+0x004DC8D0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: CallCatchBlock,
+0x004DC99D,func,,,waiver,confirmed,"CRT C++ EH catch-cleanup funclet (restores ptd locale, checks EH magic 0x19930520, calls DestructExceptionObject)",
+0x004DCA20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: BuildCatchObject,
+0x004DCC20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: DestructExceptionObject,
+0x004DCCA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: AdjustPointer,
+0x004DCCD0,func,__CallSettingFrame@12,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCD20,func,__mtinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCDB0,func,__initptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCDD0,func,__getptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCF10,func,_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCF30,func,__nh_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCF80,func,__heap_alloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCFE0,func,__setdefaultprecision,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD000,func,__ms_p5_test_fdiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD050,func,__ms_p5_mp_test_fdiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD080,data,__forcdecpt,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD0F0,data,__cropzeros,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD150,data,__positive,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD170,data,__fassign,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD1C0,func,__cftoe,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD240,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftoe2,
+0x004DD330,func,__cftof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD3A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftof2,
+0x004DD460,func,__cftog,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD510,data,__cfltcvt,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD580,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __shift,
+0x004DD5B0,func,__dosmaperr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD630,func,__errno,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD640,func,,,waiver,confirmed,CRT ___doserrno: returns &ptd->_tdoserrno (per-thread DOS error); sits beside __errno,
+0x004DD650,func,__mbctoupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD6E0,func,__mbsnbcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD790,func,__setmbcp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD9C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: getSystemCP,
+0x004DDA10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _CPtoLCID,
+0x004DDA70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: setSBCS,
+0x004DDAB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___initmbctable,
+0x004DDAC0,func,__filbuf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DDBC0,func,__read,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DDC40,func,__read_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DDE70,func,__write,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DDEF0,func,__write_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DE1D0,func,__input,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DEDED,data,,,waiver,confirmed,interior of / adjacent to __input; named at its base or owned by that subsystem,
+0x004DEE70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hextodec,
+0x004DEEB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __inc,
+0x004DEEE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __un_inc,
+0x004DEF00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __whiteout,
+0x004DEF30,func,__mbsnbicoll,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DEF70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___wtomb_environ,
+0x004DF000,func,__commit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF1A0,func,__XcptFilter,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF2F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: xcptlookup,
+0x004DF420,func,__ismbblead,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x_ismbbtype,
+0x004DF4D0,func,__setenvp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF5C0,func,__setargv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: parse_cmdline,
+0x004DFA30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetEnvironmentStringsA,
+0x004DFBC0,func,__ioinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DFDA0,func,__ioterm,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DFE00,func,__heap_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DFE80,func,__FF_MSGBANNER,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DFEC0,func,__NMSG_WRITE,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E00F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeW,
+0x004E02B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeA,
+0x004E03E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __lseek,
+0x004E0460,func,__lseek_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E04F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __getbuf,
+0x004E0540,func,__isatty,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E0570,func,_wctomb,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E05D0,func,__wctomb_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E0670,func,__aulldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E06E0,func,__aullrem,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E0810,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __get_lc_time,
+0x004E0B90,func,,,waiver,confirmed,CRT locale __free_lc_time: frees the __lc_time_data pointer table (~0x27 entries),
+0x004E0DD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: storeTimeFmt,
+0x004E0ED0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___init_numeric,
+0x004E10F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: fix_grouping,
+0x004E1230,func,,,waiver,confirmed,CRT locale ___init_monetary: fills lconv monetary struct via ___getlocaleinfo x16,
+0x004E1380,func,,,waiver,confirmed,"CRT locale grouping-string normalizer (subtract '0', collapse ';'); twin of fix_grouping",
+0x004E13D0,func,,,waiver,confirmed,CRT locale __free_lconv_mon: frees monetary lconv strings unless default (&DAT_00520584),
+0x004E1440,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___init_ctype,
+0x004E1700,func,_strcspn,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E1740,func,_strpbrk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E1A80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_lang_lang,
+0x004E1AE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_ctry_ctry,
+0x004E1C70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_new_region,
+0x004E1DE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_release_region,
+0x004E1E40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_decommit_pages,
+0x004E1F20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_find_block,
+0x004E1F80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_free_block,
+0x004E1FD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_alloc_block,
+0x004E2250,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_alloc_block_from_page,
+0x004E23D0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_resize_block,
+0x004E24A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_heap_check,
+0x004E2680,func,__alloc_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E27C0,func,__set_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2870,func,__free_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2910,func,__get_osfhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2A20,func,__lock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2A90,func,__unlock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2AE0,func,__sopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2EF8,data,,,waiver,confirmed,interior of / adjacent to __sopen; named at its base or owned by that subsystem,
+0x004E2F70,func,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2FE0,func,?terminate@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3055,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _abort,
+0x004E3080,func,?_inconsistency@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E30ED,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: terminate,
+0x004E3100,func,?_ValidateRead@@YAHPBXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3120,func,?_ValidateWrite@@YAHPAXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3140,func,?_ValidateExecute@@YAHP6GHXZ@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3160,func,_calloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3250,func,__callnewh,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3290,func,__statusfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E32B0,func,__clearfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E32D0,func,__control87,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3310,func,__controlfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3370,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __abstract_cw,
+0x004E3420,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hw_cw,
+0x004E34B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __abstract_sw,
+0x004E34F0,func,,,waiver,confirmed,CRT __amsg_exit(2) fatal-error stub (runtime error R6002-class),
+0x004E3500,func,__ZeroTail,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3570,func,__IncMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E35E0,func,__RoundMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3690,func,__CopyMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E36B0,func,__FillZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E36C0,func,__IsZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E36E0,func,__ShrMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3790,func,__ld12cvt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3960,func,__ld12tod,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3980,func,__ld12tof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3A30,func,__atodbl,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3AB0,func,__atoflt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3AF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fptostr,
+0x004E3B80,func,__fltout2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3C10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___dtold,
+0x004E3CD0,func,_mbtowc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3D30,func,__mbtowc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3E70,func,__ungetc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3F00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringW,
+0x004E4140,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
+0x004E4180,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringA,
+0x004E4470,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _strncnt,
+0x004E44A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtsetenv,
+0x004E46F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: findenv,
+0x004E4750,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: copy_environ,
+0x004E47C0,func,__fcloseall,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E4860,func,_wcslen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E4880,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtMessageBoxA,
+0x004E4920,func,__Getdays,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E4A10,func,__Getmonths,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E4FA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __expandtime,
+0x004E5540,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_str,
+0x004E5570,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_num,
+0x004E5600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_number,
+0x004E5660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_winword,
+0x004E5980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___getlocaleinfo,
+0x004E5C80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x64toa,
+0x004E5D40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoW,
+0x004E5E70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoA,
+0x004E6270,func,__chsize_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E63B0,func,__onexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E6440,func,_atexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E64A0,func,_abort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E6730,func,_raise,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E6910,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: siglookup,
+0x004E6970,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___addl,
+0x004E69A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___add_12,
+0x004E6A10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___shl_12,
+0x004E6A50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___shr_12,
+0x004E6A90,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___mtold12,
+0x004E6B80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___strgtold12,
+0x004E71D4,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem,
+0x004E7219,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem,
+0x004E7269,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem,
+0x004E7320,func,_$I10_OUTPUT,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E76C0,func,_realloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E7890,func,__mbschr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E7950,func,__strdup,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E7980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___tzset,
+0x004E79E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __tzset_lk,
+0x004E8160,func,__towupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E8200,func,_iswctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E8310,func,__setmode_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E8380,func,__msize,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E83F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___ld12mul,
+0x004E86A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___multtenpow12,
+0x004E8720,func,_wcstombs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E8780,func,__wcstombs_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E89F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
+0x004E8A2E,func,_RtlUnwind@16,,sms,confirmed,"IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004E95C0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E95C4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E95C6,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E95D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E95D5,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E970C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9720,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9724,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9930,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E99B0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E99D8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E99DC,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E99F8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9B40,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9BC0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9DF0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9EA4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9FD8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9FEC,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004E9FFC,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA008,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA0A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA0D0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA0D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA114,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA130,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA134,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA13C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA144,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA148,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA14A,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA14C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA150,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA154,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA158,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA15C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA160,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EA162,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EEAB8,data,,,waiver,confirmed,interior of / adjacent to _items; named at its base or owned by that subsystem,
+0x004F44D4,data,,,waiver,confirmed,interior of / adjacent to ?ifmShow@@3GA; named at its base or owned by that subsystem,
+0x0051E750,data,__umaskval,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E754,data,,,waiver,confirmed,interior of / adjacent to __umaskval; named at its base or owned by that subsystem,
+0x0051E758,data,__winver,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E75C,data,__winmajor,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E760,data,__winminor,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051E764,data,,,waiver,confirmed,interior of / adjacent to __winminor; named at its base or owned by that subsystem,
+0x0051E768,data,,,waiver,confirmed,interior of / adjacent to __winminor; named at its base or owned by that subsystem,
+0x0051E770,data,__environ,,sms,confirmed,MSVC CRT global (xrefs=15),
+0x0051E774,data,,,waiver,confirmed,interior of / adjacent to __environ; named at its base or owned by that subsystem,
+0x0051E778,data,__wenviron,,sms,confirmed,MSVC CRT global (xrefs=6),
+0x0051E788,data,__exitflag,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E78C,data,__C_Termination_Done,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E790,data,__C_Exit_Done,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051E7A0,data,__NLG_Destination,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051E7A4,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
+0x0051E7A8,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
+0x0051E7AC,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
+0x0051E7BC,data,__adjust_fdiv,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E7C0,data,__FPinit,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E7D0,data,__aenvptr,,sms,confirmed,MSVC CRT global (xrefs=5),
+0x0051E7D8,data,__aexit_rtn,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E7DC,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem,
+0x0051E7E0,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem,
+0x0051E7F0,data,__locktable,,sms,confirmed,MSVC CRT global (xrefs=9),
+0x0051E7F4,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
+0x0051E814,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
+0x0051E824,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
+0x0051E834,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
+0x0051E8B0,data,__pctype,,sms,confirmed,MSVC CRT global (xrefs=38),
+0x0051E8B4,data,__pwctype,,sms,confirmed,MSVC CRT global (xrefs=3),
+0x0051EABC,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EAC0,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EAC8,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EACC,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC48,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC50,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC58,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC5C,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC60,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC70,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC78,data,__cfltcvt_tab,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051EC7C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC80,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC84,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC88,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC8C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC90,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC98,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EC9C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
+0x0051EDF8,data,__mbctype,,sms,confirmed,MSVC CRT global (xrefs=7),
+0x0051EDFC,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EEFC,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF00,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF08,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF0C,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF10,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF14,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF18,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF19,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF20,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051EF50,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
+0x0051F010,data,__stdbuf,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051F018,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem,
+0x0051F028,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem,
+0x0051F2A8,data,__cflush,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051F2B0,data,__XcptActTab,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051F328,data,__First_FPE_Indx,,sms,confirmed,MSVC CRT global (xrefs=4),
+0x0051F32C,data,__Num_FPE,,sms,confirmed,MSVC CRT global (xrefs=4),
+0x0051F334,data,__XcptActTabCount,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051F33C,data,,,waiver,confirmed,interior of / adjacent to __XcptActTabCount; named at its base or owned by that subsystem,
+0x0051F344,data,,,waiver,confirmed,interior of / adjacent to __XcptActTabCount; named at its base or owned by that subsystem,
+0x0051F368,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
+0x0051F370,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
+0x0051F378,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
+0x0051F37C,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
+0x0051F3F8,data,__adbgmsg,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051F3FC,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F400,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F414,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F418,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F41C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F424,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F428,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F43C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F444,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F44A,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F44E,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F450,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F518,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F5E0,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F5E4,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F818,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F8C8,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F8CC,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC50,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC54,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC58,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC5C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC60,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC61,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051FC62,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0052005E,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0052005F,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x00520060,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x00520061,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x00520460,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x00520464,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x00520468,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0052046C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x00520470,data,__commode,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x00520474,data,?__pInconsistency@@3P6AXXZA,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x00520478,data,__newmode,,sms,confirmed,MSVC CRT global (xrefs=3),
+0x005204B0,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204B4,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204B8,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204BC,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204C0,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204C8,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204CC,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x005204E4,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x00520500,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x00520504,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x00520530,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x00520574,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
+0x00520578,data,__alternate_form,,sms,confirmed,MSVC CRT global (xrefs=17),
+0x0052057C,data,__no_lead_zeros,,sms,confirmed,MSVC CRT global (xrefs=20),
+0x00520588,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x0052058C,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x00520590,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205B8,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205BC,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205C0,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205C4,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205C8,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205CC,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205D0,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205D4,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
+0x005205E0,data,__timezone,,sms,confirmed,MSVC CRT global (xrefs=7),
+0x005205E4,data,__daylight,,sms,confirmed,MSVC CRT global (xrefs=3),
+0x005205E8,data,__dstbias,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x005205F3,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
+0x0052062F,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
+0x00520630,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
+0x00520633,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
+0x0052066F,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
+0x00520670,data,__tzname,,sms,confirmed,MSVC CRT global (xrefs=4),
+0x00520674,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
+0x00520678,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
+0x0052069C,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
+0x00591A5C,data,,,waiver,confirmed,interior of / adjacent to ?dbaseLow@@3PAEA; named at its base or owned by that subsystem,
+0x00591A60,data,?_pnhHeap@@3P6AHI@ZA,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x00591A68,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591A6A,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591A78,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591ABE,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591ACC,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591B12,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591B20,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
+0x00591B24,data,__crtheap,,sms,confirmed,MSVC CRT global (xrefs=11),
+0x00591B30,data,,,waiver,confirmed,interior of / adjacent to __crtheap; named at its base or owned by that subsystem,
+0x00591B34,data,,,waiver,confirmed,interior of / adjacent to __crtheap; named at its base or owned by that subsystem,
+0x00591C30,data,__nhandle,,sms,confirmed,MSVC CRT global (xrefs=18),
+0x00591C34,data,,,waiver,confirmed,interior of / adjacent to __nhandle; named at its base or owned by that subsystem,
+0x00592C40,data,__nstream,,sms,confirmed,MSVC CRT global (xrefs=6),
+0x00592C44,data,,,waiver,confirmed,interior of / adjacent to __nstream; named at its base or owned by that subsystem,
+0x00592C4C,data,__acmdln,,sms,confirmed,MSVC CRT global (xrefs=5),
+0x00592C50,data,,,waiver,confirmed,interior of / adjacent to __acmdln; named at its base or owned by that subsystem,
+0x00592C54,data,,,waiver,confirmed,interior of / adjacent to __acmdln; named at its base or owned by that subsystem,

@@ -1,24 +1,24 @@
-va,kind,name,display,source,confidence,notes
-0x00456300,func,_DecodeDSVGA8Frame,DecodeDSVGA8Frame,sms,confirmed,key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank
-0x00456AD0,func,?EDB@@YAXPAE0PAUFrameHeader@@PAUGlobalData@@@Z,EDB,sms,confirmed,"expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path"
-0x00456EC0,func,_DecodeSVGA8Frame,DecodeSVGA8Frame,sms,confirmed,
-0x00457230,func,?DecodeDBook@@YAXPAEPAGGPAUGlobalData@@@Z,DecodeDBook,sms,confirmed,decode 15/16-bit codebook: 256 entries x (4 luma + 2 chroma) -> 4 RGB555/565 px each; YUV->RGB via GlobalData+0xC1B4(luma scale)/+0xC1B6(Cb off)/+0xC1B8(Cr off)/+0xC1BA(grayscale flag); param_3==0xF selects 5:5:5 else 5:6:5; channels clamped by ClampU8
-0x004575E0,func,ClampU8,,re,confirmed,"saturate short to unsigned byte [0,255]: <0 -> 0, >=256 -> 255; leaf color-channel clamp called ~12x by DecodeDBook/DoubleDecodeDBook/Decode24Book/DoubleDecode24Book in YUV->RGB. (only FUN_ in range)"
-0x00457600,func,?DoubleDecodeDBook@@YAXPAEPAGGGPAUGlobalData@@@Z,DoubleDecodeDBook,sms,confirmed,15/16-bit codebook decode with horizontal 2x replication (Double path)
-0x00457A50,func,_DecodeSVGA15Frame,DecodeSVGA15Frame,sms,confirmed,key/intra frame -> 15/16bpp hi-color SVGA (single); dispatch case 3 depth 0xF..0x10
-0x00457E00,func,_DecodeDSVGA15Frame,DecodeDSVGA15Frame,sms,confirmed,key/intra frame -> 15/16bpp hi-color SVGA with 2x doubling; dispatch case 4 depth 0xF..0x10
-0x004581C0,func,?Decode24Book@@YAXPAEPAKPAUGlobalData@@@Z,Decode24Book,sms,confirmed,decode 24-bit (true-color) codebook: 256 entries -> RGB888 (uint out); YUV->RGB with ClampU8
-0x00458480,func,?DoubleDecode24Book@@YAXPAEPAKGPAUGlobalData@@@Z,DoubleDecode24Book,sms,confirmed,24-bit codebook decode with 2x replication
-0x004587B0,func,_DecodeSVGA24Frame,DecodeSVGA24Frame,sms,confirmed,key/intra frame -> 24bpp true-color SVGA (single); dispatch case 3 depth==0x20
-0x00458D10,func,_DecodeDSVGA24Frame,DecodeDSVGA24Frame,sms,confirmed,key/intra frame -> 24bpp true-color SVGA with 2x doubling; dispatch case 4 depth==0x20
-0x00459390,func,_DecodeInterSVGA15Frame,DecodeInterSVGA15Frame,sms,confirmed,INTER/delta (P) frame -> 15/16bpp SVGA (single); requires prior key frame (MovieContext+0x14!=0)
-0x00459B20,func,_DecodeInterDSVGA15Frame,DecodeInterDSVGA15Frame,sms,confirmed,INTER/delta (P) frame -> 15/16bpp SVGA with 2x doubling
-0x0045A2F0,func,?DitherCodeSingle@@YAXPAEPAG0@Z,DitherCodeSingle,sms,confirmed,ordered-dither a 15/16-bit codebook down to 8bpp palette indices (single)
-0x0045A520,func,?DitherCode@@YAXPAEPAK0@Z,DitherCode,sms,confirmed,dither a 24-bit codebook to 8bpp palette indices
-0x0045A800,func,?DitherCodeDouble@@YAXPAEPAK0@Z,DitherCodeDouble,sms,confirmed,dither codebook to 8bpp with 2x replication (Double)
-0x0045AB90,func,_DecodeDSVGA15NONFrame,DecodeDSVGA15NONFrame,sms,confirmed,"key frame, 15-bit codebook rendered to 8bpp (NON path, depth==8) with 2x doubling; dispatch submode6 case2 (+4==0)"
-0x0045B170,func,_DecodeDSVGA15NONSkipFrame,DecodeDSVGA15NONSkipFrame,sms,confirmed,NON 8bpp doubled key frame with skip-map (GlobalData+4!=0); dispatch submode6 case2 (+4!=0)
-0x0045B610,func,_DecodeSVGA15NONFrame,DecodeSVGA15NONFrame,sms,confirmed,key frame 15-bit codebook -> 8bpp (NON path) single; dispatch submode6 case1
-0x0045B9C0,func,_DecodeInterSVGA15NONFrame,DecodeInterSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp single; dispatch inter submode6 case1
-0x0045BE60,func,_DecodeInterDSVGA15NONFrame,DecodeInterDSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0)
-0x0045C500,func,_DecodeInterDSVGA15NONSkipFrame,DecodeInterDSVGA15NONSkipFrame,sms,confirmed,INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0)
+va,kind,name,display,source,confidence,notes,type
+0x00456300,func,_DecodeDSVGA8Frame,DecodeDSVGA8Frame,sms,confirmed,key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank,
+0x00456AD0,func,?EDB@@YAXPAE0PAUFrameHeader@@PAUGlobalData@@@Z,EDB,sms,confirmed,"expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path",
+0x00456EC0,func,_DecodeSVGA8Frame,DecodeSVGA8Frame,sms,confirmed,,
+0x00457230,func,?DecodeDBook@@YAXPAEPAGGPAUGlobalData@@@Z,DecodeDBook,sms,confirmed,decode 15/16-bit codebook: 256 entries x (4 luma + 2 chroma) -> 4 RGB555/565 px each; YUV->RGB via GlobalData+0xC1B4(luma scale)/+0xC1B6(Cb off)/+0xC1B8(Cr off)/+0xC1BA(grayscale flag); param_3==0xF selects 5:5:5 else 5:6:5; channels clamped by ClampU8,
+0x004575E0,func,ClampU8,,re,confirmed,"saturate short to unsigned byte [0,255]: <0 -> 0, >=256 -> 255; leaf color-channel clamp called ~12x by DecodeDBook/DoubleDecodeDBook/Decode24Book/DoubleDecode24Book in YUV->RGB. (only FUN_ in range)",
+0x00457600,func,?DoubleDecodeDBook@@YAXPAEPAGGGPAUGlobalData@@@Z,DoubleDecodeDBook,sms,confirmed,15/16-bit codebook decode with horizontal 2x replication (Double path),
+0x00457A50,func,_DecodeSVGA15Frame,DecodeSVGA15Frame,sms,confirmed,key/intra frame -> 15/16bpp hi-color SVGA (single); dispatch case 3 depth 0xF..0x10,
+0x00457E00,func,_DecodeDSVGA15Frame,DecodeDSVGA15Frame,sms,confirmed,key/intra frame -> 15/16bpp hi-color SVGA with 2x doubling; dispatch case 4 depth 0xF..0x10,
+0x004581C0,func,?Decode24Book@@YAXPAEPAKPAUGlobalData@@@Z,Decode24Book,sms,confirmed,decode 24-bit (true-color) codebook: 256 entries -> RGB888 (uint out); YUV->RGB with ClampU8,
+0x00458480,func,?DoubleDecode24Book@@YAXPAEPAKGPAUGlobalData@@@Z,DoubleDecode24Book,sms,confirmed,24-bit codebook decode with 2x replication,
+0x004587B0,func,_DecodeSVGA24Frame,DecodeSVGA24Frame,sms,confirmed,key/intra frame -> 24bpp true-color SVGA (single); dispatch case 3 depth==0x20,
+0x00458D10,func,_DecodeDSVGA24Frame,DecodeDSVGA24Frame,sms,confirmed,key/intra frame -> 24bpp true-color SVGA with 2x doubling; dispatch case 4 depth==0x20,
+0x00459390,func,_DecodeInterSVGA15Frame,DecodeInterSVGA15Frame,sms,confirmed,INTER/delta (P) frame -> 15/16bpp SVGA (single); requires prior key frame (MovieContext+0x14!=0),
+0x00459B20,func,_DecodeInterDSVGA15Frame,DecodeInterDSVGA15Frame,sms,confirmed,INTER/delta (P) frame -> 15/16bpp SVGA with 2x doubling,
+0x0045A2F0,func,?DitherCodeSingle@@YAXPAEPAG0@Z,DitherCodeSingle,sms,confirmed,ordered-dither a 15/16-bit codebook down to 8bpp palette indices (single),
+0x0045A520,func,?DitherCode@@YAXPAEPAK0@Z,DitherCode,sms,confirmed,dither a 24-bit codebook to 8bpp palette indices,
+0x0045A800,func,?DitherCodeDouble@@YAXPAEPAK0@Z,DitherCodeDouble,sms,confirmed,dither codebook to 8bpp with 2x replication (Double),
+0x0045AB90,func,_DecodeDSVGA15NONFrame,DecodeDSVGA15NONFrame,sms,confirmed,"key frame, 15-bit codebook rendered to 8bpp (NON path, depth==8) with 2x doubling; dispatch submode6 case2 (+4==0)",
+0x0045B170,func,_DecodeDSVGA15NONSkipFrame,DecodeDSVGA15NONSkipFrame,sms,confirmed,NON 8bpp doubled key frame with skip-map (GlobalData+4!=0); dispatch submode6 case2 (+4!=0),
+0x0045B610,func,_DecodeSVGA15NONFrame,DecodeSVGA15NONFrame,sms,confirmed,key frame 15-bit codebook -> 8bpp (NON path) single; dispatch submode6 case1,
+0x0045B9C0,func,_DecodeInterSVGA15NONFrame,DecodeInterSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp single; dispatch inter submode6 case1,
+0x0045BE60,func,_DecodeInterDSVGA15NONFrame,DecodeInterDSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0),
+0x0045C500,func,_DecodeInterDSVGA15NONSkipFrame,DecodeInterDSVGA15NONSkipFrame,sms,confirmed,INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0),

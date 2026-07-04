@@ -1,491 +1,491 @@
-va,kind,name,display,source,confidence,notes
-0x00421D40,func,ZONEActive,,re,inferred,"zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate"
-0x00421DE0,func,ZONEServiceRange,,re,inferred,per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent
-0x00422100,data,,,waiver,confirmed,MAPScreen switch jump-table (computed access)
-0x00422120,func,ZONEPickTarget,,re,inferred,resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6)
-0x00422190,func,MAPWPListBounds,,re,confirmed,"walk a waypoint list: find head via flag bit0(&1), count entries to tail via bit1(&2); stride 0x44"
-0x00422230,func,MAPAdjustObjAlt,,re,inferred,raise current object altitude (DAT_0050ce95) to terrain via _T_Info; helper of @MAPObjAlts@4
-0x00422350,func,MAPMarkDirty,,re,inferred,"clear DAT_00536720 hover, set DAT_00536518 redraw flag"
-0x004224B3,func,MAPScreenToWorld,,re,confirmed,inverse of _MAPWorldToScreen: screen point * _mapScale + _worldCenter
-0x0042256A,func,MAPLoadBG,,re,inferred,load theater map background bitmap via _RMAccessHandle into DAT_004f0564 (alloc-id 7)
-0x004225D4,func,MAPRefreshBG,,re,inferred,reload map BG if theater name (_th+0x54) changed; recomputes map extents DAT_00536418.._00536430
-0x00422667,func,MAPFreeBG,,re,inferred,free the map background handle DAT_004f0564
-0x004226CB,func,MAPSetObjWP,,re,inferred,set an object's active waypoint pointer (+0xe4); helper of @MAPUpdateWPPtrs@8
-0x004226EE,func,MAPSetFormationWP,,re,inferred,set new WP for an object plus its wing (_WNGPart) and group (_GRPPart) members
-0x00422828,func,MAPClearSelection,,re,confirmed,clear map selection state: DAT_00536500 obj / _00536514 wp / _00536530 special / _005363e8 mode
-0x00422840,func,MAPClearHover,,re,inferred,"17-byte map-state setter (clears hover/redraw); role low-confidence, revisit"
-0x0042297E,func,MAPAddSpecial,,re,inferred,allocate a 0x3a-byte 'special' map marker into the _specials/DAT_0053665c table
-0x00422A71,func,MAPScreen,,re,confirmed,"mission-map/planning screen main loop (_curScreen==3); CAM.md 'FUN_00422a71'. Loads mc_menu/mc_dlg, drives waypoint/plane edit, save-mission, slew view"
-0x00423EA3,data,,,waiver,confirmed,interior of / adjacent to ?MAPOnSpecial@@YIFPAUWORD_POINT@@@Z; named at its base or owned by that subsystem
-0x00423ED4,func,MAPRebuildWPLoop,,re,inferred,recompute a waypoint loop back-pointer after edit (uses MAPWPListBounds + MAPWPOwnerIndex)
-0x00423F30,func,MAPStoreLeafTmap,,re,inferred,write selected tmap id+rotation into _tlist at current leaf coords; _T_SortTmapList
-0x00423F90,func,MAPFindLeafTmap,,re,confirmed,"linear search _tlist[_tlistSize] for the entry at (x&0xfffc,y&0xfffc)"
-0x00423FD0,func,MAPReadLeafTmap,,re,inferred,read tmap id/rot at current leaf coords into DAT_00536724/_0053652c
-0x00424040,func,MAPSetLeafTmapPic,,re,inferred,load '%s%d.PIC' tmap thumbnail via _RMAccess for the selected leaf
-0x004240D0,func,MAPEditTmapDialog,,re,inferred,"mc_name dialog: prompt for a tmap index, then apply via MAPStoreLeafTmap"
-0x004241A0,func,MAPReadLeafTmap2,,re,inferred,duplicate of MAPReadLeafTmap (separate call site)
-0x004241D0,func,MAPSelWPIsPlayers,,re,inferred,true if the selected waypoint (DAT_00536514) belongs to the player's wing
-0x00424220,func,MAPObjInPlayerWing,,re,inferred,true if object id shares the player's wing (_WNGPart of _playerId)
-0x00424290,func,MAPSpecialSelectable,,re,inferred,returns 0 in this build (special markers not directly selectable)
-0x004242A0,func,MAPResetObjects,,re,confirmed,"reset/place ALL mission objects to start state: clear parks (_APClearParks), reassign airfield parking (_APNearest/_APAssignPark), reset positions/speeds/waypoints. Called after load and before save"
-0x00424DE0,func,MAPSetWPTargetPos,,re,inferred,copy a waypoint target's world position (_WPTarget) onto an object
-0x00424E60,func,MAPClaimObjControl,,re,inferred,set current object owner byte DAT_0050ce90 = _thisComputer|0x80 (mark human-controlled)
-0x00424EC0,func,MAPSetObjWPFlags,,re,inferred,"set object's waypoint-capable flag (bit2 of +1) from class (5/7, or 3 with a group)"
-0x00424F20,func,MAPStatusText,,re,confirmed,set the map help/status line text (DAT_005365a8) and render it via _PrepareText
-0x00424FA3,func,MAPWPOwnerIndex,,re,inferred,return the object index that owns a given waypoint pointer
-0x00425023,func,MAPSnapWPToStrip,,re,inferred,snap a waypoint onto the nearest airstrip (_APNearest)
-0x00425072,func,MAPWPNearStrip,,re,inferred,test whether a point is near an airstrip (_APNearest)
-0x00425096,func,MAPScreenSpan,,re,inferred,compute world-space span of the current map viewport (two MAPScreenToWorld corners)
-0x004250CE,func,MAPPickObjIcon,,re,inferred,"hit-test object icons at a screen point (12x10 px box), honoring MAPObjVisible"
-0x00425196,func,MAPObjVisible,,re,confirmed,object map-visibility/side filter using view mask _DAT_00536628 and side flags
-0x00425249,func,MAPPickWPIcon,,re,inferred,hit-test waypoint icons at a screen point
-0x0042532A,func,MAPSwapPalette,,re,inferred,swap map palette DAT_00536590 <-> _curPalette (enter/leave map draw)
-0x00425358,func,MAPDraw,,re,confirmed,full map render: 2D map (grid/BG/specials/icons/paths) or 3D leaf preview via _T_Make/_T_Render depending on mode DAT_005363f0
-0x00425948,func,MAPDrawRuler,,re,inferred,draw the map scale ruler bar
-0x00425A8F,func,MAPIconRadius,,re,inferred,compute on-screen icon radius from current map scale
-0x00425ACD,func,MAPDrawEra,,re,inferred,draw 'Historical Era' year range text (non-campaign multiplayer maps)
-0x00425B8B,func,MAPSyncSliders,,re,inferred,"sync dialog X/Y sliders (items 4,3) to current _worldCenter/DAT_00536528"
-0x00425C0A,func,MAPRedrawSelection,,re,inferred,redraw highlight when the selected object changes
-0x00425C77,func,MAPDrawObjIcon,,re,confirmed,"draw one object's map icon: side color ring, type glyph (mcicons.PIC), padlock/target markers, label"
-0x00426277,func,MAPDrawTargetLink,,re,inferred,draw the dashed target link line from an object to its target
-0x004262DE,func,MAPDrawAllPaths,,re,inferred,iterate visible objects and draw each waypoint path
-0x00426325,func,MAPDrawObjPath,,re,inferred,draw one object's full waypoint polyline + target links
-0x0042648F,func,MAPDrawWPIcon,,re,inferred,blit a single waypoint node icon (mcicons.PIC)
-0x0042658D,func,MAPSetSelection,,re,confirmed,set current selection to an object id / waypoint ptr / special index (DAT_00536500/_514/_530)
-0x004265C1,func,MAPStepSelection,,re,inferred,advance waypoint selection +/-1 along the owning object's list
-0x00426696,func,MAPAssignWPTarget,,re,inferred,"assign escort/target to the selected waypoint with validation ('can't escort yourself', 'can't target a zone')"
-0x004267E4,func,MAPInsertWP,,re,confirmed,"insert a new waypoint after the selection: alloc (count+2)*0x44, _MMAllocPtr, splice via MAPUpdateWPPtrs, 'Only ten waypoints allowed'"
-0x00426ACB,func,MAPObjEditable,,re,inferred,ownership/editability test for an object (compares against DAT_00536504/_005364f8 special ids)
-0x00426B70,func,MAPObjEditableP,,re,inferred,"wrapper for MAPObjEditable(param,1)"
-0x00426BF0,func,MAPInitWPSpeed,,re,inferred,initialize a new waypoint's speed from _COCornerSpeed + formation defaults
-0x00426C45,func,MAPSetWPFormationParams,,re,inferred,copy formation offset/params from table &DAT_004f057e[idx*7] into a waypoint
-0x00426C6D,func,MAPDeleteWP,,re,confirmed,"delete the selected waypoint (frees loop node, memmoves list, fixes head flag)"
-0x00426D6D,func,MAPRequirePlayerPlane,,re,inferred,error 'You must first designate a plane' if no flyable/human plane exists
-0x00426D98,func,MAPHasFlyablePlane,,re,inferred,scan objects for a human-controllable class-4 plane (flags +0x10 bit7)
-0x00426DE2,func,MAPMakeSelPlayer,,re,inferred,make the selected class-4 object the human/player (calls MAPClaimObjControl)
-0x00426E37,func,MAPAddObject,,re,confirmed,"add a new object to the mission: _DialogPickFiles, _T_AddObj, seed position/altitude/side per class flags"
-0x00427195,func,MAPDeleteObject,,re,confirmed,"delete an object from the mission: _GRPRemove, _APDelete, clear chains, MAPResetObjects"
-0x004271ED,func,MAPWPButtons,,re,confirmed,waypoint-properties dialog button handler: name/altitude/speed/formation/react/loop edits (mc_name dialog)
-0x004276A0,func,MAPWPFormationIndex,,re,inferred,return a waypoint's formation-table index (&DAT_004f0578)
-0x004276E9,func,MAPQuantizeAlt,,re,inferred,"round an altitude to selectable increments within [min,max]"
-0x00427721,func,MAPQuantizeToTable,,re,inferred,snap a value to the nearest entry of a speed/step table (&DAT_004f0740)
-0x00427769,func,MAPObjButtons,,re,confirmed,"object-properties dialog button handler: side (mc_nat2), pilot name, plane type (_ChangePlaneType), fly-this-plane, success-condition flags"
-0x004281DD,func,MAPObjCampaignLocked,,re,inferred,editability gate that is stricter when _campaignFile != 0 (campaign missions are locked)
-0x00428270,func,MAPObjEditableCheck,,re,inferred,wrapper: MAPObjEditable then flag test
-0x004282D0,func,MAPToggleObjControl,,re,inferred,toggle human control ownership of an object across the current-obj stack
-0x00428340,func,MAPCenterOnPlayer,,re,confirmed,center the map _worldCenter/DAT_00536528 on the player object; select it
-0x00428412,func,MISSIONLoad,,re,confirmed,canonical campaign/mission loader (CAM.md): MISSIONShutdown->Init1->CallMissionProc(.mc[_nato]_M or named)->Init2->MAPResetObjects->CenterOnPlayer->T_NamedTmaps/T_InitDictionary
-0x004284CA,func,MAPSaveMission,,re,confirmed,"save-mission dialog: prompt filename (mc_name), validate, write .M via FUN_00495e80"
-0x0042866A,func,MAPDragItem,,re,confirmed,mouse-drag a selected object/waypoint to a new map position (ghost bitmap follow)
-0x004289EE,func,MAPSelWorldPos,,re,inferred,get the world position of the current selection (obj/wp/special)
-0x00428A3B,func,MAPDrawSelInfo,,re,inferred,draw the selection highlight glyph + rebuild the info panel (dispatches to MAPBuildObjInfo/MAPBuildWPInfo)
-0x00428AEF,func,MAPBuildWPInfo,,re,confirmed,build the waypoint info-panel text and hot-button rects: heading/ETA/formation/react/target strings
-0x00429245,func,MAPFormatWPTarget,,re,inferred,format a waypoint's target name string (_WPTarget + _NextString)
-0x004292D2,func,MAPFormatReactFlags,,re,inferred,map a react-flag byte to the button-index table (&DAT_004f0550)
-0x0042934C,func,MAPBuildObjInfo,,re,confirmed,build the object info-panel text and hot-button rects: pilot/heading/altitude/mission-success/attack flags
-0x00429DDE,func,MAPMissionMenu,,re,confirmed,"mission-editor command dispatcher: view-filter toggles (_DAT_00536628), CampaignMenu, save-changes prompt, opens all mc_* scenario dialogs; drives wing/group add via MAPWingAdd/MAPGroupAdd"
-0x0042A576,data,,,waiver,confirmed,MAPMissionMenu switch jump-table
-0x0042A5D2,data,,,waiver,confirmed,MAPMissionMenu switch jump-table
-0x0042A632,data,,,waiver,confirmed,MAPMissionMenu switch jump-table
-0x0042A656,func,MAPRandomizeSkill,,re,inferred,randomize a side's object AI-skill byte (DAT_0050cf62) via _Rand
-0x0042A71A,func,MAPLoadMissionDialog,,re,inferred,pick a mission file (_DialogPickFiles) and load it into the editor via MISSIONLoad
-0x0042A780,func,MAPDlgWeather,,re,inferred,"weather/time-of-day dialog (mc_weth); sets _startTimeOfDay/_currentTimeOfDay, random cloud offset"
-0x0042A93A,func,MAPDlgEndTime,,re,inferred,end-scenario time dialog (mc_time); sets _endScenarioSetTime
-0x0042A9C4,func,MAPDlgRevive,,re,inferred,revive/lives dialog (mc_lives); sets _reviveAllowed
-0x0042AA50,func,MAPDlgReviveDelay,,re,inferred,revive-delay dialog (mc_delay); sets _reviveDelay
-0x0042AADC,func,MAPDlgReviveDist,,re,inferred,revive-distance dialog (mc_dist); sets _reviveDist
-0x0042AB68,func,MAPDlgEndKills,,re,inferred,end-scenario kills dialog (mc_kills); sets _endScenarioKills
-0x0042ABF4,func,MAPDlgEndKillType,,re,inferred,end-scenario kill-type dialog (mc_killt); sets _endScenarioKillsType
-0x0042AC80,func,MAPDlgNatoFighters,,re,inferred,NATO-fighters side dialog (mc_natf)
-0x0042AD35,func,MAPDlgScoring,,re,inferred,scoring dialog (mc_scr); reads 4 score-weight fields
-0x0042AE3F,func,MAPWingRejoin,,re,inferred,"rejoin/reposition a wing at its leader (_WNGPart, _wingIds/_wingSizes)"
-0x0042AEDF,func,MAPWingSetLeader,,re,inferred,make the selected object its wing's leader (_wingIds[slot]=sel)
-0x0042AF86,func,MAPWingAdd,,re,inferred,add an aircraft to wing slot N (_WNGAdd); 'No more aircraft can be added'
-0x0042B056,func,MAPGroupRejoin,,re,inferred,"rejoin/reposition a group at its leader (_GRPPart, _groupIds/_groupSizes)"
-0x0042B0F6,func,MAPGroupSetLeader,,re,inferred,make the selected object its group's leader (_groupIds[slot]=sel)
-0x0042B19D,func,MAPGroupAdd,,re,inferred,"add an object to group slot N (_GRPAdd, _GRPHumansFirst)"
-0x0042B275,func,MAPDeleteSpecial,,re,inferred,delete the selected special marker (_MMFreePtr on _specials[sel])
-0x00467240,func,PilotFindFreeSlot,,re,inferred,find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails
-0x004674F0,func,PilotBuildPaper,,re,confirmed,"build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'"
-0x00467860,func,PilotPaperAddLine,,re,inferred,append one label/value line pair into the pilot-paper text buffer
-0x00467880,func,PilotPaperEndLine,,re,inferred,append the final/terminating line to the pilot-paper buffer
-0x00467E30,func,PilotListAddAvail,,re,confirmed,load a pilot file (_RMAccess 0x810c) and insert it sorted into _sortedPilots (_totalPilots++)
-0x00468C40,func,PilotListAddUnavail,,re,confirmed,load a pilot into the unavailable list _unAvailNames (_unAvailPilots++)
-0x00468CA0,func,PilotMakeCopyName,,re,inferred,"generate a unique 'NAME Copy N' pilot name, scanning both pilot lists"
-0x00468DF0,func,PilotStripCopySuffix,,re,inferred,strip a trailing ' Copy' from a pilot name (_strstr s_Copy)
-0x00468E40,func,PilotLoadBySortIndex,,re,confirmed,load the pilot at sorted index (PLT%03d.P) and copy fields into _pilotName etc.
-0x00468F00,func,PilotFormatRank,,re,inferred,format a pilot's rank string from the _pilotRanks table
-0x00468F40,func,PilotDiskSpaceError,,re,inferred,'You don't have enough free disk space' dialog before a pilot save
-0x00468F80,func,PilotSetField,,re,inferred,"small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit"
-0x0046A57B,func,,,waiver,inferred,FOREIGN: SM module proc-by-name resolver (_SMAddress); owner = memory-resource/overlay #223
-0x0047A510,func,,,waiver,inferred,FOREIGN: file-exists/open helper in the LIB filesystem block (AnalyzeMM mislabels it 'MM keyword handler'); owner = memory-resource #223
-0x0047FAAE,func,JOGCFetchMission,,re,inferred,"download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219"
-0x004805AC,func,,,waiver,inferred,FOREIGN: anti-cheat CRC accumulator per _thisComputer; owner = network/integrity #219
-0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport
-0x00481920,func,CampaignProcInvoke,,re,confirmed,low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4
-0x00481A7B,func,MISSIONEnemiesAlive,,re,inferred,"scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome"
-0x00483C90,func,TextNextToken,,re,confirmed,whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90
-0x00483D10,func,TextIsDelim,,re,inferred,predicate: is char a token delimiter/whitespace (helper of TextNextToken)
-0x00483D30,func,TextNextNumber,,re,inferred,read next token and convert to integer (_StringToNumber)
-0x00483D50,func,TextTokenToValue,,re,inferred,"scalar token->value conversion helper (uint->uint); low-confidence, revisit"
-0x00485380,func,CampaignAccumStats,,re,confirmed,fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'
-0x004854A0,func,StatsAddPair,,re,confirmed,add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'
-0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'
-0x004867D0,func,MISSIONPlayerSlot,,re,inferred,resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore)
-0x00486BF0,func,,,waiver,inferred,FOREIGN: TIME game-clock update helper (QueryPerformanceCounter/__alldiv); owner = game-loop/startup
-0x00486DC0,func,,,waiver,inferred,FOREIGN: FPS-counter print helper; owner = game-loop/startup
-0x004F0000,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem
-0x004F0398,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem
-0x004F03A0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem
-0x004F04E0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem
-0x004F0540,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem
-0x004F0548,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F054C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0550,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0552,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0564,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0568,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0578,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F057A,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F057E,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0580,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0582,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0586,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F058C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F058E,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0590,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0594,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F05E8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F05F0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F05F8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F05FA,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0610,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0614,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0618,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0670,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06A0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06C0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06E0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06E4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06F8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F06FC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0710,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0714,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0730,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0734,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0740,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0742,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0754,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0758,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F075C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0764,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0780,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F07A0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F07A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F07C0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F07D0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0850,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0870,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F089C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F08C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F08E4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0914,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F093C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0948,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0954,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F095C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0964,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F096C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0974,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F097C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0984,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F09A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F09BC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F09D4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F09DC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F09F0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A0C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A24,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A40,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A48,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A50,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A54,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A58,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A5C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A78,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0A94,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0AD0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0AE0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0B0C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0B48,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0B7C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0BBC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0BE0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0C18,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0C4C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0C80,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0C98,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0CA0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0CA8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0CB4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0CD8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0D04,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0D20,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0D34,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0D4C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0D98,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0D9C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0DCC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0DE4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0DEC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0E10,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0E30,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0E5C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0E64,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0E6C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0E74,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0EA0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0EB0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0EE0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0EE4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F08,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F20,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F34,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F48,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F60,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F6C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0F84,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FA0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FA8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FB8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FC0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FC8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FE8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F0FFC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F100C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1028,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1054,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F10A8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F10C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F10E0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F10F4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F10FC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F111C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1120,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1124,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1128,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F112C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1144,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F114C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1154,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F115C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1164,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1184,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F11A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F11C8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F11D0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F11D8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1200,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1224,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1258,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1290,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F12CC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1300,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F131C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1338,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F134C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1368,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1381,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1388,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F13B0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F13D8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F13F0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1410,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1424,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1444,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1450,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1460,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F146C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F147C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1490,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14B8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14C0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14CC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14D4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14E0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14EC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F14F4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1500,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F150C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1514,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1570,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1578,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F15A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F15D8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1600,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1630,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F1664,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem
-0x004F7138,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F715C,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F716C,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F717C,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F7198,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F71AC,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F71C0,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F71D0,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F7318,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F7324,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F7330,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F7338,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem
-0x004F8184,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem
-0x004F86F0,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem
-0x004F8930,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem
-0x004F8BA0,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem
-0x004F8BA8,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem
-0x004FAB40,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB44,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB50,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB54,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB58,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB5C,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB60,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB64,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB68,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB6C,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FAB70,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem
-0x004FB1C9,data,,,waiver,confirmed,interior of / adjacent to _mapName; named at its base or owned by that subsystem
-0x004FB2BC,data,,,waiver,confirmed,interior of / adjacent to _nationStrings; named at its base or owned by that subsystem
-0x004FBAA4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBAC0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBAC1,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBAC8,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBAE0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBAF4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBB2C,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBB44,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBB5C,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBB70,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBB8C,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBBAC,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBBB4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBBD8,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBBD9,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBBE0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FBBF1,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem
-0x004FC928,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem
-0x004FC92C,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem
-0x00502424,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem
-0x00529134,data,,,waiver,confirmed,interior of / adjacent to _itemPicked; named at its base or owned by that subsystem
-0x005362C8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362D0,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362D2,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362D4,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362D6,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362D8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362DA,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362DC,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362E6,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362E8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362EA,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362F7,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362F8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362FA,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005362FC,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005363E8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005363EC,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005363F0,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005363F4,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005363F8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536408,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x0053640C,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536410,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536418,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x0053641C,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536420,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536428,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x0053642C,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536430,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x0053646A,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x005364F8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem
-0x00536500,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x00536504,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x00536508,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x0053650A,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x0053650C,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x00536510,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x00536514,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x00536518,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x0053651C,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem
-0x00536524,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem
-0x00536528,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem
-0x0053652C,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem
-0x00536530,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem
-0x00536534,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem
-0x00536539,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536578,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x0053657C,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536580,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536584,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536588,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x0053658C,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536590,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536594,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536598,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x0053659C,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x005365A0,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x005365A4,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x005365A8,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x005365F8,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem
-0x00536608,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x0053660C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536610,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536614,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536618,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x0053661C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536620,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536624,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x0053662C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536630,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536634,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536638,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x0053663C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem
-0x00536644,data,,,waiver,confirmed,interior of / adjacent to _desiredViewSet; named at its base or owned by that subsystem
-0x00536648,data,,,waiver,confirmed,interior of / adjacent to _desiredViewSet; named at its base or owned by that subsystem
-0x00536650,data,,,waiver,confirmed,interior of / adjacent to ?mapScale@@3JA; named at its base or owned by that subsystem
-0x0053665C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
-0x00536660,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
-0x00536664,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
-0x00536720,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
-0x00536724,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
-0x005468CC,data,,,waiver,confirmed,interior of / adjacent to _groupIds; named at its base or owned by that subsystem
-0x005469B4,data,,,waiver,confirmed,interior of / adjacent to _wingIds; named at its base or owned by that subsystem
-0x0054DDC4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDD0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDD4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDD8,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDDC,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDE0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDE4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDE8,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDEC,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054DDF0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem
-0x0054E54D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem
-0x0054E56D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem
-0x00551668,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem
-0x00551669,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem
-0x0055166A,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem
-0x005516F1,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem
-0x005516FD,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem
-0x0055281C,data,,,waiver,confirmed,interior of / adjacent to _endScenarioKillsType; named at its base or owned by that subsystem
-0x005528C0,data,,,waiver,confirmed,interior of / adjacent to _fortMission; named at its base or owned by that subsystem
-0x005528D0,data,,,waiver,confirmed,interior of / adjacent to _currentT; named at its base or owned by that subsystem
-0x005528D4,data,,,waiver,confirmed,interior of / adjacent to _currentT; named at its base or owned by that subsystem
-0x00552938,data,,,waiver,confirmed,interior of / adjacent to _currentTimeOfDay; named at its base or owned by that subsystem
-0x0055293C,data,,,waiver,confirmed,interior of / adjacent to _currentTimeOfDay; named at its base or owned by that subsystem
-0x005733E8,data,,,waiver,confirmed,interior of / adjacent to _tlist; named at its base or owned by that subsystem
-0x005733EA,data,,,waiver,confirmed,interior of / adjacent to _tlist; named at its base or owned by that subsystem
-0x00583F40,data,,,waiver,confirmed,interior of / adjacent to _curPalette; named at its base or owned by that subsystem
-0x00583F44,data,,,waiver,confirmed,interior of / adjacent to _curPalette; named at its base or owned by that subsystem
+va,kind,name,display,source,confidence,notes,type
+0x00421D40,func,ZONEActive,,re,inferred,"zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate",
+0x00421DE0,func,ZONEServiceRange,,re,inferred,per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent,
+0x00422100,data,,,waiver,confirmed,MAPScreen switch jump-table (computed access),
+0x00422120,func,ZONEPickTarget,,re,inferred,resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6),
+0x00422190,func,MAPWPListBounds,,re,confirmed,"walk a waypoint list: find head via flag bit0(&1), count entries to tail via bit1(&2); stride 0x44",
+0x00422230,func,MAPAdjustObjAlt,,re,inferred,raise current object altitude (DAT_0050ce95) to terrain via _T_Info; helper of @MAPObjAlts@4,
+0x00422350,func,MAPMarkDirty,,re,inferred,"clear DAT_00536720 hover, set DAT_00536518 redraw flag",
+0x004224B3,func,MAPScreenToWorld,,re,confirmed,inverse of _MAPWorldToScreen: screen point * _mapScale + _worldCenter,
+0x0042256A,func,MAPLoadBG,,re,inferred,load theater map background bitmap via _RMAccessHandle into DAT_004f0564 (alloc-id 7),
+0x004225D4,func,MAPRefreshBG,,re,inferred,reload map BG if theater name (_th+0x54) changed; recomputes map extents DAT_00536418.._00536430,
+0x00422667,func,MAPFreeBG,,re,inferred,free the map background handle DAT_004f0564,
+0x004226CB,func,MAPSetObjWP,,re,inferred,set an object's active waypoint pointer (+0xe4); helper of @MAPUpdateWPPtrs@8,
+0x004226EE,func,MAPSetFormationWP,,re,inferred,set new WP for an object plus its wing (_WNGPart) and group (_GRPPart) members,
+0x00422828,func,MAPClearSelection,,re,confirmed,clear map selection state: DAT_00536500 obj / _00536514 wp / _00536530 special / _005363e8 mode,
+0x00422840,func,MAPClearHover,,re,inferred,"17-byte map-state setter (clears hover/redraw); role low-confidence, revisit",
+0x0042297E,func,MAPAddSpecial,,re,inferred,allocate a 0x3a-byte 'special' map marker into the _specials/DAT_0053665c table,
+0x00422A71,func,MAPScreen,,re,confirmed,"mission-map/planning screen main loop (_curScreen==3); CAM.md 'FUN_00422a71'. Loads mc_menu/mc_dlg, drives waypoint/plane edit, save-mission, slew view",
+0x00423EA3,data,,,waiver,confirmed,interior of / adjacent to ?MAPOnSpecial@@YIFPAUWORD_POINT@@@Z; named at its base or owned by that subsystem,
+0x00423ED4,func,MAPRebuildWPLoop,,re,inferred,recompute a waypoint loop back-pointer after edit (uses MAPWPListBounds + MAPWPOwnerIndex),
+0x00423F30,func,MAPStoreLeafTmap,,re,inferred,write selected tmap id+rotation into _tlist at current leaf coords; _T_SortTmapList,
+0x00423F90,func,MAPFindLeafTmap,,re,confirmed,"linear search _tlist[_tlistSize] for the entry at (x&0xfffc,y&0xfffc)",
+0x00423FD0,func,MAPReadLeafTmap,,re,inferred,read tmap id/rot at current leaf coords into DAT_00536724/_0053652c,
+0x00424040,func,MAPSetLeafTmapPic,,re,inferred,load '%s%d.PIC' tmap thumbnail via _RMAccess for the selected leaf,
+0x004240D0,func,MAPEditTmapDialog,,re,inferred,"mc_name dialog: prompt for a tmap index, then apply via MAPStoreLeafTmap",
+0x004241A0,func,MAPReadLeafTmap2,,re,inferred,duplicate of MAPReadLeafTmap (separate call site),
+0x004241D0,func,MAPSelWPIsPlayers,,re,inferred,true if the selected waypoint (DAT_00536514) belongs to the player's wing,
+0x00424220,func,MAPObjInPlayerWing,,re,inferred,true if object id shares the player's wing (_WNGPart of _playerId),
+0x00424290,func,MAPSpecialSelectable,,re,inferred,returns 0 in this build (special markers not directly selectable),
+0x004242A0,func,MAPResetObjects,,re,confirmed,"reset/place ALL mission objects to start state: clear parks (_APClearParks), reassign airfield parking (_APNearest/_APAssignPark), reset positions/speeds/waypoints. Called after load and before save",
+0x00424DE0,func,MAPSetWPTargetPos,,re,inferred,copy a waypoint target's world position (_WPTarget) onto an object,
+0x00424E60,func,MAPClaimObjControl,,re,inferred,set current object owner byte DAT_0050ce90 = _thisComputer|0x80 (mark human-controlled),
+0x00424EC0,func,MAPSetObjWPFlags,,re,inferred,"set object's waypoint-capable flag (bit2 of +1) from class (5/7, or 3 with a group)",
+0x00424F20,func,MAPStatusText,,re,confirmed,set the map help/status line text (DAT_005365a8) and render it via _PrepareText,
+0x00424FA3,func,MAPWPOwnerIndex,,re,inferred,return the object index that owns a given waypoint pointer,
+0x00425023,func,MAPSnapWPToStrip,,re,inferred,snap a waypoint onto the nearest airstrip (_APNearest),
+0x00425072,func,MAPWPNearStrip,,re,inferred,test whether a point is near an airstrip (_APNearest),
+0x00425096,func,MAPScreenSpan,,re,inferred,compute world-space span of the current map viewport (two MAPScreenToWorld corners),
+0x004250CE,func,MAPPickObjIcon,,re,inferred,"hit-test object icons at a screen point (12x10 px box), honoring MAPObjVisible",
+0x00425196,func,MAPObjVisible,,re,confirmed,object map-visibility/side filter using view mask _DAT_00536628 and side flags,
+0x00425249,func,MAPPickWPIcon,,re,inferred,hit-test waypoint icons at a screen point,
+0x0042532A,func,MAPSwapPalette,,re,inferred,swap map palette DAT_00536590 <-> _curPalette (enter/leave map draw),
+0x00425358,func,MAPDraw,,re,confirmed,full map render: 2D map (grid/BG/specials/icons/paths) or 3D leaf preview via _T_Make/_T_Render depending on mode DAT_005363f0,
+0x00425948,func,MAPDrawRuler,,re,inferred,draw the map scale ruler bar,
+0x00425A8F,func,MAPIconRadius,,re,inferred,compute on-screen icon radius from current map scale,
+0x00425ACD,func,MAPDrawEra,,re,inferred,draw 'Historical Era' year range text (non-campaign multiplayer maps),
+0x00425B8B,func,MAPSyncSliders,,re,inferred,"sync dialog X/Y sliders (items 4,3) to current _worldCenter/DAT_00536528",
+0x00425C0A,func,MAPRedrawSelection,,re,inferred,redraw highlight when the selected object changes,
+0x00425C77,func,MAPDrawObjIcon,,re,confirmed,"draw one object's map icon: side color ring, type glyph (mcicons.PIC), padlock/target markers, label",
+0x00426277,func,MAPDrawTargetLink,,re,inferred,draw the dashed target link line from an object to its target,
+0x004262DE,func,MAPDrawAllPaths,,re,inferred,iterate visible objects and draw each waypoint path,
+0x00426325,func,MAPDrawObjPath,,re,inferred,draw one object's full waypoint polyline + target links,
+0x0042648F,func,MAPDrawWPIcon,,re,inferred,blit a single waypoint node icon (mcicons.PIC),
+0x0042658D,func,MAPSetSelection,,re,confirmed,set current selection to an object id / waypoint ptr / special index (DAT_00536500/_514/_530),
+0x004265C1,func,MAPStepSelection,,re,inferred,advance waypoint selection +/-1 along the owning object's list,
+0x00426696,func,MAPAssignWPTarget,,re,inferred,"assign escort/target to the selected waypoint with validation ('can't escort yourself', 'can't target a zone')",
+0x004267E4,func,MAPInsertWP,,re,confirmed,"insert a new waypoint after the selection: alloc (count+2)*0x44, _MMAllocPtr, splice via MAPUpdateWPPtrs, 'Only ten waypoints allowed'",
+0x00426ACB,func,MAPObjEditable,,re,inferred,ownership/editability test for an object (compares against DAT_00536504/_005364f8 special ids),
+0x00426B70,func,MAPObjEditableP,,re,inferred,"wrapper for MAPObjEditable(param,1)",
+0x00426BF0,func,MAPInitWPSpeed,,re,inferred,initialize a new waypoint's speed from _COCornerSpeed + formation defaults,
+0x00426C45,func,MAPSetWPFormationParams,,re,inferred,copy formation offset/params from table &DAT_004f057e[idx*7] into a waypoint,
+0x00426C6D,func,MAPDeleteWP,,re,confirmed,"delete the selected waypoint (frees loop node, memmoves list, fixes head flag)",
+0x00426D6D,func,MAPRequirePlayerPlane,,re,inferred,error 'You must first designate a plane' if no flyable/human plane exists,
+0x00426D98,func,MAPHasFlyablePlane,,re,inferred,scan objects for a human-controllable class-4 plane (flags +0x10 bit7),
+0x00426DE2,func,MAPMakeSelPlayer,,re,inferred,make the selected class-4 object the human/player (calls MAPClaimObjControl),
+0x00426E37,func,MAPAddObject,,re,confirmed,"add a new object to the mission: _DialogPickFiles, _T_AddObj, seed position/altitude/side per class flags",
+0x00427195,func,MAPDeleteObject,,re,confirmed,"delete an object from the mission: _GRPRemove, _APDelete, clear chains, MAPResetObjects",
+0x004271ED,func,MAPWPButtons,,re,confirmed,waypoint-properties dialog button handler: name/altitude/speed/formation/react/loop edits (mc_name dialog),
+0x004276A0,func,MAPWPFormationIndex,,re,inferred,return a waypoint's formation-table index (&DAT_004f0578),
+0x004276E9,func,MAPQuantizeAlt,,re,inferred,"round an altitude to selectable increments within [min,max]",
+0x00427721,func,MAPQuantizeToTable,,re,inferred,snap a value to the nearest entry of a speed/step table (&DAT_004f0740),
+0x00427769,func,MAPObjButtons,,re,confirmed,"object-properties dialog button handler: side (mc_nat2), pilot name, plane type (_ChangePlaneType), fly-this-plane, success-condition flags",
+0x004281DD,func,MAPObjCampaignLocked,,re,inferred,editability gate that is stricter when _campaignFile != 0 (campaign missions are locked),
+0x00428270,func,MAPObjEditableCheck,,re,inferred,wrapper: MAPObjEditable then flag test,
+0x004282D0,func,MAPToggleObjControl,,re,inferred,toggle human control ownership of an object across the current-obj stack,
+0x00428340,func,MAPCenterOnPlayer,,re,confirmed,center the map _worldCenter/DAT_00536528 on the player object; select it,
+0x00428412,func,MISSIONLoad,,re,confirmed,canonical campaign/mission loader (CAM.md): MISSIONShutdown->Init1->CallMissionProc(.mc[_nato]_M or named)->Init2->MAPResetObjects->CenterOnPlayer->T_NamedTmaps/T_InitDictionary,
+0x004284CA,func,MAPSaveMission,,re,confirmed,"save-mission dialog: prompt filename (mc_name), validate, write .M via FUN_00495e80",
+0x0042866A,func,MAPDragItem,,re,confirmed,mouse-drag a selected object/waypoint to a new map position (ghost bitmap follow),
+0x004289EE,func,MAPSelWorldPos,,re,inferred,get the world position of the current selection (obj/wp/special),
+0x00428A3B,func,MAPDrawSelInfo,,re,inferred,draw the selection highlight glyph + rebuild the info panel (dispatches to MAPBuildObjInfo/MAPBuildWPInfo),
+0x00428AEF,func,MAPBuildWPInfo,,re,confirmed,build the waypoint info-panel text and hot-button rects: heading/ETA/formation/react/target strings,
+0x00429245,func,MAPFormatWPTarget,,re,inferred,format a waypoint's target name string (_WPTarget + _NextString),
+0x004292D2,func,MAPFormatReactFlags,,re,inferred,map a react-flag byte to the button-index table (&DAT_004f0550),
+0x0042934C,func,MAPBuildObjInfo,,re,confirmed,build the object info-panel text and hot-button rects: pilot/heading/altitude/mission-success/attack flags,
+0x00429DDE,func,MAPMissionMenu,,re,confirmed,"mission-editor command dispatcher: view-filter toggles (_DAT_00536628), CampaignMenu, save-changes prompt, opens all mc_* scenario dialogs; drives wing/group add via MAPWingAdd/MAPGroupAdd",
+0x0042A576,data,,,waiver,confirmed,MAPMissionMenu switch jump-table,
+0x0042A5D2,data,,,waiver,confirmed,MAPMissionMenu switch jump-table,
+0x0042A632,data,,,waiver,confirmed,MAPMissionMenu switch jump-table,
+0x0042A656,func,MAPRandomizeSkill,,re,inferred,randomize a side's object AI-skill byte (DAT_0050cf62) via _Rand,
+0x0042A71A,func,MAPLoadMissionDialog,,re,inferred,pick a mission file (_DialogPickFiles) and load it into the editor via MISSIONLoad,
+0x0042A780,func,MAPDlgWeather,,re,inferred,"weather/time-of-day dialog (mc_weth); sets _startTimeOfDay/_currentTimeOfDay, random cloud offset",
+0x0042A93A,func,MAPDlgEndTime,,re,inferred,end-scenario time dialog (mc_time); sets _endScenarioSetTime,
+0x0042A9C4,func,MAPDlgRevive,,re,inferred,revive/lives dialog (mc_lives); sets _reviveAllowed,
+0x0042AA50,func,MAPDlgReviveDelay,,re,inferred,revive-delay dialog (mc_delay); sets _reviveDelay,
+0x0042AADC,func,MAPDlgReviveDist,,re,inferred,revive-distance dialog (mc_dist); sets _reviveDist,
+0x0042AB68,func,MAPDlgEndKills,,re,inferred,end-scenario kills dialog (mc_kills); sets _endScenarioKills,
+0x0042ABF4,func,MAPDlgEndKillType,,re,inferred,end-scenario kill-type dialog (mc_killt); sets _endScenarioKillsType,
+0x0042AC80,func,MAPDlgNatoFighters,,re,inferred,NATO-fighters side dialog (mc_natf),
+0x0042AD35,func,MAPDlgScoring,,re,inferred,scoring dialog (mc_scr); reads 4 score-weight fields,
+0x0042AE3F,func,MAPWingRejoin,,re,inferred,"rejoin/reposition a wing at its leader (_WNGPart, _wingIds/_wingSizes)",
+0x0042AEDF,func,MAPWingSetLeader,,re,inferred,make the selected object its wing's leader (_wingIds[slot]=sel),
+0x0042AF86,func,MAPWingAdd,,re,inferred,add an aircraft to wing slot N (_WNGAdd); 'No more aircraft can be added',
+0x0042B056,func,MAPGroupRejoin,,re,inferred,"rejoin/reposition a group at its leader (_GRPPart, _groupIds/_groupSizes)",
+0x0042B0F6,func,MAPGroupSetLeader,,re,inferred,make the selected object its group's leader (_groupIds[slot]=sel),
+0x0042B19D,func,MAPGroupAdd,,re,inferred,"add an object to group slot N (_GRPAdd, _GRPHumansFirst)",
+0x0042B275,func,MAPDeleteSpecial,,re,inferred,delete the selected special marker (_MMFreePtr on _specials[sel]),
+0x00467240,func,PilotFindFreeSlot,,re,inferred,find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails,
+0x004674F0,func,PilotBuildPaper,,re,confirmed,"build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'",
+0x00467860,func,PilotPaperAddLine,,re,inferred,append one label/value line pair into the pilot-paper text buffer,
+0x00467880,func,PilotPaperEndLine,,re,inferred,append the final/terminating line to the pilot-paper buffer,
+0x00467E30,func,PilotListAddAvail,,re,confirmed,load a pilot file (_RMAccess 0x810c) and insert it sorted into _sortedPilots (_totalPilots++),
+0x00468C40,func,PilotListAddUnavail,,re,confirmed,load a pilot into the unavailable list _unAvailNames (_unAvailPilots++),
+0x00468CA0,func,PilotMakeCopyName,,re,inferred,"generate a unique 'NAME Copy N' pilot name, scanning both pilot lists",
+0x00468DF0,func,PilotStripCopySuffix,,re,inferred,strip a trailing ' Copy' from a pilot name (_strstr s_Copy),
+0x00468E40,func,PilotLoadBySortIndex,,re,confirmed,load the pilot at sorted index (PLT%03d.P) and copy fields into _pilotName etc.,
+0x00468F00,func,PilotFormatRank,,re,inferred,format a pilot's rank string from the _pilotRanks table,
+0x00468F40,func,PilotDiskSpaceError,,re,inferred,'You don't have enough free disk space' dialog before a pilot save,
+0x00468F80,func,PilotSetField,,re,inferred,"small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit",
+0x0046A57B,func,,,waiver,inferred,FOREIGN: SM module proc-by-name resolver (_SMAddress); owner = memory-resource/overlay #223,
+0x0047A510,func,,,waiver,inferred,FOREIGN: file-exists/open helper in the LIB filesystem block (AnalyzeMM mislabels it 'MM keyword handler'); owner = memory-resource #223,
+0x0047FAAE,func,JOGCFetchMission,,re,inferred,"download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219",
+0x004805AC,func,,,waiver,inferred,FOREIGN: anti-cheat CRC accumulator per _thisComputer; owner = network/integrity #219,
+0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport,
+0x00481920,func,CampaignProcInvoke,,re,confirmed,low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4,
+0x00481A7B,func,MISSIONEnemiesAlive,,re,inferred,"scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome",
+0x00483C90,func,TextNextToken,,re,confirmed,whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90,
+0x00483D10,func,TextIsDelim,,re,inferred,predicate: is char a token delimiter/whitespace (helper of TextNextToken),
+0x00483D30,func,TextNextNumber,,re,inferred,read next token and convert to integer (_StringToNumber),
+0x00483D50,func,TextTokenToValue,,re,inferred,"scalar token->value conversion helper (uint->uint); low-confidence, revisit",
+0x00485380,func,CampaignAccumStats,,re,confirmed,fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush',
+0x004854A0,func,StatsAddPair,,re,confirmed,add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator',
+0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch',
+0x004867D0,func,MISSIONPlayerSlot,,re,inferred,resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore),
+0x00486BF0,func,,,waiver,inferred,FOREIGN: TIME game-clock update helper (QueryPerformanceCounter/__alldiv); owner = game-loop/startup,
+0x00486DC0,func,,,waiver,inferred,FOREIGN: FPS-counter print helper; owner = game-loop/startup,
+0x004F0000,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
+0x004F0398,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
+0x004F03A0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
+0x004F04E0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
+0x004F0540,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
+0x004F0548,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F054C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0550,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0552,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0564,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0568,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0578,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F057A,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F057E,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0580,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0582,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0586,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F058C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F058E,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0590,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0594,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F05E8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F05F0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F05F8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F05FA,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0610,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0614,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0618,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0670,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06A0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06C0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06E0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06E4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06F8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F06FC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0710,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0714,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0730,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0734,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0740,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0742,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0754,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0758,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F075C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0764,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0780,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F07A0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F07A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F07C0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F07D0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0850,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0870,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F089C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F08C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F08E4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0914,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F093C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0948,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0954,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F095C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0964,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F096C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0974,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F097C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0984,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F09A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F09BC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F09D4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F09DC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F09F0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A0C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A24,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A40,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A48,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A50,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A54,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A58,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A5C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A78,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0A94,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0AD0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0AE0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0B0C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0B48,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0B7C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0BBC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0BE0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0C18,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0C4C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0C80,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0C98,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0CA0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0CA8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0CB4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0CD8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0D04,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0D20,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0D34,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0D4C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0D98,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0D9C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0DCC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0DE4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0DEC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0E10,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0E30,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0E5C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0E64,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0E6C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0E74,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0EA0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0EB0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0EE0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0EE4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F08,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F20,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F34,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F48,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F60,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F6C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0F84,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FA0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FA8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FB8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FC0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FC8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FE8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F0FFC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F100C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1028,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1054,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F10A8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F10C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F10E0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F10F4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F10FC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F111C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1120,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1124,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1128,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F112C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1144,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F114C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1154,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F115C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1164,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1184,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F11A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F11C8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F11D0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F11D8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1200,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1224,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1258,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1290,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F12CC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1300,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F131C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1338,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F134C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1368,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1381,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1388,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F13B0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F13D8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F13F0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1410,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1424,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1444,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1450,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1460,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F146C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F147C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1490,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14B8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14C0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14C4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14CC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14D4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14E0,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14EC,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F14F4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1500,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F150C,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1514,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1570,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1578,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F15A4,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F15D8,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1600,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1630,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F1664,data,,,waiver,confirmed,interior of / adjacent to ?mcFlyAll@@3DA; named at its base or owned by that subsystem,
+0x004F7138,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F715C,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F716C,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F717C,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F7198,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F71AC,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F71C0,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F71D0,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F7318,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F7324,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F7330,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F7338,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F8184,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F86F0,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
+0x004F8930,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
+0x004F8BA0,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
+0x004F8BA8,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
+0x004FAB40,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB44,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB50,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB54,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB58,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB5C,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB60,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB64,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB68,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB6C,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FAB70,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FB1C9,data,,,waiver,confirmed,interior of / adjacent to _mapName; named at its base or owned by that subsystem,
+0x004FB2BC,data,,,waiver,confirmed,interior of / adjacent to _nationStrings; named at its base or owned by that subsystem,
+0x004FBAA4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBAC0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBAC1,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBAC8,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBAE0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBAF4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBB2C,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBB44,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBB5C,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBB70,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBB8C,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBBAC,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBBB4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBBD8,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBBD9,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBBE0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FBBF1,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
+0x004FC928,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem,
+0x004FC92C,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem,
+0x00502424,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x00529134,data,,,waiver,confirmed,interior of / adjacent to _itemPicked; named at its base or owned by that subsystem,
+0x005362C8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362D0,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362D2,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362D4,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362D6,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362D8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362DA,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362DC,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362E6,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362E8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362EA,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362F7,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362F8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362FA,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005362FC,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005363E8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005363EC,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005363F0,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005363F4,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005363F8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536408,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x0053640C,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536410,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536418,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x0053641C,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536420,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536428,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x0053642C,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536430,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x0053646A,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x005364F8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
+0x00536500,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x00536504,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x00536508,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x0053650A,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x0053650C,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x00536510,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x00536514,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x00536518,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x0053651C,data,,,waiver,confirmed,interior of / adjacent to _desiredMapScale; named at its base or owned by that subsystem,
+0x00536524,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem,
+0x00536528,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem,
+0x0053652C,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem,
+0x00536530,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem,
+0x00536534,data,,,waiver,confirmed,interior of / adjacent to ?worldCenter@@3UF24_POINT3@@A; named at its base or owned by that subsystem,
+0x00536539,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536578,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x0053657C,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536580,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536584,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536588,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x0053658C,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536590,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536594,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536598,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x0053659C,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x005365A0,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x005365A4,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x005365A8,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x005365F8,data,,,waiver,confirmed,interior of / adjacent to _nationSides; named at its base or owned by that subsystem,
+0x00536608,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x0053660C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536610,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536614,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536618,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x0053661C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536620,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536624,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x0053662C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536630,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536634,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536638,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x0053663C,data,,,waiver,confirmed,interior of / adjacent to _desiredWorldCenter; named at its base or owned by that subsystem,
+0x00536644,data,,,waiver,confirmed,interior of / adjacent to _desiredViewSet; named at its base or owned by that subsystem,
+0x00536648,data,,,waiver,confirmed,interior of / adjacent to _desiredViewSet; named at its base or owned by that subsystem,
+0x00536650,data,,,waiver,confirmed,interior of / adjacent to ?mapScale@@3JA; named at its base or owned by that subsystem,
+0x0053665C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
+0x00536660,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
+0x00536664,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
+0x00536720,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
+0x00536724,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
+0x005468CC,data,,,waiver,confirmed,interior of / adjacent to _groupIds; named at its base or owned by that subsystem,
+0x005469B4,data,,,waiver,confirmed,interior of / adjacent to _wingIds; named at its base or owned by that subsystem,
+0x0054DDC4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDD0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDD4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDD8,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDDC,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDE0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDE4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDE8,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDEC,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDF0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054E54D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
+0x0054E56D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
+0x00551668,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
+0x00551669,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
+0x0055166A,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
+0x005516F1,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem,
+0x005516FD,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem,
+0x0055281C,data,,,waiver,confirmed,interior of / adjacent to _endScenarioKillsType; named at its base or owned by that subsystem,
+0x005528C0,data,,,waiver,confirmed,interior of / adjacent to _fortMission; named at its base or owned by that subsystem,
+0x005528D0,data,,,waiver,confirmed,interior of / adjacent to _currentT; named at its base or owned by that subsystem,
+0x005528D4,data,,,waiver,confirmed,interior of / adjacent to _currentT; named at its base or owned by that subsystem,
+0x00552938,data,,,waiver,confirmed,interior of / adjacent to _currentTimeOfDay; named at its base or owned by that subsystem,
+0x0055293C,data,,,waiver,confirmed,interior of / adjacent to _currentTimeOfDay; named at its base or owned by that subsystem,
+0x005733E8,data,,,waiver,confirmed,interior of / adjacent to _tlist; named at its base or owned by that subsystem,
+0x005733EA,data,,,waiver,confirmed,interior of / adjacent to _tlist; named at its base or owned by that subsystem,
+0x00583F40,data,,,waiver,confirmed,interior of / adjacent to _curPalette; named at its base or owned by that subsystem,
+0x00583F44,data,,,waiver,confirmed,interior of / adjacent to _curPalette; named at its base or owned by that subsystem,
