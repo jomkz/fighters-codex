@@ -19,7 +19,7 @@ video,Video decode (FMV/Cobra),FA.EXE,0x456300-0x45CDA0,complete,docs/fa/video-d
 render-core,3D render core / SH interpreter (GR),FA.EXE,0x4CD588-0x4D6C00,complete,docs/fa/render-core.md,228
 seq,.SEQ scripted-cutscene / sequence player (SEQ),FA.EXE,0x444F70-0x446D90;0x446F10-0x4471E0,complete,docs/fa/seq.md,240
 wail32,WAIL32.DLL — Miles Sound System (AIL) audio driver,WAIL32.DLL,0x20001000-0x20019E00,complete,docs/fa/wail32.md,253
-ip,IP.EXE — EA system-info & tech-support tool (MFC),IP.EXE,0x401000-0x4BD800,active,docs/fa/ip-tool.md,254
+ip,IP.EXE — EA system-info & tech-support tool (MFC),IP.EXE,0x401000-0x4BD800,complete,docs/fa/ip-tool.md,254
 comms-dl,CDRVDL32.DLL — Cdrv RS-232 serial comms driver,CDRVDL32.DLL,0x10001000-0x10010000,complete,docs/fa/comms.md,255
 comms-hf,CDRVHF32.DLL — Cdrv Hayes-modem comms driver,CDRVHF32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-modem.md,255
 comms-xf,CDRVXF32.DLL — Cdrv file-transfer comms driver,CDRVXF32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-transfer.md,255

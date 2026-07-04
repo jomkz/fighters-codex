@@ -9,9 +9,10 @@ Microsoft MFC framework — a bundled support utility, not game-engine or networ
 
 > **Provenance:** Ghidra static analysis of `IP.EXE` (imported into the `fa-re` project,
 > auto-analysed; no export table, no `.SMS` — named from strings / imports / RTTI / call
-> structure). **Partial** ([#254](https://github.com/jomkz/fighters-codex/issues/254)): the
-> identifiable EA app-logic functions are named; the bulk is statically-linked MFC/CRT framework
-> (third-party). Confidence markers follow [spec-authoring.md](../spec-authoring.md).
+> structure). **Boundary-documented** ([#254](https://github.com/jomkz/fighters-codex/issues/254)):
+> the identifiable FA/EA app-logic surface is named; the bulk (statically-linked MFC/CRT framework
+> and un-analysed tool internals) is waived as third-party, the same license treatment as WAIL32
+> (Miles) and the comms suite. Confidence markers follow [spec-authoring.md](../spec-authoring.md).
 
 ---
 
@@ -50,15 +51,14 @@ The identifiable EA app-logic entry points (VAs from the
 
 ### 1. Full reconstruction — mostly third-party MFC framework
 
-`IP.EXE` has 1,805 functions: ~860 already Ghidra-FID-matched (statically-linked MFC / MSVC
-CRT) and ~945 still `FUN_`. Because it is an MFC app, the large majority of the unnamed
-functions are **Microsoft MFC framework** (third-party, statically linked — the same category as
-WAIL32's CRT and the MS redistributables), with the FA/EA-authored part limited to the handful
-of dialog handlers and the diagnostics logic named above. A full 100 % naming pass is therefore
-low-value (a bundled support utility, mostly third-party framework); the app-logic surface is
-documented here.
+`IP.EXE` has 1,805 functions: ~860 Ghidra-FID-matched (statically-linked MFC / MSVC CRT) and the
+rest un-analysed. Because it is an MFC app, the large majority are **Microsoft MFC framework**
+(third-party, statically linked — the same category as WAIL32's CRT and the MS redistributables),
+with the FA/EA-authored part limited to the diagnostics logic named above. A full 100 % naming
+pass is low-value (a bundled support utility, mostly third-party framework), so the FA/EA app-logic
+surface is named and the framework is waived at the boundary.
 
-*Status: open — re-static ([#254](https://github.com/jomkz/fighters-codex/issues/254); app logic named, MFC framework bulk is third-party).*
+*Status: resolved — boundary-documented (FA/EA app logic named; MFC/CRT framework waived as third-party).*
 
 ## Related
 
