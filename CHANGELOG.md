@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-07-03
+
 ### Added
 - **re** FA.EXE reconstruction program (epic #209): a machine-readable symbol database under `db/` — a manifest of the 18 engine subsystems, per-subsystem VA→name CSVs (`db/symbols/`), and committed Ghidra ground-truth inventory exports — applied to the Ghidra project by `scripts/ghidra/ApplySymbols.java` and re-exported by `ExportInventory.java`. `tools/check_status.py` gains a reconstruction layer that enforces, per completed subsystem, that every code-referenced function is named and every referenced global is named or explicitly waived, cross-checks each subsystem doc's symbol table against the database, and generates the `docs/fa/reconstruction.md` progress matrix — all with self-test fixtures (#231)
 - **re** Object/entity subsystem named and documented (`docs/fa/objects.md` + a theme-aware lifecycle diagram): the per-frame service chain, the `_cg`/`_cgt` current-object mirror, proc dispatch, arena allocation, and the remote hit/effect queues — 80/80 in-range functions named, referenced globals resolved (#210)
@@ -136,7 +138,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.2
 [0.5.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.1
 [0.5.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.0
 [0.4.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.3
