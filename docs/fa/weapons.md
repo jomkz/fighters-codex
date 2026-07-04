@@ -66,14 +66,22 @@ Full record: [`db/symbols/weapons.csv`](https://github.com/jomkz/fighters-codex/
 
 ## Open Questions
 
-### 1. Lock-tone / RWR bookkeeping globals
+### 1. Lock-tone / RWR bookkeeping globals — resolved
 
-`0x58F104`/`108`/`1C4`/`1C8`/`1DC`/`1E0` (zeroed by `PROJInit`, low xref, several
-sound-tagged) look like IR/radar lock-tone and search/track-lock timing paired with the
-named `_trackLockEndT`/`_searchLockEndT`; no reader fully pins them in the PROJ cluster —
-likely resolved by the sound/HUD-RWR pass.
+They are a **multi-slot lock-timing table**, keyed on the mission clock `_currentT`. Two kinds
+of field, all zeroed by `PROJInit` and read in the PROJ lock-state aggregation:
 
-*Status: open — re-static.*
+- **Expiry timestamps** tested `<= _currentT` — the track-lock group around `_trackLockEndT`
+  (`0x58F100`): `0x58F102`/`104`/`106`/`108`; and the search-lock group around `_searchLockEndT`
+  (`0x58F1C0`): `0x58F1C2`/`1C4`/`1C8`. Each marks when that lock slot's window elapses.
+- **Active counters/flags** tested `< 1` — `0x58F1DC`/`1DE`/`1E0`, the "lock still up" gates.
+
+A single compound predicate (near `0x4C…`) ANDs all of these together with
+`_projLocksOnPlayer` to decide "no lock currently on the player" — i.e. this table is the state
+behind RWR silence vs. the search/track **lock-tone**. So they are confirmed lock-timing slots,
+not opaque: expiry stamps + active flags for the per-slot track/search locks.
+
+*Status: resolved — re-static (lock-timing slots: `<=_currentT` expiry stamps + `<1` active flags).*
 
 ## Related
 

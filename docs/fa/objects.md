@@ -175,15 +175,18 @@ Recovered object-system state (full list, with per-symbol confidence, in the
 
 ## Open questions
 
-### 1. `service_key` (`+0x68`) time base
+### 1. `service_key` (`+0x68`) time base — resolved
 
-The chain is ordered by `+0x68` and `ServiceObjects` stops at the first object whose
-key is in the future, so `+0x68` is a scheduling tick. Whether it is an absolute
-frame tick or an offset from `_currentTicks` (and its wrap behavior near `0x7FFF`,
-which `TimeAddSat` guards) is not yet pinned — a short trace of the writers of
-`+0x68` will settle it.
+`+0x68` (a `u16`) is an **absolute schedule tick on the mission-sim clock** (`_currentT`),
+not a relative offset. The service walk gates on it directly against the clock — objects are
+processed while `key <= deadline` and skipped while `_currentT + 1 < key` (`(&_objPtrs)[id] +
+0x68`) — so the chain is a priority queue keyed by absolute due-time. The re-queue writes the
+next key through `TimeAddSat` (`0x463B90`), which **saturates near `0x7FFF`** instead of
+wrapping (the same guard applied to `DAT_0050CED2`/`CED4`), matching `_currentT`'s `0x7F9A`
+cap. So an object due "now + N ticks" stores `TimeAddSat(_currentT + N)`, and near end-of-scale
+the key sticks at `0x7FFF` rather than wrapping past the clock.
 
-*Status: open — re-static.*
+*Status: resolved — re-static.*
 
 ## Related
 

@@ -522,14 +522,25 @@ Representative subset; the full record is in
 
 ## Open Questions
 
-### 1. Fuel-flow scaling constant
+### 1. Fuel-flow scaling constant — resolved
 
-`FMFuelConsumption` (`0x451E50`) scales the throttle/engine-state term by a fixed factor
-before `BurnFuel` drains it; whether that constant is a global tuning value or derived
-from the engine-type record (`_cgt`) is not yet traced. A short look at its one caller
-chain will settle it.
+`FMFuelConsumption` (`0x451E50`) is a two-branch scale of the throttle term:
 
-*Status: open — re-static.*
+```c
+int FMFuelConsumption(int throttle) {
+    if (100 < throttle) return DAT_0050D3CB << 8;          // afterburner: fixed rate
+    return (DAT_0050D3C9 * throttle * 0x100) / 100;         // mil power: linear per-percent rate
+}
+```
+
+Both `DAT_0050D3C9` and `DAT_0050D3CB` fall inside the `_cgt` **type-record mirror**
+(`≈0x50D268–0x50D420`; `_cgt+0x161` and `+0x163`), which `GetCurObj` refreshes from the active
+object's type record each frame. So the fuel rate is **derived from the engine/type record
+(`_cgt`), per-aircraft-type — not a single global tuning constant**: `_cgt+0x161` is the
+mil-power fuel rate (scaled linearly by throttle 0–100%) and `_cgt+0x163` the fixed afterburner
+rate (throttle > 100%). `BurnFuel` (`0x451E80`) then drains the result.
+
+*Status: resolved — re-static.*
 
 ## Related
 

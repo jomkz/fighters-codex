@@ -37,13 +37,20 @@ Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex
 
 ## Open Questions
 
-### 1. TIME/FPS utility block
+### 1. TIME/FPS utility block — resolved
 
-`0x4869A0–0x486E60` (a game-clock/FPS utility) sits adjacent to the campaign core but is
-claimed by no other subsystem; trimmed from campaign here — revisit whether it wants its own
-home or annexation.
+`0x4869A0–0x486E60` is a self-contained **game-clock + FPS + timer-interrupt** cluster, not
+campaign code. Its functions are almost all FA.SMS-named: `TIMESystemTime` (`0x4869A0`),
+`TIMEInit`/`TIMERestart`/`TIMEUpdate`, `TIMESetCompression` (`0x486C60`), `FPSInit`/`FPSUpdate`/
+`FPSPrint`/`FPSPrint2`/`FPSReturn`, and `InstallTimerInt` (`0x486E20`), plus two helpers —
+`FUN_00486BF0` (a `QueryPerformanceCounter`-based high-resolution frame-time via `__alldiv`) and
+`FUN_00486DC0` (a `strlen` used by the FPS string formatting). It drives the very globals in
+[game-loop.md](game-loop.md) § Frame Timing (`_timerTicks`, `_currentTime`, `_timeCompression`).
+**Disposition:** it is its own small timing subsystem — recommend a standalone `timing` row in
+`db/subsystems.csv` (≈13 functions, 2 still `FUN_`) rather than annexing it to campaign; tracked
+alongside the game-loop discovery [#257](https://github.com/jomkz/fighters-codex/issues/257).
 
-*Status: open — re-static.*
+*Status: resolved — re-static (identified as the TIME/FPS timing cluster; homing tracked in #257).*
 
 ## Related
 

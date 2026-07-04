@@ -7,6 +7,32 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.6] - 2026-07-04
+
+### Changed
+- **re** **docs/fa open-items closure — Phase 1 (#247).** Closed open questions across the
+  subsystem docs against the now-complete FA.EXE reconstruction:
+  - **game-loop.md refresh (#249):** cleared the stale `Unresolved`/`FUN_` markers — the frame
+    timer globals now carry real VAs (`_timerTicks` `0x5528EC`, …), three dispatch calls
+    resolve to `MISSIONLoadOrdIcons` / `MAPClearHover` / `MPEnqueue`, and the `_GVProc` /
+    `_PROJProc` "callers unresolved" notes are explained as indirect proc-table dispatch.
+  - **subsystem sweep (#250), 10 evidence-based resolutions:** fuel flow reads the `_cgt`
+    engine-type record (not a global); the object `+0x68` service key is an absolute
+    `_currentT` tick saturated by `TimeAddSat`; `HUDDrawTargetView` is a target-slaved 3D
+    render and `_hudMasterMode` a 0–6 store-flag enum; `0x4869A0–0x486E60` is the TIME/FPS
+    timing cluster; the weapons `0x58F1xx` globals are lock-timing slots; `_ctCheckPass` has no
+    writer in FA.EXE (dormant validator) and `_ctState+0x7C` is save/restore-only; `PollMod`
+    is the pause/resume mixer service; the joystick calibration record is `0x34` bytes/device.
+  - **status cleanups (#251):** seq `SEQUENCE`/`SEQGR` maps homed to the #230 struct-typing
+    pass; wingman `_wmFormControl` routed to the re-gameplay epic #56.
+
+### Notes
+- **Documentation-only release.** `fx_lib` and the `fx` CLI are byte-identical to v0.5.5 — no
+  fa-bridge submodule bump. First cut of the epic #247 docs-closure stream. The game-loop
+  refresh surfaced a previously unmapped in-flight **view/replay cluster** (`0x40D7F0–0x40F5D0`),
+  filed as a new discovery (#257); a Ghidra xref / raw-byte pass on the remaining subsystem
+  questions and the DLG (#258) / VDO (#259) format items continue under #247.
+
 ## [0.5.5] - 2026-07-04
 
 ### Added
@@ -200,7 +226,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.6...HEAD
+[0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
 [0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
 [0.5.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.4
 [0.5.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.3

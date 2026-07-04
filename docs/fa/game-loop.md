@@ -37,7 +37,7 @@ The window title is registered as `"Fighters Anthology"` (string at `0x004EB834`
 
 ### `?usnfmain@@YAXXZ` — `0x00403700` (FA.SMS: `?usnfmain@@YAXXZ`)
 
-This is the game's own "main" function invoked after the window is set up. It references the `"Fighters Anthology"` window class string at `0x004EB760` (from offset `0x00403D41`). Full decompile of this function was not included in the analysis output — its exact body is unresolved beyond the string reference.
+This is the game's own "main" function invoked after the window is set up. It references the `"Fighters Anthology"` window class string at `0x004EB760` (from offset `0x00403D41`). Its body is not transcribed in full in this doc; the notable reference is the window-class string.
 
 ---
 
@@ -107,7 +107,7 @@ Returns 0 immediately. Audio subsystem initialization is handled elsewhere — t
 
 ### `_SMInit@0` — `0x0046A370`
 
-Initializes the symbol/script manager. Calls `_GetExecutablePath_8` to locate the executable directory, then calls `_RMChangeType_12` to build a path with a modified extension, and loads a data file via `_LoadFile_16`. Falls back to a `"RELEASE"` default if the file is not found. The full init path is unresolved beyond the file-load sequence.
+Initializes the symbol/script manager. Calls `_GetExecutablePath_8` to locate the executable directory, then calls `_RMChangeType_12` to build a path with a modified extension, and loads a data file via `_LoadFile_16`. Falls back to a `"RELEASE"` default if the file is not found. The remaining init steps beyond the file load are not transcribed here.
 
 ---
 
@@ -163,10 +163,10 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 | 9 | `_MPSend__YGXXZ()` | Multiplayer: send state packets |
 | 10 | `_MPReceive__YGDXZ()` | Multiplayer: receive and apply remote state |
 | 11 | `_MPCheckDisconnect__YGDXZ()` | Returns zero → exits loop (disconnect) |
-| 12 | `FUN_0040F5D0(&_mainV)` | Unresolved — injects a fake key 0x3B00 if non-zero |
-| 13 | `FUN_0040D7F0(&_mainV)` | Unresolved |
-| 14 | `FUN_0040D810(&_mainV)` | Unresolved |
-| 15 | `FUN_0040E960(&_mainV)` | Unresolved |
+| 12 | `FUN_0040F5D0(&_mainV)` | External-view update — returns a view-active flag; when it returns 0 the external/IFM view is cleared. Part of the in-flight view/replay cluster (see note below) |
+| 13 | `FUN_0040D7F0(&_mainV)` | External-view dispatch — when the view-mode word (`_mainV[0x5A]`) is non-zero, delegates to the view builder `FUN_0040EBC0` |
+| 14 | `FUN_0040D810(&_mainV)` | Spot/track-view update — positions the view from the tracked object (`(&_objPtrs)[_mainV[0x0E]]`) and its velocity |
+| 15 | `FUN_0040E960(&_mainV)` | Replay record-gate — inside the `_timerTicks` capture window (`DAT_005223F0`/`DAT_005223F4`) sets the replay-active flag `DAT_005224C0` |
 | 16 | `_ServiceSounds__YIXXZ()` | Audio: update positional sounds |
 | 17 | `_T_Make_12(&_mainV, 0)` | Build render scene (skipped if IFM active) |
 | 18 | `_G_SetClipBox_16(...)` | Set render clip rect to cockpit area |
@@ -175,7 +175,7 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 | 21 | `_WRLensFlare_0()` | Lens flare post-pass |
 | 22 | `_HUDDraw_4(0)` | Draw cockpit HUD overlay |
 | 23 | `_G_SetFullClipBox_0()` | Restore full-screen clip |
-| 24 | `FUN_0040EBA0(&_mainV)` | Unresolved — post-render step |
+| 24 | `FUN_0040EBA0(&_mainV)` | Replay playback — when replay-active (`DAT_005224C0`), copies the 0x30-dword saved-view buffer (`&DAT_00522400`) back into `_mainV` |
 | 25 | `_FPSUpdate_0()` | Framerate counter update |
 | 26 | Key read loop | `_GetKey()` / `_GetFakeKey_0()` — classifies Space (weapon) and Tab (gun) |
 | 27 | `_CPDraw_8(key, ...)` | Draw control panel (cockpit or IFM variant) |
@@ -202,7 +202,7 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 
 **Time compression display strings** (from `?FlyingLoop@@YAXXZ`):
 
-| `__timeCompression` | HUD message |
+| `_timeCompression` | HUD message |
 |---------------------|-------------|
 | `0` | `"Time compression: 1X"` |
 | `1` | `"Time compression: 2X"` |
@@ -210,6 +210,24 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 | `3` | `"Time compression: 8X"` |
 | `-1` | `"Time compression: 1/2"` |
 | `0x7FFF` | `"GAME PAUSED"` |
+
+### In-flight view / replay cluster (`0x0040D7F0`–`0x0040F5D0`)
+
+Steps 12–15 and 24 call a tight group of helpers that operate on the main-view struct
+`_mainV` and manage the external/spot camera and the flight replay recorder: an external-view
+dispatcher (`FUN_0040D7F0` → view builder `FUN_0040EBC0`), a spot/track-view update driven by
+the tracked object (`FUN_0040D810`), and a replay recorder/player pair that gates on the
+`_timerTicks` capture window and copies a 48-dword saved-view buffer (`DAT_00522400`) in and out
+of `_mainV` (`FUN_0040E960` record-gate, `FUN_0040EBA0` playback, `DAT_005224C0` replay-active
+flag). This cluster sits in an **unmapped region** of FA.EXE — outside every subsystem range in
+`db/subsystems.csv`, so its functions are still `FUN_`-named in the project. It is a discovery
+follow-on of the reconstruction (a small "in-flight view / replay" subsystem the original map
+missed, the same way the `.SEQ` player and the SPX path surfaced as [#240]/[#241]); naming it is
+tracked under epic [#247].
+
+[#240]: https://github.com/jomkz/fighters-codex/issues/240
+[#241]: https://github.com/jomkz/fighters-codex/issues/241
+[#247]: https://github.com/jomkz/fighters-codex/issues/247
 
 ---
 
@@ -265,7 +283,7 @@ Dispatch codes:
 | `0x06` | `_OBJSayProc` (via `_OBJProc`) — speech/callout |
 | other | `NULL` (via `_OBJProc`) |
 
-Callers of `_GVProc` are listed in the analysis as "unresolved" — the cross-reference scan returned no direct callers within the analyzed address range. The call presumably originates inside `_ServiceObjects`.
+`_GVProc` has no direct callers by design: it is installed as an object's proc-table accessor and invoked *indirectly* through the proc dispatch in `_ServiceObjects` (the `+0x68`-keyed service chain), never called by name. See [objects.md](objects.md) for the dispatch mechanism.
 
 ### `_GVEventProc` — `0x00473F50` (FA.SMS: `_GVEventProc`)
 
@@ -281,7 +299,7 @@ Base proc-table accessor for static objects (`.OT`). Returns function pointers f
 
 ### Projectile Dispatch — `0x004C1F50` (`_PROJProc`)
 
-The analysis identifies the projectile dispatch function at `0x004C1F50`. No callers were found in the analyzed range — cross-reference resolution is unresolved from the output provided. The function symbol `_PROJProc` is confirmed in FA.SMS at this address.
+`_PROJProc` (`0x004C1F50`, FA.SMS-confirmed) is the projectile proc-table accessor. Like `_GVProc` it has no direct callers — it is reached indirectly through the object proc dispatch in `_ServiceObjects`. See [objects.md](objects.md) for the dispatch and [weapons.md](weapons.md) for the projectile system.
 
 ### `_Kill@0` — `0x00473C10` (FA.SMS: `_Kill@0`)
 
@@ -300,12 +318,12 @@ Called when an object is destroyed. Key actions:
 
 | Symbol | VA | Type | Role |
 |--------|----|------|------|
-| `_timerTicks` | unresolved (global) | `s32` | Raw timer tick counter — incremented by the timer thread |
+| `_timerTicks` | `0x005528EC` | `s32` | Raw timer tick counter — incremented by the timer thread |
 | `_frameCounter` | `0x004EB738` | u32 | Frame counter (FA.SMS confirmed) |
-| `_frameTicks` | unresolved (global) | `s32` | Ticks elapsed since last frame; gating value for object simulation |
-| `_currentTime` | unresolved (global) | u16/u32 | Mission simulation time (in mission ticks); capped at `0x7F9A` |
-| `__timeCompression` | unresolved (global) | `s16` | Time compression factor: 0=1×, 1=2×, 2=4×, 3=8×, -1=½×, `0x7FFF`=paused |
-| `_constConv__1__cobraTime__YAJJ_Z_4JA` | unresolved (global) | `s32` | Cobra-time conversion constant (multiplied with `_timerTicks` delta to produce cobra-time units) |
+| `_frameTicks` | `0x0055292C` | `s32` | Ticks elapsed since last frame; gating value for object simulation |
+| `_currentTime` | `0x005528E0` | u16/u32 | Mission simulation time (in mission ticks); capped at `0x7F9A` |
+| `_timeCompression` | `0x005528F8` | `s16` | Time compression factor: 0=1×, 1=2×, 2=4×, 3=8×, -1=½×, `0x7FFF`=paused (FA.SMS name is `_timeCompression`) |
+| `?constConv@?1??cobraTime@@YAJJ@Z@4JA` | `0x004F7618` | `s32` | Cobra-time conversion constant (multiplied with `_timerTicks` delta to produce cobra-time units) |
 
 ### Cobra-Time Computation (movie loop)
 
@@ -337,7 +355,7 @@ Top-level shutdown called after the flight loop exits:
 1. `FUN_004767D0` — restores screensaver setting via `SystemParametersInfoA(0x11, 1, ...)` if it was disabled at startup.
 2. `TerminateThread(_hGameThread, 0)` + `CloseHandle` — if `_dwGameThreadID != 0`.
 3. `TerminateThread(_hTimeThread, 0)` + `CloseHandle` — if `_dwTimeThreadID != 0`.
-4. `_GameCleanup_0()` — full game state teardown (body unresolved from output).
+4. `_GameCleanup_0()` — full game state teardown (body not transcribed here).
 
 ### `?CleanupCobra@@YAGPAUGlobalData@@@Z` — `0x0046B530`
 
@@ -389,9 +407,9 @@ Resets all per-mission state and initializes subsystems. Actions in order:
 | UI flags | Zero `_doBriefMap`, `_doBriefPaper`, `_cloudAlt`, `_missionDLLName__3PADA` |
 | Nation sides | `memcpy(&_nationSides, &_defaultNationSides, 0x40)` |
 | Wind | `_windH = _Rand_4(0xFFF0)`, `__windSpeed = _Rand_4(0x16) + 7` |
-| `FUN_004809D0` | Unresolved — called immediately after wind init |
+| `MISSIONLoadOrdIcons` (`0x004809D0`) | Loads the ordnance HUD icon PICs (`ord_air3.PIC`, …) — recovered by the reconstruction (campaign subsystem) |
 | MM alloc ID | `_mmAllocId__3EA = 1` |
-| Subsystem inits (ordered) | `_T_Init_0`, `_T_InitDatabase_0`, `_FPSInit`, `_TIMEInit_12(0,0,0)`, `_OBJInit_4(300000)`, `_InitChain_0`, `_COLInit_0`, `_CTInit_0`, `_MSGInit_0`, `_SAYInit_0`, `_WNGInit_0`, `_GRPInit_0`, `_APInit_0`, `_PLANEInit_0`, `_ROInit_0`, `_PROJInit_0`, `_ZONEInit_0`, `_GRAPHICInit_0`, `FUN_00422840` |
+| Subsystem inits (ordered) | `_T_Init_0`, `_T_InitDatabase_0`, `_FPSInit`, `_TIMEInit_12(0,0,0)`, `_OBJInit_4(300000)`, `_InitChain_0`, `_COLInit_0`, `_CTInit_0`, `_MSGInit_0`, `_SAYInit_0`, `_WNGInit_0`, `_GRPInit_0`, `_APInit_0`, `_PLANEInit_0`, `_ROInit_0`, `_PROJInit_0`, `_ZONEInit_0`, `_GRAPHICInit_0`, `MAPClearHover` (`0x00422840`, campaign — clears map hover/redraw state) |
 | Player damage init | If `_playerId != 0`: `_GetCurObj_4(_playerId)` → `_DAMAGEInit_0()` → `_PutCurObj_0()` |
 | Stats array | Zero `_stats` (0x978 dwords = ~9,696 bytes) |
 
@@ -412,12 +430,12 @@ Post-spawn finalization. Runs after all mission objects have been loaded and pla
 | Say init | `_SAYInit2_0()` |
 | Score init | `_ChooseScoreInit()` |
 | Airport | If `_playerId != 0`: `_APHomeAirport_0()` to identify home airport, call `_NextString_8(...)` for airport name |
-| `FUN_004809D0` | Unresolved — called again before success check |
+| `MISSIONLoadOrdIcons` (`0x004809D0`) | Ordnance-icon PIC load again, before the success check (campaign subsystem) |
 | Success check | `_MISSIONCheckSuccess_0()` |
 
 ### `?MPMissionInit1@@YGXXZ` — `0x0046C280`
 
-Multiplayer Phase 1 wrapper. Only runs if `_numComputers > 1`. On host (`_thisComputer == 0`): loads the mission file via `_LoadFile_16(&_missionName, ...)` and broadcasts it to all peers via `FUN_0046C0A0`. On all machines: calls `_MPWaitEveryoneStatus__YGDJDDD_Z(0x17, ...)` to synchronize before proceeding.
+Multiplayer Phase 1 wrapper. Only runs if `_numComputers > 1`. On host (`_thisComputer == 0`): loads the mission file via `_LoadFile_16(&_missionName, ...)` and broadcasts it to all peers via `MPEnqueue` (`0x0046C0A0`, network — the core outbound enqueue primitive). On all machines: calls `_MPWaitEveryoneStatus__YGDJDDD_Z(0x17, ...)` to synchronize before proceeding.
 
 ### `?MPMissionInit2@@YGXXZ` — `0x0046C470`
 
@@ -442,7 +460,7 @@ All addresses are virtual addresses from FA.EXE (base `0x00400000`).
 | `0x004D9D00` | `_WinMainCRTStartup` | PE entry point / CRT startup |
 | `0x00476120` | `_WinMain@16` | Win32 WinMain; message loop |
 | `0x004764B0` | `?InitApplication@@YAHPAX@Z` | Window class registration and creation |
-| `0x00403700` | `?usnfmain@@YAXXZ` | Game's internal main; body partially unresolved |
+| `0x00403700` | `?usnfmain@@YAXXZ` | Game's internal main; body not transcribed in full here |
 | `0x00476660` | `?CreateGameThread@@YAHXZ` | Spawns game simulation thread |
 | `0x00476700` | `?EndGame@@YAXXZ` | Tears down game and timer threads |
 | `0x00436320` | `?StartGameThread@@YAKPAK@Z` | Game thread entry point |

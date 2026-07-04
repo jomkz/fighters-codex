@@ -71,7 +71,7 @@ Set to `1` on Add and clamped in `SetControl` with a two-sided comparison; `WNGS
 early-outs when it is `> 1`. Whether it is a boolean "hold formation", a member count, or a
 tightness level needs the CT `wm_control` argument range — a bench (`re-gameplay`) check.
 
-*Status: open — re-gameplay.*
+*Status: open — re-gameplay ([#56](https://github.com/jomkz/fighters-codex/issues/56)).*
 
 ## Related
 
