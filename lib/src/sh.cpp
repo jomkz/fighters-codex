@@ -389,19 +389,41 @@ static void walk_code(const uint8_t* code, size_t code_sz,
 
 // Parse a run of geometry bytecode starting at an x86-selected sub-stream entry
 // (a relocation target). Entries are exact — no false positives — so we walk
-// VertexBuffer/Face/TextureFile linearly, skipping other opcodes, until a
-// terminator. Appends into the shared pool via push_at, exactly like walk_code.
+// VertexBuffer/Face/TextureFile, follow Unmask sub-model calls, and stop at the
+// first other control opcode. Appends into the shared pool via push_at.
+// `visited` (one byte per code offset) bounds recursion and prevents loops.
 static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
                            float scale_factor, std::vector<ShVertex>& vpool,
                            std::vector<ShFace>& faces, std::string cur_tex,
-                           size_t base_count) {
+                           size_t base_count, std::vector<char>& visited, int depth) {
+    if (depth > 16) return;
     size_t off = start;
     size_t budget = 4096;  // a sub-stream is small; bound the walk
     while (off < code_sz && budget--) {
+        if (visited[off]) return;   // already harvested / loop guard
+        visited[off] = 1;
         const uint8_t* p = code + off;
         size_t avail = code_sz - off;
         uint8_t op = p[0];
         if (op == 0x00 || op == 0x01 || op == 0xF0) return;  // terminators
+
+        // Sub-model call: draw a referenced sub-stream, then resume after it.
+        if (op == 0x12 && avail >= 4 && p[1] == 0x00) {       // Unmask [12 00][rel16]
+            size_t tgt = off + 4 + (int16_t)u16le(p + 2);
+            if (tgt < code_sz)
+                harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
+                               cur_tex, base_count, visited, depth + 1);
+            off += 4;
+            continue;
+        }
+        if (op == 0x6E && avail >= 6 && p[1] == 0x00) {       // UnmaskLong [6E 00][rel32]
+            size_t tgt = off + 6 + (int32_t)u32le(p + 2);
+            if (tgt < code_sz)
+                harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
+                               cur_tex, base_count, visited, depth + 1);
+            off += 6;
+            continue;
+        }
 
         if (op == 0x82 && avail >= 6 && p[1] == 0x00) {
             uint16_t nv = u16le(p + 2), pa = u16le(p + 4);
@@ -464,15 +486,14 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size) {
     PeInfo pe = parse_pe(data, size);
     auto targets = collect_reloc_targets(data, size, pe, cs.size);
     const size_t base_count = mesh.vertices.size();
-    std::vector<uint32_t> seen;
+    std::vector<char> visited(cs.size, 0);
     for (auto& t : targets) {
         uint32_t to = t.second;
         // skip trampolines (FF 25 -> external import) — those aren't geometry
         if (to + 1 < cs.size && cs.data[to] == 0xFF && cs.data[to + 1] == 0x25) continue;
-        if (std::find(seen.begin(), seen.end(), to) != seen.end()) continue;
-        seen.push_back(to);
         harvest_target(cs.data, cs.size, to, mesh.scale, mesh.vertices, mesh.faces,
-                       mesh.textures.empty() ? std::string() : mesh.textures.back(), base_count);
+                       mesh.textures.empty() ? std::string() : mesh.textures.back(),
+                       base_count, visited, 0);
     }
     return mesh;
 }
