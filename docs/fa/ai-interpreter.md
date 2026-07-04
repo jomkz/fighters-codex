@@ -86,23 +86,30 @@ Representative subset; the full record (incl. all `CTEval_*`/`CTDo_*` handlers) 
 
 ## Open Questions
 
-### 1. Who writes `_ctCheckPass` (`0x546C8C`)?
+### 1. Who writes `_ctCheckPass` (`0x546C8C`)? — resolved
 
-It reads as a **validate/dry-run** flag — it gates every branch and side effect and
-unlocks the syntax-error / expecting-var / stack-imbalance `CTError` paths, i.e. the same
-core doubles as the `.AI`→`.BI` compiler's validator. Its setter is outside the CT
-cluster; confirming it would settle whether FA.EXE runs a load-time verification pass over
-each `.BI`.
+**Nobody, in FA.EXE.** A whole-program scan of the decompile finds all 11 references to
+`_ctCheckPass` are **reads** (`== '\0'` / `!= '\0'` gates); there is no write, address-of, or
+bulk initialiser anywhere in the image. So at runtime it is a constant `0`, and every branch it
+guards (the validate/dry-run path unlocking the syntax-error / expecting-var / stack-imbalance
+`CTError` diagnostics) is **dormant in the shipped game**. This confirms the read: the CT core
+doubles as the `.AI`→`.BI` compiler's validator, and the flag's *setter lives in that offline
+compiler tool*, which is not linked into FA.EXE — FA.EXE ships only the interpreter, so it never
+runs the load-time verification pass.
 
-*Status: open — re-static.*
+*Status: resolved — re-static (no writer in FA.EXE; validator dormant).*
 
-### 2. `_ctState + 0x7c/0x7e` (FRAME) semantics
+### 2. `_ctState + 0x7c/0x7e` (FRAME) semantics — characterized
 
-The two `s16` at the tail of `_ctState` are captured only by the bulk save/restore (no
-scalar reader); their meaning — likely a maneuver-frame / animation-phase stamp — is not
-yet pinned.
+The two `s16` at the tail of `_ctState` are touched **only** by the bulk `CTSaveState`
+(`0x466920`) / `CTRestoreState` (`0x4668F0`) snapshot copy — there is no scalar read or write
+anywhere in FA.EXE. Statically that is all that can be established: they are opaque
+saved-and-restored interpreter state with no in-binary accessor, so their runtime meaning (the
+suspected maneuver-frame / animation-phase stamp) cannot be pinned by static RE alone — it would
+need the running game or the `.AI` compiler. Documented as characterized rather than left open,
+since a further static pass cannot resolve it.
 
-*Status: open — re-static.*
+*Status: resolved (characterized) — no scalar accessor in FA.EXE; runtime meaning needs [#56](https://github.com/jomkz/fighters-codex/issues/56).*
 
 ## Related
 

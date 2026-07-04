@@ -70,21 +70,40 @@ Representative subset; the full record is in
 
 ## Open Questions
 
-### 1. `HUDDrawTargetView` (`0x4075D0`) content
+### 1. `HUDDrawTargetView` (`0x4075D0`) content — resolved
 
-It builds a 3D shape into `_hudShape`, flips the HUD bitmap, and blits it at several
-offsets — plausibly a magnified target silhouette, an IR/FLIR image, or a combining-glass
-reflection. Confirming needs the writer of `_hudShape`/`_hudTargetViewEnable` (likely in
-`HUDInit` or a sensor subsystem).
+It renders a **live 3D view**, not a static silhouette. The body positions the view struct
+`_hudShape` (`0x5213D8`) with `FUN_0040D810` — the spot/track-view helper that aims a camera at
+the tracked object (the same helper the in-flight view/replay cluster [#257] uses) — then
+`_T_Make(&_hudShape, 0)` + `_T_Render(&_hudShape)` render the world from that viewpoint into the
+HUD bitmap, `_G_HFlipBitmap(_cb)` horizontally flips it, and the result is blitted (element count
+`_hudTargetViewCount` `0x521498`). `_hudTargetViewEnable` (`0x4EBD08`) is a plain 1/0 gate. So
+the content is a **target-slaved 3D inset** (padlock / combining-glass view), the horizontal
+flip being the combining-glass optic — not an IR/FLIR raster or a flat silhouette.
 
-*Status: open — re-static.*
+*Status: resolved — re-static (target-slaved 3D render via `FUN_0040D810` + `_T_Make`/`_T_Render`, H-flipped).*
 
-### 2. `_hudMasterMode` (`0x521694`) enumeration
+### 2. `_hudMasterMode` (`0x521694`) enumeration — resolved
 
-Values `0`/`1`/`2` are used (`2` = landing). Whether A/A vs A/G gun/bomb submodes are
-encoded here or carried on the weapon record would pin the inferred reticle names.
+The submodes **are** encoded in `_hudMasterMode`, not carried on the weapon record. The
+master-mode selector (in the HUD update near `0x406E00`) picks the value from the currently
+selected store's type record (`_HARDPtrs_12` → store record; delivery flags at record `+0xA6`,
+bits `0x80`/`0x10`) plus the target-designation flags `DAT_00521599`/`DAT_0052159A`:
 
-*Status: open — re-static.*
+| Value | Condition | Mode |
+|-------|-----------|------|
+| `0` | initial each frame | none / cleared |
+| `1` | no deliverable A/G store selected (empty, or store type ≠ 7, or store `+0x05 & 0x80`) | A/A guns / navigation default |
+| `2` | mode 1 **and** aligned with a runway (heading/pitch within band, lateral `< 0x1FFE`, alt `< 0x1D4C01`, range `< 0x76AC00`) | landing |
+| `3` | store `+0xA6 & 0x10` set **and** target designated (`DAT_00521599 ≠ 0`) | A/G designated (computed-impact) |
+| `4` | store `+0xA6 & 0x80` set | A/G special-delivery |
+| `5` | A/G store, undesignated | A/G unguided default |
+| `6` | store `+0xA6 & 0x10` set, `DAT_00521599 = 0`, `DAT_0052159A ≠ 0` | A/G designation-pending |
+
+So it is a 0–6 enum driven by the selected store's delivery flags; the reticle name follows the
+mode. (Exact CCIP/CCRP labelling of 3–6 is inferred from the selecting conditions, not asserted.)
+
+*Status: resolved — re-static.*
 
 ## Related
 

@@ -60,13 +60,24 @@ Full record: [`db/symbols/sound.csv`](https://github.com/jomkz/fighters-codex/bl
 
 ## Open Questions
 
-### 1. `PollMod` per-tick work
+### 1. `PollMod` per-tick work — resolved
 
-`PollMod` (~796 bytes, the mixer-service timer callback) is one of five functions folded
-into inter-function gaps and materialised on apply; what its body services each tick (voice
-aging / `_pendMOD` promotion / fade stepping) is not yet fully traced.
+A fresh decompile shows `PollMod` (`0x4354B0`) is the **pause/resume mixer service**, not a
+voice-aging/fade stepper. Each tick it reconciles the mixer against the pause state
+(`_timeCompression == 0x7FFF` PAUSED, or `MPPaused()`, or `DAT_004F3BC8`):
 
-*Status: open — re-static.*
+- **Music** (when `_musicOn`): on entering pause it calls Miles `AIL_stop_sequence` on
+  `_musicSeqHandle` (once, guarded by `DAT_004F3BF0`); on leaving pause, `AIL_resume_sequence`
+  and restores volume via `MusicVolume(_flightMusicVol)` or `MusicVolume(_otherMusicVol)`
+  depending on `_curScreen`.
+- **Sound** (when `_soundOn`): on entering pause it silences all **16 voices** — a loop over the
+  `_MOD` voice table (stride `0x54`) calling `SetVolPitchPan(&_MOD[i], i)` — guarded by
+  `DAT_004F3C08`; it un-silences on resume.
+
+So the per-tick work is suspend/restore of the Miles music sequence and the 16-voice `_MOD`
+table across pause transitions, plus screen-dependent music-volume selection.
+
+*Status: resolved — re-static (pause/resume of the Miles music sequence + 16-voice `_MOD` table).*
 
 ## Related
 

@@ -31,12 +31,22 @@ Full record: [`db/symbols/input.csv`](https://github.com/jomkz/fighters-codex/bl
 
 ## Open Questions
 
-### 1. Calibration / mapping table
+### 1. Calibration / mapping table — resolved (layout)
 
-The axis calibration and control-mapping tables the poll path reads are named at their base;
-their exact record layout would let the `.CFG` control bindings be edited from the doc.
+`NormalizeStick` (`0x4946B0`) indexes two parallel per-device arrays by the axis's device
+number (`_joystickXDevice`/`YDevice`/`ThrottleDevice`/`RudderDevice`):
 
-*Status: open — re-static.*
+- **`_joystickInfo`** — Win32 `JOYINFO` snapshots, **stride `0x10`** (`&_joystickInfo + dev*0x10`).
+- **Calibration table** at base `0x554670` — **stride `0x34` per device**; the raw axis words sit
+  at record `+0x00` (X, `0x554670`), `+0x04` (Y, `0x554674`), `+0x0C` (rudder, `0x55467C`). The
+  first poll auto-captures the resting value as centre (`_gotCenterX/Y/R` guard →
+  `DAT_00554EBC/EC4/EC8`), and `ScaleToRange` (`0x494580`) maps raw→min/centre/max into the
+  normalized int the sim consumes.
+
+So each joystick device has a `0x34`-byte calibration record (raw + captured-centre per axis)
+plus a `0x10`-byte `JOYINFO` slot; that is the layout the `.CFG` axis bindings persist.
+
+*Status: resolved — re-static (calibration record: 0x34-byte stride/device; JOYINFO 0x10 stride).*
 
 ## Related
 
