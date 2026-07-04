@@ -91,6 +91,7 @@ nav:
       - Input: fa/input.md
       - Shell UI: fa/shell-ui.md
       - Startup: fa/startup.md
+      - Sequence Player: fa/seq.md
       - Globals: fa/globals.md
       - Structs: fa/structs.md
       - Symbols: fa/symbols.md
