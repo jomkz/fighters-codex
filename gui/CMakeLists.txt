@@ -36,6 +36,18 @@ target_include_directories(fx_gui_vendor PUBLIC
 )
 target_link_libraries(fx_gui_vendor PUBLIC SDL3::SDL3)
 
+# fx_render's OpenGL backend (render/src/gl_backend.cpp) is compiled here, where
+# the glad loader lives; its glad function pointers are resolved from
+# fx_gui_vendor's gl.cpp at the final fx-gui link (fx_render_gl is listed before
+# fx_gui_vendor below). Core fx_render stays dependency-free. See fx_render #289.
+add_library(fx_render_gl STATIC
+    ${CMAKE_SOURCE_DIR}/render/src/gl_backend.cpp
+)
+target_include_directories(fx_render_gl PUBLIC ${CMAKE_SOURCE_DIR}/render/include)
+target_include_directories(fx_render_gl SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
+target_link_libraries(fx_render_gl PUBLIC fx_render PRIVATE fx_warnings)
+set_target_properties(fx_render_gl PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 add_executable(fx-gui WIN32
     src/main.cpp
     src/app.cpp
@@ -85,6 +97,7 @@ target_include_directories(fx-gui SYSTEM PRIVATE
 
 target_link_libraries(fx-gui PRIVATE
     fx_lib
+    fx_render_gl
     fx_gui_vendor
     fx_warnings
 )

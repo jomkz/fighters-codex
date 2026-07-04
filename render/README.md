@@ -4,7 +4,7 @@
 interchangeable backends, so the OpenGL and software render paths are built **once** and shared
 across the reconstruction's consumers instead of re-implemented three times:
 
-- **fx-gui** — the asset viewer (source of the OpenGL backend).
+- **fx-gui** — the asset viewer (its SH 3D preview renders through this module).
 - **fxc** — the clean-room source port of the game executable.
 - **fighters-legacy** — the GPL engine may adopt it for its classic/parity path
   ([fighters-legacy#669](https://github.com/fighters-legacy/fighters-legacy/issues/669)).
@@ -14,35 +14,42 @@ MIT, clean-room from this project's own documentation. Part of epic
 
 ## API
 
-`#include <fx_render/render.h>` (link `fx::render`):
+`#include <fx_render/render.h>` (link `fx::render`). A frame is `Begin` → one or more `Draw` →
+`End`; targets are backend-owned offscreen surfaces:
 
 | Type | Role |
 |---|---|
-| `Vertex` | object-space position + linear RGB (grows to normals/UVs) |
-| `Mesh` | non-indexed triangle list (3 vertices per triangle) |
+| `Vertex` / `Mesh` | interleaved position + linear RGB; a triangle **or** line list |
 | `Camera` | column-major 4×4 MVP (OpenGL convention) |
-| `Image` | owned RGBA8 offscreen target (row-major, top-left origin) |
-| `RenderOptions` | wireframe, backface cull, clear colour |
-| `Renderer` / `MakeRenderer(Backend)` | draw meshes into an `Image` |
+| `Image` | owned RGBA8 CPU buffer (top-left origin) |
+| `DrawOptions` | primitive (triangles/lines), depth test/write, wireframe overlay, cull |
+| `RenderTarget` | offscreen surface; `Read` → CPU `Image`, `native_texture()` → GL id or 0 |
+| `Renderer` | `MakeTarget` / `Begin` / `Draw` / `End`; `MakeRenderer(Backend)` |
 
 ```cpp
 auto r = fx_render::MakeRenderer(fx_render::Backend::Software);
-fx_render::Image img; img.resize(256, 256);
-r->Render(mesh, cam, img, {});   // img.pixels is now RGBA8
+auto t = r->MakeTarget(256, 256);
+r->Begin(*t, {0, 0, 0, 255});
+r->Draw(mesh, cam, {});          // DrawOptions{} = filled triangles, depth on
+r->End();
+fx_render::Image img; t->Read(img);   // img.pixels is now RGBA8
 ```
+
+`RenderToImage(...)` is a one-shot convenience for the single-mesh case (used by the tests).
 
 ## Backends
 
-- **Software** — a context-free CPU rasteriser (barycentric Gouraud fill + depth buffer). No GPU,
-  no window: the only backend usable in headless tests and `fxc` validation, and the substrate for
-  the FA-faithful `GG_/G_` pipeline. Always available.
-- **OpenGL** — the GPU path matching the game's hardware rendering; requires a current GL context.
-  `MakeRenderer(OpenGL)` returns `nullptr` until it is wired.
+- **Software** — a context-free CPU rasteriser (barycentric Gouraud fill + shared depth buffer +
+  line/wireframe). No GPU, no window: the only backend usable in headless tests and `fxc`
+  validation, and the substrate for the FA-faithful `GG_/G_` pipeline (#290). Always available.
+- **OpenGL** — the GPU path (`#include <fx_render/gl.h>`, `MakeOpenGLRenderer()`), extracted from
+  fx-gui's preview. Targets are FBOs; `native_texture()` is the colour attachment for zero-copy
+  ImGui display. Requires a current GL 3.3 core context with glad loaded (the host provides both).
 
 ## Roadmap (sub-issues of #281)
 
-1. **#288** — this module: API + software-backend foundation ✅
-2. **#289** — OpenGL backend, extracted from `gui/src/panels/preview.cpp`
-3. **#290** — FA-faithful software rasteriser (painter's sort, fixed-point spans, flat/Gouraud)
-4. **#291** — refactor fx-gui onto `fx::render`
+1. **#288** — module: API + software-backend foundation ✅
+2. **#289** — OpenGL backend, extracted from `gui/src/panels/preview.cpp` ✅
+3. **#291** — fx-gui refactored onto `fx::render` (SH preview) ✅
+4. **#290** — FA-faithful software rasteriser (painter's sort, fixed-point spans, flat/Gouraud)
 5. **#292** — fxc runtime render hook
