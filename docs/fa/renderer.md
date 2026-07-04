@@ -481,12 +481,19 @@ Representative subset of the device + rasterizer; the full record is in
 
 ### 1. `GG_Flush` path selection
 
-`GG_Flush` (`0x45E120`) dispatches to `GG_FlushShaken` or `GG_FlushDirtyLines`; the exact
-predicate (a shake-active flag vs. the `_lineStats` dirty-line optimisation being enabled) is
-inferred from the two callees' reads, not yet traced at the dispatch site. A short trace of
-`GG_Flush` will pin it.
+A disassembly + caller sweep corrects the premise. `GG_Flush` (`0x45E120`) is a single
+**SEH-wrapped flush routine** — called by `G_Flush` (`0x498420`) and `PlaySeq` — that itself
+chooses **full-frame redraw** (when `_forceRedraw` is set, or at 320×200) versus the
+**`_lineStats` dirty-line diff-blit** default; its SEH handler is at `0x45E356`. So the real
+predicate is `_forceRedraw`/resolution *inside* `GG_Flush`, not a dispatch between two callees.
+`GG_FlushDirtyLines` (`0x45E13F`) is a Ghidra **mid-function split** of `GG_Flush`'s own body
+(it falls inside the `0x45E120`–`0x45E356` extent), not a separate function; `GG_FlushShaken`
+(`0x45DEDF`) is a distinct 518-byte variant with **no direct callers** in the image (reached, if
+at all, only via a shake path outside the analyzed call graph). The `GG_FlushDirtyLines` split
+and the uncalled `GG_FlushShaken` are queued for a DB cleanup in
+[#262](https://github.com/jomkz/fighters-codex/issues/262).
 
-*Status: open — re-static.*
+*Status: resolved — re-static (single SEH flush; `_forceRedraw`/resolution predicate; DirtyLines is a Ghidra split).*
 
 ## Related
 

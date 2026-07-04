@@ -63,7 +63,14 @@ handlers' exact geometry/state effects (e.g. `sh_op_78`, `sh_op_80`) are not ful
 the highest-value remaining targets, and the substrate for finishing [SH.md](formats/SH.md)'s
 `Unk*` opcodes.
 
-*Status: open — re-static (#52).*
+**Partially resolved.** `sh_op_80` (`0x4D1FC0`) is a **shading/colour-setup** opcode: it
+early-outs on `codes_and`, and when `gouraudOn == 0` calls `SetFlatColor(a, b)` — i.e. it
+selects flat vs. Gouraud shading and stages the primitive colour. `sh_op_78` (`0x4D3938`, the
+2085-byte largest handler) is the primary **polygon/mesh** op (vertex-list reads + clip/switch
+tables); its full geometry/state semantics need a dedicated SH trace and are tracked in
+[#262](https://github.com/jomkz/fighters-codex/issues/262) (successor to the closed #52).
+
+*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262); `sh_op_80` characterized, `sh_op_78` deep semantics remain).*
 
 ## Related
 

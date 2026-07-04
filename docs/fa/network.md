@@ -564,7 +564,15 @@ engine's `NET_ADDRESS`. These leaves were recovered via the
 The MP-adjacent code in this span (see § Dark Zone) is partly traced; a targeted pass would
 resolve the remaining session/sync helpers referenced but not yet named.
 
-*Status: open — re-static.*
+**Recharacterized.** The span is not a small set of unnamed session/sync helpers: it holds
+~97 still-`FUN_` functions, and most are *not* network — it overlaps the TIME/FPS timing
+cluster (`0x4869A0–0x486E60`, see [campaign.md](campaign.md)) and other unmapped FA.EXE code.
+The genuinely network-referenced helpers in it are already named; the remainder is a broad
+**unclaimed region**, the same class of gap as the in-flight view/replay cluster, and naming it
+is a discovery-scale effort rather than a targeted network read — folded into the unmapped-code
+discovery [#257](https://github.com/jomkz/fighters-codex/issues/257).
+
+*Status: resolved — re-static (broad unclaimed region; naming folded into #257).*
 
 ## Related
 

@@ -57,9 +57,12 @@ Full record: [`db/symbols/terrain.csv`](https://github.com/jomkz/fighters-codex/
 
 The exact meaning of several `.T2` sub-header fields (documented as partly-unknown in
 [T2.md](formats/T2.md)) is read here by the loader path; a targeted trace of the corner-height
-sampler would resolve them.
+sampler would resolve them. The `.T2` loader / corner-height sampler was **not located in the
+analyzed code** (see § the T2 loader note), so the sub-header class constants cannot be pinned
+from the current inventory — it needs the loader path first. Tracked in
+[#262](https://github.com/jomkz/fighters-codex/issues/262).
 
-*Status: open — re-static.*
+*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262)).*
 
 ## Related
 

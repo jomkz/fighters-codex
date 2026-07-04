@@ -53,9 +53,13 @@ boundary is explicit.
 
 ### 2. `T_HANDLE` flag bit `0x1000`
 
-Distinct from the `0x4000` mmap bit; its exact meaning is not yet traced.
+Distinct from the `0x4000` mmap bit (unmap-on-free) and `0x0010` (RM-registered → `RMNotify`
+on free). No clean reader of `handle+0x10 & 0x1000` surfaced — the `& 0x1000` in
+`ConvertOldPreferredTargetId` is an unrelated 13-bit target-ID sign bit, not the handle flag —
+so pinning it needs a dedicated handle-flag write/read trace. Tracked in
+[#262](https://github.com/jomkz/fighters-codex/issues/262).
 
-*Status: open — re-static.*
+*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262)).*
 
 ## Related
 
