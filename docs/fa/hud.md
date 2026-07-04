@@ -1,11 +1,11 @@
-# FA.EXE HUD / Cockpit
+# HUD / Cockpit
 
 The head-up display — the symbology layer drawn over the 3D scene each frame: the
 flight-path marker, pitch ladder, speed/altitude/heading tapes, warning annunciators,
 and the combat symbology (target boxes, gun reticle, CCIP bomb pipper, sensor contacts).
 One tidy compilation unit (`HUD.C`), `0x405E30–0x40AE50`.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; every symbol here is recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/hud.csv)
 > and applied to the Ghidra project; progress is tracked in the

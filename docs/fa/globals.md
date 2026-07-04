@@ -1,10 +1,10 @@
-# FA.EXE Global Variable Reference
+# Global Variable Reference
 
-Inventory of all named global variables recovered from FA.EXE.
+Inventory of all named global variables recovered from the game executable.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; data sourced from `DumpGlobals.csv` (`DumpGlobals.java` headless run). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; data sourced from `DumpGlobals.csv` (`DumpGlobals.java` headless run). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
-> **Referenced-globals rule:** the [FA.EXE reconstruction program](reconstruction.md)
+> **Referenced-globals rule:** the [game-executable reconstruction program](reconstruction.md)
 > treats a data symbol as in-scope only when it is **referenced by code** (≥1 xref):
 > the 10,313 such globals in
 > [`db/inventory/FA.EXE/globals.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/inventory/FA.EXE/globals.csv)

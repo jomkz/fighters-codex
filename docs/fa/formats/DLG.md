@@ -23,7 +23,7 @@ related: [MNU]
 
 FA_2.LIB contains 92 `.DLG` files. Each defines one dialog box in the FA menu
 system. All are **Win32 PE DLLs** (MZ stub + Phar Lap PE image) loaded at
-runtime; they import rendering functions from `main.dll` (= FA.EXE — see
+runtime; they import rendering functions from `main.dll` (= the game executable — see
 [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and embed
 their label strings in the PE data section. The engine associates dialogs with
 their parent MNU file; the DLG is loaded when the corresponding menu item is

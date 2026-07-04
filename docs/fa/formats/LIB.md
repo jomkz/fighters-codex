@@ -256,4 +256,4 @@ conventions from the consumer side; every format spec in this directory
 describes content stored in these archives.
 
 **Engine:** [architecture.md](../architecture.md) — Asset System (EALIB
-Archives) covers how FA.EXE mounts and reads them at runtime.
+Archives) covers how the game executable mounts and reads them at runtime.

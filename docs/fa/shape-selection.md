@@ -1,10 +1,10 @@
 # Shape Selection & Damage Models
 
-How FA.EXE chooses which `.SH` model to draw for a game object — the **whole-model
+How the game executable chooses which `.SH` model to draw for a game object — the **whole-model
 damage swap** that replaces an aircraft with a wreck when it is destroyed, and the
 per-class variant set (`A10_A.SH`, `A10_C.SH`, …) that supplies those wrecks.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md)
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md)
 > symbols applied; recovered from `DumpAllFunctions.txt`
 > ([scripts/ghidra/](https://github.com/jomkz/fighters-codex/tree/main/scripts/ghidra)).
 > Confidence markers follow [spec-authoring.md](../spec-authoring.md):

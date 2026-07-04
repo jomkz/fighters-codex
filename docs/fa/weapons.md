@@ -1,10 +1,10 @@
-# FA.EXE Weapons — Projectiles, Seekers & ECM
+# Weapons — Projectiles, Seekers & ECM
 
 The `PROJ_*` subsystem: everything a fired weapon does after it leaves the rail — guidance,
 seeker lock, hit probability, detonation, and the countermeasure (ECM) interactions that
 defeat it. `0x4C0690–0x4C5D30`.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; every symbol is recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/weapons.csv)
 > and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md).

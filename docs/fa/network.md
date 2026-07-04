@@ -1,8 +1,8 @@
 # FA Multiplayer Networking Internals
 
-FA.EXE's multiplayer networking internals. Companion reference: [formats/DAT.md](formats/DAT.md).
+The game executable's multiplayer networking internals. Companion reference: [formats/DAT.md](formats/DAT.md).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; source output `AnalyzeNetwork.txt`. Every symbol is recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv)
 > and applied to the Ghidra project (this is the reconstruction-program `network` subsystem,
@@ -566,7 +566,7 @@ resolve the remaining session/sync helpers referenced but not yet named.
 
 **Recharacterized.** The span is not a small set of unnamed session/sync helpers: it holds
 ~97 still-`FUN_` functions, and most are *not* network — it overlaps the TIME/FPS timing
-cluster (`0x4869A0–0x486E60`, see [campaign.md](campaign.md)) and other unmapped FA.EXE code.
+cluster (`0x4869A0–0x486E60`, see [campaign.md](campaign.md)) and other unmapped the game executable code.
 The genuinely network-referenced helpers in it are already named; the remainder is a broad
 **unclaimed region**, the same class of gap as the in-flight view/replay cluster, and naming it
 is a discovery-scale effort rather than a targeted network read — folded into the unmapped-code

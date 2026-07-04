@@ -1,14 +1,14 @@
 # FA Game Loop Architecture
 
-Analysis of FA.EXE's main loop, initialization sequence, per-frame object dispatch, frame timing, mission init, and shutdown.
+Analysis of the game executable's main loop, initialization sequence, per-frame object dispatch, frame timing, mission init, and shutdown.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 
 ## Overview
 
-FA.EXE's execution model is a multi-threaded Win32 application. The Win32 message loop lives on the main thread; the simulation runs on a dedicated game thread. A separate timer thread drives `_timerTicks`. The in-flight simulation loop (`?FlyingLoop@@YAXXZ`) is a do-while loop that runs until a scenario-end condition or player exit is detected.
+The game executable's execution model is a multi-threaded Win32 application. The Win32 message loop lives on the main thread; the simulation runs on a dedicated game thread. A separate timer thread drives `_timerTicks`. The in-flight simulation loop (`?FlyingLoop@@YAXXZ`) is a do-while loop that runs until a scenario-end condition or player exit is detected.
 
 ---
 
@@ -450,7 +450,7 @@ Two additional init phases follow:
 
 ## Function Reference
 
-All addresses are virtual addresses from FA.EXE (base `0x00400000`).
+All addresses are virtual addresses from the game executable (base `0x00400000`).
 
 | VA | FA.SMS name | Role |
 |----|-------------|------|

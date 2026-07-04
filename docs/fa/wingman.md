@@ -1,10 +1,10 @@
-# FA.EXE Wingman / Group AI (WNG / GRP)
+# Wingman / Group AI (WNG / GRP)
 
 Formation and flight/group management: `WNG_*` manages **aircraft wings** (a leader plus up
 to 9 wingmen), `GRP_*` the byte-identical twin for **ground/naval groups**. This is the
 executor the AI interpreter's `wm_*` commands drive. `0x45E460–0x45FEC0`.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/wingman.csv)
 > and applied to the Ghidra project. FA.SMS exported the full `GRP` API but only part of

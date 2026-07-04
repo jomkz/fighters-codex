@@ -27,7 +27,7 @@ Run from the game's support/setup path, `IP.EXE` gathers a machine profile and s
   version, BIOS.
 - **Network config report** — DirectPlay version, Winsock description, IP address, subnet mask,
   default gateway, RAS connections. These are *diagnostics reported to support*, **not** a
-  transport — the actual multiplayer transport is DirectPlay (external) and the in-FA.EXE
+  transport — the actual multiplayer transport is DirectPlay (external) and the in-the game executable
   SPX/IPX/UDP path (see [network.md](network.md)).
 - **Report + submit** — `BuildSupportReport` assembles a `[CPU]`/`[VIDEO]`/`[SOUND]`/`[MODEM]`
   config file and sends it to EA Tech Support by **fax or MAPI e-mail**.
@@ -62,6 +62,6 @@ surface is named and the framework is waived at the boundary.
 
 ## Related
 
-- [network.md](network.md) — FA.EXE's actual multiplayer transport (SPX/IPX/UDP + DirectPlay).
+- [network.md](network.md) — the game executable's actual multiplayer transport (SPX/IPX/UDP + DirectPlay).
 - [reconstruction.md](reconstruction.md) — the program this binary belongs to.
 - [wail32.md](wail32.md) — the other companion binary; same third-party-framework boundary pattern.

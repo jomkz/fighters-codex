@@ -119,7 +119,7 @@ is the full-complexity exemplar.
 
 - **confirmed** — decompile evidence with the VA cited, or proven by a
   byte-identical round-trip
-- **inferred** — consistent with all observed data, but not traced in FA.EXE
+- **inferred** — consistent with all observed data, but not traced in the game executable
 - **unknown** — unmapped
 
 Region headings take a suffix (`### Identity block (0x00–0xAF) — confirmed`);

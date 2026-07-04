@@ -1,4 +1,4 @@
-# FA.EXE Campaign / Mission / Pilot
+# Campaign / Mission / Pilot
 
 The single-player meta-game: the theater **mission map** screen, the scripted **ZONE**
 threats, **pilot** save/logbook, and the **.CAM** campaign state machine that strings
@@ -6,7 +6,7 @@ missions together with scoring. Re-carved from a grab-bag nominal range into its
 clusters (the mission-map editor `0x421C70–0x42B800` plus pilot/campaign/mission cores in
 `0x467110–0x490000`).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ## The pieces
 

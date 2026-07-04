@@ -1,4 +1,4 @@
-# FA.EXE .SEQ Cutscene Player
+# .SEQ Cutscene Player
 
 The **.SEQ sequence player** runs Jane's scripted intro/outro cutscenes from a **text
 script file** (e.g. `g_intro`). It loads and compiles the script, then ticks a timeline of
@@ -6,7 +6,7 @@ commands that draw bitmaps, blocks and wrapped text into a display list, fade th
 and play music, sound and video. `0x444F70–0x4471E0` (plus the public entry `PlaySeq` at
 `0x412C10`).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/seq.csv)
 > and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md).

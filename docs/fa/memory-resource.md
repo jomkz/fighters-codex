@@ -1,11 +1,11 @@
-# FA.EXE Memory & Resource Managers (MM / RM)
+# Memory & Resource Managers (MM / RM)
 
 Two layers the whole engine loads assets through: **MM**, a handle-based memory allocator
 with memory-mapped-file support (`0x435C60–0x43631C`), and **RM**, the resource manager — a
 filename registry with an LRU cache that resolves per-type load hooks and pulls bytes from
 LIB archives into MM handles (`0x4A67F0–0x4A6E46`).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/memory-resource.csv)
 > and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md).

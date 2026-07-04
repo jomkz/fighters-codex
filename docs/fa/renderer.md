@@ -1,4 +1,4 @@
-# FA.EXE Renderer & Rasterizer
+# Renderer & Rasterizer
 
 The **2D graphics device and software rasterizer** — the primitive-drawing library the whole
 game renders through. Two layers: `GG_*`, the DirectDraw surface/mode/palette/present device
@@ -15,7 +15,7 @@ virtual address (VA) and SMS name where available.
 > migrate to `render-core.md` when it lands. [Terrain](reconstruction.md) and the
 > [SH shape format](formats/SH.md) are their own subsystems.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; every symbol here is recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv)
 > and applied to the Ghidra project. Confidence markers follow
@@ -136,7 +136,7 @@ function pointer to the actual scanline fill kernel selected at startup.
 
 ### 3.3 Z-buffer
 
-No dedicated Z-buffer write was observed in the rasteriser output — FA.EXE predates z-buffer
+No dedicated Z-buffer write was observed in the rasteriser output — the game executable predates z-buffer
 hardware and relies entirely on painter's-order submission (objects sorted back-to-front by the
 scene graph before draw calls). The `_lineStats` array (base `0x5568a8`) is a per-scanline byte
 flag used to mark which scanlines are occupied by a polygon, preventing re-scan of empty rows.
@@ -239,7 +239,7 @@ Key DirectDraw globals:
 
 `G_AllocSurfaceBitmap` stores the DirectDraw surface's locked pixel pointer (`piVar3[9]`) and row
 stride (`piVar3[4]`) directly into the bitmap header, then builds a `param_2`-entry array of row
-pointers at the handle's data area starting at offset `+0x32`. The FA.EXE bitmap struct (used as
+pointers at the handle's data area starting at offset `+0x32`. The the game executable bitmap struct (used as
 `_cb`) has this layout at known offsets:
 
 | Offset | Field |
@@ -309,7 +309,7 @@ duplication, creating a 2× stretched copy for the higher-resolution renderer pa
 
 ## 10. Horizon / Sky Integration
 
-`T_DefaultHorizon` (`0x4aacf0`) is the exported FA.EXE function that LAY DLLs invoke for sky
+`T_DefaultHorizon` (`0x4aacf0`) is the exported the game executable function that LAY DLLs invoke for sky
 rendering. It is called indirectly — the LAY DLL's dispatch table entry for the horizon slot
 contains a pointer to this function (resolved at load time when the engine patches the LAY DLL's
 IAT). `FUN_004aacfe` is the only direct caller confirmed in the analysis output.

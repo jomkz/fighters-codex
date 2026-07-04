@@ -285,7 +285,7 @@ Only `0` and `1` observed across all 75 files (192 waypoints total). `w_goal 0`
 always appears with `w_flags 1` and `w_speed 0` (stationary anchor/spawn
 point); `w_goal 1` appears with `w_flags 0`, a non-zero speed, and a `w_react`
 bitmask (active patrol waypoint). Exact goal-type semantics need a trace of the
-waypoint consumer in FA.EXE.
+waypoint consumer in the game executable.
 
 *Status: open — re-static (#54)*
 

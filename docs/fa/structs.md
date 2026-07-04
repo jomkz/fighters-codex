@@ -4,7 +4,7 @@ Master struct reference for Jane's Fighters Anthology. All offsets were derived 
 `RecoverStructs.java` scanning the executable for field-access patterns against known
 struct pointer arguments.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; recovered by `RecoverStructs.java`. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; recovered by `RecoverStructs.java`. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 In this document, **confirmed** means the accessor function name clearly indicates the
 field meaning (e.g., `MPSetFuel`, `HUDDrawAlt`, `DAMAGEDoHit`); **inferred** means only

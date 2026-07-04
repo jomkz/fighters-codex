@@ -1,11 +1,11 @@
-# FA.EXE 3D Render Core & SH Interpreter (GR)
+# 3D Render Core & SH Interpreter (GR)
 
 The 3D scene pipeline that turns transformed geometry into the 2D rasterizer calls — and the
 hand-written threaded-code **SH interpreter** that executes `.SH` shape bytecode into it.
 `0x4CD588–0x4D6C00`. This is the layer above the [2D rasterizer](renderer.md): `render-core`
 issues the `G_*` calls, `renderer` fills them.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/render-core.csv)
 > and applied to the Ghidra project (the ~120 `vector_table` SH-opcode handlers, previously

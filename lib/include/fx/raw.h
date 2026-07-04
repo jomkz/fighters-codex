@@ -15,7 +15,7 @@
 //  32  768   Embedded palette: 256 x RGB8 triplets (8-bit, 0-255)
 // 800  w*h   Pixel indices, row-major
 //
-// Width and height are stored big-endian despite FA.EXE being little-endian.
+// Width and height are stored big-endian despite the game executable being little-endian.
 // Palette values are full 8-bit (not the 6-bit VGA format used by .PAL/.PIC).
 
 namespace fx {

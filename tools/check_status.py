@@ -22,7 +22,7 @@ it checks three layers:
   3. coverage:    every codec, CLI command, test, fuzz harness, and GUI
                   editor in the repository is claimed by a spec.
 
-It also validates the FA.EXE reconstruction program (epic #209): the db/ symbol
+It also validates the game-executable reconstruction program (epic #209): the db/ symbol
 database (manifest + per-subsystem symbol files + committed Ghidra inventory),
 per-subsystem coverage for completed subsystems (every in-scope function named,
 every referenced global named or waived), subsystem-doc structure, and the

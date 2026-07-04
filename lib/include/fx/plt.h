@@ -26,7 +26,7 @@
 //   Weapon accuracy   0x20B8-0x21F7  (8 groups x 0x28 bytes: player slot + wingman slot)
 //
 // Remaining gaps (0xB0-0xC1, 0xCF-0x5AE, 0x21F8-0x25DF):
-//   No code in FA.EXE was found accessing these regions via static analysis.
+//   No code in the game executable was found accessing these regions via static analysis.
 //   Differential save of fresh pilot files shows all zeros â€” populated only after
 //   actual campaign gameplay. Layout unknown; marked reserved.
 

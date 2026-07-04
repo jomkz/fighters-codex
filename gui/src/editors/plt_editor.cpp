@@ -197,7 +197,7 @@ void DrawPltEditor(App& app) {
 
     // â”€â”€ Gap Explorer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     ImGui::SeparatorText("Gap Explorer");
-    ImGui::TextDisabled("Probe workflow: set bytes below, Save, launch FA.EXE, observe what changes.");
+    ImGui::TextDisabled("Probe workflow: set bytes below, Save, launch the game, observe what changes.");
     ImGui::Spacing();
 
     // Renders a compact editable hex grid for ed.data[base .. base+len).

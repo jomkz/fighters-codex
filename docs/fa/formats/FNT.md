@@ -52,7 +52,7 @@ glyph functions followed by a width table, then the glyph function bodies.
 ### FONT struct
 
 Starts at CODE section offset 0 (VA 0x1000). Confirmed from tracing
-`@G_Print@16` in FA.EXE (`0x004986B0`), which accesses the loaded FNT DLL via
+`@G_Print@16` in the game executable (`0x004986B0`), which accesses the loaded FNT DLL via
 the global `?cFont@@3PAUFONT@@A`:
 
 ```

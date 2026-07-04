@@ -1,11 +1,11 @@
-# FA.EXE Startup & C Runtime
+# Startup & C Runtime
 
 The program's boot path and the statically-linked **MSVC C runtime** it pulls in. Notably,
-FA.EXE is a **native Win32 PE** — there is *no* Phar Lap DOS extender (that name refers to
+The game executable is a **native Win32 PE** — there is *no* Phar Lap DOS extender (that name refers to
 the `PL\0\0` overlay-DLL format handled elsewhere). The one genuine startup element in this
 range is the PE entry `_WinMainCRTStartup` (`0x4D9D00`); the rest is CRT.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ## What's here
 

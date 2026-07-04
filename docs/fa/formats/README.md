@@ -109,7 +109,7 @@ Game configuration, multiplayer network settings, the recovered C++ symbol map, 
 |--------|------|-------------|
 | CFG | [CFG.md](CFG.md) | Binary game configuration — graphics, controls, audio, pilot slot |
 | DAT | [DAT.md](DAT.md) | Binary multiplayer network settings (NET.DAT / MODEM.DAT / SERIAL.DAT) |
-| SMS | [SMS.md](SMS.md) | FA.EXE symbol map — 3,829 MSVC-mangled C++ symbols with virtual addresses |
+| SMS | [SMS.md](SMS.md) | the game executable symbol map — 3,829 MSVC-mangled C++ symbols with virtual addresses |
 | P | [P.md](P.md) | Pilot save file — career stats, callsign, and campaign progress |
 | BIN | [BIN.md](BIN.md) | Lookup tables and palette subsets (INSIGMAP.BIN, VFONTPAL.BIN) |
 

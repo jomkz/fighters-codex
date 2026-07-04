@@ -193,7 +193,7 @@ MRFA  — trailing audio
 
 CB8 frame data consists entirely of 8-bit palette indices. The palette used to
 render those indices is **not stored in any LIB file**. It is an
-engine-internal table loaded at startup from a resource embedded in FA.EXE (or
+engine-internal table loaded at startup from a resource embedded in the game executable (or
 a companion file loaded before the cutscene begins).
 
 **PALETTE.PAL is the wrong palette for CB8.** Indices 1–46 in PALETTE.PAL are
@@ -223,7 +223,7 @@ JANELOGO.CB8 (6,496,064 bytes): VooM at offset 14812 with 466 index entries
 
 ### 1. Playback palette recovery
 
-The CB8 palette is engine-internal (an FA.EXE-embedded resource or a
+The CB8 palette is engine-internal (an game-executable-embedded resource or a
 pre-cutscene companion load); until it is located, decoded frames render
 correctly only in greyscale.
 

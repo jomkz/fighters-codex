@@ -1,4 +1,4 @@
-# FA.EXE AI Interpreter — "Chuck Talk" (CT)
+# AI Interpreter — "Chuck Talk" (CT)
 
 The bytecode virtual machine that runs the game's `.AI` behaviour scripts. `CT` is not
 "control/tactics" — the interpreter's own error path prints **"Chuck Talk error: %s,
@@ -6,7 +6,7 @@ line %u"**, so `CT` = **Chuck Talk**, the internal name of the `.AI` scripting l
 The VM lives at `0x464C60–0x467110`; it runs the compiled `.BI` bytecode
 ([BI.md](formats/BI.md)) that `.AI` source ([AI.md](formats/AI.md)) compiles to.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; every symbol here is recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv)
 > and applied to the Ghidra project (the ~95 `CTEval_*`/`CTDo_*` handlers are label-only
@@ -33,7 +33,7 @@ reached through two **call** opcodes that form an inline cache:
   to `CALL_DIRECT` (`0x26`) with the resolved `code*` stored inline. First hit resolves
   by name; every later hit is a direct call.
 
-This is the FA.EXE-resident-handler / BI-supplies-bytecode split — the same architecture
+This is the game-executable-resident-handler / BI-supplies-bytecode split — the same architecture
 as the SH interpreter ([shape-selection.md](shape-selection.md) / SH.md), differing only
 in that CT resolves handlers by name-and-self-patch rather than a fixed vector table.
 
@@ -88,28 +88,28 @@ Representative subset; the full record (incl. all `CTEval_*`/`CTDo_*` handlers) 
 
 ### 1. Who writes `_ctCheckPass` (`0x546C8C`)? — resolved
 
-**Nobody, in FA.EXE.** A whole-program scan of the decompile finds all 11 references to
+**Nobody, in the game executable.** A whole-program scan of the decompile finds all 11 references to
 `_ctCheckPass` are **reads** (`== '\0'` / `!= '\0'` gates); there is no write, address-of, or
 bulk initialiser anywhere in the image. So at runtime it is a constant `0`, and every branch it
 guards (the validate/dry-run path unlocking the syntax-error / expecting-var / stack-imbalance
 `CTError` diagnostics) is **dormant in the shipped game**. This confirms the read: the CT core
 doubles as the `.AI`→`.BI` compiler's validator, and the flag's *setter lives in that offline
-compiler tool*, which is not linked into FA.EXE — FA.EXE ships only the interpreter, so it never
+compiler tool*, which is not linked into the game executable — the game executable ships only the interpreter, so it never
 runs the load-time verification pass.
 
-*Status: resolved — re-static (no writer in FA.EXE; validator dormant).*
+*Status: resolved — re-static (no writer in the game executable; validator dormant).*
 
 ### 2. `_ctState + 0x7c/0x7e` (FRAME) semantics — characterized
 
 The two `s16` at the tail of `_ctState` are touched **only** by the bulk `CTSaveState`
 (`0x466920`) / `CTRestoreState` (`0x4668F0`) snapshot copy — there is no scalar read or write
-anywhere in FA.EXE. Statically that is all that can be established: they are opaque
+anywhere in the game executable. Statically that is all that can be established: they are opaque
 saved-and-restored interpreter state with no in-binary accessor, so their runtime meaning (the
 suspected maneuver-frame / animation-phase stamp) cannot be pinned by static RE alone — it would
 need the running game or the `.AI` compiler. Documented as characterized rather than left open,
 since a further static pass cannot resolve it.
 
-*Status: resolved (characterized) — no scalar accessor in FA.EXE; runtime meaning needs [#56](https://github.com/jomkz/fighters-codex/issues/56).*
+*Status: resolved (characterized) — no scalar accessor in the game executable; runtime meaning needs [#56](https://github.com/jomkz/fighters-codex/issues/56).*
 
 ## Related
 
