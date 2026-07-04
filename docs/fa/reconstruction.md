@@ -10,7 +10,7 @@ Ghidra inventory by CI (`--check`).
 | Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
 | Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 80/80 (100%) | 15 named · 113 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
-| Renderer & rasterizer (GG/G_) | `0x45DBD0–0x499380` | — | — | — | — | [#211](https://github.com/jomkz/fighters-codex/issues/211) | planned |
+| Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 121/121 (100%) | 3 named · 149 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
 | Flight model / physics (FM/HARD) | `0x451480–0x454800` | — | — | — | — | [#212](https://github.com/jomkz/fighters-codex/issues/212) | planned |
 | HUD / cockpit | `0x405E30–0x40AE50` | — | — | — | — | [#213](https://github.com/jomkz/fighters-codex/issues/213) | planned |
 | Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | — | — | — | — | [#215](https://github.com/jomkz/fighters-codex/issues/215) | planned |
@@ -26,7 +26,7 @@ Ghidra inventory by CI (`--check`).
 | Core shell / menu / dialog UI | `0x40AE50–0x421C70`<br>`0x487A3A–0x48D200` | — | — | — | — | [#225](https://github.com/jomkz/fighters-codex/issues/225) | planned |
 | Startup / Phar Lap DOS extender / config | `0x4D5C00–0x4E8B66` | — | — | — | — | [#226](https://github.com/jomkz/fighters-codex/issues/226) | planned |
 | Video decode (FMV/Cobra) | `0x456300–0x45D090` | — | — | — | — | [#227](https://github.com/jomkz/fighters-codex/issues/227) | planned |
-| 3D render core / SH interpreter (GR) | `0x4C5D70–0x4D5C00` | — | — | — | — | [#228](https://github.com/jomkz/fighters-codex/issues/228) | planned |
+| 3D render core / SH interpreter (GR) | `0x4C5D70–0x4D6C00` | — | — | — | — | [#228](https://github.com/jomkz/fighters-codex/issues/228) | planned |
 
-**Program totals:** 1/18 subsystems complete; 80/3564 in-scope functions named; 128/8591 referenced globals resolved.
+**Program totals:** 2/18 subsystems complete; 201/2878 in-scope functions named; 280/8282 referenced globals resolved.
 

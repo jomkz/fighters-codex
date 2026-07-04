@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="FA.EXE renderer stack: the 3D core feeds the G_ rasterizer, which writes spans into the frame buffer that the GG_ device presents to DirectDraw.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .setup { fill: #e8f0fb; stroke: #3d6aa8; stroke-width: 1.5; }
+    .run   { fill: #eaf4ec; stroke: #3f7d4f; stroke-width: 1.5; }
+    .ext   { fill: #eef0f2; stroke: #90a0ad; stroke-width: 1.3; stroke-dasharray: 5 4; }
+    .dec   { fill: #fdf4e3; stroke: #b8892f; stroke-width: 1.5; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 11.5px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .lanetitle { fill: #33424e; font-size: 12px; font-weight: 600; letter-spacing: .05em; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    .edgelbl { fill: #4a5a67; font-size: 11px; }
+    .bracket { fill: none; stroke: #3f7d4f; stroke-width: 1.6; }
+    @media (prefers-color-scheme: dark) {
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+      .run{fill:#1d2c22;stroke:#6fae7f;} .ext{fill:#20262c;stroke:#6b7a86;}
+      .dec{fill:#322a1a;stroke:#d9b45f;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .lanetitle{fill:#c7d2da;}
+      .edge{stroke:#8a99a5;} .edgelbl{fill:#a6b3bd;} .bracket{stroke:#6fae7f;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;}
+    :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;}
+    :root[data-theme="dark"] .ext{fill:#20262c;stroke:#6b7a86;}
+    :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;}
+    :root[data-theme="dark"] .lanetitle{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;}
+    :root[data-theme="dark"] .edgelbl{fill:#a6b3bd;} :root[data-theme="dark"] .bracket{stroke:#6fae7f;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;}
+    :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;}
+    :root[data-theme="light"] .ext{fill:#eef0f2;stroke:#90a0ad;}
+    :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;}
+    :root[data-theme="light"] .lanetitle{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;}
+    :root[data-theme="light"] .edgelbl{fill:#4a5a67;} :root[data-theme="light"] .bracket{stroke:#3f7d4f;}
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/>
+    </marker>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" class="lanetitle">RENDERER STACK — geometry in, presented frame out</text>
+
+  <!-- render-core (external, above) -->
+  <rect class="dec" x="150" y="44" width="520" height="58" rx="6"/>
+  <text x="410" y="68" text-anchor="middle" class="lbl mono">render-core · GR_</text>
+  <text x="410" y="87" text-anchor="middle" class="sub">3D transform, project, scene dispatch — issues 2D draw calls · #228</text>
+
+  <!-- G_ rasterizer (this subsystem) -->
+  <rect class="run" x="150" y="150" width="520" height="86" rx="6"/>
+  <text x="410" y="174" text-anchor="middle" class="lbl mono">G_ rasterizer</text>
+  <text x="410" y="194" text-anchor="middle" class="sub">primitives: G_Point · G_Line · G_Rect · G_Polygon · G_Print</text>
+  <text x="410" y="212" text-anchor="middle" class="sub">span fillers: G__Texture · G__Perspective · NPM_*Tri</text>
+
+  <!-- frame buffer -->
+  <rect class="box" x="150" y="284" width="520" height="52" rx="6"/>
+  <text x="410" y="306" text-anchor="middle" class="lbl mono">_mainBitmap  +  _lineStats</text>
+  <text x="410" y="324" text-anchor="middle" class="sub">back buffer and per-scanline dirty spans</text>
+
+  <!-- GG_ device (this subsystem) -->
+  <rect class="setup" x="150" y="384" width="520" height="80" rx="6"/>
+  <text x="410" y="408" text-anchor="middle" class="lbl mono">GG_ device</text>
+  <text x="410" y="428" text-anchor="middle" class="sub">surfaces · palette · GG_Flush</text>
+  <text x="410" y="446" text-anchor="middle" class="sub">-> GG_FlushShaken (shake offset) / GG_FlushDirtyLines (dirty spans)</text>
+
+  <!-- DirectDraw (external, below) -->
+  <rect class="ext" x="150" y="486" width="520" height="42" rx="6"/>
+  <text x="410" y="512" text-anchor="middle" class="sub mono">DirectDraw primary / secondary surfaces</text>
+
+  <!-- flow arrows -->
+  <path class="edge" d="M410,102 L410,147" marker-end="url(#arrow)"/>
+  <text x="420" y="127" class="edgelbl">2D draw calls</text>
+  <path class="edge" d="M410,236 L410,281" marker-end="url(#arrow)"/>
+  <text x="420" y="261" class="edgelbl">spans</text>
+  <path class="edge" d="M410,336 L410,381" marker-end="url(#arrow)"/>
+  <text x="420" y="362" class="edgelbl">present</text>
+  <path class="edge" d="M410,464 L410,483" marker-end="url(#arrow)"/>
+  <text x="420" y="479" class="edgelbl">flip</text>
+
+  <!-- subsystem bracket -->
+  <path class="bracket" d="M694,150 L708,150 L708,464 L694,464"/>
+  <text x="726" y="312" text-anchor="middle" class="lanetitle" transform="rotate(90 726 312)">renderer subsystem · #211</text>
+</svg>

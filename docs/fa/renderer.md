@@ -1,9 +1,25 @@
-# FA 3D Rendering Pipeline
+# FA.EXE Renderer & Rasterizer
 
-Documentation of the Jane's Fighters Anthology (FA.EXE) 3D rendering pipeline. Functions are
-identified by virtual address (VA) and SMS name where available.
+The **2D graphics device and software rasterizer** — the primitive-drawing library the whole
+game renders through. Two layers: `GG_*`, the DirectDraw surface/mode/palette/present device
+(`0x45DBD0–0x45E460`), and `G_*`, the software rasterizer — points, lines, rectangles,
+polygons, text, bitmap blit/scale, and the polygon/triangle span fillers (`G_*` clusters at
+`0x497330`, `0x4B7900`, and the span fillers at `0x4C6000+`). Functions are identified by
+virtual address (VA) and SMS name where available.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Scope:** this is the [reconstruction-program](reconstruction.md) `renderer` subsystem
+> (#211) — the device + rasterizer. The **3D scene pipeline** that drives it (`GR_*`:
+> transform, project, scene dispatch, camera, culling, sky/horizon) is the separate
+> **render-core** subsystem (#228, forthcoming); the sections below that describe that
+> pipeline (§1 Scene Dispatch, §5 Camera, §6 Visibility, §10 Horizon) are provisional and
+> migrate to `render-core.md` when it lands. [Terrain](reconstruction.md) and the
+> [SH shape format](formats/SH.md) are their own subsystems.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> applied; every symbol here is recorded in the
+> [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv)
+> and applied to the Ghidra project. Confidence markers follow
+> [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 
@@ -419,3 +435,64 @@ the `JPEGMEM` environment variable to override its memory pool size (default fro
 | `DAT_0057cd08` | Sun disc colour/brightness for GRExec |
 | `_realPalette` / `_curPalette` | 0xC0-entry (192) VGA 6-bit RGB palette (base + sky range) |
 | `_lastPalette` | Copy of the last-uploaded palette; zeroed by `_WRForcePaletteUpdate` to trigger re-upload |
+
+## Pipeline
+
+The renderer is a strict stack: the 3D core (render-core, `GR_*`) transforms geometry into
+2D calls; the `G_*` rasterizer turns those into spans; the `GG_*` device presents the
+finished frame to DirectDraw. This subsystem owns the lower two layers.
+
+![Renderer stack: the 3D core feeds the G_ rasterizer (primitives and span fillers), which draws into the frame the GG_ device presents to DirectDraw.](diagrams/renderer-stack.svg)
+
+## Functions
+
+Representative subset of the device + rasterizer; the full record is in
+[`db/symbols/renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv).
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x45DBD0` | `GG_InitMode` | create the DirectDraw surfaces and enter the graphics mode |
+| `0x45DE70` | `GG_SetPalette` | upload the 192-entry palette to the primary surface |
+| `0x45E120` | `GG_Flush` | present the back buffer (dispatches to the two paths below) |
+| `0x45DEDF` | `GG_FlushShaken` | present with the current screen-shake offset |
+| `0x45E13F` | `GG_FlushDirtyLines` | present only the dirty scanlines tracked in `_lineStats` |
+| `0x45E3A0` | `GG_RestoreSurfaces` | rebuild surfaces after a DirectDraw device loss |
+| `0x45CDA0` | `DrawAcrossBank` | span helper that draws across a VGA bank boundary |
+| `0x497340` | `G_Init` | initialise the rasterizer (clip box, colour, font, line stats) |
+| `0x4974F0` | `G_SetClipBox` | set the active clip rectangle |
+| `0x4976D0` | `G_Point` | plot a single clipped pixel |
+| `0x498160` | `G_Line` | draw a clipped line |
+| `0x497BF0` | `G_Rect` | draw a clipped filled rectangle |
+| `0x497DE0` | `G_ClipLine` | Cohen–Sutherland line clip against the clip box |
+| `0x4986B0` | `G_Print` | draw a text string in the current font |
+| `0x4B79B0` | `G_AllocBitmap` | allocate a rasterizer bitmap |
+| `0x4B7CD0` | `G_LoadBitmap` | load a `.PIC`/brush into a bitmap |
+| `0x4B7E10` | `G_RemapBitmapToPalette` | nearest-colour remap of a bitmap to `_curPalette` |
+| `0x4B7FE0` | `G_Blit` | blit a bitmap to a surface |
+| `0x4B8670` | `G_Scale` | scaled bitmap blit |
+| `0x4B87F0` | `G_AcTexture` | affine-textured span setup |
+| `0x4B9B90` | `NPM_TexturePerspectiveTri` | perspective-correct textured triangle rasterizer |
+| `0x4C6ECC` | `G_UPolygon` | unclipped convex-polygon span fill |
+| `0x4C8A38` | `G_Polygon` | clipped convex-polygon span fill |
+| `0x4CAE38` | `G__Texture` | affine texture-mapped scanline span filler |
+| `0x4CBD0B` | `G__Perspective` | perspective texture-mapped scanline span filler |
+
+## Open Questions
+
+### 1. `GG_Flush` path selection
+
+`GG_Flush` (`0x45E120`) dispatches to `GG_FlushShaken` or `GG_FlushDirtyLines`; the exact
+predicate (a shake-active flag vs. the `_lineStats` dirty-line optimisation being enabled) is
+inferred from the two callees' reads, not yet traced at the dispatch site. A short trace of
+`GG_Flush` will pin it.
+
+*Status: open — re-static.*
+
+## Related
+
+- [reconstruction.md](reconstruction.md) — the program this subsystem belongs to, and the
+  forthcoming **render-core** (#228) 3D pipeline that drives this rasterizer.
+- [objects.md](objects.md) — the object system whose draw-enqueue passes feed geometry in.
+- [shape-selection.md](shape-selection.md) / [SH.md](formats/SH.md) — the shape format the
+  3D core interprets into the polygon calls this rasterizer fills.
+- [formats/PIC.md](formats/PIC.md) — the bitmap format `G_LoadBitmap` consumes.
