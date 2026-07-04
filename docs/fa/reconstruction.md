@@ -35,5 +35,13 @@ Ghidra inventory by CI (`--check`).
 
 **FA.EXE totals:** 19/19 subsystems complete; 1709/1709 in-scope functions named; 2476/4564 referenced globals resolved.
 
-**Program totals (all binaries):** 19/19 subsystems complete; 1709/1709 in-scope functions named; 2476/4564 referenced globals resolved.
+## WAIL32.DLL
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| WAIL32.DLL — Miles Sound System (AIL) audio driver | `0x20001000–0x20019E00` | 503/503 (100%) | 0 named · 577 waived | [doc](wail32.md) | ✓ | [#253](https://github.com/jomkz/fighters-codex/issues/253) | complete |
+
+**WAIL32.DLL totals:** 1/1 subsystems complete; 503/503 in-scope functions named; 577/756 referenced globals resolved.
+
+**Program totals (all binaries):** 20/20 subsystems complete; 2212/2212 in-scope functions named; 3053/5320 referenced globals resolved.
 

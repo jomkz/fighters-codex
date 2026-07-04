@@ -56,6 +56,8 @@ The per-subsystem tables below are **generated from the [symbol database](https:
 
 _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/); each subsystem's detailed prose lives on its own page._
 
+**Binary: `FA.EXE`**
+
 ### Network / multiplayer (NET/SER/UDP/MP)
 
 [`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 107 named functions
@@ -1731,6 +1733,145 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004E8720` | `_wcstombs` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E8780` | `__wcstombs_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E8A2E` | `_RtlUnwind@16` | sms | IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem |
+
+**Binary: `WAIL32.DLL`**
+
+### WAIL32.DLL — Miles Sound System (AIL) audio driver
+
+[`wail32.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/wail32.csv) · [page](wail32.md) — 130 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x20001660` | `DllMain` | re | Miles/AIL public export |
+| `0x200019C0` | `AIL_startup` | re | Miles/AIL public export |
+| `0x20001CF0` | `AIL_shutdown` | re | Miles/AIL public export |
+| `0x20001E00` | `MEM_alloc_lock` | re | Miles/AIL public export |
+| `0x20001F10` | `MEM_free_lock` | re | Miles/AIL public export |
+| `0x20001FA0` | `AIL_set_preference` | re | Miles/AIL public export |
+| `0x200020C0` | `AIL_get_preference` | re | Miles/AIL public export |
+| `0x200021D0` | `AIL_last_error` | re | Miles/AIL public export |
+| `0x200022D0` | `AIL_set_error` | re | Miles/AIL public export |
+| `0x20002360` | `AIL_lock` | re | Miles/AIL public export |
+| `0x20002380` | `AIL_unlock` | re | Miles/AIL public export |
+| `0x200023A0` | `AIL_delay` | re | Miles/AIL public export |
+| `0x20002420` | `AIL_background` | re | Miles/AIL public export |
+| `0x20002430` | `AIL_register_timer` | re | Miles/AIL public export |
+| `0x20002540` | `AIL_set_timer_user` | re | Miles/AIL public export |
+| `0x20002660` | `AIL_set_timer_period` | re | Miles/AIL public export |
+| `0x20002700` | `AIL_set_timer_frequency` | re | Miles/AIL public export |
+| `0x200027A0` | `AIL_set_timer_divisor` | re | Miles/AIL public export |
+| `0x20002840` | `AIL_start_timer` | re | Miles/AIL public export |
+| `0x200028D0` | `AIL_start_all_timers` | re | Miles/AIL public export |
+| `0x20002950` | `AIL_stop_timer` | re | Miles/AIL public export |
+| `0x200029E0` | `AIL_stop_all_timers` | re | Miles/AIL public export |
+| `0x20002A60` | `AIL_release_timer_handle` | re | Miles/AIL public export |
+| `0x20002AF0` | `AIL_release_all_timers` | re | Miles/AIL public export |
+| `0x20002B70` | `AIL_waveOutOpen` | re | Miles/AIL public export |
+| `0x20002CB0` | `AIL_waveOutClose` | re | Miles/AIL public export |
+| `0x20002D60` | `AIL_allocate_sample_handle` | re | Miles/AIL public export |
+| `0x20002E80` | `AIL_allocate_file_sample` | re | Miles/AIL public export |
+| `0x20002FB0` | `AIL_release_sample_handle` | re | Miles/AIL public export |
+| `0x20003060` | `AIL_init_sample` | re | Miles/AIL public export |
+| `0x20003110` | `AIL_set_sample_file` | re | Miles/AIL public export |
+| `0x20003240` | `AIL_set_sample_address` | re | Miles/AIL public export |
+| `0x200032F0` | `AIL_set_sample_type` | re | Miles/AIL public export |
+| `0x200033A0` | `AIL_start_sample` | re | Miles/AIL public export |
+| `0x20003450` | `AIL_stop_sample` | re | Miles/AIL public export |
+| `0x20003500` | `AIL_resume_sample` | re | Miles/AIL public export |
+| `0x200035B0` | `AIL_end_sample` | re | Miles/AIL public export |
+| `0x20003660` | `AIL_set_sample_playback_rate` | re | Miles/AIL public export |
+| `0x20003710` | `AIL_set_sample_volume` | re | Miles/AIL public export |
+| `0x200037C0` | `AIL_set_sample_pan` | re | Miles/AIL public export |
+| `0x20003870` | `AIL_set_sample_loop_count` | re | Miles/AIL public export |
+| `0x20003920` | `AIL_set_sample_loop_block` | re | Miles/AIL public export |
+| `0x200039D0` | `AIL_sample_status` | re | Miles/AIL public export |
+| `0x20003AF0` | `AIL_sample_playback_rate` | re | Miles/AIL public export |
+| `0x20003C10` | `AIL_sample_volume` | re | Miles/AIL public export |
+| `0x20003D30` | `AIL_sample_pan` | re | Miles/AIL public export |
+| `0x20003E50` | `AIL_sample_loop_count` | re | Miles/AIL public export |
+| `0x20003F70` | `AIL_set_digital_master_volume` | re | Miles/AIL public export |
+| `0x20004020` | `AIL_digital_master_volume` | re | Miles/AIL public export |
+| `0x20004140` | `AIL_minimum_sample_buffer_size` | re | Miles/AIL public export |
+| `0x20004280` | `AIL_sample_buffer_ready` | re | Miles/AIL public export |
+| `0x200043A0` | `AIL_load_sample_buffer` | re | Miles/AIL public export |
+| `0x20004460` | `AIL_sample_buffer_info` | re | Miles/AIL public export |
+| `0x200045B0` | `AIL_set_sample_position` | re | Miles/AIL public export |
+| `0x20004660` | `AIL_sample_position` | re | Miles/AIL public export |
+| `0x20004780` | `AIL_register_SOB_callback` | re | Miles/AIL public export |
+| `0x200048B0` | `AIL_register_EOB_callback` | re | Miles/AIL public export |
+| `0x200049E0` | `AIL_register_EOS_callback` | re | Miles/AIL public export |
+| `0x20004B10` | `AIL_register_EOF_callback` | re | Miles/AIL public export |
+| `0x20004C30` | `AIL_set_sample_user_data` | re | Miles/AIL public export |
+| `0x20004CE0` | `AIL_sample_user_data` | re | Miles/AIL public export |
+| `0x20004E10` | `AIL_active_sample_count` | re | Miles/AIL public export |
+| `0x20004F30` | `AIL_digital_configuration` | re | Miles/AIL public export |
+| `0x20004FF0` | `AIL_set_direct_buffer_control` | re | Miles/AIL public export |
+| `0x20005110` | `AIL_get_DirectSound_info` | re | Miles/AIL public export |
+| `0x200051A0` | `AIL_midiOutOpen` | re | Miles/AIL public export |
+| `0x200052D0` | `AIL_midiOutClose` | re | Miles/AIL public export |
+| `0x20005360` | `AIL_allocate_sequence_handle` | re | Miles/AIL public export |
+| `0x20005470` | `AIL_release_sequence_handle` | re | Miles/AIL public export |
+| `0x20005500` | `AIL_init_sequence` | re | Miles/AIL public export |
+| `0x20005630` | `AIL_start_sequence` | re | Miles/AIL public export |
+| `0x200056C0` | `AIL_stop_sequence` | re | Miles/AIL public export |
+| `0x20005750` | `AIL_resume_sequence` | re | Miles/AIL public export |
+| `0x200057E0` | `AIL_end_sequence` | re | Miles/AIL public export |
+| `0x20005870` | `AIL_set_sequence_tempo` | re | Miles/AIL public export |
+| `0x20005910` | `AIL_set_sequence_volume` | re | Miles/AIL public export |
+| `0x200059B0` | `AIL_set_sequence_loop_count` | re | Miles/AIL public export |
+| `0x20005A50` | `AIL_sequence_status` | re | Miles/AIL public export |
+| `0x20005B60` | `AIL_sequence_tempo` | re | Miles/AIL public export |
+| `0x20005C70` | `AIL_sequence_volume` | re | Miles/AIL public export |
+| `0x20005D80` | `AIL_sequence_loop_count` | re | Miles/AIL public export |
+| `0x20005E90` | `AIL_set_XMIDI_master_volume` | re | Miles/AIL public export |
+| `0x20005F30` | `AIL_XMIDI_master_volume` | re | Miles/AIL public export |
+| `0x20006040` | `AIL_active_sequence_count` | re | Miles/AIL public export |
+| `0x20006150` | `AIL_controller_value` | re | Miles/AIL public export |
+| `0x20006280` | `AIL_channel_notes` | re | Miles/AIL public export |
+| `0x200063A0` | `AIL_sequence_position` | re | Miles/AIL public export |
+| `0x200064C0` | `AIL_branch_index` | re | Miles/AIL public export |
+| `0x20006560` | `AIL_register_prefix_callback` | re | Miles/AIL public export |
+| `0x20006680` | `AIL_register_trigger_callback` | re | Miles/AIL public export |
+| `0x200067A0` | `AIL_register_sequence_callback` | re | Miles/AIL public export |
+| `0x200068C0` | `AIL_register_beat_callback` | re | Miles/AIL public export |
+| `0x200069E0` | `AIL_register_event_callback` | re | Miles/AIL public export |
+| `0x20006B00` | `AIL_register_timbre_callback` | re | Miles/AIL public export |
+| `0x20006C20` | `AIL_set_sequence_user_data` | re | Miles/AIL public export |
+| `0x20006CC0` | `AIL_sequence_user_data` | re | Miles/AIL public export |
+| `0x20006DE0` | `AIL_register_ICA_array` | re | Miles/AIL public export |
+| `0x20006E80` | `AIL_lock_channel` | re | Miles/AIL public export |
+| `0x20006F90` | `AIL_release_channel` | re | Miles/AIL public export |
+| `0x20007030` | `AIL_map_sequence_channel` | re | Miles/AIL public export |
+| `0x200070D0` | `AIL_true_sequence_channel` | re | Miles/AIL public export |
+| `0x200071F0` | `AIL_send_channel_voice_message` | re | Miles/AIL public export |
+| `0x200072B0` | `AIL_send_sysex_message` | re | Miles/AIL public export |
+| `0x20007350` | `AIL_create_wave_synthesizer` | re | Miles/AIL public export |
+| `0x20007480` | `AIL_destroy_wave_synthesizer` | re | Miles/AIL public export |
+| `0x20007510` | `FILE_error` | re | Miles/AIL public export |
+| `0x20007610` | `FILE_size` | re | Miles/AIL public export |
+| `0x20007720` | `FILE_read` | re | Miles/AIL public export |
+| `0x20007840` | `FILE_write` | re | Miles/AIL public export |
+| `0x20007970` | `AIL_serve` | re | Miles/AIL public export |
+| `0x200079F0` | `AIL_redbook_open` | re | Miles/AIL public export |
+| `0x20007B00` | `AIL_redbook_close` | re | Miles/AIL public export |
+| `0x20007B90` | `AIL_redbook_eject` | re | Miles/AIL public export |
+| `0x20007C20` | `AIL_redbook_status` | re | Miles/AIL public export |
+| `0x20007D30` | `AIL_redbook_tracks` | re | Miles/AIL public export |
+| `0x20007E40` | `AIL_redbook_track_info` | re | Miles/AIL public export |
+| `0x20007EF0` | `AIL_redbook_id` | re | Miles/AIL public export |
+| `0x20008000` | `AIL_redbook_position` | re | Miles/AIL public export |
+| `0x20008110` | `AIL_redbook_play` | re | Miles/AIL public export |
+| `0x20008240` | `AIL_redbook_stop` | re | Miles/AIL public export |
+| `0x20008350` | `AIL_redbook_pause` | re | Miles/AIL public export |
+| `0x20008460` | `AIL_redbook_resume` | re | Miles/AIL public export |
+| `0x20008570` | `AIL_quick_startup` | re | Miles/AIL public export |
+| `0x200086B0` | `AIL_quick_shutdown` | re | Miles/AIL public export |
+| `0x20008730` | `AIL_quick_load` | re | Miles/AIL public export |
+| `0x20008840` | `AIL_quick_unload` | re | Miles/AIL public export |
+| `0x200088D0` | `AIL_quick_play` | re | Miles/AIL public export |
+| `0x200089F0` | `AIL_quick_halt` | re | Miles/AIL public export |
+| `0x20008A80` | `AIL_quick_status` | re | Miles/AIL public export |
+| `0x20008B90` | `AIL_quick_load_and_play` | re | Miles/AIL public export |
 
 <!-- END GENERATED: symbol-registry -->
 
