@@ -25,11 +25,22 @@ std::unique_ptr<Renderer> MakeRenderer(Backend backend) {
         case Backend::Software:
             return MakeSoftwareRenderer();
         case Backend::OpenGL:
-            // The OpenGL backend is extracted from fx-gui's preview path in
-            // fx_render #289; until then callers fall back to Software.
+            // The OpenGL backend needs a current GL context and glad, so it is
+            // constructed via fx_render/gl.h (MakeOpenGLRenderer) rather than
+            // this dependency-free factory.
             return nullptr;
     }
     return nullptr;
+}
+
+void RenderToImage(Renderer& r, const Mesh& mesh, const Camera& cam, Image& out,
+                   const std::array<std::uint8_t, 4>& clear, const DrawOptions& opts) {
+    auto target = r.MakeTarget(out.width > 0 ? out.width : 1,
+                               out.height > 0 ? out.height : 1);
+    r.Begin(*target, clear);
+    r.Draw(mesh, cam, opts);
+    r.End();
+    target->Read(out);
 }
 
 }  // namespace fx_render

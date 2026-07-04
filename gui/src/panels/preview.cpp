@@ -9,11 +9,13 @@
 #include "fx/ealib.h"
 #include "fx/raw.h"
 #include "fx/sh.h"
+#include "fx_render/render.h"
+#include "fx_render/gl.h"
 
-#include <glad/gl.h>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <memory>
 #include <vector>
 
 // ---------------------------------------------------------------------------
@@ -26,44 +28,15 @@ static int        s_previewEntry  = -2;
 static int        s_previewPalGen = -1;
 
 // ---------------------------------------------------------------------------
-// SH 3D preview — offscreen GL 3.3 FBO pipeline
+// SH 3D preview — geometry is built here and rendered through the shared
+// fx_render module (OpenGL backend); see render/ and fx_render #281.
 // ---------------------------------------------------------------------------
 
-struct Vtx3D { float x, y, z, r, g, b; };
-
-static const char* kVS = R"glsl(
-#version 330 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aCol;
-uniform mat4 uMvp;
-out vec3 vCol;
-void main() {
-    gl_Position = uMvp * vec4(aPos, 1.0);
-    vCol = aCol;
-}
-)glsl";
-
-static const char* kFS = R"glsl(
-#version 330 core
-in vec3 vCol;
-uniform bool uWire;
-out vec4 FragColor;
-void main() {
-    FragColor = uWire ? vec4(0.7, 0.7, 0.7, 1.0) : vec4(vCol, 1.0);
-}
-)glsl";
-
 struct ShPreview {
-    GLuint fbo      = 0;
-    GLuint colorTex = 0;
-    GLuint depthRbo = 0;
-    GLuint prog     = 0;
-    GLuint vaoMesh  = 0, vboMesh = 0;
-    GLuint vaoGrid  = 0, vboGrid = 0;
-    GLint  locMvp   = -1;
-    GLint  locWire  = -1;
-    int vtx_count      = 0;
-    int grid_vtx_count = 0;
+    std::unique_ptr<fx_render::Renderer>     renderer;
+    std::unique_ptr<fx_render::RenderTarget> rt;
+    fx_render::Mesh mesh;   // lit triangles
+    fx_render::Mesh grid;   // room line segments
     int rt_w = 0, rt_h = 0;
     int cached_lib   = -2;
     int cached_entry = -2;
@@ -71,125 +44,16 @@ struct ShPreview {
     float elevation  = 20.0f;
     float distance   = 100.0f;
     float model_span = 1.0f;
-    float target[3]  = {};
-    bool  prog_ok    = false;
-
-    void ReleaseRT() {
-        if (fbo)      { glDeleteFramebuffers(1, &fbo);   fbo = 0; }
-        if (colorTex) { glDeleteTextures(1, &colorTex);  colorTex = 0; }
-        if (depthRbo) { glDeleteRenderbuffers(1, &depthRbo); depthRbo = 0; }
-        rt_w = rt_h = 0;
-    }
-    void ReleaseMesh() {
-        if (vaoMesh) { glDeleteVertexArrays(1, &vaoMesh); vaoMesh = 0; }
-        if (vboMesh) { glDeleteBuffers(1, &vboMesh);      vboMesh = 0; }
-        if (vaoGrid) { glDeleteVertexArrays(1, &vaoGrid); vaoGrid = 0; }
-        if (vboGrid) { glDeleteBuffers(1, &vboGrid);      vboGrid = 0; }
-        vtx_count = grid_vtx_count = 0;
-    }
+    float target[3]  = {};   // orbit centre, render Y-up space
 } s_sh;
 
-static GLuint CompileShader(GLenum type, const char* src) {
-    GLuint sh = glCreateShader(type);
-    glShaderSource(sh, 1, &src, nullptr);
-    glCompileShader(sh);
-    GLint ok = GL_FALSE;
-    glGetShaderiv(sh, GL_COMPILE_STATUS, &ok);
-    if (!ok) { glDeleteShader(sh); return 0; }
-    return sh;
-}
-
-static bool EnsureProgram() {
-    if (s_sh.prog_ok) return true;
-
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, kVS);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
-    if (!vs || !fs) {
-        if (vs) glDeleteShader(vs);
-        if (fs) glDeleteShader(fs);
-        return false;
-    }
-    s_sh.prog = glCreateProgram();
-    glAttachShader(s_sh.prog, vs);
-    glAttachShader(s_sh.prog, fs);
-    glLinkProgram(s_sh.prog);
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-
-    GLint linked = GL_FALSE;
-    glGetProgramiv(s_sh.prog, GL_LINK_STATUS, &linked);
-    if (!linked) {
-        glDeleteProgram(s_sh.prog);
-        s_sh.prog = 0;
-        return false;
-    }
-    s_sh.locMvp  = glGetUniformLocation(s_sh.prog, "uMvp");
-    s_sh.locWire = glGetUniformLocation(s_sh.prog, "uWire");
-    s_sh.prog_ok = true;
-    return true;
-}
-
-static bool EnsureRT(int w, int h) {
-    if (s_sh.rt_w == w && s_sh.rt_h == h && s_sh.fbo) return true;
-    s_sh.ReleaseRT();
-    if (w <= 0 || h <= 0) return false;
-
-    glGenTextures(1, &s_sh.colorTex);
-    glBindTexture(GL_TEXTURE_2D, s_sh.colorTex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glGenRenderbuffers(1, &s_sh.depthRbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, s_sh.depthRbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, w, h);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-    glGenFramebuffers(1, &s_sh.fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, s_sh.fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                           GL_TEXTURE_2D, s_sh.colorTex, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                              GL_RENDERBUFFER, s_sh.depthRbo);
-    bool complete =
-        glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    if (!complete) { s_sh.ReleaseRT(); return false; }
-
-    s_sh.rt_w = w;
-    s_sh.rt_h = h;
-    return true;
-}
-
-// Upload interleaved pos+colour vertices into a fresh VAO/VBO pair.
-static void UploadVertexBuffer(GLuint* vao, GLuint* vbo,
-                               const std::vector<Vtx3D>& verts) {
-    glGenVertexArrays(1, vao);
-    glGenBuffers(1, vbo);
-    glBindVertexArray(*vao);
-    glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-    glBufferData(GL_ARRAY_BUFFER,
-                 (GLsizeiptr)(verts.size() * sizeof(Vtx3D)),
-                 verts.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vtx3D),
-                          (const void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vtx3D),
-                          (const void*)(3 * sizeof(float)));
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
+// Triangulate + flat-light the SH mesh into render-space triangles for
+// fx_render (Vertex = interleaved position + colour, same layout).
 static void BuildMeshVB(const fx::ShMesh& mesh) {
-    s_sh.ReleaseMesh();
+    s_sh.mesh.vertices.clear();
     if (mesh.vertices.empty() || mesh.faces.empty()) return;
 
-    std::vector<Vtx3D> verts;
+    std::vector<fx_render::Vertex> verts;
     verts.reserve(mesh.faces.size() * 6);
 
     // Fixed directional light — upper-left-front in render space (X=right, Y=up, Z=fwd)
@@ -241,9 +105,7 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
         }
     }
 
-    if (verts.empty()) return;
-    UploadVertexBuffer(&s_sh.vaoMesh, &s_sh.vboMesh, verts);
-    s_sh.vtx_count = (int)verts.size();
+    s_sh.mesh.vertices = std::move(verts);
 }
 
 // Build a 6-wall room around the model.
@@ -278,7 +140,7 @@ static void BuildBoxGridVB(const fx::ShInfo& info, float max_span) {
     ylo = floorf(ylo/step)*step;  yhi = ceilf(yhi/step)*step;
     zlo = floorf(zlo/step)*step;  zhi = ceilf(zhi/step)*step;
 
-    std::vector<Vtx3D> lines;
+    std::vector<fx_render::Vertex> lines;
 
     // Grid on one XZ face (constant Y)
     auto faceXZ = [&](float y, float c) {
@@ -327,29 +189,28 @@ static void BuildBoxGridVB(const fx::ShInfo& info, float max_span) {
     edge(xlo,ylo,zlo, xlo,yhi,zlo); edge(xhi,ylo,zlo, xhi,yhi,zlo);
     edge(xhi,ylo,zhi, xhi,yhi,zhi); edge(xlo,ylo,zhi, xlo,yhi,zhi);
 
-    if (lines.empty()) return;
-    UploadVertexBuffer(&s_sh.vaoGrid, &s_sh.vboGrid, lines);
-    s_sh.grid_vtx_count = (int)lines.size();
+    s_sh.grid.vertices = std::move(lines);
 }
 
 static void RenderSh(int w, int h) {
-    if (!EnsureRT(w, h))   return;
-    if (!EnsureProgram())  return;
-
-    glBindFramebuffer(GL_FRAMEBUFFER, s_sh.fbo);
-    glViewport(0, 0, w, h);
-    glClearColor(0.08f, 0.08f, 0.12f, 1.0f);
-    glClearDepth(1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if (!s_sh.vaoMesh || s_sh.vtx_count == 0) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        return; // empty model — just show dark bg
+    if (w <= 0 || h <= 0) return;
+    if (!s_sh.renderer) s_sh.renderer = fx_render::MakeOpenGLRenderer();
+    if (!s_sh.renderer) return;
+    if (!s_sh.rt || s_sh.rt_w != w || s_sh.rt_h != h) {
+        s_sh.rt = s_sh.renderer->MakeTarget(w, h);
+        s_sh.rt_w = w;
+        s_sh.rt_h = h;
     }
 
-    // Build MVP. Orbit camera in the renderer's right-handed Y-up space; the
-    // SH mesh is mapped there by platform::sh_to_render (proper rotation, no
-    // mirror), so look_at/perspective are used as-is.
+    // Dark background; draw only when there's a model (as the old path did).
+    s_sh.renderer->Begin(*s_sh.rt, {20, 20, 31, 255});  // (0.08, 0.08, 0.12)
+    if (s_sh.mesh.vertices.empty()) {
+        s_sh.renderer->End();
+        return;
+    }
+
+    // Orbit camera in the renderer's right-handed Y-up space; the SH mesh is
+    // mapped there by platform::sh_to_render, so look_at/perspective apply as-is.
     const float kPi = 3.14159265358979f;
     float azRad = s_sh.azimuth   * kPi / 180.0f;
     float elRad = s_sh.elevation * kPi / 180.0f;
@@ -359,7 +220,6 @@ static void RenderSh(int w, int h) {
         s_sh.target[2] + s_sh.distance * cosf(elRad) * cosf(azRad),
     };
     float up[3] = {0.0f, 1.0f, 0.0f};
-
     platform::Mat4 view = platform::mat4_look_at(eye, s_sh.target, up);
     float near_p = std::max(1.0f, s_sh.distance * 0.01f);
     float far_p  = s_sh.distance + s_sh.model_span * 10.0f;
@@ -367,43 +227,22 @@ static void RenderSh(int w, int h) {
         60.0f * kPi / 180.0f, (float)w / (float)h, near_p, far_p);
     platform::Mat4 mvp = platform::mat4_mul(proj, view);
 
-    glUseProgram(s_sh.prog);
-    glUniformMatrix4fv(s_sh.locMvp, 1, GL_FALSE, mvp.m);
-    glUniform1i(s_sh.locWire, 0);
+    fx_render::Camera cam;
+    std::memcpy(cam.mvp.data(), mvp.m, sizeof(float) * 16);
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glDepthMask(GL_TRUE);
-    glDisable(GL_CULL_FACE); // parity with D3D11_CULL_NONE
+    fx_render::DrawOptions opts;
+    // Room grid first so the model's depth writes occlude it naturally.
+    opts.primitive = fx_render::Primitive::Lines;
+    if (!s_sh.grid.vertices.empty()) s_sh.renderer->Draw(s_sh.grid, cam, opts);
+    // Solid mesh.
+    opts.primitive = fx_render::Primitive::Triangles;
+    s_sh.renderer->Draw(s_sh.mesh, cam, opts);
+    // Grey wireframe overlay — depth-biased, no depth write.
+    opts.wireframe = true;
+    opts.depth_write = false;
+    s_sh.renderer->Draw(s_sh.mesh, cam, opts);
 
-    // Room grid first so model depth writes occlude it naturally
-    if (s_sh.vaoGrid && s_sh.grid_vtx_count > 0) {
-        glBindVertexArray(s_sh.vaoGrid);
-        glDrawArrays(GL_LINES, 0, s_sh.grid_vtx_count);
-    }
-
-    glBindVertexArray(s_sh.vaoMesh);
-    glDrawArrays(GL_TRIANGLES, 0, s_sh.vtx_count);
-
-    // Wireframe overlay — grey lines on top of the solid mesh (the DX build
-    // used a depth-bias rasterizer state; polygon offset is the GL analogue)
-    glUniform1i(s_sh.locWire, 1);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glEnable(GL_POLYGON_OFFSET_LINE);
-    glPolygonOffset(-1.0f, -1.0f);
-    glDepthMask(GL_FALSE);
-    glDepthFunc(GL_LEQUAL);
-    glDrawArrays(GL_TRIANGLES, 0, s_sh.vtx_count);
-
-    // Restore state for the ImGui backend
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDisable(GL_POLYGON_OFFSET_LINE);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LESS);
-    glDisable(GL_DEPTH_TEST);
-    glBindVertexArray(0);
-    glUseProgram(0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    s_sh.renderer->End();
 }
 
 // ---------------------------------------------------------------------------
@@ -484,14 +323,14 @@ void DrawPreview(App& app) {
         int iw = (int)canvas.x, ih = (int)canvas.y;
         RenderSh(iw, ih);
 
-        if (s_sh.fbo && s_sh.vtx_count > 0) {
+        if (s_sh.rt && !s_sh.mesh.vertices.empty()) {
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImGui::InvisibleButton("##sh3d", canvas);
             bool held    = ImGui::IsItemActive();
             bool hovered = ImGui::IsItemHovered();
             // FBO content is bottom-up in GL — flip V when displaying.
             ImGui::GetWindowDrawList()->AddImage(
-                (ImTextureID)(intptr_t)s_sh.colorTex,
+                (ImTextureID)(intptr_t)s_sh.rt->native_texture(),
                 pos, {pos.x + canvas.x, pos.y + canvas.y},
                 ImVec2(0, 1), ImVec2(1, 0));
 
@@ -545,4 +384,12 @@ void DrawPreview(App& app) {
     } else {
         ImGui::TextDisabled("No record selected.");
     }
+}
+
+void PreviewShutdown() {
+    // Order matters only in that both need the live GL context (the caller
+    // guarantees it). Targets before the renderer, then the image texture.
+    s_sh.rt.reset();
+    s_sh.renderer.reset();
+    s_preview.Release();
 }

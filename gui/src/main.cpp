@@ -1,4 +1,5 @@
 #include "app.h"
+#include "panels/preview.h"
 #include "platform/dialogs.h"
 #include "platform/fonts.h"
 #include "platform/theme.h"
@@ -404,6 +405,9 @@ int main(int argc, char** argv) {
         ImGui::SaveIniSettingsToDisk(io.IniFilename);
     }
     g_app = nullptr;
+
+    // Release preview GPU resources while the GL context is still current.
+    PreviewShutdown();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
