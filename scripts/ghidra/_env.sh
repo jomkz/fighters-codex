@@ -43,3 +43,11 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ANALYZE_HEADLESS="$GHIDRA_HOME/support/analyzeHeadless"
+
+# Distinct binaries from db/subsystems.csv (the `binary` column) — the set of
+# Ghidra programs the apply/export/type launchers can target. Used by the ALL
+# target in those launchers.
+fa_binaries() {
+    local repo="${1:?repo root required}"
+    tail -n +2 "$repo/db/subsystems.csv" | cut -d, -f3 | sort -u
+}

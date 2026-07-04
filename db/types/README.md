@@ -49,3 +49,8 @@ edit db/types/*.h and the db/symbols type column
 
 Same canonical-project rule as `db/README.md`: types are applied to and exported from the
 Fedora `fa-re` project; a bench copy is never the source of truth.
+
+**Per-binary headers:** the top-level `db/types/*.h` (e.g. `fa_types.h`) are FA.EXE's. An
+overlay/companion binary's recovered struct layouts go in `db/types/<binary>/*.h` (e.g.
+`db/types/WAIL32.DLL/`); `apply_types.sh <binary>` parses the top-level headers plus that
+binary's subdirectory and applies only that binary's `type` column.

@@ -7,7 +7,7 @@ Inventory of all named global variables recovered from FA.EXE.
 > **Referenced-globals rule:** the [FA.EXE reconstruction program](reconstruction.md)
 > treats a data symbol as in-scope only when it is **referenced by code** (≥1 xref):
 > the 10,313 such globals in
-> [`db/inventory/globals.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/inventory/globals.csv)
+> [`db/inventory/FA.EXE/globals.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/inventory/FA.EXE/globals.csv)
 > are the mechanical universe a completed subsystem must name or explicitly waive. The
 > ~48k zero-xref entries are mostly struct/array interiors named at their base and are
 > not individually tracked.

@@ -44,11 +44,24 @@ public class ApplyTypes extends GhidraScript {
             return;
         }
         File repo = new File(args[0]);
+        File dbDir = new File(repo, "db");
         DataTypeManager dtm = currentProgram.getDataTypeManager();
 
+        // Scope to the current binary (this program's name).
+        String binary = currentProgram.getDomainFile().getName();
+        java.util.Set<String> binSlugs = ExportInventory.slugsForBinary(dbDir, binary);
+        println("binary: " + binary);
+
         // --- 1. parse db/types/*.h into the program DTM -----------------------
-        File typesDir = new File(new File(repo, "db"), "types");
-        File[] headers = typesDir.listFiles((d, n) -> n.endsWith(".h"));
+        // Top-level headers are shared; per-binary struct headers live in
+        // db/types/<binary>/ and are parsed only for their program.
+        File typesDir = new File(dbDir, "types");
+        java.util.List<File> headerList = new java.util.ArrayList<>();
+        File[] shared = typesDir.listFiles((d, n) -> n.endsWith(".h"));
+        if (shared != null) headerList.addAll(java.util.Arrays.asList(shared));
+        File[] perBin = new File(typesDir, binary).listFiles((d, n) -> n.endsWith(".h"));
+        if (perBin != null) headerList.addAll(java.util.Arrays.asList(perBin));
+        File[] headers = headerList.toArray(new File[0]);
         int parsed = 0;
         if (headers != null) {
             java.util.Arrays.sort(headers);
@@ -67,8 +80,8 @@ public class ApplyTypes extends GhidraScript {
         }
         println("headers parsed: " + parsed);
 
-        // --- 2. apply the `type` column --------------------------------------
-        File symbolsDir = new File(new File(repo, "db"), "symbols");
+        // --- 2. apply the `type` column (this binary's symbol files only) -----
+        File symbolsDir = new File(dbDir, "symbols");
         File[] files = symbolsDir.listFiles((d, n) -> n.endsWith(".csv"));
         if (files == null) { println("no symbol CSVs"); return; }
         java.util.Arrays.sort(files);
@@ -78,6 +91,8 @@ public class ApplyTypes extends GhidraScript {
         int dataApplied = 0, funcApplied = 0, unchanged = 0, skipped = 0, failed = 0;
 
         for (File f : files) {
+            String slug = f.getName().replaceAll("\\.csv$", "");
+            if (!binSlugs.contains(slug)) continue; // not this binary
             for (List<String> row : ExportInventory.readCsv(f)) {
                 // va,kind,name,display,source,confidence,notes,type
                 if (row.size() < 8) continue;
