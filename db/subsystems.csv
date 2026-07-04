@@ -2,7 +2,7 @@ slug,title,binary,ranges,status,doc,issue
 objects,Object / entity system & shape selection,FA.EXE,0x462600-0x464660;0x4A6EB0-0x4A7240;0x473A40-0x473DA0;0x491240-0x491AA0,complete,docs/fa/objects.md,210
 renderer,Renderer & rasterizer (GG/G_),FA.EXE,0x45DBD0-0x45E460;0x497330-0x499380;0x4B7900-0x4BA700,complete,docs/fa/renderer.md,211
 flight-model,Flight model / physics (FM/HARD),FA.EXE,0x451480-0x454800,complete,docs/fa/physics.md,212
-hud,HUD / cockpit,FA.EXE,0x405E30-0x40AE50,planned,docs/fa/hud.md,213
+hud,HUD / cockpit,FA.EXE,0x405E30-0x40AE50,complete,docs/fa/hud.md,213
 weapons,Weapons — projectiles / seekers / ECM (PROJ),FA.EXE,0x4C0690-0x4C5D30,planned,docs/fa/weapons.md,215
 ai,AI interpreter (CT),FA.EXE,0x464C80-0x467110,planned,docs/fa/ai-interpreter.md,216
 wingman,Wingman / group AI (WNG/GRP),FA.EXE,0x45E460-0x460FB0,planned,docs/fa/wingman.md,217

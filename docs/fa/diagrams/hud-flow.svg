@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 490" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="FA.EXE HUD per-frame flow: HUDDraw computes the flight-path marker, runs the tape, ladder, annunciator and combat-symbology drawers, and flushes the message lines; setters stage state between frames.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:14px;} .sub{fill:#4a5a67;font-size:11px;}
+    .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;}
+    .lanetitle{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;}
+    .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .edgelbl{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+      .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .lanetitle{fill:#c7d2da;} .edge{stroke:#8a99a5;} .edgelbl{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;}
+    :root[data-theme="dark"] .lanetitle{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .edgelbl{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;}
+    :root[data-theme="light"] .lanetitle{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .edgelbl{fill:#4a5a67;}
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/>
+    </marker>
+  </defs>
+
+  <text x="410" y="24" text-anchor="middle" class="lanetitle">HUD PER-FRAME DRAW — HUDDraw (0x406A50), twice per frame</text>
+
+  <!-- setters (left) -->
+  <rect class="setup" x="30" y="150" width="170" height="86" rx="6"/>
+  <text x="115" y="174" text-anchor="middle" class="lbl mono">setters</text>
+  <text x="115" y="192" text-anchor="middle" class="sub">HUDSetWarning</text>
+  <text x="115" y="208" text-anchor="middle" class="sub">HUDSetStability / Disrupt</text>
+  <text x="115" y="224" text-anchor="middle" class="sub">(between frames)</text>
+
+  <!-- state block -->
+  <rect class="box" x="30" y="270" width="170" height="70" rx="6"/>
+  <text x="115" y="294" text-anchor="middle" class="lbl mono">_hud layout/state</text>
+  <text x="115" y="312" text-anchor="middle" class="sub">offsets · colour · warn text</text>
+  <text x="115" y="328" text-anchor="middle" class="sub">(HUDInit, once)</text>
+
+  <!-- main column -->
+  <rect class="run" x="300" y="46" width="300" height="52" rx="6"/>
+  <text x="450" y="68" text-anchor="middle" class="lbl mono">resolve player · compute FPM</text>
+  <text x="450" y="86" text-anchor="middle" class="sub">_hudFpmX / _hudFpmY anchor</text>
+
+  <rect class="dec" x="250" y="140" width="180" height="48" rx="6"/>
+  <text x="340" y="169" text-anchor="middle" class="lbl mono">tapes</text>
+  <rect class="dec" x="450" y="140" width="180" height="48" rx="6"/>
+  <text x="540" y="163" text-anchor="middle" class="lbl mono">pitch ladder</text>
+  <text x="540" y="179" text-anchor="middle" class="sub">rotated by roll</text>
+
+  <rect class="dec" x="250" y="206" width="180" height="48" rx="6"/>
+  <text x="340" y="229" text-anchor="middle" class="lbl mono">annunciators</text>
+  <text x="340" y="245" text-anchor="middle" class="sub">warning · config · G/thr</text>
+  <rect class="dec" x="450" y="206" width="290" height="48" rx="6"/>
+  <text x="595" y="229" text-anchor="middle" class="lbl mono">combat symbology</text>
+  <text x="595" y="245" text-anchor="middle" class="sub">target box · gun · bomb · contacts</text>
+
+  <rect class="box" x="330" y="300" width="240" height="48" rx="6"/>
+  <text x="450" y="329" text-anchor="middle" class="lbl mono">HUDDrawMessages</text>
+
+  <!-- blit -->
+  <rect class="box" x="330" y="392" width="240" height="52" rx="6"/>
+  <text x="450" y="414" text-anchor="middle" class="lbl mono">_hudBitmap -> screen</text>
+  <text x="450" y="432" text-anchor="middle" class="sub">composited over the 3D scene</text>
+
+  <!-- edges -->
+  <path class="edge" d="M450,98 L450,136" marker-end="url(#arrow)"/>
+  <text x="460" y="120" class="edgelbl">then, in order:</text>
+  <path class="edge" d="M450,254 L450,296" marker-end="url(#arrow)"/>
+  <path class="edge" d="M450,348 L450,388" marker-end="url(#arrow)"/>
+  <path class="edge" d="M200,200 L246,190" marker-end="url(#arrow)"/>
+  <path class="edge" d="M115,238 L115,268" marker-end="url(#arrow)"/>
+  <path class="edge" d="M200,305 L246,240" marker-end="url(#arrow)"/>
+  <text x="150" y="262" text-anchor="middle" class="edgelbl">read by drawers</text>
+</svg>
