@@ -1,0 +1,513 @@
+va,kind,name,display,source,confidence,notes
+0x004CD588,func,sincos,,re,confirmed,sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates
+0x004CD5DF,func,isqrt16,,re,inferred,tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt)
+0x004CD5EE,func,isqrt16_body,,re,inferred,Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize
+0x004CD7A0,func,@GRACos@4,GRACos,sms,confirmed,public arccos wrapper over acos
+0x004CD7B4,func,acos,,re,confirmed,arccos via DAT_00515dcc table lookup+lerp
+0x004CD834,func,@GRSetLightSource@4,GRSetLightSource,sms,confirmed,store world light dir into _worldLightSource/515ED2/515ED4
+0x004CD854,func,SetShading,,re,confirmed,thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT
+0x004CD8B0,func,_Sun,Sun,re,confirmed,lighting dot product of _worldLightSource against current matrix rows (518384/38A/390)
+0x004CD8F0,func,clip_edge_right,,re,inferred,Sutherland-Hodgman clip vs screen edge (outcode bit4); vbuf/vbuf2 ping-pong; calls ecode_pnt
+0x004CD9DA,func,clip_edge_left,,re,inferred,S-H clip vs screen edge (outcode bit8); vbuf ping-pong
+0x004CDAC6,func,clip_edge_top,,re,inferred,S-H clip vs screen edge (outcode bit2); vbuf ping-pong
+0x004CDBB3,func,clip_edge_bottom,,re,inferred,S-H clip vs screen edge (outcode bit1); vbuf ping-pong
+0x004CDCA8,func,do_nop,,sms,confirmed,SH opcode 0x34 no-op handler
+0x004CDCB8,func,render_3d,,re,confirmed,scene traversal: sets viewport from _cb clip box; inits sort list; T_AddYourObjs; dispatches dddEntry via vector_table; painter-sorts cur_sort_list then draws via PTR_FUN_0051839c
+0x004CDEB4,func,setup_view_projection,,re,inferred,per-frame view/projection setup (aspect/head vectors/frustum) from zoom + screen dims
+0x004CE4A8,func,set_render_mode,,re,inferred,tail into check_flat body; installs perspective-path rasterizer fn-ptr table (5184AC-518674/5185F0-51861C)
+0x004CE4B4,func,check_flat,,re,confirmed,pick flat vs perspective render path from matrix (m4=m2=m8=m6=0 && m5~0x7FFF); swaps the rasterizer fn-ptr dispatch tables; sets DAT_00518679/515F84
+0x004CE784,func,load_normal_table,,re,inferred,copy lighting normal_table (or DAT_00518620 variant) into working DAT_00518484 by in_AL selector
+0x004CE7BC,func,load_xlate_rotate_pnt,,re,confirmed,hand-asm vertex load+translate+rotate helper (axis-select on DAT_00515f84)
+0x004CE7F7,func,mxmul,,re,confirmed,hand-asm matrix*scalar accumulate helper (axis-select)
+0x004CE89C,func,compute_axis_check,,re,inferred,derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant
+0x004CE968,func,sort_objs_wrapper,,re,inferred,painter depth sort wrapper over _SortObjs_8
+0x004CEB00,func,rotate_vec_roll,,re,inferred,rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll
+0x004CEB70,func,rotate_matrix_roll,,re,inferred,object-instancing: concat roll rotation into current matrix (m1..m9) via sincos
+0x004CED44,func,rotate_vec_pitch,,re,inferred,rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch
+0x004CEDB8,func,rotate_matrix_pitch,,re,inferred,object-instancing: concat pitch rotation into current matrix via sincos
+0x004CEF8C,func,rotate_vec_yaw,,re,inferred,rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw
+0x004CF000,func,rotate_matrix_yaw,,re,inferred,object-instancing: concat yaw rotation into current matrix via sincos
+0x004CF270,func,code_pnt,,re,confirmed,compute 5-bit frustum outcode of a projected point (BP/BX bounds)
+0x004CF2A4,func,ecode_pnt,,re,confirmed,extended outcode (near-plane aware) returned in AL; used by clippers
+0x004CF2D0,func,matrix_from_angle3,,re,inferred,build 3x3 rotation matrix (3x FUN_004cf410) for MakeObj/ViewRotationMatrix
+0x004CF328,func,mult_point_by_matrix_asm,,re,inferred,hand-asm point*matrix (register-only; empty decompile) — MultPointByMatrix core
+0x004CF410,func,matrix_row_asm,,re,inferred,hand-asm matrix row build (register-only; empty decompile)
+0x004D028C,func,cull_bbox_viewspace,,re,inferred,view-space bounding-box/near-plane visibility test; returns clip code; called by GRAddBrentObj & do_drawobj000
+0x004D0494,func,get_sort_dist,,re,confirmed,painter sort key = max|Δ|+quarters of others + per-obj bias (from _xv32/_yv32/_zv32)
+0x004D04DC,data,,,waiver,confirmed,interior of / adjacent to get_sort_dist; named at its base or owned by that subsystem
+0x004D052C,data,,,waiver,confirmed,interior of / adjacent to get_sort_dist; named at its base or owned by that subsystem
+0x004D057C,func,_GRAddBrentObj@40,GRAddBrentObj,sms,confirmed,
+0x004D0798,func,draw_brent_obj,,re,inferred,per-object shape-draw callback (PTR_FUN_0051839c target): restore saved matrix/viewer; ShapeSetup(brentObjId); object rotate (roll/pitch/yaw); lighting matrix; check_flat; SetShadingTable; interpret shape stream with _bdrawObj=1
+0x004D0C2F,func,sh_op_BA,,re,inferred,SH opcode 0xBA handler
+0x004D0C50,func,do_drawobj000,,sms,confirmed,
+0x004D0C8A,func,sh_op_6A,,re,inferred,SH opcode 0x6A handler (render-state/geometry; 1409 bytes)
+0x004D120B,func,sh_op_28,,re,inferred,SH opcode 0x28/0x30 handler
+0x004D1421,func,sh_op_D6_pre,,re,inferred,3-byte pre-adjust falling into sh_op_5A (op 0xD6)
+0x004D1424,func,sh_op_5A,,re,confirmed,SH opcode 0x5A handler (epic #52 placeholder name; 623 bytes)
+0x004D1694,func,sh_op_20,,re,inferred,SH opcode 0x20 handler
+0x004D17BC,func,do_shape_name,,sms,confirmed,SH opcode 0x42 (SourceName): consume null-terminated shape name into _shapeName
+0x004D17E0,func,sh_op_stub,,re,confirmed,shared no-op stub for 10 unassigned SH opcodes
+0x004D17F0,func,sh_op_00,,re,inferred,SH opcode 0x00 (EndObject) handler entry (1 byte; falls into do_short_eof)
+0x004D17F4,func,do_short_eof,,sms,confirmed,SH opcode 0x1E (Pad/EOF) handler
+0x004D17F8,func,sh_op_3A,,re,inferred,SH opcode 0x3A handler
+0x004D18F4,func,sh_op_08,,re,inferred,SH opcode 0x08 handler
+0x004D1974,func,sh_op_72,,re,confirmed,SH opcode 0x72 handler (epic #52 placeholder name)
+0x004D1984,func,sh_op_96,,re,inferred,SH opcode 0x96 handler (856 bytes)
+0x004D1E5C,func,do_vertexbuffer,,re,inferred,SH opcode 0x82 (VertexBuffer) + 0x02/0x04/0x0A: push vertex batch into global pool at push_at/8
+0x004D1ECC,func,sh_op_A2,,re,inferred,SH opcode 0xA2/0xAE handler
+0x004D1EDC,func,sh_op_7A,,re,confirmed,SH opcode 0x7A handler (epic #52 placeholder name)
+0x004D1F24,func,sh_op_74,,re,inferred,SH opcode 0x74/0x7C/0x8E/0x9C handler (6-byte)
+0x004D1F2C,func,sh_op_76,,re,inferred,SH opcode 0x76 handler
+0x004D1F34,func,sh_op_22,,re,inferred,SH opcode 0x22/0x7E handler
+0x004D1FC0,func,sh_op_80,,re,confirmed,SH opcode 0x80 handler (epic #52 placeholder name; 796 bytes)
+0x004D225E,func,sh_op_1A,,re,inferred,SH opcode 0x1A handler
+0x004D2278,func,do_unmask,,re,inferred,SH opcode 0x12 (Unmask): call referenced sub-stream via dispatch call-form; renders articulated sub-part
+0x004D22A8,func,do_sfcal_long,,sms,confirmed,SH opcode 0x6E (UnmaskLong)
+0x004D22D4,func,do_ifdestroyed,,sms,confirmed,SH opcode 0xAC (JumpToDamage): esi+=rel16 if _destroyed (0x50C39C)
+0x004D22FC,func,do_no_overlap,,sms,confirmed,SH opcode 0xB8: clears overlap/collision flag via FUN_004d426c
+0x004D2318,func,do_jumptodetail,,re,inferred,SH opcode 0xA6 (JumpToDetail): skip rel16 when _detail(0x515EEE) < threshold
+0x004D2344,func,do_use_terrain_detail,,sms,confirmed,SH opcode 0xB2
+0x004D2360,func,sh_op_B0,,re,inferred,SH opcode 0xB0 handler
+0x004D2380,func,do_if_not_effect,,sms,confirmed,SH opcodes 0x14/0x16/0x3C/0xA8/0xAA/0xC0: conditional skip keyed on effects setting
+0x004D23AC,func,sh_op_6C,,re,inferred,SH opcode 0x6C handler (Unk6C; 13/14/16-byte variants)
+0x004D2450,func,sh_op_06,,re,inferred,SH opcode 0x06 handler (Unk06; 16+u16 var-size)
+0x004D24F8,func,sh_op_0C,,re,inferred,SH opcode 0x0C handler (Unk0C)
+0x004D2580,func,sh_op_0E,,re,inferred,SH opcode 0x0E handler (Unk0E)
+0x004D2608,func,sh_op_10,,re,inferred,SH opcode 0x10 handler (Unk10)
+0x004D2690,func,sh_op_18,,re,inferred,SH opcode 0x18 handler
+0x004D2740,func,sh_op_84,,re,confirmed,SH opcode 0x84 handler (epic #52 placeholder name)
+0x004D2798,func,load_dest,,re,confirmed,interpreter helper: load destination operand
+0x004D2880,func,sh_op_1C,,re,inferred,SH opcode 0x1C/0x88 handler (perspective-path variant swapped by check_flat)
+0x004D2910,func,sh_op_26,,re,inferred,SH opcode 0x26 handler
+0x004D29EC,func,sh_op_2A,,re,inferred,SH opcode 0x2A/0x86 handler
+0x004D2B20,func,sh_op_2C,,re,inferred,SH opcode 0x2C/0x8A handler
+0x004D2BB0,func,sh_op_92,,re,inferred,SH opcode 0x92 handler
+0x004D2C70,func,sh_op_90,,re,inferred,SH opcode 0x90 handler
+0x004D2D30,func,sh_op_94,,re,inferred,SH opcode 0x94 handler
+0x004D2FC0,func,do_setcolor2,,sms,confirmed,SH opcode 0x5C
+0x004D2FC8,func,sh_op_BC,,re,inferred,SH opcode 0xBC handler (UnkBC)
+0x004D2FD0,func,sh_op_2E,,re,inferred,SH opcode 0x2E handler; contains do_setcolor_continue (0x4D2FD6)
+0x004D300A,func,sh_op_24_pre,,re,inferred,2-byte entry for op 0x24 (falls into do_fullpntg16)
+0x004D300C,func,do_fullpntg16,,sms,confirmed,SH opcode 0xFA
+0x004D3064,func,sh_op_A0,,re,inferred,SH opcode 0xA0 handler
+0x004D30C8,func,sh_op_4E,,re,inferred,SH opcode 0x4E handler
+0x004D30E4,func,do_short_ijmp,,sms,confirmed,SH opcode 0x38 (ShortJump): DEC ESI then shares 0x48 body
+0x004D30E5,func,do_jump,,sms,confirmed,SH opcode 0x48 (Jump): esi+=rel16
+0x004D3100,func,do_ijmp_long,,sms,confirmed,SH opcode 0x50 (LongJump): esi+=rel32
+0x004D3118,func,sh_op_32,,re,inferred,SH opcode 0x32 handler
+0x004D3134,func,do_anim_jmp,,sms,confirmed,SH opcode 0x40 (JumpToFrame): idx=_frameCounter mod nframes; relative frame-table jump
+0x004D315C,func,sh_op_4A,,re,inferred,SH opcode 0x4A handler
+0x004D3193,func,sh_op_4C_pre,,re,inferred,1-byte entry for op 0x4C/0x8C (falls into sh_op_C4)
+0x004D3194,func,do_xformunmask,,re,inferred,SH opcode 0xC4 XformUnmask: render sub-stream at a relative transform
+0x004D33D8,func,do_icall_long,,sms,confirmed,SH opcode 0xC6 (XformUnmaskLong)
+0x004D3618,func,sh_op_52,,re,inferred,SH opcode 0x52/0x54 handler
+0x004D3644,func,sh_op_56,,re,inferred,SH opcode 0x56 handler
+0x004D3670,func,sh_op_5E,,re,inferred,SH opcode 0x5E handler
+0x004D36CC,func,sh_op_60,,re,inferred,SH opcode 0x60 handler
+0x004D3728,func,sh_op_62,,re,inferred,SH opcode 0x62 handler
+0x004D3784,func,sh_op_64,,re,inferred,SH opcode 0x64 handler
+0x004D37BC,func,sh_op_66,,re,inferred,SH opcode 0x66 handler
+0x004D37F4,func,sh_op_68,,re,inferred,SH opcode 0x68 handler
+0x004D382C,func,sh_op_58,,re,inferred,SH opcode 0x58 handler
+0x004D3938,func,sh_op_78,,re,inferred,SH opcode 0x78 handler (Unk78; 2085 bytes — largest handler)
+0x004D415D,func,thunk_FUN_004d416b,,sms,confirmed,2-byte thunk for ops 0xA4/0xBE -> FUN_004d416b
+0x004D416B,func,sh_op_A4_body,,re,inferred,body reached via thunk (op 0xA4/0xBE)
+0x004D416C,func,do_jumpfar4,,sms,confirmed,SH opcode 0xC8 (JumpToLOD): distance/size LOD test; skips 6-byte operand when _effects&0x20000
+0x004D4240,func,do_start_interp,,sms,confirmed,bytecode re-entry target for x86-embedded regions (all 208 x86 shapes jump here); esi=selected sub-stream
+0x004D4254,func,do_start_asm,,sms,confirmed,SH opcode 0xF0 (X86Code): push esi; ret -> execute embedded x86 payload
+0x004D4258,func,do_collision_info,,sms,confirmed,SH opcode 0xF2 (PtrToObjEnd): records obj_end_off
+0x004D426C,func,set_overlap_flag,,re,inferred,helper: AND/OR update of collision/overlap flag word 0x515EF0 (used by do_no_overlap)
+0x004D4288,func,sh_op_CA,,re,inferred,SH opcode 0xCA handler (UnkCA)
+0x004D42C8,func,do_setlight,,sms,confirmed,SH opcode 0xDA
+0x004D42EC,func,do_setcoarse,,sms,confirmed,SH opcode 0x44 (sets _coarse detail flag)
+0x004D4308,func,do_set_point_color,,sms,confirmed,SH opcode 0xF6 (VertexInfo): per-vertex color+normal
+0x004D4364,func,do_set_gouraud,,sms,confirmed,SH opcode 0xF4
+0x004D43CC,func,SetFlatColor,,re,confirmed,helper: set flat-shade color for do_new_poly
+0x004D43DC,func,do_new_poly,,sms,confirmed,SH opcode 0xFC (Face): parse face flags/indices(<<3=*8 pool)/texcoords; effect-gate; synthesize+dispatch sub-program of setcolor/gouraud/texture/brush opcodes -> rasterizer
+0x004D478C,func,do_force_no_pmap,,sms,confirmed,SH opcode 0x46 (sets _force_no_pmap)
+0x004D47A4,func,do_streamer_def,,sms,confirmed,SH opcode 0xCE (streamer/contrail define)
+0x004D47B8,func,do_streamer_draw,,sms,confirmed,SH opcode 0xD0 (streamer/contrail draw)
+0x004D4874,func,_NeedClip,NeedClip,re,confirmed,helper: mark clip needed
+0x004D4888,func,_RestoreClip,RestoreClip,re,confirmed,helper: restore prior clip state
+0x004D4894,func,do_screen_coords,,sms,confirmed,SH opcode 0xD2 (project to screen coords)
+0x004D4988,func,do_texture_index,,re,inferred,SH opcode 0xE0 (TextureIndex): select current texture by index
+0x004D49C0,func,do_texture_file,,re,inferred,SH opcode 0xE2 (TextureFile): set current texture by 14-byte name
+0x004D4A19,func,do_brush_solid,,sms,confirmed,SH opcode 0xEC
+0x004D4A30,func,do_brush_trans,,sms,confirmed,SH opcode 0xEE
+0x004D4A47,func,do_brush_area,,sms,confirmed,SH opcode 0xE4
+0x004D4A6D,func,do_brush_area_full,,sms,confirmed,SH opcode 0xE6
+0x004D4ACA,func,sh_op_DC,,re,inferred,SH opcode 0xDC handler (UnkDC; 610 bytes; textured-fill path)
+0x004D4D2C,func,sh_op_DE,,re,inferred,SH opcode 0xDE handler (perspective textured-fill; 723 bytes)
+0x004D4FFF,func,shade_span_a,,re,inferred,do_new_smap/rmap shade-span builder variant A
+0x004D511B,func,shade_span_b,,re,inferred,do_new_smap/rmap shade-span builder variant B
+0x004D523B,func,shade_span_c,,re,inferred,do_new_smap/rmap shade-span builder variant C
+0x004D5356,func,shade_span_d,,re,inferred,do_new_smap/rmap shade-span builder variant D
+0x004D5475,func,do_new_smap,,sms,confirmed,SH opcode 0xE8 (shade map)
+0x004D5644,func,do_new_rmap,,sms,confirmed,SH opcode 0xEA (remap; 872 bytes)
+0x004D59AC,func,do_new_pmap_or_tmap,,sms,confirmed,SH opcodes 0x36/0x3E (perspective/texture map)
+0x004D5A2C,func,angles_2_matrix,,re,confirmed,build view rotation matrix from _am_h/_am_p/_am_b (heading/pitch/bank) via sincos
+0x004D5BA8,func,_GRInit3d@4,GRInit3d,sms,confirmed,init: store detail flag; install _overflow_ptr divide trap
+0x004D5BCC,func,_GRRender@36,GRRender,sms,confirmed,top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix
+0x004D5C98,func,_GRSinCos@12,GRSinCos,sms,confirmed,public sin/cos wrapper over sincos
+0x004D5CC0,func,_GRTo2d@8,GRTo2d,sms,confirmed,
+0x004D5E58,func,_MakeObjRotationMatrix@16,MakeObjRotationMatrix,sms,confirmed,build object rotation matrix (roll/pitch/yaw) into caller buffer
+0x004D60D8,func,_MakeViewRotationMatrix@16,MakeViewRotationMatrix,sms,confirmed,build view rotation matrix (yaw/pitch/roll order) into caller buffer
+0x004D631C,func,_MultPointByMatrix@8,MultPointByMatrix,sms,confirmed,transform a point by the current matrix (wraps mult_point_by_matrix_asm)
+0x004D6348,func,_GRSaveContext@0,GRSaveContext,sms,confirmed,save viewer/xv/scr/bias/wtop + scaled+unscaled matrices to shadow block 0x51D5E3+
+0x004D63F0,func,_GRRestoreContext@0,GRRestoreContext,sms,confirmed,restore the GRSaveContext shadow block
+0x004D6498,func,@GRExec@4,GRExec,sms,confirmed,execute one SH command stream: dispatch vector_table[*param]; preserve _xv/_yv/_zv (used by scene dispatch for sky/sun list)
+0x004D64D8,func,_MultF24PointByMatrix@8,MultF24PointByMatrix,sms,confirmed,transform a 24.8 fixed point by matrix with saturation
+0x004D65C4,func,@Sqrt@4,Sqrt,sms,confirmed,
+0x004D6640,func,do_nt,,sms,confirmed,SH opcode 0xFE (terrain node/tile): read tile verts; compute bbox+sort key; insert into sort list; draw_quad or draw_tri_nw+se by diagonal
+0x004D69EC,func,__compute_viewer_dot_product,,re,confirmed,backface cull: face-normal dot (vertex - viewer) for do_nt tiles
+0x004D6A38,func,draw_quad,,re,confirmed,assemble 4-vertex tile working set -> draw_nt
+0x004D6A90,func,draw_tri_nw,,re,confirmed,assemble NW-triangle working set -> draw_nt
+0x004D6B24,func,draw_tri_se,,re,confirmed,assemble SE-triangle working set -> draw_nt
+0x004D6BB8,func,draw_nt,,re,confirmed,build terrain-tile polygon (flat/gouraud/textured) from working set and submit to the 2D rasterizer
+0x0050DE10,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE14,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE18,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE1C,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE20,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE24,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE28,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE2C,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE30,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE34,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE38,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE3C,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE40,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE44,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE48,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE4C,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE50,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE54,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x0050DE58,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem
+0x00515ED2,data,,,waiver,confirmed,interior of / adjacent to _worldLightSource; named at its base or owned by that subsystem
+0x00515ED4,data,,,waiver,confirmed,interior of / adjacent to _worldLightSource; named at its base or owned by that subsystem
+0x00515ED8,data,,,waiver,confirmed,interior of / adjacent to _objLightSource; named at its base or owned by that subsystem
+0x00515EDA,data,,,waiver,confirmed,interior of / adjacent to _objLightSource; named at its base or owned by that subsystem
+0x00515F30,data,,,waiver,confirmed,interior of / adjacent to _bitmap_table; named at its base or owned by that subsystem
+0x00515F38,data,,,waiver,confirmed,interior of / adjacent to ppolygon; named at its base or owned by that subsystem
+0x00515F6C,data,,,waiver,confirmed,interior of / adjacent to _matrix_no_instancing; named at its base or owned by that subsystem
+0x00515F84,data,,,waiver,confirmed,interior of / adjacent to codes_and; named at its base or owned by that subsystem
+0x00515F94,data,,,waiver,confirmed,interior of / adjacent to _resbuf; named at its base or owned by that subsystem
+0x00517F20,data,,,waiver,confirmed,interior of / adjacent to _shiftbuf; named at its base or owned by that subsystem
+0x00517F24,data,,,waiver,confirmed,interior of / adjacent to _shiftbuf; named at its base or owned by that subsystem
+0x00517F28,data,,,waiver,confirmed,interior of / adjacent to _shiftbuf; named at its base or owned by that subsystem
+0x00517F30,data,,,waiver,confirmed,interior of / adjacent to _shiftbuf; named at its base or owned by that subsystem
+0x00517F38,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F3C,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F40,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F44,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F48,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F4C,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F50,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F54,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00517F58,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00518100,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00518104,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00518108,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00518110,data,,,waiver,confirmed,interior of / adjacent to vbuf; named at its base or owned by that subsystem
+0x00518116,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518118,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x0051811A,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x0051811C,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x0051811E,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518120,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518122,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518124,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518128,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x0051812C,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518130,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518134,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518138,data,,,waiver,confirmed,interior of / adjacent to vbuf2; named at its base or owned by that subsystem
+0x00518318,data,,,waiver,confirmed,interior of / adjacent to _viewer_x; named at its base or owned by that subsystem
+0x0051831C,data,,,waiver,confirmed,interior of / adjacent to _viewer_y; named at its base or owned by that subsystem
+0x00518320,data,,,waiver,confirmed,interior of / adjacent to _viewer_z; named at its base or owned by that subsystem
+0x00518338,data,,,waiver,confirmed,interior of / adjacent to dx1; named at its base or owned by that subsystem
+0x00518354,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x00518356,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x00518358,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x0051835A,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x0051835C,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x0051835E,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x00518360,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x00518362,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x00518364,data,,,waiver,confirmed,interior of / adjacent to c_z; named at its base or owned by that subsystem
+0x00518376,data,,,waiver,confirmed,interior of / adjacent to zoom; named at its base or owned by that subsystem
+0x00518378,data,,,waiver,confirmed,interior of / adjacent to zoom; named at its base or owned by that subsystem
+0x00518382,data,,,waiver,confirmed,interior of / adjacent to _unscaled_matrix; named at its base or owned by that subsystem
+0x00518384,data,,,waiver,confirmed,interior of / adjacent to _unscaled_matrix; named at its base or owned by that subsystem
+0x0051838A,data,,,waiver,confirmed,interior of / adjacent to _unscaled_matrix; named at its base or owned by that subsystem
+0x00518390,data,,,waiver,confirmed,interior of / adjacent to _unscaled_matrix; named at its base or owned by that subsystem
+0x0051839C,data,,,waiver,confirmed,interior of / adjacent to type_handler; named at its base or owned by that subsystem
+0x005183E0,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x00518458,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x00518484,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x00518486,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184AC,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184B0,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184B4,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184C0,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184C4,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184C8,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184D8,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005184E8,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x00518558,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x0051855C,data,,,waiver,confirmed,interior of / adjacent to vector_table; named at its base or owned by that subsystem
+0x005185CA,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x005185F0,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x005185F4,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x005185F8,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518604,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518608,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x0051860C,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x0051861C,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518620,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518622,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518648,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x0051864C,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518650,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x0051865C,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518660,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518664,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518674,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518679,data,,,waiver,confirmed,interior of / adjacent to normal_table; named at its base or owned by that subsystem
+0x00518688,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x0051868C,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518690,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C04,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C06,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C08,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C0A,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C0E,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C10,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C12,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C14,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C16,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C1A,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C1E,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C22,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C24,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C26,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C28,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C2A,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C2E,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x00518C32,data,,,waiver,confirmed,interior of / adjacent to cur_sort_ptr; named at its base or owned by that subsystem
+0x0051CDA6,data,,,waiver,confirmed,interior of / adjacent to obj_rec_end; named at its base or owned by that subsystem
+0x0051CDBE,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDC0,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDC2,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDC6,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDC8,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDCA,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDD0,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDD4,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDD8,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDDC,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDE0,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDE2,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDE4,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDE6,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDEA,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDF0,data,,,waiver,confirmed,interior of / adjacent to _lightMatrix; named at its base or owned by that subsystem
+0x0051CDF6,data,,,waiver,confirmed,interior of / adjacent to xv32; named at its base or owned by that subsystem
+0x0051CDFA,data,,,waiver,confirmed,interior of / adjacent to yv32; named at its base or owned by that subsystem
+0x0051CDFE,data,,,waiver,confirmed,interior of / adjacent to zv32; named at its base or owned by that subsystem
+0x0051CE02,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE06,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE0A,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE0C,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE0E,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE10,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE12,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE16,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE1A,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE1E,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE20,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE22,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE24,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE26,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE2A,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE2E,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CE3C,data,,,waiver,confirmed,interior of / adjacent to obj; named at its base or owned by that subsystem
+0x0051CF49,data,,,waiver,confirmed,interior of / adjacent to _shapeName; named at its base or owned by that subsystem
+0x0051CFBC,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051CFBE,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051CFC0,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051CFC2,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051CFC4,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051D000,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051D004,data,,,waiver,confirmed,interior of / adjacent to buf_ptr; named at its base or owned by that subsystem
+0x0051D008,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D020,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D024,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D026,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D028,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D02A,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D032,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D034,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D036,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D052,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D054,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D056,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D08E,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D090,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D092,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D094,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D096,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D098,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D09A,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D09C,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D09E,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0A0,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0A2,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0A4,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0A6,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0A8,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0AA,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0AE,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0B0,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0B2,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0B4,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D0B6,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D124,data,,,waiver,confirmed,interior of / adjacent to gouraudOn; named at its base or owned by that subsystem
+0x0051D130,data,,,waiver,confirmed,interior of / adjacent to _sizeAdjust; named at its base or owned by that subsystem
+0x0051D138,data,,,waiver,confirmed,interior of / adjacent to source_vertex_ptr; named at its base or owned by that subsystem
+0x0051D156,data,,,waiver,confirmed,interior of / adjacent to tmapRemap; named at its base or owned by that subsystem
+0x0051D15A,data,,,waiver,confirmed,interior of / adjacent to tmapRemap; named at its base or owned by that subsystem
+0x0051D15E,data,,,waiver,confirmed,interior of / adjacent to tmapRemap; named at its base or owned by that subsystem
+0x0051D162,data,,,waiver,confirmed,interior of / adjacent to tmapRemap; named at its base or owned by that subsystem
+0x0051D57C,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D580,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D582,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D584,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D586,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D588,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D58A,data,,,waiver,confirmed,interior of / adjacent to _force_no_pmap; named at its base or owned by that subsystem
+0x0051D5A8,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5AC,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5B0,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5B4,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5B8,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5BC,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5BE,data,,,waiver,confirmed,interior of / adjacent to am_b; named at its base or owned by that subsystem
+0x0051D5D2,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5D4,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5E2,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5E3,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5E7,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5EB,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5EF,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5F1,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5F3,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5F5,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5F7,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5F9,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5FB,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5FD,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D5FF,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D601,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D611,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051D613,data,,,waiver,confirmed,interior of / adjacent to to2d_dbase; named at its base or owned by that subsystem
+0x0051E628,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E62C,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E62E,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E630,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E634,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E636,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E638,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E63A,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E63E,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E640,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E642,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E644,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E646,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E648,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E64C,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E650,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E651,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E652,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E653,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E655,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E656,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E65A,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E65E,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E662,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E666,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E668,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E66A,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E66C,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E66E,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E670,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E672,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E674,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E676,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E678,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E67A,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E67C,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E67E,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E680,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E682,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E684,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E688,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E689,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E68A,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E68B,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E68C,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E68D,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E691,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E69D,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E69F,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6A5,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6A7,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6AB,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6AF,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6B3,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6B5,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6B7,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6BB,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6BF,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6C3,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6C5,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6C7,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6CB,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6CF,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6D3,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6D5,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6D7,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6D9,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6DB,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6DD,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6DF,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6E3,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6E5,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6E7,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6E9,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6EB,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6ED,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6EF,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6F1,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6F3,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6F5,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6F7,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6F9,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6FB,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6FD,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E6FF,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E701,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E703,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E705,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E707,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E709,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E70B,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E70D,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E70F,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E713,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E715,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E717,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E719,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E73B,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E73F,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem
+0x0051E743,data,,,waiver,confirmed,interior of / adjacent to sqrt_table; named at its base or owned by that subsystem

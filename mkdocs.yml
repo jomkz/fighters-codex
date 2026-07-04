@@ -82,6 +82,10 @@ nav:
       - Collision: fa/collision.md
       - Sound: fa/sound.md
       - Wingman: fa/wingman.md
+      - Video Decode: fa/video-decode.md
+      - Memory & Resource: fa/memory-resource.md
+      - Terrain: fa/terrain.md
+      - Render Core: fa/render-core.md
       - Network: fa/network.md
       - Globals: fa/globals.md
       - Structs: fa/structs.md

@@ -53,36 +53,54 @@ public class ApplySymbols extends GhidraScript {
                 if (source.equals("waiver")) { waived++; continue; }
                 Address addr = toAddr(va);
 
-                if (kind.equals("func")) {
-                    Function fn = getFunctionAt(addr);
-                    if (fn == null) {
-                        if (getInstructionAt(addr) == null) disassemble(addr);
-                        fn = createFunction(addr, name);
+                try {
+                    if (kind.equals("func")) {
+                        Function fn = getFunctionAt(addr);
                         if (fn == null) {
-                            println(String.format(
-                                    "CONFLICT 0x%08X: cannot create function", va));
-                            conflicts++;
+                            if (getInstructionAt(addr) == null) disassemble(addr);
+                            fn = createFunction(addr, name);
+                            if (fn == null) {
+                                println(String.format(
+                                        "CONFLICT 0x%08X: cannot create function", va));
+                                conflicts++;
+                                continue;
+                            }
+                            created++;
+                        }
+                        if (fn.getName().equals(name)) { unchanged++; continue; }
+                        // The target name may already exist at this address as a
+                        // non-primary label (e.g. from FA.SMS). Remove it so the
+                        // function can adopt the name instead of aborting the run.
+                        dropConflictingLabel(st, addr, name, fn.getSymbol());
+                        println(String.format("RENAME 0x%08X: %s -> %s",
+                                va, fn.getName(), name));
+                        fn.setName(name, SourceType.USER_DEFINED);
+                        applied++;
+                    } else {
+                        Symbol primary = st.getPrimarySymbol(addr);
+                        if (primary != null && primary.getName().equals(name)) {
+                            unchanged++;
                             continue;
                         }
-                        created++;
+                        // If a symbol with this name already exists here, make it
+                        // primary rather than creating a duplicate.
+                        Symbol existing = findSymbol(st, addr, name);
+                        if (existing != null) {
+                            existing.setPrimary();
+                            applied++;
+                            continue;
+                        }
+                        if (primary != null)
+                            println(String.format("RELABEL 0x%08X: %s -> %s",
+                                    va, primary.getName(), name));
+                        Symbol s = st.createLabel(addr, name, SourceType.USER_DEFINED);
+                        s.setPrimary();
+                        applied++;
                     }
-                    if (fn.getName().equals(name)) { unchanged++; continue; }
-                    println(String.format("RENAME 0x%08X: %s -> %s",
-                            va, fn.getName(), name));
-                    fn.setName(name, SourceType.USER_DEFINED);
-                    applied++;
-                } else {
-                    Symbol primary = st.getPrimarySymbol(addr);
-                    if (primary != null && primary.getName().equals(name)) {
-                        unchanged++;
-                        continue;
-                    }
-                    if (primary != null)
-                        println(String.format("RELABEL 0x%08X: %s -> %s",
-                                va, primary.getName(), name));
-                    Symbol s = st.createLabel(addr, name, SourceType.USER_DEFINED);
-                    s.setPrimary();
-                    applied++;
+                } catch (Exception ex) {
+                    println(String.format("CONFLICT 0x%08X (%s): %s",
+                            va, name, ex.getMessage()));
+                    conflicts++;
                 }
             }
         }
@@ -90,5 +108,20 @@ public class ApplySymbols extends GhidraScript {
                 "ApplySymbols: %d applied (%d functions created), %d unchanged, "
                 + "%d waived, %d conflicts",
                 applied, created, unchanged, waived, conflicts));
+    }
+
+    /** Symbol at addr with the given name, or null. */
+    private Symbol findSymbol(SymbolTable st, Address addr, String name) {
+        for (Symbol s : st.getSymbols(addr))
+            if (s.getName().equals(name)) return s;
+        return null;
+    }
+
+    /** Remove a label at addr that would collide with a rename to name (unless
+     *  it is the function's own symbol). */
+    private void dropConflictingLabel(SymbolTable st, Address addr, String name,
+                                      Symbol keep) {
+        Symbol s = findSymbol(st, addr, name);
+        if (s != null && !s.equals(keep)) s.delete();
     }
 }
