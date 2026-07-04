@@ -7,6 +7,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-07-03
+
+### Added
+- **re** FA.EXE reconstruction program (epic #209): a machine-readable symbol database under `db/` — a manifest of the 18 engine subsystems, per-subsystem VA→name CSVs (`db/symbols/`), and committed Ghidra ground-truth inventory exports — applied to the Ghidra project by `scripts/ghidra/ApplySymbols.java` and re-exported by `ExportInventory.java`. `tools/check_status.py` gains a reconstruction layer that enforces, per completed subsystem, that every code-referenced function is named and every referenced global is named or explicitly waived, cross-checks each subsystem doc's symbol table against the database, and generates the `docs/fa/reconstruction.md` progress matrix — all with self-test fixtures (#231)
+- **re** Object/entity subsystem named and documented (`docs/fa/objects.md` + a theme-aware lifecycle diagram): the per-frame service chain, the `_cg`/`_cgt` current-object mirror, proc dispatch, arena allocation, and the remote hit/effect queues — 80/80 in-range functions named, referenced globals resolved (#210)
+- **re** Shape-selection / whole-model damage swap documented (`docs/fa/shape-selection.md` + diagram): how `_SetupOT` derives the `_A`…`_D` variant set and how the engine swaps a destroyed object's model — the definitive answer to the A-10 `_A/_B/_C/_D` question (#214)
+- **fx-gui** headless `--render <LIB> <ENTRY>` snapshot to PNG for automated visual review of the SH/PIC/editor render paths (#208)
+
+### Changed
+- **re** shape-selection `damage_set` (`+0x33`) resolved: written `_Rand(2)+1` by `PLANEBreakUp` at destruction, so a wreck's `{_A,_B}` vs `{_C,_D}` model pair is chosen at random per kill rather than fixed per aircraft (#210)
+- **build** Ghidra whole-image decompile (`DumpAllFunctions`) parallelized across all cores via `ParallelDecompiler`; headless JVM heap default raised from 2G to 8G (#231)
+
+### Fixed
+- **fx-gui** correct mirrored SH 3D preview (#207)
+
+### Notes
+- **Documentation + tooling release.** `fx_lib` and the `fx` CLI are byte-identical to v0.5.1 — no fa-bridge submodule bump. `fx-gui` gains the headless `--render` snapshot (#208) and the mirrored-preview fix (#207). The release stands up epic #209 (complete FA.EXE reconstruction) with its first subsystem (#210) done and the machinery every subsequent subsystem builds on: the `db/` symbol database, the apply/export Ghidra scripts, CI coverage enforcement, and the reconstruction matrix. Remaining subsystems are tracked as sub-issues #211–#228.
+
 ## [0.5.1] - 2026-07-03
 
 ### Changed
@@ -120,7 +138,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.2
 [0.5.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.1
 [0.5.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.0
 [0.4.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.4.3
