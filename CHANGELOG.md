@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-07-04
+
 ### Added
 - **re** **Datatype layer for the symbol database (#230).** `db/symbols` gains a `type`
   column, `db/types/fa_types.h` holds the recovered struct layouts (scalar aliases, the
@@ -198,7 +200,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
 [0.5.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.4
 [0.5.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.3
 [0.5.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.2
