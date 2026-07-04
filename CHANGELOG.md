@@ -7,6 +7,49 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.7] - 2026-07-04
+
+### Added
+- **re** **The overlay-binary reconstruction program (epic #247) — per-binary tooling and all
+  six companion binaries.** The `db/` machinery is now **per-binary** (#252): VA-uniqueness,
+  claims, coverage, and the reconstruction matrix are scoped by the `subsystems.csv` `binary`
+  column, inventory lives under `db/inventory/<binary>/`, `ExportInventory.java` derives image
+  bounds from the program (not a hardcoded window), the launchers take a `[BINARY]` arg, and a
+  multi-binary `check_status` self-test guards it — VAs are unique only *within* a binary
+  (IP.EXE bases at the same `0x00400000` as FA.EXE; the comms DLLs all at `0x10000000`). On top
+  of it, every companion binary FA ships is now documented:
+  - **WAIL32.DLL (#253)** — the Miles Sound System (AIL) audio library: 130 public `AIL_*`
+    exports named, internals waived (third-party boundary).
+  - **IP.EXE (#254)** — re-characterized as an MFC-based **EA system-info / tech-support tool**
+    (CD-ROM benchmark, hardware/OS/network profiling, faxes/e-mails a config report to EA) — *not*
+    a TCP/IP transport; app logic named, MFC framework waived.
+  - **Comms suite CDRV\*32 / COMMSC32 (#255)** — a third-party **Cdrv** serial / modem /
+    file-transfer / terminal middleware library: 142 exported ABI functions named, internals waived.
+  - **external-imports.md (#260)** — the FA-side boundary to the MS / third-party DLLs
+    (DDRAW, WINMM, MSAPI, DSOUND, …), built from the PE import tables; surfaced **`MSAPI.dll` as
+    the real matchmaking / internet-play client** (now tracked as epic #272).
+- **re** **VIEW subsystem (#257)** — named the in-flight camera & replay cluster
+  (`0x40D7A0–0x40F6B0`, 19 functions) the `game-loop.md` refresh surfaced: the external/spot view
+  builder, camera-from-object, slew, and the flight replay recorder. FA.EXE is now **20/20
+  subsystems, 1728/1728 in-scope functions named**.
+
+### Changed
+- **re** **docs/fa open-items closure completed (#247).** Pulled the DLG record-type layouts
+  (#258, advancing #54) and the VDO/Cobra corrections (#259, advancing #55) into the sweep, closed
+  the remaining #250 subsystem questions, and resolved the GG_Flush DB-split (#262). Every
+  `docs/fa` open item is now homed.
+- **re** The **reconstruction matrix is multi-binary** — one section per binary, program totals
+  across all seven (FA.EXE + the six companions), 26/26 subsystems complete.
+
+### Notes
+- **Documentation + tooling release.** `fx_lib` and the `fx` CLI are byte-identical to v0.5.6 —
+  no fa-bridge submodule bump. This closes out epic #247's overlay stream: the key finding is that
+  all three companion-binary categories are **third-party middleware** (Miles, MFC/EA-tool, Cdrv),
+  so the treatment is boundary documentation — the export ABI named, internals waived — not deep
+  reverse-engineering. Remaining under #247: the `#262` deep tail (`sh_op_78` geometry, `T_HANDLE`
+  flag `0x1000`, `.T2` sub-header) and the **MSAPI.dll matchmaking-client reconstruction** (epic
+  #272, the one genuinely game-relevant external found via #260).
+
 ## [0.5.6] - 2026-07-04
 
 ### Changed
@@ -226,7 +269,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.7
 [0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
 [0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
 [0.5.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.4
