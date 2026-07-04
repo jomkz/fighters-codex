@@ -163,10 +163,10 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 | 9 | `_MPSend__YGXXZ()` | Multiplayer: send state packets |
 | 10 | `_MPReceive__YGDXZ()` | Multiplayer: receive and apply remote state |
 | 11 | `_MPCheckDisconnect__YGDXZ()` | Returns zero → exits loop (disconnect) |
-| 12 | `FUN_0040F5D0(&_mainV)` | External-view update — returns a view-active flag; when it returns 0 the external/IFM view is cleared. Part of the in-flight view/replay cluster (see note below) |
-| 13 | `FUN_0040D7F0(&_mainV)` | External-view dispatch — when the view-mode word (`_mainV[0x5A]`) is non-zero, delegates to the view builder `FUN_0040EBC0` |
-| 14 | `FUN_0040D810(&_mainV)` | Spot/track-view update — positions the view from the tracked object (`(&_objPtrs)[_mainV[0x0E]]`) and its velocity |
-| 15 | `FUN_0040E960(&_mainV)` | Replay record-gate — inside the `_timerTicks` capture window (`DAT_005223F0`/`DAT_005223F4`) sets the replay-active flag `DAT_005224C0` |
+| 12 | `VIEWCanSeeTarget(&_mainV)` | padlock visibility test (`_WRCanSee`); returns a view-active flag, `0` clears the external/IFM view. Part of the [VIEW subsystem](view.md) |
+| 13 | `VIEWApplyMode(&_mainV)` | external-view dispatch — when the view-mode word (`_mainV[0x5A]`) is set, delegates to the view builder `VIEWBuild` |
+| 14 | `VIEWFromObject(&_mainV)` | spot/track-view update — positions the view from the tracked object (`(&_objPtrs)[_mainV[0x0E]]`) |
+| 15 | `VIEWReplayRecordGate(&_mainV)` | replay record-gate — inside the `_timerTicks` capture window (`_replayWindowStart`/`End`) sets `_replayActive` |
 | 16 | `_ServiceSounds__YIXXZ()` | Audio: update positional sounds |
 | 17 | `_T_Make_12(&_mainV, 0)` | Build render scene (skipped if IFM active) |
 | 18 | `_G_SetClipBox_16(...)` | Set render clip rect to cockpit area |
@@ -175,7 +175,7 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 | 21 | `_WRLensFlare_0()` | Lens flare post-pass |
 | 22 | `_HUDDraw_4(0)` | Draw cockpit HUD overlay |
 | 23 | `_G_SetFullClipBox_0()` | Restore full-screen clip |
-| 24 | `FUN_0040EBA0(&_mainV)` | Replay playback — when replay-active (`DAT_005224C0`), copies the 0x30-dword saved-view buffer (`&DAT_00522400`) back into `_mainV` |
+| 24 | `VIEWReplayPlayback(&_mainV)` | replay playback — when `_replayActive`, copies the 0x30-dword saved-view buffer (`_replaySaveBuf`) back into `_mainV` |
 | 25 | `_FPSUpdate_0()` | Framerate counter update |
 | 26 | Key read loop | `_GetKey()` / `_GetFakeKey_0()` — classifies Space (weapon) and Tab (gun) |
 | 27 | `_CPDraw_8(key, ...)` | Draw control panel (cockpit or IFM variant) |
@@ -211,23 +211,20 @@ The core per-frame simulation loop for the in-flight screen. This is a do-while 
 | `-1` | `"Time compression: 1/2"` |
 | `0x7FFF` | `"GAME PAUSED"` |
 
-### In-flight view / replay cluster (`0x0040D7F0`–`0x0040F5D0`)
+### In-flight view / replay — the VIEW subsystem (`0x0040D7A0`–`0x0040F6B0`)
 
-Steps 12–15 and 24 call a tight group of helpers that operate on the main-view struct
-`_mainV` and manage the external/spot camera and the flight replay recorder: an external-view
-dispatcher (`FUN_0040D7F0` → view builder `FUN_0040EBC0`), a spot/track-view update driven by
-the tracked object (`FUN_0040D810`), and a replay recorder/player pair that gates on the
-`_timerTicks` capture window and copies a 48-dword saved-view buffer (`DAT_00522400`) in and out
-of `_mainV` (`FUN_0040E960` record-gate, `FUN_0040EBA0` playback, `DAT_005224C0` replay-active
-flag). This cluster sits in an **unmapped region** of FA.EXE — outside every subsystem range in
-`db/subsystems.csv`, so its functions are still `FUN_`-named in the project. It is a discovery
-follow-on of the reconstruction (a small "in-flight view / replay" subsystem the original map
-missed, the same way the `.SEQ` player and the SPX path surfaced as [#240]/[#241]); naming it is
-tracked under epic [#247].
+Steps 12–15 and 24 call the **VIEW subsystem** — the external/spot camera and the flight replay
+recorder over the main-view struct `_mainV`: an external-view dispatcher (`VIEWApplyMode` →
+builder `VIEWBuild`), a spot/track-view update driven by the tracked object (`VIEWFromObject`),
+and a replay recorder/player pair that gates on the `_timerTicks` capture window and copies a
+0x30-dword saved-view buffer (`_replaySaveBuf`) in and out of `_mainV` (`VIEWReplayRecordGate`,
+`VIEWReplayPlayback`, `_replayActive` flag). This was a gap in the original map (a subsystem the
+19-subsystem set missed, the same way the `.SEQ` player and the SPX path surfaced as
+[#240]/[#241]); it is now named and documented in [view.md](view.md) — [#257].
 
 [#240]: https://github.com/jomkz/fighters-codex/issues/240
 [#241]: https://github.com/jomkz/fighters-codex/issues/241
-[#247]: https://github.com/jomkz/fighters-codex/issues/247
+[#257]: https://github.com/jomkz/fighters-codex/issues/257
 
 ---
 
