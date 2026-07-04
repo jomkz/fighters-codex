@@ -24,8 +24,26 @@ No root needed: unpack the Ghidra release zip and a JDK tarball under `~/tools/`
 | `FA_INSTALL` | FA game files (`FA.EXE`, LIBs) | `$FA_PROJECT/game` |
 | `GHIDRA_HOME` | Ghidra install | newest `~/tools/ghidra_*_PUBLIC`, else `/opt/ghidra*` |
 | `JAVA_HOME` | JDK 21+ | newest `~/tools/jdk-*`, else system `javac` |
+| `GHIDRA_HEADLESS_MAXMEM` | headless JVM heap | `8G` (Ghidra's own default is only `2G`) |
 
 Export any of them before calling a launcher to override.
+
+### Core utilization
+
+`DumpAllFunctions` decompiles the whole image with
+[`ParallelDecompiler`](DumpAllFunctions.java) — one native decompiler process
+per core — instead of a single serial `DecompInterface` (which `FAScript` keeps
+for the targeted `Analyze*` scripts that dump only a handful of functions each).
+Ghidra auto-detects the core count for its thread pools; the launchers set no
+`-max-cpu` and no `-Dcpu.core.limit`, so nothing caps it. To throttle on a
+shared box, export `GHIDRA_HEADLESS_JAVA_OPTIONS="-Dcpu.core.limit=<n>"`.
+
+FA.EXE is small and its functions are mostly tiny, so the whole-image decompile
+is only a few seconds and per-invocation JVM+project-load overhead dominates a
+single run (≈14 s wall for all 2.8k functions here). The remaining serialization
+is `run_all.sh` invoking each analysis script in its own cold Ghidra process;
+parallelizing those is gated on read-only project sharing and is left as a
+follow-up rather than risk write-lock contention on the shared project.
 
 On Windows, edit the variables at the top of `run_ghidra.bat` instead
 (`JAVA_HOME`, `GHIDRA_HOME`, `FA_PROJECT`; defaults `C:\java\jdk-26.0.1`,

@@ -246,9 +246,9 @@ PCM files use filename prefixes: `&` for looping ambient, `^` for one-shot voice
 
 **Mission init:** `?_MISSIONInit1@@YGXXZ` allocates the 300,000-byte object pool and chains 19 subsystem inits in order: TIME → OBJ → TERRAIN → NETWORK → AUDIO → HUD → ... → MISSION. Called by `FUN_00428412` (the mission/campaign loader) immediately after DLL setup.
 
-**Object pool:** `_objPtrs` (`0x553848`) is the entity list. `_nextObjId` (`0x553838`) is the free-ID counter. `_cg` (`0x50CE80`) holds the current object context byte (set by `_T_AddObj@12`); `_curId` (`0x4F6FBC`) holds the ID of the object currently being updated.
+**Object pool:** `_objPtrs` (`0x553848`) is the entity list. `_nextObjId` (`0x553838`) is the free-ID counter. `_cg` (`0x50CE80`) is the **current-object mirror** — `_ServiceObjects` copies the object being updated into it (via `GetCurObj`) so handlers can read fixed addresses; `_curId` (`0x4F6FBC`) holds that object's ID.
 
-See [game-loop.md](game-loop.md) for the full WinMain init sequence, per-frame call order, and all subsystem init VAs.
+See [objects.md](objects.md) for the object/entity system (service chain, the `_cg` mirror, proc dispatch) and [game-loop.md](game-loop.md) for the full WinMain init sequence, per-frame call order, and all subsystem init VAs.
 
 ---
 

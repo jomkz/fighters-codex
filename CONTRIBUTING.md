@@ -88,6 +88,9 @@ matrix before merge; if a leg is red, fix the change rather than the check.
 Changes to the format specs in `docs/fa/formats/` must conform to the template and
 front-matter schema in [docs/spec-authoring.md](docs/spec-authoring.md); the `docs-status`
 leg enforces it, and `python3 tools/check_status.py --check` runs the same checks locally.
+The same leg validates the FA.EXE **reconstruction** symbol database (`db/`) and its
+subsystem docs (see [docs/spec-authoring.md](docs/spec-authoring.md) § Subsystem docs and
+[db/README.md](db/README.md)); regenerate matrices with `--write-matrix`.
 
 Docs changes also build the published site strictly (`Docs` leg): a broken link, broken
 anchor, or a page missing from the site nav fails the PR. See

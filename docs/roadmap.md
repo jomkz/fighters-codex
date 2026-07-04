@@ -87,9 +87,21 @@ goal of a *complete understanding* of the executable: every function and variabl
 in the Ghidra project, and every subsystem documented in `docs/fa/` with recovered
 symbols, struct maps, and an SVG flow diagram. It runs alongside Phase 5 as a
 per-subsystem lens over the same code (naming + documentation + diagrams), not a
-duplicate decode effort. The definition of done is exemplified by
-[shape-selection.md](fa/shape-selection.md); each subsystem in the epic's map is a
-sub-issue.
+duplicate decode effort.
+
+The program is driven by a machine-readable **symbol database** under
+[`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md): a manifest of
+the 18 subsystems, per-subsystem `symbols/*.csv` files (the canonical VA→name record,
+applied to the Ghidra project by `scripts/ghidra/ApplySymbols.java` and checked against
+the committed inventory export), and the generated
+[reconstruction matrix](fa/reconstruction.md). `check_status.py` enforces, per completed
+subsystem, that **every code-referenced function is named and every referenced global is
+named or waived** (the referenced-globals rule), plus the subsystem doc's structure and
+theme-aware diagram. The definition of done is exemplified by
+[objects.md](fa/objects.md) + [shape-selection.md](fa/shape-selection.md); each subsystem
+in the epic's map is a sub-issue. The same database is the substrate for a possible
+generated clean-room C++ reconstruction (`fc`) — a decision deferred until several
+subsystems are complete.
 
 ## Relationship to fighters-legacy
 

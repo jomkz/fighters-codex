@@ -79,6 +79,14 @@ drawn in the world/terrain pass (`_A` or `_C`) and its partner in the graphics
 pass (`_B` or `_D`). Distance never enters this decision — LOD is entirely
 intra-shape.
 
+`+0x33` is **not** authored in the type file — it is written at the moment of
+destruction. `PLANEBreakUp` (`0x49D730`, the flight model's break-up handler)
+sets `damage_set = _Rand(2) + 1` (so `1` or `2`) as it raises the destroyed
+flags, then chooses ground vs. air debris. A value of `2` routes the object to
+the `{_C, _D}` set, `1` to `{_A, _B}` — i.e. **the wreck pair is picked at random
+per kill**, which is why the same airframe shows either the torn-airframe or the
+flat-silhouette wreck across replays.
+
 ![Shape-selection flow: type-load variant generation and per-frame damage-model selection.](diagrams/shape-selection.svg)
 
 ## Worked example — the A-10 family in `FA_2.LIB`
@@ -117,7 +125,7 @@ the type-record base.
 | `+0x1B` | 4 | `shape_b` | `_b` variant (loaded) | confirmed |
 | `+0x25` | 4 | `shape_c` | `_c` variant (loaded), aircraft only | confirmed |
 | `+0x29` | 4 | `shape_d` | `_d` variant (loaded), aircraft only | confirmed |
-| `+0x33` | 4 | `damage_set` | `== 2` selects the `{_C,_D}` set | inferred |
+| `+0x33` | 4 | `damage_set` | `== 2` selects the `{_C,_D}` set; written `_Rand(2)+1` by `PLANEBreakUp` | confirmed |
 
 Instance-side fields this system reads (see [structs.md](structs.md)): entity
 `+0x05` → type record, `+0x0E` health word (`0` = destroyed), `+0x01 & 0x100000`
@@ -129,8 +137,8 @@ damage-model flag.
 |----|--------|------|
 | `0x4A6EB0` | `_SetupOT` | generate the lettered variant names and load every shape slot |
 | `0x4A7200` / `0x4A7220` / `0x4A7230` | `_SetupNT` / `_SetupPT` / `_SetupJT` | per-type-kind entry points → `_SetupOT` |
-| `0x4A71E0` | `FUN_004a71e0` *(proposed: `type_load_shape_slot`)* | resolve one slot's name to a loaded shape via `_RMAccess` |
-| `0x4A6B10` | `FUN_004a6b10` *(proposed: `type_record`)* | return the type-record pointer for a type id |
+| `0x4A71E0` | `LoadShapeSlot` | resolve one slot's name to a loaded shape via `_RMAccess` |
+| `0x4A6B10` | `ResolveTypeRecord` | return the type-record pointer via the MM handle at `+0x0F` (`_SetupOT`'s first step) |
 | `0x4A6AE0` | `_RMAccess@8` | resource-manager load/lock by name |
 | `0x4A7A40` | `_T_AddYourObjs@0` | world/terrain draw-enqueue; selects `_A`/`_C` |
 | `0x4431B0` | `_GRAPHICAddYourObjs@4` | graphics draw-enqueue; selects `_B`/`_D` |
@@ -139,16 +147,18 @@ damage-model flag.
 
 ## Open questions
 
-### 1. `damage_set` (`+0x33`) derivation
+### 1. `damage_set` (`+0x33`) derivation — resolved
 
-`+0x33 == 2` selects the `{_C,_D}` set over `{_A,_B}`, but what sets `+0x33` (and to
-what, per aircraft) is set at type load from a field not yet named — a short
-follow-up trace of the type-record initializer will resolve it.
+`+0x33` is written at destruction time by `PLANEBreakUp` (`0x49D730`) as
+`_Rand(2) + 1`, so the `{_A,_B}` vs `{_C,_D}` wreck pair is chosen at random per
+kill rather than fixed per aircraft (see above). No longer open.
 
-*Status: open — re-static.*
+*Status: resolved — re-static.*
 
 ## Related
 
+- [objects.md](objects.md) — the entity/object system that owns the type record and
+  runs the destruction path.
 - [SH.md](formats/SH.md) — the shape format; intra-shape LOD/damage/articulation
   opcodes and the x86 `_PL*` selectors (the *other* variation axis).
 - [PT.md](formats/PT.md) — the plane-type record whose `obj_class` and shape fields

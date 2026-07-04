@@ -2,12 +2,32 @@
 // This covers all VA ranges not targeted by the subsystem-specific Analyze*.java scripts.
 // Invoke: run_ghidra.bat DumpAllFunctions.java
 // Output: %FA_PROJECT%\output\DumpAllFunctions.txt
+//
+// Decompilation fans out across every available core via ParallelDecompiler
+// (one native decompiler process per core); the serial DecompInterface in
+// FAScript is left for the targeted Analyze* scripts that dump only a handful
+// of functions each. Give the JVM a real heap (GHIDRA_HEADLESS_MAXMEM in _env.sh)
+// so the pool is not starved.
 
+import ghidra.app.decompiler.DecompileOptions;
+import ghidra.app.decompiler.DecompileResults;
+import ghidra.app.decompiler.parallel.DecompileConfigurer;
+import ghidra.app.decompiler.parallel.DecompilerCallback;
+import ghidra.app.decompiler.parallel.ParallelDecompiler;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.address.*;
+import ghidra.util.task.TaskMonitor;
 import java.util.*;
 
 public class DumpAllFunctions extends FAScript {
+
+    /** One decompiled function, pre-formatted exactly as dumpFunction() would print it. */
+    private static final class Dump {
+        final long va;
+        final String name;
+        final String text;
+        Dump(long va, String name, String text) { this.va = va; this.name = name; this.text = text; }
+    }
 
     @Override
     public void run() throws Exception {
@@ -18,35 +38,59 @@ public class DumpAllFunctions extends FAScript {
         for (Function fn : currentProgram.getFunctionManager().getFunctions(true)) {
             allFunctions.add(fn);
         }
-        allFunctions.sort((a, b) ->
-            Long.compare(a.getEntryPoint().getOffset(), b.getEntryPoint().getOffset()));
+        allFunctions.sort(Comparator.comparingLong(f -> f.getEntryPoint().getOffset()));
 
-        // Group by name prefix (SMS namespace) for organised output
+        // Decompile everything in parallel. The callback formats each result to
+        // match FAScript.dumpFunction() byte-for-byte (header line, C body or a
+        // failure note, trailing blank line), so the grouped output is unchanged.
+        DecompileConfigurer configurer = d -> {
+            d.toggleCCode(true);
+            d.toggleSyntaxTree(true);
+            d.setSimplificationStyle("decompile");
+            d.setOptions(new DecompileOptions());
+        };
+        DecompilerCallback<Dump> callback =
+                new DecompilerCallback<Dump>(currentProgram, configurer) {
+            @Override
+            public Dump process(DecompileResults res, TaskMonitor m) {
+                Function fn = res.getFunction();
+                StringBuilder sb = new StringBuilder();
+                sb.append("// --- ").append(fn.getName())
+                  .append(" @ ").append(fn.getEntryPoint()).append(" ---\n");
+                if (res.getDecompiledFunction() != null) {
+                    sb.append(res.getDecompiledFunction().getC()).append("\n");
+                } else {
+                    sb.append("// decompile failed: ").append(fn.getName()).append("\n");
+                }
+                sb.append("\n");
+                return new Dump(fn.getEntryPoint().getOffset(), fn.getName(), sb.toString());
+            }
+        };
+        callback.setTimeout(120);
+
+        List<Dump> dumps;
+        try {
+            dumps = ParallelDecompiler.decompileFunctions(callback, allFunctions, monitor);
+        } finally {
+            callback.dispose();
+        }
+        dumps.sort(Comparator.comparingLong(d -> d.va));
+
+        // Emit in VA order, inserting a group header whenever the namespace changes.
         String currentGroup = "";
         int total = 0;
-        int skipped = 0;
-
-        for (Function fn : allFunctions) {
-            long va = fn.getEntryPoint().getOffset();
-
-            // Determine group from function name prefix
-            String name = fn.getName();
-            String group = deriveGroup(name, va);
+        for (Dump d : dumps) {
+            String group = deriveGroup(d.name, d.va);
             if (!group.equals(currentGroup)) {
                 currentGroup = group;
                 header("GROUP: " + currentGroup);
             }
-
-            if (!dumped.contains(va)) {
-                dumpAt(va);
-                total++;
-            } else {
-                skipped++;
-            }
+            out.print(d.text);
+            total++;
         }
 
         out.println("// Total functions dumped: " + total);
-        out.println("// Skipped (already dumped): " + skipped);
+        out.println("// Skipped (already dumped): 0");
 
         closeOutput();
     }

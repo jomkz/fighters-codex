@@ -70,8 +70,10 @@ nav:
   - Fighters Anthology:
       - Overview: fa/README.md
       - Architecture: fa/architecture.md
+      - Reconstruction: fa/reconstruction.md
       - Game Loop: fa/game-loop.md
       - Renderer: fa/renderer.md
+      - Objects: fa/objects.md
       - Shape Selection: fa/shape-selection.md
       - Physics: fa/physics.md
       - Network: fa/network.md

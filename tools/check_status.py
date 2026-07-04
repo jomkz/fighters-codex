@@ -22,10 +22,17 @@ it checks three layers:
   3. coverage:    every codec, CLI command, test, fuzz harness, and GUI
                   editor in the repository is claimed by a spec.
 
+It also validates the FA.EXE reconstruction program (epic #209): the db/ symbol
+database (manifest + per-subsystem symbol files + committed Ghidra inventory),
+per-subsystem coverage for completed subsystems (every in-scope function named,
+every referenced global named or waived), subsystem-doc structure, and the
+generated docs/fa/reconstruction.md matrix. See db/README.md.
+
 Stdlib-only; Python 3.8+.
 """
 
 import argparse
+import csv
 import os
 import re
 import sys
@@ -38,6 +45,19 @@ MANIFEST = ROOT / "tests" / "integration" / "fa-extract.sha256"
 CLI_MAIN = ROOT / "cli" / "main.cpp"
 CLI_DOC = ROOT / "docs" / "cli.md"
 NON_SPEC = {"README.md", "STATUS.md"}
+
+# Reconstruction program (epic #209): machine-readable symbol database under db/,
+# its generated matrix, and the enforced vocabularies. See db/README.md.
+DB_DIR = ROOT / "db"
+SUBSYSTEMS_CSV = DB_DIR / "subsystems.csv"
+SYMBOLS_DIR = DB_DIR / "symbols"
+INVENTORY_DIR = DB_DIR / "inventory"
+RECON_MD = ROOT / "docs" / "fa" / "reconstruction.md"
+RECON_STATUS = {"planned", "active", "complete"}
+SYMBOL_KIND = {"func", "data"}
+SYMBOL_SOURCE = {"sms", "re", "waiver"}
+SYMBOL_CONFIDENCE = {"confirmed", "inferred"}
+BLOB = "https://github.com/jomkz/fighters-codex/blob/main"
 
 # Canonical H2 set, in required relative order.
 CANONICAL_H2 = [
@@ -581,6 +601,7 @@ def iter_repo_file_urls(text):
 def docs_files():
     files = sorted(ROOT.glob("*.md"))
     files += sorted(p for p in (ROOT / "docs").rglob("*.md"))
+    files += sorted(DB_DIR.glob("*.md"))
     return files
 
 
@@ -588,7 +609,7 @@ def check_docs_hygiene():
     errs = []
     docs_dir = (ROOT / "docs").resolve()
     for path in docs_files():
-        rel = path.relative_to(ROOT)
+        rel = _rel(path)
         raw = path.read_bytes()
         if raw.startswith(b"\xef\xbb\xbf"):
             errs.append("%s: UTF-8 BOM (strip it)" % rel)
@@ -600,7 +621,7 @@ def check_docs_hygiene():
             continue
         for hit in find_mojibake(text):
             errs.append("%s: mojibake %r (cp1252 double-encoding)" % (rel, hit))
-        in_docs = rel.parts[0] == "docs"
+        in_docs = rel.split("/")[0] == "docs"
         for target in iter_links(text):
             resolved = (path.parent / target).resolve()
             if not exists_case_exact(resolved):
@@ -643,7 +664,7 @@ def load_specs():
     errs = []
     for path in spec_paths():
         stem = path.stem
-        rel = path.relative_to(ROOT)
+        rel = _rel(path)
         text = path.read_bytes().decode("utf-8", errors="replace")
         if not text.startswith("---\n"):
             errs.append("%s: missing front-matter (see docs/spec-authoring.md)" % rel)
@@ -860,25 +881,422 @@ def check_readme_index(specs):
 
 
 # ---------------------------------------------------------------------------
+# Reconstruction program (epic #209): db/ symbol database
+# ---------------------------------------------------------------------------
+
+VA8_RE = re.compile(r"^0x[0-9A-F]{8}$")
+RANGE_RE = re.compile(r"^0x[0-9A-Fa-f]{4,8}-0x[0-9A-Fa-f]{4,8}$")
+ISSUE_URL = "https://github.com/jomkz/fighters-codex/issues"
+
+
+def _rel(path):
+    """Repo-relative posix path, or the bare name for out-of-tree self-test fixtures."""
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.name
+
+
+def _read_csv(path):
+    with path.open(encoding="utf-8", newline="") as f:
+        rows = list(csv.reader(f))
+    if not rows:
+        return [], []
+    return rows[0], rows[1:]
+
+
+def load_manifest(path):
+    """Parse subsystems.csv -> (list of subsystem dicts, errors)."""
+    errs = []
+    rel = _rel(path)
+    if not path.exists():
+        return [], ["%s: missing" % rel]
+    header, rows = _read_csv(path)
+    want = ["slug", "title", "binary", "ranges", "status", "doc", "issue"]
+    if header != want:
+        return [], ["%s: header must be %s" % (rel, ",".join(want))]
+    subs = []
+    seen = set()
+    for i, r in enumerate(rows, start=2):
+        if len(r) != len(want):
+            errs.append("%s:%d: expected %d columns, got %d" % (rel, i, len(want), len(r)))
+            continue
+        slug, title, binary, ranges, status, doc, issue = r
+        if not re.match(r"^[a-z0-9-]+$", slug):
+            errs.append("%s:%d: bad slug %r" % (rel, i, slug))
+        if slug in seen:
+            errs.append("%s:%d: duplicate slug %r" % (rel, i, slug))
+        seen.add(slug)
+        if not binary:
+            errs.append("%s:%d: empty binary" % (rel, i))
+        parsed = []
+        for chunk in ranges.split(";"):
+            if not RANGE_RE.match(chunk):
+                errs.append("%s:%d: bad range %r" % (rel, i, chunk))
+                continue
+            lo, hi = (int(x, 16) for x in chunk.split("-"))
+            if lo >= hi:
+                errs.append("%s:%d: range %r is not ascending" % (rel, i, chunk))
+            parsed.append((lo, hi))
+        if status not in RECON_STATUS:
+            errs.append("%s:%d: status %r not in %s" % (rel, i, status, sorted(RECON_STATUS)))
+        if not issue.lstrip("-").isdigit():
+            errs.append("%s:%d: issue %r is not an integer" % (rel, i, issue))
+            issue_n = 0
+        else:
+            issue_n = int(issue)
+        if status != "planned":
+            if not doc or not (ROOT / doc).exists():
+                errs.append("%s:%d: doc %r must exist when status=%s" % (rel, i, doc, status))
+            if issue_n <= 0:
+                errs.append("%s:%d: %s subsystem must reference a real issue (got %s)"
+                            % (rel, i, status, issue))
+        subs.append({"slug": slug, "title": title, "binary": binary, "ranges": parsed,
+                     "status": status, "doc": doc, "issue": issue_n, "line": i})
+    return subs, errs
+
+
+def load_symbols(symbols_dir, manifest):
+    """Parse db/symbols/*.csv -> (dict slug->rows, errors). Enforces schema,
+    ascending+unique VAs within a file, global VA uniqueness, and manifest match."""
+    errs = []
+    by_slug = {}
+    slugs = {s["slug"] for s in manifest}
+    global_va = {}
+    global_name = {}
+    want = ["va", "kind", "name", "display", "source", "confidence", "notes"]
+    files = sorted(symbols_dir.glob("*.csv")) if symbols_dir.exists() else []
+    for path in files:
+        rel = _rel(path)
+        slug = path.stem
+        if slug not in slugs:
+            errs.append("%s: no matching row in subsystems.csv" % rel)
+        header, rows = _read_csv(path)
+        if header != want:
+            errs.append("%s: header must be %s" % (rel, ",".join(want)))
+            continue
+        parsed = []
+        last = -1
+        for i, r in enumerate(rows, start=2):
+            if len(r) != len(want):
+                errs.append("%s:%d: expected %d columns, got %d" % (rel, i, len(want), len(r)))
+                continue
+            va, kind, name, display, source, confidence, notes = r
+            if not VA8_RE.match(va):
+                errs.append("%s:%d: bad va %r (want 0x00XXXXXX)" % (rel, i, va))
+                continue
+            n = int(va, 16)
+            if n <= last:
+                errs.append("%s:%d: va %s not ascending" % (rel, i, va))
+            last = n
+            if n in global_va:
+                errs.append("%s:%d: va %s already defined in %s" % (rel, i, va, global_va[n]))
+            global_va[n] = rel
+            if kind not in SYMBOL_KIND:
+                errs.append("%s:%d: kind %r invalid" % (rel, i, kind))
+            if source not in SYMBOL_SOURCE:
+                errs.append("%s:%d: source %r invalid" % (rel, i, source))
+            if confidence not in SYMBOL_CONFIDENCE:
+                errs.append("%s:%d: confidence %r invalid" % (rel, i, confidence))
+            if source == "waiver":
+                if not notes.strip():
+                    errs.append("%s:%d: waiver requires a notes rationale" % (rel, i))
+            else:
+                if not name.strip():
+                    errs.append("%s:%d: non-waiver row needs a name" % (rel, i))
+                if name in global_name:
+                    errs.append("note-dup: %s:%d name %r also at %s"
+                                % (rel, i, name, global_name[name]))
+                global_name[name] = "%s:%d" % (rel, i)
+            parsed.append({"va": n, "kind": kind, "name": name, "display": display,
+                           "source": source, "confidence": confidence, "notes": notes})
+        by_slug[slug] = parsed
+    return by_slug, errs
+
+
+def load_inventory(inv_dir):
+    """Parse db/inventory/*.csv -> (dict, errors)."""
+    errs = []
+    inv = {"functions": {}, "globals": [], "ranges": []}
+    fpath = inv_dir / "functions.csv"
+    if fpath.exists():
+        _, rows = _read_csv(fpath)
+        for r in rows:
+            if len(r) >= 3 and VA8_RE.match(r[0]):
+                inv["functions"][int(r[0], 16)] = {"name": r[1], "size": r[2]}
+    else:
+        errs.append("db/inventory/functions.csv: missing (run export_inventory.sh)")
+    gpath = inv_dir / "globals.csv"
+    if gpath.exists():
+        _, rows = _read_csv(gpath)
+        for r in rows:
+            if len(r) >= 4 and VA8_RE.match(r[0]):
+                inv["globals"].append({"va": int(r[0], 16), "name": r[1],
+                                       "xref": r[2], "subs": r[3].split(";") if r[3] else []})
+    else:
+        errs.append("db/inventory/globals.csv: missing (run export_inventory.sh)")
+    rpath = inv_dir / "ranges.csv"
+    if rpath.exists():
+        _, rows = _read_csv(rpath)
+        for r in rows:
+            if len(r) >= 5:
+                inv["ranges"].append(r)
+    return inv, errs
+
+
+def _claims(symbols):
+    """va -> slug for every symbol row (explicit membership, overrides ranges)."""
+    out = {}
+    for slug, rows in symbols.items():
+        for row in rows:
+            out[row["va"]] = slug
+    return out
+
+
+def _in_ranges(va, sub):
+    return any(lo <= va < hi for lo, hi in sub["ranges"])
+
+
+def check_coverage(sub, symbols, inventory, claims):
+    """For a complete subsystem: 100% of in-scope functions named, and every
+    referenced global named or waived."""
+    errs = []
+    slug = sub["slug"]
+    rel = ("db/symbols/%s.csv" % slug)
+    rows = symbols.get(slug, [])
+    by_va = {r["va"]: r for r in rows}
+
+    # Functions: every claimed inventory function is covered and named.
+    for va, info in inventory["functions"].items():
+        owner = claims.get(va)
+        belongs = owner == slug or (owner is None and _in_ranges(va, sub))
+        if not belongs:
+            continue
+        row = by_va.get(va)
+        if row is None:
+            errs.append("%s: function 0x%08X (%s) is in-scope but absent from the DB"
+                        % (rel, va, info["name"]))
+        elif row["source"] != "waiver":
+            if info["name"].startswith("FUN_"):
+                errs.append("%s: 0x%08X still unnamed in the project (FUN_)" % (rel, va))
+            elif info["name"] != row["name"]:
+                errs.append("%s: 0x%08X name drift — project %r vs DB %r"
+                            % (rel, va, info["name"], row["name"]))
+    # Every func-kind DB row must correspond to a real function.
+    for row in rows:
+        if row["kind"] == "func" and row["source"] != "waiver" \
+                and row["va"] not in inventory["functions"]:
+            errs.append("%s: 0x%08X named as a function but not in the inventory" % (rel, row["va"]))
+
+    # Data: every referenced global tagged with this subsystem is named or waived.
+    for g in inventory["globals"]:
+        if slug not in g["subs"]:
+            continue
+        row = by_va.get(g["va"])
+        unnamed = g["name"] == "<unnamed>" or g["name"].startswith("DAT_")
+        if row is None and unnamed:
+            errs.append("%s: referenced global 0x%08X is unnamed and unwaived"
+                        % (rel, g["va"]))
+    return errs
+
+
+def _section(text, heading_re):
+    """Return the body lines of the first H2 whose text matches heading_re."""
+    lines = text.splitlines()
+    out, capturing = [], False
+    for ln in lines:
+        if ln.startswith("## "):
+            if capturing:
+                break
+            capturing = bool(re.match(heading_re, ln))
+            continue
+        if capturing:
+            out.append(ln)
+    return out if capturing or out else None
+
+
+def check_subsystem_doc(sub, symbols):
+    """Structure checks for a subsystem doc (status in {active, complete})."""
+    doc = ROOT / sub["doc"]
+    if not doc.exists():
+        return ["%s: subsystem doc missing" % sub["doc"]]
+    return check_doc_structure(sub["doc"], doc.read_text(encoding="utf-8"),
+                               doc.parent, symbols.get(sub["slug"], []))
+
+
+def check_doc_structure(rel, text, doc_dir, rows):
+    """Text-level structure checks (shared by the file check and the self-test)."""
+    errs = []
+    if not re.search(r"(?m)^>\s*\*\*Provenance:\*\*", text):
+        errs.append("%s: missing '> **Provenance:**' blockquote" % rel)
+    if not re.search(r"(?m)^##\s+Related\b", text):
+        errs.append("%s: missing '## Related' section" % rel)
+
+    oq = _section(text, r"^##\s+Open [Qq]uestions\b")
+    if oq is None:
+        errs.append("%s: missing '## Open Questions' section" % rel)
+    elif not any("*Status:" in ln for ln in oq):
+        errs.append("%s: Open Questions entries must end with a *Status: …* line" % rel)
+
+    # Functions table cross-checked against the DB (kills doc/DB drift).
+    fn = _section(text, r"^##\s+Functions\b")
+    if fn is None:
+        errs.append("%s: missing '## Functions' section" % rel)
+    else:
+        names = {r["va"]: {r["name"], r["display"]} - {""} for r in rows}
+        for ln in fn:
+            if not ln.strip().startswith("|"):
+                continue
+            cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+            if len(cells) < 2 or set(cells[0]) <= set("- :"):
+                continue
+            vas = re.findall(r"0x[0-9A-Fa-f]{6,8}", cells[0])
+            if not vas:
+                continue
+            token_m = re.search(r"[`*]*([\w@?$]+)", cells[1])
+            token = token_m.group(1) if token_m else ""
+            for va in vas:
+                n = int(va, 16)
+                if n not in names:
+                    errs.append("%s: Functions row 0x%08X not in the DB" % (rel, n))
+                elif token and token not in names[n]:
+                    errs.append("%s: Functions row 0x%08X shows %r; DB has %s"
+                                % (rel, n, token, sorted(names[n])))
+
+    imgs = re.findall(r"!\[[^\]]*\]\((diagrams/[^)]+\.svg)\)", text)
+    if not imgs:
+        errs.append("%s: needs at least one ![…](diagrams/*.svg) flow diagram" % rel)
+    for img in imgs:
+        svg = doc_dir / img
+        if not svg.exists():
+            errs.append("%s: diagram %s does not exist" % (rel, img))
+            continue
+        body = svg.read_text(encoding="utf-8")
+        if "prefers-color-scheme: dark" not in body or "data-theme" not in body:
+            errs.append("%s: %s must be theme-aware (prefers-color-scheme + data-theme)"
+                        % (rel, img))
+    return errs
+
+
+def recon_stats(sub, symbols, inventory, claims):
+    """Per-subsystem numbers for the matrix."""
+    slug = sub["slug"]
+    rows = symbols.get(slug, [])
+    func_named = sum(1 for r in rows if r["kind"] == "func" and r["source"] != "waiver")
+    func_waived = sum(1 for r in rows if r["kind"] == "func" and r["source"] == "waiver")
+    func_total = 0
+    for va in inventory["functions"]:
+        owner = claims.get(va)
+        if owner == slug or (owner is None and _in_ranges(va, sub)):
+            func_total += 1
+    g_named = sum(1 for r in rows if r["kind"] == "data" and r["source"] != "waiver")
+    g_waived = sum(1 for r in rows if r["kind"] == "data" and r["source"] == "waiver")
+    g_total = sum(1 for g in inventory["globals"] if slug in g["subs"])
+    return {"func_named": func_named + func_waived, "func_total": func_total,
+            "g_named": g_named, "g_waived": g_waived, "g_total": g_total}
+
+
+def generate_recon_matrix(manifest, symbols, inventory, claims):
+    lines = [
+        "# FA.EXE Reconstruction Matrix",
+        "",
+        "<!-- Generated by tools/check_status.py --write-matrix. Do not edit. -->",
+        "",
+        "Progress of the [complete-FA.EXE reconstruction program](../roadmap.md#program-complete-faexe-reconstruction)",
+        "(epic [#209](%s/209)): one row per subsystem, generated from the" % ISSUE_URL,
+        "[symbol database](%s/db/README.md) and verified against the committed" % BLOB,
+        "Ghidra inventory by CI (`--check`).",
+        "",
+        "| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    tot_named = tot_funcs = tot_gn = tot_gt = 0
+    for sub in manifest:
+        st = recon_stats(sub, symbols, inventory, claims)
+        tot_named += st["func_named"]; tot_funcs += st["func_total"]
+        tot_gn += st["g_named"] + st["g_waived"]; tot_gt += st["g_total"]
+        rng = "<br>".join("`0x%06X–0x%06X`" % (lo, hi) for lo, hi in sub["ranges"])
+        if sub["status"] == "planned":
+            funcs = globs = "—"
+        else:
+            pct = (100 * st["func_named"] // st["func_total"]) if st["func_total"] else 100
+            funcs = "%d/%d (%d%%)" % (st["func_named"], st["func_total"], pct)
+            globs = "%d named · %d waived" % (st["g_named"], st["g_waived"])
+        has_sym = (SYMBOLS_DIR / ("%s.csv" % sub["slug"])).exists()
+        doc_cell = "[doc](%s)" % Path(sub["doc"]).name if sub["status"] != "planned" else "—"
+        diag = "✓" if sub["status"] == "complete" else ("—" if not has_sym else "·")
+        issue_cell = "[#%d](%s/%d)" % (sub["issue"], ISSUE_URL, sub["issue"]) \
+            if sub["issue"] > 0 else "—"
+        lines.append("| %s | %s | %s | %s | %s | %s | %s | %s |" % (
+            sub["title"], rng, funcs, globs, doc_cell, diag, issue_cell, sub["status"]))
+    done = sum(1 for s in manifest if s["status"] == "complete")
+    lines += [
+        "",
+        "**Program totals:** %d/%d subsystems complete; %d/%d in-scope functions named; "
+        "%d/%d referenced globals resolved."
+        % (done, len(manifest), tot_named, tot_funcs, tot_gn, tot_gt),
+        "",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def check_reconstruction(db_dir=DB_DIR):
+    """Validate the symbol DB and return (errors, matrix-or-None)."""
+    manifest, errs = load_manifest(db_dir / "subsystems.csv")
+    if not manifest:
+        return errs, None
+    symbols, serrs = load_symbols(db_dir / "symbols", manifest)
+    inventory, ierrs = load_inventory(db_dir / "inventory")
+    errs = errs + serrs + ierrs
+    # Surface cross-file duplicate-name notes as warnings, not hard errors.
+    warns = [e[len("note-dup: "):] for e in errs if e.startswith("note-dup: ")]
+    errs = [e for e in errs if not e.startswith("note-dup: ")]
+    claims = _claims(symbols)
+    for sub in manifest:
+        if sub["status"] in ("active", "complete"):
+            errs += check_subsystem_doc(sub, symbols)
+        if sub["status"] == "complete":
+            errs += check_coverage(sub, symbols, inventory, claims)
+    matrix = generate_recon_matrix(manifest, symbols, inventory, claims)
+    for w in warns:
+        print("note: %s" % w)
+    return errs, matrix
+
+
+# ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
 
+def _matrix_currency(path, generated, errs):
+    on_disk = path.read_text(encoding="utf-8") if path.exists() else ""
+    if on_disk.replace("\r\n", "\n") != generated:
+        errs.append("%s is stale — run 'python3 tools/check_status.py "
+                    "--write-matrix' and commit" % path.relative_to(ROOT).as_posix())
+
+
 def run_checks(write_matrix):
     specs, errs = load_specs()
-    errs += check_docs_hygiene()
-    errs += check_readme_index(specs)
-    claim_errs, warns = check_claims(specs)
-    errs += claim_errs
 
+    # Reconstruction DB + matrix. Generate (and, in --write-matrix, write) both
+    # matrices before hygiene so db/README's link to reconstruction.md resolves.
+    recon_errs, recon_matrix = check_reconstruction()
     matrix = generate_matrix(specs)
     if write_matrix:
         STATUS_MD.write_bytes(matrix.encode("utf-8"))  # LF-only on every platform
         print("wrote %s" % STATUS_MD.relative_to(ROOT))
+        if recon_matrix is not None:
+            RECON_MD.write_bytes(recon_matrix.encode("utf-8"))
+            print("wrote %s" % RECON_MD.relative_to(ROOT))
     else:
-        on_disk = STATUS_MD.read_text(encoding="utf-8") if STATUS_MD.exists() else ""
-        if on_disk.replace("\r\n", "\n") != matrix:
-            errs.append("docs/fa/formats/STATUS.md is stale — run "
-                        "'python3 tools/check_status.py --write-matrix' and commit")
+        _matrix_currency(STATUS_MD, matrix, errs)
+        if recon_matrix is not None:
+            _matrix_currency(RECON_MD, recon_matrix, errs)
+
+    errs += check_docs_hygiene()
+    errs += check_readme_index(specs)
+    claim_errs, warns = check_claims(specs)
+    errs += claim_errs
+    errs += recon_errs
 
     for w in warns:
         print("note: %s" % w)
@@ -1051,8 +1469,162 @@ def self_test():
            "matrix: row rendering")
     expect(_matrix_row("ZZZ", fm) == row, "matrix: deterministic")
 
+    _recon_self_test(expect)
+
     print("self-test: all checks passed")
     return 0
+
+
+THEMED_SVG = ('<svg xmlns="http://www.w3.org/2000/svg">'
+              '<style>@media (prefers-color-scheme: dark){.b{fill:#111}}'
+              ':root[data-theme="dark"] .b{fill:#111}</style></svg>\n')
+
+GOOD_DOC = """\
+# Objects
+
+Intro.
+
+> **Provenance:** Ghidra static analysis. Markers per spec-authoring.
+
+## Functions
+
+| VA | Symbol | Role |
+|---|---|---|
+| `0x00462600` | `InitChain` | reset chains |
+| `0x004A7200` / `0x004A7220` | `SetupNT` | init types |
+
+![flow](diagrams/objects.svg)
+
+## Open Questions
+
+### 1. Something
+
+*Status: open — re-static.*
+
+## Related
+
+[shape](shape-selection.md)
+"""
+
+
+def _recon_self_test(expect, tmpdir=None):
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        base = Path(td)
+        (base / "symbols").mkdir()
+        (base / "inventory").mkdir()
+        (base / "diagrams").mkdir()
+
+        def write(rel, text):
+            p = base / rel
+            p.write_text(text, encoding="utf-8")
+            return p
+
+        # doc points at an existing file so load_manifest's existence check passes;
+        # doc *structure* is exercised directly via check_doc_structure below.
+        header = "slug,title,binary,ranges,status,doc,issue\n"
+        write("subsystems.csv", header +
+              "obj,Objects,FA.EXE,0x462600-0x462700,complete,db/README.md,210\n")
+        good_syms = ("va,kind,name,display,source,confidence,notes\n"
+                     "0x00462600,func,InitChain,,re,confirmed,head\n"
+                     "0x00462640,func,,,waiver,confirmed,thunk\n"
+                     "0x004EB600,data,_flag,,re,inferred,state\n")
+        write("symbols/obj.csv", good_syms)
+        manifest, merrs = load_manifest(base / "subsystems.csv")
+        expect(merrs == [], "recon: clean manifest")
+        symbols, serrs = load_symbols(base / "symbols", manifest)
+        expect(serrs == [], "recon: clean symbols")
+
+        # Manifest failures
+        for bad, label in [
+            ("obj,O,FA.EXE,0x462700-0x462600,planned,,0\n", "descending range"),
+            ("obj,O,FA.EXE,zzz,planned,,0\n", "bad range syntax"),
+            ("obj,O,FA.EXE,0x1-0x2,frozen,,0\n", "unknown status"),
+            ("obj,O,FA.EXE,0x1-0x2,complete,nope.md,210\n", "complete needs real doc"),
+            ("obj,O,FA.EXE,0x1-0x2,active,db/x.md,0\n", "active needs real issue"),
+        ]:
+            _, e = load_manifest(write("m.csv", header + bad))
+            expect(e != [], "recon: manifest rejects %s" % label)
+
+        # Symbol-schema failures
+        for bad, label in [
+            ("0x462600,func,X,,re,confirmed,n\n", "short va"),
+            ("0x00462600,func,X,,re,confirmed,n\n0x00462500,func,Y,,re,confirmed,n\n",
+             "unsorted va"),
+            ("0x00462600,func,X,,re,confirmed,n\n0x00462600,data,Y,,re,confirmed,n\n",
+             "duplicate va"),
+            ("0x00462600,thing,X,,re,confirmed,n\n", "bad kind"),
+            ("0x00462600,func,X,,guess,confirmed,n\n", "bad source"),
+            ("0x00462600,func,X,,re,maybe,n\n", "bad confidence"),
+            ("0x00462600,data,,,waiver,confirmed,\n", "waiver without notes"),
+            ("0x00462600,func,,,re,confirmed,n\n", "non-waiver without name"),
+        ]:
+            wf = base / "symbols" / "m.csv"
+            wf.write_text("va,kind,name,display,source,confidence,notes\n" + bad,
+                          encoding="utf-8")
+            _, e = load_symbols(base / "symbols", manifest + [{"slug": "m"}])
+            expect(e != [], "recon: symbols reject %s" % label)
+            wf.unlink()
+
+        # Symbol file with no manifest row
+        (base / "symbols" / "orphan.csv").write_text(good_syms, encoding="utf-8")
+        _, e = load_symbols(base / "symbols", manifest)
+        expect(any("no matching row" in x for x in e), "recon: orphan symbol file")
+        (base / "symbols" / "orphan.csv").unlink()
+
+        # Coverage: functions
+        inv_ok = {"functions": {0x462600: {"name": "InitChain", "size": "10"},
+                                0x462640: {"name": "FUN_00462640", "size": "5"}},
+                  "globals": [{"va": 0x4EB600, "name": "_flag", "xref": "3", "subs": ["obj"]}],
+                  "ranges": []}
+        sub = manifest[0]
+        claims = _claims(symbols)
+        expect(check_coverage(sub, symbols, inv_ok, claims) == [], "recon: coverage clean")
+
+        inv_funly = dict(inv_ok, functions={0x462600: {"name": "FUN_00462600", "size": "1"}})
+        expect(any("FUN_" in x for x in check_coverage(sub, symbols, inv_funly, claims)),
+               "recon: coverage catches leftover FUN_")
+        inv_gap = dict(inv_ok, functions={0x462600: {"name": "InitChain", "size": "1"},
+                                          0x4626F0: {"name": "FUN_x", "size": "1"}})
+        expect(any("in-scope but absent" in x
+                   for x in check_coverage(sub, symbols, inv_gap, claims)),
+               "recon: coverage catches in-range function missing from DB")
+        inv_grf = dict(inv_ok, globals=[{"va": 0x4EB601, "name": "<unnamed>",
+                                         "xref": "2", "subs": ["obj"]}])
+        expect(any("unnamed and unwaived" in x
+                   for x in check_coverage(sub, symbols, inv_grf, claims)),
+               "recon: coverage catches unwaived referenced global")
+
+        # Doc structure
+        write("x.md", GOOD_DOC)
+        drows = symbols["obj"] + [{"va": 0x4A7200, "kind": "func", "name": "_SetupNT@4",
+                                   "display": "SetupNT", "source": "sms",
+                                   "confidence": "confirmed", "notes": ""},
+                                  {"va": 0x4A7220, "kind": "func", "name": "_SetupPT@4",
+                                   "display": "SetupNT", "source": "sms",
+                                   "confidence": "confirmed", "notes": ""}]
+        write("diagrams/objects.svg", THEMED_SVG)
+        expect(check_doc_structure("x.md", GOOD_DOC, base, drows) == [],
+               "recon: clean subsystem doc")
+        expect(any("Provenance" in x for x in check_doc_structure(
+            "x.md", GOOD_DOC.replace("> **Provenance:**", "Provenance"), base, drows)),
+            "recon: doc needs provenance")
+        expect(any("not in the DB" in x for x in check_doc_structure(
+            "x.md", GOOD_DOC.replace("0x00462600", "0x00999999"), base, drows)),
+            "recon: Functions VA must be in DB")
+        expect(any("Status" in x for x in check_doc_structure(
+            "x.md", GOOD_DOC.replace("*Status: open — re-static.*", "done"), base, drows)),
+            "recon: open question needs Status line")
+        expect(any("theme-aware" in x for x in check_doc_structure(
+            "x.md", GOOD_DOC, base,
+            drows)) is False, "recon: themed svg accepted")
+        write("diagrams/objects.svg", "<svg></svg>\n")
+        expect(any("theme-aware" in x
+                   for x in check_doc_structure("x.md", GOOD_DOC, base, drows)),
+               "recon: non-theme svg rejected")
+        expect(any("diagram" in x for x in check_doc_structure(
+            "x.md", GOOD_DOC.replace("diagrams/objects.svg", "diagrams/missing.svg"),
+            base, drows)), "recon: missing diagram rejected")
 
 
 def main():

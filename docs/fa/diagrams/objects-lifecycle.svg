@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="FA.EXE object lifecycle: objects enter the service chain, are mirrored into _cg, updated through proc dispatch, written back, and re-queued each frame.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .setup { fill: #e8f0fb; stroke: #3d6aa8; stroke-width: 1.5; }
+    .run   { fill: #eaf4ec; stroke: #3f7d4f; stroke-width: 1.5; }
+    .dmg   { fill: #fbecea; stroke: #b25548; stroke-width: 1.5; }
+    .dec   { fill: #fdf4e3; stroke: #b8892f; stroke-width: 1.5; }
+    .lane  { fill: none; stroke: #9aa7b2; stroke-width: 1.2; stroke-dasharray: 6 5; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 11.5px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .lanetitle { fill: #33424e; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    .edgelbl { fill: #4a5a67; font-size: 11px; }
+    @media (prefers-color-scheme: dark) {
+      .box   { fill: #232a31; stroke: #7f8f9d; }
+      .setup { fill: #1e2c3e; stroke: #6f9bd6; }
+      .run   { fill: #1d2c22; stroke: #6fae7f; }
+      .dmg   { fill: #33221f; stroke: #d98a7c; }
+      .dec   { fill: #322a1a; stroke: #d9b45f; }
+      .lane  { stroke: #55636e; }
+      .lbl   { fill: #dce4ea; } .sub { fill: #a6b3bd; }
+      .lanetitle { fill: #c7d2da; } .edge { stroke: #8a99a5; }
+      .edgelbl { fill: #a6b3bd; }
+    }
+    :root[data-theme="dark"] .box  { fill: #232a31; stroke: #7f8f9d; }
+    :root[data-theme="dark"] .setup{ fill: #1e2c3e; stroke: #6f9bd6; }
+    :root[data-theme="dark"] .run  { fill: #1d2c22; stroke: #6fae7f; }
+    :root[data-theme="dark"] .dmg  { fill: #33221f; stroke: #d98a7c; }
+    :root[data-theme="dark"] .dec  { fill: #322a1a; stroke: #d9b45f; }
+    :root[data-theme="dark"] .lane { stroke: #55636e; }
+    :root[data-theme="dark"] .lbl  { fill: #dce4ea; } :root[data-theme="dark"] .sub { fill: #a6b3bd; }
+    :root[data-theme="dark"] .lanetitle { fill: #c7d2da; } :root[data-theme="dark"] .edge { stroke: #8a99a5; }
+    :root[data-theme="dark"] .edgelbl { fill: #a6b3bd; }
+    :root[data-theme="light"] .box  { fill: #f4f6f8; stroke: #5b6b7a; }
+    :root[data-theme="light"] .setup{ fill: #e8f0fb; stroke: #3d6aa8; }
+    :root[data-theme="light"] .run  { fill: #eaf4ec; stroke: #3f7d4f; }
+    :root[data-theme="light"] .dmg  { fill: #fbecea; stroke: #b25548; }
+    :root[data-theme="light"] .dec  { fill: #fdf4e3; stroke: #b8892f; }
+    :root[data-theme="light"] .lane { stroke: #9aa7b2; }
+    :root[data-theme="light"] .lbl  { fill: #22303c; } :root[data-theme="light"] .sub { fill: #4a5a67; }
+    :root[data-theme="light"] .lanetitle { fill: #33424e; } :root[data-theme="light"] .edge { stroke: #5b6b7a; }
+    :root[data-theme="light"] .edgelbl { fill: #4a5a67; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/>
+    </marker>
+  </defs>
+
+  <text x="450" y="26" text-anchor="middle" class="lanetitle">PER-FRAME OBJECT SERVICE — ServiceObjects (0x462A50)</text>
+
+  <!-- left: allocation -->
+  <text x="150" y="60" text-anchor="middle" class="lanetitle">ALLOCATION</text>
+  <rect class="setup" x="45" y="72" width="210" height="52" rx="6"/>
+  <text x="150" y="94" text-anchor="middle" class="lbl mono">OBJAdd</text>
+  <text x="150" y="112" text-anchor="middle" class="sub">append record -> _objPtrs[id]</text>
+
+  <!-- left: current-object mirror note -->
+  <rect class="box" x="45" y="250" width="210" height="70" rx="6"/>
+  <text x="150" y="272" text-anchor="middle" class="lbl mono">_cg / _cgt</text>
+  <text x="150" y="290" text-anchor="middle" class="sub">record + type mirror;</text>
+  <text x="150" y="306" text-anchor="middle" class="sub">handlers read fixed addrs</text>
+
+  <!-- center column: the loop -->
+  <rect class="box"  x="315" y="72"  width="270" height="52" rx="6"/>
+  <text x="450" y="94"  text-anchor="middle" class="lbl mono">_chainStart</text>
+  <text x="450" y="112" text-anchor="middle" class="sub">service chain, ordered by +0x68</text>
+
+  <rect class="run"  x="315" y="160" width="270" height="52" rx="6"/>
+  <text x="450" y="182" text-anchor="middle" class="lbl mono">GetCurObj</text>
+  <text x="450" y="200" text-anchor="middle" class="sub">mirror head object -> _cg / _cgt</text>
+
+  <rect class="run"  x="315" y="248" width="270" height="52" rx="6"/>
+  <text x="450" y="270" text-anchor="middle" class="lbl mono">Service</text>
+  <text x="450" y="288" text-anchor="middle" class="sub">run this object's update</text>
+
+  <rect class="run"  x="315" y="336" width="270" height="52" rx="6"/>
+  <text x="450" y="358" text-anchor="middle" class="lbl mono">PutCurObj</text>
+  <text x="450" y="376" text-anchor="middle" class="sub">write mirror back to record</text>
+
+  <rect class="run"  x="315" y="424" width="270" height="52" rx="6"/>
+  <text x="450" y="446" text-anchor="middle" class="lbl mono">ChainMergeSorted</text>
+  <text x="450" y="464" text-anchor="middle" class="sub">fold _requeueChain back in</text>
+
+  <!-- right: proc dispatch stack -->
+  <text x="748" y="150" text-anchor="middle" class="lanetitle">PROC DISPATCH</text>
+  <rect class="dec" x="632" y="160" width="232" height="44" rx="6"/>
+  <text x="748" y="187" text-anchor="middle" class="lbl mono">CallUtilProc</text>
+  <rect class="dec" x="632" y="216" width="232" height="44" rx="6"/>
+  <text x="748" y="238" text-anchor="middle" class="lbl mono">GetObjProc</text>
+  <text x="748" y="254" text-anchor="middle" class="sub">+0x6C override, else type +0x7D</text>
+  <rect class="box" x="632" y="272" width="232" height="44" rx="6"/>
+  <text x="748" y="299" text-anchor="middle" class="lbl mono">OBJProc</text>
+  <rect class="box" x="632" y="328" width="232" height="52" rx="6"/>
+  <text x="748" y="350" text-anchor="middle" class="lbl mono">Event / Damage / Say</text>
+  <text x="748" y="368" text-anchor="middle" class="sub">per-class handlers</text>
+
+  <!-- bottom: remote queues -->
+  <rect class="dmg" x="315" y="512" width="480" height="56" rx="6"/>
+  <text x="555" y="534" text-anchor="middle" class="lbl mono">ProcessHitMsgs · ProcessEffectMsgs</text>
+  <text x="555" y="552" text-anchor="middle" class="sub">drain remote hits/effects after the walk -> GRAPHICAddExp</text>
+
+  <!-- edges: allocation into chain -->
+  <path class="edge" d="M255,98 L308,98" marker-end="url(#arrow)"/>
+  <!-- center loop -->
+  <path class="edge" d="M450,124 L450,157" marker-end="url(#arrow)"/>
+  <path class="edge" d="M450,212 L450,245" marker-end="url(#arrow)"/>
+  <path class="edge" d="M450,300 L450,333" marker-end="url(#arrow)"/>
+  <path class="edge" d="M450,388 L450,421" marker-end="url(#arrow)"/>
+  <!-- mirror link -->
+  <path class="edge" d="M315,192 L258,270" marker-end="url(#arrow)"/>
+  <!-- service -> dispatch and back -->
+  <path class="edge" d="M585,266 L629,190" marker-end="url(#arrow)"/>
+  <path class="edge" d="M748,204 L748,214" marker-end="url(#arrow)"/>
+  <path class="edge" d="M748,260 L748,270" marker-end="url(#arrow)"/>
+  <path class="edge" d="M748,316 L748,326" marker-end="url(#arrow)"/>
+  <!-- loop back to chain head -->
+  <path class="lane" d="M315,450 L282,450 L282,98 L308,98" marker-end="url(#arrow)"/>
+  <text x="272" y="275" text-anchor="middle" class="edgelbl" transform="rotate(-90 272 275)">re-queue next frame</text>
+  <!-- service walk drains remote -->
+  <path class="edge" d="M600,462 L600,490 L555,490 L555,509" marker-end="url(#arrow)"/>
+</svg>

@@ -10,8 +10,11 @@ The RE effort has documented all 44 known binary and text formats, the full FA.E
 |----------|-------------|
 | [formats/](formats/README.md) | Binary and text format specifications — all 44 formats, categorized |
 | [formats/STATUS.md](formats/STATUS.md) | Generated per-format status matrix (spec, codec, tests, fuzzing) |
+| [reconstruction.md](reconstruction.md) | Generated FA.EXE reconstruction matrix — per-subsystem naming/doc progress (epic #209) |
 | [architecture.md](architecture.md) | Runtime environment, asset system, overlay architecture, and all major subsystems |
 | [game-loop.md](game-loop.md) | Main loop, initialization, per-frame dispatch, frame timing, and shutdown |
+| [objects.md](objects.md) | Object/entity system — the service chain, current-object mirror, and proc dispatch |
+| [shape-selection.md](shape-selection.md) | Whole-model damage swap and the per-class `_A`…`_D` variant set |
 | [globals.md](globals.md) | Named FA.EXE global variables, organized by subsystem |
 | [network.md](network.md) | Multiplayer networking internals — transports, session discovery, frame sync |
 | [physics.md](physics.md) | Physics, flight model, and collision detection |
