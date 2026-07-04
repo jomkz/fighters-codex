@@ -1,0 +1,6 @@
+va,kind,name,display,source,confidence,notes,type
+0x004019B0,func,CDROMBenchmark,CDROMBenchmark,re,confirmed,"CD-ROM speed/transfer benchmark (""Benchmarking CD-ROM Drive"", Single/Double/Quad-Speed, KB/s)",
+0x00403FE0,func,LaunchSystemProperties,LaunchSystemProperties,re,confirmed,ShellExecute sysdm.cpl (Windows System control panel),
+0x00404061,func,LoadDetectionDlls,LoadDetectionDlls,re,inferred,LoadLibrary hdd.dll + cd.dll (hardware-detection helper libraries),
+0x0040DC60,func,BuildSupportReport,BuildSupportReport,re,confirmed,"builds the [CPU]/[VIDEO]/[SOUND]/[MODEM] system-config report and faxes/e-mails it to EA support (support@ea.com)",
+0x00436EF0,func,_WinMain@16,WinMain,re,confirmed,MFC AfxWinMain wrapper (Ghidra FID),

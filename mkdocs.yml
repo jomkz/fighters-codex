@@ -82,6 +82,7 @@ nav:
       - Collision: fa/collision.md
       - Sound: fa/sound.md
       - WAIL32 (audio): fa/wail32.md
+      - IP.EXE (support tool): fa/ip-tool.md
       - Wingman: fa/wingman.md
       - Video Decode: fa/video-decode.md
       - Memory & Resource: fa/memory-resource.md
