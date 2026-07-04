@@ -75,13 +75,17 @@ notes rather than named on a guess.
 
 *Status: open — re-static (needs a bench read of the rodata bytes).*
 
-### 2. `SEQUENCE` / `SEQGR` struct maps
+### 2. `SEQUENCE` / `SEQGR` struct maps — resolved
 
-The node structures are named at their array bases in FA.SMS (`seqList`, `seqGrArray`,
-`seqGraphics`); their interiors are waived. A later `RecoverStructs` pass can apply the
-`SEQUENCE` (stride `0x38`), `SEQGR`, `SEQLBL`, `SEQFNT` and `SEQTXT` layouts as datatypes.
+The program-wide struct-typing pass ([#230](https://github.com/jomkz/fighters-codex/issues/230))
+addressed this: `SEQUENCE` (stride `0x38`), `SEQGR`, `SEQLBL`, `SEQFNT` and `SEQTXT` are declared
+as the recovered type vocabulary in [db/types/fa_types.h](https://github.com/jomkz/fighters-codex/blob/main/db/types/fa_types.h),
+and the FA.SMS array-base globals are typed against them (`seqGrArray`/`seqGrList`/`seqGraphics`
+→ `SEQGR *`, `seqFontArray`/`seqFonts` → `SEQFNT *`, `seqTextArray` → `SEQTXT *`,
+`seqLabelList` → `SEQLBL *`). Per that pass's conservative policy the struct *interiors* stay
+reserved padding rather than guessed byte-exact layouts.
 
-*Status: open — deferred to the program-wide struct-typing pass.*
+*Status: resolved — struct-typing pass (#230).*
 
 ## Related
 
