@@ -41,14 +41,15 @@ Full record: [`db/symbols/video.csv`](https://github.com/jomkz/fighters-codex/bl
 
 ## Open Questions
 
-### 1. VDO.md corrections
+### 1. VDO.md corrections — resolved
 
-The trace found three [VDO.md](formats/VDO.md) inaccuracies to reconcile: the `DecodeFrame`
-dispatch keys are on the **FrameHeader** (`+8` kind, `+9` submode), not the movie context;
-the **frame-kind polarity is reversed** (0 = key/intra, 1 = inter/delta); and the `0xC14E`
-canvas pointer belongs to `GlobalData`, not the movie context.
+The three [VDO.md](formats/VDO.md) inaccuracies are now reconciled ([#259](https://github.com/jomkz/fighters-codex/issues/259)):
+the `DecodeFrame` dispatch keys are documented on the **FrameHeader** (`+8` kind, `+9` submode),
+not the movie context; the **frame-kind polarity is corrected** (0 = key/intra, 1 = inter/delta);
+and the `0xC14E` canvas pointer is attributed to `GlobalData`. The Cobra per-frame codec itself
+(the ~45 leaf decoders) remains the long pole, tracked under epic #55.
 
-*Status: open — re-static (spec fix under #55).*
+*Status: resolved — re-static (#259; the codec long-pole stays under #55).*
 
 ## Related
 
