@@ -5,28 +5,15 @@
 # Reconstruction reproducibility audit
 
 Clean rebuild (fresh project + FA.SMS + db/symbols) vs committed `db/inventory/`.
-**Verdict: 56 differences — see above (Ghidra analysis variance or hidden state).**
+**Verdict: 26 differences — see above (Ghidra analysis variance or hidden state).**
 
 
 ## Functions
 
-- committed: 3036   rebuilt: 3020   shared: 3020
-- only in committed: 16
+- committed: 3048   rebuilt: 3045   shared: 3045
+- only in committed: 3
 - only in rebuilt (newly discovered): 0
 - name mismatches at shared VAs: 1
-  - only-committed 0x00446890 _SEQfadein
-  - only-committed 0x00446910 _SEQfadeout
-  - only-committed 0x00446B70 _SEQmusic
-  - only-committed 0x004874C0 ?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z
-  - only-committed 0x00493780 ?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z
-  - only-committed 0x00496F40 ?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z
-  - only-committed 0x00497000 ?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z
-  - only-committed 0x00497010 ?spxlisten@@YAIXZ
-  - only-committed 0x004970C0 FUN_004970c0
-  - only-committed 0x00497150 ?spxconnect@@YAIPAUNET_ADDRESS@@@Z
-  - only-committed 0x004971D0 ?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z
-  - only-committed 0x00497210 ?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z
-  - only-committed 0x00497290 ?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z
   - only-committed 0x004B22A0 FUN_004b22a0
   - only-committed 0x004BC177 FUN_004bc177
   - only-committed 0x004BC190 FUN_004bc190
@@ -34,31 +21,15 @@ Clean rebuild (fresh project + FA.SMS + db/symbols) vs committed `db/inventory/`
 
 ## Referenced globals
 
-- committed: 8502   rebuilt: 8465   shared: 8464
-- only in committed: 38
-- only in rebuilt (newly discovered): 1
+- committed: 8503   rebuilt: 8481   shared: 8481
+- only in committed: 22
+- only in rebuilt (newly discovered): 0
 - name mismatches at shared VAs: 0
-  - only-committed 0x00493B36 caseD_0
-  - only-committed 0x00493C2F caseD_2
-  - only-committed 0x00493C46 default
-  - only-committed 0x00493C53 caseD_1
-  - only-committed 0x00493C91 caseD_3
-  - only-committed 0x00493CA8 switchdataD_00493ca8
-  - only-committed 0x00493CB0 <unnamed>
-  - only-committed 0x00493CB4 <unnamed>
-  - only-committed 0x004EBC14 <unnamed>
-  - only-committed 0x004EBCC4 <unnamed>
   - only-committed 0x004FC998 <unnamed>
   - only-committed 0x004FC9C4 <unnamed>
   - only-committed 0x004FC9C8 <unnamed>
   - only-committed 0x004FC9DC <unnamed>
   - only-committed 0x004FC9EC <unnamed>
-  - only-committed 0x004FFFF0 <unnamed>
-  - only-committed 0x00500008 <unnamed>
-  - only-committed 0x00500034 <unnamed>
-  - only-committed 0x0050008C <unnamed>
-  - only-committed 0x005000E0 <unnamed>
-  - only-committed 0x00500104 <unnamed>
   - only-committed 0x0050149C <unnamed>
   - only-committed 0x005014B4 <unnamed>
   - only-committed 0x005014C0 <unnamed>
@@ -76,22 +47,39 @@ Clean rebuild (fresh project + FA.SMS + db/symbols) vs committed `db/inventory/`
   - only-committed 0x00580CB2 <unnamed>
   - only-committed 0x00580CB6 <unnamed>
   - only-committed 0x00580CE2 <unnamed>
-  - only-rebuilt   0x00493780 ?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z
 
 
-## Interpretation (18/18 complete)
+## Interpretation (19/19 complete, post-#240 + #241)
 
-**0 functions "only in rebuilt" and 0 real name drift** — `db/symbols` fully drives the
-named project; nothing is applied that the database does not record, and every applied name
-reproduces byte-identically. The remaining "only in committed" entries are residue in the
-long-lived working project from earlier epics, not yet folded into `db/`:
+**The reproducibility guarantee holds: `only in rebuilt (newly discovered): 0` for both
+functions and globals.** A from-scratch rebuild that knows *only* `db/` produces nothing the
+committed inventory does not already contain — `db/` has **no hidden state**, and every symbol
+it names reproduces. The residue has fallen from **244 → 56 (after #240) → 26 (after #241)**.
 
-- **`.SEQ` cutscene sequence player** (`_SEQfadein`/`_SEQmusic`/… around `0x446800`) — a real
-  engine subsystem the 18-subsystem map does not yet cover. Worth a 19th subsystem.
-- **SPX network entries** (`spxinit`/`spxconnect`/`sapopensocket`/… around `0x496F00`) — SPX
-  transport functions `network.csv` did not capture; fold into the network subsystem.
-- **A few stray `FUN_*`** and one SH-thunk naming inconsistency (`0x4D415D`) — minor.
+The remaining 26 "only in committed" entries are **not** name drift or gaps in `db/` — they
+are artifacts the long-lived working project accumulated from Ghidra's auto-analysis that a
+clean analysis does not recreate:
 
-**To reach a 0-diff baseline** (a 1.0 gate): add the `.SEQ` subsystem and the SPX gap to
-`db/`, then regenerate the canonical `db/inventory/` from a clean rebuild so committed ≡
-reproducible by construction. Tracked as a follow-up under epic #209.
+- **3 tiny stub functions** (`0x4B22A0` 14 bytes, `0x4BC177`/`0x4BC190` 10 bytes each) in
+  unclaimed regions — auto-analysis created them in the working project; a clean rebuild does
+  not. They belong to no subsystem and are named nowhere.
+- **1 thunk-classification difference** (`0x4D415D`): the working project keeps the 2-byte
+  thunk `thunk_FUN_004d416b`; a clean rebuild classifies the same bytes as a thunk that
+  inherits its target's name `sh_op_A4_body`. Both are valid readings of one SH op-`0xA4`
+  handler; the choice is Ghidra thunk-recovery non-determinism, so the DB keeps the stable
+  working-project name rather than conform to a coin-flip.
+- **22 data-markup-variance globals** — the winsock/IPX function-pointer table
+  (`0x580CAA`…), the SPX error strings (`0x5014xx`) and switch data the working project
+  defined as data symbols but a clean analysis leaves as raw bytes. Referenced identically by
+  the same code either way; only the *symbol-table markup* differs.
+
+**Why not literal 0-diff:** closing the last 26 would mean either deleting auto-analysis
+output from the working project or conforming the DB to non-deterministic thunk/data markup —
+both fragile, neither improving understanding. The reproducibility contract that matters —
+*db/ is the complete and sufficient source of truth for the named program* — is met and
+mechanically verified (0 newly-discovered). This is the baseline.
+
+**#241 also filled the SPX/IPX transport gap:** the 9 FA.SMS-named SPX functions plus the
+recovered `spxopensocket` (`0x4970C0`) are now claimed by the network subsystem, so a clean
+rebuild materialises them instead of leaving them label-only (they moved from the residue
+into the reproduced set).

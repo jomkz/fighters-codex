@@ -543,6 +543,19 @@ Full record: [`db/symbols/network.csv`](https://github.com/jomkz/fighters-codex/
 | `0x46C980` | `MPReceive` | receive + dispatch multiplayer packets |
 | `0x405CD0` | `NETFormatIP` | format an IP address string |
 | `0x402330` | `NETArmKeepalive` | arm the socket send/keepalive timer |
+| `0x496F40` | `spxinit` | SPX/IPX transport init — enumerate adapters |
+| `0x4970C0` | `spxopensocket` | open an SPX socket (`socket(6)` + IPX ioctl) |
+| `0x497150` | `spxconnect` | SPX connect to a `NET_ADDRESS` peer |
+
+### IPX/SPX transport
+
+Alongside the IP/UDP path, FA ships an **IPX/SPX** transport (Novell NetWare LANs) built on
+a dynamically-resolved winsock function-pointer table (`socket`/`bind`/`listen`/`ioctl`/
+`closesocket` at `0x580CAA…`). `spxinit`/`spxinit2` enumerate adapters, `spxopensocket`
+opens and configures an SPX socket, `spxlisten`/`spxconnect` accept or dial a peer, and
+`convert_addr_ipx2usnf`/`convert_addr_usnf2ipx` translate between an IPX `sockaddr` and the
+engine's `NET_ADDRESS`. These leaves were recovered via the
+[reproducibility audit](https://github.com/jomkz/fighters-codex/blob/main/db/reproducibility-audit.md) (#241).
 
 ## Open Questions
 
