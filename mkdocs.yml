@@ -70,6 +70,7 @@ nav:
   - Fighters Anthology:
       - Overview: fa/README.md
       - Architecture: fa/architecture.md
+      - External imports: fa/external-imports.md
       - Reconstruction: fa/reconstruction.md
       - Game Loop: fa/game-loop.md
       - Renderer: fa/renderer.md
