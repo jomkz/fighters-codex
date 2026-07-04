@@ -3,6 +3,7 @@
 #include <climits>
 #include <cstring>
 #include <sstream>
+#include <utility>
 
 namespace fx {
 
@@ -43,6 +44,93 @@ static CodeSection find_code_section(const uint8_t* data, size_t size) {
             return {data + raw_ptr, raw_sz};
     }
     return {nullptr, 0};
+}
+
+// ---- PE relocations (x86 sub-stream discovery, #297) --------------------
+
+struct PeSec { uint32_t rva, raw_ptr, raw_sz, vsize; };
+struct PeInfo {
+    bool ok = false;
+    uint32_t image_base = 0;
+    uint32_t code_rva = 0;               // rva of the code section
+    uint32_t reloc_rva = 0, reloc_size = 0;
+    std::vector<PeSec> secs;
+};
+
+static PeInfo parse_pe(const uint8_t* data, size_t size) {
+    PeInfo pe{};
+    if (size < 0x40 || data[0] != 'M' || data[1] != 'Z') return pe;
+    uint32_t pe_off = u32le(data + 0x3C);
+    if ((size_t)pe_off + 24 > size) return pe;
+    const uint8_t* h = data + pe_off;
+    if (h[0] != 'P' || h[2] != 0 || h[3] != 0) return pe;
+    uint16_t num_sec = u16le(h + 6);
+    uint16_t opt_sz  = u16le(h + 20);
+    const uint8_t* opt = h + 24;
+    if (opt + 32 > data + size) return pe;
+    pe.image_base = u32le(opt + 28);                  // PE32 ImageBase
+    if (opt_sz >= 96 + 6 * 8 && opt + 96 + 6 * 8 <= data + size) {
+        pe.reloc_rva  = u32le(opt + 96 + 5 * 8);       // DataDirectory[5] = .reloc
+        pe.reloc_size = u32le(opt + 96 + 5 * 8 + 4);
+    }
+    uint32_t sec_table = pe_off + 24 + opt_sz;
+    bool have_code = false;
+    for (uint16_t i = 0; i < num_sec; ++i) {
+        uint32_t so = sec_table + (uint32_t)i * 40;
+        if ((size_t)so + 40 > size) break;
+        const uint8_t* s = data + so;
+        PeSec ps{ u32le(s + 12), u32le(s + 20), u32le(s + 16), u32le(s + 8) };
+        pe.secs.push_back(ps);
+        if (!have_code && ps.raw_sz > 0 && (size_t)ps.raw_ptr + ps.raw_sz <= size) {
+            pe.code_rva = ps.rva;
+            have_code = true;
+        }
+    }
+    pe.ok = have_code;
+    return pe;
+}
+
+static bool rva_to_file(const PeInfo& pe, uint32_t rva, size_t size, size_t& out) {
+    for (const auto& s : pe.secs) {
+        uint32_t span = std::max(s.vsize, s.raw_sz);
+        if (rva >= s.rva && rva < s.rva + span) {
+            size_t fo = (size_t)s.raw_ptr + (rva - s.rva);
+            if (fo <= size) { out = fo; return true; }
+        }
+    }
+    return false;
+}
+
+// (site_code_off, target_code_off) for base relocations whose fixed-up value
+// points into the code section — i.e. the internal `mov esi, <sub-stream>`
+// pointers the x86 selectors use. Both offsets are code-section-relative.
+static std::vector<std::pair<uint32_t, uint32_t>>
+collect_reloc_targets(const uint8_t* data, size_t size, const PeInfo& pe, size_t code_sz) {
+    std::vector<std::pair<uint32_t, uint32_t>> out;
+    if (!pe.ok || !pe.reloc_rva || !pe.reloc_size) return out;
+    size_t rbase;
+    if (!rva_to_file(pe, pe.reloc_rva, size, rbase)) return out;
+    size_t rend = std::min(rbase + pe.reloc_size, size);
+    size_t p = rbase;
+    while (p + 8 <= rend) {
+        uint32_t page = u32le(data + p);
+        uint32_t blk  = u32le(data + p + 4);
+        if (blk < 8 || p + blk > rend) break;
+        size_t nent = (blk - 8) / 2;
+        for (size_t e = 0; e < nent; ++e) {
+            uint16_t ent = u16le(data + p + 8 + e * 2);
+            if ((ent >> 12) != 3) continue;             // IMAGE_REL_BASED_HIGHLOW
+            uint32_t fixup_rva = page + (ent & 0xFFF);
+            size_t ffo;
+            if (!rva_to_file(pe, fixup_rva, size, ffo) || ffo + 4 > size) continue;
+            uint32_t target_rva = u32le(data + ffo) - pe.image_base;
+            if (fixup_rva  < pe.code_rva || fixup_rva  - pe.code_rva >= code_sz) continue;
+            if (target_rva < pe.code_rva || target_rva - pe.code_rva >= code_sz) continue;
+            out.push_back({ fixup_rva - pe.code_rva, target_rva - pe.code_rva });
+        }
+        p += blk;
+    }
+    return out;
 }
 
 // ---- scale factor -------------------------------------------------------
@@ -299,6 +387,64 @@ static void walk_code(const uint8_t* code, size_t code_sz,
     }
 }
 
+// Parse a run of geometry bytecode starting at an x86-selected sub-stream entry
+// (a relocation target). Entries are exact — no false positives — so we walk
+// VertexBuffer/Face/TextureFile linearly, skipping other opcodes, until a
+// terminator. Appends into the shared pool via push_at, exactly like walk_code.
+static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
+                           float scale_factor, std::vector<ShVertex>& vpool,
+                           std::vector<ShFace>& faces, std::string cur_tex,
+                           size_t base_count) {
+    size_t off = start;
+    size_t budget = 4096;  // a sub-stream is small; bound the walk
+    while (off < code_sz && budget--) {
+        const uint8_t* p = code + off;
+        size_t avail = code_sz - off;
+        uint8_t op = p[0];
+        if (op == 0x00 || op == 0x01 || op == 0xF0) return;  // terminators
+
+        if (op == 0x82 && avail >= 6 && p[1] == 0x00) {
+            uint16_t nv = u16le(p + 2), pa = u16le(p + 4);
+            size_t dsz = 6 + (size_t)nv * 6;
+            if (nv == 0 || nv > 512 || dsz > avail) return;
+            size_t pool_idx = pa / 8, needed = pool_idx + nv;
+            // Append-only: never overwrite the base mesh (state variants reuse
+            // low pool slots; merging them statically would corrupt the base).
+            if (pool_idx < base_count) { off += dsz; continue; }
+            if (needed > vpool.size()) vpool.resize(needed, {0.f, 0.f, 0.f});
+            for (size_t i = 0; i < nv; ++i) {
+                size_t vo = 6 + i * 6;
+                vpool[pool_idx + i] = {
+                    (int16_t)u16le(p + vo)     * scale_factor,
+                    (int16_t)u16le(p + vo + 2) * scale_factor,
+                    (int16_t)u16le(p + vo + 4) * scale_factor };
+            }
+            off += dsz;
+            continue;
+        }
+        if (op == 0xFC) {
+            ShFace f;
+            size_t fs = parse_face(p, avail, f, cur_tex);
+            if (fs == 0 || f.indices.empty()) return;
+            faces.push_back(std::move(f));
+            off += fs;
+            continue;
+        }
+        if (op == 0xE2 && avail >= 16) {
+            std::string name;
+            for (size_t i = 2; i < 16 && p[i] != 0; ++i) name += (char)p[i];
+            if (!name.empty()) cur_tex = name;
+            off += 16;
+            continue;
+        }
+        if (op == 0x1E) { off += 1; continue; }             // Pad
+        if (op == 0xF6 && avail >= 7) { off += 7; continue; } // VertexInfo
+        // A sub-stream is a pure geometry run; the first control/attribute
+        // opcode (jump, unmask, LOD, x86, …) ends it. Stop rather than walk on.
+        return;
+    }
+}
+
 // ---- public API ---------------------------------------------------------
 
 ShMesh sh_parse_mesh(const uint8_t* data, size_t size) {
@@ -307,8 +453,27 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size) {
     if (!cs.data) return mesh;
 
     mesh.scale = read_scale(cs.data, cs.size);
+
+    // Base geometry (everything up to the first x86 selector).
     walk_code(cs.data, cs.size, mesh.scale,
               mesh.vertices, mesh.faces, mesh.textures);
+
+    // The x86 conditional selectors gate the articulation geometry. We can't
+    // execute the x86, but its `esi` re-entry points are internal pointers in
+    // the PE base-relocation table (#297). Harvest each internal sub-stream.
+    PeInfo pe = parse_pe(data, size);
+    auto targets = collect_reloc_targets(data, size, pe, cs.size);
+    const size_t base_count = mesh.vertices.size();
+    std::vector<uint32_t> seen;
+    for (auto& t : targets) {
+        uint32_t to = t.second;
+        // skip trampolines (FF 25 -> external import) — those aren't geometry
+        if (to + 1 < cs.size && cs.data[to] == 0xFF && cs.data[to + 1] == 0x25) continue;
+        if (std::find(seen.begin(), seen.end(), to) != seen.end()) continue;
+        seen.push_back(to);
+        harvest_target(cs.data, cs.size, to, mesh.scale, mesh.vertices, mesh.faces,
+                       mesh.textures.empty() ? std::string() : mesh.textures.back(), base_count);
+    }
     return mesh;
 }
 

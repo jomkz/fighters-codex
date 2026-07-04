@@ -315,14 +315,18 @@ exist because the bytecode's own conditionals cannot read arbitrary engine
 globals; the authoring tool emitted a small x86 `switch` instead. 208 of the
 1275 FA_2.LIB shapes carry them.
 
-The `fx` read codec detects and skips these regions (below); this section
-specifies the **runtime contract** so the effect can be reimplemented — see
-[Round-Trip Notes](#round-trip-notes) for why the static codec cannot render
-their output, and fa-bridge#21 for the interpreter that can.
+The `fx` read codec bounds these regions (skip protocol below) and **recovers
+the guarded sub-stream geometry via the PE relocation table** (sub-stream
+harvest below) so articulated models render more completely; this section
+specifies the **runtime contract** so the game-accurate, state-selected effect
+can be reimplemented — see [Round-Trip Notes](#round-trip-notes) and fa-bridge#21
+for the interpreter that reads live state, and
+[#297](https://github.com/jomkz/fighters-codex/issues/297) for the codec-side
+work remaining.
 
 #### Skip protocol (read codec)
 
-The parser bounds and skips each region without executing it:
+The parser bounds each region:
 
 1. **PtrToObjEnd (0xF2)** seen: record `obj_end_off = offset_field`.
 2. **EndObject (0x00)** seen while `current_pos < obj_end_off`: the range
@@ -330,6 +334,32 @@ The parser bounds and skips each region without executing it:
    sub-stream geometry it guards). Skip to `obj_end_off` and continue.
 3. **EndObject (0x00)** seen while `current_pos >= obj_end_off`: real end of
    object; stop parsing.
+
+#### Sub-stream harvest (read codec, reloc-based)
+
+Rather than dropping the guarded geometry, the codec recovers it without
+executing the x86. Each x86 selector sets `esi` to a sub-stream via an internal
+pointer that the **Phar Lap PE base-relocation table** fixes up, so the reloc
+entries whose target lands inside the code section are the **exact** sub-stream
+entry offsets (a byte scan would false-positive on x86 bytes — the relocations do
+not). The codec (`lib/src/sh.cpp`, `collect_reloc_targets` + `harvest_target`):
+
+1. Parses the `.reloc` table; keeps targets that point into the code section and
+   are **not** `FF 25` trampolines (those reach the game executable's exports).
+2. From each target, walks a **pure geometry run** (VertexBuffer / Face /
+   TextureFile, plus Pad/VertexInfo), stopping at the first control/attribute
+   opcode — the sub-stream boundary.
+3. Writes vertices **append-only** (never below the base pool count) so
+   state-variant sub-streams that reuse low pool slots cannot corrupt the base
+   mesh; faces reference the shared pool.
+
+This yields the base mesh **plus every reloc-reachable sub-stream** — i.e. all
+articulation states merged, not the single game-accurate state (default landing
+gear, flap position, …). Selecting one state per selector from live `_PL*` values
+is the remaining work ([#297](https://github.com/jomkz/fighters-codex/issues/297),
+with [#295](https://github.com/jomkz/fighters-codex/issues/295) exposing the
+state inputs); the case→sub-stream values are attributed to OpenFA, never
+transcribed.
 
 #### Entry contract (`0xF0` → native)
 
