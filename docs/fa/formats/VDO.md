@@ -74,27 +74,29 @@ Frame data is palettized (8-bit palette indices into the header palette at
 
 ### Cobra codec — known structure
 
-`DecodeFrame(MovieContext*, arg1, arg2)` dispatches on two fields of its
-`MovieContext` struct:
+`DecodeFrame(MovieContext*, arg1, arg2)` dispatches on two fields of the
+**per-frame `FrameHeader`** (not the `MovieContext`): the frame kind at `+8`
+and, for inter frames, a sub-mode at `+9`. (Corrected against the video-decode
+reconstruction — see [video-decode.md](../video-decode.md); [#259](https://github.com/jomkz/fighters-codex/issues/259).)
 
-| `context[8]` | Meaning |
+| `FrameHeader[+8]` | Meaning |
 |---|---|
-| `0` | Delta frame (P-frame) — only changed regions are encoded |
-| `1` | Key frame (I-frame) — full frame is encoded |
+| `0` | Key / intra frame (I-frame) — the full frame is encoded |
+| `1` | Inter / delta frame (P-frame) — only changed regions are encoded |
 
-For delta frames (`context[8] == 0`), a second field `context[9]` selects a
-sub-mode via an 8-entry jump table (VA `0x44260C`). Sub-modes 5 and 6 are the
-only values observed in practice. Each sub-mode calls a dedicated leaf decoder
-in the range `0x456300–0x45D090` (~45 functions); those leaf functions have
-not yet been reversed.
+For inter/delta frames (`FrameHeader[+8] == 1`), the sub-mode field
+`FrameHeader[+9]` selects a decoder via an 8-entry jump table (VA `0x44260C`).
+Sub-modes 5 and 6 are the only values observed in practice. Each sub-mode calls
+a dedicated leaf decoder in the range `0x456300–0x45D090` (~45 functions); those
+leaf functions have not yet been reversed.
 
 `InitMovieContext` (VA `0x442360`) initialises the context; it only sets
-`context[0x14] = 0`. The MovieContext struct is large — a pointer at offset
-`0xC14E` points to the output/canvas buffer.
+`context[0x14] = 0`. The output/canvas pointer at offset `0xC14E` lives in the
+**`GlobalData`** struct (which `DecodeFrame` also receives), not in the
+`MovieContext`.
 
 `VDOSetMode` (VA `0x4AED50`) selects between 320×200 and 640×480 render paths
-and stores the result in `VDO.field_0x38`; this feeds `context[8]` during
-decode.
+and stores the result in `VDO.field_0x38`.
 
 ### Audio
 
