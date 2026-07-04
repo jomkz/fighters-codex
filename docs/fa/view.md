@@ -58,7 +58,7 @@ The **replay recorder** is a record/playback pair over a saved-view buffer: `VIE
 padlock / fly-by / external) is not fully pinned. A short trace of the callers that write
 `_mainV[0x5A]` would settle it.
 
-*Status: open — re-static.*
+*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262)).*
 
 ## Related
 
