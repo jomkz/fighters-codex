@@ -28,3 +28,4 @@ reader would reasonably re-litigate without the context.
 | ADR | Title | Status |
 |-----|-------|--------|
 | [0001](0001-fx-gui-sdl3-opengl3-miniaudio.md) | fx-gui cross-platform backend — SDL3 + OpenGL 3.3 + miniaudio | Accepted |
+| [0002](0002-fxc-clean-room-source-port.md) | fxc — committed, generated, clean-room source port of the game executable | Accepted |

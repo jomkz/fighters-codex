@@ -1,0 +1,39 @@
+fighters-codex
+Copyright (c) the fighters-codex contributors
+Licensed under the MIT License (see LICENSE).
+
+================================================================================
+Reverse-engineering provenance and the fxc source port
+================================================================================
+
+This project reverse-engineers Jane's Fighters Anthology (1998, Electronic Arts)
+for the purpose of documentation and interoperability. The reverse-engineering
+documentation is the primary output. The code (fx_lib, fx, fx-gui, fx_render,
+and the fxc source port) exists to validate that documentation.
+
+Clean-room provenance
+---------------------
+All code here is written or generated CLEAN-ROOM from this project's own
+documentation of behaviour and from non-copyrightable facts (interface and
+export signatures, structure layouts, virtual addresses, and algorithms
+described in prose). It is NOT a transcription of the original program's
+compiled or decompiled expression. Decompiler output is used only to establish
+facts; it is never copied into this repository.
+
+fxc — source-port model, requires original content
+---------------------------------------------------
+fxc is a clean-room, modern C++ re-implementation ("source port") of the game
+executable, generated from this project's symbol database and subsystem
+documentation. fxc ships NO game data: no textures, audio, missions, models,
+text, or other assets from Jane's Fighters Anthology. It is inert without
+content that the user must supply from their own, legally obtained copy of the
+game (the same model used by ScummVM, OpenMW, and similar projects).
+
+No game assets — of any format — are committed to this repository.
+
+Trademarks
+----------
+"Jane's", "Fighters Anthology", "Electronic Arts", and related names are the
+property of their respective owners. They are used here only nominatively, to
+identify the software being documented. This project is not affiliated with,
+endorsed by, or sponsored by any of those rights holders.

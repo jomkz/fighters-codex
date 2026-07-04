@@ -7,9 +7,11 @@ This document is the map; the tracker is the source of truth for status.
 ## Charter
 
 The RE documentation is the primary output — format specs, architecture notes, recovered
-symbols. The `fx_lib` library, `fx` CLI, and `fx-gui` are the validation layer: a working,
-byte-identical codec is the proof that a format is truly understood. (Restated in
-[#33](https://github.com/jomkz/fighters-codex/pull/33); see
+symbols. The `fx_lib` library, `fx` CLI, and `fx-gui` are the **format** validation layer: a
+working, byte-identical codec is the proof that a format is truly understood. Its **executable**
+counterpart is **`fxc`** — a clean-room modern C++ source port generated from the reconstruction:
+a port that runs the original content is the proof that the game executable is understood.
+(Restated in [#33](https://github.com/jomkz/fighters-codex/pull/33); see
 [README](https://github.com/jomkz/fighters-codex/blob/main/README.md).)
 
 ## The 1.0 definition
@@ -35,8 +37,12 @@ gates don't.
 ```
 P0 ─→ P1 ─→ P3 (gui port)
  │     ├──→ P4 (codecs/tests/fuzz) ──┐
- └──→ P2 (docs system) ─────────────┼──→ P5 (deep static RE) ──→ P6 (gameplay + multi-game + 1.0)
+ └──→ P2 (docs system) ─────────────┼──→ P5 (deep static RE + reconstruction) ──→ P6 (gameplay + multi-game + 1.0)
                                     ┘
+Reality check (mid-2026): the P5 reconstruction ran *ahead* of the P4 validation layer — the game
+executable and its overlay binaries are fully named and documented while the codecs/tests/fuzz work
+is barely started. P4 and the P5 forward programs (fxc, fx_render) now **interleave**
+release-to-release, so neither the docs nor the validation layer goes stale.
 P5d (VDO, #55) may start any time after P1 — it is the schedule's long pole.
 The RE workbench migration (#120) may start any time after P0.
 ATF/USNF acquisition (#144) is external — start immediately.
@@ -49,7 +55,7 @@ ATF/USNF acquisition (#144) is external — start immediately.
 | **2 — Documentation System** | [Phase 2](https://github.com/jomkz/fighters-codex/milestone/3) | #38 executed: one spec template, all 44 specs restructured, status matrix CI-enforced, docs site published | Site live; matrix drift fails CI |
 | **3 — fx-gui Port** | [Phase 3](https://github.com/jomkz/fighters-codex/milestone/4) | SDL3 + OpenGL3 + miniaudio backends; ready-now validation features | Parity on Fedora + Windows; in CI + releases |
 | **4 — Codec & Test Completeness** | [Phase 4](https://github.com/jomkz/fighters-codex/milestone/5) | Round-trip upgrades, codecs for the 16 uncovered formats, full test/fixture coverage, fuzzing rollout | Matrix: every format round-trips or carries a rationale, with tests + fixtures + fuzz target |
-| **5 — Deep Static RE** | [Phase 5](https://github.com/jomkz/fighters-codex/milestone/6) | SH/renderer semantics (pulled in from fa-bridge), format-unknown closure, VDO/Cobra decoded | Static analysis exhausted; fa-bridge implementable from the docs alone |
+| **5 — Deep Static RE + Reconstruction** | [Phase 5](https://github.com/jomkz/fighters-codex/milestone/6) | SH/renderer semantics, format-unknown closure, VDO/Cobra decoded, **and the full reconstruction programs** (game executable + overlay binaries named & documented); forward programs `fxc` and `fx_render` begin here | Static analysis exhausted; the docs alone implement a bridge or a source port |
 | **6 — Gameplay, Multi-Game & 1.0** | [Phase 6](https://github.com/jomkz/fighters-codex/milestone/7) | PLT gap campaign on the Windows bench, ATF/USNF verification, 1.0 audit | The 1.0 definition above; v1.0.0 tagged |
 
 ## Epic index
@@ -67,36 +73,45 @@ ATF/USNF acquisition (#144) is external — start immediately.
 | 4 | [#49](https://github.com/jomkz/fighters-codex/issues/49) | Codecs for the 16 uncovered formats |
 | 4 | [#50](https://github.com/jomkz/fighters-codex/issues/50) | Test & fixture completeness |
 | 4 | [#51](https://github.com/jomkz/fighters-codex/issues/51) | Fuzzing rollout |
-| 5 | [#52](https://github.com/jomkz/fighters-codex/issues/52) | SH engine-behavior semantics |
-| 5 | [#53](https://github.com/jomkz/fighters-codex/issues/53) | Renderer & effects internals |
-| 5 | [#54](https://github.com/jomkz/fighters-codex/issues/54) | Format unknown closure (static) |
+| 4 | [#279](https://github.com/jomkz/fighters-codex/issues/279) | fx_lib asset interpreters — SH geometry + effect data |
+| 4 | [#281](https://github.com/jomkz/fighters-codex/issues/281) | fx_render — shared render abstraction (OpenGL + software backends) |
+| 5 | [#53](https://github.com/jomkz/fighters-codex/issues/53) | Renderer & effects internals — residual static closure |
+| 5 | [#54](https://github.com/jomkz/fighters-codex/issues/54) | Format-unknown closure (static) — residual tail |
 | 5 | [#55](https://github.com/jomkz/fighters-codex/issues/55) | VDO/Cobra video — the long pole |
-| 5 | [#209](https://github.com/jomkz/fighters-codex/issues/209) | Complete FA.EXE reconstruction — name & document every function/variable |
+| 5 | [#209](https://github.com/jomkz/fighters-codex/issues/209) | Game-executable reconstruction — every function/variable named & documented (complete) |
+| 5 | [#247](https://github.com/jomkz/fighters-codex/issues/247) | Overlay-binary reconstruction — WAIL32 / IP.EXE / comms DLLs (complete) |
+| 5 | [#272](https://github.com/jomkz/fighters-codex/issues/272) | MSAPI.dll — matchmaking / internet-play client reconstruction |
+| 5† | [#280](https://github.com/jomkz/fighters-codex/issues/280) | fxc — clean-room modern C++ source port of the game executable |
 | 6 | [#56](https://github.com/jomkz/fighters-codex/issues/56) | Gameplay-gated RE (Windows bench) |
 | 6 | [#57](https://github.com/jomkz/fighters-codex/issues/57) | ATF/USNF verification pass |
 | 6 | [#58](https://github.com/jomkz/fighters-codex/issues/58) | v1.0 audit, release, maintenance mode |
 
+† `fxc` (#280) has its own [milestone](https://github.com/jomkz/fighters-codex/milestones), sequenced
+out of the Phase 5 reconstruction and interleaved with Phase 4; it is a stretch program, not a 1.0 gate.
+The SH-semantics epic (#52) and the two reconstruction milestones are complete and folded in here.
+
 Standalone Phase 5 prerequisite: [#120](https://github.com/jomkz/fighters-codex/issues/120)
 — migrate the RE workbench (Ghidra project + FA corpus) to Fedora.
 
-### Program: Complete FA.EXE Reconstruction
+Phase 5 folds in the two **reconstruction programs** — a per-subsystem lens (naming + documentation
++ diagrams) over the same code the static-RE epics decode — plus the forward programs (`fxc`,
+`fx_render`) they enable. Both reconstruction programs are **complete**.
 
-Milestone [FA.EXE — Complete Reconstruction](https://github.com/jomkz/fighters-codex/milestones)
-(epic [#209](https://github.com/jomkz/fighters-codex/issues/209)) is the long-horizon
-goal of a *complete understanding* of the executable: every function and variable named
-in the Ghidra project, and every subsystem documented in `docs/fa/` with recovered
-symbols, struct maps, and an SVG flow diagram. It runs alongside Phase 5 as a
-per-subsystem lens over the same code (naming + documentation + diagrams), not a
-duplicate decode effort.
+### Program: Game-executable reconstruction
 
-**Status (v0.5.3): all 18 mapped subsystems are `complete`** — 1,659 in-scope functions
-named and every referenced global named or waived, each with a `docs/fa/` page and a
-theme-aware SVG. See the [reconstruction matrix](fa/reconstruction.md). A from-scratch
+Epic [#209](https://github.com/jomkz/fighters-codex/issues/209) is the long-horizon goal of a
+*complete understanding* of the game executable: every function and variable named in the Ghidra
+project, and every subsystem documented in `docs/fa/` with recovered symbols, struct maps, and an
+SVG flow diagram.
+
+**Complete (as of v0.5.7): all 20 mapped subsystems are `complete`** — 1,728 in-scope functions
+named and every referenced global named or waived, each with a `docs/fa/` page and a theme-aware
+SVG. See the [reconstruction matrix](fa/reconstruction.md). A from-scratch
 [reproducibility audit](https://github.com/jomkz/fighters-codex/blob/main/db/reproducibility-audit.md)
-(rebuild the project from `db/`, diff against the committed inventory) confirms **zero name
-drift** and that `db/` fully drives the named project. That audit also surfaced the path to
-a true-100% binary: a 19th subsystem the map missed (the `.SEQ` cutscene player, [#240](https://github.com/jomkz/fighters-codex/issues/240))
-and a 0-diff inventory baseline ([#241](https://github.com/jomkz/fighters-codex/issues/241)).
+(rebuild the project from `db/`, diff against the committed inventory) confirms **zero name drift**
+and that `db/` fully drives the named project — that audit surfaced the final subsystems the original
+map missed (the `.SEQ` cutscene player [#240](https://github.com/jomkz/fighters-codex/issues/240) and
+the in-flight VIEW camera/replay cluster [#257](https://github.com/jomkz/fighters-codex/issues/257)).
 
 The program is driven by a machine-readable **symbol database** under
 [`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md): a manifest of
@@ -107,45 +122,94 @@ the committed inventory export), and the generated
 subsystem, that **every code-referenced function is named and every referenced global is
 named or waived** (the referenced-globals rule), plus the subsystem doc's structure and
 theme-aware diagram. The definition of done is exemplified by
-[objects.md](fa/objects.md) + [shape-selection.md](fa/shape-selection.md); each subsystem
-in the epic's map is a sub-issue. The same database is the substrate for a possible
-generated clean-room C++ reconstruction (`fc`) — a decision deferred until several
-subsystems are complete.
+[objects.md](fa/objects.md) + [shape-selection.md](fa/shape-selection.md). The same database is the
+substrate for the **fxc** source port (below).
 
 ### Program: Overlay Reconstruction
 
-Milestone [Overlay binaries — Reconstruction](https://github.com/jomkz/fighters-codex/milestones)
-(epic [#247](https://github.com/jomkz/fighters-codex/issues/247)) is the sibling program: the
-same treatment — every function/variable named, every subsystem documented — applied to the
-binaries FA ships alongside `FA.EXE`: **IP.EXE** (TCP/IP transport), **WAIL32.DLL** (audio),
-and the comms/modem drivers (**CDRV\*32.DLL**, **COMMSC32.DLL**). Unlike `FA.EXE` these ship no
-`.SMS` symbol map, so naming seeds from the DLL export/import tables, strings, and RTTI. The
-same [`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md) machinery drives
-it — the `subsystems.csv` `binary` column and a per-binary `db/inventory/<binary>/` export scope
-every check to one image (VAs collide across binaries — IP.EXE bases at the same `0x00400000`
-as FA.EXE), and each binary gets its own section in the
-[reconstruction matrix](fa/reconstruction.md). The FA-side interface to the Microsoft /
-third-party redistributables is documented at the boundary
-([#260](https://github.com/jomkz/fighters-codex/issues/260)) without reversing MS code.
+Epic [#247](https://github.com/jomkz/fighters-codex/issues/247) is the sibling program: the same
+treatment — every function/variable named, every subsystem documented — applied to the binaries the
+game ships alongside the executable. Unlike the main executable these ship no `.SMS` symbol map, so
+naming seeds from the DLL export/import tables, strings, and RTTI. The same
+[`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md) machinery drives it — the
+`subsystems.csv` `binary` column and a per-binary `db/inventory/<binary>/` export scope every check
+to one image (VAs collide across binaries — `IP.EXE` bases at the same `0x00400000` as the main
+executable; the comms DLLs all at `0x10000000`), and each binary gets its own section in the
+[reconstruction matrix](fa/reconstruction.md). **Complete** across 7 binaries. Key findings from the
+RE (correcting earlier assumptions):
+
+- **WAIL32.DLL** = the Miles Sound System (AIL) audio middleware — boundary-documented (exported API
+  named, third-party internals waived).
+- **IP.EXE** = an EA system-info / tech-support tool (MFC), **not** a TCP/IP transport as first
+  assumed — no Winsock.
+- The comms/modem drivers (`CDRV*32.DLL`, `COMMSC32.DLL`) = third-party `Cdrv` serial/modem
+  middleware — boundary-documented.
+- The real internet-play / matchmaking client is **MSAPI.dll** (the genuinely game-relevant network
+  binary the epic first mistook `IP.EXE` for) — reconstruction tracked as epic
+  [#272](https://github.com/jomkz/fighters-codex/issues/272).
+
+The interface to the Microsoft / third-party redistributables is documented at the boundary
+([external-imports.md](fa/external-imports.md), [#260](https://github.com/jomkz/fighters-codex/issues/260))
+without reversing their code.
+
+### Program: `fxc` — clean-room source port of the game executable
+
+Where fx_lib / fx / fx-gui prove the **format** documentation by processing assets, **fxc** proves
+the **reconstruction** documentation of the game executable by being a runnable, clean-room, modern
+C++ **source port** (epic [#280](https://github.com/jomkz/fighters-codex/issues/280), its own
+[milestone](https://github.com/jomkz/fighters-codex/milestones)). Give it the content from the user's
+original disks and it plays the game — on modern **OpenGL + software rendering** (through the shared
+`fx_render` module) and modern audio. It is **generated** from `db/` + the subsystem docs by an
+in-repo generator that is the source of truth; the emitted C++ is committed and kept in sync by CI
+(the same pattern as the generated matrices), clean-room from *our own* facts and prose and never
+transcribed from decompiler output. Legal model: a **source port** — ship no assets, require the
+original disks (documented in an ADR + NOTICE). fxc is a **validation lens**, interleaved with the
+Phase 4 train, **not a 1.0 gate**, and independent of fa-bridge.
+
+### Program: `fx_render` — one renderer for three consumers
+
+`fx_render` (epic [#281](https://github.com/jomkz/fighters-codex/issues/281)) is a committed MIT
+render-abstraction module — a backend-agnostic geometry→pixels API with **OpenGL** and
+**FA-faithful software** backends — extracted from fx-gui's renderer so the OpenGL/software path is
+built once and shared by **fx-gui** and **fxc** (and available for the fighters-legacy engine to
+adopt, rather than a third implementation). The SH/effect *asset* interpretation it renders comes
+from fx_lib (epic [#279](https://github.com/jomkz/fighters-codex/issues/279)); the full runtime lives
+in fxc.
 
 ## Relationship to fighters-legacy
 
-[fa-bridge](https://github.com/fighters-legacy/fa-bridge) implements the engine's
-`IContentPack` using `fx_lib` as a submodule. Per the charter, **reverse-engineering
-documentation lives here; implementations that consume it live there** — fa-bridge's former
-RE issues (C.1–C.5) moved into Phase 5 epics #52/#53, and its interpreter/rasterizer issues
-are blocked on those docs. Phase 1 (fx_lib on Linux) is what unblocks fa-bridge's
-work. After each release, fa-bridge's `extern/fx_lib` submodule is bumped to the tag
-(the release script prints the reminder).
+The RE understanding produced here has **two independent consumers**, and this repo produces the
+shared pieces both build on:
 
-**License boundary:** fighters-codex is MIT; OpenFA and fa-bridge are GPL. RE facts are
-documented here with attribution where verified against other projects' findings; code is
-never transcribed across the boundary.
+- **codex** (MIT) produces the RE docs (primary), the **format** validation layer (`fx_lib` / `fx` /
+  `fx-gui`), the shared **`fx_render`** core (OpenGL + software backends), and **`fxc`** — a committed
+  clean-room source port of the game executable (generated from `db/` + docs, requires the user's
+  original content).
+- **[fa-bridge](https://github.com/fighters-legacy/fa-bridge)** (GPL) implements the engine's
+  `IContentPack` using `fx_lib` as a submodule and the RE docs; it runs FA content on the
+  **fighters-legacy** (GPL) engine, which may itself adopt `fx_render` rather than write a third
+  OpenGL/software path.
+
+`fxc` and fa-bridge are **independent** consumers of the same reconstruction — one a standalone MIT
+source port, one a GPL bridge — and share no code. The reconstruction being complete unblocks
+fa-bridge's former interpreter/rasterizer work (the docs it was waiting on now exist). After each
+release, fa-bridge's `extern/fx_lib` submodule is bumped to the tag (the release script prints the
+reminder).
+
+**License boundary:** fighters-codex is MIT; OpenFA and fa-bridge are GPL. RE facts are documented
+here with attribution where verified against other projects' findings; code is never transcribed
+across the boundary. MIT→GPL reuse (fa-bridge/fighters-legacy consuming `fx_lib`/`fx_render`) is
+one-way and clean.
 
 ## Releases
 
 Minimum one release per phase gate: v0.3.0 (P0) · v0.4.0 (P1) · v0.5.0 (P2+P3) ·
 v0.6.0 (P4) · v0.7–v0.9 (P5, as RE lands) · **v1.0.0** (P6).
+
+The v0.5.x train (P5 reconstruction) shipped ahead of P4; from here the P4 validation work and the
+P5 forward programs (`fxc`, `fx_render`, residual RE) **interleave** — alternating release-to-release
+so neither the docs nor the codec/test layer goes stale. `fxc` is a stretch program on its own
+milestone and is **not** a 1.0 gate.
 
 ## How this roadmap is maintained
 

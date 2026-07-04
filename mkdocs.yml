@@ -162,3 +162,4 @@ nav:
       - Decisions:
           - Index: adr/README.md
           - "ADR-0001: fx-gui backend": adr/0001-fx-gui-sdl3-opengl3-miniaudio.md
+          - "ADR-0002: fxc source port": adr/0002-fxc-clean-room-source-port.md
