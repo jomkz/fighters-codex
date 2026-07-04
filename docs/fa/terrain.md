@@ -1,11 +1,11 @@
-# FA.EXE Terrain (T_)
+# Terrain (T_)
 
 The terrain engine — how a `.T2` heightfield becomes drawable geometry each frame: a
 view-adaptive **quadtree cell** tessellation with distance LOD, plus the decoration-scatter
 system that places trees/objects across the ground. `0x4A7310–0x4ABBE2` (+ a small tail at
 `0x4C5D30–0x4C60E8`).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/terrain.csv)
 > and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md).

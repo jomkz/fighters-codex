@@ -1,10 +1,10 @@
-# FA.EXE Symbol Map — Organized Reference
+# Symbol Map — Organized Reference
 
 FA.SMS ships with Jane's Fighters Anthology and contains 3,829 MSVC C++ mangled symbols with virtual addresses spanning `0x00401000`–`0x005937E0`. This document organizes them by address range into functional subsystems and highlights format-related entry points.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; the file itself is specified in [formats/SMS.md](formats/SMS.md). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; the file itself is specified in [formats/SMS.md](formats/SMS.md). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
-> **Reconstruction program:** for subsystems the [FA.EXE reconstruction program](reconstruction.md)
+> **Reconstruction program:** for subsystems the [game-executable reconstruction program](reconstruction.md)
 > (epic [#209](https://github.com/jomkz/fighters-codex/issues/209)) has completed, the
 > machine-readable [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/)
 > and its per-subsystem doc are canonical (they include recovered names beyond FA.SMS,
@@ -2224,4 +2224,4 @@ Cross-reference of symbols that directly load, initialize, or parse named file f
 
 ---
 
-*Generated from FA.SMS (3,829 symbols). Addresses are virtual addresses in the FA.EXE address space (ImageBase 0x00400000).*
+*Generated from FA.SMS (3,829 symbols). Addresses are virtual addresses in the game executable's address space (ImageBase 0x00400000).*

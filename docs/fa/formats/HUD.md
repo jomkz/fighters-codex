@@ -95,7 +95,7 @@ sub-panels. It also uses `BAY` (weapons bay indicator) instead of `HOOK`.
 All gauge positions are stored as signed s16 offsets from the HUD anchor
 point. Confirmed by tracing the HUD draw functions (`HUDInit`,
 `?HUDDrawHeading`, `?HUDDrawSpeed`, `?HUDDrawAlt`, `HUDDrawHVel`,
-`?HUDDrawWeaponInfo`, `?HUDDrawRangeInfo`) in FA.EXE via Ghidra.
+`?HUDDrawWeaponInfo`, `?HUDDrawRangeInfo`) in the game executable via Ghidra.
 
 After loading, the struct is resident at `hud`. Field offsets within the
 copied struct:
@@ -212,7 +212,7 @@ advisory bit.
 ### 1. Struct byte +0x238 and state-flag bit 14
 
 The struct byte at `+0x238` (`DAT_00521598`) has no cross-references anywhere
-in FA.EXE. Separately, HUD state flag bit 14 (`0x04000`) has a confirmed
+in the game executable. Separately, HUD state flag bit 14 (`0x04000`) has a confirmed
 multiplayer writer (`?MPReceive@@YGDXZ`, whose decompile failed) but the
 single-player writer path is untraced — no direct `OR [mem], 0x4000` constant
 exists; candidate unanalyzed code sits at 0x4bc177/0x4bc190.

@@ -1,6 +1,6 @@
 # WAIL32.DLL — Miles Sound System (AIL) audio driver
 
-`WAIL32.DLL` (135 KB) is the audio library FA.EXE's [sound subsystem](sound.md) (#220) drives.
+`WAIL32.DLL` (135 KB) is the audio library the game executable's [sound subsystem](sound.md) (#220) drives.
 It is **not FA-authored code**: it is the **Miles Sound System** (the *Audio Interface Library*,
 `AIL`) by Miles Design / RAD Game Tools — `WAIL32` = "Windows AIL, 32-bit". Its 130 public
 exports are the documented Miles `AIL_*` API; the ~373 internal functions are Miles' own mixer,
@@ -20,16 +20,16 @@ XMIDI player, and statically-linked C runtime.
 Miles Sound System is licensed third-party middleware — the same category as the Microsoft
 redistributables (DDraw / dsound / msapi) documented at the boundary rather than reversed. Its
 internal mixer/sequencer implementation is not FA's IP and its public API is already documented
-by Miles, so this page names the **exported `AIL_*` API** (the surface FA.EXE links against) and
+by Miles, so this page names the **exported `AIL_*` API** (the surface the game executable links against) and
 **waives the internals**. Every one of the 503 functions is accounted for: 130 named exports,
 373 waived (Miles internals + statically-linked CRT), and the 577 referenced data globals are
 waived as Miles-internal state.
 
-![WAIL32.DLL: FA.EXE's sound subsystem calls the Miles AIL public API (digital samples + XMIDI sequences); AIL dispatches to third-party Miles internals over WINMM and DirectSound.](diagrams/wail32.svg)
+![WAIL32.DLL: the game executable's sound subsystem calls the Miles AIL public API (digital samples + XMIDI sequences); AIL dispatches to third-party Miles internals over WINMM and DirectSound.](diagrams/wail32.svg)
 
 ## The AIL API surface
 
-The API splits into three groups, all reached from FA.EXE's sound path:
+The API splits into three groups, all reached from the game executable's sound path:
 
 - **Digital samples** — PCM/`.11K` playback: `AIL_allocate_sample_handle` → `AIL_init_sample` →
   `AIL_start_sample`; `AIL_set_sample_volume` / `AIL_set_sample_pan`; `AIL_end_sample`.
@@ -69,9 +69,9 @@ all 130 are named there):
 | `0x200088D0` | `AIL_quick_play` | one-call sample play |
 | `0x20008B90` | `AIL_quick_load_and_play` | one-call load + play |
 
-## FA.EXE ↔ AIL boundary
+## the game executable ↔ AIL boundary
 
-FA.EXE's sound subsystem (#220) links `WAIL32.DLL` and calls into this API — confirmed call
+The game executable's sound subsystem (#220) links `WAIL32.DLL` and calls into this API — confirmed call
 sites include `AIL_startup` / `AIL_shutdown`, `AIL_set_preference`, `AIL_lock` / `AIL_unlock`,
 `AIL_start_timer` / `AIL_stop_timer`, `AIL_end_sample`, `AIL_sequence_status`, and
 `AIL_release_sequence_handle`. The pause/resume path (`PollMod`, see [sound.md](sound.md))
@@ -91,6 +91,6 @@ understanding depends on them.
 
 ## Related
 
-- [sound.md](sound.md) — FA.EXE's sound subsystem, the client of this API.
+- [sound.md](sound.md) — the game executable's sound subsystem, the client of this API.
 - [reconstruction.md](reconstruction.md) — the program this binary belongs to.
 - [formats/11K.md](formats/11K.md) / [formats/XMI.md](formats/XMI.md) — the sample and music formats AIL plays.

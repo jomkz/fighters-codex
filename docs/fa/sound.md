@@ -1,10 +1,10 @@
-# FA.EXE Sound / Music
+# Sound / Music
 
 The audio engine: positional sound effects, threat-warning tones, ambient loops, and the
 two-layer music system — all driven onto the Miles Sound System (WAIL32.DLL / AIL) through
 a logical-voice mixer. `0x4328B0–0x435C60`.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv)
 > and applied to the Ghidra project (five mixer functions folded into gaps — incl. the

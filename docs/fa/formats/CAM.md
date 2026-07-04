@@ -31,7 +31,7 @@ Win32 PE DLL (`MZ` stub + PE32 image). The standard DOS stub message
 PE sections `.idata` and `.reloc`. `BALTIC.CAM` decompresses to **8704
 bytes**; `UKRAINE.CAM` is larger to accommodate its 50-mission list.
 
-All CAM files import from `main.dll` (= FA.EXE — see
+All CAM files import from `main.dll` (= the game executable — see
 [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and
 export a campaign-specific set of functions that the engine calls to drive
 campaign state.
@@ -139,7 +139,7 @@ All six live in FA_2.LIB.
 
 ### Loading Mechanism
 
-`FUN_00428412` (0x428412) is the canonical FA.EXE campaign/mission loader.
+`FUN_00428412` (0x428412) is the canonical the game executable campaign/mission loader.
 Called from the mission-map screen handler `FUN_00422a71` (when
 `_curScreen == 3`) and from `FUN_0042a71a`.
 
@@ -165,7 +165,7 @@ callers: `FUN_00428412`, `_ChooseScoreInit` (0x441c60), `_MISSIONTextProc@16`
 
 `AnalyzeCAMDLL.java` confirmed the dispatch function for KURILE.CAM
 (representative of all CAM DLLs). The single exported entry point is at PE
-code offset `0x1000` (`FUN_00001000`). FA.EXE calls it via
+code offset `0x1000` (`FUN_00001000`). The game executable calls it via
 `_CallMissionProc_8`, passing a command byte as the first stack argument
 (`in_stack_00000004`).
 
@@ -182,11 +182,11 @@ code offset `0x1000` (`FUN_00001000`). FA.EXE calls it via
 Data globals are stored in the PE `.data` section at offsets around
 `0x1700`–`0x17C0`. The mission list string table starts at `DAT_000014e1`.
 
-### Import Table (Functions CAM DLL Calls from FA.EXE)
+### Import Table (Functions CAM DLL Calls from the game executable)
 
-The `.idata` section of each CAM DLL lists the FA.EXE functions it calls back
+The `.idata` section of each CAM DLL lists the the game executable functions it calls back
 into. Note: these appear in the CAM DLL's **import table** (calls out to
-FA.EXE) — they are not functions exported by the DLL.
+The game executable) — they are not functions exported by the DLL.
 
 **Common imports (all campaigns):**
 
@@ -218,7 +218,7 @@ FA.EXE) — they are not functions exported by the DLL.
 | `_KurileRescued` | Rescued pilot tracking |
 
 UKRAINE.CAM, VIETNAM.CAM, etc. import analogous `_Ukraine*` / `_Vietnam*`
-functions from FA.EXE.
+functions from the game executable.
 
 ## Related
 

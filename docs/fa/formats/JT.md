@@ -198,7 +198,7 @@ else                                  → bomb-hit sound   (MK-82: 0x12 has neit
 ```
 
 Bits 2–3 of the lower byte are present in consistent category-level patterns
-across all 135 `.JT` files but no function in the full FA.EXE decompile or any
+across all 135 `.JT` files but no function in the full the game executable decompile or any
 analyzed overlay DLL tests them individually. Remaining inferred assignments:
 
 | Bit | Hex | Inferred pattern | Notes |
@@ -384,7 +384,7 @@ confirmed by scanning entity+0xF0–0x114:
 
 ## Open Questions
 
-### 1. PROJ_TYPE bytes with zero FA.EXE xrefs
+### 1. PROJ_TYPE bytes with zero the game executable xrefs
 
 Full exhaustive search (Ghidra GUI): all four PROJ proc types decompiled
 (`_PROJMoveProc`, `_PROJEventProc`, `_PROJDamageProc`, guidance proc at
@@ -393,10 +393,10 @@ gap global address — all returned zero references:
 
 | PROJ_TYPE offset | Global addr | Status |
 |-----------------|-------------|--------|
-| `+0x50` | `DAT_0050d35e` | Zero xrefs in FA.EXE |
-| `+0x51` | `DAT_0050d35f` | Zero xrefs in FA.EXE |
-| `+0x52` | `DAT_0050d360` | Zero xrefs in FA.EXE |
-| `+0x53` | `DAT_0050d361` | Zero xrefs in FA.EXE |
+| `+0x50` | `DAT_0050d35e` | Zero xrefs in the game executable |
+| `+0x51` | `DAT_0050d35f` | Zero xrefs in the game executable |
+| `+0x52` | `DAT_0050d360` | Zero xrefs in the game executable |
+| `+0x53` | `DAT_0050d361` | Zero xrefs in the game executable |
 | `+0x54` | `DAT_0050d362` | Not in `_PROJMoveProc` |
 | `+0x56` | `DAT_0050d364` | Not in `_PROJMoveProc` — may be high byte of `+0x55` (short) |
 | `+0x58` | `DAT_0050d366` | Not in `_PROJMoveProc` — may be high byte of `+0x57` (short) |
@@ -407,7 +407,7 @@ gap global address — all returned zero references:
 The scattered gap bytes `+0x56`/`+0x58`/`+0x5A`/`+0x5C` are the high bytes of
 the confirmed short fields immediately preceding them (`+0x55`/`+0x57`/
 `+0x59`/`+0x5B`) — not independent fields. The block `+0x50`–`+0x54` and
-isolated range `+0x5E`–`+0x64` have zero xrefs in all of FA.EXE — no missile
+isolated range `+0x5E`–`+0x64` have zero xrefs in all of the game executable — no missile
 code, no BRF code, no generic entity loop touches them. These bytes are either
 dead/unused fields from an earlier engine version, or are read exclusively by
 overlay DLLs. Closing this requires scanning the overlay DLL corpus for

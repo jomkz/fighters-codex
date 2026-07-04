@@ -1,13 +1,13 @@
 # Object / Entity System
 
-How FA.EXE stores, services, and dispatches behavior for every live game object —
+How the game executable stores, services, and dispatches behavior for every live game object —
 aircraft, ground vehicles, projectiles, and static props alike. This is the runtime
 spine the flight model, AI, weapons, and renderer all hang off: one **object chain**
 walked every frame, a **current-object mirror** each handler operates on, and a
 **proc-dispatch** indirection that routes events, damage, and updates to the right
 per-class code.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md)
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md)
 > symbols applied; recovered from `DumpAllFunctions.txt` and `AnalyzeOTNT.txt`
 > ([scripts/ghidra/](https://github.com/jomkz/fighters-codex/tree/main/scripts/ghidra)).
 > Every symbol here is recorded in the

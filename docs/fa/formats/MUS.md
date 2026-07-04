@@ -139,7 +139,7 @@ Group 2 (high-intensity, 6 tracks): `9 38 62 65 67 19`
 ### Playback Architecture — confirmed via Ghidra
 
 Traced from `_SEQmusic` (`0x00446B70`), `?MusicOn` (`0x004329E0`),
-`?MusicVolume` (`0x00432B40`) in FA.EXE.
+`?MusicVolume` (`0x00432B40`) in the game executable.
 
 ```
 _SEQmusic(name, seq_idx)
@@ -154,7 +154,7 @@ _SEQmusic(name, seq_idx)
 **The MUS CODE section is passed directly to the Miles Sound System (AIL).**
 FA does not interpret the FA/FB/FC/FD/FE bytes itself — Miles processes them
 natively as XMIDI or MSS sequence data. The sub-opcode semantics (`FA 0x19`,
-`FA 0x21`, etc.) are Miles-internal and cannot be decoded from FA.EXE alone.
+`FA 0x21`, etc.) are Miles-internal and cannot be decoded from the game executable alone.
 
 **Volume:** `?MusicVolume(vol)` maps the 0–100 game volume scale to AIL's
 0–127 range: `AIL_set_XMIDI_master_volume(handle, vol * 127 / 100)`.
@@ -172,7 +172,7 @@ of the XMIDI data to start playback from. Normally 0 (first sequence).
 ### 1. FA/FB sub-opcode semantics
 
 The sub-opcode values (`FA 0x19`, `FA 0x21`, `FB` mode bytes, the `FC` state
-dispatch) are consumed by Miles, not FA.EXE — decoding them requires tracing
+dispatch) are consumed by Miles, not the game executable — decoding them requires tracing
 the AIL wrapper (WAIL32.DLL), whose import surface is untraced, or consulting
 Miles Sound System XMIDI documentation.
 

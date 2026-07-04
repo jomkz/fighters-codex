@@ -23,7 +23,7 @@ related: [DLG]
 
 FA_2.LIB contains 12 `.MNU` files. Each defines one top-level in-game menu
 screen. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded by the FA
-engine at runtime; they import rendering functions from `main.dll` (= FA.EXE —
+engine at runtime; they import rendering functions from `main.dll` (= the game executable —
 see [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and
 embed their label strings directly in the PE data section.
 
@@ -32,7 +32,7 @@ embed their label strings directly in the PE data section.
 All multi-byte integers are little-endian.
 
 Win32 PE DLL (MZ DOS stub + PE32 image). All MNU files import rendering
-functions from `main.dll` (= FA.EXE):
+functions from `main.dll` (= the game executable):
 
 | Import | Role |
 |--------|------|

@@ -1,4 +1,4 @@
-# FA.EXE VIEW — in-flight camera & replay
+# VIEW — in-flight camera & replay
 
 The **VIEW** subsystem (`0x40D7A0–0x40F6B0`) manages the in-flight camera — the external / spot
 views, the slew (free-look) camera, view transitions, and the flight **replay** recorder — for
@@ -9,7 +9,7 @@ names (`_VIEWSlew`, `_VIEWImmediateVisibility`, `_VIEWInTransition`, `_VIEWChang
 [#257](https://github.com/jomkz/fighters-codex/issues/257), the same class of gap as the `.SEQ`
 player (#240) and the SPX path (#241).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) seed symbols; the
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) seed symbols; the
 > `VIEW*` helper names are recovered by this program from their behaviour. Confidence markers
 > follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred.
 

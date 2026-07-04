@@ -1,6 +1,6 @@
 ---
 format: SMS
-name: FA.EXE Symbol Map
+name: Game-executable Symbol Map
 extensions: [".SMS"]
 category: system
 endianness: little
@@ -19,12 +19,12 @@ codec:
 related: []
 ---
 
-# SMS — FA.EXE Symbol Map (.SMS)
+# SMS — Game-executable Symbol Map (.SMS)
 
 `FA.SMS` is a binary symbol map file shipped with Jane's Fighters Anthology —
 a loose file in the FA install directory, not packed into any LIB archive. It
 contains 3,829 MSVC-mangled C++ function and variable names paired with their
-virtual addresses in FA.EXE. It is the single most useful resource for FA.EXE
+virtual addresses in the game executable. It is the single most useful resource for the game executable
 reverse engineering.
 
 ## Tools
@@ -47,7 +47,7 @@ All multi-byte integers are little-endian.
 
 - `string_table` base offset = `4 + count × 8` = **30636** (0x778C)
 - Total file size: **106,706 bytes**
-- `va` — virtual address of the symbol in FA.EXE's address space (not a file offset)
+- `va` — virtual address of the symbol in the game executable's address space (not a file offset)
 - `str_off` — byte offset into `string_table` of the null-terminated symbol name
 - Records are stored in `str_off` order (string-table insertion order),
   **not** sorted by VA
@@ -59,7 +59,7 @@ All multi-byte integers are little-endian.
 | Lowest   | `0x00401000` |
 | Highest  | `0x005937E0` |
 
-This covers the full FA.EXE image: `.text` (code), `.data`, `.rdata`, and `.bss`.
+This covers the full the game executable image: `.text` (code), `.data`, `.rdata`, and `.bss`.
 
 ### Symbol Contents
 
@@ -135,10 +135,10 @@ during the main Ghidra disassembly pass:
 | `0x41EB60` | `LoadDLL` | Generic overlay DLL loader |
 | `0x41F240` | `LoadBrentDLL` | Load a Phar Lap BRF overlay DLL |
 | `0x441C60` | `_ChooseScoreInit` | Score / debrief screen initialiser |
-| `0x464C80` | `_CTDo_*` range start | AI condition/action dispatcher — in FA.EXE itself (see AI.md) |
+| `0x464C80` | `_CTDo_*` range start | AI condition/action dispatcher — in the game executable itself (see AI.md) |
 | `0x463EA0` | `_MaskEvents_4` | Entity flag bit 10 event-mask handler |
 | `0x464040` | `_Reaction_12` | Entity flag bit 10 reaction handler |
-| `0x467110` | `_CTEval_*` range end | AI condition evaluator — in FA.EXE itself |
+| `0x467110` | `_CTEval_*` range end | AI condition evaluator — in the game executable itself |
 | `0x467180` | `PilotSave(PILOT*, short)` | Write pilot data to `PLTnnn.P` save file |
 | `0x480B50` | `_MISSIONInit2_0` | Mission system second-phase init |
 | `0x481940` | `_CallMissionProc_8` | Dispatch per-mission condition proc |
@@ -146,8 +146,8 @@ during the main Ghidra disassembly pass:
 | `0x486860` | `_MISSIONCheckSuccess@0` | Check win/loss conditions |
 | `0x4A6EB0` | `SetupOT` | OBJ_TYPE init (BRF type init entry) |
 | `0x4A7230` | `SetupJT` | PROJ_TYPE init |
-| `0x4AACF0` | `T_HorizonProc` | Horizon renderer — exported by FA.EXE, consumed by .LAY DLLs |
-| `0x4B4320` | `WRFogLayerUpdate` | Per-frame fog opacity jitter — confirmed FA.EXE export |
+| `0x4AACF0` | `T_HorizonProc` | Horizon renderer — exported by the game executable, consumed by .LAY DLLs |
+| `0x4B4320` | `WRFogLayerUpdate` | Per-frame fog opacity jitter — confirmed the game executable export |
 | `0x4C5D70` | `@T_Load@4` | T2 terrain file loader entry point |
 | `0x4D22D4` | `do_ifdestroyed` | Shape bytecode opcode handler — tests destroyed state |
 
@@ -160,7 +160,7 @@ for full setup and overlay-DLL rebasing instructions.
 
 Quick start:
 
-1. Open FA.EXE in Ghidra and let auto-analysis finish.
+1. Open the game executable in Ghidra and let auto-analysis finish.
 2. Tools → Script Manager → run `ImportFASms`.
 3. Point the file dialog at `FA.SMS` in the FA install directory.
 4. All 3,829 functions and globals are labelled in one pass; progress bar

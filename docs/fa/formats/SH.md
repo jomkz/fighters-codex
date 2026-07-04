@@ -134,7 +134,7 @@ see [Engine Notes](#engine-notes).
 where nonzero it equals `radius * 2^(scale-8)` exactly in 93/134 files, with
 authoring drift in the rest (ratios 1.4–4.8). It is zero in 1141/1275 shapes —
 every aircraft and weapon — and nonzero only for ground/naval scenery (ships,
-runways, cities, rocks, SAM sites). No FA.EXE code reads it: it is authoring
+runways, cities, rocks, SAM sites). No the game executable code reads it: it is authoring
 residue — see [Engine Notes](#engine-notes) for the tracing evidence.
 
 **Scale table** (`world_coord_feet = raw_i16 * scale_factor`):
@@ -349,9 +349,9 @@ the sub-streams that follow it.
 
 #### External references (trampolines)
 
-The payload reaches FA.EXE globals and functions through **trampolines** —
+The payload reaches the game executable globals and functions through **trampolines** —
 6-byte indirect jumps `[FF 25][target u32]` whose `target` the shape's Phar Lap
-PE relocations bind to a FA.EXE export **by name** at load time. Two kinds:
+PE relocations bind to a the game executable export **by name** at load time. Two kinds:
 
 - **Inputs** — a global the block reads. Across the corpus these are dominated by
   the `_PL*` articulation-state block that
@@ -397,7 +397,7 @@ case values is documented by the [OpenFA](https://gitlab.com/openfa/openfa)
 project's `sh` crate (GPLv3) as a symbol→state table
 (`_PLgearDown`/`_PLrightFlap`/`_PLslats`/`_PLbayOpen`/`_PLbrake`/`_PLhook`/…);
 the *mechanism, trampoline inventory, and entry contract here are independently
-derived* (Ghidra on FA.EXE plus a structural parse of all 1275 shapes) and the
+derived* (Ghidra on the game executable plus a structural parse of all 1275 shapes) and the
 per-shape case values are attributed to OpenFA per the license boundary — never
 transcribed.
 
@@ -471,7 +471,7 @@ as facts.
 
 ## Engine Notes
 
-Shape opcodes that branch on entity state are handled by FA.EXE functions.
+Shape opcodes that branch on entity state are handled by the game executable functions.
 Confirmed from FA.SMS:
 
 | VA | Symbol | Description |
@@ -481,7 +481,7 @@ Confirmed from FA.SMS:
 
 ### Header field consumption (traced)
 
-`GRAddBrentObj(shape, x, y, z)` is the only FA.EXE code that touches the raw
+`GRAddBrentObj(shape, x, y, z)` is the only the game executable code that touches the raw
 14-byte header:
 
 - **`scale` (+6)** shifts the viewer-relative Δx/Δy/Δz into shape units.
@@ -492,7 +492,7 @@ Confirmed from FA.SMS:
   which is why authored values need not be exact radii.
 - **`radius_world` (+2) is never read.** Evidence: the interpreter receives
   the stream pointer already advanced to header+0xe; a scan of every
-  decompiled FA.EXE function found no 16-bit or 32-bit read of header+2
+  decompiled the game executable function found no 16-bit or 32-bit read of header+2
   co-occurring with other header-field access; and a raw-listing scan of the
   hand-written interpreter region (0x4CD000–0x4D7000, including 5342
   instructions outside Ghidra functions) shows all 467 `[reg+0x2]` accesses

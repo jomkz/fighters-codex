@@ -63,7 +63,7 @@ analysis, and AI parameter extraction.
 
 Layout derived by direct byte-counting against `F16C.PT` (type_size = 660 =
 0x294). Offsets marked **confirmed** were read or written directly by
-decompiled FA.EXE code. All others are inferred from packing (BRF fields
+decompiled the game executable code. All others are inferred from packing (BRF fields
 written sequentially, no alignment padding).
 
 `file_name` is **not stored** in the binary struct — it is the LIB lookup key

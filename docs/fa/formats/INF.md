@@ -123,7 +123,7 @@ view — extraction no longer removes footer lines from section text.
 Only three directives (`.body .right`, `.body .left`, `.title .center`) have
 been observed across the corpus, and the structured footer is *inferred* to be
 engine-parsed for the stat display; the renderer and its directive dispatch in
-FA.EXE have not been traced.
+The game executable have not been traced.
 
 *Status: open — re-static (#54)*
 

@@ -27,7 +27,7 @@ files decompress to 4608 bytes.
 All multi-byte integers are little-endian.
 
 Win32 PE DLL. String analysis of all `.MC` files reveals the mission condition
-API imported from FA.EXE:
+API imported from the game executable:
 
 | Import | Description |
 |--------|-------------|
@@ -70,10 +70,10 @@ short FUN_00001000(short param_1, undefined4 param_2, undefined4 param_3, short 
 - `DAT_00001212` (offset `0x1212`): target status byte — the success code
   returned when the condition triggers
 
-FA.EXE writes these bytes to track the mission state for the DLL. When
+The game executable writes these bytes to track the mission state for the DLL. When
 `*param_4 = 0x00`, if the target is destroyed (`DAT_00001212 != 0`) and not
 still alive (`DAT_00001211 == 0`), the MC DLL returns the success code and
-FA.EXE calls `_MISSIONSuccess@0` to end the mission.
+The game executable calls `_MISSIONSuccess@0` to end the mission.
 
 The `.idata` string scan confirmed `_MISSIONSuccess` at offset `0x207F` and
 `_OBJAlias` at offset `0x2065`.

@@ -51,19 +51,19 @@ because `.LAY` files embed the full sky/atmosphere rendering lookup tables as
 data. `DAY1.LAY` decompresses to **20992 bytes**, confirming that file size is
 not uniform across LAY variants.
 
-String analysis, CODE section analysis, and FA.EXE decompilation reveal the
+String analysis, CODE section analysis, and the game executable decompilation reveal the
 embedded content:
 
 - **`wave1.SH`** — animated ocean wave mesh, referenced by name in both cloud
   and day variants (string at CODE VA ~0x11C2)
-- **`_T_HorizonProc`** — **imported** from `main.dll` (= FA.EXE; one of the 2
-  functions in FA.EXE's PE export table — see
+- **`_T_HorizonProc`** — **imported** from `main.dll` (= the game executable; one of the 2
+  functions in the game executable's PE export table — see
   [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)). LAY
   files call the engine's horizon rendering function rather than implementing
   it. (An earlier claim that `_T_HorizonProc` is an export was incorrect — it
   is an import in all observed LAY files.)
 - **DLL data header** — first 0x78 bytes (0x1e dwords) of the CODE section are
-  copied verbatim to FA.EXE globals at load time (full map below).
+  copied verbatim to the game executable globals at load time (full map below).
 - **LAYER array** — `N` entries × 0x160 bytes each, at a CODE VA stored in the
   header. Each entry defines one sky condition (altitude range, gradient
   table, cloud textures, visibility).
@@ -99,14 +99,14 @@ files have a larger PE header structure:
 0x400.)
 
 The CODE section contains all rendering data. The engine interprets this data;
-`_T_HorizonProc` (`0x4AACF0` in FA.EXE, confirmed from FA.SMS) is the horizon
+`_T_HorizonProc` (`0x4AACF0` in the game executable, confirmed from FA.SMS) is the horizon
 renderer called by the LAY DLL.
 
 ### CODE section structure (VA offsets from 0x1000)
 
 | VA range | Content |
 |----------|---------|
-| 0x1000–0x1077 | **DLL data header** — 0x78 bytes copied verbatim to FA.EXE globals at load time |
+| 0x1000–0x1077 | **DLL data header** — 0x78 bytes copied verbatim to the game executable globals at load time |
 | 0x1078–0x10AF | **Layer parameter sub-block** — VA back-pointer (0x1078), u32 count=38, INT_MAX sentinel (0x7FFFFFFF), u32 5000, u32 165, and additional u32 fields |
 | 0x10B0–0x1175 | **Sky gradient / colour sub-block** — 8-byte header + 190 bytes of palette index data |
 | 0x1176–0x11A5 | Zero-fill padding |
@@ -115,11 +115,11 @@ renderer called by the LAY DLL.
 
 ### DLL data header (VA 0x1000, first 0x78 bytes)
 
-These 30 dwords are copied verbatim into FA.EXE's BSS segment at `hdr` when the
+These 30 dwords are copied verbatim into the game executable's BSS segment at `hdr` when the
 LAY file is loaded. After relocation all pointer fields hold absolute VAs
 within the loaded DLL image.
 
-| Header offset | FA.EXE global | Role |
+| Header offset | the game executable global | Role |
 |--------------|---------------|------|
 | `+0x00` | hdr | Parameter field (count/flags — semantics **unknown**, see Open Questions) |
 | `+0x04` | DAT_00580db4 | → `_DAT_0055be28` |
@@ -154,7 +154,7 @@ within the loaded DLL image.
 
 ### LAYER Struct Layout (0x160 bytes)
 
-Confirmed from FA.EXE decompilation of `WRInit`, `FUN_004b3be0`,
+Confirmed from the game executable decompilation of `WRInit`, `FUN_004b3be0`,
 `FUN_004b3cb0`, and `WRWeatherEffects`.
 
 | Offset | Type | Description |
@@ -186,7 +186,7 @@ Confirmed from FA.EXE decompilation of `WRInit`, `FUN_004b3be0`,
 
 The LAYER array is terminated when an entry's flag byte has bit 0 set. The
 array pointer is stored at offset 0x74 in the DLL data header (global
-`DAT_00580e24` in FA.EXE).
+`DAT_00580e24` in the game executable).
 
 ### Identified sub-block types (from CODE inspection)
 
@@ -214,12 +214,12 @@ from within LAYER entries via the colour entry table.
 
 | Offset | Type | Value | Meaning |
 |--------|------|-------|---------|
-| `+0` | u32 | 0x31 = 49 | Builder metadata — not read by FA.EXE at runtime |
+| `+0` | u32 | 0x31 = 49 | Builder metadata — not read by the game executable at runtime |
 | `+4` | u16 | 0 | Builder metadata |
 | `+6` | u8 | 0x10 = 16 | Builder metadata |
 | `+7` | u8 | 0x10 = 16 | Builder metadata |
 
-No FA.EXE function reads these four bytes. The engine accesses gradient and
+No the game executable function reads these four bytes. The engine accesses gradient and
 colour data exclusively via pre-initialised pointers stored in LAYER struct
 entries (e.g. `colour_entry_ptr` at +0x3A) and in the DLL data header; it never
 decodes this 8-byte preamble. The header is a **LAY file builder artefact** —
@@ -387,7 +387,7 @@ used by the rendering pipeline).
 | `0x004b4320` | `WRFogLayerUpdate` | Per-frame fog update: add random jitter in [−25, +26] to `LAYER+0xfe`, clamp to [0xD9, 0xEB] |
 | `0x004b4790` | `ClearAtmosphereBuffer` | Clears 0x843 dwords at `DAT_00581140`; called at end of `ParseLayerFile` |
 | `0x004cc4b4` | `SetActiveLayerByAngle` | Sets `currentShadeTable` (secondary active-layer ptr) from a signed 16-bit elevation angle: above horizon → `sky_layer_array[angle × sky_angle_scale >> 8]`; near/at horizon → `sky_layer_array[0]`; below −0xC0 → `below_layer_array[(−0xC0 − angle) × below_angle_scale >> 6]` |
-| `0x004aacf0` | `T_DefaultHorizon` | Default horizon renderer (FA.EXE); reads colour bytes from `currentTintTable+0xD4..+0xFC` (active LAYER colour table); calls `SolidHorizon` / `GouraudHorizon` for gradient rendering |
+| `0x004aacf0` | `T_DefaultHorizon` | Default horizon renderer (the game executable); reads colour bytes from `currentTintTable+0xD4..+0xFC` (active LAYER colour table); calls `SolidHorizon` / `GouraudHorizon` for gradient rendering |
 
 ## Open Questions
 
@@ -407,4 +407,4 @@ than a count/flags parameter; its semantics are unknown.
 `cloud_pic`/`sky_pic` wildcard textures.
 
 **Engine:** [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)
-— the overlay DLL loading architecture and FA.EXE's export table.
+— the overlay DLL loading architecture and the game executable's export table.

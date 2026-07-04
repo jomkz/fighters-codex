@@ -1,11 +1,11 @@
-# FA.EXE Shell / Menu / Dialog UI
+# Shell / Menu / Dialog UI
 
 The out-of-cockpit interface: the **menu-bar** state machine and the **dialog/widget** core
 that render and drive every menu screen, dialog box, and button. Re-carved from a nominal
 range that was ~85% foreign into its two true clusters (menu core `0x40B8A0–0x40D79C`,
 dialog core `0x487A3A–0x48D200`) plus scattered screen entries.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ## Menu bar and dialogs
 

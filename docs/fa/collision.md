@@ -1,11 +1,11 @@
-# FA.EXE Collision (COL)
+# Collision (COL)
 
 The swept collision query engine — one entry point, `_Collision` (`0x42B800`), that answers
 "what does this segment hit first?" against terrain and against registered objects. Used
 for weapon impacts, line-of-sight/lock gating, ground-avoidance AI, and landing.
 `0x42B800–0x42E680`.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/collision.csv)
 > and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md).

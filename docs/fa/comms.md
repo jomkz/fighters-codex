@@ -4,7 +4,7 @@
 
 ## The Cdrv comms suite
 
-FA.EXE's serial/modem multiplayer path — the peer of the DirectPlay / SPX/IPX path in [network.md](network.md) — is built on a four-DLL **Cdrv** comms library: **CDRVDL32** (this file, RS-232 base), **CDRVHF32** (Hayes modem), **CDRVXF32** (file transfer), and **COMMSC32** (terminal screen). It is generic serial/modem middleware (a `.commdrv` section, a complete `Cdrv*` / `ser_rs232_*` ABI, the Win32 comms API underneath, no game-specific content) — **licensed third-party code**, boundary-documented like WAIL32 (Miles) and the MS redistributables: the exported ABI is named, the internals are waived, not reversed.
+The game executable's serial/modem multiplayer path — the peer of the DirectPlay / SPX/IPX path in [network.md](network.md) — is built on a four-DLL **Cdrv** comms library: **CDRVDL32** (this file, RS-232 base), **CDRVHF32** (Hayes modem), **CDRVXF32** (file transfer), and **COMMSC32** (terminal screen). It is generic serial/modem middleware (a `.commdrv` section, a complete `Cdrv*` / `ser_rs232_*` ABI, the Win32 comms API underneath, no game-specific content) — **licensed third-party code**, boundary-documented like WAIL32 (Miles) and the MS redistributables: the exported ABI is named, the internals are waived, not reversed.
 
 > **Provenance:** Ghidra static analysis of `CDRVDL32.DLL` (imported into `fa-re`, auto-analysed;
 > public names from the PE export table). Third-party middleware, documented at the **boundary**
@@ -12,7 +12,7 @@ FA.EXE's serial/modem multiplayer path — the peer of the DirectPlay / SPX/IPX 
 > [#255](https://github.com/jomkz/fighters-codex/issues/255)): the exported ABI is named; internals
 > and referenced data are waived, not reversed. Confidence per [spec-authoring.md](../spec-authoring.md).
 
-![The Cdrv comms suite: FA.EXE's serial/modem multiplayer path drives CDRVDL32 (RS-232), CDRVHF32 (Hayes modem), CDRVXF32 (file transfer) and COMMSC32 (terminal), over the Win32 comms API.](diagrams/comms.svg)
+![The Cdrv comms suite: the game executable's serial/modem multiplayer path drives CDRVDL32 (RS-232), CDRVHF32 (Hayes modem), CDRVXF32 (file transfer) and COMMSC32 (terminal), over the Win32 comms API.](diagrams/comms.svg)
 
 ## Functions
 
@@ -41,6 +41,6 @@ boundary). No FA understanding depends on them.
 
 ## Related
 
-- [network.md](network.md) — FA.EXE's multiplayer, which drives the serial/modem path.
+- [network.md](network.md) — the game executable's multiplayer, which drives the serial/modem path.
 - [comms.md](comms.md) — the CDRVDL32 base driver and suite overview.
 - [reconstruction.md](reconstruction.md) — the program this binary belongs to.

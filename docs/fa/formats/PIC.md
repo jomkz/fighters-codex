@@ -185,7 +185,7 @@ the `_0` exterior photo in contexts where a thumbnail is needed.
 ### 1. font_data_offset semantics
 
 Header field `0x2A` is nonzero in only a handful of files and its consumer in
-FA.EXE has not been traced; the FNT overlay DLLs carry the actual fonts, so the
+The game executable has not been traced; the FNT overlay DLLs carry the actual fonts, so the
 field's role (legacy, or an alternate glyph path) is unconfirmed.
 
 *Status: open — re-static (#54)*

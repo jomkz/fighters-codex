@@ -1,4 +1,4 @@
-# FA.EXE Flight Model & Stores
+# Flight Model & Stores
 
 The aircraft **flight model** (`FM_*`) and **hardpoint/stores management** (`HARD_*`) —
 how the engine turns pilot/AI control inputs and a loadout into per-frame aircraft state:
@@ -15,7 +15,7 @@ units) unless noted.
 > (§ Terrain Collision, § PROJ dispatch, § Collision Detection) are provisional and
 > migrate to those docs as they land.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; every flight-model symbol here is recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv)
 > and applied to the Ghidra project. Confidence markers follow

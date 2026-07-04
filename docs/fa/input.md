@@ -1,4 +1,4 @@
-# FA.EXE Input — Joystick & Mouse
+# Input — Joystick & Mouse
 
 Player input device handling: the Win32 multimedia **joystick** API layer and the **mouse**
 event ring. (Serial-cable and modem link transport, historically "input" territory, is
@@ -6,7 +6,7 @@ documented with the [network](network.md) transport layer per the reconstruction
 ownership split.) Re-carved from a very broad nominal range into the two true device
 clusters.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ## Devices
 

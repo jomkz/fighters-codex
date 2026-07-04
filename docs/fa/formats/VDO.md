@@ -70,7 +70,7 @@ delimiters. Frame N starts at offset `816 + sum(FBC[0..N-1])`.
 
 Frame data is palettized (8-bit palette indices into the header palette at
 +48). Each frame is Cobra-compressed. Partial RE of `DecodeFrame` (VA
-`0x442370` in FA.EXE) reveals the following structure:
+`0x442370` in the game executable) reveals the following structure:
 
 ### Cobra codec — known structure
 

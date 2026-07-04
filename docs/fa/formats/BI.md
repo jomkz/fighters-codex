@@ -25,7 +25,7 @@ related: [AI]
 FA_2.LIB contains 9 `.BI` files — exactly one per `.AI` script file (e.g.
 `AC130.BI` paired with `AC130.AI`). Each is a **Win32 PE DLL** whose CODE
 section contains only compiled AI bytecode; the runtime operations it
-references live in FA.EXE.
+references live in the game executable.
 
 ## Tools
 
@@ -50,13 +50,13 @@ The FA engine runs a two-part AI system:
   defines the logic (conditions, branches, actions) in a goto-based language
 - **`.BI`** — Phar Lap PE DLL whose **CODE section contains only compiled AI
   bytecode** (no x86 machine code). All `_CTDo_*` and `_CTEval_*`
-  action/condition implementations live in FA.EXE; the `.BI` imports them via
+  action/condition implementations live in the game executable; the `.BI` imports them via
   its `.idata` section. The bytecode starts at the very first byte of the CODE
   section (raw file offset `0x400`).
 
 At runtime the engine loads the `.BI`, resolves its `.idata` imports against
-FA.EXE, and calls `_CTExecProgram@4`, which reads bytecode from the BI CODE
-section and dispatches to the `_CTDo_*` and `_CTEval_*` functions in FA.EXE
+The game executable, and calls `_CTExecProgram@4`, which reads bytecode from the BI CODE
+section and dispatches to the `_CTDo_*` and `_CTEval_*` functions in the game executable
 via `CALL_BY_NAME`/`CALL_DIRECT` opcodes.
 
 ### Exported Functions
@@ -263,11 +263,11 @@ from the bytecode stream and writes them to `DAT_00546c44` / `DAT_00546c46`
   auto-analysis found zero functions after analyzing the BI project — the code
   section is pure bytecode data, not native machine code. There is no x86
   reader in the BI DLLs.
-- **Full FA.EXE interpreter path traced with no consumer found:**
+- **Full the game executable interpreter path traced with no consumer found:**
   `FUN_00466a80` (opcode dispatch 0–0x28): no case reads `+0x7c`/`+0x7e`;
   `_CTExecProgram@4` (interpreter loop): only calls `FUN_00466a80` per opcode;
   `FUN_00464cd0` (script loader) and `FUN_00464db0` (PC reset): no field reads.
-- `DAT_00546c44` / `DAT_00546c46` have no direct read xrefs in FA.EXE.
+- `DAT_00546c44` / `DAT_00546c46` have no direct read xrefs in the game executable.
 - All reads of `DAT_0050cf90` (checkpoint pointer) are bulk 128-byte block
   copies via `FUN_004668f0` (restore) and `FUN_00466920` (save/push) — never
   field-level reads.

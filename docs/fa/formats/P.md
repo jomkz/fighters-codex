@@ -227,7 +227,7 @@ reads none of the gap regions.
 ### 1. Gap 0xB0–0xC1 (18 bytes)
 
 No named DAT_ label or MOV/CMP instruction targeting VA
-`0x004f8c68`–`0x004f8c79` found in any function in FA.EXE. All zeros in all
+`0x004f8c68`–`0x004f8c79` found in any function in the game executable. All zeros in all
 three fresh saves. Struct context suggests these bytes are written only after
 campaign assignment — possibly a score tier index, medal count, or secondary
 rank fields.

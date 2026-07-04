@@ -10,7 +10,7 @@ The suite's shared design, third-party rationale, and the FA-side boundary are d
 > [#255](https://github.com/jomkz/fighters-codex/issues/255)): the exported ABI is named; internals
 > and referenced data are waived, not reversed. Confidence per [spec-authoring.md](../spec-authoring.md).
 
-![The Cdrv comms suite: FA.EXE's serial/modem multiplayer path drives CDRVDL32 (RS-232), CDRVHF32 (Hayes modem), CDRVXF32 (file transfer) and COMMSC32 (terminal), over the Win32 comms API.](diagrams/comms.svg)
+![The Cdrv comms suite: the game executable's serial/modem multiplayer path drives CDRVDL32 (RS-232), CDRVHF32 (Hayes modem), CDRVXF32 (file transfer) and COMMSC32 (terminal), over the Win32 comms API.](diagrams/comms.svg)
 
 ## Functions
 
@@ -39,6 +39,6 @@ boundary). No FA understanding depends on them.
 
 ## Related
 
-- [network.md](network.md) — FA.EXE's multiplayer, which drives the serial/modem path.
+- [network.md](network.md) — the game executable's multiplayer, which drives the serial/modem path.
 - [comms.md](comms.md) — the CDRVDL32 base driver and suite overview.
 - [reconstruction.md](reconstruction.md) — the program this binary belongs to.

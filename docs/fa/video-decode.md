@@ -1,10 +1,10 @@
-# FA.EXE Video Decode (Cobra / .VDO)
+# Video Decode (Cobra / .VDO)
 
 The **Cobra** full-motion-video codec — the in-engine decoder for the `.VDO` cutscenes.
 A per-frame vector-quantization scheme: a 256-entry YUV 2×2 codebook rendered to 8/15/16/24
 bpp with optional 2× pixel doubling, key + delta frames. `0x456300–0x45CDA0`.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv)
 > and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md).

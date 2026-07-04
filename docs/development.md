@@ -136,7 +136,7 @@ the path embedders use (see [api.md](api.md)).
   on every preset leg, so a codec change that invalidates a format spec's
   front-matter claims — or leaves the generated
   [status matrix](fa/formats/STATUS.md) stale — fails `ctest` locally, not
-  just the CI `docs-status` job. The same checker validates the FA.EXE
+  just the CI `docs-status` job. The same checker validates the game-executable
   reconstruction symbol database (`db/`), per-subsystem coverage, and the
   generated [reconstruction matrix](fa/reconstruction.md). See
   [spec-authoring.md](spec-authoring.md) and [db/README.md](https://github.com/jomkz/fighters-codex/blob/main/db/README.md).
@@ -305,7 +305,7 @@ fighters-codex/
 ├── tests/                  # Catch2 suite, embed smoke, CLI e2e, FA integration
 ├── tools/                  # dll_info and other RE utilities
 ├── scripts/                # release tooling, Ghidra headless scripts
-├── db/                     # FA.EXE reconstruction symbol database (epic #209)
+├── db/                     # game-executable reconstruction symbol database (epic #209)
 └── docs/                   # documentation (the primary output)
 ```
 

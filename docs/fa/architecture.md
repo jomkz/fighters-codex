@@ -1,14 +1,24 @@
 # FA Game Architecture
 
-A comprehensive overview of what is known about Jane's Fighters Anthology's runtime architecture, file formats, and subsystems. Organized by subsystem for developers picking up RE work or modding.
+The integrating overview of Jane's Fighters Anthology's runtime — the map that ties together the
+**completed reconstruction**. The game executable is documented as **20 named subsystems**, and the
+binaries it ships alongside as a further set (**7 binaries in all**); each subsystem has its own page
+with recovered symbols, a struct/field map, and a theme-aware flow diagram, all indexed in the
+[reconstruction matrix](reconstruction.md). This page gives the cross-subsystem picture — the runtime
+environment, the asset system, the overlay-DLL architecture, and how the pieces fit — and links out
+to that detail. For the file formats see [formats/](formats/README.md); for the newcomer index see
+the [knowledge-base README](README.md).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
+> applied, now driven by the machine-readable [`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md)
+> symbol database. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed ·
+> inferred · unknown.
 
 ---
 
 ## Runtime Environment
 
-FA.EXE is a Win32 application built for Windows 95/98, approximately 1.2 MB in size. It runs on modern Windows through the compatibility layer without significant modification.
+The game executable is a Win32 application built for Windows 95/98, approximately 1.2 MB in size. It runs on modern Windows through the compatibility layer without significant modification.
 
 A binary symbol map, **FA.SMS**, ships with the game and is a gold mine for RE work. It contains 3,829 MSVC C++ mangled function and variable names with their virtual addresses, spanning the range `0x00401000`–`0x005937E0`. Loading this map into Ghidra or IDA auto-names nearly every significant function in the executable with no manual effort required. See [formats/SMS.md](formats/SMS.md) for the file structure (4-byte count + N × 8-byte `[VA, strOffset]` records + null-terminated string table).
 
@@ -54,7 +64,7 @@ All game assets are packed into `.LIB` files using the EALIB container format. S
 
 Many game subsystems are implemented as hot-swappable Win32 PE DLLs loaded at runtime. These DLLs import from `main.dll` and export named C++ functions.
 
-**`main.dll` = FA.EXE.** `main.dll` does not exist as a file on disk and is not packed in any LIB archive. It is a logical module name used in the overlay DLLs' PE import tables to refer to FA.EXE's own address space. The functions imported under this name (`_DrawAction`, `_DrawRocker`, `_DrawText`, `_DrawFormattedText`, `_DrawEditBox`, `_DrawCampaignList`, `_okString`, `_cancelString`, `_T_HorizonProc`, and others) are all internal FA.EXE routines confirmed via FA.SMS (e.g. `_DrawAction` at `0x00489B90`, `_DrawText` at `0x00489AC0`, `_T_HorizonProc` exported as `T_HorizonProc`). FA.EXE's PE export table lists only 2 functions (`T_HorizonProc`, `WRFogLayerUpdate`) — the drawing functions are not among them. The overlay loader resolves "main.dll" imports by patching the overlay DLL's IAT directly with FA.EXE address-space pointers.
+**`main.dll` = the game executable.** `main.dll` does not exist as a file on disk and is not packed in any LIB archive. It is a logical module name used in the overlay DLLs' PE import tables to refer to the game executable's own address space. The functions imported under this name (`_DrawAction`, `_DrawRocker`, `_DrawText`, `_DrawFormattedText`, `_DrawEditBox`, `_DrawCampaignList`, `_okString`, `_cancelString`, `_T_HorizonProc`, and others) are all internal the game executable routines confirmed via FA.SMS (e.g. `_DrawAction` at `0x00489B90`, `_DrawText` at `0x00489AC0`, `_T_HorizonProc` exported as `T_HorizonProc`). The game executable's PE export table lists only 2 functions (`T_HorizonProc`, `WRFogLayerUpdate`) — the drawing functions are not among them. The overlay loader resolves "main.dll" imports by patching the overlay DLL's IAT directly with the game executable address-space pointers.
 
 **Loading mechanism.** Where `LoadLibrary` is used (confirmed for `.LAY` — `ParseLayerFile` `0x004b4370`), it must be called with `DONT_RESOLVE_DLL_REFERENCES` or equivalent so Windows does not attempt to load the non-existent `main.dll`. The engine then patches the IAT manually. For other overlay types the exact call site is unconfirmed — the docs simply say "loaded at runtime."
 
@@ -193,11 +203,11 @@ Binary, approximately 3.4 KB. Stores pilot name, rank, stats, campaign progress,
 
 ### Menu Screens (.MNU)
 
-12 `.MNU` files — Win32 PE DLLs containing all UI label strings in the PE data section. Import `_DrawAction`, `_DrawRocker`, `_DrawText` from `main.dll` (= FA.EXE). One DLL per major menu screen. See [formats/MNU.md](formats/MNU.md).
+12 `.MNU` files — Win32 PE DLLs containing all UI label strings in the PE data section. Import `_DrawAction`, `_DrawRocker`, `_DrawText` from `main.dll` (= the game executable). One DLL per major menu screen. See [formats/MNU.md](formats/MNU.md).
 
 ### Dialog Boxes (.DLG)
 
-92 `.DLG` files — Win32 PE DLLs for dialog boxes. Import `_DrawAction`, `_DrawRocker`, `_DrawEditBox`, `_DrawText`, `_DrawFormattedText`, `_DrawCampaignList`, `_cancelString`, `_okString` from `main.dll` (= FA.EXE). See [formats/DLG.md](formats/DLG.md).
+92 `.DLG` files — Win32 PE DLLs for dialog boxes. Import `_DrawAction`, `_DrawRocker`, `_DrawEditBox`, `_DrawText`, `_DrawFormattedText`, `_DrawCampaignList`, `_cancelString`, `_okString` from `main.dll` (= the game executable). See [formats/DLG.md](formats/DLG.md).
 
 ### Bitmap Assets (.PIC, .PAL)
 
@@ -289,9 +299,9 @@ Each 3-byte record encodes `[surface_class, elevation_band, texture_variant]`. `
 
 ### Sky & Atmosphere (.LAY)
 
-24 `.LAY` files — Win32 PE DLLs implementing sky and atmosphere rendering. References `wave1.SH` and `ocean*06.PIC`. Imports `_T_HorizonProc` from `main.dll` (= FA.EXE) — the engine provides the horizon renderer; the LAY file supplies lookup table data only. See [formats/LAY.md](formats/LAY.md).
+24 `.LAY` files — Win32 PE DLLs implementing sky and atmosphere rendering. References `wave1.SH` and `ocean*06.PIC`. Imports `_T_HorizonProc` from `main.dll` (= the game executable) — the engine provides the horizon renderer; the LAY file supplies lookup table data only. See [formats/LAY.md](formats/LAY.md).
 
-**FA.EXE atmosphere subsystem** — the engine maintains the following globals for the current atmosphere state:
+**the game executable atmosphere subsystem** — the engine maintains the following globals for the current atmosphere state:
 
 | Global | Role |
 |--------|------|
@@ -316,7 +326,7 @@ The colour entry table (pointed to by header offset +0x6C) uses stride-0x30 entr
 
 **Algorithm:** Painter's sort — no z-buffer. Polygons are depth-sorted by centroid before submission to the rasterizer.
 
-**Scene entry:** `T_DefaultHorizon` (`0x4AACF0`) — the terrain/sky scene renderer, exported from FA.EXE as `T_HorizonProc`. Called from the game loop render step after object updates. Drives the full frame render.
+**Scene entry:** `T_DefaultHorizon` (`0x4AACF0`) — the terrain/sky scene renderer, exported from the game executable as `T_HorizonProc`. Called from the game loop render step after object updates. Drives the full frame render.
 
 **Pipeline stages (VA range `0x4B4200–0x4BEDFF`):**
 

@@ -259,10 +259,10 @@ All 9 live in FA_2.LIB.
 ## Engine Notes
 
 The `_CTDo_*` and `_CTEval_*` condition/action dispatcher functions exist in
-**FA.EXE itself** at VA range **0x464C80–0x467110** — not only in the
+**the game executable itself** at VA range **0x464C80–0x467110** — not only in the
 companion `.BI` DLL files. This means the interpreter core is compiled into
 the main executable; the `.BI` DLLs supply per-object script data but delegate
-dispatch back to FA.EXE's built-in handlers.
+dispatch back to the game executable's built-in handlers.
 
 ## Related
 
