@@ -1,0 +1,255 @@
+va,kind,name,display,source,confidence,notes
+0x00405E30,func,_HUDInitMessages@0,HUDInitMessages,sms,confirmed,
+0x00405E50,func,?HUDDrawMessages@@YGXD@Z,HUDDrawMessages,sms,confirmed,
+0x00405F50,func,_HUDMessage@4,HUDMessage,sms,confirmed,
+0x00406010,func,_HUDReprintMessages@0,HUDReprintMessages,sms,confirmed,
+0x00406040,func,_HUDInit@0,HUDInit,sms,confirmed,
+0x00406920,func,_HUDRevive@0,HUDRevive,sms,confirmed,
+0x00406950,func,_HUDShutdown@0,HUDShutdown,sms,confirmed,
+0x00406A50,func,_HUDDraw@4,HUDDraw,sms,confirmed,
+0x00406A5E,func,,,waiver,confirmed,Ghidra mid-function split: body of _HUDDraw@4 (0x406A50) — the per-frame master HUD dispatcher
+0x004075B4,data,,,waiver,confirmed,switch/jump table inside the _HUDDraw body
+0x004075D0,func,HUDDrawTargetView,,re,inferred,"render a 3D shape into the HUD bitmap (_T_Make/_T_Render on _hudShape), flip and blit; target/padlock silhouette or combining-glass image"
+0x004075DE,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawTargetView (0x4075D0)
+0x004077B0,func,@HUDSetWarning@8,HUDSetWarning,sms,confirmed,
+0x004078B0,func,HUDDrawWarning,,re,confirmed,draw the blinking warning string set by HUDSetWarning (STALL / LOW FUEL / ...) while unexpired
+0x00407930,func,HUDDrawConfigFlags,,re,inferred,stacked gear/flaps/speedbrake/hook annunciators gated by entity config bits (DAT_0050cfef)
+0x00407A00,func,HUDDrawGLoadThrottle,,re,confirmed,"lower data block: G-load, throttle (THR AFT / THR %d%%) and thrust-vector line"
+0x00407B60,func,?HUDDrawHeading@@YIXXZ,HUDDrawHeading,sms,confirmed,
+0x00407EC0,func,?HUDSpeedToY@@YIJJ@Z,HUDSpeedToY,sms,confirmed,
+0x00407EE0,func,?HUDDrawSpeed@@YIXXZ,HUDDrawSpeed,sms,confirmed,
+0x00408400,func,?HUDAltToY@@YIJJ@Z,HUDAltToY,sms,confirmed,
+0x00408420,func,?HUDDrawAlt@@YIXXZ,HUDDrawAlt,sms,confirmed,
+0x00408930,func,@InitScreenMove@4,InitScreenMove,sms,confirmed,
+0x004089A0,func,HUDDrawPitchLadder,,re,confirmed,"climb/dive pitch ladder: rotate the pitch-bar table by roll, position vs waterline, dashed below / solid above horizon"
+0x00408C80,func,HUDDrawLeadCaret,,re,inferred,lag/lead aim caret at the padlock target using a time-lagged sample; SymFont glyph bucketed by range
+0x00408C8B,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawLeadCaret (0x408C80)
+0x00408E20,func,?HUDDrawHVel@@YIXXZ,HUDDrawHVel,sms,confirmed,
+0x00409030,func,?HUDDrawWeaponInfo@@YIXXZ,HUDDrawWeaponInfo,sms,confirmed,
+0x0040903B,func,,,waiver,confirmed,Ghidra mid-function split: body of ?HUDDrawWeaponInfo@@YIXXZ (0x409030) — weapon name/rounds/hit-chance
+0x004092D0,func,?HUDDrawRangeInfo@@YIXXZ,HUDDrawRangeInfo,sms,confirmed,
+0x00409760,func,HUDDrawBombFall,,re,confirmed,CCIP bomb fall line/pipper from the ballistic solution (PROJMakeBombEq/PROJBombPos)
+0x00409910,func,HUDDrawGunReticle,,re,inferred,gun aiming circle + bearing tick + vertical range tape with weapon/lock/target markers
+0x0040991B,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawGunReticle (0x409910)
+0x00409BF0,func,HUDDrawApproach,,re,confirmed,ILS/carrier glideslope box in landing submode (APApproachPath/CheckLandingParms)
+0x00409BFB,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawApproach (0x409BF0)
+0x00409F30,func,HUDDrawTargetBox,,re,confirmed,"target-designator box over the padlock target (PROJLock tone/lock, GRTo2d projection, IFF glyph)"
+0x0040A450,func,@HUDSquawk@0,HUDSquawk,sms,confirmed,
+0x0040A530,func,@HUDFindNearest@8,HUDFindNearest,sms,confirmed,
+0x0040A6C0,func,HUDDrawTargetLabels,,re,confirmed,name tags over visible targets; player's current target in a distinct color
+0x0040A7F0,func,HUDDrawContacts,,re,confirmed,"radar/IR sensor contacts (CPGetContact), SymFont glyph per contact, locked one highlighted"
+0x0040AAC0,func,@HUDBrightness@4,HUDBrightness,sms,confirmed,
+0x0040AB10,func,_HUDSetFont@0,HUDSetFont,sms,confirmed,
+0x0040AB30,func,_HUDSetSymFont@0,HUDSetSymFont,sms,confirmed,
+0x0040AB50,func,_HUDSetWinFont@0,HUDSetWinFont,sms,confirmed,
+0x0040AB70,func,@HUDSetDisrupt@4,HUDSetDisrupt,sms,confirmed,
+0x0040ABB0,func,?HUDDrawDisrupt@@YIXXZ,HUDDrawDisrupt,sms,confirmed,
+0x0040AC80,func,?HUDSetStability@@YIJXZ,HUDSetStability,sms,confirmed,
+0x0040ACE0,func,?HUDDrawStability@@YIXXZ,HUDDrawStability,sms,confirmed,
+0x0040AD40,func,@ComputeBombPosition@4,ComputeBombPosition,sms,confirmed,
+0x0040AD4B,func,,,waiver,confirmed,Ghidra mid-function split: body of @ComputeBombPosition@4 (0x40AD40)
+0x0040AE40,func,?HUDHasFlaps@@YIDXZ,HUDHasFlaps,sms,confirmed,
+0x004EB548,data,,,waiver,confirmed,DirectDraw clipper / shared view state (_mainV); renderer/camera pass
+0x004EB632,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB634,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB64A,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB654,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB662,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB6AE,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB6B2,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB6B8,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EB6BC,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass
+0x004EBD08,data,_hudTargetViewEnable,,re,inferred,enable flag guarding HUDDrawTargetView
+0x004EBD10,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBD14,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBD18,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBD30,data,_hudPitchBarTable,,re,confirmed,"pitch-ladder bar table, 37 records x 3 int16 {pitch,dY,dX}"
+0x004EBD32,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBD34,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBD38,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBD3A,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE14,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE20,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE28,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE40,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE4C,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE58,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE68,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE74,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE88,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBE98,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEA4,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEB9,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEC0,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEC8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBED0,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEDC,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEE8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBEFC,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF0C,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF24,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF3C,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF44,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF6C,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF78,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF84,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBF90,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFBC,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFCC,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFD8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFE0,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFE8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFF0,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EBFF8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC034,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC03C,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC048,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC054,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC060,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC078,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC088,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC094,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC0A4,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC0BC,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC0C8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC0D8,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC0EC,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC104,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC118,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC128,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC148,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC164,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x004EC17C,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata"
+0x0050D08A,data,,,waiver,confirmed,interior of _cg/_cgt current-object mirror; base named in objects.csv
+0x0050D0AA,data,,,waiver,confirmed,interior of _cg/_cgt current-object mirror; base named in objects.csv
+0x0050D30A,data,,,waiver,confirmed,interior of _cg/_cgt current-object mirror; base named in objects.csv
+0x0050D3AA,data,,,waiver,confirmed,interior of _cg/_cgt current-object mirror; base named in objects.csv
+0x0050D3AE,data,,,waiver,confirmed,interior of _cg/_cgt current-object mirror; base named in objects.csv
+0x00521054,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x00521058,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x0052105C,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x00521060,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x00521062,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x0052107C,data,_hudWarnExpireTick,,re,confirmed,warning-message expiry tick vs _currentTicks
+0x00521080,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x00521084,data,,,waiver,confirmed,HUD init/quick-creator state near the HUD layout block
+0x00521364,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521388,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052138A,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052138C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052138E,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521390,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521392,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521394,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213A5,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213A9,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213AD,data,_hudLineHeight,,re,confirmed,text row pitch between HUD print lines
+0x005213BE,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213C2,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213C4,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213C6,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213C8,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213CA,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213CC,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213CE,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213D0,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005213D2,data,_hudColor,,re,confirmed,current HUD draw colour (G_SetColor)
+0x005213D4,data,_hudBitmap,,re,confirmed,HUD offscreen bitmap handle (G_SetBitmap target / G_Blit source)
+0x005213D8,data,_hudShape,,re,inferred,3D shape record rendered into the HUD by HUDDrawTargetView
+0x005213DC,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521464,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521498,data,_hudTargetViewCount,,re,inferred,element count for the HUDDrawTargetView blit loop
+0x00521511,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521513,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521515,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521517,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052151D,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052151F,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521521,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521523,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052152D,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052152F,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521535,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521539,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521541,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521545,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521549,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052154D,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521551,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521555,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521556,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521557,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052155B,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052155F,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521563,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521564,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521565,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521569,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052156D,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521571,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521572,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521573,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521574,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521578,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052157C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521580,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521581,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521582,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521586,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052158A,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052158E,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052158F,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521590,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521591,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521593,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521595,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521597,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521599,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052159A,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052159B,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052159C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052159D,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052159E,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215A0,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215A1,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215A3,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215AD,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215C5,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215C7,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215C9,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215CB,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215CD,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215CF,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215D1,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005215D3,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521604,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052160B,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052160D,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052160F,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521611,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521614,data,_hudBlink1,,re,confirmed,~1Hz blink flag from _timerTicks
+0x00521618,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521620,data,_hudWarnText2,,re,inferred,secondary warning line buffer
+0x00521670,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x0052168C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521694,data,_hudMasterMode,,re,inferred,HUD weapon/master submode; ==2 selects landing (HUDDrawApproach)
+0x0052169C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005216A0,data,_hudBlink2,,re,confirmed,second blink-phase flag
+0x005216A4,data,_hudWarnText,,re,confirmed,warning-message string pointer set by HUDSetWarning
+0x00521980,data,_hudFpmXCached,,re,inferred,cached _hudFpmX restored when not in a view transition
+0x00521988,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521D78,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521D88,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521D8C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521D90,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521D94,data,_hudFpmX,,re,confirmed,flight-path-marker screen X; anchor for nearly all HUD symbology
+0x00521D96,data,_hudFpmY,,re,confirmed,flight-path-marker screen Y
+0x00521DA0,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521DA8,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521DAC,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521DAE,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521DB0,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x00521DB4,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base"
+0x005224CC,data,,,waiver,confirmed,interior of the _dam damage-state block; owned by collision (#222)
+0x005224EF,data,,,waiver,confirmed,interior of the _dam damage-state block; owned by collision (#222)
+0x0057CC72,data,,,waiver,confirmed,interior of _visibleTargetIds target list; owned by objects/sensor

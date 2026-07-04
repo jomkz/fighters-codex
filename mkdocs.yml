@@ -74,6 +74,7 @@ nav:
       - Game Loop: fa/game-loop.md
       - Renderer: fa/renderer.md
       - Objects: fa/objects.md
+      - HUD: fa/hud.md
       - Shape Selection: fa/shape-selection.md
       - Physics: fa/physics.md
       - Network: fa/network.md

@@ -12,7 +12,7 @@ Ghidra inventory by CI (`--check`).
 | Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 80/80 (100%) | 15 named · 113 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
 | Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 121/121 (100%) | 3 named · 149 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
 | Flight model / physics (FM/HARD) | `0x451480–0x454800` | 62/62 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
-| HUD / cockpit | `0x405E30–0x40AE50` | — | — | — | — | [#213](https://github.com/jomkz/fighters-codex/issues/213) | planned |
+| HUD / cockpit | `0x405E30–0x40AE50` | 49/49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
 | Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | — | — | — | — | [#215](https://github.com/jomkz/fighters-codex/issues/215) | planned |
 | AI interpreter (CT) | `0x464C80–0x467110` | — | — | — | — | [#216](https://github.com/jomkz/fighters-codex/issues/216) | planned |
 | Wingman / group AI (WNG/GRP) | `0x45E460–0x460FB0` | — | — | — | — | [#217](https://github.com/jomkz/fighters-codex/issues/217) | planned |
@@ -28,5 +28,5 @@ Ghidra inventory by CI (`--check`).
 | Video decode (FMV/Cobra) | `0x456300–0x45D090` | — | — | — | — | [#227](https://github.com/jomkz/fighters-codex/issues/227) | planned |
 | 3D render core / SH interpreter (GR) | `0x4C5D70–0x4D6C00` | — | — | — | — | [#228](https://github.com/jomkz/fighters-codex/issues/228) | planned |
 
-**Program totals:** 3/18 subsystems complete; 263/2878 in-scope functions named; 422/8282 referenced globals resolved.
+**Program totals:** 4/18 subsystems complete; 312/2878 in-scope functions named; 627/8282 referenced globals resolved.
 
