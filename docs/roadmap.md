@@ -89,9 +89,18 @@ symbols, struct maps, and an SVG flow diagram. It runs alongside Phase 5 as a
 per-subsystem lens over the same code (naming + documentation + diagrams), not a
 duplicate decode effort.
 
+**Status (v0.5.3): all 18 mapped subsystems are `complete`** — 1,659 in-scope functions
+named and every referenced global named or waived, each with a `docs/fa/` page and a
+theme-aware SVG. See the [reconstruction matrix](fa/reconstruction.md). A from-scratch
+[reproducibility audit](https://github.com/jomkz/fighters-codex/blob/main/db/reproducibility-audit.md)
+(rebuild the project from `db/`, diff against the committed inventory) confirms **zero name
+drift** and that `db/` fully drives the named project. That audit also surfaced the path to
+a true-100% binary: a 19th subsystem the map missed (the `.SEQ` cutscene player, [#240](https://github.com/jomkz/fighters-codex/issues/240))
+and a 0-diff inventory baseline ([#241](https://github.com/jomkz/fighters-codex/issues/241)).
+
 The program is driven by a machine-readable **symbol database** under
 [`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md): a manifest of
-the 18 subsystems, per-subsystem `symbols/*.csv` files (the canonical VA→name record,
+the subsystems, per-subsystem `symbols/*.csv` files (the canonical VA→name record,
 applied to the Ghidra project by `scripts/ghidra/ApplySymbols.java` and checked against
 the committed inventory export), and the generated
 [reconstruction matrix](fa/reconstruction.md). `check_status.py` enforces, per completed
