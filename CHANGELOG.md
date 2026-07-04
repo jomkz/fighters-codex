@@ -7,6 +7,29 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-07-04
+
+### Added
+- **re** **Datatype layer for the symbol database (#230).** `db/symbols` gains a `type`
+  column, `db/types/fa_types.h` holds the recovered struct layouts (scalar aliases, the
+  struct type-vocabulary, and a gcc-verified `CN_INFO`), and `scripts/ghidra/ApplyTypes.java`
+  applies both to the Ghidra project. 32 named globals typed by demangling their FA.SMS
+  names (`?curSeq@@3FA` → `s16`, `?seqGrList@@3PAUSEQGR@@A` → `SEQGR *`) — the enabling step
+  for generating C++ declarations for a clean-room reconstruction (`fc`)
+
+### Changed
+- **re** **symbols.md and globals.md are now generated from the symbol database (#229).**
+  Their per-subsystem sections come from `db/symbols/` between `<!-- BEGIN/END GENERATED -->`
+  markers, written by `--write-matrix` and currency-enforced by `--check` — the same
+  mechanism as the reconstruction matrix, so the human-readable registries can no longer
+  drift from the database
+
+### Notes
+- **Documentation + tooling release.** `fx_lib` and the `fx` CLI are byte-identical to
+  v0.5.4 — no fa-bridge submodule bump. Completes the two enhancement follow-ons under the
+  now-complete FA.EXE reconstruction (#209); the overlay-binary program and a `docs/fa`
+  open-items closure sweep continue under epic #247
+
 ## [0.5.4] - 2026-07-04
 
 ### Added
@@ -177,7 +200,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
 [0.5.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.4
 [0.5.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.3
 [0.5.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.2
