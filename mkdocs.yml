@@ -76,6 +76,7 @@ nav:
       - Objects: fa/objects.md
       - HUD: fa/hud.md
       - Shape Selection: fa/shape-selection.md
+      - AI Interpreter: fa/ai-interpreter.md
       - Physics: fa/physics.md
       - Network: fa/network.md
       - Globals: fa/globals.md

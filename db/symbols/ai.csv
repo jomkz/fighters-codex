@@ -1,0 +1,161 @@
+va,kind,name,display,source,confidence,notes
+0x00464C60,func,_CTInit@0,CTInit,sms,confirmed,
+0x00464C80,func,_CTShutdown@0,CTShutdown,sms,confirmed,
+0x00464C90,func,_CTRespondToCancelCmdBuf@0,CTRespondToCancelCmdBuf,sms,confirmed,
+0x00464CD0,func,CTLoadProgram,,re,confirmed,"load/switch the BI CODE resource by name (RMAccess 0x8000); set IP=base, CTResetPC"
+0x00464DB0,func,CTResetPC,,re,confirmed,reset IP=base and line=1; if arg!=0 also zero stack depth
+0x00464DE0,func,_CTVarDiff,CTVarDiff,sms,confirmed,
+0x00464E20,func,_CTEval_time,CTEval_time,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E30,func,_CTEval_do_nothing,CTEval_do_nothing,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E40,func,_CTEval_do_evade,CTEval_do_evade,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E50,func,_CTEval_do_attack,CTEval_do_attack,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E60,func,_CTEval_do_radar_launch,CTEval_do_radar_launch,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E70,func,_CTEval_do_ir_launch,CTEval_do_ir_launch,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E80,func,_CTEval_do_hit,CTEval_do_hit,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464E90,func,_CTEval_tgtattackingme,CTEval_tgtattackingme,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464ED0,func,_CTEval_tgtattackinganyone,CTEval_tgtattackinganyone,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464F10,func,_CTEval_tgt,CTEval_tgt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464F50,func,_CTEval_tgtclass,CTEval_tgtclass,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464F90,func,_CTEval_tgtisfighter,CTEval_tgtisfighter,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464FB0,func,_CTEval_tgtisbomber,CTEval_tgtisbomber,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464FD0,func,_CTEval_tgtisplane,CTEval_tgtisplane,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00464FF0,func,_CTEval_tgtisship,CTEval_tgtisship,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465000,func,_CTEval_tgtissam,CTEval_tgtissam,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465010,func,_CTEval_tgtisaaa,CTEval_tgtisaaa,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465020,func,_CTEval_tgthumancontrol,CTEval_tgthumancontrol,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465040,func,_CTEval_maxrange,CTEval_maxrange,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465060,func,_CTEval_maxrangediff,CTEval_maxrangediff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465080,func,_CTEval_bestrange,CTEval_bestrange,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465090,func,_CTEval_bestrangediff,CTEval_bestrangediff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004650A0,func,_CTEval_radar,CTEval_radar,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004650B0,func,_CTEval_tgtradar,CTEval_tgtradar,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004650E0,func,_CTEval_ir,CTEval_ir,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004650F0,func,_CTEval_tgtir,CTEval_tgtir,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465120,func,_CTEval_tgtoffbeam,CTEval_tgtoffbeam,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465150,func,_CTEval_tgtahead,CTEval_tgtahead,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465180,func,_CTEval_tgtfacing,CTEval_tgtfacing,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004651D0,func,_CTEval_hrzdisttotgt,CTEval_hrzdisttotgt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465220,func,_CTEval_disttotgt,CTEval_disttotgt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465240,func,_CTEval_htotgt,CTEval_htotgt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465290,func,_CTEval_ptotgt,CTEval_ptotgt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004652E0,func,_CTEval_tgtaspectangle,CTEval_tgtaspectangle,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465380,func,_CTEval_canclimb,CTEval_canclimb,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004653A0,func,_CTEval_speed,CTEval_speed,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004653B0,func,_CTEval_speeddiff,CTEval_speeddiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004653D0,func,_CTEval_minspeed,CTEval_minspeed,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004653E0,func,_CTEval_minspeeddiff,CTEval_minspeeddiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004653F0,func,_CTEval_cornerspeed,CTEval_cornerspeed,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465400,func,_CTEval_corner,CTEval_corner,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465410,func,_CTEval_cornerspeeddiff,CTEval_cornerspeeddiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465420,func,_CTEval_maxrudderh,CTEval_maxrudderh,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465430,func,_CTEval_maxrudderp,CTEval_maxrudderp,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465440,func,_CTEval_maxspeed,CTEval_maxspeed,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465450,func,_CTEval_maxspeeddiff,CTEval_maxspeeddiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465460,func,_CTEval_betterspeed,CTEval_betterspeed,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465480,func,_CTEval_twr,CTEval_twr,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465490,func,_CTEval_twrdiff,CTEval_twrdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004654A0,func,_CTEval_bettertwr,CTEval_bettertwr,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004654C0,func,_CTEval_turnrate,CTEval_turnrate,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004654D0,func,_CTEval_turnratediff,CTEval_turnratediff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004654F0,func,_CTEval_turnradius,CTEval_turnradius,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465500,func,_CTEval_turnradiusdiff,CTEval_turnradiusdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465510,func,_CTEval_alt,CTEval_alt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465540,func,_CTEval_altdiff,CTEval_altdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465560,func,_CTEval_maxalt,CTEval_maxalt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465590,func,_CTEval_maxaltdiff,CTEval_maxaltdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004655B0,func,_CTEval_minalt,CTEval_minalt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004655C0,func,_CTEval_minaltdiff,CTEval_minaltdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004655E0,func,_CTEval_waypointalt,CTEval_waypointalt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465640,func,_CTEval_disttowaypoint,CTEval_disttowaypoint,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004656B0,func,_CTEval_cloudalt,CTEval_cloudalt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004656C0,func,_CTEval_skill,CTEval_skill,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004656D0,func,_CTEval_h,CTEval_h,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465710,func,_CTEval_p,CTEval_p,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465730,func,_CTEval_b,CTEval_b,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465750,func,_CTEval_hdiff,CTEval_hdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465770,func,_CTEval_pdiff,CTEval_pdiff,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465790,func,_CTEval_any,CTEval_any,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004657A0,func,_CTEval_engagep,CTEval_engagep,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004658A0,func,_CTEval_wingapproach,CTEval_wingapproach,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465960,func,_CTEval_wingcombat,CTEval_wingcombat,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004659F0,func,_CTEval_wm_hspacing_is,CTEval_wm_hspacing_is,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465A00,func,_CTEval_wm_vspacing_is,CTEval_wm_vspacing_is,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465A10,func,_CTEval_wm_formation_is,CTEval_wm_formation_is,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465A20,func,_CTEval_wm_control_is,CTEval_wm_control_is,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465A30,func,_CTDo_exit,CTDo_exit,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465A50,func,_CTDo_restart,CTDo_restart,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465A70,func,_CTDo_maneuver,CTDo_maneuver,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465AD0,func,CTPop,,re,confirmed,eval-stack pop; underflow raises CTError(4)
+0x00465B00,func,_CTDo_print,CTDo_print,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465B60,func,_CTDo_printnum,CTDo_printnum,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465BC0,func,_CTDo_play,CTDo_play,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465C20,func,_CTDo_rudder,CTDo_rudder,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465C90,func,CTReadAngle,,re,confirmed,"pop then clamp [-90,90] x182 (binary degrees)"
+0x00465CC0,func,_CTDo_move,CTDo_move,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465D40,func,CTReadHeading,,re,confirmed,"pop then normalize [0,359] x182"
+0x00465DA0,func,CTReadAngle180,,re,confirmed,"pop then clamp [-180,180] x182; passthrough sentinel 0x7FFFFFFF"
+0x00465DE0,func,CTReadDuration,,re,confirmed,"pop then clamp [0,15]"
+0x00465E00,func,CTReadSpeed,,re,confirmed,"pop then clamp [COMinSpeed,COMaxSpeed] read live"
+0x00465E20,func,_CTDo_movetoalt,CTDo_movetoalt,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00465EA0,func,_CTDo_turn,CTDo_turn,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466052,func,_CTDo_yoyo,CTDo_yoyo,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004660C0,func,_CTDo_circle,CTDo_circle,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004661A0,func,_CTDo_homeangle,CTDo_homeangle,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466290,func,CTPush,,re,confirmed,eval-stack push; overflow (>0x13) raises CTError(5)
+0x004662C0,func,_CTDo_homepos,CTDo_homepos,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004663E0,func,_CTDo_uhomepos,CTDo_uhomepos,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004663F0,func,_CTDo_jink,CTDo_jink,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004664C0,func,_CTDo_invert,CTDo_invert,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004664F0,func,_CTDo_btoh,CTDo_btoh,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466540,func,_CTDo_splits,CTDo_splits,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466590,func,_CTDo_immelman,CTDo_immelman,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004665E0,func,_CTDo_wm_break,CTDo_wm_break,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466630,func,_CTDo_wm_approach,CTDo_wm_approach,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466700,func,_CTDo_wm_hspacing,CTDo_wm_hspacing,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466750,func,_CTDo_wm_vspacing,CTDo_wm_vspacing,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004667A0,func,_CTDo_wm_formation,CTDo_wm_formation,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x004667E0,func,_CTDo_wm_control,CTDo_wm_control,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x00466820,func,CTError,,re,confirmed,"map error code 1..0xc to a string and ErrorExit('Chuck Talk error: %s, line %u')"
+0x004668F0,func,CTRestoreState,,re,confirmed,restore _ctState from _ctStateCheckpoint (or zero it)
+0x00466920,func,CTSaveState,,re,confirmed,"copy _ctState to the heap checkpoint, then zero it"
+0x00466970,func,_CTExecProgram@4,CTExecProgram,sms,confirmed,
+0x00466A80,func,CTStep,,re,confirmed,fetch one opcode and dispatch via switch; CALL_BY_NAME(0x27) resolves via SMAddress then self-patches to CALL_DIRECT(0x26)
+0x004670E0,func,CTVarPtr,,re,confirmed,"return &_ctState[i] for script var index i in [0,4]; out-of-range raises CTError(3)"
+0x004F7004,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7024,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7034,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7044,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7064,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7074,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7084,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F7098,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F70B4,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F70CC,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F70DC,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F70EC,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F70FC,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x004F710C,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter
+0x0050CF83,data,_ctOverrideName,,re,inferred,alternate/override AI script-name buffer; selected by _ctState+0x1d
+0x0050CF84,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv
+0x0050CF86,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv
+0x0050CF90,data,_ctStateCheckpoint,,re,confirmed,heap copy of _ctState for preemptible save/restore
+0x0050D095,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv
+0x0050D2DD,data,,,waiver,confirmed,interior of _cgt type-record mirror read by the interpreter; base named in objects.csv
+0x0050D312,data,_ctProgramNamePtr,,re,inferred,pointer to the current AI script name; NULL gates the interpreter off
+0x00546BC0,data,_ctCompareActor,,re,inferred,actor slot used by CTVarDiff to evaluate attributes under the other object
+0x00546BC8,data,_ctState,,re,confirmed,0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority)
+0x00546BCC,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BD8,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BD9,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BE5,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BE6,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BEA,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BEE,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546BF0,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546C42,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here
+0x00546C48,data,_ctPrintBuf,,re,inferred,"HUD message text staged by CTDo_print/printnum, flushed on loop exit"
+0x00546C8C,data,_ctCheckPass,,re,inferred,"validate/dry-run flag: skips branches and side effects, enables the stack-imbalance check"
+0x00546C90,data,_ctActionTaken,,re,confirmed,set 1 when a CTDo action fires; returned by CTExecProgram
+0x00546C94,data,_ctActorObj,,re,confirmed,pointer to the current actor entity record
+0x00546C98,data,_ctHalt,,re,confirmed,halt flag; the CTExecProgram loop runs while *IP!='%' and !_ctHalt
+0x00546CA4,data,_ctExecuting,,re,confirmed,re-entry guard set across CTExecProgram
