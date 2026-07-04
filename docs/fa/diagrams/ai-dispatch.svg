@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Chuck Talk dispatch: CTExecProgram loops over opcodes via CTStep; CALL_BY_NAME resolves a handler through SMAddress and self-patches to CALL_DIRECT; CTEval_ readers and CTDo_ actions are the call targets.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .dmg{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:14px;} .sub{fill:#4a5a67;font-size:11px;}
+    .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;}
+    .lanetitle{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;}
+    .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .lane{fill:none;stroke:#9aa7b2;stroke-width:1.2;stroke-dasharray:6 5;} .edgelbl{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;}
+      .dec{fill:#322a1a;stroke:#d9b45f;} .dmg{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .lanetitle{fill:#c7d2da;} .edge{stroke:#8a99a5;} .lane{stroke:#55636e;} .edgelbl{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .dmg{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .lanetitle{fill:#c7d2da;}
+    :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .lane{stroke:#55636e;} :root[data-theme="dark"] .edgelbl{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .dmg{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .lanetitle{fill:#33424e;}
+    :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .lane{stroke:#9aa7b2;} :root[data-theme="light"] .edgelbl{fill:#4a5a67;}
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/>
+    </marker>
+  </defs>
+
+  <text x="410" y="24" text-anchor="middle" class="lanetitle">CHUCK TALK (CT) DISPATCH — one .BI script tick</text>
+
+  <rect class="run" x="280" y="42" width="260" height="54" rx="6"/>
+  <text x="410" y="64" text-anchor="middle" class="lbl mono">CTExecProgram</text>
+  <text x="410" y="82" text-anchor="middle" class="sub">loop while *IP != '%' &amp; !_ctHalt</text>
+
+  <rect class="run" x="300" y="138" width="220" height="52" rx="6"/>
+  <text x="410" y="160" text-anchor="middle" class="lbl mono">CTStep</text>
+  <text x="410" y="178" text-anchor="middle" class="sub">decode one opcode</text>
+
+  <!-- three dispatch cases -->
+  <rect class="box" x="40" y="232" width="200" height="52" rx="6"/>
+  <text x="140" y="254" text-anchor="middle" class="lbl mono">inline ops</text>
+  <text x="140" y="272" text-anchor="middle" class="sub">arith · stack · compare · branch</text>
+
+  <rect class="dec" x="290" y="232" width="240" height="52" rx="6"/>
+  <text x="410" y="254" text-anchor="middle" class="lbl mono">CALL_BY_NAME (0x27)</text>
+  <text x="410" y="272" text-anchor="middle" class="sub">first hit — resolve by name</text>
+
+  <rect class="dec" x="580" y="232" width="200" height="52" rx="6"/>
+  <text x="680" y="254" text-anchor="middle" class="lbl mono">CALL_DIRECT (0x26)</text>
+  <text x="680" y="272" text-anchor="middle" class="sub">later hits — cached ptr</text>
+
+  <!-- resolve + self-patch -->
+  <rect class="box" x="290" y="316" width="240" height="46" rx="6"/>
+  <text x="410" y="344" text-anchor="middle" class="lbl mono">_SMAddress lookup</text>
+  <rect class="dmg" x="290" y="384" width="240" height="46" rx="6"/>
+  <text x="410" y="405" text-anchor="middle" class="lbl mono">self-patch -> 0x26</text>
+  <text x="410" y="421" text-anchor="middle" class="sub">rewrite opcode + store code*</text>
+
+  <!-- handler -->
+  <rect class="box" x="580" y="330" width="200" height="66" rx="6"/>
+  <text x="680" y="353" text-anchor="middle" class="lbl mono">handler</text>
+  <text x="680" y="371" text-anchor="middle" class="sub">CTEval_* -> push value</text>
+  <text x="680" y="387" text-anchor="middle" class="sub">CTDo_* -> action</text>
+
+  <!-- edges -->
+  <path class="edge" d="M410,96 L410,135" marker-end="url(#arrow)"/>
+  <path class="edge" d="M340,190 L200,230" marker-end="url(#arrow)"/>
+  <path class="edge" d="M410,190 L410,230" marker-end="url(#arrow)"/>
+  <path class="edge" d="M480,190 L640,230" marker-end="url(#arrow)"/>
+  <path class="edge" d="M410,284 L410,314" marker-end="url(#arrow)"/>
+  <path class="edge" d="M410,362 L410,382" marker-end="url(#arrow)"/>
+  <path class="lane" d="M530,407 L620,407 L620,286" marker-end="url(#arrow)"/>
+  <text x="596" y="360" text-anchor="middle" class="edgelbl" transform="rotate(90 596 360)">next time</text>
+  <path class="edge" d="M530,338 L620,320 L660,286" marker-end="url(#arrow)"/>
+  <path class="edge" d="M680,284 L680,326" marker-end="url(#arrow)"/>
+  <path class="lane" d="M140,232 L140,120 L296,120" marker-end="url(#arrow)"/>
+  <text x="150" y="150" class="edgelbl">loop</text>
+</svg>

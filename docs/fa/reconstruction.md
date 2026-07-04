@@ -14,7 +14,7 @@ Ghidra inventory by CI (`--check`).
 | Flight model / physics (FM/HARD) | `0x451480–0x454800` | 62/62 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
 | HUD / cockpit | `0x405E30–0x40AE50` | 49/49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
 | Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | — | — | — | — | [#215](https://github.com/jomkz/fighters-codex/issues/215) | planned |
-| AI interpreter (CT) | `0x464C80–0x467110` | — | — | — | — | [#216](https://github.com/jomkz/fighters-codex/issues/216) | planned |
+| AI interpreter (CT) | `0x464C60–0x467110` | 122/122 (100%) | 11 named · 27 waived | [doc](ai-interpreter.md) | ✓ | [#216](https://github.com/jomkz/fighters-codex/issues/216) | complete |
 | Wingman / group AI (WNG/GRP) | `0x45E460–0x460FB0` | — | — | — | — | [#217](https://github.com/jomkz/fighters-codex/issues/217) | planned |
 | Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) | `0x421C70–0x42B800`<br>`0x467110–0x490000` | — | — | — | — | [#218](https://github.com/jomkz/fighters-codex/issues/218) | planned |
 | Network / multiplayer (NET/SER/UDP/MP) | `0x401000–0x405E30`<br>`0x45D090–0x45DBD0`<br>`0x46ADE0–0x473680` | — | — | — | — | [#219](https://github.com/jomkz/fighters-codex/issues/219) | planned |
@@ -28,5 +28,5 @@ Ghidra inventory by CI (`--check`).
 | Video decode (FMV/Cobra) | `0x456300–0x45D090` | — | — | — | — | [#227](https://github.com/jomkz/fighters-codex/issues/227) | planned |
 | 3D render core / SH interpreter (GR) | `0x4C5D70–0x4D6C00` | — | — | — | — | [#228](https://github.com/jomkz/fighters-codex/issues/228) | planned |
 
-**Program totals:** 4/18 subsystems complete; 312/2878 in-scope functions named; 627/8282 referenced globals resolved.
+**Program totals:** 5/18 subsystems complete; 434/2975 in-scope functions named; 665/8302 referenced globals resolved.
 

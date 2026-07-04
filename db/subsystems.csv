@@ -4,7 +4,7 @@ renderer,Renderer & rasterizer (GG/G_),FA.EXE,0x45DBD0-0x45E460;0x497330-0x49938
 flight-model,Flight model / physics (FM/HARD),FA.EXE,0x451480-0x454800,complete,docs/fa/physics.md,212
 hud,HUD / cockpit,FA.EXE,0x405E30-0x40AE50,complete,docs/fa/hud.md,213
 weapons,Weapons — projectiles / seekers / ECM (PROJ),FA.EXE,0x4C0690-0x4C5D30,planned,docs/fa/weapons.md,215
-ai,AI interpreter (CT),FA.EXE,0x464C80-0x467110,planned,docs/fa/ai-interpreter.md,216
+ai,AI interpreter (CT),FA.EXE,0x464C60-0x467110,complete,docs/fa/ai-interpreter.md,216
 wingman,Wingman / group AI (WNG/GRP),FA.EXE,0x45E460-0x460FB0,planned,docs/fa/wingman.md,217
 campaign,Campaign / mission / pilot (MAP/CAM/MC/MM/PLT),FA.EXE,0x421C70-0x42B800;0x467110-0x490000,planned,docs/fa/campaign.md,218
 network,Network / multiplayer (NET/SER/UDP/MP),FA.EXE,0x401000-0x405E30;0x45D090-0x45DBD0;0x46ADE0-0x473680,planned,docs/fa/network.md,219
