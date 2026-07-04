@@ -93,6 +93,8 @@ These are the most-accessed runtime state variables across the entire binary.
 
 _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/); each subsystem's detailed prose lives on its own page._
 
+**Binary: `FA.EXE`**
+
 ### HUD / cockpit
 
 [`hud.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/hud.csv) · [page](hud.md) — 16 named referenced globals
@@ -358,6 +360,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00591C30` | `__nhandle` | sms | MSVC CRT global (xrefs=18) |
 | `0x00592C40` | `__nstream` | sms | MSVC CRT global (xrefs=6) |
 | `0x00592C4C` | `__acmdln` | sms | MSVC CRT global (xrefs=5) |
+
+**Binary: `WAIL32.DLL`**
 
 <!-- END GENERATED: globals-registry -->
 

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="WAIL32.DLL: FA.EXE's sound subsystem calls the Miles AIL public API (digital samples + XMIDI sequences); AIL dispatches to third-party Miles internals over WINMM and DirectSound.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .ext{fill:#f0eef6;stroke:#6f5b9a;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;} .ext{fill:#282436;stroke:#9a86c7;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .ext{fill:#282436;stroke:#9a86c7;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .ext{fill:#f0eef6;stroke:#6f5b9a;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+  <text x="410" y="22" text-anchor="middle" class="title">WAIL32.DLL — Miles Sound System (AIL), boundary-documented</text>
+
+  <rect class="run" x="270" y="40" width="280" height="48" rx="6"/>
+  <text x="410" y="61" text-anchor="middle" class="lbl">FA.EXE sound subsystem (#220)</text>
+  <text x="410" y="78" text-anchor="middle" class="sub mono">AIL_startup · quick_load/play · sequence_status</text>
+
+  <path class="edge" d="M410,88 L410,120" marker-end="url(#arrow)"/>
+  <text x="470" y="108" class="el">imports (WINMM-style API)</text>
+
+  <rect class="setup" x="90" y="120" width="640" height="118" rx="8"/>
+  <text x="410" y="140" text-anchor="middle" class="title">AIL public API — 130 named exports</text>
+  <rect class="box" x="110" y="152" width="200" height="72" rx="6"/>
+  <text x="210" y="172" text-anchor="middle" class="lbl">Digital samples</text>
+  <text x="210" y="190" text-anchor="middle" class="sub mono">allocate/init/start/end_sample</text>
+  <text x="210" y="206" text-anchor="middle" class="sub mono">sample_volume · set_sample_pan</text>
+  <rect class="box" x="320" y="152" width="200" height="72" rx="6"/>
+  <text x="420" y="172" text-anchor="middle" class="lbl">XMIDI sequences</text>
+  <text x="420" y="190" text-anchor="middle" class="sub mono">init/start/stop_sequence</text>
+  <text x="420" y="206" text-anchor="middle" class="sub mono">register_sequence_callback</text>
+  <rect class="box" x="530" y="152" width="180" height="72" rx="6"/>
+  <text x="620" y="172" text-anchor="middle" class="lbl">Driver / quick_*</text>
+  <text x="620" y="190" text-anchor="middle" class="sub mono">quick_startup/load/play</text>
+  <text x="620" y="206" text-anchor="middle" class="sub mono">master_volume · prefs</text>
+
+  <path class="edge" d="M410,238 L410,272" marker-end="url(#arrow)"/>
+  <text x="470" y="258" class="el">dispatches to (not reversed)</text>
+
+  <rect class="dec" x="230" y="272" width="360" height="46" rx="6"/>
+  <text x="410" y="293" text-anchor="middle" class="lbl">Miles internals — 373 waived</text>
+  <text x="410" y="309" text-anchor="middle" class="sub">third-party mixer / XMIDI / CRT (boundary)</text>
+
+  <path class="edge" d="M410,318 L410,348" marker-end="url(#arrow)"/>
+  <rect class="ext" x="230" y="348" width="360" height="42" rx="6"/>
+  <text x="410" y="373" text-anchor="middle" class="lbl mono">WINMM (midiOut/waveOut) · DirectSound</text>
+</svg>
