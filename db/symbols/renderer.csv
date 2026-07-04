@@ -1,0 +1,274 @@
+va,kind,name,display,source,confidence,notes
+0x0045CA70,func,?DrawAcrossBankInter@@YAGFFFFKPAUGlobalData@@GPAE@Z,DrawAcrossBankInter,sms,confirmed,
+0x0045CDA0,func,?DrawAcrossBank@@YAGFFFFKPAUGlobalData@@G@Z,DrawAcrossBank,sms,confirmed,
+0x0045DBD0,func,@GG_InitMode@0,GG_InitMode,sms,confirmed,
+0x0045DCB0,func,@GG_ShutdownMode@0,GG_ShutdownMode,sms,confirmed,
+0x0045DCE0,func,@GG_GetMode@0,GG_GetMode,sms,confirmed,
+0x0045DE70,func,_GG_SetPalette@16,GG_SetPalette,sms,confirmed,
+0x0045DEC0,func,@GG_Shake@0,GG_Shake,sms,confirmed,
+0x0045DEDF,func,GG_FlushShaken,,re,inferred,present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake path of GG_Flush
+0x0045E0EF,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushShaken — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk
+0x0045E120,func,@GG_Flush@4,GG_Flush,sms,confirmed,
+0x0045E13F,func,GG_FlushDirtyLines,,re,inferred,present only the dirty scanlines tracked in _lineStats (partial blit); default path of GG_Flush
+0x0045E360,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushDirtyLines — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk
+0x0045E370,func,@flushLineStats@0,flushLineStats,sms,confirmed,
+0x0045E3A0,func,@GG_RestoreSurfaces@0,GG_RestoreSurfaces,sms,confirmed,
+0x0045E410,func,@GG_WaitRetrace@0,GG_WaitRetrace,sms,confirmed,
+0x0045E440,func,_GG_VideoModesAvailable@0,GG_VideoModesAvailable,sms,confirmed,
+0x00497330,func,@G_FlipY@4,G_FlipY,sms,confirmed,
+0x00497340,func,@G_Init@0,G_Init,sms,confirmed,
+0x004973F0,func,@G_Shutdown@0,G_Shutdown,sms,confirmed,
+0x00497490,func,_G_InitLineStats@0,G_InitLineStats,sms,confirmed,
+0x004974C0,func,_G_SetPalette@16,G_SetPalette,sms,confirmed,
+0x004974E0,func,@G_SetBitmap@4,G_SetBitmap,sms,confirmed,
+0x004974F0,func,@G_SetClipBox@16,G_SetClipBox,sms,confirmed,
+0x004975F0,func,@G_SetFullClipBox@0,G_SetFullClipBox,sms,confirmed,
+0x00497610,func,@G_PushClipBox@0,G_PushClipBox,sms,confirmed,
+0x00497650,func,@G_PopClipBox@0,G_PopClipBox,sms,confirmed,
+0x00497680,func,@G_SetColor@4,G_SetColor,sms,confirmed,
+0x004976D0,func,@G_Point@8,G_Point,sms,confirmed,
+0x00497700,func,@G_UPoint@8,G_UPoint,sms,confirmed,
+0x00497770,func,_G_UHline@12,G_UHline,sms,confirmed,
+0x00497A10,func,_G_Hline@12,G_Hline,sms,confirmed,
+0x00497A60,func,_G_UVline@12,G_UVline,sms,confirmed,
+0x00497B00,func,_G_Vline@12,G_Vline,sms,confirmed,
+0x00497B60,func,_G_URect@16,G_URect,sms,confirmed,
+0x00497BF0,func,_G_Rect@16,G_Rect,sms,confirmed,
+0x00497D10,func,_G_URect2@16,G_URect2,sms,confirmed,
+0x00497D40,func,_G_UBox@16,G_UBox,sms,confirmed,
+0x00497D90,func,_G_Box@16,G_Box,sms,confirmed,
+0x00497DE0,func,_G_ClipLine,G_ClipLine,sms,confirmed,
+0x00498160,func,_G_Line@16,G_Line,sms,confirmed,
+0x004981A0,func,_G_ULine@16,G_ULine,sms,confirmed,
+0x00498380,func,_G_PatLine@20,G_PatLine,sms,confirmed,
+0x004983E0,func,@G_DrawYLR@4,G_DrawYLR,sms,confirmed,
+0x00498410,func,@G_SetScaleMax@8,G_SetScaleMax,sms,confirmed,
+0x00498420,func,@G_Flush@4,G_Flush,sms,confirmed,
+0x00498430,func,@G_ReverseVertices@8,G_ReverseVertices,sms,confirmed,
+0x00498480,func,@G_Flip@8,G_Flip,sms,confirmed,
+0x004984F0,func,@G_UPolygonFlip@8,G_UPolygonFlip,sms,confirmed,
+0x00498570,func,@G_PointFlip@8,G_PointFlip,sms,confirmed,
+0x004985E0,func,_G_ULineFlip@16,G_ULineFlip,sms,confirmed,
+0x00498610,func,_G_LineFlip@16,G_LineFlip,sms,confirmed,
+0x00498640,func,_G_CircleFlip@16,G_CircleFlip,sms,confirmed,
+0x00498670,func,_G_URectFlip@16,G_URectFlip,sms,confirmed,
+0x004986A0,func,@G_SetFont@4,G_SetFont,sms,confirmed,
+0x004986B0,func,@G_Print@16,G_Print,sms,confirmed,
+0x004988F0,func,_G_PrintOutline@24,G_PrintOutline,sms,confirmed,
+0x00498980,func,_G_Printf,G_Printf,sms,confirmed,
+0x004989F0,func,@G_StringWidth@4,G_StringWidth,sms,confirmed,
+0x00498A20,func,@G_StringHeight@0,G_StringHeight,sms,confirmed,
+0x00498AF0,func,?code@@YAJJJ@Z,code,sms,confirmed,
+0x00498B90,func,?clipT@@YAJJPAUTVERTEX@@@Z,clipT,sms,confirmed,
+0x00498B9A,func,,,waiver,confirmed,Ghidra mid-function split of clipT (edge-clip helper at 0x498B90)
+0x00498CE0,func,?clipB@@YAJJPAUTVERTEX@@@Z,clipB,sms,confirmed,
+0x00498CEA,func,,,waiver,confirmed,Ghidra mid-function split of clipB (edge-clip helper at 0x498CE0)
+0x00498E30,func,?clipL@@YAJJPAUTVERTEX@@@Z,clipL,sms,confirmed,
+0x00498E3A,func,,,waiver,confirmed,Ghidra mid-function split of clipL (edge-clip helper at 0x498E30)
+0x00498F90,func,?clipR@@YAJJPAUTVERTEX@@@Z,clipR,sms,confirmed,
+0x00498F9A,func,,,waiver,confirmed,Ghidra mid-function split of clipR (edge-clip helper at 0x498F90)
+0x004990F0,func,_G_ClipDestPoly,G_ClipDestPoly,sms,confirmed,
+0x00499200,func,@G_SetHShake@8,G_SetHShake,sms,confirmed,
+0x00499240,func,@G_SetVShake@8,G_SetVShake,sms,confirmed,
+0x00499280,func,_G_Hline2@12,G_Hline2,sms,confirmed,
+0x004992B0,func,_G_UHline2@12,G_UHline2,sms,confirmed,
+0x004992E0,func,_G_Box2@16,G_Box2,sms,confirmed,
+0x00499330,func,_G_UBox2@16,G_UBox2,sms,confirmed,
+0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag
+0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,
+0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,
+0x004B7A80,func,_G_AllocSurfaceBitmap@8,G_AllocSurfaceBitmap,sms,confirmed,
+0x004B7BF0,func,@G_FreeSurfaceBitmap@4,G_FreeSurfaceBitmap,sms,confirmed,
+0x004B7C30,func,?RemapAdd@@YAXPAUT_HANDLE@@H@Z,RemapAdd,sms,confirmed,
+0x004B7C60,func,?RemapRelocate@@YAXPAUT_HANDLE@@F@Z,RemapRelocate,sms,confirmed,
+0x004B7CD0,func,_G_LoadBitmap@20,G_LoadBitmap,sms,confirmed,
+0x004B7E10,func,G_RemapBitmapToPalette,,re,confirmed,remap a bitmap's RGB triples to the nearest _curPalette index (sum-of-squared-channel-diff nearest-colour match)
+0x004B7F60,func,_G_BlitToBrush@16,G_BlitToBrush,sms,confirmed,
+0x004B7FA0,func,_G_BlitToScreen@16,G_BlitToScreen,sms,confirmed,
+0x004B7FE0,func,_G_Blit@36,G_Blit,sms,confirmed,
+0x004B8460,func,@G_ColorPrint@20,G_ColorPrint,sms,confirmed,
+0x004B85F0,func,@G_ColorStringWidth@8,G_ColorStringWidth,sms,confirmed,
+0x004B8620,func,@G_ColorStringHeight@4,G_ColorStringHeight,sms,confirmed,
+0x004B8630,func,@G_NextTab@4,G_NextTab,sms,confirmed,
+0x004B8670,func,@G_Scale@20,G_Scale,sms,confirmed,
+0x004B8710,func,@G_ScaleFlip@8,G_ScaleFlip,sms,confirmed,
+0x004B87F0,func,@G_AcTexture@12,G_AcTexture,sms,confirmed,
+0x004B8820,func,@G_TextureFlip@12,G_TextureFlip,sms,confirmed,
+0x004B8890,func,@G_PerspectiveFlip@12,G_PerspectiveFlip,sms,confirmed,
+0x004B8920,func,@G_HFlipBitmap@4,G_HFlipBitmap,sms,confirmed,
+0x004B8960,func,@G_DoubleBitmapY@4,G_DoubleBitmapY,sms,confirmed,
+0x004B8BF0,func,@G_DoubleBitmapX@4,G_DoubleBitmapX,sms,confirmed,
+0x004B8D90,func,?carefulDiv@@YANPAMMM@Z,carefulDiv,sms,confirmed,
+0x004B8E10,func,?NPM_clipTop@@YIJPAUFVERTEX@@0@Z,NPM_clipTop,sms,confirmed,
+0x004B8F70,func,?NPM_clipTri@@YAJPAUFVERTEX@@@Z,NPM_clipTri,sms,confirmed,
+0x004B90C0,func,?NPM_clipAndScan@@YIJPAUFVERTEX@@J@Z,NPM_clipAndScan,sms,confirmed,
+0x004B90D6,func,,,waiver,confirmed,Ghidra mid-function split of NPM_clipAndScan (0x4B90C0)
+0x004B9430,func,?NPM_FlatTri@@YIXPAUFVERTEX@@J@Z,NPM_FlatTri,sms,confirmed,
+0x004B9630,func,?NPM_TextureLinearTri@@YIXPAUT_BITMAP@@PAUFVERTEX@@J@Z,NPM_TextureLinearTri,sms,confirmed,
+0x004B9B90,func,?NPM_TexturePerspectiveTri@@YIXPAUT_BITMAP@@PAUFVERTEX@@J@Z,NPM_TexturePerspectiveTri,sms,confirmed,
+0x004BA400,func,@G_FloatFlatFlip@8,G_FloatFlatFlip,sms,confirmed,
+0x004BA500,func,@G_FloatTextureFlip@12,G_FloatTextureFlip,sms,confirmed,
+0x004BA660,func,@G_FloatPerspectiveFlip@12,G_FloatPerspectiveFlip,sms,confirmed,
+0x004C619C,func,_G_UPatLine@20,G_UPatLine,sms,confirmed,
+0x004C6334,func,_G_UBresenhamLine@16,G_UBresenhamLine,sms,confirmed,
+0x004C6ECC,func,@G_UPolygon@8,G_UPolygon,sms,confirmed,
+0x004C77D0,func,@G_SUPolygon@8,G_SUPolygon,sms,confirmed,
+0x004C8A38,func,@G_Polygon@8,G_Polygon,sms,confirmed,
+0x004C8A74,func,@G_SPolygon@8,G_SPolygon,sms,confirmed,
+0x004CA028,func,_G__AC_Texture,G__AC_Texture,sms,confirmed,
+0x004CAE38,func,_G__Texture,G__Texture,sms,confirmed,
+0x004CBD0B,func,_G__Perspective,G__Perspective,sms,confirmed,
+0x004CBE7C,func,_G__ScaleBitmap,G__ScaleBitmap,sms,confirmed,
+0x004CC8B0,func,@DrawYLRP@8,DrawYLRP,sms,confirmed,
+0x004EB6B4,data,,,waiver,confirmed,view/screen state named at the _mainV base; shared with hud/shell-ui
+0x004EB6BE,data,,,waiver,confirmed,view/screen state named at the _mainV base; shared with hud/shell-ui
+0x004EC320,data,,,waiver,confirmed,interior of the colour remap/darken tables (remapDarken320)
+0x004F6C40,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path)
+0x004F6C50,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path)
+0x004F6C60,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path)
+0x004F6C6C,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path)
+0x004F6C78,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path)
+0x004F6CA4,data,_blitDestX,,re,inferred,destination X of the present blit rect (GG_FlushShaken/FlushDirtyLines)
+0x004F6CA8,data,_blitDestY,,re,inferred,destination Y of the present blit rect; offset by screen shake
+0x004F6CAC,data,_shakeParity,,re,inferred,current screen-shake parity toggle (GG_FlushShaken)
+0x004F6CB0,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path)
+0x00501500,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox)
+0x00501528,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox)
+0x0050153C,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox)
+0x0050C992,data,,,waiver,confirmed,interior of _tabStops text tab-stop table
+0x0050C994,data,,,waiver,confirmed,interior of _tabStops text tab-stop table
+0x0050CE68,data,,,waiver,confirmed,Bresenham/pattern-line rasterizer state near reduceLookDown
+0x0050E14C,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E150,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E160,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E164,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E168,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E178,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E184,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E188,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E18C,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E190,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E198,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E19C,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1A0,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1A4,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1A8,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1AC,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1B4,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1BC,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1C4,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1CC,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1D8,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1EC,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x0050E1F0,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family)
+0x00510050,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x00510064,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x00510068,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x00510074,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x00510078,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x00510098,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x0051009C,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100A0,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100A4,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100A8,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100AC,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100B0,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100B4,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100C4,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005100DC,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops)
+0x005101A8,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101AC,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101B0,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101B4,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101C8,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101D0,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101DC,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101E8,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x005101EC,data,,,waiver,confirmed,"interior of the texture-mapper span working set (src/dest pointers, gradients)"
+0x0051021C,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510224,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510228,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051022C,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510238,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051023C,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510240,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510244,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510250,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510254,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510258,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051025C,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510260,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510264,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x00510268,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051027C,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051028C,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051028D,data,,,waiver,confirmed,interior of the G__ScaleBitmap span working set
+0x0051079C,data,,,waiver,confirmed,interior of _gbuffer rasterizer scratch buffer
+0x005107A0,data,,,waiver,confirmed,interior of _gbuffer rasterizer scratch buffer
+0x005107A4,data,,,waiver,confirmed,interior of _gbuffer rasterizer scratch buffer
+0x00517288,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer
+0x0051728A,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer
+0x0051728B,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer
+0x0051728C,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer
+0x00517290,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer
+0x00517294,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer
+0x00518678,data,,,waiver,confirmed,interior of normal_table lighting-normal table
+0x005568AC,data,,,waiver,confirmed,interior of _visibleLineStats per-scanline span table
+0x00556D64,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base
+0x00556D6A,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base
+0x00556D6C,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base
+0x00556D6E,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base
+0x00556D72,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base
+0x0055BBD8,data,,,waiver,confirmed,interior of _colorIndirections colour-remap table
+0x0055BC38,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base
+0x0055BC3C,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base
+0x0055BC4C,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base
+0x0055BC50,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base
+0x0055BDE2,data,,,waiver,confirmed,interior of _srcBitmap blit-source state
+0x0055BDE6,data,,,waiver,confirmed,interior of _srcBitmap blit-source state
+0x0055BE02,data,,,waiver,confirmed,interior of _srcBitmap blit-source state
+0x0055BF00,data,,,waiver,confirmed,edge-clip scan working state near _snowLow
+0x0055BF04,data,,,waiver,confirmed,edge-clip scan working state near _snowLow
+0x0055BF08,data,,,waiver,confirmed,edge-clip scan working state near _snowLow
+0x0055BF10,data,,,waiver,confirmed,edge-clip scan working state near _snowLow
+0x0055C066,data,,,waiver,confirmed,graphics-mode state named at the _grMode base
+0x0055C068,data,,,waiver,confirmed,graphics-mode state named at the _grMode base
+0x0055C06A,data,,,waiver,confirmed,graphics-mode state named at the _grMode base
+0x0055C06C,data,,,waiver,confirmed,graphics-mode state named at the _grMode base
+0x0055C074,data,,,waiver,confirmed,graphics-mode state named at the _grMode base
+0x00583DC4,data,,,waiver,confirmed,interior of _curPalette
+0x005843D8,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005843DC,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005843E0,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005843E4,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005843F4,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005843FC,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584400,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584410,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584418,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x0058441C,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x0058442C,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584764,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584768,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x0058476C,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584774,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005847AC,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584808,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584818,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584828,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x0058482C,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584834,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584838,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x00584898,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005848A0,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005848A2,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005848A4,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x005848A6,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables)
+0x0058B7C4,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B7CC,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B7D4,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B7D8,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B7DC,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B7E0,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B7E4,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
+0x0058B818,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array)
