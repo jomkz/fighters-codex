@@ -7,6 +7,16 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **re** **The FA.EXE reconstruction program (epic #209) is complete — all 18 engine subsystems are named and documented.** Building on the object/entity subsystem shipped in v0.5.2, this release lands the remaining 17: renderer & rasterizer (#211), flight model & stores (#212), HUD/cockpit (#213), the "Chuck Talk" AI interpreter (#216), weapons/projectiles/ECM (#215), collision (#222), sound/music (#220), wingman/group AI (#217), video decode / Cobra (#227), memory & resource managers (#223), terrain (#221), 3D render core & SH interpreter (#228), campaign/mission/pilot (#218), network/multiplayer (#219), input (#224), shell/menu/dialog UI (#225), and startup/CRT (#226). Every code-referenced function in each subsystem's ranges is named (1,659 in scope) and every referenced global is named or waived; each subsystem has a `docs/fa/` page with a DB-checked symbol table and a theme-aware SVG flow diagram, tracked in the generated [reconstruction matrix](https://github.com/jomkz/fighters-codex/blob/main/docs/fa/reconstruction.md)
+- **re** Reproducibility audit harness (`scripts/ghidra/rebuild_audit.sh` + `rebuild_diff.py`): rebuilds the Ghidra project from scratch (FA.EXE + FA.SMS + `db/symbols`) on a clean project and diffs the exported inventory against the committed one — turning "is this rebuildable from `db/`?" into a checked artifact. Verified 0 name drift across the program
+
+### Changed
+- **build** `ApplySymbols.java` hardened to survive symbol collisions (a name matching an existing FA.SMS label no longer aborts the run); `ExportInventory.java` takes an optional output dir; `check_status.py` coverage now recognises DB-wide global coverage (a shared struct interior is documented once); `DumpAllFunctions` decompiles in parallel and the headless heap default is raised to 8G
+
+### Notes
+- **Documentation + tooling release.** `fx_lib` and the `fx` CLI are byte-identical to v0.5.2 — no fa-bridge submodule bump. This closes milestone #8 (FA.EXE — Complete Reconstruction): the executable is fully named in the Ghidra project and documented subsystem-by-subsystem, rebuildable from the committed symbol database.
+
 ## [0.5.2] - 2026-07-03
 
 ### Added
