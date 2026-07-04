@@ -59,14 +59,29 @@ Full record: [`db/symbols/collision.csv`](https://github.com/jomkz/fighters-code
 
 ## Open Questions
 
-### 1. `_Collision` flag-word bit map
+### 1. `_Collision` flag-word bit map — resolved
 
-Confirmed: `0x1` terrain, `0x2` structure broad-phase, `0x4` single-target, `0x8`
-all-objects, `0x200` skip-self-predict. Bits `0x10`/`0x20`/`0x40`/`0x80` are object
-class/side filters inferred from `COLTestObj` but not yet tied to specific callers
-(`MoveObj`, PROJ). A caller sweep would pin them and confirm the COL→damage handoff.
+The flag word is `_Collision`'s 8th argument, stored in `_colFlags` (`0x00536B08`). The low
+bits were already confirmed; a read of `COLTestObj`'s bit tests pins the object class/side
+filters:
 
-*Status: open — re-static.*
+| Bit | Meaning (from `COLTestObj`) |
+|-----|-----------------------------|
+| `0x1` | test terrain |
+| `0x2` | structure broad-phase (also gated on the object's `+9` flags `& 0x408000`) |
+| `0x4` | single-target — only test `_colTargetId` |
+| `0x8` | all-objects sweep |
+| `0x10` | **ignore side** — bypass the same-side filter |
+| `0x20` | **same-side filter** — require `((target[+9] ^ _colSelfSide) & 0x80) == 0` (the `0x80` side bit) |
+| `0x40` | **class-4 filter** — gate objects whose class byte `== 0x04` |
+| `0x80` | **class-filter override** — bypass the per-object `[+?] & 0x40` exclusion in the sub-object loop |
+| `0x200` | skip-self-predict |
+
+Call sites confirm the low bits as literals (`0x201` = terrain + skip-self from the airframe
+move path; `0x4` = single-target from the projectile path); the `0x10`–`0x80` class/side bits
+are computed per caller (`MoveObj`, PROJ) and consumed by `COLTestObj` as above.
+
+*Status: resolved — re-static (0x10/0x20 = side filters, 0x40/0x80 = object-class filters).*
 
 ## Related
 

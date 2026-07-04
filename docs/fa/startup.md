@@ -38,7 +38,12 @@ Full record: [`db/symbols/startup.csv`](https://github.com/jomkz/fighters-codex/
 The 41 IAT import thunks are carried under startup; a later pass could reassign them to the
 subsystems that call them (DDRAW → renderer, serial → network, …) for purer attribution.
 
-*Status: open — re-static.*
+**Decision: keep them under startup.** Each thunk is a single shared IAT entry (one per
+imported symbol, called from many subsystems), and the owning module is already legible from
+the import DLL name, so per-caller reattribution would duplicate entries across files and churn
+the DB for no analytic gain. The IAT/CRT-bootstrap grouping stays.
+
+*Status: resolved — re-static (kept in startup by decision).*
 
 ## Related
 

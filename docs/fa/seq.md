@@ -66,14 +66,22 @@ Full record: [`db/symbols/seq.csv`](https://github.com/jomkz/fighters-codex/blob
 
 ## Open Questions
 
-### 1. Dispatch prefix and keyword strings
+### 1. Dispatch prefix and keyword strings — resolved
 
-The exact bytes of the dispatch prefix `DAT_004F4F5C` (inferred `"SEQ"`), the `sync`
-keyword at `DAT_004F4F64`, and the `SEQmusic` suffix at `DAT_004F4F6C` are not recoverable
-from the decompile dumps (binary-only rodata). They are waived in the symbol database with
-notes rather than named on a guess.
+A direct read of the `.data` bytes settles them:
 
-*Status: open — re-static (needs a bench read of the rodata bytes).*
+| VA | Bytes (C string) | Role |
+|----|------------------|------|
+| `0x004F4F5C` | `"_SEQ"` | the dispatch prefix — `SeqContinue` builds `"_SEQ" + cmd` and resolves it through `_SMAddress`, matching the `_SEQ<verb>` handler names |
+| `0x004F4F64` | `"sync"` | the `sync` script keyword |
+| `0x004F4F6C` | `".XMI"` | the music-file **extension**, not a `SEQmusic` suffix — the `_SEQmusic` op loads an `.XMI` sequence (`"all"` follows at `0x004F4F74`) |
+
+So the prefix is `"_SEQ"` (with the leading underscore, hence the `_SEQ<verb>` labels), and the
+third string is the `.XMI` extension the music op appends — the earlier `SEQmusic` guess was
+wrong. (Read via the PE `.data` section; these sit at file offset `0x…` in the `0x4EB000`-based
+`.data` block.)
+
+*Status: resolved — re-static (`"_SEQ"` / `"sync"` / `".XMI"`).*
 
 ### 2. `SEQUENCE` / `SEQGR` struct maps — resolved
 
