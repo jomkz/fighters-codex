@@ -83,6 +83,10 @@ nav:
       - Sound: fa/sound.md
       - WAIL32 (audio): fa/wail32.md
       - IP.EXE (support tool): fa/ip-tool.md
+      - Comms — Serial (CDRVDL32): fa/comms.md
+      - Comms — Modem (CDRVHF32): fa/comms-modem.md
+      - Comms — Transfer (CDRVXF32): fa/comms-transfer.md
+      - Comms — Terminal (COMMSC32): fa/comms-screen.md
       - Wingman: fa/wingman.md
       - Video Decode: fa/video-decode.md
       - Memory & Resource: fa/memory-resource.md

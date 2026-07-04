@@ -1873,6 +1873,184 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x20008A80` | `AIL_quick_status` | re | Miles/AIL public export |
 | `0x20008B90` | `AIL_quick_load_and_play` | re | Miles/AIL public export |
 
+**Binary: `CDRVDL32.DLL`**
+
+### CDRVDL32.DLL — Cdrv RS-232 serial comms driver
+
+[`comms-dl.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/comms-dl.csv) · [page](comms.md) — 26 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x100019D0` | `ser_rs232_block` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x100019E0` | `ser_rs232_cleanup` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001A90` | `ser_rs232_dtr_off` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001AE0` | `ser_rs232_dtr_on` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001B30` | `ser_rs232_flush` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001C50` | `ser_rs232_getbyte` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001D20` | `ser_rs232_getpacket` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001DF0` | `ser_rs232_getport` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001E50` | `ser_rs232_getregister` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001EB0` | `ser_rs232_getstatus` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001F00` | `ser_rs232_maxport` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001F10` | `ser_rs232_putbyte` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10001FE0` | `ser_rs232_putpacket` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x100020B0` | `ser_rs232_putregister` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x100020C0` | `ser_rs232_rts_off` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002110` | `ser_rs232_rts_on` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002160` | `ser_rs232_set_intfunc` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x100021D0` | `ser_rs232_misc_func` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002420` | `ser_rs232_setbauddiv` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002450` | `ser_rs232_setup` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002B10` | `ser_rs232_viewpacket` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002B80` | `ser_rs232_get_sdata` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002BC0` | `bio_set_timer` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002BE0` | `bio_get_elapsedtime` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002C10` | `bio_get_timer` | re | Cdrv comms driver (RS-232 serial) public export |
+| `0x10002C40` | `bio_set_timerresolution` | re | Cdrv comms driver (RS-232 serial) public export |
+
+**Binary: `CDRVHF32.DLL`**
+
+### CDRVHF32.DLL — Cdrv Hayes-modem comms driver
+
+[`comms-hf.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/comms-hf.csv) · [page](comms-modem.md) — 75 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x10001000` | `InitializePort` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100013D0` | `SetBaud` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001430` | `SetFlowControlCharacters` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100014B0` | `SetFlowControlThreshold` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001510` | `SetPortCharacteristics` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100015A0` | `UnInitializePort` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001640` | `SetSpecialBehavior` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001720` | `Dial` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001880` | `ModemAnswerMode` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001950` | `ModemAttention` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001A70` | `ModemConnect` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001C20` | `ModemGetCarrierSpeed` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001C50` | `ModemGetConnectSpeed` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001C80` | `ModemHangup` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001D30` | `ModemInit` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001DE0` | `ModemModifyString` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10001F40` | `ModemModifyValue` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002010` | `SendBreak` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002090` | `ModemWaitForCall` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002270` | `GetByte` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100022F0` | `GetPacket` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100023A0` | `GetString` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100024C0` | `PeekChar` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002540` | `PutByte` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100025C0` | `PutPacket` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100026B0` | `PutString` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100026E0` | `BytesInReceiveBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002700` | `BytesInTransmitBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002720` | `FlushReceiveBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002740` | `FlushTransmitBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002760` | `ReceiveBufferSize` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002780` | `SpaceInReceiveBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100027B0` | `SpaceInTransmitBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100027E0` | `SpaceTransmitBuffer` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100027F0` | `TransmitBufferSize` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002810` | `WaitForPeekTableFixed` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002970` | `WaitForPeekFixed` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100029C0` | `WaitForTableFixed` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002C10` | `WaitForFixed` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002C60` | `WaitForPeekTable` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002DB0` | `WaitForPeek` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10002DF0` | `WaitForTable` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003010` | `WaitFor` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003050` | `CdrvCrc16` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100030A0` | `CdrvCrc32` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100030E0` | `DtrOff` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003100` | `DtrOn` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003120` | `RtsOff` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003140` | `RtsOn` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003160` | `CdrvGetPcb` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003180` | `CdrvCheckTime` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003240` | `CdrvDelay` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003270` | `CdrvReturnStringAddress` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003280` | `CdrvSetTime` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100032D0` | `CdrvSetTimeoutFunction` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003300` | `CdrvSetTimerResolution` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003320` | `GetPaceTime` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003350` | `GetTimeout` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003380` | `SetPaceTime` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100033B0` | `SetTimeout` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100033E0` | `DataStreamGetPacket` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003430` | `DataStreamGetByte` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003480` | `SetDataStreamFunction` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100034B0` | `IsBreak` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100034F0` | `IsCarrierDetect` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003520` | `IsCts` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003550` | `IsDsr` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003580` | `IsFramingError` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100035C0` | `IsInputOverrun` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003600` | `IsOverrunError` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003640` | `IsParityError` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003680` | `IsPortAvailable` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100036A0` | `IsReceiveBufferEmpty` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x100036C0` | `IsRing` | re | Cdrv comms driver (Hayes modem) public export |
+| `0x10003700` | `IsTransmitBufferEmpty` | re | Cdrv comms driver (Hayes modem) public export |
+
+**Binary: `CDRVXF32.DLL`**
+
+### CDRVXF32.DLL — Cdrv file-transfer comms driver
+
+[`comms-xf.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/comms-xf.csv) · [page](comms-transfer.md) — 33 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x10002410` | `CdrvXferCreateDialog` | re | Cdrv comms driver (file transfer) public export |
+| `0x10002580` | `CdrvXferUpdateDialog` | re | Cdrv comms driver (file transfer) public export |
+| `0x100026A0` | `CdrvXferDestroyDialog` | re | Cdrv comms driver (file transfer) public export |
+| `0x10002A90` | `cdrvxfer_files` | re | Cdrv comms driver (file transfer) public export |
+| `0x10002AC0` | `cdrvxfer_sfiles` | re | Cdrv comms driver (file transfer) public export |
+| `0x10002AF0` | `FileTransferDialog` | re | Cdrv comms driver (file transfer) public export |
+| `0x10003080` | `cdrvxfer_gclose` | re | Cdrv comms driver (file transfer) public export |
+| `0x100033E0` | `cdrvxfer_getfiles` | re | Cdrv comms driver (file transfer) public export |
+| `0x10003410` | `cdrvxfer_sendfiles` | re | Cdrv comms driver (file transfer) public export |
+| `0x10003440` | `SetXferParameters` | re | Cdrv comms driver (file transfer) public export |
+| `0x10003500` | `TransferFiles` | re | Cdrv comms driver (file transfer) public export |
+| `0x100058B0` | `dos_close` | re | Cdrv comms driver (file transfer) public export |
+| `0x100058D0` | `dos_commit` | re | Cdrv comms driver (file transfer) public export |
+| `0x100058F0` | `dos_create` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005960` | `dos_createdir` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005980` | `dos_delete` | re | Cdrv comms driver (file transfer) public export |
+| `0x100059A0` | `dos_deletedir` | re | Cdrv comms driver (file transfer) public export |
+| `0x100059C0` | `dos_getdate` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005A10` | `dos_getdir` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005A80` | `dos_getfdate` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005AD0` | `dos_getfileattribute` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005B20` | `dos_getfiledatetime` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005BC0` | `dos_getfirstfile` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005C70` | `dos_getnextfile` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005DA0` | `dos_gettime` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005E00` | `dos_open` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005EA0` | `dos_read` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005EE0` | `dos_rename` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005F00` | `dos_seek` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005F40` | `dos_setfdate` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005F90` | `dos_setfileattribute` | re | Cdrv comms driver (file transfer) public export |
+| `0x10005FE0` | `dos_setfiledatetime` | re | Cdrv comms driver (file transfer) public export |
+| `0x10006070` | `dos_write` | re | Cdrv comms driver (file transfer) public export |
+
+**Binary: `COMMSC32.DLL`**
+
+### COMMSC32.DLL — Cdrv comms terminal-screen service
+
+[`comms-sc.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/comms-sc.csv) · [page](comms-screen.md) — 8 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x100011F0` | `commdrvw_char_screen` | re | Cdrv comms service (terminal screen) public export |
+| `0x10001990` | `CdrvScrDestroy` | re | Cdrv comms service (terminal screen) public export |
+| `0x100019B0` | `CdrvScrCreate` | re | Cdrv comms service (terminal screen) public export |
+| `0x100019D0` | `CdrvScrResize` | re | Cdrv comms service (terminal screen) public export |
+| `0x100019F0` | `CdrvScrWrite` | re | Cdrv comms service (terminal screen) public export |
+| `0x10001A10` | `CdrvScrKillFocus` | re | Cdrv comms service (terminal screen) public export |
+| `0x10001A30` | `CdrvScrSetFocus` | re | Cdrv comms service (terminal screen) public export |
+| `0x10001A50` | `CdrvScrPaint` | re | Cdrv comms service (terminal screen) public export |
+
 <!-- END GENERATED: symbol-registry -->
 
 ## Format Loaders and Parsers
