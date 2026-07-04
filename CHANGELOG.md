@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.6] - 2026-07-04
+
 ### Changed
 - **re** **docs/fa open-items closure — Phase 1 (#247).** Closed open questions across the
   subsystem docs against the now-complete FA.EXE reconstruction:
@@ -224,7 +226,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.6...HEAD
+[0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
 [0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
 [0.5.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.4
 [0.5.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.3
