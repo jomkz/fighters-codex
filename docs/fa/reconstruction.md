@@ -27,7 +27,7 @@ Ghidra inventory by CI (`--check`).
 | Startup / Phar Lap DOS extender / config | `0x4D715A–0x4E8A2F` | 338/338 (100%) | 47 named · 174 waived | [doc](startup.md) | ✓ | [#226](https://github.com/jomkz/fighters-codex/issues/226) | complete |
 | Video decode (FMV/Cobra) | `0x456300–0x45CDA0` | 23/23 (100%) | 0 named · 0 waived | [doc](video-decode.md) | ✓ | [#227](https://github.com/jomkz/fighters-codex/issues/227) | complete |
 | 3D render core / SH interpreter (GR) | `0x4CD588–0x4D6C00` | 163/163 (100%) | 0 named · 349 waived | [doc](render-core.md) | ✓ | [#228](https://github.com/jomkz/fighters-codex/issues/228) | complete |
-| .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 40/40 (100%) | 25 named · 40 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
+| .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 40/40 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
 
-**Program totals:** 19/19 subsystems complete; 1709/1709 in-scope functions named; 2479/4567 referenced globals resolved.
+**Program totals:** 19/19 subsystems complete; 1709/1709 in-scope functions named; 2476/4564 referenced globals resolved.
 

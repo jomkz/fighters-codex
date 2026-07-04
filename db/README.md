@@ -11,8 +11,9 @@ Program progress is tracked in the generated
 The schema is deliberately machine-first: downstream tooling — up to and including
 generation of C++ declarations (structs with asserted offsets, per-subsystem
 prototypes, dispatch tables) for a clean-room reimplementation — should be able to
-consume these files without parsing prose. Planned schema growth for that purpose
-(`type`/`signature` columns) is tracked as epic #209 follow-up work.
+consume these files without parsing prose. To that end each symbol row carries a
+`type` column, and recovered struct layouts live under [`db/types/`](types/README.md)
+(applied by `scripts/ghidra/apply_types.sh`).
 
 `tools/check_status.py --check` validates everything here (schemas, coverage, doc
 consistency) in CI and under `ctest -L docs`.
@@ -20,10 +21,12 @@ consistency) in CI and under `ctest -L docs`.
 ## Workflow
 
 ```
-edit db/symbols/<slug>.csv          # record/propose names (the DB is canonical)
-scripts/ghidra/apply_symbols.sh     # apply the DB to the Ghidra project
+edit db/symbols/<slug>.csv          # record/propose names + types (the DB is canonical)
+edit db/types/*.h                   # recovered struct layouts (optional)
+scripts/ghidra/apply_symbols.sh     # apply names to the Ghidra project
+scripts/ghidra/apply_types.sh       # apply db/types/ + the type column
 scripts/ghidra/export_inventory.sh  # re-export db/inventory/ ground truth
-python3 tools/check_status.py --write-matrix   # refresh docs/fa/reconstruction.md
+python3 tools/check_status.py --write-matrix   # refresh reconstruction.md + registries
 python3 tools/check_status.py --check
 ```
 
@@ -63,6 +66,7 @@ One row per symbol the subsystem claims. Columns:
 | `source` | `sms` (from FA.SMS), `re` (recovered by this program), `waiver` (deliberately not named — `notes` must say why) |
 | `confidence` | `confirmed` or `inferred` ([spec-authoring.md](../docs/spec-authoring.md) vocabulary) |
 | `notes` | short role note; **required** for waivers; carries attribution when a name was corroborated externally |
+| `type` | optional C type (data: `u32`, `SEQGR *`, `char[16]`; func: a signature override, usually empty). Must resolve to a builtin or a [`db/types/`](types/README.md) declaration; **must be empty on waivers**. See [db/types/README.md](types/README.md) |
 
 Naming convention for `re` rows: follow the subsystem's FA.SMS prefix and casing
 (`OBJ…`, `T_…`, `Setup…`) so decompiled code reads uniformly — provenance lives in

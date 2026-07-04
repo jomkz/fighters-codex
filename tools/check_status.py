@@ -966,7 +966,7 @@ def load_symbols(symbols_dir, manifest):
     slugs = {s["slug"] for s in manifest}
     global_va = {}
     global_name = {}
-    want = ["va", "kind", "name", "display", "source", "confidence", "notes"]
+    want = ["va", "kind", "name", "display", "source", "confidence", "notes", "type"]
     files = sorted(symbols_dir.glob("*.csv")) if symbols_dir.exists() else []
     for path in files:
         rel = _rel(path)
@@ -983,7 +983,7 @@ def load_symbols(symbols_dir, manifest):
             if len(r) != len(want):
                 errs.append("%s:%d: expected %d columns, got %d" % (rel, i, len(want), len(r)))
                 continue
-            va, kind, name, display, source, confidence, notes = r
+            va, kind, name, display, source, confidence, notes, ctype = r
             if not VA8_RE.match(va):
                 errs.append("%s:%d: bad va %r (want 0x00XXXXXX)" % (rel, i, va))
                 continue
@@ -1003,6 +1003,8 @@ def load_symbols(symbols_dir, manifest):
             if source == "waiver":
                 if not notes.strip():
                     errs.append("%s:%d: waiver requires a notes rationale" % (rel, i))
+                if ctype.strip():
+                    errs.append("%s:%d: waiver row must not carry a type" % (rel, i))
             else:
                 if not name.strip():
                     errs.append("%s:%d: non-waiver row needs a name" % (rel, i))
@@ -1011,7 +1013,8 @@ def load_symbols(symbols_dir, manifest):
                                 % (rel, i, name, global_name[name]))
                 global_name[name] = "%s:%d" % (rel, i)
             parsed.append({"va": n, "kind": kind, "name": name, "display": display,
-                           "source": source, "confidence": confidence, "notes": notes})
+                           "source": source, "confidence": confidence, "notes": notes,
+                           "type": ctype})
         by_slug[slug] = parsed
     return by_slug, errs
 
@@ -1618,10 +1621,10 @@ def _recon_self_test(expect, tmpdir=None):
         header = "slug,title,binary,ranges,status,doc,issue\n"
         write("subsystems.csv", header +
               "obj,Objects,FA.EXE,0x462600-0x462700,complete,db/README.md,210\n")
-        good_syms = ("va,kind,name,display,source,confidence,notes\n"
-                     "0x00462600,func,InitChain,,re,confirmed,head\n"
-                     "0x00462640,func,,,waiver,confirmed,thunk\n"
-                     "0x004EB600,data,_flag,,re,inferred,state\n")
+        good_syms = ("va,kind,name,display,source,confidence,notes,type\n"
+                     "0x00462600,func,InitChain,,re,confirmed,head,\n"
+                     "0x00462640,func,,,waiver,confirmed,thunk,\n"
+                     "0x004EB600,data,_flag,,re,inferred,state,int\n")
         write("symbols/obj.csv", good_syms)
         manifest, merrs = load_manifest(base / "subsystems.csv")
         expect(merrs == [], "recon: clean manifest")
@@ -1641,19 +1644,21 @@ def _recon_self_test(expect, tmpdir=None):
 
         # Symbol-schema failures
         for bad, label in [
-            ("0x462600,func,X,,re,confirmed,n\n", "short va"),
-            ("0x00462600,func,X,,re,confirmed,n\n0x00462500,func,Y,,re,confirmed,n\n",
+            ("0x462600,func,X,,re,confirmed,n,\n", "short va"),
+            ("0x00462600,func,X,,re,confirmed,n,\n0x00462500,func,Y,,re,confirmed,n,\n",
              "unsorted va"),
-            ("0x00462600,func,X,,re,confirmed,n\n0x00462600,data,Y,,re,confirmed,n\n",
+            ("0x00462600,func,X,,re,confirmed,n,\n0x00462600,data,Y,,re,confirmed,n,\n",
              "duplicate va"),
-            ("0x00462600,thing,X,,re,confirmed,n\n", "bad kind"),
-            ("0x00462600,func,X,,guess,confirmed,n\n", "bad source"),
-            ("0x00462600,func,X,,re,maybe,n\n", "bad confidence"),
-            ("0x00462600,data,,,waiver,confirmed,\n", "waiver without notes"),
-            ("0x00462600,func,,,re,confirmed,n\n", "non-waiver without name"),
+            ("0x00462600,thing,X,,re,confirmed,n,\n", "bad kind"),
+            ("0x00462600,func,X,,guess,confirmed,n,\n", "bad source"),
+            ("0x00462600,func,X,,re,maybe,n,\n", "bad confidence"),
+            ("0x00462600,data,,,waiver,confirmed,,\n", "waiver without notes"),
+            ("0x00462600,func,,,re,confirmed,n,\n", "non-waiver without name"),
+            ("0x00462600,data,,,waiver,confirmed,note,int\n", "waiver carrying a type"),
+            ("0x00462600,func,X,,re,confirmed,n\n", "wrong column count"),
         ]:
             wf = base / "symbols" / "m.csv"
-            wf.write_text("va,kind,name,display,source,confidence,notes\n" + bad,
+            wf.write_text("va,kind,name,display,source,confidence,notes,type\n" + bad,
                           encoding="utf-8")
             _, e = load_symbols(base / "symbols", manifest + [{"slug": "m"}])
             expect(e != [], "recon: symbols reject %s" % label)

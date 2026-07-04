@@ -1,106 +1,103 @@
-va,kind,name,display,source,confidence,notes
-0x00412C10,func,?PlaySeq@@YGDPADJJ@Z,PlaySeq,sms,confirmed,public entry - SeqStart then GetKey/SeqContinue/flush loop then SeqEnd; scattered out-of-range
-0x00444F70,func,_SeqInit,SeqInit,sms,confirmed,zero all seq lists/free-lists/arrays (seqList seqGrArray seqFontArray seqLabels seqText)
-0x00445060,func,_SeqStart,SeqStart,sms,confirmed,load .SEQ file - alloc a 0x38-byte SEQUENCE slot - build background bitmap - returns slot index
-0x00445330,func,SeqLoadScript,,re,confirmed,LoadFile the .SEQ then loop skip/expand/include lines into compiled command buffer; recursive for includes
-0x00445440,func,SeqSkipComments,,re,confirmed,scan script text past blank lines - ; and // comments - whitespace; return next content or NULL
-0x004454D0,func,?SeqSubstitute@@YAPADPAPADPAD0F@Z,SeqSubstitute,sms,confirmed,expand %N token into the N-th SeqStart argument string
-0x00445550,func,SeqExpandLine,,re,confirmed,tokenize one script line into seqLine - handle quotes and %-substitution; return next line
-0x004456B0,func,SeqParseInclude,,re,confirmed,detect an include directive and extract the quoted filename
-0x00445700,func,_SeqContinue,SeqContinue,sms,confirmed,main per-tick interpreter - fade + labels + fetch line + build SEQ+cmd name and SMAddress-dispatch the sub-op
-0x00445B40,func,SeqFetchLine,,re,confirmed,read next raw line from compiled buffer into seqLine - parse leading timecode (/abs +rel frame) into next-command tick
-0x00445CC0,func,SeqParseLabel,,re,confirmed,parse =label definition - copy name into a seqLabelList node and set seqLabelPtr
-0x00445D30,func,_SeqStop,SeqStop,sms,confirmed,tear down one sequence slot - free handle - return label/graphic nodes to free lists
-0x00445E30,func,_SeqEnd,SeqEnd,sms,confirmed,stop all active sequences - SoundAllOff - MusicOff - RMFreeAllId(4)
-0x00445E70,func,?SeqRect@@YGXJJJJ@Z,SeqRect,sms,confirmed,script op - set current sequence clip rectangle (x y w h); absent-from-inventory
-0x00445ED0,func,SeqRender,,re,confirmed,per-frame render - SetupBitmapAccess then expire nodes then walk seqGraphics ring drawing dirty SEQGR nodes under clip box
-0x00446090,func,SeqExpireGraphics,,re,confirmed,age SEQGR ring nodes vs timerTicks - set expired/dirty flags; return redraw-needed
-0x00446100,func,SeqNextOverlap,,re,confirmed,iterate SEQGR ring for next node whose rect overlaps a given rect
-0x00446170,func,SeqGraphicOrder,,re,inferred,SEQGR list walk via prev-links (+0x28) to a target node - returns its left-x
-0x004461A0,func,SeqDrawGraphic,,re,confirmed,draw one SEQGR node by type - 1 bitmap blit - 2 filled rect - 4 multiline color text; mark overlaps dirty
-0x00446330,func,SeqAccessResource,,re,confirmed,RMAccessHandle wrapper that credits the load time back into seqIgnoreTicks
-0x00446360,func,SeqRedrawRegion,,re,confirmed,redraw a SEQGR node clipped to a sub-rect (partial refresh of overlapped area)
-0x00446500,func,SeqNewGraphic,,re,confirmed,allocate a SEQGR node from seqGrList free-list - link into seqGraphics ring - set rect/type/expiry/name
-0x00446610,func,?SeqGRFind@@YAPAUSEQGR@@PAD@Z,SeqGRFind,sms,confirmed,find a SEQGR node by its name string; absent-from-inventory
-0x00446660,func,_SEQbitmap,SEQbitmap,sms,confirmed,script op - load and display a bitmap as a SEQGR node; absent-from-inventory
-0x00446710,func,SeqLinkLabel,,re,confirmed,link seqLabelPtr into the sequence label list and set the synch wait target when seqSynch
-0x004467B0,func,?SEQblock@@YAPAUSEQGR@@JJJJJJ@Z,SEQblock,sms,confirmed,script op - draw a filled colored block as a SEQGR type-2 node
-0x00446850,func,_SEQcall,SEQcall,sms,inferred,script op - chain/call another sequence or label; absent-from-inventory
-0x00446890,func,_SEQfadein,SEQfadein,sms,confirmed,script op - begin palette fade-in (save curPalette - set seqFading=1 fade start/len)
-0x00446910,func,_SEQfadeout,SEQfadeout,sms,confirmed,script op - begin palette fade-out (seqFading=-1)
-0x00446990,func,?SeqFadeOut@@YADGG@Z,SeqFadeOut,sms,confirmed,apply a fade-out step - blacken curPalette by elapsed/len ratio; return done
-0x004469F0,func,?SeqFadeIn@@YADGG@Z,SeqFadeIn,sms,confirmed,apply a fade-in step - un-blacken curPalette by ratio; return done
-0x00446A50,func,_SEQfont,SEQfont,sms,confirmed,script op - load a font into seqFontList; absent-from-inventory
-0x00446B70,func,_SEQmusic,SEQmusic,sms,confirmed,script op - start a music track via MusicOn(name priority)
-0x00446BE0,func,_SEQpalette,SEQpalette,sms,confirmed,script op - load/set the sequence palette; absent-from-inventory
-0x00446C60,func,_SEQrun,SEQrun,sms,inferred,script op - resume/run control (16-byte leaf); absent-from-inventory
-0x00446C70,func,_SEQsound,SEQsound,sms,confirmed,script op - play a sound effect; absent-from-inventory
-0x00446D30,func,_SEQsndoff,SEQsndoff,sms,confirmed,script op - stop sound(s); absent-from-inventory
-0x00446F10,func,_SEQtext,SEQtext,sms,confirmed,script op - build a wrapped-text SEQGR type-4 node using FormatText; absent-from-inventory
-0x00447090,func,_SEQvideo,SEQvideo,sms,confirmed,script op - play an AVI/video clip (drives videoState); absent-from-inventory
-0x00447120,func,_SEQwait,SEQwait,sms,confirmed,script op - wait/synchronize N ticks; absent-from-inventory
-0x004ECEC0,data,,,waiver,inferred,interior/constant referenced by SEQ - named at base or binary-only
-0x004F4EA0,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x004F4EB8,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x004F4EC0,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x004F4EEC,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x004F4F5C,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x004F4F64,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x004F4F65,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only)
-0x00540318,data,?seqFontArray@@3PAUSEQFNT@@A,seqFontArray,sms,confirmed,SEQFNT font pool base - init by SeqInit
-0x0054032A,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00540340,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x0054039C,data,?seqFonts@@3PAUSEQFNT@@A,seqFonts,sms,confirmed,active font list head
-0x005403A0,data,?seqFadeLen@@3GA,seqFadeLen,sms,confirmed,palette fade duration in fixed ticks
-0x005403A8,data,?seqGrArray@@3PAUSEQGR@@A,seqGrArray,sms,confirmed,SEQGR graphic-node pool base
-0x005403D4,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00540404,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00540768,data,?seqSynch@@3DA,seqSynch,sms,confirmed,synch flag - current command is a wait/synch point
-0x00540770,data,?curSeq@@3FA,curSeq,sms,confirmed,index of the sequence slot being ticked
-0x00540778,data,?seqTextArray@@3PAUSEQTXT@@A,seqTextArray,sms,confirmed,SEQTXT text-node pool base
-0x00540780,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x0054078C,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005407D8,data,?videoState@@3FA,videoState,sms,confirmed,video/AVI playback state gating SEQvideo (shared with video path)
-0x005407DC,data,?seqIgnoreTicks@@3KA,seqIgnoreTicks,sms,confirmed,accumulated load time subtracted from the sequence clock
-0x005407E0,data,?seqGrList@@3PAUSEQGR@@A,seqGrList,sms,confirmed,SEQGR free-list head
-0x005407E4,data,?seqFading@@3FA,seqFading,sms,confirmed,fade direction 0 none 1 in -1 out
-0x005407E8,data,?seqFlipState@@3GA,seqFlipState,sms,confirmed,page-flip/dirty state for the render pass
-0x005407EC,data,?seqSndPriority@@3GA,seqSndPriority,sms,confirmed,current sound priority
-0x005407F0,data,?seqLoadPtr@@3PADA,seqLoadPtr,sms,confirmed,write cursor into the compiled command buffer
-0x005407F4,data,?seqFadeStart@@3KA,seqFadeStart,sms,confirmed,tick at which the current fade started
-0x00541278,data,?seqSndLink@@3FA,seqSndLink,sms,confirmed,linked sound handle
-0x0054127C,data,?seqGraphics@@3PAUSEQGR@@A,seqGraphics,sms,confirmed,active SEQGR display-list ring head
-0x00541280,data,?seqFontList@@3PAUSEQFNT@@A,seqFontList,sms,confirmed,SEQFNT free-list head
-0x00541284,data,?seqLabelList@@3PAUSEQLBL@@A,seqLabelList,sms,confirmed,SEQLBL free-list head
-0x00541288,data,?lineChar@@3PADA,lineChar,sms,confirmed,interpreter cursor into the current command line
-0x00541290,data,?seqLine@@3PADA,seqLine,sms,confirmed,expanded current-line scratch buffer
-0x00541291,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541292,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541293,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541294,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541394,data,?seqLabelPtr@@3PAUSEQLBL@@A,seqLabelPtr,sms,confirmed,label node just defined by SeqParseLabel
-0x00541398,data,?seqTextList@@3PAUSEQTXT@@A,seqTextList,sms,confirmed,SEQTXT free-list head
-0x005413A0,data,?seqList@@3PAUSEQUENCE@@A,seqList,sms,confirmed,SEQUENCE slot array base - stride 0x38 - up to 3-4 slots
-0x005413D8,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413D9,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413DA,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413DB,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413DC,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413DE,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413E0,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413E2,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413E4,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413E8,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413EC,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413F0,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413F4,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005413F8,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541400,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541404,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541408,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x0054140C,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541410,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541450,data,?seqLabels@@3PAUSEQLBL@@A,seqLabels,sms,confirmed,SEQLBL node pool base
-0x0054145E,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x00541470,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base
-0x005840C4,data,,,waiver,inferred,interior/constant referenced by SEQ - named at base or binary-only
+va,kind,name,display,source,confidence,notes,type
+0x00412C10,func,?PlaySeq@@YGDPADJJ@Z,PlaySeq,sms,confirmed,public entry - SeqStart then GetKey/SeqContinue/flush loop then SeqEnd; scattered out-of-range,
+0x00444F70,func,_SeqInit,SeqInit,sms,confirmed,zero all seq lists/free-lists/arrays (seqList seqGrArray seqFontArray seqLabels seqText),
+0x00445060,func,_SeqStart,SeqStart,sms,confirmed,load .SEQ file - alloc a 0x38-byte SEQUENCE slot - build background bitmap - returns slot index,
+0x00445330,func,SeqLoadScript,,re,confirmed,LoadFile the .SEQ then loop skip/expand/include lines into compiled command buffer; recursive for includes,
+0x00445440,func,SeqSkipComments,,re,confirmed,scan script text past blank lines - ; and // comments - whitespace; return next content or NULL,
+0x004454D0,func,?SeqSubstitute@@YAPADPAPADPAD0F@Z,SeqSubstitute,sms,confirmed,expand %N token into the N-th SeqStart argument string,
+0x00445550,func,SeqExpandLine,,re,confirmed,tokenize one script line into seqLine - handle quotes and %-substitution; return next line,
+0x004456B0,func,SeqParseInclude,,re,confirmed,detect an include directive and extract the quoted filename,
+0x00445700,func,_SeqContinue,SeqContinue,sms,confirmed,main per-tick interpreter - fade + labels + fetch line + build SEQ+cmd name and SMAddress-dispatch the sub-op,
+0x00445B40,func,SeqFetchLine,,re,confirmed,read next raw line from compiled buffer into seqLine - parse leading timecode (/abs +rel frame) into next-command tick,
+0x00445CC0,func,SeqParseLabel,,re,confirmed,parse =label definition - copy name into a seqLabelList node and set seqLabelPtr,
+0x00445D30,func,_SeqStop,SeqStop,sms,confirmed,tear down one sequence slot - free handle - return label/graphic nodes to free lists,
+0x00445E30,func,_SeqEnd,SeqEnd,sms,confirmed,stop all active sequences - SoundAllOff - MusicOff - RMFreeAllId(4),
+0x00445E70,func,?SeqRect@@YGXJJJJ@Z,SeqRect,sms,confirmed,script op - set current sequence clip rectangle (x y w h); absent-from-inventory,
+0x00445ED0,func,SeqRender,,re,confirmed,per-frame render - SetupBitmapAccess then expire nodes then walk seqGraphics ring drawing dirty SEQGR nodes under clip box,
+0x00446090,func,SeqExpireGraphics,,re,confirmed,age SEQGR ring nodes vs timerTicks - set expired/dirty flags; return redraw-needed,
+0x00446100,func,SeqNextOverlap,,re,confirmed,iterate SEQGR ring for next node whose rect overlaps a given rect,
+0x00446170,func,SeqGraphicOrder,,re,inferred,SEQGR list walk via prev-links (+0x28) to a target node - returns its left-x,
+0x004461A0,func,SeqDrawGraphic,,re,confirmed,draw one SEQGR node by type - 1 bitmap blit - 2 filled rect - 4 multiline color text; mark overlaps dirty,
+0x00446330,func,SeqAccessResource,,re,confirmed,RMAccessHandle wrapper that credits the load time back into seqIgnoreTicks,
+0x00446360,func,SeqRedrawRegion,,re,confirmed,redraw a SEQGR node clipped to a sub-rect (partial refresh of overlapped area),
+0x00446500,func,SeqNewGraphic,,re,confirmed,allocate a SEQGR node from seqGrList free-list - link into seqGraphics ring - set rect/type/expiry/name,
+0x00446610,func,?SeqGRFind@@YAPAUSEQGR@@PAD@Z,SeqGRFind,sms,confirmed,find a SEQGR node by its name string; absent-from-inventory,
+0x00446660,func,_SEQbitmap,SEQbitmap,sms,confirmed,script op - load and display a bitmap as a SEQGR node; absent-from-inventory,
+0x00446710,func,SeqLinkLabel,,re,confirmed,link seqLabelPtr into the sequence label list and set the synch wait target when seqSynch,
+0x004467B0,func,?SEQblock@@YAPAUSEQGR@@JJJJJJ@Z,SEQblock,sms,confirmed,script op - draw a filled colored block as a SEQGR type-2 node,
+0x00446850,func,_SEQcall,SEQcall,sms,inferred,script op - chain/call another sequence or label; absent-from-inventory,
+0x00446890,func,_SEQfadein,SEQfadein,sms,confirmed,script op - begin palette fade-in (save curPalette - set seqFading=1 fade start/len),
+0x00446910,func,_SEQfadeout,SEQfadeout,sms,confirmed,script op - begin palette fade-out (seqFading=-1),
+0x00446990,func,?SeqFadeOut@@YADGG@Z,SeqFadeOut,sms,confirmed,apply a fade-out step - blacken curPalette by elapsed/len ratio; return done,
+0x004469F0,func,?SeqFadeIn@@YADGG@Z,SeqFadeIn,sms,confirmed,apply a fade-in step - un-blacken curPalette by ratio; return done,
+0x00446A50,func,_SEQfont,SEQfont,sms,confirmed,script op - load a font into seqFontList; absent-from-inventory,
+0x00446B70,func,_SEQmusic,SEQmusic,sms,confirmed,script op - start a music track via MusicOn(name priority),
+0x00446BE0,func,_SEQpalette,SEQpalette,sms,confirmed,script op - load/set the sequence palette; absent-from-inventory,
+0x00446C60,func,_SEQrun,SEQrun,sms,inferred,script op - resume/run control (16-byte leaf); absent-from-inventory,
+0x00446C70,func,_SEQsound,SEQsound,sms,confirmed,script op - play a sound effect; absent-from-inventory,
+0x00446D30,func,_SEQsndoff,SEQsndoff,sms,confirmed,script op - stop sound(s); absent-from-inventory,
+0x00446F10,func,_SEQtext,SEQtext,sms,confirmed,script op - build a wrapped-text SEQGR type-4 node using FormatText; absent-from-inventory,
+0x00447090,func,_SEQvideo,SEQvideo,sms,confirmed,script op - play an AVI/video clip (drives videoState); absent-from-inventory,
+0x00447120,func,_SEQwait,SEQwait,sms,confirmed,script op - wait/synchronize N ticks; absent-from-inventory,
+0x004ECEC0,data,,,waiver,inferred,interior/constant referenced by SEQ - named at base or binary-only,
+0x004F4EA0,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x004F4EB8,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x004F4EC0,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x004F4EEC,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x004F4F5C,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x004F4F64,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x004F4F65,data,,,waiver,inferred,rodata constant/dispatch string used by SeqContinue _SMAddress name-dispatch (binary-only),
+0x00540318,data,?seqFontArray@@3PAUSEQFNT@@A,seqFontArray,sms,confirmed,SEQFNT font pool base - init by SeqInit,SEQFNT *
+0x0054032A,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00540340,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x0054039C,data,?seqFonts@@3PAUSEQFNT@@A,seqFonts,sms,confirmed,active font list head,SEQFNT *
+0x005403A0,data,?seqFadeLen@@3GA,seqFadeLen,sms,confirmed,palette fade duration in fixed ticks,u16
+0x005403A8,data,?seqGrArray@@3PAUSEQGR@@A,seqGrArray,sms,confirmed,SEQGR graphic-node pool base,SEQGR *
+0x005403D4,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00540404,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00540768,data,?seqSynch@@3DA,seqSynch,sms,confirmed,synch flag - current command is a wait/synch point,char
+0x00540770,data,?curSeq@@3FA,curSeq,sms,confirmed,index of the sequence slot being ticked,s16
+0x00540778,data,?seqTextArray@@3PAUSEQTXT@@A,seqTextArray,sms,confirmed,SEQTXT text-node pool base,SEQTXT *
+0x00540780,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x0054078C,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005407D8,data,?videoState@@3FA,videoState,sms,confirmed,video/AVI playback state gating SEQvideo (shared with video path),s16
+0x005407DC,data,?seqIgnoreTicks@@3KA,seqIgnoreTicks,sms,confirmed,accumulated load time subtracted from the sequence clock,u32
+0x005407E0,data,?seqGrList@@3PAUSEQGR@@A,seqGrList,sms,confirmed,SEQGR free-list head,SEQGR *
+0x005407E4,data,?seqFading@@3FA,seqFading,sms,confirmed,fade direction 0 none 1 in -1 out,s16
+0x005407E8,data,?seqFlipState@@3GA,seqFlipState,sms,confirmed,page-flip/dirty state for the render pass,u16
+0x005407EC,data,?seqSndPriority@@3GA,seqSndPriority,sms,confirmed,current sound priority,u16
+0x005407F0,data,?seqLoadPtr@@3PADA,seqLoadPtr,sms,confirmed,write cursor into the compiled command buffer,char *
+0x005407F4,data,?seqFadeStart@@3KA,seqFadeStart,sms,confirmed,tick at which the current fade started,u32
+0x00541278,data,?seqSndLink@@3FA,seqSndLink,sms,confirmed,linked sound handle,s16
+0x0054127C,data,?seqGraphics@@3PAUSEQGR@@A,seqGraphics,sms,confirmed,active SEQGR display-list ring head,SEQGR *
+0x00541280,data,?seqFontList@@3PAUSEQFNT@@A,seqFontList,sms,confirmed,SEQFNT free-list head,SEQFNT *
+0x00541284,data,?seqLabelList@@3PAUSEQLBL@@A,seqLabelList,sms,confirmed,SEQLBL free-list head,SEQLBL *
+0x00541288,data,?lineChar@@3PADA,lineChar,sms,confirmed,interpreter cursor into the current command line,char *
+0x00541290,data,?seqLine@@3PADA,seqLine,sms,confirmed,expanded current-line scratch buffer,char *
+0x00541294,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541394,data,?seqLabelPtr@@3PAUSEQLBL@@A,seqLabelPtr,sms,confirmed,label node just defined by SeqParseLabel,SEQLBL *
+0x00541398,data,?seqTextList@@3PAUSEQTXT@@A,seqTextList,sms,confirmed,SEQTXT free-list head,SEQTXT *
+0x005413A0,data,?seqList@@3PAUSEQUENCE@@A,seqList,sms,confirmed,SEQUENCE slot array base - stride 0x38 - up to 3-4 slots,SEQUENCE *
+0x005413D8,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413D9,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413DA,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413DB,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413DC,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413DE,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413E0,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413E2,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413E4,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413E8,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413EC,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413F0,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413F4,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005413F8,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541400,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541404,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541408,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x0054140C,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541410,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541450,data,?seqLabels@@3PAUSEQLBL@@A,seqLabels,sms,confirmed,SEQLBL node pool base,SEQLBL *
+0x0054145E,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x00541470,data,,,waiver,inferred,interior byte of a named seq array/struct - named at base,
+0x005840C4,data,,,waiver,inferred,interior/constant referenced by SEQ - named at base or binary-only,

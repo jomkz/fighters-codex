@@ -1,82 +1,82 @@
-va,kind,name,display,source,confidence,notes
-0x00494270,func,@ReadSticksRaw@0,ReadSticksRaw,sms,confirmed,poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10)
-0x004942D0,func,_InitJoysticks@0,InitJoysticks,sms,confirmed,joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions
-0x00494430,func,?GetJoystickType@@YA?AW4JOYRESULT@@K@Z,GetJoystickType,sms,confirmed,JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4
-0x004944A0,func,?ReadDevice@@YA?AW4JOYRESULT@@K@Z,ReadDevice,sms,confirmed,read one device joyGetPos/joyGetPosEx into joystickInfo/Ex[id]; 50ms (0x32) rate-limit via joystickLastRead + timeGetTime
-0x00494580,func,?ScaleToRange@@YGJMMMMMMD@Z,ScaleToRange,sms,confirmed,clamp/scale a float axis into calibrated min/center/max range via __ftol; stack-arg helper for NormalizeStick
-0x004946B0,func,@NormalizeStick@16,NormalizeStick,sms,confirmed,normalize X/Y/throttle/rudder to ints; first-read center auto-capture (gotCenterX/Y/R -> DAT_00554ec4/ec8/ebc); calls ScaleToRange
-0x004946BB,func,,,waiver,confirmed,Ghidra split alt-entry into @NormalizeStick@16 (0x4946B0) — same body via register-entry; computed/mid-function split
-0x00494A50,func,@GetPOV@0,GetPOV,sms,confirmed,read POV hat; map centidegrees/100 to keypad scancode 0x48/0x4D/0x50/0x4B (U/R/D/L); 0xFFFF=centered->0
-0x00494AE0,func,@ASynchJoystick@0,ASynchJoystick,sms,confirmed,poll buttons via ReadJoystickButtons; edge-detect new presses into buttonPresses[] per JOYCAPS button count
-0x00494B50,func,@ReadJoystickButtons@0,ReadJoystickButtons,sms,confirmed,return button mask from joystickInfo+0x14 (legacy) or joystickInfoEx+0x28 (extended)
-0x00499CF0,func,_MOUSESetLimits@8,MOUSESetLimits,sms,confirmed,set cursor clamp limits (mouse-ring limit fields DAT_00560f38/f3a)
-0x00499D10,func,_MOUSESetPos@8,MOUSESetPos,sms,confirmed,center mousePos to screen/2 (DAT_0055c06a/c06c halved)
-0x00499D40,func,_MOUSECenter,MOUSECenter,sms,inferred,FA.SMS symbol at 0x499d40 not split by current Ghidra inventory; ~16-byte helper between MOUSESetPos and MOUSERead — candidate to define
-0x00499D50,func,_MOUSERead@8,MOUSERead,sms,confirmed,dequeue next event from 16-entry ring (critical-section); returns queued pos+buttons or current mousePos/mouseButtons if empty
-0x00499DF0,func,_MOUSEInit@0,MOUSEInit,sms,confirmed,InitializeCriticalSection(mouse_critical_section); reset ring indices; set initialized flag DAT_00501598
-0x00499E30,func,_MOUSEShutdown,MOUSEShutdown,sms,confirmed,DeleteCriticalSection(mouse_critical_section) if initialized
-0x00499E50,func,?MOUSEEvent@@YIXIIJ@Z,MOUSEEvent,sms,confirmed,WndProc mouse handler WM_MOUSEMOVE/L/R DOWN+UP (0x200/201/202/204/205); edge-count mouseButtonPresses & DAT_00560ef1; push to ring; update mousePos
-0x00499E5B,func,,,waiver,confirmed,Ghidra split alt-entry into ?MOUSEEvent@@YIXIIJ@Z (0x499E50) — same switch body via register-entry
-0x0049B1D0,func,?RunSerialConfigurationScreen@@YGXXZ,RunSerialConfigurationScreen,sms,confirmed,large device-config dialog for direct-serial link (baud/port/etc.); ~5.4KB UI — could alternatively be shell-ui
-0x0049C780,func,?RunModemConfigurationScreen@@YGXXZ,RunModemConfigurationScreen,sms,confirmed,large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui
-0x004EBCE4,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem
-0x004F8448,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem
-0x004FFE9C,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem
-0x004FFF20,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem
-0x004FFFD8,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem
-0x00501598,data,,,waiver,confirmed,interior of / adjacent to _vHzMod; named at its base or owned by that subsystem
-0x00501730,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501750,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501778,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050178C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005017A0,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005017A8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005017D4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005018A4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501904,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501940,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050196C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501974,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050197C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050198C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501994,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0050199C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005019A4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005019AC,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005019B4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005019EC,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005019F4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005019FC,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501A04,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501A0C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501F4C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501F6C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501F84,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501FB4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501FC0,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00501FC8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502024,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502040,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x005020E0,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502128,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502130,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502138,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502144,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502150,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502158,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502160,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x00502168,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
-0x0054B824,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem
-0x00554ABC,data,,,waiver,confirmed,interior of / adjacent to _buttonPresses; named at its base or owned by that subsystem
-0x00554EBC,data,,,waiver,confirmed,interior of / adjacent to ?joystickXDevice@@3KA; named at its base or owned by that subsystem
-0x00554EC4,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem
-0x00554EC8,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem
-0x00554EF4,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem
-0x00554EF8,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem
-0x00554F30,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem
-0x00555088,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem
-0x0055508C,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem
-0x005550C4,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem
-0x00560EE8,data,,,waiver,confirmed,interior of / adjacent to ?mouse_critical_section@@3U_RTL_CRITICAL_SECTION@@A; named at its base or owned by that subsystem
-0x00560EF1,data,,,waiver,confirmed,interior of / adjacent to _mouseButtonPresses; named at its base or owned by that subsystem
-0x00560F3C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtonPresses; named at its base or owned by that subsystem
+va,kind,name,display,source,confidence,notes,type
+0x00494270,func,@ReadSticksRaw@0,ReadSticksRaw,sms,confirmed,poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10),
+0x004942D0,func,_InitJoysticks@0,InitJoysticks,sms,confirmed,joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions,
+0x00494430,func,?GetJoystickType@@YA?AW4JOYRESULT@@K@Z,GetJoystickType,sms,confirmed,JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4,
+0x004944A0,func,?ReadDevice@@YA?AW4JOYRESULT@@K@Z,ReadDevice,sms,confirmed,read one device joyGetPos/joyGetPosEx into joystickInfo/Ex[id]; 50ms (0x32) rate-limit via joystickLastRead + timeGetTime,
+0x00494580,func,?ScaleToRange@@YGJMMMMMMD@Z,ScaleToRange,sms,confirmed,clamp/scale a float axis into calibrated min/center/max range via __ftol; stack-arg helper for NormalizeStick,
+0x004946B0,func,@NormalizeStick@16,NormalizeStick,sms,confirmed,normalize X/Y/throttle/rudder to ints; first-read center auto-capture (gotCenterX/Y/R -> DAT_00554ec4/ec8/ebc); calls ScaleToRange,
+0x004946BB,func,,,waiver,confirmed,Ghidra split alt-entry into @NormalizeStick@16 (0x4946B0) — same body via register-entry; computed/mid-function split,
+0x00494A50,func,@GetPOV@0,GetPOV,sms,confirmed,read POV hat; map centidegrees/100 to keypad scancode 0x48/0x4D/0x50/0x4B (U/R/D/L); 0xFFFF=centered->0,
+0x00494AE0,func,@ASynchJoystick@0,ASynchJoystick,sms,confirmed,poll buttons via ReadJoystickButtons; edge-detect new presses into buttonPresses[] per JOYCAPS button count,
+0x00494B50,func,@ReadJoystickButtons@0,ReadJoystickButtons,sms,confirmed,return button mask from joystickInfo+0x14 (legacy) or joystickInfoEx+0x28 (extended),
+0x00499CF0,func,_MOUSESetLimits@8,MOUSESetLimits,sms,confirmed,set cursor clamp limits (mouse-ring limit fields DAT_00560f38/f3a),
+0x00499D10,func,_MOUSESetPos@8,MOUSESetPos,sms,confirmed,center mousePos to screen/2 (DAT_0055c06a/c06c halved),
+0x00499D40,func,_MOUSECenter,MOUSECenter,sms,inferred,FA.SMS symbol at 0x499d40 not split by current Ghidra inventory; ~16-byte helper between MOUSESetPos and MOUSERead — candidate to define,
+0x00499D50,func,_MOUSERead@8,MOUSERead,sms,confirmed,dequeue next event from 16-entry ring (critical-section); returns queued pos+buttons or current mousePos/mouseButtons if empty,
+0x00499DF0,func,_MOUSEInit@0,MOUSEInit,sms,confirmed,InitializeCriticalSection(mouse_critical_section); reset ring indices; set initialized flag DAT_00501598,
+0x00499E30,func,_MOUSEShutdown,MOUSEShutdown,sms,confirmed,DeleteCriticalSection(mouse_critical_section) if initialized,
+0x00499E50,func,?MOUSEEvent@@YIXIIJ@Z,MOUSEEvent,sms,confirmed,WndProc mouse handler WM_MOUSEMOVE/L/R DOWN+UP (0x200/201/202/204/205); edge-count mouseButtonPresses & DAT_00560ef1; push to ring; update mousePos,
+0x00499E5B,func,,,waiver,confirmed,Ghidra split alt-entry into ?MOUSEEvent@@YIXIIJ@Z (0x499E50) — same switch body via register-entry,
+0x0049B1D0,func,?RunSerialConfigurationScreen@@YGXXZ,RunSerialConfigurationScreen,sms,confirmed,large device-config dialog for direct-serial link (baud/port/etc.); ~5.4KB UI — could alternatively be shell-ui,
+0x0049C780,func,?RunModemConfigurationScreen@@YGXXZ,RunModemConfigurationScreen,sms,confirmed,large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui,
+0x004EBCE4,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
+0x004F8448,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
+0x004FFE9C,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
+0x004FFF20,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
+0x004FFFD8,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
+0x00501598,data,,,waiver,confirmed,interior of / adjacent to _vHzMod; named at its base or owned by that subsystem,
+0x00501730,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501750,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501778,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050178C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005017A0,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005017A8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005017D4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005018A4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501904,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501940,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050196C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501974,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050197C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050198C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501994,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050199C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005019A4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005019AC,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005019B4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005019EC,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005019F4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005019FC,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501A04,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501A0C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501F4C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501F6C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501F84,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501FB4,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501FC0,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00501FC8,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502024,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502040,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005020E0,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502128,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502130,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502138,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502144,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502150,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502158,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502160,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x00502168,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0054B824,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem,
+0x00554ABC,data,,,waiver,confirmed,interior of / adjacent to _buttonPresses; named at its base or owned by that subsystem,
+0x00554EBC,data,,,waiver,confirmed,interior of / adjacent to ?joystickXDevice@@3KA; named at its base or owned by that subsystem,
+0x00554EC4,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem,
+0x00554EC8,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem,
+0x00554EF4,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem,
+0x00554EF8,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem,
+0x00554F30,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem,
+0x00555088,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem,
+0x0055508C,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem,
+0x005550C4,data,,,waiver,confirmed,interior of / adjacent to ?joystickCaps@@3PAUtagJOYCAPSA@@A; named at its base or owned by that subsystem,
+0x00560EE8,data,,,waiver,confirmed,interior of / adjacent to ?mouse_critical_section@@3U_RTL_CRITICAL_SECTION@@A; named at its base or owned by that subsystem,
+0x00560EF1,data,,,waiver,confirmed,interior of / adjacent to _mouseButtonPresses; named at its base or owned by that subsystem,
+0x00560F3C,data,,,waiver,confirmed,interior of / adjacent to _mouseButtonPresses; named at its base or owned by that subsystem,

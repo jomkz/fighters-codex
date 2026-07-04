@@ -6925,9 +6925,6 @@ va,name,xref_count,subsystems
 0x00541284,?seqLabelList@@3PAUSEQLBL@@A,9,seq
 0x00541288,?lineChar@@3PADA,4,seq
 0x00541290,?seqLine@@3PADA,11,seq
-0x00541291,<unnamed>,10,seq
-0x00541292,<unnamed>,11,seq
-0x00541293,<unnamed>,7,seq
 0x00541294,<unnamed>,7,seq
 0x00541394,?seqLabelPtr@@3PAUSEQLBL@@A,5,seq
 0x00541398,?seqTextList@@3PAUSEQTXT@@A,5,seq
