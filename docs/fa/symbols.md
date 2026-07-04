@@ -816,9 +816,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DCE0` | `GG_GetMode` | sms |  |
 | `0x0045DE70` | `GG_SetPalette` | sms |  |
 | `0x0045DEC0` | `GG_Shake` | sms |  |
-| `0x0045DEDF` | `GG_FlushShaken` | re | present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake path of GG_Flush |
+| `0x0045DEDF` | `GG_FlushShaken` | re | present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path) |
 | `0x0045E120` | `GG_Flush` | sms |  |
-| `0x0045E13F` | `GG_FlushDirtyLines` | re | present only the dirty scanlines tracked in _lineStats (partial blit); default path of GG_Flush |
+| `0x0045E13F` | `GG_FlushDirtyLines` | re | the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable |
 | `0x0045E370` | `flushLineStats` | sms |  |
 | `0x0045E3A0` | `GG_RestoreSurfaces` | sms |  |
 | `0x0045E410` | `GG_WaitRetrace` | sms |  |

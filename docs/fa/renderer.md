@@ -489,9 +489,10 @@ predicate is `_forceRedraw`/resolution *inside* `GG_Flush`, not a dispatch betwe
 `GG_FlushDirtyLines` (`0x45E13F`) is a Ghidra **mid-function split** of `GG_Flush`'s own body
 (it falls inside the `0x45E120`–`0x45E356` extent), not a separate function; `GG_FlushShaken`
 (`0x45DEDF`) is a distinct 518-byte variant with **no direct callers** in the image (reached, if
-at all, only via a shake path outside the analyzed call graph). The `GG_FlushDirtyLines` split
-and the uncalled `GG_FlushShaken` are queued for a DB cleanup in
-[#262](https://github.com/jomkz/fighters-codex/issues/262).
+at all, only via a shake path outside the analyzed call graph). Both facts — the
+`GG_FlushDirtyLines` fall-through split and the uncalled `GG_FlushShaken` — are now recorded in
+the [symbol-DB notes](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv)
+([#262](https://github.com/jomkz/fighters-codex/issues/262)).
 
 *Status: resolved — re-static (single SEH flush; `_forceRedraw`/resolution predicate; DirtyLines is a Ghidra split).*
 
