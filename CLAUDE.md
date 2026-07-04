@@ -60,7 +60,9 @@ per-format status matrix (docs/fa/formats/STATUS.md — regenerate with
 `python3 tools/check_status.py --write-matrix`). The same rule binds the **FA.EXE
 reconstruction program**: any change to the symbol database (db/) re-exports the Ghidra
 inventory (`scripts/ghidra/export_inventory.sh`) and regenerates the reconstruction
-matrix (docs/fa/reconstruction.md, same `--write-matrix`) in that PR; subsystem docs
+matrix (docs/fa/reconstruction.md) plus the generated per-subsystem registry regions in
+docs/fa/symbols.md and docs/fa/globals.md (all via the same `--write-matrix`) in that PR;
+those registry blocks are marker-delimited and must not be hand-edited. Subsystem docs
 follow docs/spec-authoring.md § Subsystem docs. Specs follow docs/spec-authoring.md;
 `tools/check_status.py --check` enforces the template, the front-matter claims, symbol-DB
 coverage, and matrix currency in CI (`docs-status` job) and in ctest (label `docs`); the

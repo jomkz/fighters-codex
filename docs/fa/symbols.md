@@ -46,400 +46,1693 @@ FA.SMS ships with Jane's Fighters Anthology and contains 3,829 MSVC C++ mangled 
 
 ---
 
-## Subsystem Sections
-
-### Network — Master/Slave, UDP, TCP, SPX, SER (0x401000–0x409000 + scattered)
-
-Low addresses are NET slave/master negotiation and high-level wrappers; UDP/TCP/SPX factories and serial modem code are in 0x44xxx–0x4Bxxx.
-
-Key functions:
-- `0x4016C0` — `NET_SlaveInit(CN_INFO*, NET_ADDRESS*, …)`
-- `0x401780` — `NET_SlaveShutdown()`
-- `0x4017B0` — `NET_RequestPlayerList(…)`
-- `0x401850` — `NET_CancelPlayerList()`
-- `0x401880` — `PlayerListQueryEvents(…)`
-- `0x401B20` — `slave_events(…)`
-- `0x401EB0` — `slave_process_pkt(NET_PKT*, socket_state*)`
-- `0x402320` — `state_func_slave_connecting()`
-- `0x40AE50` — `NET_MasterInit(…)`
-- `0x40AF40` — `state_func_master_query()`
-- `0x40AFF0` — `NET_MasterRejectPlayer(NET_ADDRESS*, char*)`
-- `0x40B080` — `NET_MasterShutdown()`
-- `0x44BAF0` — `SER_EnterCriticalCodeForeground()`
-- `0x44BB70` — `SER_ForegroundCheckConnection(…)`
-- `0x44C470` — `SER_Initialize(CN_INFO*, long)` (+ Init1–5)
-- `0x44CCA0` — `SER_Shutdown()`
-- `0x4B0830` — `NET_Initialize(CN_INFO*, long)`
-- `0x4B0A10` — `NET_Shutdown()`
-- `0x4B0AC0` — `NET_Often()`
-- `0x4B0BD0` — `NET_Synchronize()`
-- `0x4B0CF0` — `NET_Write(…)` / `NET_Read(…)` / `NET_Flush(…)`
-- `0x4B1350` — `NET_SendMessageAll(char*)`
-- `0x4B1540` — `NETProcessEvent(…)`
-
----
-
-### HUD / Cockpit Display (0x405E30–0x40AE50)
-
-- `0x405E30` — `HUDInitMessages()`
-- `0x405E50` — `HUDDrawMessages(char)`
-- `0x405F50` — `HUDMessage(…)`
-- `0x406040` — `HUDInit()`
-- `0x406950` — `HUDShutdown()`
-- `0x406A50` — `HUDDraw(char)`
-- `0x4077B0` — `HUDSetWarning(…)`
-- `0x407B60` — `HUDDrawHeading()`
-- `0x407EE0` — `HUDDrawSpeed()`
-- `0x408420` — `HUDDrawAlt()`
-- `0x408E20` — `HUDDrawHVel()`
-- `0x409030` — `HUDDrawWeaponInfo()`
-- `0x4092D0` — `HUDDrawRangeInfo()`
-- `0x40A450` — `HUDSquawk()`
-- `0x40A530` — `HUDFindNearest(…)`
-- `0x40ABB0` — `HUDDrawDisrupt()`
-- `0x40AC80` — `HUDSetStability(long)`
-- `0x40ACE0` — `HUDDrawStability()`
-- `0x40AE40` — `HUDHasFlaps(char)`
-
----
-
-### Core Shell / Menu (0x40B080–0x421C70)
-
-Shell setup, menu creation, mouse handling, view slew, damage system.
-
-- `0x40B8A0` — `MouseLoadPtr()`
-- `0x40BA10` — `ShellSetup()`
-- `0x40BD30` — `MenuStartUp(…)`
-- `0x40C1F0` — `MenuCreateRemaps()`
-- `0x40C290` — `ShellOff()`
-- `0x40C310` — `MenuShutDown(char)`
-- `0x40C4F0` — `MenuUpdate()`
-- `0x40CFE0` — `ShadowBox(long,long,long,long)`
-- `0x40D7A0` — `VIEWSlew(…)`
-- `0x40F6B0` — `DAMAGEInit2()` / `0x40F760` — `DAMAGEInit()`
-- `0x40F970` — `DAMAGEDoHit(…)`
-- `0x4113C0` — `DAMAGEAutopilotAvail()`
-- `0x411A40` — `Angles(…)` / `AngleOffNose(…)` / `AnglesOffNose(…)`
-- `0x411BD0` — `Clock(…)`
-- `0x4120C0` — `Move3d(…)`
-- `0x412C10` — `PlaySeq(char*, long, long)`
-- `0x413120` — `CHATInit()` / `CHATKey(…)` / `CHATEndMission()`
-- `0x4140A0` — `SetPlayerTarget(…)` / `TargetNearestTo(…)`
-- `0x414690` — `FlightKey(…)`
-- `0x416380` — `SetAutopilot(…)` / `ForceAutopilot(…)`
-- `0x4164B0` — `ServicePlayer()`
-- `0x417760` — `InitPlayerControl()`
-- `0x418070` — `MSGInit()` / `MSGSend(…)` / `MSGReceive(…)`
-- `0x419800` — `ArmPlane(…)`
-- `0x41D740` — `CDirDraw::CreateSingleton()` / `CDirDraw::Create(…)`
-- `0x41E8F0` — `IsBrentDLL(void*)` — tests Phar Lap PE signature
-- `0x41E910` — `IsDLL(…)`
-- `0x41EB60` — `LoadDLL(…)` — generic overlay DLL loader
-- `0x41F240` — `LoadBrentDLL(…)` — loads Phar Lap PE overlay
-
----
-
-### Sound / Music (0x432920–0x435F80)
-
-- `0x432920` — `ShutDownMidi()`
-- `0x4329A0` — `DMusicOn(char*, float)` / `MusicOn(char*, float)`
-- `0x432C30` — `ScoreOn(void*, char)` / `ScoreOff()` / `ScoreUpdate()`
-- `0x432F80` — `ShellMusicUpdate(long)` / `ShellMusic(char)`
-- `0x433180` — `InitSound()` / `ShutDownSndDriver()` / `InitMixer()`
-- `0x433480` — `SoundPoints()`
-- `0x433580` — `SingleSound(char*, float, …)`
-- `0x433680` — `SoundOn(…)` — full parameter sound trigger
-- `0x433CE0` — `SoundOff(short)`
-- `0x433D40` — `SoundAllOff()`
-- `0x434800` — `MaybeLoopSound(…)` / `UpdateLoopSounds()`
-- `0x4349D0` — `ServiceSounds()`
-- `0x435480` — `StopGameSounds()`
-- `0x435980` — `StartVoice(MODSPEC*, short)`
-- `0x435B80` — `SoundStatus()` / `SndLostFocus()` / `SndGotFocus()`
-
----
-
-### Memory Manager (MM) (0x435C60–0x436320)
-
-- `0x435C60` — `MMInit(…)` / `MMShutdown()`
-- `0x435D80` — `MMAllocHandle(…)` / `MMMapFile(…)` / `MMFreeHandle(…)`
-- `0x435F80` — `MMFreePtr(…)` / `MMReallocHandle(…)` / `MMReallocPtr(…)`
-- `0x436170` — `MMPushAllocId(…)` / `MMPopAllocId()` / `MMFreeAllId(…)`
-- `0x436210` — `MMLock(…)` / `MMUnlock(…)` / `MMAccessR(…)` / `MMAccessW(…)`
-- `0x4362C0` — `MMAreaFree()`
-
----
-
-### Campaign Map (MAP/ZONE) (0x421C70–0x42B800)
-
-- `0x421C70` — `ZONEInit()` / `ZONEAdd(…)` / `ZONEForGV()` / `ZONEUpdate()`
-- `0x4221D0` — `MAPObjAlts(…)` / `MAPSetSide(…)` / `MAPMaybeSetControl(…)`
-- `0x422380` — `MAPWorldToScreen(F24_POINT3*, WORD_POINT*)`
-- `0x4223BE` — `MAPDrawGrid()`
-- `0x4224EE` — `MAPDrawBG()`
-- `0x42267F` — `MAPUpdateWPPtrs(…)` / `MAPSetNewWP(…)`
-- `0x422851` — `MAPDrawSpecials()` / `MAPOnSpecial(…)`
-
----
-
-### Collision (COL) (0x42B800–0x42E690)
-
-- `0x42B800` — `Collision(…)` — main collision check
-- `0x42BD30` — `COLSetAngle(…)`
-- `0x42DDA0` — `COLFlatGround(…)`
-- `0x42DF80` — `COLPitchToAvoidTerrain()`
-- `0x42E0C0` — `COLGetInfo(…)` / `COLGetBox(…)`
-- `0x42E4E0` — `COLTerrainBlocking(…)`
-- `0x42E530` — `COLInit()` / `COLAddObj()` / `COLRemoveCurObj()`
-
----
-
-### Flight Model / Hardpoints (FM/HARD) (0x451480–0x454800)
-
-- `0x4514C0` — `FMUpdateGearPitch()` / `FMUpdateGear()` / `FMUpdateWingSweep()`
-- `0x4516B0` — `FMGetWeight()`
-- `0x4518A0` — `FMInitPlane(…)`
-- `0x451B00` — `SetThrottle(…)` / `FMFlaps(…)` / `FMGear(…)` / `FMBrakes(…)`
-- `0x451E50` — `FMFuelConsumption(…)` / `BurnFuel()`
-- `0x452140` — `FMUpdatePlaneFields()`
-- `0x452770` — `HARDPtrs(…)` — hardpoint pointer resolver
-- `0x4527F0` — `HARDUnload(…)` / `HARDLoad(…)` / `HARDLoadAll()` / `HARDUnloadAll()`
-- `0x452D90` — `HARDBestSeekers(…)` / `HARDBestSeeker(…)` / `HARDFindJammer(…)`
-- `0x452F80` — `HARDFindStore(…)` / `HARDFindProj(…)`
-- `0x453440` — `HARDGunsOnlyAll()`
-- `0x453AC0` — `HARDNumLoaded(…)` / `HARDTotalFuel()`
-- `0x453B90` — `HARDRearmTest()` / `HARDRearmHumanLoad()`
-- `0x454140` — `ChangePlaneType(…)` / `RepairTime(…)` / `SelectRepairPlane(…)`
-
----
-
-### AI Interpreter (CT) (0x464C80–0x467110)
-
-Full condition evaluator and action dispatcher for `.AI` scripts. All `CTEval_*` and `CTDo_*` are exported by `.BI` DLLs and resolved by name.
-
-Selected `CTEval_*` (condition evaluators):
-- `0x464E20` — `CTEval_time` / `CTEval_do_nothing` / `CTEval_do_evade` / `CTEval_do_attack`
-- `0x464E60` — `CTEval_do_radar_launch` / `CTEval_do_ir_launch` / `CTEval_do_hit`
-- `0x464F10` — `CTEval_tgt` / `CTEval_tgtclass` / `CTEval_tgtisfighter` / `CTEval_tgtisbomber`
-- `0x464FF0` — `CTEval_tgtisship` / `CTEval_tgtissam` / `CTEval_tgtisaaa`
-- `0x465040` — `CTEval_maxrange` / `CTEval_bestrange` / `CTEval_radar` / `CTEval_ir`
-- `0x465150` — `CTEval_tgtahead` / `CTEval_tgtfacing` / `CTEval_disttotgt`
-- `0x4653A0` — `CTEval_speed` / `CTEval_minspeed` / `CTEval_cornerspeed` / `CTEval_maxspeed`
-- `0x465480` — `CTEval_twr` / `CTEval_turnrate` / `CTEval_turnradius`
-- `0x465510` — `CTEval_alt` / `CTEval_altdiff` / `CTEval_maxalt` / `CTEval_minalt`
-- `0x465640` — `CTEval_disttowaypoint` / `CTEval_skill` / `CTEval_engagep`
-
-Selected `CTDo_*` (action executors):
-- `0x465A30` — `CTDo_exit` / `CTDo_restart` / `CTDo_maneuver` / `CTDo_play`
-- `0x465CC0` — `CTDo_move` / `CTDo_movetoalt` / `CTDo_turn`
-- `0x466052` — `CTDo_yoyo` / `CTDo_circle` / `CTDo_homeangle` / `CTDo_homepos`
-- `0x4663F0` — `CTDo_jink` / `CTDo_invert` / `CTDo_btoh` / `CTDo_immelman`
-- `0x4665E0` — `CTDo_wm_break` / `CTDo_wm_approach` / `CTDo_wm_formation`
-- `0x466970` — `CTExecProgram(…)` — `.AI` interpreter loop
-
----
-
-### Pilot / Mission / Campaign (0x467110–0x490000)
-
-- `0x467180` — `PilotSave(PILOT*, short)` / `PilotPhoto(PILOT*)`
-- `0x467310` — `CallsignChoose(PILOT*, long)` / `EditPilot(…)`
-- `0x468020` — `PilotScreen(…)`
-- `0x4692D0` — `EJECTProc` / `EJECTAdd(…)` / `EJECTRemove()`
-- `0x4754B0` — `PilotSave(…)` — save pilot to .PLT file
-- `0x480750` — `_MISSIONInit1()` / `_MISSIONInit2()`
-- `0x480B40` — `MISSIONInit1()` / `MISSIONInit2()` / `MISSIONInit3()`
-- `0x480C20` — `LoadCampaignProc`
-- `0x480C40` — `InitCampaignPilot`
-- `0x480C90` — `AddCampaignPlane`
-- `0x480D70` — `CampaignPlanesLeft()`
-- `0x480DF0` — `UkraineAddA7` — per-theater campaign hook
-- `0x481150` — `AtFriendlyAP()`
-- `0x481320` — `CampaignSave` / `CampaignOff`
-- `0x481440` — `CallCampaignProc(…)` / `CallMissionProc(…)`
-- `0x4819F0` — `MISSIONShutdown()` / `MISSIONSuccess()`
-- `0x4851C0` — `MISSIONFortDestroyed(…)` — fort destruction logic
-- `0x485260` — `MISSIONFortDestroyedByFort(…)`
-- `0x486010` — `MISSIONLoadCommonResources()`
-- `0x486160` — `MISSIONEndScenario()`
-- `0x486860` — `MISSIONCheckSuccess()`
-- `0x4869A0` — `TIMESystemTime()` / `TIMEInit(…)` / `TIMEUpdate()`
-
----
-
-### Object System / Entity Chain (0x462600–0x464C80)
-
-- `0x462600` — `InitChain()` / `RemoveFromChains()` / `ImmediateService()`
-- `0x4627B0` — `RemoveCurObj()` / `GetCurObj(…)` / `PutCurObj()`
-- `0x4629E0` — `PushCurObj(…)` / `PopCurObj()`
-- `0x462A50` — `ServiceObjects`
-- `0x462E70` — `Service()` — main per-frame service
-- `0x463980` — `MaybeCallEventProc(…)` / `CallEventProc(…)`
-- `0x463A20` — `CreateMove(…)` / `CreateMoveGoal(…)`
-- `0x463F60` — `CallUtilProc` — dispatches to OBJ/GV/PROJ proc
-- `0x464040` — `Reaction(…)` / `EnterState(…)`
-- `0x473A40` — `OBJEventProc` / `OBJDamageProc(HIT_OBJ_DATA*)`
-- `0x473BE0` — `OBJProc` — static object update
-- `0x473C10` — `Kill()`
-- `0x473DB0` — `GVProc` — ground vehicle update
-- `0x491240` — `OBJGet(…)` / `OBJInit(…)` / `OBJShutdown()`
-- `0x491300` — `OBJAlloc(…)` / `OBJAdd(…)` / `OBJSubtract()`
-- `0x4914C0` — `OBJAlias(…)` — alias lookup (used by .MC DLLs)
-
----
-
-### Wingman / Group AI (WNG/GRP) (0x45E460–0x460FB0)
-
-- `0x45E460` — `WNGInit()` / `WNGAdd(…)` / `WNGWingmen(…)` / `WNGPart(…)`
-- `0x45E8F0` — `WNGLeaderLanding()` / `WNGFormationMove(…)` / `WNGSendWM(…)`
-- `0x45F190` — `GRPInit()` / `GRPAdd(…)` / `GRPRemove()`
-- `0x45F360` — `GRPLeader(…)` / `GRPWingman(…)` / `GRPWingmenNearby(…)`
-- `0x45F580` — `GRPSetWaypoints(…)` / `GRPControl(…)` / `GRPLeaderLanding()`
-- `0x45F7F0` — `GRPSetControl(…)` / `GRPSetType(…)` / `GRPSetSpacingH/V(…)`
-- `0x45FE30` — `GRPName(…)`
-- `0x45FEC0` — `INFO2Draw()`
-- `0x46A370` — `SMInit()` / `SMShutdown()` / `SMAddress(…)` / `SMCallByName`
-
----
-
-### Airport / Carrier (AP) (0x4BA750–0x4BEE60)
-
-- `0x4BA750` — `APInit()` / `APAdd(…)` / `APDelete(…)` / `APNearest(…)`
-- `0x4BAA10` — `APTakeoffType(…)` / `APLandingType(…)`
-- `0x4BADB0` — `APTakeoff()`
-- `0x4BC210` — `APStartFinalApproach()` / `APEndArrestorCatch()` / `APLanding()`
-- `0x4BD2D0` — `APFind(…)` / `APClearParks()` / `APGetPark()` / `APAssignPark()`
-- `0x4BD5B0` — `CARRIERProc`
-- `0x4BE640` — `STRIPProc` / `APApproachPath(…)` / `APTeleport`
-- `0x4BEB00` — `APAddToCarrier(…)` / `APRemoveFromCarrier()` / `APCheckCarrier()`
-- `0x4BED70` — `APHomeAirport()` / `APObjOnShip(…)`
-
----
-
-### World Render / Palette / Layer (WR) (0x4B3010–0x4B4B30)
-
-See architecture.md for the full per-frame update pipeline. These functions implement the atmosphere/sky system that consumes loaded `.LAY` DLL data.
-
-- `0x4B3190` — `WRGetLayer(…)` / `WRSetRemaps(…)`
-- `0x4B3480` — `WRUpdate(…)` — transition atmosphere parameters
-- `0x4B3D90` — `WRUpdatePalette()` — per-frame palette smooth-transition (= `UpdateSkyState`)
-- `0x4B4170` — `WRLightUpdate()`
-- `0x4B4320` — `WRFogLayerUpdate` — per-frame fog density jitter
-- `0x4B4370` — `WRInit(…)` — loads LAY DLL, sets up atmosphere (= `ParseLayerFile`)
-- `0x4B46D0` — `WRShutdown()`
-- `0x4B4720` — `WRWeatherEffects`
-- `0x4B47B0` — `SetTmapRemaps()`
-- `0x4B4990` — `WRLensFlare()` / `WRCanSee(…)`
-- `0x4C8E20` — `WRBlackenPalette(…)` / `WRWhitenPalette(…)` / `WRReddenPalette(…)` / `WRColorPalette(…)`
-
----
-
-### Projectile / Weapons (PROJ) (0x4C0690–0x4C5D30)
-
-- `0x4C06A0` — `PROJInit()` / `PROJGetTargetPos(…)` / `PROJAccurateHardPos(…)`
-- `0x4C0870` — `PROJSetTarget(…)` / `PROJLockUpdate()`
-- `0x4C0A90` — `PROJAdd(…)` — spawn projectile
-- `0x4C1170` — `PROJEngineState()`
-- `0x4C11B0` — `PROJMoveProc(char)` / `PROJDamageProc(HIT_OBJ_DATA*)`
-- `0x4C1F50` — `PROJProc`
-- `0x4C20C0` — `PROJHit(…)` / `PROJFire(…)` / `PROJFireSound(…)`
-- `0x4C2860` — `PROJInFOV(…)` / `PROJRadarIsOn(…)` / `PROJLock(…)`
-- `0x4C3380` — `PROJHitChance(…)` / `PROJLaunchDevice(…)`
-- `0x4C3CA0` — `PROJRemove()` / `PROJRetargetMissiles(…)`
-- `0x4C3EB0` — `PROJMakeBombEq(…)` / `PROJChangeBombEq(…)` / `PROJBombPos(…)`
-- `0x4C4100` — `PROJSelectTarget()` / `PROJServiceWeapon(…)`
-- `0x4C5670` — `PROJSendCollateralDamages(…)`
-
----
-
-### Terrain Renderer (T_) (0x4A7310–0x4C5D70)
-
-- `0x4A6E50` — `LoadPIC` — bitmap load dispatcher
-- `0x4A6EB0` — `SetupOT` / `SetupNT` / `SetupPT` / `SetupJT` — BRF object type setup
-- `0x4A7310` — `T_InitPlane(…)` / `T_AddObj(…)` / `T_AddYourObjs()`
-- `0x4A7D70` — `T_ImmediateVisibility(…)` / `T_ObjList(…)` / `T_Render(…)`
-- `0x4A7F20` — `T_InitForestProc` / `T_ForestProc(long)`
-- `0x4A8660` — `T_InitFarmProc` / `T_FarmProc(long)` / `T_InitMooseProc` / `T_MooseProc(long)`
-- `0x4A8870` — `T_InitVietRicePaddy1–3Proc` / `T_VietPalms1–3Proc` / `T_VietTrees1–3Proc`
-- `0x4A8A70` — `T_InitWaterProc` / `T_WaterProc(long)` / `T_InitCloudProc` / `T_CloudProc(long)`
-- `0x4A8D30` — `T_Normal(…)` / `T_LeafOp(…)` / `T_Make(…)`
-- `0x4AA620` — `T_InitDictionary()` / `T_InitDictionaryEntry(…)` / `T_NamedTmaps()`
-- `0x4AACF0` — `T_DefaultHorizon` / `T_HorizonProc` — exported as `T_HorizonProc` from FA.EXE
-- `0x4C5D60` — `T_Init()` / `T_Load(…)` / `T_Init2()` / `T_Shutdown()` / `T_StopAdding()`
-- `0x4C6040` — `T_GetLeaf(…)`
-
----
-
-### 3D Renderer (GR/render) (0x4C5D70–0x4D5C00)
-
-- `0x4D5B64` — `GRInit3d(…)` / `GRRender(…)` / `GRSinCos(…)` / `GRTo2d(…)`
-- `0x4D5E58` — `MakeObjRotationMatrix(…)` / `MakeViewRotationMatrix(…)` / `MultPointByMatrix(…)`
-- `0x4D6348` — `GRSaveContext()` / `GRRestoreContext()` / `GRExec(…)`
-- `0x4D64D8` — `MultF24PointByMatrix(…)` / `Sqrt(…)`
-- `0x4D057C` — `GRAddBrentObj(…)` — add BRF object to render queue
-- `0x4CD834` — `GRSetLightSource(…)` / `SetShading`
-- `0x4CD8B0` — `Sun` — sun direction update
-- `0x4CDCB8` — `render_3d` — main 3D render entry
-- `0x4CE980` — `dmxmul` / `dmxmul2` — matrix multiply helpers
-- `0x4CC4B4` — `SetShadingTable` (= `SetActiveLayerByAngle`)
-- `0x4CCB88` — `ArcTan(…)`
-
-Low-level shape dispatch opcodes (interpreter for .SH bytecode):
-- `0x4D2180` — `must_clip_3d`
-- `0x4D22A8` — `do_sfcal_long`
-- `0x4D22D4` — `do_ifdestroyed` — destruction-state conditional
-- `0x4D2380` — `do_if_not_effect`
-- `0x4D33D8` — `do_icall_long` / `do_jumpfar4`
-- `0x4D42EC` — `do_setcoarse` / `do_set_point_color` / `do_set_gouraud`
-- `0x4D43DC` — `do_new_poly` / `do_new_smap` / `do_new_rmap` / `do_new_pmap_or_tmap`
-- `0x4D47B8` — `do_streamer_def` / `do_streamer_draw`
-
----
-
-### Dialog / UI Shell (0x487A3A–0x48D200)
-
-- `0x487A63` — `DialogSetup(…)` / `DialogShow()` / `DialogShutDown(…)` / `DialogDone()`
-- `0x488470` — `DialogUpdate(…)` / `DialogWhatItem()`
-- `0x4892E0` — `DialogGetPtr(…)` / `DialogGetValue(…)` / `DialogSetValue`
-- `0x489400` — `DialogSetRocker(…)` / `DialogSetString(…)` / `DialogGetString(…)`
-- `0x489AC0` — `DrawText` — imported by .MNU/.DLG overlays as `main.dll::_DrawText`
-- `0x489B90` — `DrawAction` — imported by overlays as `main.dll::_DrawAction`
-- `0x48A730` — `DrawLight` / `DrawFormattedText` / `DrawMissList` / `DrawCampaignList`
-- `0x48B4E0` — `DrawRocker` / `DrawToggle` / `DrawSliderHoriz` / `DrawSliderVert`
-- `0x48C710` — `DrawEditBox`
-
----
-
-### SAY / Voice Callout (0x48D2B0–0x491240)
-
-- `0x48D2B0` — `SAYInit()` / `SAYInit2()` / `SAYShutdown()`
-- `0x48D350` — `SAYMsg(…)` / `SAYDefaultSayProc`
-- `0x48D780` — `PLANESayProc`
-- `0x48E8D0` — `OBJSayProc`
-- `0x48E920` — `SAYRearmMessage(…)` / `SAYSuppRadarMessage(…)` / `SAYLowFuelMessage(…)`
-- `0x48EC40` — `PLANECommentProc`
-- `0x48F6A0` — `APCommentProc`
-- `0x490F30` — `SAYTranslate(…)` / `SAYFortAircraft` / `SAYFortStatus`
-
----
-
-### Graphics Low-Level (G_/GG) (0x45DBD0–0x499380)
-
-- `0x45DBD0` — `GG_InitMode()` / `GG_ShutdownMode()` / `GG_GetMode()`
-- `0x45DE70` — `GG_SetPalette(…)` / `GG_Shake()` / `GG_Flush(…)`
-- `0x497340` — `G_Init()` / `G_Shutdown()`
-- `0x4974E0` — `G_SetBitmap(…)` / `G_SetClipBox(…)` / `G_SetColor(…)`
-- `0x497700` — `G_UHline(…)` / `G_Hline(…)` / `G_Vline(…)` / `G_Line(…)`
-- `0x497D40` — `G_UBox(…)` / `G_Box(…)` / `G_Rect(…)`
-- `0x4983E0` — `G_DrawYLR(…)` / `G_Flush(…)` / `G_Flip(…)`
-- `0x4986A0` — `G_SetFont(…)` / `G_Print(…)` / `G_Printf`
-- `0x498A30` — `G_LoadDriver(…)` / `G_UnloadDriver()`
-- `0x4B7930` — `G_RelocBitmap(…)` / `G_AllocBitmap(…)` / `G_AllocSurfaceBitmap(…)`
-- `0x4B7CD0` — `G_LoadBitmap(…)` — load PIC from LIB
-- `0x4B7FA0` — `G_BlitToScreen(…)` / `G_Blit(…)`
-- `0x4B87C0` — `G_Texture(…)` / `G_AcTexture(…)` / `G_PerspectiveFlip(…)`
-- `0x4B9430` — `NPM_FlatTri(…)` / `NPM_TextureLinearTri(…)` / `NPM_TexturePerspectiveTri(…)`
-
----
+## Subsystem symbol registry
+
+The per-subsystem tables below are **generated from the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/)** so they cannot drift from the Ghidra project. Each row is a named symbol; the full record (including waived interiors) is the linked CSV, and the narrative for each subsystem is on its own page. Progress: [reconstruction matrix](reconstruction.md).
+
+<!-- BEGIN GENERATED: symbol-registry -->
+
+<!-- Generated by tools/check_status.py --write-matrix. Do not edit. -->
+
+_Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/); each subsystem's detailed prose lives on its own page._
+
+### Network / multiplayer (NET/SER/UDP/MP)
+
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 107 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004016C0` | `NET_SlaveInit` | sms | client: open connection to master at NET_ADDRESS; registers PLAYER_ACTION/NET_CONNECTED_STATE callbacks |
+| `0x00401780` | `NET_SlaveShutdown` | sms | client leave/teardown |
+| `0x004017B0` | `NET_RequestPlayerList` | sms | query lobby for player list (async) |
+| `0x00401850` | `NET_CancelPlayerList` | sms | cancel pending player-list query |
+| `0x004019A0` | `player_list_process_pkt` | sms | dispatch player-list-query reply packets |
+| `0x00401A60` | `NETSlaveConnect` | re | slave connect helper: proto_ptr->open (vtbl+0x56), register slave_events (0x401B20) via socket_add_state_func, seed socket_state addr fields; net_set_often_state(5). Body @0x401A60 cited |
+| `0x00401CD0` | `handle_slave_connection_failed` | sms | retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0) |
+| `0x00401E30` | `NETSlaveLostConn` | re | slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30 |
+| `0x00401EB0` | `slave_process_pkt` | sms | slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected |
+| `0x00402330` | `NETArmKeepalive` | re | arm socket send timer (state+8 = timerTicks+0x400; state+4 = 4 unless already ready). Body @0x402330 |
+| `0x00402360` | `NETResetTimer` | re | reset socket send timer to now (state+8 = timerTicks; state+4 = 4). Body @0x402360 |
+| `0x004024D0` | `NETProcessPlayerList` | re | process NET_PLAYER_LIST: find self via NETIsAddrLocal, net_add_self, connect to every other listed peer (mesh) via proto vtbl+0x56 + socket_add_state_func(...,0x401B20); if all ready -> pkt_send_ready. Called from slave_process_pkt case 4. Body @0x4024D0 |
+| `0x00405360` | `NETWaitMasterScreen` | re | slave: spin polling MPReceive/MPCheckDisconnect while _masterNextScreen==-1, then adopt it as _curScreen (thisComputer>0). Body @0x405360 |
+| `0x004053A0` | `NETApplyMasterScreen` | re | slave: apply pending _masterNextScreen to _curScreen once (non-blocking). Body @0x4053A0 |
+| `0x004054F0` | `netDialogAppIO` | sms | net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse |
+| `0x00405CD0` | `NETFormatIP` | re | format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0 |
+| `0x00405D10` | `ip2long` | sms | parse dotted-quad string -> packed u32 (strchr('.')+atoi x4) |
+| `0x00405DF0` | `RunNetConfigurationScreen` | sms | net config screen entry; calls doConfigurationScreen(1\|4) |
+| `0x0045D090` | `pkt_send_can_i_play` | sms | client->host join request |
+| `0x0045D120` | `pkt_send_can_i_play_player` | sms | join request naming a player slot |
+| `0x0045D1B0` | `pkt_send_sync` | sms | send sync request |
+| `0x0045D1C0` | `pkt_send_type` | sms | send a bare typed packet to peer index |
+| `0x0045D200` | `pkt_sock_send_type` | sms | send bare typed packet to a socket |
+| `0x0045D240` | `pkt_sock_send_message` | sms | send text message packet to a socket |
+| `0x0045D280` | `pkt_build_message` | sms | fill NET_PKT message body |
+| `0x0045D2D0` | `pkt_send_you_can_play` | sms | host->client accept |
+| `0x0045D320` | `pkt_send_ready` | sms | ready handshake |
+| `0x0045D360` | `pkt_send_error` | sms | send error code to peer |
+| `0x0045D3A0` | `pkt_send_new_player` | sms | announce new player to peer |
+| `0x0045D440` | `pkt_sock_send_new_player` | sms | announce new player over socket |
+| `0x0045D580` | `pkt_sock_send_lost_player` | sms | announce lost player over socket |
+| `0x0045D700` | `pkt_sock_send_error` | sms | send error over socket |
+| `0x0045D760` | `pkt_build_sync_reply` | sms | fill sync-reply header |
+| `0x0045D780` | `pkt_build_play_game` | sms | fill play-game (start) header |
+| `0x0045D810` | `pkt_send_player_info` | sms | send NET_PLAYER_LIST entry |
+| `0x0045D890` | `pkt_build_player_info` | sms | serialize NET_PLAYER_LIST into NET_PKT |
+| `0x0045D940` | `pkt_sock_send` | sms | low-level: send NET_PKT to one socket |
+| `0x0045D970` | `pkt_send` | sms | low-level: send NET_PKT to peer index |
+| `0x0045DA10` | `pkt_set_header` | sms | fill NET_PKT header (type/len) |
+| `0x0045DA30` | `pkt_queue_write` | re | append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30 |
+| `0x0045DB00` | `pkt_sock_read` | sms | read one NET_PKT from a socket |
+| `0x0046C0A0` | `MPEnqueue` | re | core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper') |
+| `0x0046C680` | `MPInterpPosAxis` | re | interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680 |
+| `0x0046C780` | `MPUpdateInterval` | re | per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780 |
+| `0x0046C860` | `MPInterpAngleAxis` | re | interpolate one angle axis (uses MPWrapAngle). Body @0x46C860 |
+| `0x0046C980` | `MPReceive` | sms | per-frame inbound dispatcher (entry; body=FUN_0046C98F). Keepalive/timeout scan + 0x10-0x51 dispatch + MP_Often tail |
+| `0x0046EC40` | `MPRelToAbsTime` | re | resolve relative packet timestamp to absolute (+currentT; skips sentinels 0/0x7FFF). Body @0x46EC40 |
+| `0x0046EC60` | `MPResolveAlias` | re | map network alias <-> local object id via entity +0x74; walks _objPtrs[1.._nextObjId]. Body @0x46EC60 (the OBJ/net bridge) |
+| `0x0046ECD0` | `MPReadAlloc` | re | MMAllocPtr(n) then MP_Read n bytes from peer 0 (bulk payloads: file/waypoint sync). Body @0x46ECD0 |
+| `0x0046ED10` | `MPDecodeState16` | re | decode packed pos(+angle) delta scaled by hdr+3 into int[3]/short[3] (packet 0x16). Body @0x46ED10 |
+| `0x0046EDB0` | `MPDecodePos` | re | decode packed position delta bytes*0x1000 into int[3] (packet 0x14/0x15). Body @0x46EDB0 |
+| `0x0046EE00` | `MPGetType` | re | peek/pull next packet type byte from peer (MP_PeekByte/MP_Read); -0x100 on EOF. Body @0x46EE00 (docs cite as FUN_0046EE00) |
+| `0x0046EE40` | `MPReadPayload` | re | read param_3 bytes iff fully available (MP_ReadAvail then MP_Read). Body @0x46EE40 |
+| `0x0046EE90` | `MPClearDeadStatus` | re | zero _mpStatus[peer] for peers no longer in MP_Info connected_mask. Body @0x46EE90 |
+| `0x0046FA40` | `MPAbsToRelTime` | re | encode absolute time to relative packet timestamp (-currentT; skips sentinels). Body @0x46FA40 |
+| `0x0046FA60` | `MPEncodeState14` | re | encode packet 0x14: quantized pos delta (auto-exponent) + BAM angle delta /0xB6, writes alias +0x74. Body @0x46FA60 |
+| `0x0046FBF0` | `MPEncodeState15` | re | encode packet 0x15: small position-only delta (>>0xC). Body @0x46FBF0 |
+| `0x0046FD50` | `MPSendSyncOnce` | re | broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50 |
+| `0x0046FF20` | `MPSendScenarioEndTime` | re | broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20 |
+| `0x00470780` | `MPMsgRemapAliases` | re | remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780 |
+| `0x00471880` | `MPChatChecksum` | re | checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880 |
+| `0x004718F0` | `MPDrawStatusLine` | re | truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0 |
+| `0x00471A90` | `MPWaitStatus` | re | modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status) |
+| `0x00471B80` | `MPAllPeersAtStatus` | re | test whether every connected peer's _mpStatus == param_1. Body @0x471B80 |
+| `0x00471FA0` | `MPAssignPlanePlayers` | re | per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers |
+| `0x00472130` | `MPBuildSpawnPayload` | re | apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130 |
+| `0x00472670` | `MPRevive` | re | apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670 |
+| `0x004735D0` | `MPChatStore` | re | append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey |
+| `0x004874C0` | `sapopensocket` | sms | SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild) |
+| `0x00493780` | `RunIPXOptionsDialog` | sms | IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild |
+| `0x00496F40` | `spxinit` | sms | SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST |
+| `0x00497000` | `spxinit2` | sms | SPX secondary init from NET_PROTOCOL/CN_INFO |
+| `0x00497010` | `spxlisten` | sms | open+bind an IPX socket and start SPX listening (backlog 5) |
+| `0x004970C0` | `spxopensocket` | re | open an SPX socket - socket(6) then SPX ioctl 0x8004667e; sibling of sapopensocket |
+| `0x00497150` | `spxconnect` | sms | SPX connect to a NET_ADDRESS |
+| `0x004971D0` | `convert_addr_ipx2usnf` | sms | convert an IPX sockaddr to the engine NET_ADDRESS |
+| `0x00497210` | `convert_addr_usnf2ipx` | sms | convert an engine NET_ADDRESS to an IPX sockaddr |
+| `0x00497290` | `spxbuildaddress` | sms | build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO |
+| `0x00499F70` | `setPacketInfo` | sms | write SERIAL_PACKET type (low2 bits of byte0 \| 0xfc) and seq (byte3) |
+| `0x0049A000` | `packetCRC` | sms | extract stored CRC (byte1 [+byte10 for type0/3]) by packet type |
+| `0x0049A040` | `verifyPacketCRC` | sms | packetCRC()==computePacketCRC() |
+| `0x0049A070` | `assignPacketCRC` | sms | store computed CRC into byte1 (+byte10 for type0/3) |
+| `0x0049A0A0` | `SER_EnterCriticalCodeBackground` | sms | spin-acquire Ctrl busy flag (DAT_00570bb4) under critical section w/ Sleep(0) |
+| `0x0049A100` | `SER_LeaveCriticalCodeBackground` | sms | clear Ctrl busy flag under critical section |
+| `0x0049A120` | `SER_CheckDisconnect` | sms | detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags |
+| `0x0049A1B0` | `SER_GetOutholdingLimit` | sms | transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window) |
+| `0x0049A3E0` | `updateQueueHead` | sms | head = seq % capacity; returns seq / capacity (wrap count) |
+| `0x0049A400` | `insertQueue` | sms | copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count |
+| `0x0049A460` | `overwriteQueue` | sms | overwrite slot by wrapper seq without count bump (history record) |
+| `0x0049A4A0` | `retrieveFromQueue` | sms | copy out slot at (idx%cap)*0x30 |
+| `0x0049A4D0` | `fetchFromQueueTail` | sms | pop tail slot then zero it; advance tail; returns wrap count |
+| `0x0049A660` | `SER_InitializeLowLevel` | sms | init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers |
+| `0x0049A6B0` | `SER_ShutdownLowLevel` | sms | mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag |
+| `0x0049A700` | `strToCom` | sms | map "COM1".."COM8" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none |
+| `0x0049A7D0` | `MOD_InitPortAndModem` | sms | SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc |
+| `0x0049A9B0` | `MOD_FindModemAndInitPCMCIA` | sms | enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem |
+| `0x0049AC00` | `MOD_WaitForCall` | sms | answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO "Ring..." |
+| `0x0049AD00` | `MOD_Initialize1` | sms | dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail |
+| `0x0049AF30` | `MOD_InitializeAndConnect` | sms | MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure |
+| `0x0049AFF0` | `MOD_Initialize` | sms | top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce |
+| `0x0049B0D0` | `MOD_Shutdown` | sms | SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3 |
+| `0x004AC180` | `SER_SendBytes` | sms | append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba |
+| `0x004AC1D0` | `SER_SendHoldingBuffer` | sms | flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel |
+| `0x004AC210` | `SER_OkToSendPacket` | sms | budget check (>0x17=23 bytes free); set pending flag DAT_00570edc |
+| `0x004AC230` | `SER_SendPacket` | sms | per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters |
+| `0x004AC2E0` | `SER_SendRequests` | sms | scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket |
+| `0x004AC480` | `SER_SendStatus` | sms | send status/ACK packet (type0) carrying last-tx seq + per-player state |
+
+### HUD / cockpit
+
+[`hud.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/hud.csv) · [page](hud.md) — 42 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00405E30` | `HUDInitMessages` | sms |  |
+| `0x00405E50` | `HUDDrawMessages` | sms |  |
+| `0x00405F50` | `HUDMessage` | sms |  |
+| `0x00406010` | `HUDReprintMessages` | sms |  |
+| `0x00406040` | `HUDInit` | sms |  |
+| `0x00406920` | `HUDRevive` | sms |  |
+| `0x00406950` | `HUDShutdown` | sms |  |
+| `0x00406A50` | `HUDDraw` | sms |  |
+| `0x004075D0` | `HUDDrawTargetView` | re | render a 3D shape into the HUD bitmap (_T_Make/_T_Render on _hudShape), flip and blit; target/padlock silhouette or combining-glass image |
+| `0x004077B0` | `HUDSetWarning` | sms |  |
+| `0x004078B0` | `HUDDrawWarning` | re | draw the blinking warning string set by HUDSetWarning (STALL / LOW FUEL / ...) while unexpired |
+| `0x00407930` | `HUDDrawConfigFlags` | re | stacked gear/flaps/speedbrake/hook annunciators gated by entity config bits (DAT_0050cfef) |
+| `0x00407A00` | `HUDDrawGLoadThrottle` | re | lower data block: G-load, throttle (THR AFT / THR %d%%) and thrust-vector line |
+| `0x00407B60` | `HUDDrawHeading` | sms |  |
+| `0x00407EC0` | `HUDSpeedToY` | sms |  |
+| `0x00407EE0` | `HUDDrawSpeed` | sms |  |
+| `0x00408400` | `HUDAltToY` | sms |  |
+| `0x00408420` | `HUDDrawAlt` | sms |  |
+| `0x00408930` | `InitScreenMove` | sms |  |
+| `0x004089A0` | `HUDDrawPitchLadder` | re | climb/dive pitch ladder: rotate the pitch-bar table by roll, position vs waterline, dashed below / solid above horizon |
+| `0x00408C80` | `HUDDrawLeadCaret` | re | lag/lead aim caret at the padlock target using a time-lagged sample; SymFont glyph bucketed by range |
+| `0x00408E20` | `HUDDrawHVel` | sms |  |
+| `0x00409030` | `HUDDrawWeaponInfo` | sms |  |
+| `0x004092D0` | `HUDDrawRangeInfo` | sms |  |
+| `0x00409760` | `HUDDrawBombFall` | re | CCIP bomb fall line/pipper from the ballistic solution (PROJMakeBombEq/PROJBombPos) |
+| `0x00409910` | `HUDDrawGunReticle` | re | gun aiming circle + bearing tick + vertical range tape with weapon/lock/target markers |
+| `0x00409BF0` | `HUDDrawApproach` | re | ILS/carrier glideslope box in landing submode (APApproachPath/CheckLandingParms) |
+| `0x00409F30` | `HUDDrawTargetBox` | re | target-designator box over the padlock target (PROJLock tone/lock, GRTo2d projection, IFF glyph) |
+| `0x0040A450` | `HUDSquawk` | sms |  |
+| `0x0040A530` | `HUDFindNearest` | sms |  |
+| `0x0040A6C0` | `HUDDrawTargetLabels` | re | name tags over visible targets; player's current target in a distinct color |
+| `0x0040A7F0` | `HUDDrawContacts` | re | radar/IR sensor contacts (CPGetContact), SymFont glyph per contact, locked one highlighted |
+| `0x0040AAC0` | `HUDBrightness` | sms |  |
+| `0x0040AB10` | `HUDSetFont` | sms |  |
+| `0x0040AB30` | `HUDSetSymFont` | sms |  |
+| `0x0040AB50` | `HUDSetWinFont` | sms |  |
+| `0x0040AB70` | `HUDSetDisrupt` | sms |  |
+| `0x0040ABB0` | `HUDDrawDisrupt` | sms |  |
+| `0x0040AC80` | `HUDSetStability` | sms |  |
+| `0x0040ACE0` | `HUDDrawStability` | sms |  |
+| `0x0040AD40` | `ComputeBombPosition` | sms |  |
+| `0x0040AE40` | `HUDHasFlaps` | sms |  |
+
+### Core shell / menu / dialog UI
+
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 136 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x0040B8A0` | `MouseLoadPtr` | sms | load per-screen mouse pointer bitmap (PLANE.C etc.); reads _curScreen/_menuResolution |
+| `0x0040BC20` | `MaybeCampaignMenu` | sms | conditionally overlay the campaign action bar (MAINMENU.MNU) on a screen |
+| `0x0040BD00` | `MaybeCampaignMenu2` | sms | tail variant of MaybeCampaignMenu |
+| `0x0040BD30` | `MenuStartUp` | sms | build+show a menu bar from a .MNU name; calls ShellSetup, clears _menuSelecting |
+| `0x0040BF40` | `MenuInstallRemap` | re | install a palette color-remap table into a G-remap slot (0x114-0x118); called 5x by MenuCreateRemaps |
+| `0x0040BF60` | `MenuMeasureItemWidth` | re | measure widest menu item label via G_ColorStringWidth over the item linked list (+0x12 text, +submenu via FUN_0040c130) |
+| `0x0040C130` | `MenuItemSubString` | re | skip a menu label's leading marker bytes (>1) and return the submenu/secondary substring, or NULL |
+| `0x0040C160` | `MenuLoadFont` | re | load MENUFONT.PIC (640) or MFONT320.PIC (320) per _menuResolution into DAT_004ec21c |
+| `0x0040C1A0` | `MenuRemoveItem` | sms | remove a menu item by packed G-index |
+| `0x0040C1D0` | `MenuLinkTerminate` | re | walk _firstMenu linked list to the tail and null-terminate it |
+| `0x0040C1F0` | `MenuCreateRemaps` | sms | build 5 shadow palette-remaps (menuShadow1..5 at 0x5221f0/0x5220f0/0x521ef0/0x521df0/0x521ff0, %=60/66/74/84/96) via FUN_0040d4e0; install slots 0x114-0x118 via FUN_0040bf40 |
+| `0x0040C410` | `MenuDrawBar` | sms | save region under bar (menuBarSave) then draw the top menu bar from _firstMenu list |
+| `0x0040C4F0` | `MenuUpdate` | sms | per-frame menu poll: ShellMousePos, hover/hit-test, returns selected G-index; skips mouse poll while _dialogOn |
+| `0x0040C5A0` | `MenuCurrentIndex` | re | close open sub-item/menu highlights, then compute the packed (menu<<8 \| item) index of the current selection |
+| `0x0040C670` | `MenuMouseSelect` | re | hit-test mouse over bar entries/items via MouseInBox; update _curMenu/_curSubMenu/_curItem, open/close dropdowns |
+| `0x0040C990` | `MenuDrawDropdown` | re | draw an opened submenu: save background (FUN_0040cea0/cf40), MenuSteelRect frame, item rows |
+| `0x0040CB10` | `MenuClearItemInvert` | re | restore the current item's inverted-highlight brush (pair of FUN_0040cb80); called by MenuCurrentIndex |
+| `0x0040CB40` | `MenuCloseSubMenu` | re | close/restore the open sub-menu highlight; called by MenuCurrentIndex and MenuMouseSelect |
+| `0x0040CB80` | `MenuInvertItem` | re | toggle the highlight brush over _curItem (invertItemBrush: AllocBitmap+BlitToBrush+URect2, or blit back+free) |
+| `0x0040CC50` | `MenuInvertSubItem` | re | toggle the highlight brush over _curSubItem (invertSubItem) |
+| `0x0040CD20` | `MenuInvertBar` | re | toggle the highlight brush over the _curMenu bar entry (invertMenuBrush) |
+| `0x0040CDE0` | `CheckItem` | sms | set/clear checkmark on a menu item (via FUN_0040ce00 index lookup) |
+| `0x0040CE00` | `MenuItemByIndex` | re | resolve a packed index (hi=menu#, lo=item#) to a MENU_ITEM* by walking _firstMenu; used by Check/Enable/DisableItem |
+| `0x0040CE70` | `EnableItem` | sms | enable a menu item by index |
+| `0x0040CE80` | `DisableItem` | sms | disable/dim a menu item by index |
+| `0x0040CEA0` | `MenuSaveBackground` | re | save the screen region under a submenu into menuSaveBrush (+shadowWidth/Height margin) |
+| `0x0040CF00` | `MenuRestoreBackground` | re | blit menuSaveBrush back to screen and free it |
+| `0x0040CF40` | `MenuSaveBackground2` | re | second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0 |
+| `0x0040CFA0` | `MenuRestoreBackground2` | re | restore pair for FUN_0040cf40 |
+| `0x0040CFE0` | `ShadowBox` | sms | 11-byte entry; drop-shadow frame around a rect. Worker is FUN_0040cfeb (tail) |
+| `0x0040CFEB` | `ShadowBoxDraw` | re | 403-byte worker behind ShadowBox@0x40CFE0: renders the 8-piece drop-shadow frame (shadowUR/LL/LR/H/V handles) |
+| `0x0040D180` | `MenuSteelRect` | sms | draw the brushed-steel panel rectangle (uses steelHandle, FUN_0040d390 pattern) |
+| `0x0040D390` | `MenuSteelPattern` | re | builds an i*i square table and tiles the brushed-steel gradient (DAT_004ec260) used by MenuSteelRect |
+| `0x0040D4E0` | `MenuBuildRemap` | re | build a palette remap table scaling _curPalette RGB by param%/100; confirmed by MenuCreateRemaps callsites |
+| `0x0040D5F0` | `PushShellAlloc` | sms | push MM alloc-id scope for shell allocations (paired with PopShellAlloc) |
+| `0x0040D620` | `PopShellAlloc` | sms | pop shell MM alloc scope |
+| `0x0040D640` | `ShellShowMouse` | sms | show software mouse cursor (ref counts via mouseShown) |
+| `0x0040D6B0` | `ShellHideMouse` | sms | hide software mouse cursor |
+| `0x0040D6E0` | `ShellMousePos` | sms | sample mouse: writes _shellMousePos, _shellButtons, _shellEvent |
+| `0x0040D790` | `MouseInBox` | sms | hit-test _shellMousePos against a BOX; used by menu bar/item hover |
+| `0x0042E680` | `QuickMultiButton` | sms | quick-mission wizard: store button value into DAT_00537360[i]/DAT_00537260[i]; just past collision's range |
+| `0x0042E690` | `QuickMultiButtonText` | sms | set a quick-mission wizard button's label |
+| `0x0042E9A0` | `QuickMission` | sms | quick-mission creator loop (drives the 24 QUICKB*.DLG wizard steps) |
+| `0x0047F0B0` | `InTextButton` | sms | hit-test mouse against the _buttonBoxes[_lastButton] MNU text-button array; in campaign seed range |
+| `0x0047FA30` | `RunDisconnectScreen` | sms | multiplayer disconnect confirmation screen (DDIAG.DLG) |
+| `0x00487A3A` | `WaitTicks` | sms | busy-wait N ticks (TIMESystemTime); dialog animation delay |
+| `0x00487A63` | `DialogSetup` | sms | push a DIALOG frame (_curDialog = &_dialogStruct + ++_dialogNum*0x29); ChoosePreload header, link records |
+| `0x00487E90` | `DialogLinkRecords` | re | per-record setup pass over the DIALOG record list (short-field init); called by DialogSetup |
+| `0x004880D0` | `DialogShow` | sms | render the dialog: alloc/lazy-init background bitmap (+0x16/+0x1a), draw all records |
+| `0x00488170` | `DialogBeginDraw` | re | common draw prologue: PushShellAlloc + ShellHideMouse |
+| `0x00488180` | `DialogEndDraw` | re | paired draw epilogue (ShellShowMouse/PopShellAlloc) |
+| `0x00488190` | `DialogShutDown` | sms | blit saved background back (param gated), free +0x16/+0x1a/+0x12 handles |
+| `0x00488300` | `DialogDone` | sms | free all shared dialog fonts (wheel/list/panel/panelDisabled/panel2/actionBlue) |
+| `0x00488470` | `DialogDraw` | sms | record draw dispatcher: walks next_record_ptr calling (**draw_fn_ptr)(record) |
+| `0x00488490` | `DialogUpdate` | sms | event dispatcher (2617 B): per-record PointInBox hit-test, focus, slider/rocker/edit input, returns selected item |
+| `0x00488F00` | `DialogWaitUntilTick` | re | spin on TIMESystemTime until a target tick reached (returns bool) |
+| `0x00488F30` | `DialogHelper488f30` | re | small dialog helper (31 B); role not confirmed |
+| `0x00488F50` | `DialogRadioGroupClear` | re | walk records; for type 1/5 matching group id at +0x17, clear the pressed flag (+0xb) — radio de-select |
+| `0x00488FC0` | `DialogWhatItem` | sms | return _dialogItemPtr (last record that passed hit-test) |
+| `0x00488FD0` | `DialogScrollbarHit` | re | type-7 scrollbar custom hit handler: PointInBox(+0x18) then callback +0x24 (DLG.md hit-zone table) |
+| `0x00489070` | `DialogSliderRelease` | re | active-slider mouse handler: on button-up call slider callback +0x2c and clear _activeSlider |
+| `0x004891A0` | `DialogScrollThumbInit` | re | initialise scrollbar thumb position from +0xb/+0xc/+0xe/+0x10 (DLG.md: called on show) |
+| `0x00489220` | `DialogClampThumb` | re | clamp scrollbar thumb (+0x12) within track bounds (+0x16/+0x1a/+0x1e) |
+| `0x004892E0` | `DialogGetPtr` | sms | resolve a record pointer by item id |
+| `0x00489300` | `DialogGetValue` | sms | read a control's current value |
+| `0x00489360` | `DialogMatchListString` | sms | find a list-box row by string |
+| `0x00489400` | `DialogSetRocker` | sms | set a rocker control's state |
+| `0x00489430` | `DialogSetValue` | sms | set a control's value |
+| `0x004894F0` | `DialogSelectItem` | sms | mark a record selected (highlight) |
+| `0x00489580` | `DialogDeselectItem` | sms | clear a record's selected/disabled bit |
+| `0x004895D0` | `DialogSetString` | sms | set an edit/text record's string |
+| `0x00489660` | `DialogUpdateString` | sms | refresh a text record after edit |
+| `0x004896A0` | `DialogGetString` | sms | read an edit box's text buffer |
+| `0x00489710` | `TopCenterDialog` | sms | center dialog: x=(sw-w)/2, y=(sh-h)/3 |
+| `0x00489760` | `Info2640Preload` | sms | preload header for INFO2640.DLG (OK+Cancel 640) |
+| `0x00489780` | `Info640Preload` | sms | preload header for INFO640.DLG |
+| `0x004897A0` | `GrafPrefPreload` | sms | preload header for GRAFPREF.DLG |
+| `0x004897D0` | `SndPrefPreload` | sms | preload header for SNDPREF.DLG |
+| `0x004897F0` | `ChoosePreload` | sms | DLG header record: PushShellAlloc, load action-button PIC/font by type (DLG.md); dispatched via computed indirect call |
+| `0x00489810` | `MultiPreload` | sms | preload header for multiplayer dialogs |
+| `0x00489AC0` | `DrawText` | sms | type-9 static text renderer (DLG.md field layout) |
+| `0x00489B90` | `DrawAction` | sms | type-0 clickable action-button renderer (DLG.md field layout) |
+| `0x0048A080` | `DialogFlush` | re | ShellShowMouse + G_Flush + ShellHideMouse |
+| `0x0048A260` | `DialogBlitModuleBitmap` | re | blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y |
+| `0x0048A2B0` | `DialogSetupBitmap` | re | SetupBitmapAccess wrapper for dialog rendering |
+| `0x0048A4C0` | `DrawDial` | sms | rotary dial control renderer |
+| `0x0048A730` | `DrawLight` | sms | indicator light/LED renderer |
+| `0x0048A7D0` | `PrintPageNums` | sms | render 'page N of M' for paged list widgets |
+| `0x0048A8E0` | `DialogEnsureListFont` | re | lazy-load SMLFONT into _listFont if null |
+| `0x0048A910` | `DrawFormattedText` | sms | type-9 variant multi-line/paged text renderer (DLG.md) |
+| `0x0048A9F0` | `DrawMissList` | sms | single-mission list renderer |
+| `0x0048ADE0` | `DrawListBox` | sms | generic scrollable list-box renderer |
+| `0x0048B320` | `DrawCheck` | sms | checkbox renderer (type 3) |
+| `0x0048B450` | `DialogRockerRepeat` | re | rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16 |
+| `0x0048B4E0` | `DrawRocker` | sms | type-6 rocker/toggle renderer (two hit halves) |
+| `0x0048B8B0` | `DialogHelper48b8b0` | re | rocker/slider draw helper (62 B) |
+| `0x0048B8F0` | `DialogHelper48b8f0` | re | rocker/slider draw helper (62 B) |
+| `0x0048B930` | `DrawToggle` | sms | two-state toggle renderer (type 8) |
+| `0x0048BAD0` | `DrawSliderHoriz` | sms | horizontal slider renderer |
+| `0x0048BBE0` | `DialogHelper48bbe0` | re | small slider helper (31 B) |
+| `0x0048BC00` | `DialogHelper48bc00` | re | slider helper (96 B) |
+| `0x0048BC60` | `DrawSliderVert` | sms | vertical slider renderer |
+| `0x0048BDF0` | `DialogHelper48bdf0` | re | slider/edit helper (99 B) |
+| `0x0048BE60` | `CheckMousePtr` | sms | test/redraw mouse pointer over a widget rect during draw |
+| `0x0048BEC0` | `DialogEditGeom` | re | compute edit-box on-screen geometry from _curDialog + focused record (+0x1e) |
+| `0x0048BF50` | `DialogHelper48bf50` | re | edit-box helper (66 B) |
+| `0x0048BFA0` | `DialogDrawEditCaret` | re | draw the blinking text caret (G_Vline) at _cursorAt within the focused edit box; _selectEnd gate |
+| `0x0048C040` | `DialogEditKey` | re | edit-box keystroke handler (1220 B; char insert/delete/cursor) |
+| `0x0048C510` | `DialogHelper48c510` | re | edit helper (94 B) |
+| `0x0048C570` | `DialogHelper48c570` | re | edit helper (45 B) |
+| `0x0048C5A0` | `DialogDrawEditText` | re | render edit-box text/selection (359 B) |
+| `0x0048C710` | `DrawEditBox` | sms | type-2 edit-box renderer (DLG.md field layout) |
+| `0x0048C800` | `DrawText320` | sms | 320x200 static text renderer |
+| `0x0048C8A0` | `DrawCheck320` | sms | 320x200 checkbox renderer |
+| `0x0048C970` | `DrawDial320` | sms | 320x200 dial renderer |
+| `0x0048CB00` | `Do320Button` | sms | 320x200 action-button dispatcher |
+| `0x0048CBE0` | `DrawYes320` | sms | 320 'Yes' button label renderer |
+| `0x0048CC10` | `DrawNo320` | sms | 320 'No' button label renderer |
+| `0x0048CC40` | `DrawCancel320` | sms | 320 'Cancel' button label renderer |
+| `0x0048CC70` | `DrawDone320` | sms | 320 'Done' button label renderer |
+| `0x0048CCA0` | `DrawOK320` | sms | 320 'OK' button label renderer |
+| `0x0048CD40` | `DrawLight320` | sms | 320 indicator light renderer |
+| `0x0048CD70` | `DrawSwitch320` | sms | 320 switch renderer |
+| `0x0048CF10` | `SliderVert320` | sms | 320 vertical slider renderer |
+| `0x0048D030` | `ShellClickSound` | sms | play the UI click sound on a valid activation |
+| `0x0048D090` | `ShellDisabledSound` | sms | play the 'disabled' buzz when a dimmed control is clicked |
+| `0x0048D0D0` | `DisableActionButton` | sms | set record type_flags bit15 (dim); see DLG.md +0x00 |
+| `0x0048D0E0` | `EnableActionButton` | sms | clear record type_flags bit15 (undim) |
+| `0x0048D0F0` | `DialogEnableItem` | sms | enable/disable a dialog item |
+| `0x0048D140` | `DialogItemIsEnabled` | sms | query a dialog item's enabled bit |
+| `0x0048D150` | `LimitEditFieldLength` | sms | cap an edit field's character length |
+| `0x0048D160` | `DialogTextStreamInit` | re | init a paged text-stream reader object (vtable[2]=LAB_0048d1d0, [3]=FUN_0048d1e0; alloc 0x26+0x1000) |
+| `0x0048D1E0` | `DialogTextStreamRead` | re | text-stream read callback: FUN_00486f20 decode into 0x1000 buffer; sets state 0x29/0x74 |
+| `0x004A08A0` | `ChooseActivity` | sms | TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection |
+| `0x004A26F0` | `DoDialogInfoBox` | sms | modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10) |
+| `0x004A27C0` | `DialogInfoBox` | sms | generic INFO320/INFO640 message-box builder+run |
+
+### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
+
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 125 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00421D40` | `ZONEActive` | re | zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate |
+| `0x00421DE0` | `ZONEServiceRange` | re | per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent |
+| `0x00422120` | `ZONEPickTarget` | re | resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6) |
+| `0x00422190` | `MAPWPListBounds` | re | walk a waypoint list: find head via flag bit0(&1), count entries to tail via bit1(&2); stride 0x44 |
+| `0x00422230` | `MAPAdjustObjAlt` | re | raise current object altitude (DAT_0050ce95) to terrain via _T_Info; helper of @MAPObjAlts@4 |
+| `0x00422350` | `MAPMarkDirty` | re | clear DAT_00536720 hover, set DAT_00536518 redraw flag |
+| `0x004224B3` | `MAPScreenToWorld` | re | inverse of _MAPWorldToScreen: screen point * _mapScale + _worldCenter |
+| `0x0042256A` | `MAPLoadBG` | re | load theater map background bitmap via _RMAccessHandle into DAT_004f0564 (alloc-id 7) |
+| `0x004225D4` | `MAPRefreshBG` | re | reload map BG if theater name (_th+0x54) changed; recomputes map extents DAT_00536418.._00536430 |
+| `0x00422667` | `MAPFreeBG` | re | free the map background handle DAT_004f0564 |
+| `0x004226CB` | `MAPSetObjWP` | re | set an object's active waypoint pointer (+0xe4); helper of @MAPUpdateWPPtrs@8 |
+| `0x004226EE` | `MAPSetFormationWP` | re | set new WP for an object plus its wing (_WNGPart) and group (_GRPPart) members |
+| `0x00422828` | `MAPClearSelection` | re | clear map selection state: DAT_00536500 obj / _00536514 wp / _00536530 special / _005363e8 mode |
+| `0x00422840` | `MAPClearHover` | re | 17-byte map-state setter (clears hover/redraw); role low-confidence, revisit |
+| `0x0042297E` | `MAPAddSpecial` | re | allocate a 0x3a-byte 'special' map marker into the _specials/DAT_0053665c table |
+| `0x00422A71` | `MAPScreen` | re | mission-map/planning screen main loop (_curScreen==3); CAM.md 'FUN_00422a71'. Loads mc_menu/mc_dlg, drives waypoint/plane edit, save-mission, slew view |
+| `0x00423ED4` | `MAPRebuildWPLoop` | re | recompute a waypoint loop back-pointer after edit (uses MAPWPListBounds + MAPWPOwnerIndex) |
+| `0x00423F30` | `MAPStoreLeafTmap` | re | write selected tmap id+rotation into _tlist at current leaf coords; _T_SortTmapList |
+| `0x00423F90` | `MAPFindLeafTmap` | re | linear search _tlist[_tlistSize] for the entry at (x&0xfffc,y&0xfffc) |
+| `0x00423FD0` | `MAPReadLeafTmap` | re | read tmap id/rot at current leaf coords into DAT_00536724/_0053652c |
+| `0x00424040` | `MAPSetLeafTmapPic` | re | load '%s%d.PIC' tmap thumbnail via _RMAccess for the selected leaf |
+| `0x004240D0` | `MAPEditTmapDialog` | re | mc_name dialog: prompt for a tmap index, then apply via MAPStoreLeafTmap |
+| `0x004241A0` | `MAPReadLeafTmap2` | re | duplicate of MAPReadLeafTmap (separate call site) |
+| `0x004241D0` | `MAPSelWPIsPlayers` | re | true if the selected waypoint (DAT_00536514) belongs to the player's wing |
+| `0x00424220` | `MAPObjInPlayerWing` | re | true if object id shares the player's wing (_WNGPart of _playerId) |
+| `0x00424290` | `MAPSpecialSelectable` | re | returns 0 in this build (special markers not directly selectable) |
+| `0x004242A0` | `MAPResetObjects` | re | reset/place ALL mission objects to start state: clear parks (_APClearParks), reassign airfield parking (_APNearest/_APAssignPark), reset positions/speeds/waypoints. Called after load and before save |
+| `0x00424DE0` | `MAPSetWPTargetPos` | re | copy a waypoint target's world position (_WPTarget) onto an object |
+| `0x00424E60` | `MAPClaimObjControl` | re | set current object owner byte DAT_0050ce90 = _thisComputer\|0x80 (mark human-controlled) |
+| `0x00424EC0` | `MAPSetObjWPFlags` | re | set object's waypoint-capable flag (bit2 of +1) from class (5/7, or 3 with a group) |
+| `0x00424F20` | `MAPStatusText` | re | set the map help/status line text (DAT_005365a8) and render it via _PrepareText |
+| `0x00424FA3` | `MAPWPOwnerIndex` | re | return the object index that owns a given waypoint pointer |
+| `0x00425023` | `MAPSnapWPToStrip` | re | snap a waypoint onto the nearest airstrip (_APNearest) |
+| `0x00425072` | `MAPWPNearStrip` | re | test whether a point is near an airstrip (_APNearest) |
+| `0x00425096` | `MAPScreenSpan` | re | compute world-space span of the current map viewport (two MAPScreenToWorld corners) |
+| `0x004250CE` | `MAPPickObjIcon` | re | hit-test object icons at a screen point (12x10 px box), honoring MAPObjVisible |
+| `0x00425196` | `MAPObjVisible` | re | object map-visibility/side filter using view mask _DAT_00536628 and side flags |
+| `0x00425249` | `MAPPickWPIcon` | re | hit-test waypoint icons at a screen point |
+| `0x0042532A` | `MAPSwapPalette` | re | swap map palette DAT_00536590 <-> _curPalette (enter/leave map draw) |
+| `0x00425358` | `MAPDraw` | re | full map render: 2D map (grid/BG/specials/icons/paths) or 3D leaf preview via _T_Make/_T_Render depending on mode DAT_005363f0 |
+| `0x00425948` | `MAPDrawRuler` | re | draw the map scale ruler bar |
+| `0x00425A8F` | `MAPIconRadius` | re | compute on-screen icon radius from current map scale |
+| `0x00425ACD` | `MAPDrawEra` | re | draw 'Historical Era' year range text (non-campaign multiplayer maps) |
+| `0x00425B8B` | `MAPSyncSliders` | re | sync dialog X/Y sliders (items 4,3) to current _worldCenter/DAT_00536528 |
+| `0x00425C0A` | `MAPRedrawSelection` | re | redraw highlight when the selected object changes |
+| `0x00425C77` | `MAPDrawObjIcon` | re | draw one object's map icon: side color ring, type glyph (mcicons.PIC), padlock/target markers, label |
+| `0x00426277` | `MAPDrawTargetLink` | re | draw the dashed target link line from an object to its target |
+| `0x004262DE` | `MAPDrawAllPaths` | re | iterate visible objects and draw each waypoint path |
+| `0x00426325` | `MAPDrawObjPath` | re | draw one object's full waypoint polyline + target links |
+| `0x0042648F` | `MAPDrawWPIcon` | re | blit a single waypoint node icon (mcicons.PIC) |
+| `0x0042658D` | `MAPSetSelection` | re | set current selection to an object id / waypoint ptr / special index (DAT_00536500/_514/_530) |
+| `0x004265C1` | `MAPStepSelection` | re | advance waypoint selection +/-1 along the owning object's list |
+| `0x00426696` | `MAPAssignWPTarget` | re | assign escort/target to the selected waypoint with validation ('can't escort yourself', 'can't target a zone') |
+| `0x004267E4` | `MAPInsertWP` | re | insert a new waypoint after the selection: alloc (count+2)*0x44, _MMAllocPtr, splice via MAPUpdateWPPtrs, 'Only ten waypoints allowed' |
+| `0x00426ACB` | `MAPObjEditable` | re | ownership/editability test for an object (compares against DAT_00536504/_005364f8 special ids) |
+| `0x00426B70` | `MAPObjEditableP` | re | wrapper for MAPObjEditable(param,1) |
+| `0x00426BF0` | `MAPInitWPSpeed` | re | initialize a new waypoint's speed from _COCornerSpeed + formation defaults |
+| `0x00426C45` | `MAPSetWPFormationParams` | re | copy formation offset/params from table &DAT_004f057e[idx*7] into a waypoint |
+| `0x00426C6D` | `MAPDeleteWP` | re | delete the selected waypoint (frees loop node, memmoves list, fixes head flag) |
+| `0x00426D6D` | `MAPRequirePlayerPlane` | re | error 'You must first designate a plane' if no flyable/human plane exists |
+| `0x00426D98` | `MAPHasFlyablePlane` | re | scan objects for a human-controllable class-4 plane (flags +0x10 bit7) |
+| `0x00426DE2` | `MAPMakeSelPlayer` | re | make the selected class-4 object the human/player (calls MAPClaimObjControl) |
+| `0x00426E37` | `MAPAddObject` | re | add a new object to the mission: _DialogPickFiles, _T_AddObj, seed position/altitude/side per class flags |
+| `0x00427195` | `MAPDeleteObject` | re | delete an object from the mission: _GRPRemove, _APDelete, clear chains, MAPResetObjects |
+| `0x004271ED` | `MAPWPButtons` | re | waypoint-properties dialog button handler: name/altitude/speed/formation/react/loop edits (mc_name dialog) |
+| `0x004276A0` | `MAPWPFormationIndex` | re | return a waypoint's formation-table index (&DAT_004f0578) |
+| `0x004276E9` | `MAPQuantizeAlt` | re | round an altitude to selectable increments within [min,max] |
+| `0x00427721` | `MAPQuantizeToTable` | re | snap a value to the nearest entry of a speed/step table (&DAT_004f0740) |
+| `0x00427769` | `MAPObjButtons` | re | object-properties dialog button handler: side (mc_nat2), pilot name, plane type (_ChangePlaneType), fly-this-plane, success-condition flags |
+| `0x004281DD` | `MAPObjCampaignLocked` | re | editability gate that is stricter when _campaignFile != 0 (campaign missions are locked) |
+| `0x00428270` | `MAPObjEditableCheck` | re | wrapper: MAPObjEditable then flag test |
+| `0x004282D0` | `MAPToggleObjControl` | re | toggle human control ownership of an object across the current-obj stack |
+| `0x00428340` | `MAPCenterOnPlayer` | re | center the map _worldCenter/DAT_00536528 on the player object; select it |
+| `0x00428412` | `MISSIONLoad` | re | canonical campaign/mission loader (CAM.md): MISSIONShutdown->Init1->CallMissionProc(.mc[_nato]_M or named)->Init2->MAPResetObjects->CenterOnPlayer->T_NamedTmaps/T_InitDictionary |
+| `0x004284CA` | `MAPSaveMission` | re | save-mission dialog: prompt filename (mc_name), validate, write .M via FUN_00495e80 |
+| `0x0042866A` | `MAPDragItem` | re | mouse-drag a selected object/waypoint to a new map position (ghost bitmap follow) |
+| `0x004289EE` | `MAPSelWorldPos` | re | get the world position of the current selection (obj/wp/special) |
+| `0x00428A3B` | `MAPDrawSelInfo` | re | draw the selection highlight glyph + rebuild the info panel (dispatches to MAPBuildObjInfo/MAPBuildWPInfo) |
+| `0x00428AEF` | `MAPBuildWPInfo` | re | build the waypoint info-panel text and hot-button rects: heading/ETA/formation/react/target strings |
+| `0x00429245` | `MAPFormatWPTarget` | re | format a waypoint's target name string (_WPTarget + _NextString) |
+| `0x004292D2` | `MAPFormatReactFlags` | re | map a react-flag byte to the button-index table (&DAT_004f0550) |
+| `0x0042934C` | `MAPBuildObjInfo` | re | build the object info-panel text and hot-button rects: pilot/heading/altitude/mission-success/attack flags |
+| `0x00429DDE` | `MAPMissionMenu` | re | mission-editor command dispatcher: view-filter toggles (_DAT_00536628), CampaignMenu, save-changes prompt, opens all mc_* scenario dialogs; drives wing/group add via MAPWingAdd/MAPGroupAdd |
+| `0x0042A656` | `MAPRandomizeSkill` | re | randomize a side's object AI-skill byte (DAT_0050cf62) via _Rand |
+| `0x0042A71A` | `MAPLoadMissionDialog` | re | pick a mission file (_DialogPickFiles) and load it into the editor via MISSIONLoad |
+| `0x0042A780` | `MAPDlgWeather` | re | weather/time-of-day dialog (mc_weth); sets _startTimeOfDay/_currentTimeOfDay, random cloud offset |
+| `0x0042A93A` | `MAPDlgEndTime` | re | end-scenario time dialog (mc_time); sets _endScenarioSetTime |
+| `0x0042A9C4` | `MAPDlgRevive` | re | revive/lives dialog (mc_lives); sets _reviveAllowed |
+| `0x0042AA50` | `MAPDlgReviveDelay` | re | revive-delay dialog (mc_delay); sets _reviveDelay |
+| `0x0042AADC` | `MAPDlgReviveDist` | re | revive-distance dialog (mc_dist); sets _reviveDist |
+| `0x0042AB68` | `MAPDlgEndKills` | re | end-scenario kills dialog (mc_kills); sets _endScenarioKills |
+| `0x0042ABF4` | `MAPDlgEndKillType` | re | end-scenario kill-type dialog (mc_killt); sets _endScenarioKillsType |
+| `0x0042AC80` | `MAPDlgNatoFighters` | re | NATO-fighters side dialog (mc_natf) |
+| `0x0042AD35` | `MAPDlgScoring` | re | scoring dialog (mc_scr); reads 4 score-weight fields |
+| `0x0042AE3F` | `MAPWingRejoin` | re | rejoin/reposition a wing at its leader (_WNGPart, _wingIds/_wingSizes) |
+| `0x0042AEDF` | `MAPWingSetLeader` | re | make the selected object its wing's leader (_wingIds[slot]=sel) |
+| `0x0042AF86` | `MAPWingAdd` | re | add an aircraft to wing slot N (_WNGAdd); 'No more aircraft can be added' |
+| `0x0042B056` | `MAPGroupRejoin` | re | rejoin/reposition a group at its leader (_GRPPart, _groupIds/_groupSizes) |
+| `0x0042B0F6` | `MAPGroupSetLeader` | re | make the selected object its group's leader (_groupIds[slot]=sel) |
+| `0x0042B19D` | `MAPGroupAdd` | re | add an object to group slot N (_GRPAdd, _GRPHumansFirst) |
+| `0x0042B275` | `MAPDeleteSpecial` | re | delete the selected special marker (_MMFreePtr on _specials[sel]) |
+| `0x00467240` | `PilotFindFreeSlot` | re | find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails |
+| `0x004674F0` | `PilotBuildPaper` | re | build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display' |
+| `0x00467860` | `PilotPaperAddLine` | re | append one label/value line pair into the pilot-paper text buffer |
+| `0x00467880` | `PilotPaperEndLine` | re | append the final/terminating line to the pilot-paper buffer |
+| `0x00467E30` | `PilotListAddAvail` | re | load a pilot file (_RMAccess 0x810c) and insert it sorted into _sortedPilots (_totalPilots++) |
+| `0x00468C40` | `PilotListAddUnavail` | re | load a pilot into the unavailable list _unAvailNames (_unAvailPilots++) |
+| `0x00468CA0` | `PilotMakeCopyName` | re | generate a unique 'NAME Copy N' pilot name, scanning both pilot lists |
+| `0x00468DF0` | `PilotStripCopySuffix` | re | strip a trailing ' Copy' from a pilot name (_strstr s_Copy) |
+| `0x00468E40` | `PilotLoadBySortIndex` | re | load the pilot at sorted index (PLT%03d.P) and copy fields into _pilotName etc. |
+| `0x00468F00` | `PilotFormatRank` | re | format a pilot's rank string from the _pilotRanks table |
+| `0x00468F40` | `PilotDiskSpaceError` | re | 'You don't have enough free disk space' dialog before a pilot save |
+| `0x00468F80` | `PilotSetField` | re | small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit |
+| `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219 |
+| `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
+| `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
+| `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome |
+| `0x00483C90` | `TextNextToken` | re | whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90 |
+| `0x00483D10` | `TextIsDelim` | re | predicate: is char a token delimiter/whitespace (helper of TextNextToken) |
+| `0x00483D30` | `TextNextNumber` | re | read next token and convert to integer (_StringToNumber) |
+| `0x00483D50` | `TextTokenToValue` | re | scalar token->value conversion helper (uint->uint); low-confidence, revisit |
+| `0x00485380` | `CampaignAccumStats` | re | fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush' |
+| `0x004854A0` | `StatsAddPair` | re | add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator' |
+| `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch' |
+| `0x004867D0` | `MISSIONPlayerSlot` | re | resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore) |
+
+### Collision (COL)
+
+[`collision.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/collision.csv) · [page](collision.md) — 19 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x0042B800` | `Collision` | sms |  |
+| `0x0042BD30` | `COLSetAngle` | sms |  |
+| `0x0042BDC0` | `COLSweepTerrain` | re | swept segment-vs-terrain grid walk (<=20 cells; ClipSegToCell + TestTerrainCell) |
+| `0x0042BFC0` | `COLTestTerrainCell` | re | test one terrain grid cell's two triangles (corner heights + normals) |
+| `0x0042C1A0` | `COLTestTerrainTri` | re | segment vs one terrain triangle plane; records a blocking hit |
+| `0x0042C420` | `COLClipSegToCell` | re | Cohen-Sutherland XZ clip of the segment to one terrain cell column |
+| `0x0042C840` | `COLTestObjects` | re | object broad-phase: AABB-overlap the frame's registered ids |
+| `0x0042C9B0` | `COLTestObj` | re | object narrow-phase: ray into object local frame, box-hierarchy clip |
+| `0x0042D050` | `COLClipSegToBox` | re | segment vs oriented box: 6-plane clip with closure radius |
+| `0x0042DDA0` | `COLFlatGround` | sms |  |
+| `0x0042DE60` | `COLRecordHit` | re | keep-nearest hit accumulator (blocking slot / object slot) |
+| `0x0042DF80` | `COLPitchToAvoidTerrain` | sms |  |
+| `0x0042E0C0` | `COLGetInfo` | sms |  |
+| `0x0042E100` | `COLGetBox` | sms |  |
+| `0x0042E140` | `COLDrawInfo` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x0042E4E0` | `COLTerrainBlocking` | sms |  |
+| `0x0042E530` | `COLInit` | sms |  |
+| `0x0042E540` | `COLAddObj` | sms |  |
+| `0x0042E5C0` | `COLRemoveCurObj` | sms |  |
+
+### Sound / music (incl. WAIL32)
+
+[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 49 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004328B0` | `InitMusic` | sms |  |
+| `0x00432920` | `ShutDownMidi` | sms |  |
+| `0x004329A0` | `DMusicOn` | sms |  |
+| `0x004329E0` | `MusicOn` | sms |  |
+| `0x00432A80` | `DMusicVolume` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00432A90` | `SoundActive` | sms |  |
+| `0x00432B40` | `MusicVolume` | sms |  |
+| `0x00432BD0` | `DMusicOff` | sms |  |
+| `0x00432C00` | `MusicOff` | sms |  |
+| `0x00432C30` | `ScoreOn` | sms |  |
+| `0x00432C70` | `ScoreOff` | sms |  |
+| `0x00432CA0` | `ScoreUpdate` | sms |  |
+| `0x00432F70` | `ScorePlaying` | sms |  |
+| `0x00432F80` | `ShellMusicUpdate` | sms |  |
+| `0x00433170` | `ShellMusic` | sms |  |
+| `0x00433180` | `InitSound` | sms |  |
+| `0x00433280` | `ShutDownSndDriver` | sms |  |
+| `0x004332F0` | `ShutDownMixer` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00433300` | `InitMixer` | sms |  |
+| `0x00433480` | `SoundPoints` | sms |  |
+| `0x004334D0` | `SoundNoMixer` | sms |  |
+| `0x00433580` | `SingleSound` | sms |  |
+| `0x004335C0` | `BasicSound` | sms |  |
+| `0x004335F0` | `BasicLinkSound` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00433640` | `LoopSound` | sms |  |
+| `0x00433680` | `SoundOn` | sms |  |
+| `0x00433CE0` | `SoundOff` | sms |  |
+| `0x00433D40` | `SoundAllOff` | sms |  |
+| `0x00433D80` | `SoundSetup` | sms |  |
+| `0x004343B0` | `ViewPan` | sms |  |
+| `0x00434550` | `Turbulence` | sms |  |
+| `0x00434620` | `SoundRelease` | sms |  |
+| `0x004347A0` | `CheckSndPurge` | sms |  |
+| `0x004347E0` | `SetupLoopSounds` | sms |  |
+| `0x00434800` | `MaybeLoopSound` | sms |  |
+| `0x00434920` | `UpdateLoopSounds` | sms |  |
+| `0x004349D0` | `ServiceSounds` | sms |  |
+| `0x00435480` | `StopGameSounds` | sms |  |
+| `0x004354B0` | `PollMod` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004357C0` | `SoundPrioritize` | sms |  |
+| `0x00435900` | `StartWaitingSounds` | sms |  |
+| `0x00435980` | `StartVoice` | sms |  |
+| `0x00435A00` | `SetVolPitchPan` | sms |  |
+| `0x00435AE0` | `CheckSndLink` | sms |  |
+| `0x00435B40` | `GetMixerStatus` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00435B80` | `SoundStatus` | sms |  |
+| `0x00435BC0` | `SndLostFocus` | sms |  |
+| `0x00435C20` | `SndGotFocus` | sms |  |
+| `0x00435C30` | `SoundName` | sms |  |
+
+### Memory & resource managers (MM/RM)
+
+[`memory-resource.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/memory-resource.csv) · [page](memory-resource.md) — 50 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00435C60` | `MMInit` | sms | alloc handle table operator_new(count*0x1C); thread all handles onto free list; GetSystemInfo page size; sets mm_initialized |
+| `0x00435D40` | `MMShutdown` | sms | MMFreeAllId for ids 0..0x12 (19 pools) then free handle array; clears mm_initialized |
+| `0x00435D80` | `MMAllocHandle` | sms | core allocator: MMInternalAlloc(size)+MMUseHandle -> T_HANDLE*; frees block if no free handle |
+| `0x00435DC0` | `MMMapFile` | sms |  |
+| `0x00435E90` | `MMUnmapFile` | sms | UnmapViewOfFile + CloseHandle(mapping) + CloseHandle(file) |
+| `0x00435ED0` | `MMUseHandle` | sms | pop mm_unused_list; fill data(+8)/len(+C)/flags(+10)/allocId(+12); push onto mm_used_list |
+| `0x00435F70` | `MMAllocPtr` | sms | MMAllocHandle then return handle->data (+8) |
+| `0x00435F80` | `MMFreeHandle` | sms | unmap(if flag 0x4000) or MMInternalFree data; RMNotify if flag 0x0010; unlink used-list; push to free list |
+| `0x00436040` | `MMFreePtr` | sms | MMPtrToHandle then MMFreeHandle |
+| `0x00436060` | `MMReallocHandle` | sms |  |
+| `0x004360D0` | `MMReallocPtr` | sms | MMPtrToHandle then return handle->data (thin realloc-by-ptr shim) |
+| `0x004360E0` | `MMInternalAlloc` | sms |  |
+| `0x00436110` | `MMInternalFree` | sms |  |
+| `0x00436140` | `MMPtrToHandle` | sms | linear scan mm_used_list for handle whose data(+8)==ptr |
+| `0x00436170` | `MMPushAllocId` | sms | save mmAllocId onto id save-stack @0x538250 (depth @0x4F3DCC); set new id |
+| `0x00436190` | `MMPopAllocId` | sms | restore mmAllocId from id save-stack |
+| `0x004361B0` | `MMCompactRAM` | sms | stub -> return 0 (no heap compaction on Win32) |
+| `0x004361C0` | `MMFreeAllId` | sms | walk mm_used_list; MMFreeHandle every handle whose allocId(+12)==id (group free) |
+| `0x004361F0` | `MMHandleLen` | sms | return handle->len(+C) if data non-null else 0 |
+| `0x00436210` | `MMLock` | sms |  |
+| `0x00436220` | `MMLockW` | sms |  |
+| `0x00436230` | `MMLockR` | sms |  |
+| `0x00436240` | `MMLockE` | sms | SMS-named; not in inventory; extended-lock variant in the MMLock family (undecompiled) |
+| `0x00436260` | `MMUnlock` | sms | no-op ret (Win32 memory is fixed) |
+| `0x00436270` | `MMAccessR` | sms |  |
+| `0x00436280` | `MMAccessW` | sms |  |
+| `0x00436290` | `MMAccessE` | sms | return handle->data(+8)+offset (0 if handle/data null); THE handle-deref primitive |
+| `0x004362C0` | `MMAreaFree` | sms | SMS-named; not in inventory; free-area query (returns KA/ulong) |
+| `0x004362D0` | `MMByteAt` | sms | *(int8*)(base+off) |
+| `0x004362E0` | `MMWordAt` | sms | *(int16*)(base+off) |
+| `0x004362F0` | `MMUWordAt` | sms | SMS-named; not in inventory; unsigned 16-bit read primitive |
+| `0x00436300` | `MMLongAt` | sms | SMS-named; not in inventory; signed 32-bit read primitive |
+| `0x00436310` | `MMULongAt` | sms | *(uint32*)(base+off) |
+| `0x004A67F0` | `RMInit` | sms | zero resList[1400] (0x19FA dwords) and resCache[20]; set rmInitialized(@0x50A618)=1 |
+| `0x004A6820` | `RMShutdown` | sms | RMFree every live resList slot; zero table; clear rmInitialized |
+| `0x004A6860` | `RMType` | sms |  |
+| `0x004A6870` | `RMChangeType` | sms |  |
+| `0x004A68F0` | `RMLocate` | sms | register key(uppercased)+flags(+0E)+ptr(+0F) in first free RES_LIST slot; tag allocId(+0D)=mmAllocId |
+| `0x004A6970` | `RMUnlocate` | sms | RMFind(name) then clear name byte (release the RES_LIST slot) |
+| `0x004A6990` | `RMFind` | sms | uppercase key; check 20-entry LRU resCache then linear-scan resList; refresh timerTicks; purge dead handles (flag&2 && handle+0x11&0x10) |
+| `0x004A6AB0` | `RMCacheInsert` | re | insert RES_LIST ptr into resCache evicting the oldest (min timerTicks) slot; stamps timerTicks [FUN_004a6ab0] |
+| `0x004A6AE0` | `RMAccess` | sms |  |
+| `0x004A6B30` | `RMFindAndLoad` | re | core resolve+load+register; name from embedded string "RMFindAndLoad: can't load %s" @0x50A624; SMCallByName <type>_Load; LoadFile; IsDLL/LoadDLL for PE-packaged resources; marks handle flag\|0x0010; RMLocate(name,3,h); RMSetup [FUN_004a6b30] |
+| `0x004A6CC0` | `RMAccessHandle` | sms | RMFindAndLoad then return the raw handle/ptr (+0x0F) WITHOUT dereferencing |
+| `0x004A6CE0` | `RMFree` | sms | RMFind; if flag bit0 SMCallByName <type>_Free; MMFreePtr or MMFreeHandle by flag bit1; RMUnlocate |
+| `0x004A6D60` | `RMFreeAllId` | sms | RMFree every resList entry whose allocId(+0D)==id; brackets with rmNotifyEnabled=0/1 |
+| `0x004A6DB0` | `RMNotify` | sms | callback from MMFreeHandle: find resList entry whose ptr(+0F)==freed handle and invalidate it; gated by rmNotifyEnabled |
+| `0x004A6DF0` | `RMSetup` | re | post-load per-type hook: SMCallByName <type>_Setup (string @0x50A654) on the freshly loaded resource [FUN_004a6df0] |
+| `0x004A6E20` | `SetupBitmapAccess` | sms |  |
+| `0x004A7240` | `RMLegalFilename` | sms | canonicalize a resource filename in place (IsBadStringPtr len 0xD; collapse to a single '.'); OUT-OF-RANGE claim (sits in terrain span) |
+
+### .SEQ scripted-cutscene / sequence player (SEQ)
+
+[`seq.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/seq.csv) · [page](seq.md) — 40 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00412C10` | `PlaySeq` | sms | public entry - SeqStart then GetKey/SeqContinue/flush loop then SeqEnd; scattered out-of-range |
+| `0x00444F70` | `SeqInit` | sms | zero all seq lists/free-lists/arrays (seqList seqGrArray seqFontArray seqLabels seqText) |
+| `0x00445060` | `SeqStart` | sms | load .SEQ file - alloc a 0x38-byte SEQUENCE slot - build background bitmap - returns slot index |
+| `0x00445330` | `SeqLoadScript` | re | LoadFile the .SEQ then loop skip/expand/include lines into compiled command buffer; recursive for includes |
+| `0x00445440` | `SeqSkipComments` | re | scan script text past blank lines - ; and // comments - whitespace; return next content or NULL |
+| `0x004454D0` | `SeqSubstitute` | sms | expand %N token into the N-th SeqStart argument string |
+| `0x00445550` | `SeqExpandLine` | re | tokenize one script line into seqLine - handle quotes and %-substitution; return next line |
+| `0x004456B0` | `SeqParseInclude` | re | detect an include directive and extract the quoted filename |
+| `0x00445700` | `SeqContinue` | sms | main per-tick interpreter - fade + labels + fetch line + build SEQ+cmd name and SMAddress-dispatch the sub-op |
+| `0x00445B40` | `SeqFetchLine` | re | read next raw line from compiled buffer into seqLine - parse leading timecode (/abs +rel frame) into next-command tick |
+| `0x00445CC0` | `SeqParseLabel` | re | parse =label definition - copy name into a seqLabelList node and set seqLabelPtr |
+| `0x00445D30` | `SeqStop` | sms | tear down one sequence slot - free handle - return label/graphic nodes to free lists |
+| `0x00445E30` | `SeqEnd` | sms | stop all active sequences - SoundAllOff - MusicOff - RMFreeAllId(4) |
+| `0x00445E70` | `SeqRect` | sms | script op - set current sequence clip rectangle (x y w h); absent-from-inventory |
+| `0x00445ED0` | `SeqRender` | re | per-frame render - SetupBitmapAccess then expire nodes then walk seqGraphics ring drawing dirty SEQGR nodes under clip box |
+| `0x00446090` | `SeqExpireGraphics` | re | age SEQGR ring nodes vs timerTicks - set expired/dirty flags; return redraw-needed |
+| `0x00446100` | `SeqNextOverlap` | re | iterate SEQGR ring for next node whose rect overlaps a given rect |
+| `0x00446170` | `SeqGraphicOrder` | re | SEQGR list walk via prev-links (+0x28) to a target node - returns its left-x |
+| `0x004461A0` | `SeqDrawGraphic` | re | draw one SEQGR node by type - 1 bitmap blit - 2 filled rect - 4 multiline color text; mark overlaps dirty |
+| `0x00446330` | `SeqAccessResource` | re | RMAccessHandle wrapper that credits the load time back into seqIgnoreTicks |
+| `0x00446360` | `SeqRedrawRegion` | re | redraw a SEQGR node clipped to a sub-rect (partial refresh of overlapped area) |
+| `0x00446500` | `SeqNewGraphic` | re | allocate a SEQGR node from seqGrList free-list - link into seqGraphics ring - set rect/type/expiry/name |
+| `0x00446610` | `SeqGRFind` | sms | find a SEQGR node by its name string; absent-from-inventory |
+| `0x00446660` | `SEQbitmap` | sms | script op - load and display a bitmap as a SEQGR node; absent-from-inventory |
+| `0x00446710` | `SeqLinkLabel` | re | link seqLabelPtr into the sequence label list and set the synch wait target when seqSynch |
+| `0x004467B0` | `SEQblock` | sms | script op - draw a filled colored block as a SEQGR type-2 node |
+| `0x00446850` | `SEQcall` | sms | script op - chain/call another sequence or label; absent-from-inventory |
+| `0x00446890` | `SEQfadein` | sms | script op - begin palette fade-in (save curPalette - set seqFading=1 fade start/len) |
+| `0x00446910` | `SEQfadeout` | sms | script op - begin palette fade-out (seqFading=-1) |
+| `0x00446990` | `SeqFadeOut` | sms | apply a fade-out step - blacken curPalette by elapsed/len ratio; return done |
+| `0x004469F0` | `SeqFadeIn` | sms | apply a fade-in step - un-blacken curPalette by ratio; return done |
+| `0x00446A50` | `SEQfont` | sms | script op - load a font into seqFontList; absent-from-inventory |
+| `0x00446B70` | `SEQmusic` | sms | script op - start a music track via MusicOn(name priority) |
+| `0x00446BE0` | `SEQpalette` | sms | script op - load/set the sequence palette; absent-from-inventory |
+| `0x00446C60` | `SEQrun` | sms | script op - resume/run control (16-byte leaf); absent-from-inventory |
+| `0x00446C70` | `SEQsound` | sms | script op - play a sound effect; absent-from-inventory |
+| `0x00446D30` | `SEQsndoff` | sms | script op - stop sound(s); absent-from-inventory |
+| `0x00446F10` | `SEQtext` | sms | script op - build a wrapped-text SEQGR type-4 node using FormatText; absent-from-inventory |
+| `0x00447090` | `SEQvideo` | sms | script op - play an AVI/video clip (drives videoState); absent-from-inventory |
+| `0x00447120` | `SEQwait` | sms | script op - wait/synchronize N ticks; absent-from-inventory |
+
+### Flight model / physics (FM/HARD)
+
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 58 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004514C0` | `FMUpdateGearPitch` | sms |  |
+| `0x00451580` | `FMUpdateGear` | sms |  |
+| `0x004515E0` | `FMUpdateWingSweep` | sms |  |
+| `0x00451680` | `FMUpdateThrustVector` | sms |  |
+| `0x004516B0` | `FMGetWeight` | sms |  |
+| `0x00451820` | `FMCopyAngles` | sms |  |
+| `0x004518A0` | `FMInitPlane` | sms |  |
+| `0x00451A60` | `LimitThrottle` | sms |  |
+| `0x00451B00` | `SetThrottle` | sms |  |
+| `0x00451B60` | `FMFlaps` | sms |  |
+| `0x00451C30` | `FMHook` | sms |  |
+| `0x00451C90` | `FMGear` | sms |  |
+| `0x00451D70` | `FMBrakes` | sms |  |
+| `0x00451E00` | `FMVector` | sms |  |
+| `0x00451E50` | `FMFuelConsumption` | sms |  |
+| `0x00451E80` | `BurnFuel` | sms |  |
+| `0x00452050` | `FMBurnNPCFuel` | sms |  |
+| `0x00452140` | `FMUpdatePlaneFields` | sms |  |
+| `0x00452630` | `FMBay` | sms |  |
+| `0x00452710` | `FMUpdateBay` | sms |  |
+| `0x00452760` | `FMBayIsOpen` | sms |  |
+| `0x00452770` | `HARDPtrs` | sms |  |
+| `0x004527F0` | `HARDUnload` | sms |  |
+| `0x00452940` | `HARDStoreWeight` | sms |  |
+| `0x00452980` | `HARDCanLoad` | sms |  |
+| `0x00452C20` | `HARDLoad` | sms |  |
+| `0x00452D10` | `HARDLoadAll` | sms |  |
+| `0x00452D90` | `HARDBestSeekers` | sms |  |
+| `0x00452E60` | `HARDBestSeeker` | sms |  |
+| `0x00452EA0` | `HARDFindJammer` | sms |  |
+| `0x00452F10` | `HARDFindECMForObj` | sms |  |
+| `0x00452F80` | `HARDFindStore` | sms |  |
+| `0x00452FF0` | `HARDFindProj` | sms |  |
+| `0x004530A0` | `HARDSetFlags` | sms |  |
+| `0x00453220` | `HARDUnrotatedHardPos` | sms |  |
+| `0x004532A0` | `HARDPos` | sms |  |
+| `0x004533D0` | `HARDGunsOnly` | sms |  |
+| `0x00453440` | `HARDGunsOnlyAll` | sms |  |
+| `0x00453490` | `HARDGunLoadPercent` | sms |  |
+| `0x00453640` | `HARDUnlimited` | sms |  |
+| `0x00453710` | `HARDPodHack` | sms |  |
+| `0x00453800` | `HARDClearUnloadedHarpoints` | sms |  |
+| `0x00453870` | `HARDResourceName` | sms |  |
+| `0x00453890` | `HARDStoreName` | re | resolve a hardpoint store's resource-name string via _NextString (name at +5 for loaded stores, +1 otherwise) |
+| `0x004538C0` | `HARDSaveHumanLoads` | sms |  |
+| `0x004539C0` | `HARDRestoreHumanLoad` | sms |  |
+| `0x00453A70` | `HARDTotalFuel` | sms |  |
+| `0x00453AF0` | `HARDHasInternalBay` | sms |  |
+| `0x00453B90` | `HARDRearmTest` | sms |  |
+| `0x00453C50` | `HARDRearmHumanLoad` | sms |  |
+| `0x00453D10` | `HARDUsedWeapons` | sms |  |
+| `0x00453D50` | `HARDSaveFortLoads` | sms |  |
+| `0x00453EC0` | `HARDRestoreFortLoad` | sms |  |
+| `0x00453F90` | `HARDRearmFortTest` | sms |  |
+| `0x00454060` | `HARDRearmFortLoad` | sms |  |
+| `0x00454140` | `ChangePlaneType` | sms |  |
+| `0x004543A0` | `RepairTime` | sms |  |
+| `0x004543C0` | `SelectRepairPlane` | sms |  |
+
+### Video decode (FMV/Cobra)
+
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 23 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00456300` | `DecodeDSVGA8Frame` | sms | key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank |
+| `0x00456AD0` | `EDB` | sms | expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path |
+| `0x00456EC0` | `DecodeSVGA8Frame` | sms |  |
+| `0x00457230` | `DecodeDBook` | sms | decode 15/16-bit codebook: 256 entries x (4 luma + 2 chroma) -> 4 RGB555/565 px each; YUV->RGB via GlobalData+0xC1B4(luma scale)/+0xC1B6(Cb off)/+0xC1B8(Cr off)/+0xC1BA(grayscale flag); param_3==0xF selects 5:5:5 else 5:6:5; channels clamped by ClampU8 |
+| `0x004575E0` | `ClampU8` | re | saturate short to unsigned byte [0,255]: <0 -> 0, >=256 -> 255; leaf color-channel clamp called ~12x by DecodeDBook/DoubleDecodeDBook/Decode24Book/DoubleDecode24Book in YUV->RGB. (only FUN_ in range) |
+| `0x00457600` | `DoubleDecodeDBook` | sms | 15/16-bit codebook decode with horizontal 2x replication (Double path) |
+| `0x00457A50` | `DecodeSVGA15Frame` | sms | key/intra frame -> 15/16bpp hi-color SVGA (single); dispatch case 3 depth 0xF..0x10 |
+| `0x00457E00` | `DecodeDSVGA15Frame` | sms | key/intra frame -> 15/16bpp hi-color SVGA with 2x doubling; dispatch case 4 depth 0xF..0x10 |
+| `0x004581C0` | `Decode24Book` | sms | decode 24-bit (true-color) codebook: 256 entries -> RGB888 (uint out); YUV->RGB with ClampU8 |
+| `0x00458480` | `DoubleDecode24Book` | sms | 24-bit codebook decode with 2x replication |
+| `0x004587B0` | `DecodeSVGA24Frame` | sms | key/intra frame -> 24bpp true-color SVGA (single); dispatch case 3 depth==0x20 |
+| `0x00458D10` | `DecodeDSVGA24Frame` | sms | key/intra frame -> 24bpp true-color SVGA with 2x doubling; dispatch case 4 depth==0x20 |
+| `0x00459390` | `DecodeInterSVGA15Frame` | sms | INTER/delta (P) frame -> 15/16bpp SVGA (single); requires prior key frame (MovieContext+0x14!=0) |
+| `0x00459B20` | `DecodeInterDSVGA15Frame` | sms | INTER/delta (P) frame -> 15/16bpp SVGA with 2x doubling |
+| `0x0045A2F0` | `DitherCodeSingle` | sms | ordered-dither a 15/16-bit codebook down to 8bpp palette indices (single) |
+| `0x0045A520` | `DitherCode` | sms | dither a 24-bit codebook to 8bpp palette indices |
+| `0x0045A800` | `DitherCodeDouble` | sms | dither codebook to 8bpp with 2x replication (Double) |
+| `0x0045AB90` | `DecodeDSVGA15NONFrame` | sms | key frame, 15-bit codebook rendered to 8bpp (NON path, depth==8) with 2x doubling; dispatch submode6 case2 (+4==0) |
+| `0x0045B170` | `DecodeDSVGA15NONSkipFrame` | sms | NON 8bpp doubled key frame with skip-map (GlobalData+4!=0); dispatch submode6 case2 (+4!=0) |
+| `0x0045B610` | `DecodeSVGA15NONFrame` | sms | key frame 15-bit codebook -> 8bpp (NON path) single; dispatch submode6 case1 |
+| `0x0045B9C0` | `DecodeInterSVGA15NONFrame` | sms | INTER/delta NON 8bpp single; dispatch inter submode6 case1 |
+| `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
+| `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
+
+### Renderer & rasterizer (GG/G_)
+
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 114 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x0045CA70` | `DrawAcrossBankInter` | sms |  |
+| `0x0045CDA0` | `DrawAcrossBank` | sms |  |
+| `0x0045DBD0` | `GG_InitMode` | sms |  |
+| `0x0045DCB0` | `GG_ShutdownMode` | sms |  |
+| `0x0045DCE0` | `GG_GetMode` | sms |  |
+| `0x0045DE70` | `GG_SetPalette` | sms |  |
+| `0x0045DEC0` | `GG_Shake` | sms |  |
+| `0x0045DEDF` | `GG_FlushShaken` | re | present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake path of GG_Flush |
+| `0x0045E120` | `GG_Flush` | sms |  |
+| `0x0045E13F` | `GG_FlushDirtyLines` | re | present only the dirty scanlines tracked in _lineStats (partial blit); default path of GG_Flush |
+| `0x0045E370` | `flushLineStats` | sms |  |
+| `0x0045E3A0` | `GG_RestoreSurfaces` | sms |  |
+| `0x0045E410` | `GG_WaitRetrace` | sms |  |
+| `0x0045E440` | `GG_VideoModesAvailable` | sms |  |
+| `0x00497330` | `G_FlipY` | sms |  |
+| `0x00497340` | `G_Init` | sms |  |
+| `0x004973F0` | `G_Shutdown` | sms |  |
+| `0x00497490` | `G_InitLineStats` | sms |  |
+| `0x004974C0` | `G_SetPalette` | sms |  |
+| `0x004974E0` | `G_SetBitmap` | sms |  |
+| `0x004974F0` | `G_SetClipBox` | sms |  |
+| `0x004975F0` | `G_SetFullClipBox` | sms |  |
+| `0x00497610` | `G_PushClipBox` | sms |  |
+| `0x00497650` | `G_PopClipBox` | sms |  |
+| `0x00497680` | `G_SetColor` | sms |  |
+| `0x004976D0` | `G_Point` | sms |  |
+| `0x00497700` | `G_UPoint` | sms |  |
+| `0x00497770` | `G_UHline` | sms |  |
+| `0x00497A10` | `G_Hline` | sms |  |
+| `0x00497A60` | `G_UVline` | sms |  |
+| `0x00497B00` | `G_Vline` | sms |  |
+| `0x00497B60` | `G_URect` | sms |  |
+| `0x00497BF0` | `G_Rect` | sms |  |
+| `0x00497D10` | `G_URect2` | sms |  |
+| `0x00497D40` | `G_UBox` | sms |  |
+| `0x00497D90` | `G_Box` | sms |  |
+| `0x00497DE0` | `G_ClipLine` | sms |  |
+| `0x00498160` | `G_Line` | sms |  |
+| `0x004981A0` | `G_ULine` | sms |  |
+| `0x00498380` | `G_PatLine` | sms |  |
+| `0x004983E0` | `G_DrawYLR` | sms |  |
+| `0x00498410` | `G_SetScaleMax` | sms |  |
+| `0x00498420` | `G_Flush` | sms |  |
+| `0x00498430` | `G_ReverseVertices` | sms |  |
+| `0x00498480` | `G_Flip` | sms |  |
+| `0x004984F0` | `G_UPolygonFlip` | sms |  |
+| `0x00498570` | `G_PointFlip` | sms |  |
+| `0x004985E0` | `G_ULineFlip` | sms |  |
+| `0x00498610` | `G_LineFlip` | sms |  |
+| `0x00498640` | `G_CircleFlip` | sms |  |
+| `0x00498670` | `G_URectFlip` | sms |  |
+| `0x004986A0` | `G_SetFont` | sms |  |
+| `0x004986B0` | `G_Print` | sms |  |
+| `0x004988F0` | `G_PrintOutline` | sms |  |
+| `0x00498980` | `G_Printf` | sms |  |
+| `0x004989F0` | `G_StringWidth` | sms |  |
+| `0x00498A20` | `G_StringHeight` | sms |  |
+| `0x00498AF0` | `code` | sms |  |
+| `0x00498B90` | `clipT` | sms |  |
+| `0x00498CE0` | `clipB` | sms |  |
+| `0x00498E30` | `clipL` | sms |  |
+| `0x00498F90` | `clipR` | sms |  |
+| `0x004990F0` | `G_ClipDestPoly` | sms |  |
+| `0x00499200` | `G_SetHShake` | sms |  |
+| `0x00499240` | `G_SetVShake` | sms |  |
+| `0x00499280` | `G_Hline2` | sms |  |
+| `0x004992B0` | `G_UHline2` | sms |  |
+| `0x004992E0` | `G_Box2` | sms |  |
+| `0x00499330` | `G_UBox2` | sms |  |
+| `0x004B7910` | `G_AllocBitmapBuffer` | re | allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag |
+| `0x004B7930` | `G_RelocBitmap` | sms |  |
+| `0x004B79B0` | `G_AllocBitmap` | sms |  |
+| `0x004B7A80` | `G_AllocSurfaceBitmap` | sms |  |
+| `0x004B7BF0` | `G_FreeSurfaceBitmap` | sms |  |
+| `0x004B7C30` | `RemapAdd` | sms |  |
+| `0x004B7C60` | `RemapRelocate` | sms |  |
+| `0x004B7CD0` | `G_LoadBitmap` | sms |  |
+| `0x004B7E10` | `G_RemapBitmapToPalette` | re | remap a bitmap's RGB triples to the nearest _curPalette index (sum-of-squared-channel-diff nearest-colour match) |
+| `0x004B7F60` | `G_BlitToBrush` | sms |  |
+| `0x004B7FA0` | `G_BlitToScreen` | sms |  |
+| `0x004B7FE0` | `G_Blit` | sms |  |
+| `0x004B8460` | `G_ColorPrint` | sms |  |
+| `0x004B85F0` | `G_ColorStringWidth` | sms |  |
+| `0x004B8620` | `G_ColorStringHeight` | sms |  |
+| `0x004B8630` | `G_NextTab` | sms |  |
+| `0x004B8670` | `G_Scale` | sms |  |
+| `0x004B8710` | `G_ScaleFlip` | sms |  |
+| `0x004B87F0` | `G_AcTexture` | sms |  |
+| `0x004B8820` | `G_TextureFlip` | sms |  |
+| `0x004B8890` | `G_PerspectiveFlip` | sms |  |
+| `0x004B8920` | `G_HFlipBitmap` | sms |  |
+| `0x004B8960` | `G_DoubleBitmapY` | sms |  |
+| `0x004B8BF0` | `G_DoubleBitmapX` | sms |  |
+| `0x004B8D90` | `carefulDiv` | sms |  |
+| `0x004B8E10` | `NPM_clipTop` | sms |  |
+| `0x004B8F70` | `NPM_clipTri` | sms |  |
+| `0x004B90C0` | `NPM_clipAndScan` | sms |  |
+| `0x004B9430` | `NPM_FlatTri` | sms |  |
+| `0x004B9630` | `NPM_TextureLinearTri` | sms |  |
+| `0x004B9B90` | `NPM_TexturePerspectiveTri` | sms |  |
+| `0x004BA400` | `G_FloatFlatFlip` | sms |  |
+| `0x004BA500` | `G_FloatTextureFlip` | sms |  |
+| `0x004BA660` | `G_FloatPerspectiveFlip` | sms |  |
+| `0x004C619C` | `G_UPatLine` | sms |  |
+| `0x004C6334` | `G_UBresenhamLine` | sms |  |
+| `0x004C6ECC` | `G_UPolygon` | sms |  |
+| `0x004C77D0` | `G_SUPolygon` | sms |  |
+| `0x004C8A38` | `G_Polygon` | sms |  |
+| `0x004C8A74` | `G_SPolygon` | sms |  |
+| `0x004CA028` | `G__AC_Texture` | sms |  |
+| `0x004CAE38` | `G__Texture` | sms |  |
+| `0x004CBD0B` | `G__Perspective` | sms |  |
+| `0x004CBE7C` | `G__ScaleBitmap` | sms |  |
+| `0x004CC8B0` | `DrawYLRP` | sms |  |
+
+### Wingman / group AI (WNG/GRP)
+
+[`wingman.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/wingman.csv) · [page](wingman.md) — 38 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x0045E460` | `WNGInit` | sms |  |
+| `0x0045E490` | `WNGAdd` | sms |  |
+| `0x0045E520` | `WNGRemove` | re | remove _curId from a wing; MSGSend 0x14 handoff (twin of GRPRemove) |
+| `0x0045E630` | `WNGLeader` | re | first live member of a wing (twin of GRPLeader) |
+| `0x0045E690` | `WNGWingman` | re | undetected twin of GRPWingman; materialized on apply |
+| `0x0045E6E0` | `WNGWingmen` | sms |  |
+| `0x0045E710` | `WNGPart` | sms |  |
+| `0x0045E790` | `WNGWingmenNearby` | re | count wingmen within distance/alt (twin of GRPWingmenNearby) |
+| `0x0045E8A0` | `WNGControl` | re | if wingman, optional FormationMove; return formControl (twin of GRPControl) |
+| `0x0045E8F0` | `WNGLeaderLanding` | sms |  |
+| `0x0045E970` | `WNGFormationMove` | sms |  |
+| `0x0045EAC0` | `WNGSetControl` | re | set formation control; MSGSend subcode 10 |
+| `0x0045EB30` | `WNGSetType` | re | set formation type; MSGSend subcode 9 |
+| `0x0045EB70` | `WNGSetSpacingH` | re | set horizontal spacing; MSGSend subcode 7 |
+| `0x0045EBB0` | `WNGSetSpacingV` | re | set vertical spacing; MSGSend subcode 8 |
+| `0x0045EBF0` | `WNGSetStateTarget` | re | EnterState + set target; MSGSend 0x11 (twin of GRPSetStateTarget) |
+| `0x0045ED90` | `WNGSendWM` | sms |  |
+| `0x0045EEF0` | `WNGResponseSize` | re | response capacity from the orders-block flags |
+| `0x0045EF20` | `WNGAttackingObj` | re | count wing members attacking a target |
+| `0x0045EFB0` | `WNGHumansFirst` | re | move human-controlled members to slot 0 |
+| `0x0045F030` | `WNGInHumanWing` | re | true if id shares the player's wing |
+| `0x0045F090` | `WNGPlayerWM` | sms |  |
+| `0x0045F100` | `WNGName` | re | format 'Wingleader'/'Wingman'/'Wingman %d' (twin of GRPName) |
+| `0x0045F190` | `GRPInit` | sms |  |
+| `0x0045F1C0` | `GRPAdd` | sms |  |
+| `0x0045F250` | `GRPRemove` | sms |  |
+| `0x0045F360` | `GRPLeader` | sms |  |
+| `0x0045F410` | `GRPWingmen` | sms |  |
+| `0x0045F440` | `GRPPart` | sms |  |
+| `0x0045F5D0` | `GRPControl` | sms |  |
+| `0x0045F6A0` | `GRPFormationMove` | sms |  |
+| `0x0045F7F0` | `GRPSetControl` | sms |  |
+| `0x0045F860` | `GRPSetType` | sms |  |
+| `0x0045F8A0` | `GRPSetSpacingH` | sms |  |
+| `0x0045F8E0` | `GRPSetSpacingV` | sms |  |
+| `0x0045FC20` | `GRPResponseSize` | sms |  |
+| `0x0045FC50` | `GRPAttackingObj` | sms |  |
+| `0x0045FCE0` | `GRPHumansFirst` | sms |  |
+
+### Object / entity system & shape selection
+
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 80 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00436B30` | `MoveObj` | sms |  |
+| `0x004382D0` | `MoveGoalValue` | re | resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj |
+| `0x004431B0` | `GRAPHICAddYourObjs` | sms |  |
+| `0x00462600` | `InitChain` | sms |  |
+| `0x00462620` | `RemoveFromChains` | sms |  |
+| `0x00462640` | `ChainRemoveCurObj` | re | unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1) |
+| `0x004626B0` | `ImmediateService` | sms |  |
+| `0x004626D0` | `ChainInsertCurObj` | re | ordered insert of the current object by service key (+0x68); honors correctChainPlacement |
+| `0x004627B0` | `RemoveCurObj` | sms |  |
+| `0x004628B0` | `GetCurObj` | sms |  |
+| `0x00462980` | `PutCurObj` | sms |  |
+| `0x004629E0` | `PushCurObj` | sms |  |
+| `0x00462A20` | `PopCurObj` | sms |  |
+| `0x00462A50` | `ServiceObjects` | sms |  |
+| `0x00462B70` | `ChainMergeSorted` | re | merge the re-queue chain back into chainStart keeping +0x68 order |
+| `0x00462C91` | `ProcessHitMsgs` | re | drain MSG 0x800B/0x800C remote hit events; raises event 0x4000 and spawns explosion via GRAPHICAddExp |
+| `0x00462D40` | `ProcessEffectMsgs` | re | drain per-computer MSG 0x8003+n remote effect spawns: explosion / smoke / MANAdd |
+| `0x00462E70` | `Service` | sms |  |
+| `0x004631B0` | `CheckForEvents1` | sms |  |
+| `0x004631F0` | `CheckForEvents2` | sms |  |
+| `0x00463730` | `PadlockTarget` | re | pick the object id the player is visually tracking (angle+distance gates, wingman fallback) |
+| `0x00463900` | `NearbyGroupLeader` | re | return the group leader id when the current object flies in role 2 within 0xC800 |
+| `0x00463980` | `MaybeCallEventProc` | sms |  |
+| `0x004639C0` | `CallEventProc` | sms |  |
+| `0x00463A20` | `CreateMove` | sms |  |
+| `0x00463AF0` | `CreateMoveGoal` | sms |  |
+| `0x00463B90` | `TimeAddSat` | re | saturating add to currentT, clamped at 0x7FFF |
+| `0x00463BC0` | `ObjPlusAngleParm` | sms |  |
+| `0x00463BE0` | `ObjPlusDeltaParm` | sms |  |
+| `0x00463C50` | `WriteCmdBuf` | sms |  |
+| `0x00463CA0` | `WriteCmdBufProcptr` | sms |  |
+| `0x00463CC0` | `WriteCmdBufMove` | sms |  |
+| `0x00463CD0` | `WriteCmdBufEnd` | sms |  |
+| `0x00463CE0` | `FinishCmdBuf` | sms |  |
+| `0x00463D00` | `AllocCmdBuf` | sms |  |
+| `0x00463D40` | `ReadCmdBuf` | sms |  |
+| `0x00463E50` | `CancelCmdBuf` | sms |  |
+| `0x00463EA0` | `MaskEvents` | sms |  |
+| `0x00463EC0` | `CallDamageProc` | sms |  |
+| `0x00463F30` | `GetObjProc` | re | resolve a proc selector: entity override (+0x6C) else class proc (type +0x7D) |
+| `0x00463F60` | `CallUtilProc` | sms |  |
+| `0x00463FA0` | `Ignore` | sms |  |
+| `0x00464040` | `Reaction` | sms |  |
+| `0x00464300` | `EnterState` | sms |  |
+| `0x00464420` | `InSearchArea` | sms |  |
+| `0x0046442B` | `InSearchAreaBody` | re | Ghidra mid-function split: body of @InSearchArea@4 (entry +0xB); route-corridor DistToLine test |
+| `0x004644F0` | `PreferredTargetId` | sms |  |
+| `0x00464520` | `PreferredProtectId` | sms |  |
+| `0x00464550` | `CloseToAnything` | sms |  |
+| `0x00464640` | `SetScenarioEndTime` | sms |  |
+| `0x00473A40` | `OBJEventProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
+| `0x00473B40` | `OBJDamageProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
+| `0x00473BE0` | `OBJProc` | sms |  |
+| `0x00473C10` | `Kill` | sms |  |
+| `0x00491240` | `OBJGet` | sms |  |
+| `0x00491250` | `OBJInit` | sms |  |
+| `0x004912C0` | `OBJShutdown` | sms |  |
+| `0x00491300` | `OBJAlloc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
+| `0x00491320` | `OBJStopAdding` | sms |  |
+| `0x00491340` | `OBJFindHumans` | sms |  |
+| `0x004913E0` | `OBJAdd` | sms |  |
+| `0x00491490` | `OBJSubtract` | sms |  |
+| `0x004914C0` | `OBJAlias` | sms |  |
+| `0x00491530` | `OBJCreateAliases` | sms |  |
+| `0x00491610` | `OBJAliasPreferred` | sms |  |
+| `0x00491670` | `OBJAliasAll` | sms |  |
+| `0x00491720` | `OBJAliasWaypoint` | sms |  |
+| `0x00491780` | `OBJAliasForMulti` | sms |  |
+| `0x004917D0` | `OBJNextAliasForMulti` | sms |  |
+| `0x004917F0` | `OBJTempAlias` | sms |  |
+| `0x00491810` | `OBJSetControl` | sms |  |
+| `0x004918D0` | `OBJHumanName` | sms |  |
+| `0x004A6B10` | `ResolveTypeRecord` | re | resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step |
+| `0x004A6EB0` | `SetupOT` | sms |  |
+| `0x004A71C0` | `LoadShapeVariantPair` | re | load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B) |
+| `0x004A71E0` | `LoadShapeSlot` | re | resolve one shape-slot filename to a loaded pointer via RMAccess (was proposed type_load_shape_slot) |
+| `0x004A7200` | `SetupNT` | sms |  |
+| `0x004A7220` | `SetupPT` | sms |  |
+| `0x004A7230` | `SetupJT` | sms |  |
+| `0x004AB450` | `ShapeSetup` | sms |  |
+
+### AI interpreter (CT)
+
+[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 122 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00464C60` | `CTInit` | sms |  |
+| `0x00464C80` | `CTShutdown` | sms |  |
+| `0x00464C90` | `CTRespondToCancelCmdBuf` | sms |  |
+| `0x00464CD0` | `CTLoadProgram` | re | load/switch the BI CODE resource by name (RMAccess 0x8000); set IP=base, CTResetPC |
+| `0x00464DB0` | `CTResetPC` | re | reset IP=base and line=1; if arg!=0 also zero stack depth |
+| `0x00464DE0` | `CTVarDiff` | sms |  |
+| `0x00464E20` | `CTEval_time` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E30` | `CTEval_do_nothing` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E40` | `CTEval_do_evade` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E50` | `CTEval_do_attack` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E60` | `CTEval_do_radar_launch` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E70` | `CTEval_do_ir_launch` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E80` | `CTEval_do_hit` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E90` | `CTEval_tgtattackingme` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464ED0` | `CTEval_tgtattackinganyone` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464F10` | `CTEval_tgt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464F50` | `CTEval_tgtclass` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464F90` | `CTEval_tgtisfighter` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464FB0` | `CTEval_tgtisbomber` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464FD0` | `CTEval_tgtisplane` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464FF0` | `CTEval_tgtisship` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465000` | `CTEval_tgtissam` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465010` | `CTEval_tgtisaaa` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465020` | `CTEval_tgthumancontrol` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465040` | `CTEval_maxrange` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465060` | `CTEval_maxrangediff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465080` | `CTEval_bestrange` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465090` | `CTEval_bestrangediff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004650A0` | `CTEval_radar` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004650B0` | `CTEval_tgtradar` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004650E0` | `CTEval_ir` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004650F0` | `CTEval_tgtir` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465120` | `CTEval_tgtoffbeam` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465150` | `CTEval_tgtahead` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465180` | `CTEval_tgtfacing` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004651D0` | `CTEval_hrzdisttotgt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465220` | `CTEval_disttotgt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465240` | `CTEval_htotgt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465290` | `CTEval_ptotgt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004652E0` | `CTEval_tgtaspectangle` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465380` | `CTEval_canclimb` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004653A0` | `CTEval_speed` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004653B0` | `CTEval_speeddiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004653D0` | `CTEval_minspeed` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004653E0` | `CTEval_minspeeddiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004653F0` | `CTEval_cornerspeed` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465400` | `CTEval_corner` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465410` | `CTEval_cornerspeeddiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465420` | `CTEval_maxrudderh` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465430` | `CTEval_maxrudderp` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465440` | `CTEval_maxspeed` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465450` | `CTEval_maxspeeddiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465460` | `CTEval_betterspeed` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465480` | `CTEval_twr` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465490` | `CTEval_twrdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004654A0` | `CTEval_bettertwr` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004654C0` | `CTEval_turnrate` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004654D0` | `CTEval_turnratediff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004654F0` | `CTEval_turnradius` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465500` | `CTEval_turnradiusdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465510` | `CTEval_alt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465540` | `CTEval_altdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465560` | `CTEval_maxalt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465590` | `CTEval_maxaltdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004655B0` | `CTEval_minalt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004655C0` | `CTEval_minaltdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004655E0` | `CTEval_waypointalt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465640` | `CTEval_disttowaypoint` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004656B0` | `CTEval_cloudalt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004656C0` | `CTEval_skill` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004656D0` | `CTEval_h` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465710` | `CTEval_p` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465730` | `CTEval_b` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465750` | `CTEval_hdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465770` | `CTEval_pdiff` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465790` | `CTEval_any` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004657A0` | `CTEval_engagep` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004658A0` | `CTEval_wingapproach` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465960` | `CTEval_wingcombat` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004659F0` | `CTEval_wm_hspacing_is` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465A00` | `CTEval_wm_vspacing_is` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465A10` | `CTEval_wm_formation_is` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465A20` | `CTEval_wm_control_is` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465A30` | `CTDo_exit` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465A50` | `CTDo_restart` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465A70` | `CTDo_maneuver` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465AD0` | `CTPop` | re | eval-stack pop; underflow raises CTError(4) |
+| `0x00465B00` | `CTDo_print` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465B60` | `CTDo_printnum` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465BC0` | `CTDo_play` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465C20` | `CTDo_rudder` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465C90` | `CTReadAngle` | re | pop then clamp [-90,90] x182 (binary degrees) |
+| `0x00465CC0` | `CTDo_move` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465D40` | `CTReadHeading` | re | pop then normalize [0,359] x182 |
+| `0x00465DA0` | `CTReadAngle180` | re | pop then clamp [-180,180] x182; passthrough sentinel 0x7FFFFFFF |
+| `0x00465DE0` | `CTReadDuration` | re | pop then clamp [0,15] |
+| `0x00465E00` | `CTReadSpeed` | re | pop then clamp [COMinSpeed,COMaxSpeed] read live |
+| `0x00465E20` | `CTDo_movetoalt` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00465EA0` | `CTDo_turn` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466052` | `CTDo_yoyo` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004660C0` | `CTDo_circle` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004661A0` | `CTDo_homeangle` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466290` | `CTPush` | re | eval-stack push; overflow (>0x13) raises CTError(5) |
+| `0x004662C0` | `CTDo_homepos` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004663E0` | `CTDo_uhomepos` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004663F0` | `CTDo_jink` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004664C0` | `CTDo_invert` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004664F0` | `CTDo_btoh` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466540` | `CTDo_splits` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466590` | `CTDo_immelman` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004665E0` | `CTDo_wm_break` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466630` | `CTDo_wm_approach` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466700` | `CTDo_wm_hspacing` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466750` | `CTDo_wm_vspacing` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004667A0` | `CTDo_wm_formation` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004667E0` | `CTDo_wm_control` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00466820` | `CTError` | re | map error code 1..0xc to a string and ErrorExit('Chuck Talk error: %s, line %u') |
+| `0x004668F0` | `CTRestoreState` | re | restore _ctState from _ctStateCheckpoint (or zero it) |
+| `0x00466920` | `CTSaveState` | re | copy _ctState to the heap checkpoint, then zero it |
+| `0x00466970` | `CTExecProgram` | sms |  |
+| `0x00466A80` | `CTStep` | re | fetch one opcode and dispatch via switch; CALL_BY_NAME(0x27) resolves via SMAddress then self-patches to CALL_DIRECT(0x26) |
+| `0x004670E0` | `CTVarPtr` | re | return &_ctState[i] for script var index i in [0,4]; out-of-range raises CTError(3) |
+
+### Input — joystick / serial / modem
+
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 18 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00494270` | `ReadSticksRaw` | sms | poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10) |
+| `0x004942D0` | `InitJoysticks` | sms | joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions |
+| `0x00494430` | `GetJoystickType` | sms | JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4 |
+| `0x004944A0` | `ReadDevice` | sms | read one device joyGetPos/joyGetPosEx into joystickInfo/Ex[id]; 50ms (0x32) rate-limit via joystickLastRead + timeGetTime |
+| `0x00494580` | `ScaleToRange` | sms | clamp/scale a float axis into calibrated min/center/max range via __ftol; stack-arg helper for NormalizeStick |
+| `0x004946B0` | `NormalizeStick` | sms | normalize X/Y/throttle/rudder to ints; first-read center auto-capture (gotCenterX/Y/R -> DAT_00554ec4/ec8/ebc); calls ScaleToRange |
+| `0x00494A50` | `GetPOV` | sms | read POV hat; map centidegrees/100 to keypad scancode 0x48/0x4D/0x50/0x4B (U/R/D/L); 0xFFFF=centered->0 |
+| `0x00494AE0` | `ASynchJoystick` | sms | poll buttons via ReadJoystickButtons; edge-detect new presses into buttonPresses[] per JOYCAPS button count |
+| `0x00494B50` | `ReadJoystickButtons` | sms | return button mask from joystickInfo+0x14 (legacy) or joystickInfoEx+0x28 (extended) |
+| `0x00499CF0` | `MOUSESetLimits` | sms | set cursor clamp limits (mouse-ring limit fields DAT_00560f38/f3a) |
+| `0x00499D10` | `MOUSESetPos` | sms | center mousePos to screen/2 (DAT_0055c06a/c06c halved) |
+| `0x00499D40` | `MOUSECenter` | sms | FA.SMS symbol at 0x499d40 not split by current Ghidra inventory; ~16-byte helper between MOUSESetPos and MOUSERead — candidate to define |
+| `0x00499D50` | `MOUSERead` | sms | dequeue next event from 16-entry ring (critical-section); returns queued pos+buttons or current mousePos/mouseButtons if empty |
+| `0x00499DF0` | `MOUSEInit` | sms | InitializeCriticalSection(mouse_critical_section); reset ring indices; set initialized flag DAT_00501598 |
+| `0x00499E30` | `MOUSEShutdown` | sms | DeleteCriticalSection(mouse_critical_section) if initialized |
+| `0x00499E50` | `MOUSEEvent` | sms | WndProc mouse handler WM_MOUSEMOVE/L/R DOWN+UP (0x200/201/202/204/205); edge-count mouseButtonPresses & DAT_00560ef1; push to ring; update mousePos |
+| `0x0049B1D0` | `RunSerialConfigurationScreen` | sms | large device-config dialog for direct-serial link (baud/port/etc.); ~5.4KB UI — could alternatively be shell-ui |
+| `0x0049C780` | `RunModemConfigurationScreen` | sms | large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui |
+
+### Terrain (T_)
+
+[`terrain.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/terrain.csv) · [page](terrain.md) — 82 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004A7310` | `T_InitPlane` | sms | spawns player plane on terrain at mission start (FMInitPlane/FMUpdatePlaneFields/EnterState/PLANESetFeetWet); writes _cg mirror fields |
+| `0x004A73B0` | `T_AddObj` | sms | add a static object/building to the terrain object database (1642 B) |
+| `0x004A7A40` | `T_AddYourObjs` | sms | terrain "add your objects" service pass |
+| `0x004A7D70` | `T_ImmediateVisibility` | sms |  |
+| `0x004A7DF0` | `T_ObjList` | sms |  |
+| `0x004A7E50` | `T_Render` | sms |  |
+| `0x004A7F20` | `T_InitForestProc` | sms | label-only in FA.SMS import; ApplySymbols materializes (0x20 B setup preceding T_ResolveDecorShapes) |
+| `0x004A7F40` | `T_ResolveDecorShapes` | re | walk a decoration brush-list (stride 0x1a) resolving each entry's SH via _RMAccess into +2; called by T_InitWaterProc(&_waterList) / T_InitCloudProc(&_cloudList) |
+| `0x004A7F70` | `T_ForestProc` | sms | scatters forest decoration (desert vs _forestList) via T_ScatterGrid |
+| `0x004A8090` | `T_ScatterGrid` | re | 2^n x 2^n tiling loop invoking T_ScatterDecorTile; called by every T_*Proc (evidence: T_ForestProc/T_MooseProc/T_WaterProc) |
+| `0x004A8130` | `T_ScatterDecorTile` | re | place one decoration cluster per tile: per-band distance LOD, T_GetLeaf gate, T_Info altitude, T_QueueDecor |
+| `0x004A83E0` | `T_InitForest1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8400` | `T_Forest1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8520` | `T_InitForest2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8540` | `T_Forest2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8660` | `T_InitFarmProc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8670` | `T_FarmProc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8730` | `T_InitMooseProc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8750` | `T_MooseProc` | sms | scatters "moose" decoration (desert vs _mooseList) |
+| `0x004A8870` | `T_InitVietRicePaddy1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8880` | `T_VietRicePaddy1Proc` | sms | Vietnam theater rice-paddy decoration proc |
+| `0x004A8950` | `T_InitVietRicePaddy2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8960` | `T_VietRicePaddy2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8970` | `T_InitVietRicePaddy3Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8980` | `T_VietRicePaddy3Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8990` | `T_InitVietPalms1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A89A0` | `T_VietPalms1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A89B0` | `T_InitVietPalms2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A89C0` | `T_VietPalms2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A89D0` | `T_InitVietPalms3Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A89E0` | `T_VietPalms3Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A89F0` | `T_InitVietTrees1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A00` | `T_VietTrees1Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A10` | `T_InitVietTrees2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A20` | `T_VietTrees2Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A30` | `T_InitVietTrees3Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A40` | `T_VietTrees3Proc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A50` | `T_InitVietWaterBuffaloProc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A60` | `T_VietWaterBuffaloProc` | sms | label-only in FA.SMS import; ApplySymbols materializes |
+| `0x004A8A70` | `T_InitWaterProc` | sms | copies _waterCfg string then resolves _waterList via T_ResolveDecorShapes |
+| `0x004A8AB0` | `T_WaterProc` | sms | scatters water-surface decoration; lazy-inits via T_InitWaterProc |
+| `0x004A8B90` | `T_InitCloudProc` | sms | resolves _cloudList via T_ResolveDecorShapes(&_cloudList 0x50C298) |
+| `0x004A8BA0` | `T_CloudProc` | sms | label-only; the global ambient proc (set in T_Init2) |
+| `0x004A8C30` | `T_QueueDecor` | re | append an entry (short id + 0x17-B record) to the per-frame decor/comment list at _decorListEnd (DAT_0057336c); dedupes by id |
+| `0x004A8CC0` | `T_ObjIsVisible` | re | per-object render-flag/type visibility test (DAT_00573396 flags vs type table at 0x50A6B8); used by T_AddVisibleObjs |
+| `0x004A8D30` | `T_Normal` | sms |  |
+| `0x004A8E50` | `T_LeafOp` | sms | emit one terrain leaf's geometry; 14-B entry + split body FUN_004a8e5e |
+| `0x004A9660` | `T_Make` | sms | build terrain scene: pick LOD tile size (_lodTileSize 0x20-0x100) + detail (_lodDetail 1/2/4/8) by view distance/DAT_00573394; quadtree tessellate into _cellArray; run ambient/object passes; emit leaf list |
+| `0x004A9BB0` | `T_RunAmbientProcs` | re | iterate _ambientProcs[0..0x10] (17 decoration procs) calling each with its index; gated by DAT_00573396&0x8000 and _ambientSuppress |
+| `0x004A9C20` | `T_AddVisibleObjs` | re | iterate _objPtrs[1.._nextObjId]; for visible in-bounds objects run ImmediateService and T_QueueDecor (via GetCurObj/PutCurObj) |
+| `0x004A9D00` | `T_BuildQuadCell` | re | build one quad cell in _cellArray (sample T_GetLeaf at 4 corners, T_QuadAltitude/SetFlags) |
+| `0x004A9E20` | `T_QuadAltitude` | re | representative altitude of a cell (clamped min/max blend of corner heights scaled by DAT_00573392) |
+| `0x004A9EA0` | `T_QuadSetFlags` | re | set leaf flat-bit (+0xF\|1) vs sloped-bit (+0xE\|0x80) from corner-delta bytes |
+| `0x004A9ED0` | `T_ViewBounds` | re | rotate view box by heading (_Rotate2) to compute cell-space AABB DAT_0057334a..DAT_00573350 |
+| `0x004AA070` | `T_SubdivideCells` | re | LOD pass: walk _cellArray, subdivide cells finer than _lodDetail via 4x T_BuildQuadCell; T_CellScreenBounds cull; caps at 500 cells |
+| `0x004AA260` | `T_CellScreenBounds` | re | cell world extent (<<5) AND'd with view bounds via _BoundsAnd (cull test) |
+| `0x004AA2B0` | `T_CompactCells` | re | compact _cellArray dropping dead (0xffff) cells; rewrites _cellCount and optional carried index |
+| `0x004AA380` | `T_SortCells` | re | in-place quicksort of _cellArray (stride 0x16) via comparator (*_cellCompare 0x580B9C) and _Swapmem |
+| `0x004AA440` | `T_CountCells` | re | tally cells into front/back counts (returns front count); drives T_Make's subdivide-again loop |
+| `0x004AA4A0` | `T_EmitCells` | re | per live cell: T_CellTmapLookup + optional T_Normal, then T_LeafOp to emit geometry |
+| `0x004AA620` | `T_InitDictionary` | sms | init the tmap dictionary (_tdic) |
+| `0x004AA680` | `T_InitDictionaryEntry` | sms |  |
+| `0x004AA790` | `T_NamedTmaps` | sms | build named-tmap list (_tlist) from dictionary |
+| `0x004AA7E0` | `T_CompareTlist` | sms | qsort comparator for _tlist (label-only; xref-only in globals.csv) |
+| `0x004AA820` | `T_SortTmapList` | sms | sort _tlist for binary search |
+| `0x004AA840` | `T_CellTmapLookup` | re | binary-search _tlist by packed cell coord ((y&~3)<<16\|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2 |
+| `0x004AACA0` | `T_InitHorizonProc` | sms | RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH |
+| `0x004AACE0` | `T_HorizonProc` | sms | 1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label |
+| `0x004AACFE` | `T_DrawHorizon` | re | horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol |
+| `0x004AB860` | `BrushFromIndex` | sms |  |
+| `0x004ABAB0` | `T_Info` | sms |  |
+| `0x004C5D30` | `T_InitDatabase` | sms | set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB) |
+| `0x004C5D50` | `T_ShutdownDatabase` | sms | zero _dbDynamicLow/High |
+| `0x004C5D60` | `T_Init` | sms |  |
+| `0x004C5D70` | `T_Load` | sms |  |
+| `0x004C5F40` | `T_StripTildes` | re | remove '~' chars from a filename in place; used twice by T_Load |
+| `0x004C5F60` | `T_Init2` | sms |  |
+| `0x004C5FA0` | `T_Shutdown` | sms | mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change) |
+| `0x004C6020` | `T_StopAdding` | sms | OBJStopAdding (unless _curScreen==3) + OBJFindHumans |
+| `0x004C6040` | `T_GetLeaf` | sms | return 3-byte leaf ptr: fine grid (th+0x91,stride th+0x89) if size<th+0x79 else coarse grid (th+0x85,stride th+0x7d); OOB -> _borderLeaf (0x50CE4C) |
+| `0x004C9624` | `T_InterpAltNW` | sms | barycentric altitude interpolation in the NW triangle of a leaf quad (64-bit divide of corner heights) |
+| `0x004C9770` | `T_InterpAltSE` | sms | label-only in FA.SMS import; SE-triangle counterpart (folded into InterpAltNW tail today) |
+
+### Weapons — projectiles / seekers / ECM (PROJ)
+
+[`weapons.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/weapons.csv) · [page](weapons.md) — 55 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004C06A0` | `PROJInit` | sms |  |
+| `0x004C0710` | `PROJGetTargetPos` | sms |  |
+| `0x004C0820` | `PROJAccurateHardPos` | sms |  |
+| `0x004C0870` | `PROJSetTarget` | sms |  |
+| `0x004C0960` | `PROJLockUpdate` | sms |  |
+| `0x004C0A90` | `PROJAdd` | sms |  |
+| `0x004C1120` | `PROJSpeed` | sms |  |
+| `0x004C1170` | `PROJEngineState` | sms |  |
+| `0x004C11B0` | `PROJMoveProc` | sms |  |
+| `0x004C1630` | `PROJGuideToTarget` | re | CreateMove toward lock target (proportional guidance) |
+| `0x004C1660` | `PROJGuideLoft` | re | loft/high-trajectory guidance when range>=type+0x10D |
+| `0x004C1720` | `PROJHoldCourse` | re | hold current commanded angles (fly straight) |
+| `0x004C1760` | `PROJGuideToSun` | re | steer IR seeker toward the sun when decoyed |
+| `0x004C17A0` | `PROJUpdateWeave` | re | random weave/jink aim offsets from type weave amp |
+| `0x004C17F0` | `PROJSunInSeeker` | re | IR seeker sun/sky FOV check (decoy source) |
+| `0x004C1870` | `PROJDamageProc` | sms |  |
+| `0x004C1C10` | `PROJBuildName` | re | compose '<nation> <weapon> <type>' into the kill-chatter name buffer |
+| `0x004C1CC0` | `PROJEventProc` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x004C1F10` | `PROJIsLockableTarget` | re | predicate: valid non-player lock candidate |
+| `0x004C1F50` | `PROJProc` | sms |  |
+| `0x004C20C0` | `PROJHit` | sms |  |
+| `0x004C2170` | `PROJFire` | sms |  |
+| `0x004C24B0` | `PROJAimAngles` | re | compute launch/boresight angles in the launcher frame (gimbal-limited) |
+| `0x004C26F0` | `PROJFireSound` | sms |  |
+| `0x004C2860` | `PROJInFOV` | sms |  |
+| `0x004C2B50` | `PROJTargetSignal` | re | seeker signal/lock quality (contrast, IR notch, look-down, clutter) |
+| `0x004C2E40` | `PROJInNotch` | re | Doppler-notch/beaming detection (defeats pulse-doppler) |
+| `0x004C2EB0` | `PROJRadarIsOn` | sms |  |
+| `0x004C2F20` | `PROJLock` | sms |  |
+| `0x004C31F0` | `PROJIRSensorOn` | re | IR-seeker detectability duty gate |
+| `0x004C3250` | `PROJProximityFuze` | re | closest-approach detonation decision + hit roll |
+| `0x004C3360` | `PROJTargetIsFastAir` | re | predicate: fast maneuvering aircraft (class4, speed>0x3A00) |
+| `0x004C3380` | `PROJHitChance` | sms |  |
+| `0x004C3830` | `PROJApplyPkCurve` | re | interpolate and clamp the running Pk penalty |
+| `0x004C3890` | `PROJRangePk` | re | range->Pk envelope lookup from the type range table |
+| `0x004C3960` | `PROJSizePk` | re | target-size/RCS vs weapon-sensitivity Pk scalar |
+| `0x004C39A0` | `PROJLaunchDevice` | sms |  |
+| `0x004C3AF0` | `PROJRetargetMissilesOnDevice` | sms |  |
+| `0x004C3C40` | `PROJGuideToDevice` | re | steer a seduced missile toward the decoy device |
+| `0x004C3CA0` | `PROJRemove` | sms |  |
+| `0x004C3DD0` | `PROJRetargetMissiles` | sms |  |
+| `0x004C3EB0` | `PROJMakeBombEq` | sms |  |
+| `0x004C4030` | `PROJChangeBombEq` | sms |  |
+| `0x004C4050` | `PROJBombPos` | sms |  |
+| `0x004C4100` | `PROJSelectTarget` | sms |  |
+| `0x004C4390` | `PROJScoreTarget` | re | per-candidate seeker scoring callback (dist+penalties) |
+| `0x004C4700` | `PROJServiceWeapon` | sms |  |
+| `0x004C5000` | `PROJSetReattackTimer` | re | set a random AI re-attack delay from aggression |
+| `0x004C5050` | `PROJAimGunSolution` | re | gun/dumb-weapon aim point with dispersion + terrain clamp |
+| `0x004C5270` | `PROJHasMissileOnTarget` | re | predicate: already have a guided missile locked on target |
+| `0x004C52D0` | `PROJSelectStore` | re | AI: pick the best weapon store for a target |
+| `0x004C5570` | `PROJMissileAttacking` | sms |  |
+| `0x004C5670` | `PROJSendCollateralDamages` | sms |  |
+| `0x004C58A0` | `PROJAreaWeaponHit` | re | special-warhead detonation (submunition scatter + collateral) |
+| `0x004C5D00` | `PROJMinScatterAngle` | re | clamp a scatter angle away from zero for submunition dispersion |
+
+### 3D render core / SH interpreter (GR)
+
+[`render-core.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/render-core.csv) · [page](render-core.md) — 163 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004CD588` | `sincos` | re | sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates |
+| `0x004CD5DF` | `isqrt16` | re | tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt) |
+| `0x004CD5EE` | `isqrt16_body` | re | Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize |
+| `0x004CD7A0` | `GRACos` | sms | public arccos wrapper over acos |
+| `0x004CD7B4` | `acos` | re | arccos via DAT_00515dcc table lookup+lerp |
+| `0x004CD834` | `GRSetLightSource` | sms | store world light dir into _worldLightSource/515ED2/515ED4 |
+| `0x004CD854` | `SetShading` | re | thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT |
+| `0x004CD8B0` | `Sun` | re | lighting dot product of _worldLightSource against current matrix rows (518384/38A/390) |
+| `0x004CD8F0` | `clip_edge_right` | re | Sutherland-Hodgman clip vs screen edge (outcode bit4); vbuf/vbuf2 ping-pong; calls ecode_pnt |
+| `0x004CD9DA` | `clip_edge_left` | re | S-H clip vs screen edge (outcode bit8); vbuf ping-pong |
+| `0x004CDAC6` | `clip_edge_top` | re | S-H clip vs screen edge (outcode bit2); vbuf ping-pong |
+| `0x004CDBB3` | `clip_edge_bottom` | re | S-H clip vs screen edge (outcode bit1); vbuf ping-pong |
+| `0x004CDCA8` | `do_nop` | sms | SH opcode 0x34 no-op handler |
+| `0x004CDCB8` | `render_3d` | re | scene traversal: sets viewport from _cb clip box; inits sort list; T_AddYourObjs; dispatches dddEntry via vector_table; painter-sorts cur_sort_list then draws via PTR_FUN_0051839c |
+| `0x004CDEB4` | `setup_view_projection` | re | per-frame view/projection setup (aspect/head vectors/frustum) from zoom + screen dims |
+| `0x004CE4A8` | `set_render_mode` | re | tail into check_flat body; installs perspective-path rasterizer fn-ptr table (5184AC-518674/5185F0-51861C) |
+| `0x004CE4B4` | `check_flat` | re | pick flat vs perspective render path from matrix (m4=m2=m8=m6=0 && m5~0x7FFF); swaps the rasterizer fn-ptr dispatch tables; sets DAT_00518679/515F84 |
+| `0x004CE784` | `load_normal_table` | re | copy lighting normal_table (or DAT_00518620 variant) into working DAT_00518484 by in_AL selector |
+| `0x004CE7BC` | `load_xlate_rotate_pnt` | re | hand-asm vertex load+translate+rotate helper (axis-select on DAT_00515f84) |
+| `0x004CE7F7` | `mxmul` | re | hand-asm matrix*scalar accumulate helper (axis-select) |
+| `0x004CE89C` | `compute_axis_check` | re | derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant |
+| `0x004CE968` | `sort_objs_wrapper` | re | painter depth sort wrapper over _SortObjs_8 |
+| `0x004CEB00` | `rotate_vec_roll` | re | rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll |
+| `0x004CEB70` | `rotate_matrix_roll` | re | object-instancing: concat roll rotation into current matrix (m1..m9) via sincos |
+| `0x004CED44` | `rotate_vec_pitch` | re | rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch |
+| `0x004CEDB8` | `rotate_matrix_pitch` | re | object-instancing: concat pitch rotation into current matrix via sincos |
+| `0x004CEF8C` | `rotate_vec_yaw` | re | rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw |
+| `0x004CF000` | `rotate_matrix_yaw` | re | object-instancing: concat yaw rotation into current matrix via sincos |
+| `0x004CF270` | `code_pnt` | re | compute 5-bit frustum outcode of a projected point (BP/BX bounds) |
+| `0x004CF2A4` | `ecode_pnt` | re | extended outcode (near-plane aware) returned in AL; used by clippers |
+| `0x004CF2D0` | `matrix_from_angle3` | re | build 3x3 rotation matrix (3x FUN_004cf410) for MakeObj/ViewRotationMatrix |
+| `0x004CF328` | `mult_point_by_matrix_asm` | re | hand-asm point*matrix (register-only; empty decompile) — MultPointByMatrix core |
+| `0x004CF410` | `matrix_row_asm` | re | hand-asm matrix row build (register-only; empty decompile) |
+| `0x004D028C` | `cull_bbox_viewspace` | re | view-space bounding-box/near-plane visibility test; returns clip code; called by GRAddBrentObj & do_drawobj000 |
+| `0x004D0494` | `get_sort_dist` | re | painter sort key = max\|Δ\|+quarters of others + per-obj bias (from _xv32/_yv32/_zv32) |
+| `0x004D057C` | `GRAddBrentObj` | sms |  |
+| `0x004D0798` | `draw_brent_obj` | re | per-object shape-draw callback (PTR_FUN_0051839c target): restore saved matrix/viewer; ShapeSetup(brentObjId); object rotate (roll/pitch/yaw); lighting matrix; check_flat; SetShadingTable; interpret shape stream with _bdrawObj=1 |
+| `0x004D0C2F` | `sh_op_BA` | re | SH opcode 0xBA handler |
+| `0x004D0C50` | `do_drawobj000` | sms |  |
+| `0x004D0C8A` | `sh_op_6A` | re | SH opcode 0x6A handler (render-state/geometry; 1409 bytes) |
+| `0x004D120B` | `sh_op_28` | re | SH opcode 0x28/0x30 handler |
+| `0x004D1421` | `sh_op_D6_pre` | re | 3-byte pre-adjust falling into sh_op_5A (op 0xD6) |
+| `0x004D1424` | `sh_op_5A` | re | SH opcode 0x5A handler (epic #52 placeholder name; 623 bytes) |
+| `0x004D1694` | `sh_op_20` | re | SH opcode 0x20 handler |
+| `0x004D17BC` | `do_shape_name` | sms | SH opcode 0x42 (SourceName): consume null-terminated shape name into _shapeName |
+| `0x004D17E0` | `sh_op_stub` | re | shared no-op stub for 10 unassigned SH opcodes |
+| `0x004D17F0` | `sh_op_00` | re | SH opcode 0x00 (EndObject) handler entry (1 byte; falls into do_short_eof) |
+| `0x004D17F4` | `do_short_eof` | sms | SH opcode 0x1E (Pad/EOF) handler |
+| `0x004D17F8` | `sh_op_3A` | re | SH opcode 0x3A handler |
+| `0x004D18F4` | `sh_op_08` | re | SH opcode 0x08 handler |
+| `0x004D1974` | `sh_op_72` | re | SH opcode 0x72 handler (epic #52 placeholder name) |
+| `0x004D1984` | `sh_op_96` | re | SH opcode 0x96 handler (856 bytes) |
+| `0x004D1E5C` | `do_vertexbuffer` | re | SH opcode 0x82 (VertexBuffer) + 0x02/0x04/0x0A: push vertex batch into global pool at push_at/8 |
+| `0x004D1ECC` | `sh_op_A2` | re | SH opcode 0xA2/0xAE handler |
+| `0x004D1EDC` | `sh_op_7A` | re | SH opcode 0x7A handler (epic #52 placeholder name) |
+| `0x004D1F24` | `sh_op_74` | re | SH opcode 0x74/0x7C/0x8E/0x9C handler (6-byte) |
+| `0x004D1F2C` | `sh_op_76` | re | SH opcode 0x76 handler |
+| `0x004D1F34` | `sh_op_22` | re | SH opcode 0x22/0x7E handler |
+| `0x004D1FC0` | `sh_op_80` | re | SH opcode 0x80 handler (epic #52 placeholder name; 796 bytes) |
+| `0x004D225E` | `sh_op_1A` | re | SH opcode 0x1A handler |
+| `0x004D2278` | `do_unmask` | re | SH opcode 0x12 (Unmask): call referenced sub-stream via dispatch call-form; renders articulated sub-part |
+| `0x004D22A8` | `do_sfcal_long` | sms | SH opcode 0x6E (UnmaskLong) |
+| `0x004D22D4` | `do_ifdestroyed` | sms | SH opcode 0xAC (JumpToDamage): esi+=rel16 if _destroyed (0x50C39C) |
+| `0x004D22FC` | `do_no_overlap` | sms | SH opcode 0xB8: clears overlap/collision flag via FUN_004d426c |
+| `0x004D2318` | `do_jumptodetail` | re | SH opcode 0xA6 (JumpToDetail): skip rel16 when _detail(0x515EEE) < threshold |
+| `0x004D2344` | `do_use_terrain_detail` | sms | SH opcode 0xB2 |
+| `0x004D2360` | `sh_op_B0` | re | SH opcode 0xB0 handler |
+| `0x004D2380` | `do_if_not_effect` | sms | SH opcodes 0x14/0x16/0x3C/0xA8/0xAA/0xC0: conditional skip keyed on effects setting |
+| `0x004D23AC` | `sh_op_6C` | re | SH opcode 0x6C handler (Unk6C; 13/14/16-byte variants) |
+| `0x004D2450` | `sh_op_06` | re | SH opcode 0x06 handler (Unk06; 16+u16 var-size) |
+| `0x004D24F8` | `sh_op_0C` | re | SH opcode 0x0C handler (Unk0C) |
+| `0x004D2580` | `sh_op_0E` | re | SH opcode 0x0E handler (Unk0E) |
+| `0x004D2608` | `sh_op_10` | re | SH opcode 0x10 handler (Unk10) |
+| `0x004D2690` | `sh_op_18` | re | SH opcode 0x18 handler |
+| `0x004D2740` | `sh_op_84` | re | SH opcode 0x84 handler (epic #52 placeholder name) |
+| `0x004D2798` | `load_dest` | re | interpreter helper: load destination operand |
+| `0x004D2880` | `sh_op_1C` | re | SH opcode 0x1C/0x88 handler (perspective-path variant swapped by check_flat) |
+| `0x004D2910` | `sh_op_26` | re | SH opcode 0x26 handler |
+| `0x004D29EC` | `sh_op_2A` | re | SH opcode 0x2A/0x86 handler |
+| `0x004D2B20` | `sh_op_2C` | re | SH opcode 0x2C/0x8A handler |
+| `0x004D2BB0` | `sh_op_92` | re | SH opcode 0x92 handler |
+| `0x004D2C70` | `sh_op_90` | re | SH opcode 0x90 handler |
+| `0x004D2D30` | `sh_op_94` | re | SH opcode 0x94 handler |
+| `0x004D2FC0` | `do_setcolor2` | sms | SH opcode 0x5C |
+| `0x004D2FC8` | `sh_op_BC` | re | SH opcode 0xBC handler (UnkBC) |
+| `0x004D2FD0` | `sh_op_2E` | re | SH opcode 0x2E handler; contains do_setcolor_continue (0x4D2FD6) |
+| `0x004D300A` | `sh_op_24_pre` | re | 2-byte entry for op 0x24 (falls into do_fullpntg16) |
+| `0x004D300C` | `do_fullpntg16` | sms | SH opcode 0xFA |
+| `0x004D3064` | `sh_op_A0` | re | SH opcode 0xA0 handler |
+| `0x004D30C8` | `sh_op_4E` | re | SH opcode 0x4E handler |
+| `0x004D30E4` | `do_short_ijmp` | sms | SH opcode 0x38 (ShortJump): DEC ESI then shares 0x48 body |
+| `0x004D30E5` | `do_jump` | sms | SH opcode 0x48 (Jump): esi+=rel16 |
+| `0x004D3100` | `do_ijmp_long` | sms | SH opcode 0x50 (LongJump): esi+=rel32 |
+| `0x004D3118` | `sh_op_32` | re | SH opcode 0x32 handler |
+| `0x004D3134` | `do_anim_jmp` | sms | SH opcode 0x40 (JumpToFrame): idx=_frameCounter mod nframes; relative frame-table jump |
+| `0x004D315C` | `sh_op_4A` | re | SH opcode 0x4A handler |
+| `0x004D3193` | `sh_op_4C_pre` | re | 1-byte entry for op 0x4C/0x8C (falls into sh_op_C4) |
+| `0x004D3194` | `do_xformunmask` | re | SH opcode 0xC4 XformUnmask: render sub-stream at a relative transform |
+| `0x004D33D8` | `do_icall_long` | sms | SH opcode 0xC6 (XformUnmaskLong) |
+| `0x004D3618` | `sh_op_52` | re | SH opcode 0x52/0x54 handler |
+| `0x004D3644` | `sh_op_56` | re | SH opcode 0x56 handler |
+| `0x004D3670` | `sh_op_5E` | re | SH opcode 0x5E handler |
+| `0x004D36CC` | `sh_op_60` | re | SH opcode 0x60 handler |
+| `0x004D3728` | `sh_op_62` | re | SH opcode 0x62 handler |
+| `0x004D3784` | `sh_op_64` | re | SH opcode 0x64 handler |
+| `0x004D37BC` | `sh_op_66` | re | SH opcode 0x66 handler |
+| `0x004D37F4` | `sh_op_68` | re | SH opcode 0x68 handler |
+| `0x004D382C` | `sh_op_58` | re | SH opcode 0x58 handler |
+| `0x004D3938` | `sh_op_78` | re | SH opcode 0x78 handler (Unk78; 2085 bytes — largest handler) |
+| `0x004D415D` | `thunk_FUN_004d416b` | sms | 2-byte thunk for ops 0xA4/0xBE -> FUN_004d416b |
+| `0x004D416B` | `sh_op_A4_body` | re | body reached via thunk (op 0xA4/0xBE) |
+| `0x004D416C` | `do_jumpfar4` | sms | SH opcode 0xC8 (JumpToLOD): distance/size LOD test; skips 6-byte operand when _effects&0x20000 |
+| `0x004D4240` | `do_start_interp` | sms | bytecode re-entry target for x86-embedded regions (all 208 x86 shapes jump here); esi=selected sub-stream |
+| `0x004D4254` | `do_start_asm` | sms | SH opcode 0xF0 (X86Code): push esi; ret -> execute embedded x86 payload |
+| `0x004D4258` | `do_collision_info` | sms | SH opcode 0xF2 (PtrToObjEnd): records obj_end_off |
+| `0x004D426C` | `set_overlap_flag` | re | helper: AND/OR update of collision/overlap flag word 0x515EF0 (used by do_no_overlap) |
+| `0x004D4288` | `sh_op_CA` | re | SH opcode 0xCA handler (UnkCA) |
+| `0x004D42C8` | `do_setlight` | sms | SH opcode 0xDA |
+| `0x004D42EC` | `do_setcoarse` | sms | SH opcode 0x44 (sets _coarse detail flag) |
+| `0x004D4308` | `do_set_point_color` | sms | SH opcode 0xF6 (VertexInfo): per-vertex color+normal |
+| `0x004D4364` | `do_set_gouraud` | sms | SH opcode 0xF4 |
+| `0x004D43CC` | `SetFlatColor` | re | helper: set flat-shade color for do_new_poly |
+| `0x004D43DC` | `do_new_poly` | sms | SH opcode 0xFC (Face): parse face flags/indices(<<3=*8 pool)/texcoords; effect-gate; synthesize+dispatch sub-program of setcolor/gouraud/texture/brush opcodes -> rasterizer |
+| `0x004D478C` | `do_force_no_pmap` | sms | SH opcode 0x46 (sets _force_no_pmap) |
+| `0x004D47A4` | `do_streamer_def` | sms | SH opcode 0xCE (streamer/contrail define) |
+| `0x004D47B8` | `do_streamer_draw` | sms | SH opcode 0xD0 (streamer/contrail draw) |
+| `0x004D4874` | `NeedClip` | re | helper: mark clip needed |
+| `0x004D4888` | `RestoreClip` | re | helper: restore prior clip state |
+| `0x004D4894` | `do_screen_coords` | sms | SH opcode 0xD2 (project to screen coords) |
+| `0x004D4988` | `do_texture_index` | re | SH opcode 0xE0 (TextureIndex): select current texture by index |
+| `0x004D49C0` | `do_texture_file` | re | SH opcode 0xE2 (TextureFile): set current texture by 14-byte name |
+| `0x004D4A19` | `do_brush_solid` | sms | SH opcode 0xEC |
+| `0x004D4A30` | `do_brush_trans` | sms | SH opcode 0xEE |
+| `0x004D4A47` | `do_brush_area` | sms | SH opcode 0xE4 |
+| `0x004D4A6D` | `do_brush_area_full` | sms | SH opcode 0xE6 |
+| `0x004D4ACA` | `sh_op_DC` | re | SH opcode 0xDC handler (UnkDC; 610 bytes; textured-fill path) |
+| `0x004D4D2C` | `sh_op_DE` | re | SH opcode 0xDE handler (perspective textured-fill; 723 bytes) |
+| `0x004D4FFF` | `shade_span_a` | re | do_new_smap/rmap shade-span builder variant A |
+| `0x004D511B` | `shade_span_b` | re | do_new_smap/rmap shade-span builder variant B |
+| `0x004D523B` | `shade_span_c` | re | do_new_smap/rmap shade-span builder variant C |
+| `0x004D5356` | `shade_span_d` | re | do_new_smap/rmap shade-span builder variant D |
+| `0x004D5475` | `do_new_smap` | sms | SH opcode 0xE8 (shade map) |
+| `0x004D5644` | `do_new_rmap` | sms | SH opcode 0xEA (remap; 872 bytes) |
+| `0x004D59AC` | `do_new_pmap_or_tmap` | sms | SH opcodes 0x36/0x3E (perspective/texture map) |
+| `0x004D5A2C` | `angles_2_matrix` | re | build view rotation matrix from _am_h/_am_p/_am_b (heading/pitch/bank) via sincos |
+| `0x004D5BA8` | `GRInit3d` | sms | init: store detail flag; install _overflow_ptr divide trap |
+| `0x004D5BCC` | `GRRender` | sms | top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix |
+| `0x004D5C98` | `GRSinCos` | sms | public sin/cos wrapper over sincos |
+| `0x004D5CC0` | `GRTo2d` | sms |  |
+| `0x004D5E58` | `MakeObjRotationMatrix` | sms | build object rotation matrix (roll/pitch/yaw) into caller buffer |
+| `0x004D60D8` | `MakeViewRotationMatrix` | sms | build view rotation matrix (yaw/pitch/roll order) into caller buffer |
+| `0x004D631C` | `MultPointByMatrix` | sms | transform a point by the current matrix (wraps mult_point_by_matrix_asm) |
+| `0x004D6348` | `GRSaveContext` | sms | save viewer/xv/scr/bias/wtop + scaled+unscaled matrices to shadow block 0x51D5E3+ |
+| `0x004D63F0` | `GRRestoreContext` | sms | restore the GRSaveContext shadow block |
+| `0x004D6498` | `GRExec` | sms | execute one SH command stream: dispatch vector_table[*param]; preserve _xv/_yv/_zv (used by scene dispatch for sky/sun list) |
+| `0x004D64D8` | `MultF24PointByMatrix` | sms | transform a 24.8 fixed point by matrix with saturation |
+| `0x004D65C4` | `Sqrt` | sms |  |
+| `0x004D6640` | `do_nt` | sms | SH opcode 0xFE (terrain node/tile): read tile verts; compute bbox+sort key; insert into sort list; draw_quad or draw_tri_nw+se by diagonal |
+| `0x004D69EC` | `__compute_viewer_dot_product` | re | backface cull: face-normal dot (vertex - viewer) for do_nt tiles |
+| `0x004D6A38` | `draw_quad` | re | assemble 4-vertex tile working set -> draw_nt |
+| `0x004D6A90` | `draw_tri_nw` | re | assemble NW-triangle working set -> draw_nt |
+| `0x004D6B24` | `draw_tri_se` | re | assemble SE-triangle working set -> draw_nt |
+| `0x004D6BB8` | `draw_nt` | re | build terrain-tile polygon (flat/gouraud/textured) from working set and submit to the 2D rasterizer |
+
+### Startup / Phar Lap DOS extender / config
+
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 222 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004D715A` | `_DirectDrawCreate@12` | sms | IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7220` | `_ser_rs232_getpacket@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7226` | `_ser_rs232_block@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D722C` | `_ser_rs232_flush@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7232` | `_ser_rs232_getbyte@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7238` | `_ser_rs232_putbyte@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D723E` | `_ser_rs232_getstatus@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7244` | `_ser_rs232_putpacket@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D724A` | `_FlushTransmitBuffer@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7250` | `_FlushReceiveBuffer@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7256` | `_SetFlowControlThreshold@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D725C` | `_SetPaceTime@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7262` | `_SetTimeout@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7268` | `_UnInitializePort@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D726E` | `_SetPortCharacteristics@24` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7274` | `_InitializePort@36` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D727A` | `_IsPortAvailable@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7280` | `_BytesInReceiveBuffer@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7286` | `_BytesInTransmitBuffer@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D728C` | `_GetByte@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7292` | `_PeekChar@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7298` | `_CdrvCrc16@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D729E` | `_IsCarrierDetect@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72A4` | `_ModemInit@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72AA` | `_ModemAttention@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72B0` | `_ModemWaitForCall@16` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72B6` | `_IsRing@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72BC` | `_GetString@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72C2` | `_ModemAnswerMode@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72C8` | `_ModemGetCarrierSpeed@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72CE` | `_ModemConnect@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72D4` | `_Dial@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72DA` | `_ModemModifyValue@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72E0` | `_ModemHangup@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72FE` | `_closeMS` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7304` | `_getMSdatafile` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D730A` | `_getMSdatafilesize` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7310` | `_initializeMS` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7316` | `_connectMS` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D731C` | `_sendMSresults` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7330` | `_strncpy` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7430` | `__cinit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7460` | `_exit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7480` | `__exit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7580` | `__lockexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7590` | `__unlockexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D75C0` | `_strrchr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D75F0` | `_atol` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D76A0` | `_atoi` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D76B0` | `__atoi64` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7790` | `_sprintf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7810` | `_strchr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D78D0` | `_memmove` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7A30` | `_tolower` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7AA0` | `__tolower_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7B90` | `_fclose` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7BD0` | `__fclose_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7C70` | `_fopen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7C90` | `_strstr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7DB0` | `_isdigit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7E20` | `_isspace` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7E80` | `_isalnum` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7EC0` | `_isprint` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8050` | `_toupper` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D80C0` | `__toupper_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D81B0` | `__chkstk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D81E0` | `?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8220` | `?_CallMemberFunction0@@YGXPAX0@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8230` | `?_CallMemberFunction1@@YGXPAX00@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8240` | `?_CallMemberFunction2@@YGXPAX00H@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8250` | `?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8310` | `?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D83B0` | `?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8510` | `__global_unwind2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8552` | `__local_unwind2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D85BA` | `__abnormal_termination` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D85DD` | `__NLG_Notify1` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D85E6` | `__NLG_Notify` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8610` | `_strncmp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8648` | `__ftol` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D86A0` | `__cfltcvt_init` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D87B5` | `__seh_longjmp_unwind@4` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D87D0` | `_labs` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D87E0` | `_strncat` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8910` | `__alldiv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D89C0` | `__allmul` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8A00` | `_qsort` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8C00` | `__chdir` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8CB0` | `__fullpath` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8D90` | `__splitpath` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8EF0` | `__getcwd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8F60` | `__getdcwd_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D90A0` | `__validdrive` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D90F0` | `_strupr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9250` | `_bsearch` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9300` | `_fread` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9340` | `__fread_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9490` | `_fwrite` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D94D0` | `__fwrite_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9660` | `_stricmp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9730` | `_strlen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D97B0` | `_strcpy` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D97C0` | `_strcat` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D98B0` | `_rand` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9A10` | `_sscanf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9A60` | `_getenv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9A90` | `__getenv_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9B70` | `__fflush_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9D00` | `WinMainCRTStartup` | sms | PE entry point / MSVC CRT startup: GetVersion, __heap_init, __mtinit, __ioinit, ___initmbctable, __setargv/__setenvp/__cinit, then _WinMain@16 (0x476120, outside range), _exit. THE one true startup element in range |
+| `0x004D9EB0` | `__amsg_exit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9EE0` | `__strlwr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA040` | `_strnicmp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA140` | `__mtinitlocks` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA170` | `__mtdeletelocks` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA1E0` | `__lock` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA250` | `__unlock` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA270` | `__lock_file` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA2B0` | `__lock_file2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA2E0` | `__unlock_file` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA320` | `__unlock_file2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA370` | `__isctype` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DBDB0` | `_free` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DBE20` | `__close` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DBE90` | `__close_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCCD0` | `__CallSettingFrame@12` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCD20` | `__mtinit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCDB0` | `__initptd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCDD0` | `__getptd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCF10` | `_malloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCF30` | `__nh_malloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCF80` | `__heap_alloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DCFE0` | `__setdefaultprecision` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD000` | `__ms_p5_test_fdiv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD050` | `__ms_p5_mp_test_fdiv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD1C0` | `__cftoe` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD330` | `__cftof` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD460` | `__cftog` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD5B0` | `__dosmaperr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD630` | `__errno` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD650` | `__mbctoupper` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD6E0` | `__mbsnbcpy` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD790` | `__setmbcp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DDAC0` | `__filbuf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DDBC0` | `__read` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DDC40` | `__read_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DDE70` | `__write` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DDEF0` | `__write_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DE1D0` | `__input` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DEF30` | `__mbsnbicoll` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DF000` | `__commit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DF1A0` | `__XcptFilter` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DF420` | `__ismbblead` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DF4D0` | `__setenvp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DF5C0` | `__setargv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DFBC0` | `__ioinit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DFDA0` | `__ioterm` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DFE00` | `__heap_init` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DFE80` | `__FF_MSGBANNER` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DFEC0` | `__NMSG_WRITE` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E0460` | `__lseek_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E0540` | `__isatty` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E0570` | `_wctomb` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E05D0` | `__wctomb_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E0670` | `__aulldiv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E06E0` | `__aullrem` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E1700` | `_strcspn` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E1740` | `_strpbrk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2680` | `__alloc_osfhnd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E27C0` | `__set_osfhnd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2870` | `__free_osfhnd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2910` | `__get_osfhandle` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2A20` | `__lock_fhandle` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2A90` | `__unlock_fhandle` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2AE0` | `__sopen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2F70` | `?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2FE0` | `?terminate@@YAXXZ` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3080` | `?_inconsistency@@YAXXZ` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3100` | `?_ValidateRead@@YAHPBXI@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3120` | `?_ValidateWrite@@YAHPAXI@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3140` | `?_ValidateExecute@@YAHP6GHXZ@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3160` | `_calloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3250` | `__callnewh` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3290` | `__statusfp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E32B0` | `__clearfp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E32D0` | `__control87` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3310` | `__controlfp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3500` | `__ZeroTail` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3570` | `__IncMan` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E35E0` | `__RoundMan` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3690` | `__CopyMan` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E36B0` | `__FillZeroMan` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E36C0` | `__IsZeroMan` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E36E0` | `__ShrMan` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3790` | `__ld12cvt` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3960` | `__ld12tod` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3980` | `__ld12tof` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3A30` | `__atodbl` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3AB0` | `__atoflt` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3B80` | `__fltout2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3CD0` | `_mbtowc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3D30` | `__mbtowc_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3E70` | `__ungetc_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E47C0` | `__fcloseall` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E4860` | `_wcslen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E4920` | `__Getdays` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E4A10` | `__Getmonths` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E6270` | `__chsize_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E63B0` | `__onexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E6440` | `_atexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E64A0` | `_abort` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E6730` | `_raise` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E7320` | `_$I10_OUTPUT` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E76C0` | `_realloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E7890` | `__mbschr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E7950` | `__strdup` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8160` | `__towupper_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8200` | `_iswctype` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8310` | `__setmode_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8380` | `__msize` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8720` | `_wcstombs` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8780` | `__wcstombs_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8A2E` | `_RtlUnwind@16` | sms | IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem |
+
+<!-- END GENERATED: symbol-registry -->
 
 ## Format Loaders and Parsers
 
