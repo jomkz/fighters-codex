@@ -2,7 +2,16 @@
 
 FA.EXE's multiplayer networking internals. Companion reference: [formats/DAT.md](formats/DAT.md).
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; source output `AnalyzeNetwork.txt`. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> applied; source output `AnalyzeNetwork.txt`. Every symbol is recorded in the
+> [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv)
+> and applied to the Ghidra project (this is the reconstruction-program `network` subsystem,
+> #219 — it also owns the serial-cable and modem **link transport**, `SER_`/`MOD_`, per the
+> program's ownership split with [input](input.md)). Progress:
+> [reconstruction matrix](reconstruction.md). Confidence markers follow
+> [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+
+![Network: a common transport vtable (UDP/IPX/TCP/SPX/serial/modem) under a master/slave session mesh; MPSend/MPReceive carry the per-frame sync.](diagrams/network.svg)
 
 ---
 
@@ -521,3 +530,32 @@ on a buffer loaded into the memory manager.
 | `0x5026B4` | `_doMPStatusDraw` | Flag: whether to draw MP status overlay |
 | `0x55281C` | `DAT_0055281C` | Mission text parser cursor pointer |
 | `0x5528C0` | `DAT_005528C0` | Mission text parser end pointer |
+
+## Functions
+
+Full record: [`db/symbols/network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv).
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x4016C0` | `NET_SlaveInit` | client-side session join |
+| `0x401A60` | `NETSlaveConnect` | slave connect helper (proto vtable `open`) |
+| `0x4024D0` | `NETProcessPlayerList` | process a `NET_PLAYER_LIST` packet |
+| `0x46C980` | `MPReceive` | receive + dispatch multiplayer packets |
+| `0x405CD0` | `NETFormatIP` | format an IP address string |
+| `0x402330` | `NETArmKeepalive` | arm the socket send/keepalive timer |
+
+## Open Questions
+
+### 1. Dark zone `0x482200`–`0x4AACEF`
+
+The MP-adjacent code in this span (see § Dark Zone) is partly traced; a targeted pass would
+resolve the remaining session/sync helpers referenced but not yet named.
+
+*Status: open — re-static.*
+
+## Related
+
+- [input.md](input.md) — joystick/mouse input (the sibling of the serial/modem link owned here).
+- [campaign.md](campaign.md) — multiplayer missions share the mission-load and scoring path.
+- [objects.md](objects.md) — MP entity sync mirrors object state across peers.
+- [formats/DAT.md](formats/DAT.md) — the `NET.DAT` / `EA.CFG` config `CN_INFO` is read from.
