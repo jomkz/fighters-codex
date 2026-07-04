@@ -1,10 +1,25 @@
-# FA Physics, Flight Model, and Collision Detection
+# FA.EXE Flight Model & Stores
 
-Analysis of FA.EXE physics, flight model, and collision subsystems. All virtual addresses
-are from the shipping binary. Fixed-point values use the engine's standard s8.8 format
-(divide by 256 for real units) unless noted.
+The aircraft **flight model** (`FM_*`) and **hardpoint/stores management** (`HARD_*`) —
+how the engine turns pilot/AI control inputs and a loadout into per-frame aircraft state:
+gear, flaps, wing sweep, thrust vectoring, weapon-bay doors, throttle, fuel burn, weight,
+and the rearm/repair bookkeeping behind it. All virtual addresses are from the shipping
+binary. Fixed-point values use the engine's standard s8.8 format (divide by 256 for real
+units) unless noted.
 
-> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Scope:** this is the [reconstruction-program](reconstruction.md) `flight-model`
+> subsystem (#212) — `FM_*` + `HARD_*`, `0x451480–0x454800`. The broader physics story it
+> used to bundle lives in adjacent subsystems: **collision** (`_Collision`, `COL_*`) is
+> #222, **weapons/projectiles** (`PROJ_*`, the seeker/ballistics model) is #215, and
+> **terrain** height/queries (`T_*`) is #221. The sections below that describe those
+> (§ Terrain Collision, § PROJ dispatch, § Collision Detection) are provisional and
+> migrate to those docs as they land.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols
+> applied; every flight-model symbol here is recorded in the
+> [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv)
+> and applied to the Ghidra project. Confidence markers follow
+> [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ---
 
@@ -460,3 +475,68 @@ function that builds a terrain command buffer before dispatching through `vector
 | `0x4D0494` | `get_sort_dist` | §8 |
 | `0x4D057C` | `_GRAddBrentObj@40` | §8 |
 | `0x4D0798` | `FUN_004d0798` (shape renderer) | §8 |
+
+## Update flow
+
+Each frame, the object system services the aircraft entity; for a player/AI plane the
+control inputs (throttle, stick, gear/flap/brake/hook/bay commands) are folded into the
+mirrored entity state, `FMUpdatePlaneFields` recomputes the derived aircraft state
+(weight from the current loadout via `HARDPtrs`, thrust from `FMVector`/throttle, drag
+and fuel burn), and the result is written back. Stores management (`HARD_*`) sits beside
+it: the loadout on each hardpoint sets the weight `FMGetWeight` sums, and rearm/repair
+rebuild the loadout between sorties.
+
+![Flight-model update: control inputs and the current loadout feed FMUpdatePlaneFields, which recomputes weight, thrust, drag and fuel each frame.](diagrams/flight-model.svg)
+
+## Functions
+
+Representative subset; the full record is in
+[`db/symbols/flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv).
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x4518A0` | `FMInitPlane` | initialise the flight model for a spawned aircraft |
+| `0x452140` | `FMUpdatePlaneFields` | per-frame recompute of derived aircraft state |
+| `0x4516B0` | `FMGetWeight` | sum airframe + fuel + loadout weight |
+| `0x451A60` | `LimitThrottle` | clamp throttle to the flight-envelope / damage limits |
+| `0x451B00` | `SetThrottle` | apply a throttle command |
+| `0x451B60` | `FMFlaps` | flap deployment state and effect |
+| `0x451C90` | `FMGear` | landing-gear deployment |
+| `0x451C30` | `FMHook` | arrestor-hook state (carrier ops) |
+| `0x451D70` | `FMBrakes` | wheel/speed-brake state |
+| `0x451E00` | `FMVector` | thrust-vectoring nozzle angle |
+| `0x4515E0` | `FMUpdateWingSweep` | variable-geometry wing sweep update |
+| `0x452630` | `FMBay` | weapon-bay door state |
+| `0x451E50` | `FMFuelConsumption` | fuel-flow rate from throttle/engine state |
+| `0x451E80` | `BurnFuel` | drain fuel from the tanks/stores each tick |
+| `0x452770` | `HARDPtrs` | resolve a hardpoint's loaded store record |
+| `0x452980` | `HARDCanLoad` | test whether a store may load on a hardpoint |
+| `0x452C20` | `HARDLoad` | load a store onto a hardpoint |
+| `0x452D90` | `HARDBestSeekers` | rank a target's seeker-capable weapons |
+| `0x453220` | `HARDUnrotatedHardPos` | hardpoint position in the airframe frame |
+| `0x453890` | `HARDStoreName` | resolve a loaded store's resource-name string |
+| `0x453A70` | `HARDTotalFuel` | total fuel including external tanks |
+| `0x453B90` | `HARDRearmTest` | can this loadout be rearmed at the current base |
+| `0x454140` | `ChangePlaneType` | swap the aircraft to a different type record |
+| `0x4543C0` | `SelectRepairPlane` | pick/repair an aircraft in the campaign rearm flow |
+
+## Open Questions
+
+### 1. Fuel-flow scaling constant
+
+`FMFuelConsumption` (`0x451E50`) scales the throttle/engine-state term by a fixed factor
+before `BurnFuel` drains it; whether that constant is a global tuning value or derived
+from the engine-type record (`_cgt`) is not yet traced. A short look at its one caller
+chain will settle it.
+
+*Status: open — re-static.*
+
+## Related
+
+- [reconstruction.md](reconstruction.md) — the program this subsystem belongs to.
+- [objects.md](objects.md) — the entity service loop that drives the per-frame FM update
+  and owns the `_cg`/`_cgt` mirror the FM state lives in.
+- [formats/PT.md](formats/PT.md) — the aircraft performance-type record whose fields feed
+  the flight model.
+- [shape-selection.md](shape-selection.md) — `PLANEBreakUp` and the destroyed-model swap
+  that the damage path triggers.

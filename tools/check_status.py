@@ -1088,15 +1088,20 @@ def check_coverage(sub, symbols, inventory, claims):
                 and row["va"] not in inventory["functions"]:
             errs.append("%s: 0x%08X named as a function but not in the inventory" % (rel, row["va"]))
 
-    # Data: every referenced global tagged with this subsystem is named or waived.
+    # Data: every referenced global tagged with this subsystem must be named or
+    # waived SOMEWHERE in the DB. Globals are frequently shared (a struct/array
+    # interior read by many subsystems), and VAs are globally unique across the
+    # symbol files, so a global is documented once — in whichever subsystem owns
+    # its base — and that covers every subsystem that references it.
+    db_data_covered = {r["va"] for s_rows in symbols.values() for r in s_rows
+                       if r["kind"] == "data"}
     for g in inventory["globals"]:
         if slug not in g["subs"]:
             continue
-        row = by_va.get(g["va"])
         unnamed = g["name"] == "<unnamed>" or g["name"].startswith("DAT_")
-        if row is None and unnamed:
-            errs.append("%s: referenced global 0x%08X is unnamed and unwaived"
-                        % (rel, g["va"]))
+        if unnamed and g["va"] not in db_data_covered:
+            errs.append("%s: referenced global 0x%08X is unnamed and unwaived "
+                        "(name or waive it in some db/symbols/*.csv)" % (rel, g["va"]))
     return errs
 
 
