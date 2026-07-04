@@ -77,6 +77,18 @@ va,kind,name,display,source,confidence,notes
 0x00472670,func,MPRevive,,re,inferred,apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670
 0x0047267C,func,,,waiver,confirmed,Ghidra split tail of the 0x472670 (MPRevive) function; decompile failed
 0x004735D0,func,MPChatStore,,re,inferred,"append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey"
+0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild)
+0x00493780,func,?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunIPXOptionsDialog,sms,confirmed,IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild
+0x00493CB0,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table
+0x00493CB4,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table
+0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST
+0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO
+0x00497010,func,?spxlisten@@YAIXZ,spxlisten,sms,confirmed,open+bind an IPX socket and start SPX listening (backlog 5)
+0x004970C0,func,spxopensocket,,re,inferred,open an SPX socket - socket(6) then SPX ioctl 0x8004667e; sibling of sapopensocket
+0x00497150,func,?spxconnect@@YAIPAUNET_ADDRESS@@@Z,spxconnect,sms,confirmed,SPX connect to a NET_ADDRESS
+0x004971D0,func,?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z,convert_addr_ipx2usnf,sms,confirmed,convert an IPX sockaddr to the engine NET_ADDRESS
+0x00497210,func,?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2ipx,sms,confirmed,convert an engine NET_ADDRESS to an IPX sockaddr
+0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO
 0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3)
 0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type
 0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC()
@@ -115,6 +127,9 @@ va,kind,name,display,source,confidence,notes
 0x004EB56C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
 0x004EB580,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
 0x004EB5A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem
+0x004EB954,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004EBC14,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004EBCC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
 0x004EBCFC,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem
 0x004F7754,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
 0x004F7778,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem
@@ -142,6 +157,17 @@ va,kind,name,display,source,confidence,notes
 0x004F79E4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
 0x004F79F4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
 0x004F7AA4,data,,,waiver,confirmed,interior of / adjacent to ?masterNextScreen@@3JA; named at its base or owned by that subsystem
+0x004FC998,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004FC9C4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004FC9C8,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004FC9DC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004FC9EC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x004FFFF0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00500008,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00500034,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x0050008C,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x005000E0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00500104,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
 0x005002E4,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
 0x005002E8,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
 0x005002EC,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
@@ -150,6 +176,12 @@ va,kind,name,display,source,confidence,notes
 0x005002FC,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
 0x00500304,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
 0x0050030C,data,,,waiver,confirmed,interior of / adjacent to ?mpInfo@@3UMP_INFO@@C; named at its base or owned by that subsystem
+0x0050149C,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
+0x005014B4,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
+0x005014C0,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
+0x005014CC,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
+0x005014DC,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
+0x005014F0,data,,,waiver,inferred,SPX/IPX error string literal (from ipx.cpp)
 0x00501668,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
 0x00501688,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
 0x00501694,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem
@@ -216,6 +248,14 @@ va,kind,name,display,source,confidence,notes
 0x00547324,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
 0x00547328,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
 0x00547334,data,,,waiver,confirmed,interior of / adjacent to ?packetTicks@@3PAJA; named at its base or owned by that subsystem
+0x00552E98,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552E9C,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552EA0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552EA2,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552EB8,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552EBC,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552EC0,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
+0x00552EC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant
 0x00560F54,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem
 0x00560F58,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem
 0x00560F64,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem
@@ -247,8 +287,16 @@ va,kind,name,display,source,confidence,notes
 0x00580C70,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem
 0x00580C74,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem
 0x00580C9E,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem
+0x00580CAA,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
+0x00580CAE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
+0x00580CB2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
+0x00580CB6,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
+0x00580CC2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
+0x00580CC6,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
+0x00580CCE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
 0x00580CD2,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem
 0x00580CDA,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem
+0x00580CE2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table)
 0x00580D14,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
 0x00580D18,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
 0x00580D1C,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem
