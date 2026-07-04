@@ -1,0 +1,47 @@
+# FA.EXE Startup & C Runtime
+
+The program's boot path and the statically-linked **MSVC C runtime** it pulls in. Notably,
+FA.EXE is a **native Win32 PE** — there is *no* Phar Lap DOS extender (that name refers to
+the `PL\0\0` overlay-DLL format handled elsewhere). The one genuine startup element in this
+range is the PE entry `_WinMainCRTStartup` (`0x4D9D00`); the rest is CRT.
+
+> **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; recorded in the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) and applied to the Ghidra project. Progress: [reconstruction matrix](reconstruction.md). Markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+
+## What's here
+
+- **`_WinMainCRTStartup`** (`0x4D9D00`): the PE entry point — CRT init (heap, locale, argv,
+  atexit) then the jump to the game's `_WinMain`.
+- **CRT public functions**: ~180 FA.SMS-named MSVC runtime routines (memory, string, math,
+  stdio, locale) plus 41 IAT import thunks to DDRAW / the serial-comms driver / matchmaking.
+- **CRT internals**: ~116 compiler-runtime helpers (EH funclets, locale init/teardown,
+  `__amsg_exit`, FID-identified library internals) — **waived** as "CRT runtime helper";
+  they are boilerplate, named where FA.SMS provides a name and waived otherwise. Per the
+  reconstruction DoD, startup carries the CRT with these waivers rather than pretending the
+  runtime is game code.
+
+![Startup: WinMainCRTStartup runs CRT init, then hands off to the game WinMain.](diagrams/startup.svg)
+
+## Functions
+
+Full record: [`db/symbols/startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv).
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x4D9D00` | `_WinMainCRTStartup` | PE entry: CRT init → game `_WinMain` |
+| `0x4D715A` | `_DirectDrawCreate@12` | DDRAW import thunk |
+| `0x4D7220` | `_ser_rs232_getpacket@12` | serial-comms driver import thunk |
+
+## Open Questions
+
+### 1. Import-thunk attribution
+
+The 41 IAT import thunks are carried under startup; a later pass could reassign them to the
+subsystems that call them (DDRAW → renderer, serial → network, …) for purer attribution.
+
+*Status: open — re-static.*
+
+## Related
+
+- [game-loop.md](game-loop.md) — the `_WinMain` → `FlyingLoop` sequence startup hands off to.
+- [architecture.md](architecture.md) — the runtime environment and overlay-DLL system.
+- [network.md](network.md) — the serial-comms driver the thunks reach.

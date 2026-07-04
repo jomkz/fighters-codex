@@ -1,0 +1,261 @@
+va,kind,name,display,source,confidence,notes
+0x0040B8A0,func,?MouseLoadPtr@@YGXXZ,MouseLoadPtr,sms,confirmed,load per-screen mouse pointer bitmap (PLANE.C etc.); reads _curScreen/_menuResolution
+0x0040BC20,func,?MaybeCampaignMenu@@YGXPADJJD@Z,MaybeCampaignMenu,sms,confirmed,conditionally overlay the campaign action bar (MAINMENU.MNU) on a screen
+0x0040BD00,func,?MaybeCampaignMenu2@@YGXPADJJD@Z,MaybeCampaignMenu2,sms,confirmed,tail variant of MaybeCampaignMenu
+0x0040BD30,func,?MenuStartUp@@YGXPADJJDJ@Z,MenuStartUp,sms,confirmed,"build+show a menu bar from a .MNU name; calls ShellSetup, clears _menuSelecting"
+0x0040BF40,func,MenuInstallRemap,,re,inferred,install a palette color-remap table into a G-remap slot (0x114-0x118); called 5x by MenuCreateRemaps
+0x0040BF60,func,MenuMeasureItemWidth,,re,confirmed,"measure widest menu item label via G_ColorStringWidth over the item linked list (+0x12 text, +submenu via FUN_0040c130)"
+0x0040C130,func,MenuItemSubString,,re,confirmed,"skip a menu label's leading marker bytes (>1) and return the submenu/secondary substring, or NULL"
+0x0040C160,func,MenuLoadFont,,re,confirmed,load MENUFONT.PIC (640) or MFONT320.PIC (320) per _menuResolution into DAT_004ec21c
+0x0040C1A0,func,?MenuRemoveItem@@YAXJ@Z,MenuRemoveItem,sms,confirmed,remove a menu item by packed G-index
+0x0040C1D0,func,MenuLinkTerminate,,re,confirmed,walk _firstMenu linked list to the tail and null-terminate it
+0x0040C1F0,func,?MenuCreateRemaps@@YGXXZ,MenuCreateRemaps,sms,confirmed,"build 5 shadow palette-remaps (menuShadow1..5 at 0x5221f0/0x5220f0/0x521ef0/0x521df0/0x521ff0, %=60/66/74/84/96) via FUN_0040d4e0; install slots 0x114-0x118 via FUN_0040bf40"
+0x0040C410,func,?MenuDrawBar@@YIXD@Z,MenuDrawBar,sms,confirmed,save region under bar (menuBarSave) then draw the top menu bar from _firstMenu list
+0x0040C4F0,func,?MenuUpdate@@YGGXZ,MenuUpdate,sms,confirmed,"per-frame menu poll: ShellMousePos, hover/hit-test, returns selected G-index; skips mouse poll while _dialogOn"
+0x0040C5A0,func,MenuCurrentIndex,,re,confirmed,"close open sub-item/menu highlights, then compute the packed (menu<<8 | item) index of the current selection"
+0x0040C670,func,MenuMouseSelect,,re,confirmed,"hit-test mouse over bar entries/items via MouseInBox; update _curMenu/_curSubMenu/_curItem, open/close dropdowns"
+0x0040C990,func,MenuDrawDropdown,,re,confirmed,"draw an opened submenu: save background (FUN_0040cea0/cf40), MenuSteelRect frame, item rows"
+0x0040CB10,func,MenuClearItemInvert,,re,inferred,restore the current item's inverted-highlight brush (pair of FUN_0040cb80); called by MenuCurrentIndex
+0x0040CB40,func,MenuCloseSubMenu,,re,inferred,close/restore the open sub-menu highlight; called by MenuCurrentIndex and MenuMouseSelect
+0x0040CB80,func,MenuInvertItem,,re,confirmed,"toggle the highlight brush over _curItem (invertItemBrush: AllocBitmap+BlitToBrush+URect2, or blit back+free)"
+0x0040CC50,func,MenuInvertSubItem,,re,confirmed,toggle the highlight brush over _curSubItem (invertSubItem)
+0x0040CD20,func,MenuInvertBar,,re,confirmed,toggle the highlight brush over the _curMenu bar entry (invertMenuBrush)
+0x0040CDE0,func,?CheckItem@@YIXDG@Z,CheckItem,sms,confirmed,set/clear checkmark on a menu item (via FUN_0040ce00 index lookup)
+0x0040CE00,func,MenuItemByIndex,,re,confirmed,"resolve a packed index (hi=menu#, lo=item#) to a MENU_ITEM* by walking _firstMenu; used by Check/Enable/DisableItem"
+0x0040CE70,func,?EnableItem@@YIXG@Z,EnableItem,sms,confirmed,enable a menu item by index
+0x0040CE80,func,?DisableItem@@YIXG@Z,DisableItem,sms,confirmed,disable/dim a menu item by index
+0x0040CEA0,func,MenuSaveBackground,,re,confirmed,save the screen region under a submenu into menuSaveBrush (+shadowWidth/Height margin)
+0x0040CF00,func,MenuRestoreBackground,,re,confirmed,blit menuSaveBrush back to screen and free it
+0x0040CF40,func,MenuSaveBackground2,,re,inferred,second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0
+0x0040CFA0,func,MenuRestoreBackground2,,re,inferred,restore pair for FUN_0040cf40
+0x0040CFE0,func,?ShadowBox@@YGXJJJJ@Z,ShadowBox,sms,confirmed,11-byte entry; drop-shadow frame around a rect. Worker is FUN_0040cfeb (tail)
+0x0040CFEB,func,ShadowBoxDraw,,re,inferred,403-byte worker behind ShadowBox@0x40CFE0: renders the 8-piece drop-shadow frame (shadowUR/LL/LR/H/V handles)
+0x0040D180,func,?MenuSteelRect@@YGXJJJJ@Z,MenuSteelRect,sms,confirmed,"draw the brushed-steel panel rectangle (uses steelHandle, FUN_0040d390 pattern)"
+0x0040D390,func,MenuSteelPattern,,re,inferred,builds an i*i square table and tiles the brushed-steel gradient (DAT_004ec260) used by MenuSteelRect
+0x0040D4E0,func,MenuBuildRemap,,re,confirmed,build a palette remap table scaling _curPalette RGB by param%/100; confirmed by MenuCreateRemaps callsites
+0x0040D5F0,func,?PushShellAlloc@@YGXXZ,PushShellAlloc,sms,confirmed,push MM alloc-id scope for shell allocations (paired with PopShellAlloc)
+0x0040D620,func,?PopShellAlloc@@YGXXZ,PopShellAlloc,sms,confirmed,pop shell MM alloc scope
+0x0040D640,func,?ShellShowMouse@@YGXXZ,ShellShowMouse,sms,confirmed,show software mouse cursor (ref counts via mouseShown)
+0x0040D6B0,func,?ShellHideMouse@@YGXXZ,ShellHideMouse,sms,confirmed,hide software mouse cursor
+0x0040D6E0,func,?ShellMousePos@@YGXXZ,ShellMousePos,sms,confirmed,"sample mouse: writes _shellMousePos, _shellButtons, _shellEvent"
+0x0040D790,func,?MouseInBox@@YIDPAUBOX@@@Z,MouseInBox,sms,confirmed,hit-test _shellMousePos against a BOX; used by menu bar/item hover
+0x0042E680,func,@QuickMultiButton@8,QuickMultiButton,sms,confirmed,quick-mission wizard: store button value into DAT_00537360[i]/DAT_00537260[i]; just past collision's range
+0x0042E690,func,@QuickMultiButtonText@8,QuickMultiButtonText,sms,confirmed,set a quick-mission wizard button's label
+0x0042E9A0,func,_QuickMission@4,QuickMission,sms,confirmed,quick-mission creator loop (drives the 24 QUICKB*.DLG wizard steps)
+0x0047F0B0,func,?InTextButton@@YIDJJ@Z,InTextButton,sms,confirmed,hit-test mouse against the _buttonBoxes[_lastButton] MNU text-button array; in campaign seed range
+0x0047FA30,func,?RunDisconnectScreen@@YGXXZ,RunDisconnectScreen,sms,confirmed,multiplayer disconnect confirmation screen (DDIAG.DLG)
+0x00487A3A,func,@WaitTicks@4,WaitTicks,sms,confirmed,busy-wait N ticks (TIMESystemTime); dialog animation delay
+0x00487A63,func,_DialogSetup@12,DialogSetup,sms,confirmed,"push a DIALOG frame (_curDialog = &_dialogStruct + ++_dialogNum*0x29); ChoosePreload header, link records"
+0x00487E90,func,DialogLinkRecords,,re,inferred,per-record setup pass over the DIALOG record list (short-field init); called by DialogSetup
+0x004880D0,func,_DialogShow@0,DialogShow,sms,confirmed,"render the dialog: alloc/lazy-init background bitmap (+0x16/+0x1a), draw all records"
+0x00488170,func,DialogBeginDraw,,re,confirmed,common draw prologue: PushShellAlloc + ShellHideMouse
+0x00488180,func,DialogEndDraw,,re,inferred,paired draw epilogue (ShellShowMouse/PopShellAlloc)
+0x00488190,func,_DialogShutDown@8,DialogShutDown,sms,confirmed,"blit saved background back (param gated), free +0x16/+0x1a/+0x12 handles"
+0x00488300,func,_DialogDone@0,DialogDone,sms,confirmed,free all shared dialog fonts (wheel/list/panel/panelDisabled/panel2/actionBlue)
+0x00488470,func,?DialogDraw@@YGXPAX@Z,DialogDraw,sms,confirmed,record draw dispatcher: walks next_record_ptr calling (**draw_fn_ptr)(record)
+0x00488490,func,@DialogUpdate@4,DialogUpdate,sms,confirmed,"event dispatcher (2617 B): per-record PointInBox hit-test, focus, slider/rocker/edit input, returns selected item"
+0x00488F00,func,DialogWaitUntilTick,,re,confirmed,spin on TIMESystemTime until a target tick reached (returns bool)
+0x00488F30,func,DialogHelper488f30,,re,inferred,small dialog helper (31 B); role not confirmed
+0x00488F50,func,DialogRadioGroupClear,,re,confirmed,"walk records; for type 1/5 matching group id at +0x17, clear the pressed flag (+0xb) — radio de-select"
+0x00488FC0,func,_DialogWhatItem@0,DialogWhatItem,sms,confirmed,return _dialogItemPtr (last record that passed hit-test)
+0x00488FD0,func,DialogScrollbarHit,,re,confirmed,type-7 scrollbar custom hit handler: PointInBox(+0x18) then callback +0x24 (DLG.md hit-zone table)
+0x00489070,func,DialogSliderRelease,,re,confirmed,active-slider mouse handler: on button-up call slider callback +0x2c and clear _activeSlider
+0x004891A0,func,DialogScrollThumbInit,,re,confirmed,initialise scrollbar thumb position from +0xb/+0xc/+0xe/+0x10 (DLG.md: called on show)
+0x00489220,func,DialogClampThumb,,re,confirmed,clamp scrollbar thumb (+0x12) within track bounds (+0x16/+0x1a/+0x1e)
+0x004892E0,func,@DialogGetPtr@4,DialogGetPtr,sms,confirmed,resolve a record pointer by item id
+0x00489300,func,@DialogGetValue@4,DialogGetValue,sms,confirmed,read a control's current value
+0x00489360,func,_DialogMatchListString,DialogMatchListString,sms,confirmed,find a list-box row by string
+0x00489400,func,_DialogSetRocker@8,DialogSetRocker,sms,confirmed,set a rocker control's state
+0x00489430,func,_DialogSetValue,DialogSetValue,sms,confirmed,set a control's value
+0x004894F0,func,@DialogSelectItem@4,DialogSelectItem,sms,confirmed,mark a record selected (highlight)
+0x00489580,func,@DialogDeselectItem@4,DialogDeselectItem,sms,confirmed,clear a record's selected/disabled bit
+0x004895D0,func,_DialogSetString@12,DialogSetString,sms,confirmed,set an edit/text record's string
+0x00489660,func,_DialogUpdateString,DialogUpdateString,sms,confirmed,refresh a text record after edit
+0x004896A0,func,@DialogGetString@4,DialogGetString,sms,confirmed,read an edit box's text buffer
+0x00489710,func,_TopCenterDialog,TopCenterDialog,sms,confirmed,"center dialog: x=(sw-w)/2, y=(sh-h)/3"
+0x00489760,func,_Info2640Preload,Info2640Preload,sms,confirmed,preload header for INFO2640.DLG (OK+Cancel 640)
+0x00489780,func,_Info640Preload,Info640Preload,sms,confirmed,preload header for INFO640.DLG
+0x004897A0,func,_GrafPrefPreload,GrafPrefPreload,sms,confirmed,preload header for GRAFPREF.DLG
+0x004897D0,func,_SndPrefPreload,SndPrefPreload,sms,confirmed,preload header for SNDPREF.DLG
+0x004897F0,func,_ChoosePreload,ChoosePreload,sms,confirmed,"DLG header record: PushShellAlloc, load action-button PIC/font by type (DLG.md); dispatched via computed indirect call"
+0x00489810,func,_MultiPreload,MultiPreload,sms,confirmed,preload header for multiplayer dialogs
+0x00489AC0,func,_DrawText,DrawText,sms,confirmed,type-9 static text renderer (DLG.md field layout)
+0x00489B90,func,_DrawAction,DrawAction,sms,confirmed,type-0 clickable action-button renderer (DLG.md field layout)
+0x0048A080,func,DialogFlush,,re,confirmed,ShellShowMouse + G_Flush + ShellHideMouse
+0x0048A260,func,DialogBlitModuleBitmap,,re,confirmed,blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y
+0x0048A2B0,func,DialogSetupBitmap,,re,inferred,SetupBitmapAccess wrapper for dialog rendering
+0x0048A4C0,func,_DrawDial,DrawDial,sms,confirmed,rotary dial control renderer
+0x0048A730,func,_DrawLight,DrawLight,sms,confirmed,indicator light/LED renderer
+0x0048A7D0,func,_PrintPageNums@16,PrintPageNums,sms,confirmed,render 'page N of M' for paged list widgets
+0x0048A8E0,func,DialogEnsureListFont,,re,confirmed,lazy-load SMLFONT into _listFont if null
+0x0048A910,func,_DrawFormattedText,DrawFormattedText,sms,confirmed,type-9 variant multi-line/paged text renderer (DLG.md)
+0x0048A9F0,func,_DrawMissList,DrawMissList,sms,confirmed,single-mission list renderer
+0x0048ADE0,func,_DrawListBox,DrawListBox,sms,confirmed,generic scrollable list-box renderer
+0x0048B320,func,_DrawCheck,DrawCheck,sms,confirmed,checkbox renderer (type 3)
+0x0048B450,func,DialogRockerRepeat,,re,confirmed,"rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16"
+0x0048B4E0,func,_DrawRocker,DrawRocker,sms,confirmed,type-6 rocker/toggle renderer (two hit halves)
+0x0048B8B0,func,DialogHelper48b8b0,,re,inferred,rocker/slider draw helper (62 B)
+0x0048B8F0,func,DialogHelper48b8f0,,re,inferred,rocker/slider draw helper (62 B)
+0x0048B930,func,_DrawToggle,DrawToggle,sms,confirmed,two-state toggle renderer (type 8)
+0x0048BAD0,func,_DrawSliderHoriz,DrawSliderHoriz,sms,confirmed,horizontal slider renderer
+0x0048BBE0,func,DialogHelper48bbe0,,re,inferred,small slider helper (31 B)
+0x0048BC00,func,DialogHelper48bc00,,re,inferred,slider helper (96 B)
+0x0048BC60,func,_DrawSliderVert,DrawSliderVert,sms,confirmed,vertical slider renderer
+0x0048BDF0,func,DialogHelper48bdf0,,re,inferred,slider/edit helper (99 B)
+0x0048BE60,func,_CheckMousePtr@16,CheckMousePtr,sms,confirmed,test/redraw mouse pointer over a widget rect during draw
+0x0048BEC0,func,DialogEditGeom,,re,inferred,compute edit-box on-screen geometry from _curDialog + focused record (+0x1e)
+0x0048BF50,func,DialogHelper48bf50,,re,inferred,edit-box helper (66 B)
+0x0048BFA0,func,DialogDrawEditCaret,,re,confirmed,draw the blinking text caret (G_Vline) at _cursorAt within the focused edit box; _selectEnd gate
+0x0048C040,func,DialogEditKey,,re,inferred,edit-box keystroke handler (1220 B; char insert/delete/cursor)
+0x0048C510,func,DialogHelper48c510,,re,inferred,edit helper (94 B)
+0x0048C570,func,DialogHelper48c570,,re,inferred,edit helper (45 B)
+0x0048C5A0,func,DialogDrawEditText,,re,inferred,render edit-box text/selection (359 B)
+0x0048C710,func,_DrawEditBox,DrawEditBox,sms,confirmed,type-2 edit-box renderer (DLG.md field layout)
+0x0048C800,func,_DrawText320,DrawText320,sms,confirmed,320x200 static text renderer
+0x0048C8A0,func,_DrawCheck320,DrawCheck320,sms,confirmed,320x200 checkbox renderer
+0x0048C970,func,_DrawDial320,DrawDial320,sms,confirmed,320x200 dial renderer
+0x0048CB00,func,?Do320Button@@YGXPAUT_HANDLE@@PAUACTION@@@Z,Do320Button,sms,confirmed,320x200 action-button dispatcher
+0x0048CBE0,func,_DrawYes320,DrawYes320,sms,confirmed,320 'Yes' button label renderer
+0x0048CC10,func,_DrawNo320,DrawNo320,sms,confirmed,320 'No' button label renderer
+0x0048CC40,func,_DrawCancel320,DrawCancel320,sms,confirmed,320 'Cancel' button label renderer
+0x0048CC70,func,_DrawDone320,DrawDone320,sms,confirmed,320 'Done' button label renderer
+0x0048CCA0,func,_DrawOK320,DrawOK320,sms,confirmed,320 'OK' button label renderer
+0x0048CD40,func,_DrawLight320,DrawLight320,sms,confirmed,320 indicator light renderer
+0x0048CD70,func,_DrawSwitch320,DrawSwitch320,sms,confirmed,320 switch renderer
+0x0048CF10,func,_SliderVert320,SliderVert320,sms,confirmed,320 vertical slider renderer
+0x0048D030,func,@ShellClickSound@8,ShellClickSound,sms,confirmed,play the UI click sound on a valid activation
+0x0048D090,func,@ShellDisabledSound@4,ShellDisabledSound,sms,confirmed,play the 'disabled' buzz when a dimmed control is clicked
+0x0048D0D0,func,@DisableActionButton@4,DisableActionButton,sms,confirmed,set record type_flags bit15 (dim); see DLG.md +0x00
+0x0048D0E0,func,@EnableActionButton@4,EnableActionButton,sms,confirmed,clear record type_flags bit15 (undim)
+0x0048D0F0,func,_DialogEnableItem@12,DialogEnableItem,sms,confirmed,enable/disable a dialog item
+0x0048D140,func,@DialogItemIsEnabled@4,DialogItemIsEnabled,sms,confirmed,query a dialog item's enabled bit
+0x0048D150,func,@LimitEditFieldLength@4,LimitEditFieldLength,sms,confirmed,cap an edit field's character length
+0x0048D160,func,DialogTextStreamInit,,re,confirmed,"init a paged text-stream reader object (vtable[2]=LAB_0048d1d0, [3]=FUN_0048d1e0; alloc 0x26+0x1000)"
+0x0048D1E0,func,DialogTextStreamRead,,re,confirmed,text-stream read callback: FUN_00486f20 decode into 0x1000 buffer; sets state 0x29/0x74
+0x004A08A0,func,_ChooseActivity@0,ChooseActivity,sms,confirmed,"TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection"
+0x004A26F0,func,_DoDialogInfoBox@8,DoDialogInfoBox,sms,confirmed,modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10)
+0x004A27C0,func,_DialogInfoBox@12,DialogInfoBox,sms,confirmed,generic INFO320/INFO640 message-box builder+run
+0x004EC218,data,,,waiver,confirmed,interior of / adjacent to ?menuSelecting@@3DA; named at its base or owned by that subsystem
+0x004EC21C,data,,,waiver,confirmed,interior of / adjacent to ?menuSelecting@@3DA; named at its base or owned by that subsystem
+0x004EC260,data,,,waiver,confirmed,interior of / adjacent to ?mouseShown@@3FA; named at its base or owned by that subsystem
+0x004EC31C,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC328,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC334,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC340,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC344,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC3DC,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC3E4,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC3F0,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC400,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004EC410,data,,,waiver,confirmed,interior of / adjacent to ?remapDarken320@@3PAEA; named at its base or owned by that subsystem
+0x004F1EDC,data,,,waiver,confirmed,interior of / adjacent to ?NationGroundForces@@3PAGA; named at its base or owned by that subsystem
+0x004F348C,data,,,waiver,confirmed,interior of / adjacent to ?NationGroundForces@@3PAGA; named at its base or owned by that subsystem
+0x004F3494,data,,,waiver,confirmed,interior of / adjacent to ?NationGroundForces@@3PAGA; named at its base or owned by that subsystem
+0x004F34A0,data,,,waiver,confirmed,interior of / adjacent to ?NationGroundForces@@3PAGA; named at its base or owned by that subsystem
+0x004F8108,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem
+0x004FCA88,data,,,waiver,confirmed,interior of / adjacent to ?dialPos320@@3PAUWORD_POINT@@A; named at its base or owned by that subsystem
+0x004FCA94,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCAA0,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCAAC,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCAB8,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCAC4,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCAD0,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCADC,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCB88,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCB94,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCC20,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCC9C,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCCA4,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCCAC,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCD38,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCD44,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCD50,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCD68,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCD70,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCD80,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCDD4,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCDE4,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCDF0,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCE00,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCE10,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCE20,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCEF0,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCEFC,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x004FCF0C,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem
+0x00502794,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005027B0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005027E0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x0050281C,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x00502824,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x0050282C,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x00502834,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x0050283C,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029B0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029BC,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029C8,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029D0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029DC,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029E8,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029F4,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x005029FC,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x00502A08,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem
+0x00520A08,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem
+0x00521DC2,data,,,waiver,confirmed,interior of / adjacent to ?menuMousePos@@3UWORD_POINT@@A; named at its base or owned by that subsystem
+0x00521DCA,data,,,waiver,confirmed,interior of / adjacent to ?subMenuPress@@3UWORD_POINT@@A; named at its base or owned by that subsystem
+0x00521DD6,data,,,waiver,confirmed,interior of / adjacent to ?subMenuPos@@3UWORD_POINT@@A; named at its base or owned by that subsystem
+0x00521DEE,data,,,waiver,confirmed,interior of / adjacent to ?menuBarPos@@3UWORD_POINT@@A; named at its base or owned by that subsystem
+0x005222FE,data,,,waiver,confirmed,interior of / adjacent to ?menuSavePos@@3UWORD_POINT@@A; named at its base or owned by that subsystem
+0x00522306,data,,,waiver,confirmed,interior of / adjacent to ?lastMousePos@@3UWORD_POINT@@A; named at its base or owned by that subsystem
+0x00537260,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537264,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053735C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537360,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537364,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053736C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537370,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537378,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537384,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537390,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373A8,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373BC,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373C8,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373D4,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373E4,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373EC,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005373F4,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053740C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537460,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537468,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053746C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537470,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537474,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537478,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053747C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537480,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537484,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537488,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053757C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537580,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537594,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005375A0,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005375A4,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005375C4,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x005375C8,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053763C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537644,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537664,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0053766C,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x0054B828,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem
+0x00552F04,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F08,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F0A,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F0C,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F0E,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F10,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F12,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F16,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F1A,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F1E,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F22,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F26,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem
+0x00552F28,data,,,waiver,confirmed,interior of / adjacent to ?dialogStruct@@3PAUDIALOG@@A; named at its base or owned by that subsystem

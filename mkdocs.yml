@@ -87,6 +87,10 @@ nav:
       - Terrain: fa/terrain.md
       - Render Core: fa/render-core.md
       - Network: fa/network.md
+      - Campaign: fa/campaign.md
+      - Input: fa/input.md
+      - Shell UI: fa/shell-ui.md
+      - Startup: fa/startup.md
       - Globals: fa/globals.md
       - Structs: fa/structs.md
       - Symbols: fa/symbols.md
