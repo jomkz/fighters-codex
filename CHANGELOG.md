@@ -7,6 +7,27 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **re** **Datatype layer for the symbol database (#230).** `db/symbols` gains a `type`
+  column, `db/types/fa_types.h` holds the recovered struct layouts (scalar aliases, the
+  struct type-vocabulary, and a gcc-verified `CN_INFO`), and `scripts/ghidra/ApplyTypes.java`
+  applies both to the Ghidra project. 32 named globals typed by demangling their FA.SMS
+  names (`?curSeq@@3FA` → `s16`, `?seqGrList@@3PAUSEQGR@@A` → `SEQGR *`) — the enabling step
+  for generating C++ declarations for a clean-room reconstruction (`fc`)
+
+### Changed
+- **re** **symbols.md and globals.md are now generated from the symbol database (#229).**
+  Their per-subsystem sections come from `db/symbols/` between `<!-- BEGIN/END GENERATED -->`
+  markers, written by `--write-matrix` and currency-enforced by `--check` — the same
+  mechanism as the reconstruction matrix, so the human-readable registries can no longer
+  drift from the database
+
+### Notes
+- **Documentation + tooling release.** `fx_lib` and the `fx` CLI are byte-identical to
+  v0.5.4 — no fa-bridge submodule bump. Completes the two enhancement follow-ons under the
+  now-complete FA.EXE reconstruction (#209); the overlay-binary program and a `docs/fa`
+  open-items closure sweep continue under epic #247
+
 ## [0.5.4] - 2026-07-04
 
 ### Added
