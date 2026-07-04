@@ -7,6 +7,31 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **re** **The `.SEQ` cutscene player — the 19th engine subsystem (#240).** The
+  reproducibility audit surfaced a real subsystem the original 18-subsystem map missed: the
+  scripted intro/outro sequence player. Its defining trait is that script commands are
+  dispatched **by name** (`_SeqContinue` builds `"SEQ"+cmd` and resolves it through
+  `_SMAddress`, the FA.SMS symbol map), so the twelve `_SEQ<verb>` handlers are reached only
+  by name and never by a direct call — invisible to a purely xref-driven inventory until
+  their `source=sms` rows materialise them. Named + documented ([seq.md](https://github.com/jomkz/fighters-codex/blob/main/docs/fa/seq.md) + diagram)
+- **re** **SPX/IPX network transport (#241).** The same name-dispatch pattern hid a cluster
+  of SPX/IPX transport functions from the network subsystem; the 9 FA.SMS-named leaves plus
+  the recovered `spxopensocket` are now claimed and documented
+
+### Changed
+- **re** **The reproducibility residue is characterized down to 26 (from 244), with zero
+  hidden state** — a from-scratch rebuild from `db/` alone discovers nothing the committed
+  inventory lacks. The remaining 26 are benign Ghidra auto-analysis variance (3 tiny stubs,
+  1 non-deterministic thunk, 22 data-markup globals), not name drift or `db/` gaps; the
+  rationale is recorded in [db/reproducibility-audit.md](https://github.com/jomkz/fighters-codex/blob/main/db/reproducibility-audit.md)
+
+### Notes
+- **Documentation + tooling release.** `fx_lib` and the `fx` CLI are byte-identical to
+  v0.5.3 — no fa-bridge submodule bump. With the 19th subsystem and the SPX gap closed, the
+  FA.EXE reconstruction is complete: **19/19 subsystems, 1709/1709 in-scope functions named**
+  (see the [reconstruction matrix](https://github.com/jomkz/fighters-codex/blob/main/docs/fa/reconstruction.md))
+
 ## [0.5.3] - 2026-07-03
 
 ### Added
