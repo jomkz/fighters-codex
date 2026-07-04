@@ -112,6 +112,22 @@ in the epic's map is a sub-issue. The same database is the substrate for a possi
 generated clean-room C++ reconstruction (`fc`) — a decision deferred until several
 subsystems are complete.
 
+### Program: Overlay Reconstruction
+
+Milestone [Overlay binaries — Reconstruction](https://github.com/jomkz/fighters-codex/milestones)
+(epic [#247](https://github.com/jomkz/fighters-codex/issues/247)) is the sibling program: the
+same treatment — every function/variable named, every subsystem documented — applied to the
+binaries FA ships alongside `FA.EXE`: **IP.EXE** (TCP/IP transport), **WAIL32.DLL** (audio),
+and the comms/modem drivers (**CDRV\*32.DLL**, **COMMSC32.DLL**). Unlike `FA.EXE` these ship no
+`.SMS` symbol map, so naming seeds from the DLL export/import tables, strings, and RTTI. The
+same [`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md) machinery drives
+it — the `subsystems.csv` `binary` column and a per-binary `db/inventory/<binary>/` export scope
+every check to one image (VAs collide across binaries — IP.EXE bases at the same `0x00400000`
+as FA.EXE), and each binary gets its own section in the
+[reconstruction matrix](fa/reconstruction.md). The FA-side interface to the Microsoft /
+third-party redistributables is documented at the boundary
+([#260](https://github.com/jomkz/fighters-codex/issues/260)) without reversing MS code.
+
 ## Relationship to fighters-legacy
 
 [fa-bridge](https://github.com/fighters-legacy/fa-bridge) implements the engine's

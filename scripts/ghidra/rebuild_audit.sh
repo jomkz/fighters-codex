@@ -12,38 +12,47 @@
 # project — the two can run concurrently. Raw output + report land outside the
 # repo (AUDIT_OUT); commit only a curated summary.
 #
-# Usage: scripts/ghidra/rebuild_audit.sh [AUDIT_OUT_DIR]
+# Usage: scripts/ghidra/rebuild_audit.sh [BINARY] [AUDIT_OUT_DIR]
+#   BINARY defaults to FA.EXE. The <stem>.SMS import step is skipped when the
+#   binary ships no symbol map (the overlays don't), so the same audit works for
+#   FA.EXE and every overlay.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/_env.sh"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+BINARY="${1:-FA.EXE}"
 PROJ="fa-re-audit"
-AUDIT_OUT="${1:-$FA_PROJECT/audit-inventory}"
+AUDIT_OUT="${2:-$FA_PROJECT/audit-inventory/$BINARY}"
+SMS="$FA_INSTALL/${BINARY%.*}.SMS"
 mkdir -p "$AUDIT_OUT"
 
-echo "[audit] fresh project $FA_PROJECT/$PROJ (removing any prior)"
+echo "[audit] binary=$BINARY  fresh project $FA_PROJECT/$PROJ (removing any prior)"
 rm -rf "$FA_PROJECT/$PROJ.rep" "$FA_PROJECT/$PROJ.gpr" "$FA_PROJECT/$PROJ.lock" \
        "$FA_PROJECT/$PROJ.lock~" 2>/dev/null || true
 
-echo "[audit 1/4] import FA.EXE + full auto-analysis (slow: minutes)"
-"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -import "$FA_INSTALL/FA.EXE" -overwrite \
+echo "[audit 1/4] import $BINARY + full auto-analysis (slow: minutes)"
+"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -import "$FA_INSTALL/$BINARY" -overwrite \
     -scriptPath "$SCRIPT_DIR"
 
-echo "[audit 2/4] import FA.SMS symbols"
-"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process FA.EXE \
-    -postScript ImportFASmsHeadless.java "$FA_INSTALL/FA.SMS" \
-    -scriptPath "$SCRIPT_DIR" -noanalysis
+if [[ -f "$SMS" ]]; then
+    echo "[audit 2/4] import $(basename "$SMS") symbols"
+    "$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process "$BINARY" \
+        -postScript ImportFASmsHeadless.java "$SMS" \
+        -scriptPath "$SCRIPT_DIR" -noanalysis
+else
+    echo "[audit 2/4] no $(basename "$SMS") — skipping symbol-map import (overlay)"
+fi
 
 echo "[audit 3/4] apply db/symbols (ApplySymbols materialises functions)"
-"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process FA.EXE \
+"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process "$BINARY" \
     -postScript ApplySymbols.java "$REPO_ROOT" \
     -scriptPath "$SCRIPT_DIR" -noanalysis
 
 echo "[audit 4/4] export fresh inventory -> $AUDIT_OUT"
-"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process FA.EXE \
+"$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process "$BINARY" \
     -postScript ExportInventory.java "$REPO_ROOT" "$AUDIT_OUT" \
     -scriptPath "$SCRIPT_DIR" -noanalysis -readOnly
 
-echo "[audit] diff fresh vs committed db/inventory/"
-python3 "$SCRIPT_DIR/rebuild_diff.py" "$REPO_ROOT/db/inventory" "$AUDIT_OUT" \
+echo "[audit] diff fresh vs committed db/inventory/$BINARY/"
+python3 "$SCRIPT_DIR/rebuild_diff.py" "$REPO_ROOT/db/inventory/$BINARY" "$AUDIT_OUT" \
     | tee "$AUDIT_OUT/REPORT.md"
 echo "[audit] done. report: $AUDIT_OUT/REPORT.md"

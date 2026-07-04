@@ -57,9 +57,10 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 Every codec/CLI/GUI change updates, **in the same PR**: the format spec it validates,
 the relevant reference doc (docs/cli.md, docs/api.md, docs/gui.md), and the generated
 per-format status matrix (docs/fa/formats/STATUS.md — regenerate with
-`python3 tools/check_status.py --write-matrix`). The same rule binds the **FA.EXE
-reconstruction program**: any change to the symbol database (db/) re-exports the Ghidra
-inventory (`scripts/ghidra/export_inventory.sh`) and regenerates the reconstruction
+`python3 tools/check_status.py --write-matrix`). The same rule binds the **reconstruction
+programs** (FA.EXE #209 + the overlay/companion binaries #247): any change to the symbol
+database (db/) re-exports the affected binary's Ghidra inventory
+(`scripts/ghidra/export_inventory.sh [BINARY]` → `db/inventory/<binary>/`) and regenerates the reconstruction
 matrix (docs/fa/reconstruction.md) plus the generated per-subsystem registry regions in
 docs/fa/symbols.md and docs/fa/globals.md (all via the same `--write-matrix`) in that PR;
 those registry blocks are marker-delimited and must not be hand-edited. Subsystem docs

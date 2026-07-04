@@ -8,6 +8,9 @@ set FA_PROJECT=%USERPROFILE%\src\fa
 set SCRIPT_DIR=%~dp0
 if "%SCRIPT_DIR:~-1%"=="\" set SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
 for %%I in ("%SCRIPT_DIR%\..\..") do set REPO_ROOT=%%~fI
+set BINARY=%1
+if "%BINARY%"=="" set BINARY=FA.EXE
 echo PROJECT_DIR=%FA_PROJECT%
 echo REPO_ROOT=%REPO_ROOT%
-"%GHIDRA_HOME%\support\analyzeHeadless.bat" "%FA_PROJECT%" fa-re -process FA.EXE -postScript ApplySymbols.java "%REPO_ROOT%" -scriptPath "%SCRIPT_DIR%" -noanalysis
+echo BINARY=%BINARY%
+"%GHIDRA_HOME%\support\analyzeHeadless.bat" "%FA_PROJECT%" fa-re -process %BINARY% -postScript ApplySymbols.java "%REPO_ROOT%" -scriptPath "%SCRIPT_DIR%" -noanalysis

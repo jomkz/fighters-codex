@@ -960,12 +960,17 @@ def load_manifest(path):
 
 def load_symbols(symbols_dir, manifest):
     """Parse db/symbols/*.csv -> (dict slug->rows, errors). Enforces schema,
-    ascending+unique VAs within a file, global VA uniqueness, and manifest match."""
+    ascending+unique VAs within a file, per-binary VA uniqueness, and manifest match.
+
+    VAs are unique only within a binary: two images (e.g. FA.EXE and IP.EXE both
+    based at 0x00400000) legitimately name different symbols at the same VA, so the
+    uniqueness key is (binary, va), not va alone."""
     errs = []
     by_slug = {}
     slugs = {s["slug"] for s in manifest}
-    global_va = {}
-    global_name = {}
+    slug_to_binary = {s["slug"]: s.get("binary") for s in manifest}
+    global_va = {}   # (binary, va) -> "rel"
+    global_name = {} # (binary, name) -> "rel:line"
     want = ["va", "kind", "name", "display", "source", "confidence", "notes", "type"]
     files = sorted(symbols_dir.glob("*.csv")) if symbols_dir.exists() else []
     for path in files:
@@ -973,6 +978,7 @@ def load_symbols(symbols_dir, manifest):
         slug = path.stem
         if slug not in slugs:
             errs.append("%s: no matching row in subsystems.csv" % rel)
+        binary = slug_to_binary.get(slug)
         header, rows = _read_csv(path)
         if header != want:
             errs.append("%s: header must be %s" % (rel, ",".join(want)))
@@ -991,9 +997,9 @@ def load_symbols(symbols_dir, manifest):
             if n <= last:
                 errs.append("%s:%d: va %s not ascending" % (rel, i, va))
             last = n
-            if n in global_va:
-                errs.append("%s:%d: va %s already defined in %s" % (rel, i, va, global_va[n]))
-            global_va[n] = rel
+            if (binary, n) in global_va:
+                errs.append("%s:%d: va %s already defined in %s" % (rel, i, va, global_va[(binary, n)]))
+            global_va[(binary, n)] = rel
             if kind not in SYMBOL_KIND:
                 errs.append("%s:%d: kind %r invalid" % (rel, i, kind))
             if source not in SYMBOL_SOURCE:
@@ -1008,10 +1014,10 @@ def load_symbols(symbols_dir, manifest):
             else:
                 if not name.strip():
                     errs.append("%s:%d: non-waiver row needs a name" % (rel, i))
-                if name in global_name:
+                if (binary, name) in global_name:
                     errs.append("note-dup: %s:%d name %r also at %s"
-                                % (rel, i, name, global_name[name]))
-                global_name[name] = "%s:%d" % (rel, i)
+                                % (rel, i, name, global_name[(binary, name)]))
+                global_name[(binary, name)] = "%s:%d" % (rel, i)
             parsed.append({"va": n, "kind": kind, "name": name, "display": display,
                            "source": source, "confidence": confidence, "notes": notes,
                            "type": ctype})
@@ -1020,7 +1026,7 @@ def load_symbols(symbols_dir, manifest):
 
 
 def load_inventory(inv_dir):
-    """Parse db/inventory/*.csv -> (dict, errors)."""
+    """Parse one binary's db/inventory/<binary>/*.csv -> (dict, errors)."""
     errs = []
     inv = {"functions": {}, "globals": [], "ranges": []}
     fpath = inv_dir / "functions.csv"
@@ -1030,7 +1036,7 @@ def load_inventory(inv_dir):
             if len(r) >= 3 and VA8_RE.match(r[0]):
                 inv["functions"][int(r[0], 16)] = {"name": r[1], "size": r[2]}
     else:
-        errs.append("db/inventory/functions.csv: missing (run export_inventory.sh)")
+        errs.append("%s: missing (run export_inventory.sh)" % _rel(fpath))
     gpath = inv_dir / "globals.csv"
     if gpath.exists():
         _, rows = _read_csv(gpath)
@@ -1039,7 +1045,7 @@ def load_inventory(inv_dir):
                 inv["globals"].append({"va": int(r[0], 16), "name": r[1],
                                        "xref": r[2], "subs": r[3].split(";") if r[3] else []})
     else:
-        errs.append("db/inventory/globals.csv: missing (run export_inventory.sh)")
+        errs.append("%s: missing (run export_inventory.sh)" % _rel(gpath))
     rpath = inv_dir / "ranges.csv"
     if rpath.exists():
         _, rows = _read_csv(rpath)
@@ -1049,12 +1055,28 @@ def load_inventory(inv_dir):
     return inv, errs
 
 
-def _claims(symbols):
-    """va -> slug for every symbol row (explicit membership, overrides ranges)."""
+def load_inventories(inv_root, binaries):
+    """Load one inventory per binary from db/inventory/<binary>/ -> ({binary: inv}, errors).
+
+    Inventories are keyed by the exact `binary` value from subsystems.csv (the Ghidra
+    program name / imported filename, e.g. FA.EXE, WAIL32.DLL)."""
+    errs = []
+    invs = {}
+    for binary in binaries:
+        inv, ierrs = load_inventory(inv_root / binary)
+        invs[binary] = inv
+        errs += ierrs
+    return invs, errs
+
+
+def _claims_by_binary(symbols, slug_to_binary):
+    """{binary: {va: slug}} for every symbol row (explicit membership, overrides ranges).
+    Scoped per binary because VAs are only unique within a binary."""
     out = {}
     for slug, rows in symbols.items():
+        binary = slug_to_binary.get(slug)
         for row in rows:
-            out[row["va"]] = slug
+            out.setdefault(binary, {})[row["va"]] = slug
     return out
 
 
@@ -1062,9 +1084,10 @@ def _in_ranges(va, sub):
     return any(lo <= va < hi for lo, hi in sub["ranges"])
 
 
-def check_coverage(sub, symbols, inventory, claims):
+def check_coverage(sub, symbols, inventory, claims, binary_slugs):
     """For a complete subsystem: 100% of in-scope functions named, and every
-    referenced global named or waived."""
+    referenced global named or waived. `inventory`/`claims` are the subsystem's
+    binary's; `binary_slugs` scopes the shared-global rule to that binary."""
     errs = []
     slug = sub["slug"]
     rel = ("db/symbols/%s.csv" % slug)
@@ -1094,11 +1117,11 @@ def check_coverage(sub, symbols, inventory, claims):
             errs.append("%s: 0x%08X named as a function but not in the inventory" % (rel, row["va"]))
 
     # Data: every referenced global tagged with this subsystem must be named or
-    # waived SOMEWHERE in the DB. Globals are frequently shared (a struct/array
-    # interior read by many subsystems), and VAs are globally unique across the
-    # symbol files, so a global is documented once — in whichever subsystem owns
-    # its base — and that covers every subsystem that references it.
-    db_data_covered = {r["va"] for s_rows in symbols.values() for r in s_rows
+    # waived SOMEWHERE in the same binary's DB. Globals are frequently shared (a
+    # struct/array interior read by many subsystems), and VAs are unique within a
+    # binary, so a global is documented once — in whichever subsystem owns its
+    # base — and that covers every subsystem of that binary which references it.
+    db_data_covered = {r["va"] for s in binary_slugs for r in symbols.get(s, [])
                        if r["kind"] == "data"}
     for g in inventory["globals"]:
         if slug not in g["subs"]:
@@ -1206,45 +1229,79 @@ def recon_stats(sub, symbols, inventory, claims):
             "g_named": g_named, "g_waived": g_waived, "g_total": g_total}
 
 
-def generate_recon_matrix(manifest, symbols, inventory, claims):
+def _ordered_binaries(manifest):
+    """Distinct binaries in first-appearance (manifest) order — FA.EXE leads."""
+    out = []
+    for s in manifest:
+        if s["binary"] not in out:
+            out.append(s["binary"])
+    return out
+
+
+def _recon_row(sub, st):
+    rng = "<br>".join("`0x%06X–0x%06X`" % (lo, hi) for lo, hi in sub["ranges"])
+    if sub["status"] == "planned":
+        funcs = globs = "—"
+    else:
+        pct = (100 * st["func_named"] // st["func_total"]) if st["func_total"] else 100
+        funcs = "%d/%d (%d%%)" % (st["func_named"], st["func_total"], pct)
+        globs = "%d named · %d waived" % (st["g_named"], st["g_waived"])
+    has_sym = (SYMBOLS_DIR / ("%s.csv" % sub["slug"])).exists()
+    doc_cell = "[doc](%s)" % Path(sub["doc"]).name if sub["status"] != "planned" else "—"
+    diag = "✓" if sub["status"] == "complete" else ("—" if not has_sym else "·")
+    issue_cell = "[#%d](%s/%d)" % (sub["issue"], ISSUE_URL, sub["issue"]) \
+        if sub["issue"] > 0 else "—"
+    return "| %s | %s | %s | %s | %s | %s | %s | %s |" % (
+        sub["title"], rng, funcs, globs, doc_cell, diag, issue_cell, sub["status"])
+
+
+def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
+    """Multi-binary matrix: one section per binary (FA.EXE + each overlay), each
+    verified against its own db/inventory/<binary>/ ground truth."""
     lines = [
-        "# FA.EXE Reconstruction Matrix",
+        "# Reconstruction Matrix",
         "",
         "<!-- Generated by tools/check_status.py --write-matrix. Do not edit. -->",
         "",
-        "Progress of the [complete-FA.EXE reconstruction program](../roadmap.md#program-complete-faexe-reconstruction)",
-        "(epic [#209](%s/209)): one row per subsystem, generated from the" % ISSUE_URL,
-        "[symbol database](%s/db/README.md) and verified against the committed" % BLOB,
+        "Progress of the FA reconstruction programs — the",
+        "[FA.EXE program](../roadmap.md#program-complete-faexe-reconstruction) (epic [#209](%s/209))" % ISSUE_URL,
+        "and the [overlay-binary program](../roadmap.md#program-overlay-reconstruction) (epic [#247](%s/247))" % ISSUE_URL,
+        "— one section per binary, one row per subsystem, generated from the",
+        "[symbol database](%s/db/README.md) and verified against the committed per-binary" % BLOB,
         "Ghidra inventory by CI (`--check`).",
         "",
-        "| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |",
-        "|---|---|---|---|---|---|---|---|",
     ]
-    tot_named = tot_funcs = tot_gn = tot_gt = 0
-    for sub in manifest:
-        st = recon_stats(sub, symbols, inventory, claims)
-        tot_named += st["func_named"]; tot_funcs += st["func_total"]
-        tot_gn += st["g_named"] + st["g_waived"]; tot_gt += st["g_total"]
-        rng = "<br>".join("`0x%06X–0x%06X`" % (lo, hi) for lo, hi in sub["ranges"])
-        if sub["status"] == "planned":
-            funcs = globs = "—"
-        else:
-            pct = (100 * st["func_named"] // st["func_total"]) if st["func_total"] else 100
-            funcs = "%d/%d (%d%%)" % (st["func_named"], st["func_total"], pct)
-            globs = "%d named · %d waived" % (st["g_named"], st["g_waived"])
-        has_sym = (SYMBOLS_DIR / ("%s.csv" % sub["slug"])).exists()
-        doc_cell = "[doc](%s)" % Path(sub["doc"]).name if sub["status"] != "planned" else "—"
-        diag = "✓" if sub["status"] == "complete" else ("—" if not has_sym else "·")
-        issue_cell = "[#%d](%s/%d)" % (sub["issue"], ISSUE_URL, sub["issue"]) \
-            if sub["issue"] > 0 else "—"
-        lines.append("| %s | %s | %s | %s | %s | %s | %s | %s |" % (
-            sub["title"], rng, funcs, globs, doc_cell, diag, issue_cell, sub["status"]))
-    done = sum(1 for s in manifest if s["status"] == "complete")
+    p_named = p_funcs = p_gn = p_gt = p_done = p_subs = 0
+    for binary in _ordered_binaries(manifest):
+        bsubs = [s for s in manifest if s["binary"] == binary]
+        inv = inventories.get(binary, {"functions": {}, "globals": [], "ranges": []})
+        claims = claims_by_binary.get(binary, {})
+        lines += [
+            "## %s" % binary,
+            "",
+            "| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        tot_named = tot_funcs = tot_gn = tot_gt = 0
+        for sub in bsubs:
+            st = recon_stats(sub, symbols, inv, claims)
+            tot_named += st["func_named"]; tot_funcs += st["func_total"]
+            tot_gn += st["g_named"] + st["g_waived"]; tot_gt += st["g_total"]
+            lines.append(_recon_row(sub, st))
+        done = sum(1 for s in bsubs if s["status"] == "complete")
+        lines += [
+            "",
+            "**%s totals:** %d/%d subsystems complete; %d/%d in-scope functions named; "
+            "%d/%d referenced globals resolved."
+            % (binary, done, len(bsubs), tot_named, tot_funcs, tot_gn, tot_gt),
+            "",
+        ]
+        p_named += tot_named; p_funcs += tot_funcs; p_gn += tot_gn; p_gt += tot_gt
+        p_done += done; p_subs += len(bsubs)
     lines += [
-        "",
-        "**Program totals:** %d/%d subsystems complete; %d/%d in-scope functions named; "
-        "%d/%d referenced globals resolved."
-        % (done, len(manifest), tot_named, tot_funcs, tot_gn, tot_gt),
+        "**Program totals (all binaries):** %d/%d subsystems complete; %d/%d in-scope "
+        "functions named; %d/%d referenced globals resolved."
+        % (p_done, p_subs, p_named, p_funcs, p_gn, p_gt),
         "",
     ]
     return "\n".join(lines) + "\n"
@@ -1259,31 +1316,41 @@ REGISTRY_TAGS = {"func": "symbol-registry", "data": "globals-registry"}
 def generate_registry(manifest, symbols, kind):
     """Per-subsystem table of *named* symbols (kind 'func' or 'data') for the
     generated region of symbols.md / globals.md. Waivers are the DB's bookkeeping,
-    not the human registry, so only sms/re rows appear. Address-ordered."""
-    subs = sorted((s for s in manifest if s["status"] == "complete"),
-                  key=lambda s: s["ranges"][0][0])
+    not the human registry, so only sms/re rows appear. Grouped by binary (a label
+    is emitted only when more than one binary is present, so the single-binary
+    output is unchanged), address-ordered within each binary."""
+    complete = [s for s in manifest if s["status"] == "complete"]
+    binaries = _ordered_binaries(complete)
+    multi = len(binaries) > 1
     what = "functions" if kind == "func" else "referenced globals"
     out = ["<!-- Generated by tools/check_status.py --write-matrix. Do not edit. -->",
            "",
            "_Generated from [`db/symbols/`](%s/db/symbols/); each subsystem's detailed "
            "prose lives on its own page._" % BLOB, ""]
-    for sub in subs:
-        rows = sorted((r for r in symbols.get(sub["slug"], [])
-                       if r["kind"] == kind and r["source"] in ("sms", "re")),
-                      key=lambda r: r["va"])
-        if not rows:
-            continue
-        out += ["### %s" % sub["title"], "",
-                "[`%s.csv`](%s/db/symbols/%s.csv) · [page](%s) — %d named %s"
-                % (sub["slug"], BLOB, sub["slug"], Path(sub["doc"]).name,
-                   len(rows), what),
-                "", "| VA | Symbol | Src | Role |", "|----|--------|-----|------|"]
-        for r in rows:
-            sym = r["display"] or r["name"]
-            note = (r["notes"] or "").replace("|", "\\|").strip()
-            out.append("| `0x%08X` | `%s` | %s | %s |"
-                       % (r["va"], sym, r["source"], note))
-        out.append("")
+    ordered = []
+    for binary in binaries:
+        ordered.append((binary, sorted((s for s in complete if s["binary"] == binary),
+                                       key=lambda s: s["ranges"][0][0])))
+    for binary, subs in ordered:
+        if multi:
+            out += ["**Binary: `%s`**" % binary, ""]
+        for sub in subs:
+            rows = sorted((r for r in symbols.get(sub["slug"], [])
+                           if r["kind"] == kind and r["source"] in ("sms", "re")),
+                          key=lambda r: r["va"])
+            if not rows:
+                continue
+            out += ["### %s" % sub["title"], "",
+                    "[`%s.csv`](%s/db/symbols/%s.csv) · [page](%s) — %d named %s"
+                    % (sub["slug"], BLOB, sub["slug"], Path(sub["doc"]).name,
+                       len(rows), what),
+                    "", "| VA | Symbol | Src | Role |", "|----|--------|-----|------|"]
+            for r in rows:
+                sym = r["display"] or r["name"]
+                note = (r["notes"] or "").replace("|", "\\|").strip()
+                out.append("| `0x%08X` | `%s` | %s | %s |"
+                           % (r["va"], sym, r["source"], note))
+            out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
@@ -1330,18 +1397,27 @@ def check_reconstruction(db_dir=DB_DIR):
     if not manifest:
         return errs, None, {}
     symbols, serrs = load_symbols(db_dir / "symbols", manifest)
-    inventory, ierrs = load_inventory(db_dir / "inventory")
+    binaries = _ordered_binaries(manifest)
+    inventories, ierrs = load_inventories(db_dir / "inventory", binaries)
     errs = errs + serrs + ierrs
     # Surface cross-file duplicate-name notes as warnings, not hard errors.
     warns = [e[len("note-dup: "):] for e in errs if e.startswith("note-dup: ")]
     errs = [e for e in errs if not e.startswith("note-dup: ")]
-    claims = _claims(symbols)
+    slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
+    claims_by_binary = _claims_by_binary(symbols, slug_to_binary)
+    slugs_by_binary = {}
+    for slug, binary in slug_to_binary.items():
+        slugs_by_binary.setdefault(binary, set()).add(slug)
     for sub in manifest:
+        binary = sub["binary"]
+        inv = inventories.get(binary, {"functions": {}, "globals": [], "ranges": []})
+        claims = claims_by_binary.get(binary, {})
         if sub["status"] in ("active", "complete"):
             errs += check_subsystem_doc(sub, symbols)
         if sub["status"] == "complete":
-            errs += check_coverage(sub, symbols, inventory, claims)
-    matrix = generate_recon_matrix(manifest, symbols, inventory, claims)
+            errs += check_coverage(sub, symbols, inv, claims,
+                                   slugs_by_binary.get(binary, set()))
+    matrix = generate_recon_matrix(manifest, symbols, inventories, claims_by_binary)
     registries = {
         (SYMBOLS_MD, REGISTRY_TAGS["func"]): generate_registry(manifest, symbols, "func"),
         (GLOBALS_MD, REGISTRY_TAGS["data"]): generate_registry(manifest, symbols, "data"),
@@ -1676,22 +1752,62 @@ def _recon_self_test(expect, tmpdir=None):
                   "globals": [{"va": 0x4EB600, "name": "_flag", "xref": "3", "subs": ["obj"]}],
                   "ranges": []}
         sub = manifest[0]
-        claims = _claims(symbols)
-        expect(check_coverage(sub, symbols, inv_ok, claims) == [], "recon: coverage clean")
+        s2b = {s["slug"]: s["binary"] for s in manifest}
+        claims = _claims_by_binary(symbols, s2b).get("FA.EXE", {})
+        bslugs = {sl for sl, b in s2b.items() if b == "FA.EXE"}
+        expect(check_coverage(sub, symbols, inv_ok, claims, bslugs) == [], "recon: coverage clean")
 
         inv_funly = dict(inv_ok, functions={0x462600: {"name": "FUN_00462600", "size": "1"}})
-        expect(any("FUN_" in x for x in check_coverage(sub, symbols, inv_funly, claims)),
+        expect(any("FUN_" in x for x in check_coverage(sub, symbols, inv_funly, claims, bslugs)),
                "recon: coverage catches leftover FUN_")
         inv_gap = dict(inv_ok, functions={0x462600: {"name": "InitChain", "size": "1"},
                                           0x4626F0: {"name": "FUN_x", "size": "1"}})
         expect(any("in-scope but absent" in x
-                   for x in check_coverage(sub, symbols, inv_gap, claims)),
+                   for x in check_coverage(sub, symbols, inv_gap, claims, bslugs)),
                "recon: coverage catches in-range function missing from DB")
         inv_grf = dict(inv_ok, globals=[{"va": 0x4EB601, "name": "<unnamed>",
                                          "xref": "2", "subs": ["obj"]}])
         expect(any("unnamed and unwaived" in x
-                   for x in check_coverage(sub, symbols, inv_grf, claims)),
+                   for x in check_coverage(sub, symbols, inv_grf, claims, bslugs)),
                "recon: coverage catches unwaived referenced global")
+
+        # --- Multi-binary (#252): VAs are unique only within a binary -----------
+        # FA.EXE and IP.EXE both name 0x00462600 (their own images) — a collision
+        # that MUST be accepted; the same VA twice within one binary is rejected.
+        mb_manifest = manifest + [{"slug": "ipx", "title": "IP", "binary": "IP.EXE",
+                                   "ranges": [(0x401000, 0x401100)], "status": "complete",
+                                   "doc": "db/README.md", "issue": 254, "line": 3}]
+        write("symbols/ipx.csv",
+              "va,kind,name,display,source,confidence,notes,type\n"
+              "0x00462600,func,IPXStart,,re,confirmed,ip entry (own image),\n")
+        try:
+            mb_syms, mb_e = load_symbols(base / "symbols", mb_manifest)
+            expect(not any("already defined" in x for x in mb_e),
+                   "recon: same VA in two binaries is accepted")
+            s2b_mb = {s["slug"]: s["binary"] for s in mb_manifest}
+            cbb = _claims_by_binary(mb_syms, s2b_mb)
+            ip_sub = mb_manifest[-1]
+            # IP.EXE coverage runs against IP.EXE's OWN inventory (0x462600 = IPXStart,
+            # claimed by ipx), independent of FA.EXE naming the same VA InitChain.
+            ip_inv = {"functions": {0x462600: {"name": "IPXStart", "size": "4"}},
+                      "globals": [], "ranges": []}
+            ip_slugs = {sl for sl, b in s2b_mb.items() if b == "IP.EXE"}
+            expect(check_coverage(ip_sub, mb_syms, ip_inv, cbb.get("IP.EXE", {}),
+                                  ip_slugs) == [], "recon: IP.EXE coverage clean (own inventory)")
+            # matrix groups by binary
+            mtx = generate_recon_matrix(mb_manifest, mb_syms,
+                                        {"FA.EXE": inv_ok, "IP.EXE": ip_inv}, cbb)
+            expect("## FA.EXE" in mtx and "## IP.EXE" in mtx,
+                   "recon: matrix has one section per binary")
+        finally:
+            (base / "symbols" / "ipx.csv").unlink()
+        # Same VA twice within ONE binary is still an error:
+        write("symbols/obj.csv", good_syms.rstrip("\n") +
+              "\n0x00462600,data,Dup,,re,confirmed,dup,int\n")
+        _, dup_e = load_symbols(base / "symbols", manifest)
+        expect(any("already defined" in x for x in dup_e),
+               "recon: same VA twice in one binary is rejected")
+        write("symbols/obj.csv", good_syms)
 
         # Doc structure
         write("x.md", GOOD_DOC)

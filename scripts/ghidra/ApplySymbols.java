@@ -32,7 +32,8 @@ public class ApplySymbols extends GhidraScript {
             println("ERROR: pass the repo root as the first script argument.");
             return;
         }
-        File symbolsDir = new File(new File(args[0], "db"), "symbols");
+        File dbDir = new File(args[0], "db");
+        File symbolsDir = new File(dbDir, "symbols");
         File[] files = symbolsDir.listFiles((d, n) -> n.endsWith(".csv"));
         if (files == null || files.length == 0) {
             println("ERROR: no CSV files under " + symbolsDir);
@@ -40,10 +41,19 @@ public class ApplySymbols extends GhidraScript {
         }
         java.util.Arrays.sort(files);
 
+        // Only apply this binary's symbol files — VAs collide across images
+        // (IP.EXE bases at the same 0x00400000 as FA.EXE), so applying another
+        // binary's rows here would stamp the wrong names.
+        String binary = currentProgram.getDomainFile().getName();
+        java.util.Set<String> binSlugs = ExportInventory.slugsForBinary(dbDir, binary);
+        println("binary: " + binary + " (" + binSlugs.size() + " subsystem files)");
+
         SymbolTable st = currentProgram.getSymbolTable();
         int applied = 0, unchanged = 0, created = 0, conflicts = 0, waived = 0;
 
         for (File f : files) {
+            String slug = f.getName().replaceAll("\\.csv$", "");
+            if (!binSlugs.contains(slug)) continue; // not this binary
             for (List<String> row : ExportInventory.readCsv(f)) {
                 // va,kind,name,display,source,confidence,notes
                 long va = Long.decode(row.get(0));

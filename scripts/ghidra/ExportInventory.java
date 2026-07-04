@@ -1,5 +1,7 @@
-// Export the Ghidra-project ground truth for the reconstruction program (#209).
-// Writes three byte-stable CSVs into <repo>/db/inventory/:
+// Export the Ghidra-project ground truth for the reconstruction program (#209/#247).
+// Scoped to the current binary (this program's name, e.g. FA.EXE / WAIL32.DLL);
+// image bounds come from the program, not a hardcoded window. Writes three
+// byte-stable CSVs into <repo>/db/inventory/<binary>/:
 //   functions.csv  va,name,size                 -- every function in the image
 //   globals.csv    va,name,xref_count,subsystems -- data symbols with >=1 code xref
 //   ranges.csv     slug,range,bytes,bytes_in_functions,functions -- per manifest range
@@ -37,8 +39,12 @@ import java.util.TreeSet;
 
 public class ExportInventory extends GhidraScript {
 
-    private static final long IMAGE_LO = 0x00400000L;
-    private static final long IMAGE_HI = 0x00600000L;
+    // Image bounds are derived from the loaded program (getImageBase() + the
+    // memory block extent), NOT hardcoded — FA.EXE is based at 0x00400000 but the
+    // overlays sit elsewhere (WAIL32.DLL at 0x20000000, the comms DLLs at
+    // 0x10000000), and IP.EXE collides with FA.EXE at 0x00400000.
+    private long imageLo;
+    private long imageHi;
 
     private static final class Subsystem {
         final String slug;
@@ -65,15 +71,35 @@ public class ExportInventory extends GhidraScript {
             return;
         }
 
-        List<Subsystem> subsystems = readManifest(new File(dbDir, "subsystems.csv"));
-        // Explicit claims: VA -> slug, from db/symbols/*.csv. A claim overrides
-        // range membership for every other subsystem.
-        Map<Long, String> claims = readClaims(new File(dbDir, "symbols"));
+        // The current binary = this Ghidra program's name (imported filename),
+        // e.g. FA.EXE / WAIL32.DLL. Everything is scoped to it.
+        String binary = currentProgram.getDomainFile().getName();
+        println("binary: " + binary);
 
-        // Optional 2nd arg: alternate output directory (used by the reproducibility
-        // audit to export a fresh-project inventory without clobbering db/inventory/).
+        // Image bounds from the loaded program (base .. highest loaded block end).
+        imageLo = currentProgram.getImageBase().getOffset();
+        imageHi = imageLo;
+        for (ghidra.program.model.mem.MemoryBlock b :
+                currentProgram.getMemory().getBlocks()) {
+            if (b.isLoaded() || b.isInitialized()) {
+                imageLo = Math.min(imageLo, b.getStart().getOffset());
+                imageHi = Math.max(imageHi, b.getEnd().getOffset() + 1);
+            }
+        }
+        println(String.format("image bounds: 0x%08X .. 0x%08X", imageLo, imageHi));
+
+        // Only this binary's subsystems + their claims count.
+        java.util.Set<String> binSlugs = slugsForBinary(dbDir, binary);
+        List<Subsystem> subsystems = readManifest(
+                new File(dbDir, "subsystems.csv"), binSlugs);
+        // Explicit claims: VA -> slug, from this binary's db/symbols/*.csv. A claim
+        // overrides range membership for every other subsystem of the same binary.
+        Map<Long, String> claims = readClaims(new File(dbDir, "symbols"), binSlugs);
+
+        // Default output dir is per-binary: db/inventory/<binary>/. Optional 2nd arg
+        // overrides it (used by the reproducibility audit to export elsewhere).
         File outDir = (args.length >= 2 && !args[1].isEmpty())
-                ? new File(args[1]) : new File(dbDir, "inventory");
+                ? new File(args[1]) : new File(new File(dbDir, "inventory"), binary);
         outDir.mkdirs();
 
         FunctionManager fm = currentProgram.getFunctionManager();
@@ -83,7 +109,7 @@ public class ExportInventory extends GhidraScript {
         TreeMap<Long, Function> functions = new TreeMap<>();
         for (Function fn : fm.getFunctions(true)) {
             long va = fn.getEntryPoint().getOffset();
-            if (va < IMAGE_LO || va >= IMAGE_HI || fn.isExternal()) continue;
+            if (va < imageLo || va >= imageHi || fn.isExternal()) continue;
             functions.put(va, fn);
         }
         try (BufferedWriter w = open(new File(outDir, "functions.csv"))) {
@@ -103,16 +129,16 @@ public class ExportInventory extends GhidraScript {
         for (Symbol sym : currentProgram.getSymbolTable().getAllSymbols(false)) {
             Address addr = sym.getAddress();
             long va = addr.getOffset();
-            if (va < IMAGE_LO || va >= IMAGE_HI) continue;
+            if (va < imageLo || va >= imageHi) continue;
             if (sym.isExternal() || fm.getFunctionAt(addr) != null) continue;
             if (!dataNames.containsKey(va)) dataNames.put(va, sym.getName());
         }
         DataIterator di = currentProgram.getListing()
-                .getDefinedData(toAddr(IMAGE_LO), true);
+                .getDefinedData(toAddr(imageLo), true);
         while (di.hasNext()) {
             Data d = di.next();
             long va = d.getAddress().getOffset();
-            if (va >= IMAGE_HI) break;
+            if (va >= imageHi) break;
             if (fm.getFunctionAt(d.getAddress()) != null) continue;
             dataNames.putIfAbsent(va, "<unnamed>");
         }
@@ -172,9 +198,20 @@ public class ExportInventory extends GhidraScript {
         return null;
     }
 
-    private List<Subsystem> readManifest(File manifest) throws Exception {
+    /** Slugs in subsystems.csv whose `binary` column equals binaryName. */
+    static java.util.Set<String> slugsForBinary(File dbDir, String binaryName)
+            throws Exception {
+        java.util.Set<String> out = new java.util.HashSet<>();
+        for (List<String> row : readCsv(new File(dbDir, "subsystems.csv")))
+            if (row.size() >= 3 && row.get(2).equals(binaryName)) out.add(row.get(0));
+        return out;
+    }
+
+    private List<Subsystem> readManifest(File manifest, java.util.Set<String> binSlugs)
+            throws Exception {
         List<Subsystem> out = new ArrayList<>();
         for (List<String> row : readCsv(manifest)) {
+            if (!binSlugs.contains(row.get(0))) continue; // this binary only
             Subsystem s = new Subsystem(row.get(0));
             for (String r : row.get(3).split(";")) {
                 String[] parts = r.split("-");
@@ -186,12 +223,14 @@ public class ExportInventory extends GhidraScript {
         return out;
     }
 
-    private Map<Long, String> readClaims(File symbolsDir) throws Exception {
+    private Map<Long, String> readClaims(File symbolsDir, java.util.Set<String> binSlugs)
+            throws Exception {
         Map<Long, String> out = new LinkedHashMap<>();
         File[] files = symbolsDir.listFiles((d, n) -> n.endsWith(".csv"));
         if (files == null) return out;
         for (File f : files) {
             String slug = f.getName().replaceAll("\\.csv$", "");
+            if (!binSlugs.contains(slug)) continue; // this binary only
             for (List<String> row : readCsv(f))
                 out.put(Long.decode(row.get(0)), slug);
         }

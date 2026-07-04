@@ -1,10 +1,20 @@
-# Ghidra Scripts — FA.EXE Reverse Engineering
+# Ghidra Scripts — Fighters Anthology Reverse Engineering
 
-Scripts for decompiling and analysing Jane's Fighters Anthology (`FA.EXE`) using Ghidra.
+Scripts for decompiling and analysing Jane's Fighters Anthology using Ghidra — `FA.EXE`
+(epic #209) and the companion binaries it ships alongside (IP.EXE, WAIL32.DLL, comms DLLs;
+epic #247).
 
 The workbench is cross-platform: the analysis scripts (`*.java`) resolve every path
 through the `FA_PROJECT` environment variable, the `.sh` launchers drive them on Linux
 (the primary RE environment), and the `.bat` launchers remain for the Windows bench.
+
+**Per-binary reconstruction:** the symbol-DB launchers (`apply_symbols`, `apply_types`,
+`export_inventory`, `rebuild_audit`) take an optional `BINARY` argument — the Ghidra program
+name = imported filename (default `FA.EXE`; `ALL` loops every binary in `db/subsystems.csv`).
+Each targets one image via `-process <BINARY>`, and inventory exports to
+`db/inventory/<BINARY>/` — VAs are unique only within a binary (IP.EXE bases at the same
+`0x00400000` as FA.EXE). Import the companion binaries first with `import_targets.sh`
+(they are standard PE, so no Phar Lap `PL` patch — unlike the LIB-embedded data overlays).
 
 ## Prerequisites (Linux)
 
@@ -260,6 +270,11 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `import_overlays.sh` | `import_overlays.bat` + `_import_one.bat` | Patch PL→PE signature and import overlay DLLs into Ghidra |
 | `import_secondary.sh` | `import_secondary.bat` | Import secondary binaries into isolated projects |
 | `run_overlays.sh` | `run_overlays.bat` + `_analyze_overlay*.bat`, `_analyze_secondary.bat` | Orchestrate extract / import / analyze; see flags above |
+| `import_targets.sh` | `import_targets.bat` | Import the #247 companion binaries (IP.EXE, WAIL32.DLL, comms DLLs) into `fa-re` as their own programs |
+| `apply_symbols.sh [BIN]` | `apply_symbols.bat [BIN]` | Apply `db/symbols/` names to the project (per binary) |
+| `apply_types.sh [BIN]` | `apply_types.bat [BIN]` | Apply `db/types/` + the `type` column (per binary) |
+| `export_inventory.sh [BIN]` | `export_inventory.bat [BIN]` | Export `db/inventory/<BIN>/` ground truth |
+| `rebuild_audit.sh [BIN]` | — (Fedora only) | Rebuild a binary from scratch and diff vs the committed inventory |
 
 ---
 
