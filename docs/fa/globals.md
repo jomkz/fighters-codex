@@ -118,6 +118,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00521D94` | `_hudFpmX` | re | flight-path-marker screen X; anchor for nearly all HUD symbology |
 | `0x00521D96` | `_hudFpmY` | re | flight-path-marker screen Y |
 
+### View / camera & replay (VIEW)
+
+[`view.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/view.csv) · [page](view.md) — 5 named referenced globals
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004EC420` | `viewModeTable` | re | view-mode dispatch table scanned by VIEWModeLookup |
+| `0x005223F0` | `replayWindowStart` | re | replay capture window start tick |
+| `0x005223F4` | `replayWindowEnd` | re | replay capture window end tick |
+| `0x00522400` | `replaySaveBuf` | re | saved-view replay buffer base (0x30 dwords copied in/out of the view) |
+| `0x005224C0` | `replayActive` | re | replay-active flag (set by VIEWReplayRecordGate, read by VIEWReplayPlayback) |
+
 ### Collision (COL)
 
 [`collision.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/collision.csv) · [page](collision.md) — 38 named referenced globals

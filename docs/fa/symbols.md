@@ -364,6 +364,32 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A26F0` | `DoDialogInfoBox` | sms | modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10) |
 | `0x004A27C0` | `DialogInfoBox` | sms | generic INFO320/INFO640 message-box builder+run |
 
+### View / camera & replay (VIEW)
+
+[`view.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/view.csv) · [page](view.md) — 19 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x0040D7A0` | `VIEWSlew` | sms | slew (free-look) camera control |
+| `0x0040D7F0` | `VIEWApplyMode` | re | if the view mode word (+0xB4) is set delegate to the view builder VIEWBuild |
+| `0x0040D810` | `VIEWFromObject` | re | position the view from the tracked object (_objPtrs[view+0x1C]) and its state |
+| `0x0040E240` | `VIEWUpdateByType` | re | per-object-type view update (object class 7/0xC/0xF branches) |
+| `0x0040E2C0` | `VIEWFitDistance` | re | compute camera stand-off distance from the object radius (_ObjRadius) |
+| `0x0040E330` | `VIEWAngleScale` | re | angle-to-scale clamp helper for the view transform |
+| `0x0040E380` | `VIEWImmediateVisibility` | sms | force the view to immediate (no-transition) visibility |
+| `0x0040E3A0` | `VIEWInit` | re | allocate/initialise a view slot (MMPushAllocId; zero +0x1C/+0x1E) |
+| `0x0040E450` | `VIEWFree` | re | free the view's allocated buffer (_MMFreePtr on +0x60) |
+| `0x0040E470` | `VIEWSnapshot` | re | copy the 0x30-dword view state block (snapshot/restore helper) |
+| `0x0040E930` | `VIEWInTransition` | sms | returns non-zero while the view is mid-transition |
+| `0x0040E960` | `VIEWReplayRecordGate` | re | replay record gate: inside the _timerTicks window (DAT_005223F0/F4) set replay-active DAT_005224C0 |
+| `0x0040EBA0` | `VIEWReplayPlayback` | re | replay playback: when replay-active copy the 0x30-dword saved-view buffer (DAT_00522400) into the view |
+| `0x0040EBC0` | `VIEWBuild` | re | build the external/spot view for the given mode (the view builder VIEWApplyMode calls) |
+| `0x0040F230` | `VIEWModeLookup` | re | scan the view-mode table at DAT_004EC420 |
+| `0x0040F270` | `VIEWScaleClamp` | re | clamp/scale helper for the view field-of-view or zoom |
+| `0x0040F2D0` | `VIEWSlewIntegrate` | re | frame-rate-scaled slew integration (_LMultDiv256 by _systemFrameTicks) |
+| `0x0040F590` | `VIEWChangeObj` | sms | switch the view to a different tracked object |
+| `0x0040F5D0` | `VIEWCanSeeTarget` | re | visibility/padlock check (_WRCanSee) gated on a _gamePrefs bit |
+
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
 [`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 125 named functions

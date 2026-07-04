@@ -73,6 +73,7 @@ nav:
       - External imports: fa/external-imports.md
       - Reconstruction: fa/reconstruction.md
       - Game Loop: fa/game-loop.md
+      - View & Camera: fa/view.md
       - Renderer: fa/renderer.md
       - Objects: fa/objects.md
       - HUD: fa/hud.md

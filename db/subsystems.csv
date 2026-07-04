@@ -24,3 +24,4 @@ comms-dl,CDRVDL32.DLL — Cdrv RS-232 serial comms driver,CDRVDL32.DLL,0x1000100
 comms-hf,CDRVHF32.DLL — Cdrv Hayes-modem comms driver,CDRVHF32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-modem.md,255
 comms-xf,CDRVXF32.DLL — Cdrv file-transfer comms driver,CDRVXF32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-transfer.md,255
 comms-sc,COMMSC32.DLL — Cdrv comms terminal-screen service,COMMSC32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-screen.md,255
+view,View / camera & replay (VIEW),FA.EXE,0x40D7A0-0x40F6B0,complete,docs/fa/view.md,257

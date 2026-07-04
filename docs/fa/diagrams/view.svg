@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 330" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="The VIEW subsystem: FlyingLoop drives VIEWApplyMode, which builds the external/spot camera from the tracked object; a replay recorder captures the view into a buffer and plays it back.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+  <text x="410" y="22" text-anchor="middle" class="title">VIEW — in-flight camera &amp; replay</text>
+
+  <rect class="run" x="310" y="40" width="200" height="42" rx="6"/>
+  <text x="410" y="65" text-anchor="middle" class="lbl mono">FlyingLoop (game-loop.md)</text>
+
+  <path class="edge" d="M410,82 L410,108" marker-end="url(#arrow)"/>
+
+  <rect class="setup" x="300" y="108" width="220" height="42" rx="6"/>
+  <text x="410" y="133" text-anchor="middle" class="lbl mono">VIEWApplyMode → VIEWBuild</text>
+
+  <path class="edge" d="M300,129 L150,129 L150,175" marker-end="url(#arrow)"/>
+  <rect class="box" x="40" y="175" width="220" height="58" rx="6"/>
+  <text x="150" y="196" text-anchor="middle" class="lbl">Camera from object</text>
+  <text x="150" y="214" text-anchor="middle" class="sub mono">VIEWFromObject · VIEWFitDistance</text>
+  <text x="150" y="228" text-anchor="middle" class="sub mono">VIEWSlew · VIEWSlewIntegrate</text>
+
+  <path class="edge" d="M520,129 L670,129 L670,175" marker-end="url(#arrow)"/>
+  <rect class="dec" x="560" y="175" width="220" height="58" rx="6"/>
+  <text x="670" y="196" text-anchor="middle" class="lbl">Replay</text>
+  <text x="670" y="214" text-anchor="middle" class="sub mono">VIEWReplayRecordGate</text>
+  <text x="670" y="228" text-anchor="middle" class="sub mono">VIEWReplayPlayback (_replaySaveBuf)</text>
+
+  <rect class="box" x="300" y="175" width="220" height="58" rx="6"/>
+  <text x="410" y="196" text-anchor="middle" class="lbl">Transition / visibility</text>
+  <text x="410" y="214" text-anchor="middle" class="sub mono">VIEWInTransition · VIEWChangeObj</text>
+  <text x="410" y="228" text-anchor="middle" class="sub mono">VIEWCanSeeTarget (_WRCanSee)</text>
+
+  <path class="edge" d="M410,233 L410,270" marker-end="url(#arrow)"/>
+  <rect class="run" x="320" y="270" width="180" height="40" rx="6"/>
+  <text x="410" y="295" text-anchor="middle" class="lbl mono">_mainV → T_Make/T_Render</text>
+</svg>
