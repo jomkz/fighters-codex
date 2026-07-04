@@ -78,6 +78,10 @@ nav:
       - Shape Selection: fa/shape-selection.md
       - AI Interpreter: fa/ai-interpreter.md
       - Physics: fa/physics.md
+      - Weapons: fa/weapons.md
+      - Collision: fa/collision.md
+      - Sound: fa/sound.md
+      - Wingman: fa/wingman.md
       - Network: fa/network.md
       - Globals: fa/globals.md
       - Structs: fa/structs.md

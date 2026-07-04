@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Projectile per-frame flow: engine state and lifetime checks, then guidance or seeker search, then thrust and drag.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .dmg{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;} .dmg{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .dmg{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .dmg{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+<text x="410" y="22" text-anchor="middle" class="title">PROJECTILE PER-FRAME — PROJMoveProc (owner only)</text>
+<rect class="run" x="300" y="40" width="220" height="46" rx="6"/>
+<text x="410" y="67" text-anchor="middle" class="lbl mono">PROJMoveProc</text>
+<rect class="box" x="300" y="120" width="220" height="46" rx="6"/>
+<text x="410" y="144" text-anchor="middle" class="lbl mono">PROJEngineState</text>
+<text x="410" y="161" text-anchor="middle" class="sub">boost -> burn -> coast</text>
+<rect class="dmg" x="30" y="210" width="220" height="64" rx="6"/>
+<text x="140" y="234" text-anchor="middle" class="lbl mono">lifetime / alt cutoff</text>
+<text x="140" y="251" text-anchor="middle" class="sub">SendCollateralDamages + Remove</text>
+<rect class="dec" x="300" y="210" width="220" height="64" rx="6"/>
+<text x="410" y="234" text-anchor="middle" class="lbl mono">has target</text>
+<text x="410" y="251" text-anchor="middle" class="sub">PROJLock -> Guide -> ProximityFuze</text>
+<rect class="dec" x="570" y="210" width="220" height="64" rx="6"/>
+<text x="680" y="234" text-anchor="middle" class="lbl mono">no target</text>
+<text x="680" y="251" text-anchor="middle" class="sub">PROJSelectTarget search</text>
+<rect class="box" x="300" y="320" width="220" height="50" rx="6"/>
+<text x="410" y="344" text-anchor="middle" class="lbl mono">thrust + drag</text>
+<text x="410" y="361" text-anchor="middle" class="sub">PROJUpdateWeave</text>
+<path class="edge" d="M410,86 L410,118" marker-end="url(#arrow)"/>
+<path class="edge" d="M410,166 L140,208" marker-end="url(#arrow)"/>
+<path class="edge" d="M410,166 L410,208" marker-end="url(#arrow)"/>
+<path class="edge" d="M410,166 L640,208" marker-end="url(#arrow)"/>
+<path class="edge" d="M410,274 L410,318" marker-end="url(#arrow)"/>
+<path class="edge" d="M660,274 L470,318" marker-end="url(#arrow)"/>
+<text x="150" y="200" class="el">detonate</text>
+<text x="560" y="120" class="el">PROJHitChance gates the hit</text>
+</svg>
