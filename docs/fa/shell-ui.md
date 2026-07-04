@@ -34,12 +34,14 @@ Full record: [`db/symbols/shell-ui.csv`](https://github.com/jomkz/fighters-codex
 
 ## Open Questions
 
-### 1. DLG record types
+### 1. DLG record types — mapped
 
-The decompiled `_Draw*` widget renderers are the source for the unmapped `.DLG` record types
-(1/3/4/5/7/8) still open in [DLG.md](formats/DLG.md).
+The `.DLG` record types 1/3/4/5/7/8 are now field-mapped in [DLG.md](formats/DLG.md) § Per-type
+record fields (recovered under [#258](https://github.com/jomkz/fighters-codex/issues/258) from
+`DialogUpdate`, `_DrawListBox`, and the scrollbar helpers). Only a few engine-scratch interior
+bytes of the largest records remain unnamed (tracked as the residual `.DLG` gap under #54).
 
-*Status: open — re-static (#54).*
+*Status: resolved — re-static (#258; residual scratch fields under #54).*
 
 ## Related
 
