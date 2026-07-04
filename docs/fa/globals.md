@@ -363,6 +363,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 **Binary: `WAIL32.DLL`**
 
+**Binary: `CDRVDL32.DLL`**
+
+**Binary: `CDRVHF32.DLL`**
+
+**Binary: `CDRVXF32.DLL`**
+
+**Binary: `COMMSC32.DLL`**
+
 <!-- END GENERATED: globals-registry -->
 
 ## Notable Globals for C Reimplementation

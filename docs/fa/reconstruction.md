@@ -51,5 +51,37 @@ Ghidra inventory by CI (`--check`).
 
 **IP.EXE totals:** 0/1 subsystems complete; 5/1805 in-scope functions named; 0/1737 referenced globals resolved.
 
-**Program totals (all binaries):** 20/21 subsystems complete; 2217/4017 in-scope functions named; 3053/7057 referenced globals resolved.
+## CDRVDL32.DLL
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| CDRVDL32.DLL — Cdrv RS-232 serial comms driver | `0x10001000–0x10010000` | 104/104 (100%) | 0 named · 129 waived | [doc](comms.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+
+**CDRVDL32.DLL totals:** 1/1 subsystems complete; 104/104 in-scope functions named; 129/175 referenced globals resolved.
+
+## CDRVHF32.DLL
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| CDRVHF32.DLL — Cdrv Hayes-modem comms driver | `0x10001000–0x10010000` | 154/154 (100%) | 0 named · 114 waived | [doc](comms-modem.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+
+**CDRVHF32.DLL totals:** 1/1 subsystems complete; 154/154 in-scope functions named; 114/150 referenced globals resolved.
+
+## CDRVXF32.DLL
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| CDRVXF32.DLL — Cdrv file-transfer comms driver | `0x10001000–0x10010000` | 121/121 (100%) | 0 named · 171 waived | [doc](comms-transfer.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+
+**CDRVXF32.DLL totals:** 1/1 subsystems complete; 121/121 in-scope functions named; 171/322 referenced globals resolved.
+
+## COMMSC32.DLL
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| COMMSC32.DLL — Cdrv comms terminal-screen service | `0x10001000–0x10010000` | 60/60 (100%) | 0 named · 109 waived | [doc](comms-screen.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+
+**COMMSC32.DLL totals:** 1/1 subsystems complete; 60/60 in-scope functions named; 109/153 referenced globals resolved.
+
+**Program totals (all binaries):** 24/25 subsystems complete; 2656/4456 in-scope functions named; 3576/7857 referenced globals resolved.
 

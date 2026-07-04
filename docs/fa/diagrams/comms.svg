@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 320" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="The Cdrv comms suite: FA.EXE's serial/modem multiplayer path drives CDRVDL32 (RS-232), CDRVHF32 (Hayes modem), CDRVXF32 (file transfer) and COMMSC32 (terminal), over the Win32 comms API.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .ext{fill:#f0eef6;stroke:#6f5b9a;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;} .ext{fill:#282436;stroke:#9a86c7;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .ext{fill:#282436;stroke:#9a86c7;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .ext{fill:#f0eef6;stroke:#6f5b9a;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+  <text x="410" y="22" text-anchor="middle" class="title">Cdrv comms suite — third-party serial/modem middleware (boundary)</text>
+
+  <rect class="run" x="290" y="40" width="240" height="44" rx="6"/>
+  <text x="410" y="60" text-anchor="middle" class="lbl">FA.EXE serial / modem MP path</text>
+  <text x="410" y="77" text-anchor="middle" class="sub">(peer of the DirectPlay / SPX/IPX path)</text>
+
+  <path class="edge" d="M410,84 L410,110" marker-end="url(#arrow)"/>
+
+  <rect class="dec" x="290" y="110" width="240" height="46" rx="6"/>
+  <text x="410" y="130" text-anchor="middle" class="lbl mono">CDRVHF32 · CDRVXF32 · COMMSC32</text>
+  <text x="410" y="147" text-anchor="middle" class="sub">Hayes modem · file transfer · terminal</text>
+
+  <path class="edge" d="M410,156 L410,182" marker-end="url(#arrow)"/>
+  <text x="470" y="173" class="el">import the base driver</text>
+
+  <rect class="setup" x="300" y="182" width="220" height="44" rx="6"/>
+  <text x="410" y="202" text-anchor="middle" class="lbl mono">CDRVDL32</text>
+  <text x="410" y="219" text-anchor="middle" class="sub">RS-232 base — ser_rs232_* / bio_*</text>
+
+  <path class="edge" d="M410,226 L410,252" marker-end="url(#arrow)"/>
+  <rect class="ext" x="270" y="252" width="280" height="42" rx="6"/>
+  <text x="410" y="277" text-anchor="middle" class="lbl mono">Win32 comms API (ClearCommError, …)</text>
+</svg>
