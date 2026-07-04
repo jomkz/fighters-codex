@@ -47,9 +47,9 @@ Ghidra inventory by CI (`--check`).
 
 | Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| IP.EXE — EA system-info & tech-support tool (MFC) | `0x401000–0x4BD800` | 5/1805 (0%) | 0 named · 0 waived | [doc](ip-tool.md) | · | [#254](https://github.com/jomkz/fighters-codex/issues/254) | active |
+| IP.EXE — EA system-info & tech-support tool (MFC) | `0x401000–0x4BD800` | 1805/1805 (100%) | 0 named · 1339 waived | [doc](ip-tool.md) | ✓ | [#254](https://github.com/jomkz/fighters-codex/issues/254) | complete |
 
-**IP.EXE totals:** 0/1 subsystems complete; 5/1805 in-scope functions named; 0/1737 referenced globals resolved.
+**IP.EXE totals:** 1/1 subsystems complete; 1805/1805 in-scope functions named; 1339/1737 referenced globals resolved.
 
 ## CDRVDL32.DLL
 
@@ -83,5 +83,5 @@ Ghidra inventory by CI (`--check`).
 
 **COMMSC32.DLL totals:** 1/1 subsystems complete; 60/60 in-scope functions named; 109/153 referenced globals resolved.
 
-**Program totals (all binaries):** 24/25 subsystems complete; 2656/4456 in-scope functions named; 3576/7857 referenced globals resolved.
+**Program totals (all binaries):** 25/25 subsystems complete; 4456/4456 in-scope functions named; 4915/7857 referenced globals resolved.
 

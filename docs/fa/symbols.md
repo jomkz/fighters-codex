@@ -1873,6 +1873,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x20008A80` | `AIL_quick_status` | re | Miles/AIL public export |
 | `0x20008B90` | `AIL_quick_load_and_play` | re | Miles/AIL public export |
 
+**Binary: `IP.EXE`**
+
+### IP.EXE — EA system-info & tech-support tool (MFC)
+
+[`ip.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ip.csv) · [page](ip-tool.md) — 5 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x004019B0` | `CDROMBenchmark` | re | CD-ROM speed/transfer benchmark ("Benchmarking CD-ROM Drive", Single/Double/Quad-Speed, KB/s) |
+| `0x00403FE0` | `LaunchSystemProperties` | re | ShellExecute sysdm.cpl (Windows System control panel) |
+| `0x00404061` | `LoadDetectionDlls` | re | LoadLibrary hdd.dll + cd.dll (hardware-detection helper libraries) |
+| `0x0040DC60` | `BuildSupportReport` | re | builds the [CPU]/[VIDEO]/[SOUND]/[MODEM] system-config report and faxes/e-mails it to EA support (support@ea.com) |
+| `0x00436EF0` | `WinMain` | re | MFC AfxWinMain wrapper (Ghidra FID) |
+
 **Binary: `CDRVDL32.DLL`**
 
 ### CDRVDL32.DLL — Cdrv RS-232 serial comms driver

@@ -363,6 +363,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 **Binary: `WAIL32.DLL`**
 
+**Binary: `IP.EXE`**
+
 **Binary: `CDRVDL32.DLL`**
 
 **Binary: `CDRVHF32.DLL`**
