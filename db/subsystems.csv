@@ -3,14 +3,14 @@ objects,Object / entity system & shape selection,FA.EXE,0x462600-0x464660;0x4A6E
 renderer,Renderer & rasterizer (GG/G_),FA.EXE,0x45DBD0-0x45E460;0x497330-0x499380;0x4B7900-0x4BA700,complete,docs/fa/renderer.md,211
 flight-model,Flight model / physics (FM/HARD),FA.EXE,0x451480-0x454800,complete,docs/fa/physics.md,212
 hud,HUD / cockpit,FA.EXE,0x405E30-0x40AE50,complete,docs/fa/hud.md,213
-weapons,Weapons — projectiles / seekers / ECM (PROJ),FA.EXE,0x4C0690-0x4C5D30,planned,docs/fa/weapons.md,215
+weapons,Weapons — projectiles / seekers / ECM (PROJ),FA.EXE,0x4C0690-0x4C5D30,complete,docs/fa/weapons.md,215
 ai,AI interpreter (CT),FA.EXE,0x464C60-0x467110,complete,docs/fa/ai-interpreter.md,216
-wingman,Wingman / group AI (WNG/GRP),FA.EXE,0x45E460-0x460FB0,planned,docs/fa/wingman.md,217
+wingman,Wingman / group AI (WNG/GRP),FA.EXE,0x45E460-0x45FEC0,complete,docs/fa/wingman.md,217
 campaign,Campaign / mission / pilot (MAP/CAM/MC/MM/PLT),FA.EXE,0x421C70-0x42B800;0x467110-0x490000,planned,docs/fa/campaign.md,218
 network,Network / multiplayer (NET/SER/UDP/MP),FA.EXE,0x401000-0x405E30;0x45D090-0x45DBD0;0x46ADE0-0x473680,planned,docs/fa/network.md,219
-sound,Sound / music (incl. WAIL32),FA.EXE,0x432920-0x435F80,planned,docs/fa/sound.md,220
+sound,Sound / music (incl. WAIL32),FA.EXE,0x4328B0-0x435C60,complete,docs/fa/sound.md,220
 terrain,Terrain (T_),FA.EXE,0x4A6E50-0x4C5D70,planned,docs/fa/terrain.md,221
-collision,Collision (COL),FA.EXE,0x42B800-0x42E690,planned,docs/fa/collision.md,222
+collision,Collision (COL),FA.EXE,0x42B800-0x42E680,complete,docs/fa/collision.md,222
 memory-resource,Memory & resource managers (MM/RM),FA.EXE,0x435C60-0x436320;0x4A67F0-0x4A6E50,planned,docs/fa/memory-resource.md,223
 input,Input — joystick / serial / modem,FA.EXE,0x494270-0x4AC510,planned,docs/fa/input.md,224
 shell-ui,Core shell / menu / dialog UI,FA.EXE,0x40AE50-0x421C70;0x487A3A-0x48D200,planned,docs/fa/shell-ui.md,225

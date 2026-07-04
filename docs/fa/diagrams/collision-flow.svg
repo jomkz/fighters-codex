@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Collision query: broad-phase object filter and swept terrain walk feed the narrow phase, resolved into a blocking slot and an object slot.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .dmg{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;} .dmg{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .dmg{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .dmg{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+<text x="410" y="22" text-anchor="middle" class="title">COLLISION QUERY — _Collision(ray, flags)</text>
+<rect class="run" x="300" y="40" width="220" height="46" rx="6"/>
+<text x="410" y="67" text-anchor="middle" class="lbl mono">_Collision</text>
+<rect class="box" x="40" y="130" width="300" height="54" rx="6"/>
+<text x="190" y="154" text-anchor="middle" class="lbl mono">terrain path (flags &amp; 1)</text>
+<text x="190" y="171" text-anchor="middle" class="sub">COLSweepTerrain grid walk -> tri test</text>
+<rect class="box" x="480" y="130" width="300" height="54" rx="6"/>
+<text x="630" y="154" text-anchor="middle" class="lbl mono">object path (flags &amp; 0xA)</text>
+<text x="630" y="171" text-anchor="middle" class="sub">COLTestObjects broad -> COLTestObj narrow</text>
+<rect class="dec" x="280" y="250" width="260" height="54" rx="6"/>
+<text x="410" y="274" text-anchor="middle" class="lbl mono">COLRecordHit</text>
+<text x="410" y="291" text-anchor="middle" class="sub">keep nearest per slot</text>
+<rect class="dmg" x="120" y="330" width="240" height="46" rx="6"/>
+<text x="240" y="354" text-anchor="middle" class="lbl mono">blocking slot</text>
+<text x="240" y="371" text-anchor="middle" class="sub">terrain / structure (0xffff)</text>
+<rect class="dec" x="460" y="330" width="240" height="46" rx="6"/>
+<text x="580" y="354" text-anchor="middle" class="lbl mono">object slot</text>
+<text x="580" y="371" text-anchor="middle" class="sub">nearest object id</text>
+<path class="edge" d="M380,86 L240,128" marker-end="url(#arrow)"/>
+<path class="edge" d="M480,86 L610,128" marker-end="url(#arrow)"/>
+<path class="edge" d="M300,184 L360,248" marker-end="url(#arrow)"/>
+<path class="edge" d="M600,184 L470,248" marker-end="url(#arrow)"/>
+<path class="edge" d="M360,304 L280,328" marker-end="url(#arrow)"/>
+<path class="edge" d="M460,304 L540,328" marker-end="url(#arrow)"/>
+</svg>

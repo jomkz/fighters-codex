@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Sound flow: SoundOn allocates a logical MODSPEC voice; SoundPrioritize steals across 16 physical AIL channels; the 30Hz PollMod timer services the mixer.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .dmg{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;} .dmg{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .dmg{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .dmg{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+<text x="410" y="22" text-anchor="middle" class="title">SOUND MIXER — 64 logical voices -> 16 channels</text>
+<rect class="run" x="300" y="40" width="220" height="50" rx="6"/>
+<text x="410" y="64" text-anchor="middle" class="lbl mono">SoundOn</text>
+<text x="410" y="81" text-anchor="middle" class="sub">parse .11K/.XMI</text>
+<rect class="box" x="300" y="124" width="220" height="54" rx="6"/>
+<text x="410" y="148" text-anchor="middle" class="lbl mono">MODSPEC voice</text>
+<text x="410" y="165" text-anchor="middle" class="sub">_MOD / _pendMOD / _noMix</text>
+<rect class="dec" x="300" y="210" width="220" height="54" rx="6"/>
+<text x="410" y="234" text-anchor="middle" class="lbl mono">SoundPrioritize</text>
+<text x="410" y="251" text-anchor="middle" class="sub">priority voice-stealing</text>
+<rect class="box" x="300" y="296" width="220" height="54" rx="6"/>
+<text x="410" y="320" text-anchor="middle" class="lbl mono">16 AIL channels</text>
+<text x="410" y="337" text-anchor="middle" class="sub">StartVoice / SetVolPitchPan</text>
+<rect class="setup" x="580" y="210" width="200" height="54" rx="6"/>
+<text x="680" y="234" text-anchor="middle" class="lbl mono">PollMod (30Hz)</text>
+<text x="680" y="251" text-anchor="middle" class="sub">timer mixer service</text>
+<rect class="box" x="30" y="124" width="220" height="54" rx="6"/>
+<text x="140" y="148" text-anchor="middle" class="lbl mono">_warnSnd / _loopSnd</text>
+<text x="140" y="165" text-anchor="middle" class="sub">threat tones / ambients</text>
+<path class="edge" d="M410,90 L410,122" marker-end="url(#arrow)"/>
+<path class="edge" d="M410,178 L410,208" marker-end="url(#arrow)"/>
+<path class="edge" d="M410,264 L410,294" marker-end="url(#arrow)"/>
+<path class="edge" d="M578,237 L522,237" marker-end="url(#arrow)"/>
+<path class="edge" d="M250,151 L296,151" marker-end="url(#arrow)"/>
+<text x="536" y="232" class="el">services</text>
+</svg>

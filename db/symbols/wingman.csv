@@ -1,0 +1,58 @@
+va,kind,name,display,source,confidence,notes
+0x0045E460,func,_WNGInit@0,WNGInit,sms,confirmed,
+0x0045E490,func,_WNGAdd@8,WNGAdd,sms,confirmed,
+0x0045E520,func,WNGRemove,,re,confirmed,remove _curId from a wing; MSGSend 0x14 handoff (twin of GRPRemove)
+0x0045E630,func,WNGLeader,,re,confirmed,first live member of a wing (twin of GRPLeader)
+0x0045E690,func,WNGWingman,,re,inferred,undetected twin of GRPWingman; materialized on apply
+0x0045E6E0,func,_WNGWingmen@8,WNGWingmen,sms,confirmed,
+0x0045E710,func,_WNGPart@12,WNGPart,sms,confirmed,
+0x0045E790,func,WNGWingmenNearby,,re,confirmed,count wingmen within distance/alt (twin of GRPWingmenNearby)
+0x0045E8A0,func,WNGControl,,re,confirmed,"if wingman, optional FormationMove; return formControl (twin of GRPControl)"
+0x0045E8F0,func,_WNGLeaderLanding@0,WNGLeaderLanding,sms,confirmed,
+0x0045E970,func,_WNGFormationMove@12,WNGFormationMove,sms,confirmed,
+0x0045EAC0,func,WNGSetControl,,re,confirmed,set formation control; MSGSend subcode 10
+0x0045EB30,func,WNGSetType,,re,confirmed,set formation type; MSGSend subcode 9
+0x0045EB70,func,WNGSetSpacingH,,re,confirmed,set horizontal spacing; MSGSend subcode 7
+0x0045EBB0,func,WNGSetSpacingV,,re,confirmed,set vertical spacing; MSGSend subcode 8
+0x0045EBF0,func,WNGSetStateTarget,,re,confirmed,EnterState + set target; MSGSend 0x11 (twin of GRPSetStateTarget)
+0x0045ED90,func,_WNGSendWM@8,WNGSendWM,sms,confirmed,
+0x0045ED9A,func,,,waiver,confirmed,Ghidra split of _WNGSendWM@8 (0x45ED90) after the 10-byte stub
+0x0045EEF0,func,WNGResponseSize,,re,confirmed,response capacity from the orders-block flags
+0x0045EF20,func,WNGAttackingObj,,re,confirmed,count wing members attacking a target
+0x0045EFB0,func,WNGHumansFirst,,re,confirmed,move human-controlled members to slot 0
+0x0045F030,func,WNGInHumanWing,,re,confirmed,true if id shares the player's wing
+0x0045F090,func,_WNGPlayerWM@0,WNGPlayerWM,sms,confirmed,
+0x0045F100,func,WNGName,,re,confirmed,format 'Wingleader'/'Wingman'/'Wingman %d' (twin of GRPName)
+0x0045F190,func,_GRPInit@0,GRPInit,sms,confirmed,
+0x0045F1C0,func,_GRPAdd@8,GRPAdd,sms,confirmed,
+0x0045F250,func,@GRPRemove@0,GRPRemove,sms,confirmed,
+0x0045F360,func,@GRPLeader@4,GRPLeader,sms,confirmed,
+0x0045F410,func,_GRPWingmen@8,GRPWingmen,sms,confirmed,
+0x0045F440,func,_GRPPart@12,GRPPart,sms,confirmed,
+0x0045F5D0,func,@GRPControl@4,GRPControl,sms,confirmed,
+0x0045F6A0,func,_GRPFormationMove@12,GRPFormationMove,sms,confirmed,
+0x0045F7F0,func,@GRPSetControl@8,GRPSetControl,sms,confirmed,
+0x0045F860,func,@GRPSetType@4,GRPSetType,sms,confirmed,
+0x0045F8A0,func,@GRPSetSpacingH@4,GRPSetSpacingH,sms,confirmed,
+0x0045F8E0,func,@GRPSetSpacingV@4,GRPSetSpacingV,sms,confirmed,
+0x0045FACA,func,,,waiver,confirmed,Ghidra split of _GRPSendWM@8 (0x45FAC0) after the 10-byte stub
+0x0045FC20,func,@GRPResponseSize@0,GRPResponseSize,sms,confirmed,
+0x0045FC50,func,@GRPAttackingObj@4,GRPAttackingObj,sms,confirmed,
+0x0045FCE0,func,@GRPHumansFirst@4,GRPHumansFirst,sms,confirmed,
+0x0050CF9E,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050CFA0,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050CFA2,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050CFA4,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0AC,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0AD,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0AE,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050D0AF,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x005468BA,data,,,waiver,confirmed,interior of / adjacent to _groupIds; named at its base or owned by that subsystem
+0x005468BC,data,,,waiver,confirmed,interior of / adjacent to _groupIds; named at its base or owned by that subsystem
+0x00546981,data,,,waiver,confirmed,interior of / adjacent to _wingSizes; named at its base or owned by that subsystem
+0x00546988,data,,,waiver,confirmed,interior of / adjacent to _wingSizes; named at its base or owned by that subsystem
+0x00546991,data,,,waiver,confirmed,interior of / adjacent to _groupSizes; named at its base or owned by that subsystem
+0x00546998,data,,,waiver,confirmed,interior of / adjacent to _groupSizes; named at its base or owned by that subsystem
+0x005469A2,data,,,waiver,confirmed,interior of / adjacent to _wingIds; named at its base or owned by that subsystem
+0x005469A4,data,,,waiver,confirmed,interior of / adjacent to _wingIds; named at its base or owned by that subsystem
+0x00546AB8,data,_wmNameBuf,,re,inferred,scratch buffer for WNGName/GRPName output

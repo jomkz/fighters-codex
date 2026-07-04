@@ -1,0 +1,66 @@
+va,kind,name,display,source,confidence,notes
+0x00400000,data,,,waiver,confirmed,interior of / adjacent to ?; named at its base or owned by that subsystem
+0x0042B800,func,_Collision@56,Collision,sms,confirmed,
+0x0042BD30,func,@COLSetAngle@8,COLSetAngle,sms,confirmed,
+0x0042BDC0,func,COLSweepTerrain,,re,inferred,swept segment-vs-terrain grid walk (<=20 cells; ClipSegToCell + TestTerrainCell)
+0x0042BDC8,func,,,waiver,confirmed,Ghidra mid-function split of COLSweepTerrain (0x42BDC0)
+0x0042BFC0,func,COLTestTerrainCell,,re,inferred,test one terrain grid cell's two triangles (corner heights + normals)
+0x0042C1A0,func,COLTestTerrainTri,,re,inferred,segment vs one terrain triangle plane; records a blocking hit
+0x0042C420,func,COLClipSegToCell,,re,inferred,Cohen-Sutherland XZ clip of the segment to one terrain cell column
+0x0042C840,func,COLTestObjects,,re,inferred,object broad-phase: AABB-overlap the frame's registered ids
+0x0042C9B0,func,COLTestObj,,re,inferred,"object narrow-phase: ray into object local frame, box-hierarchy clip"
+0x0042D040,data,,,waiver,confirmed,interior of / adjacent to @COLSetAngle@8; named at its base or owned by that subsystem
+0x0042D050,func,COLClipSegToBox,,re,inferred,segment vs oriented box: 6-plane clip with closure radius
+0x0042DDA0,func,?COLFlatGround@@YIDJPAUF24_POINT3@@00@Z,COLFlatGround,sms,confirmed,
+0x0042DE60,func,COLRecordHit,,re,inferred,keep-nearest hit accumulator (blocking slot / object slot)
+0x0042DF80,func,@COLPitchToAvoidTerrain@0,COLPitchToAvoidTerrain,sms,confirmed,
+0x0042E0C0,func,_COLGetInfo@4,COLGetInfo,sms,confirmed,
+0x0042E100,func,@COLGetBox@8,COLGetBox,sms,confirmed,
+0x0042E140,func,?COLDrawInfo@@YGXGF@Z,COLDrawInfo,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function
+0x0042E1D0,func,,,waiver,confirmed,Ghidra mid-function split of COLDrawInfo (0x42E140)
+0x0042E4E0,func,@COLTerrainBlocking@4,COLTerrainBlocking,sms,confirmed,
+0x0042E530,func,@COLInit@0,COLInit,sms,confirmed,
+0x0042E540,func,@COLAddObj@0,COLAddObj,sms,confirmed,
+0x0042E5C0,func,@COLRemoveCurObj@0,COLRemoveCurObj,sms,confirmed,
+0x0050CEAF,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x0050CEDC,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv
+0x00536728,data,_colSelfObj,,re,confirmed,querying entity ptr (predicted-pos cache follows)
+0x00536730,data,_colRayEndX,,re,confirmed,query ray end X
+0x00536734,data,_colRayEndY,,re,confirmed,query ray end Y
+0x00536738,data,_colRayEndZ,,re,confirmed,query ray end Z
+0x0053673C,data,_colObjPart,,re,confirmed,hit child-box/part id
+0x00536740,data,_colObjCount,,re,confirmed,registered collidable count this frame
+0x00536748,data,_colBoundMaxX,,re,confirmed,swept AABB max X
+0x0053674C,data,_colBoundMaxY,,re,confirmed,swept AABB max Y
+0x00536750,data,_colBoundMaxZ,,re,confirmed,swept AABB max Z
+0x00536758,data,_colBoundMinX,,re,confirmed,swept AABB min X
+0x0053675C,data,_colBoundMinY,,re,confirmed,swept AABB min Y
+0x00536760,data,_colBoundMinZ,,re,confirmed,swept AABB min Z
+0x00536764,data,_colBlockType,,re,confirmed,blocking-hit terrain-leaf/structure type
+0x00536768,data,_colStructCount,,re,confirmed,registered structure count
+0x0053676C,data,_colBlockDist,,re,confirmed,nearest blocking-hit distance (sentinel 0x7FFFFFFF)
+0x00536770,data,_colStructList,,re,confirmed,structure id list (word[0x1c2])
+0x00536772,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00536AF8,data,_colObjAngleH,,re,confirmed,object-hit angle H
+0x00536AFC,data,_colObjAngleP,,re,confirmed,object-hit angle P
+0x00536B00,data,_colClosureRadius,,re,confirmed,closure radius (query param)
+0x00536B04,data,_colGearHeight,,re,confirmed,gear/ground clearance (COLInfo+8 <<8)
+0x00536B0C,data,_colSelfSide,,re,inferred,IFF side bit of the querying object
+0x00536B10,data,_colObjList,,re,confirmed,collidable id list (word[900])
+0x00536B12,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem
+0x00537218,data,_colBlockAngleH,,re,confirmed,blocking-hit angle H
+0x0053721C,data,_colBlockAngleP,,re,confirmed,blocking-hit angle P
+0x00537220,data,_colRayStartX,,re,confirmed,query ray start X
+0x00537224,data,_colRayStartY,,re,confirmed,query ray start Y
+0x00537228,data,_colRayStartZ,,re,confirmed,query ray start Z
+0x0053722C,data,_colObjId,,re,confirmed,nearest hit object id
+0x00537230,data,_colBlockPosX,,re,confirmed,blocking-hit pos X
+0x00537234,data,_colBlockPosY,,re,confirmed,blocking-hit pos Y
+0x00537238,data,_colBlockPosZ,,re,confirmed,blocking-hit pos Z
+0x0053723C,data,_colSelfId,,re,confirmed,querying entity id
+0x00537240,data,_colObjPosX,,re,confirmed,object-hit pos X
+0x00537244,data,_colObjPosY,,re,confirmed,object-hit pos Y
+0x00537248,data,_colObjPosZ,,re,confirmed,object-hit pos Z
+0x0053724C,data,_colTargetId,,re,confirmed,single-target id (excluded from broad-phase)
+0x00537250,data,_colObjDist,,re,confirmed,nearest object-hit distance (sentinel 0x7FFFFFFF)
+0x00537254,data,_colObjBox,,re,confirmed,hit box pointer
