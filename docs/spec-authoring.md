@@ -152,6 +152,35 @@ File Layout preamble; per-field suffixes (`u16 BE`) only for deviations.
 BRF-DSL annotated listings of *file content* stay as fenced code blocks — they
 are examples, not layout tables.
 
+## Subsystem docs (reconstruction program)
+
+The [FA.EXE reconstruction program](fa/reconstruction.md) (epic #209) documents
+whole engine **subsystems** rather than file formats. These docs live directly in
+`docs/fa/` (not `formats/`), carry **no YAML front-matter** — their metadata is the
+row in [`db/subsystems.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/subsystems.csv) —
+and share the confidence markers and offset-table style above. `check_status.py`
+enforces the structure once a subsystem's manifest `status` is `active` or
+`complete`. Each doc has:
+
+- a one-paragraph intro and a `> **Provenance:**` blockquote (source dump, a link to
+  the [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/README.md),
+  and the confidence-marker reference — see [objects.md](fa/objects.md));
+- a `## Functions` table (`| VA | Symbol | Role |`) whose VAs and names are checked
+  against the subsystem's `db/symbols/<slug>.csv` (docs curate a subset; the DB is the
+  full record, so the table cannot drift);
+- at least one **theme-aware** `![…](diagrams/*.svg)` flow diagram — copy the
+  `@media (prefers-color-scheme: dark)` + `:root[data-theme="dark"|"light"]` +
+  `fill="context-stroke"` recipe from
+  [`diagrams/shape-selection.svg`](https://github.com/jomkz/fighters-codex/blob/main/docs/fa/diagrams/shape-selection.svg);
+- `## Open Questions` (numbered H3s ending in a `*Status: …*` line) and `## Related`.
+
+**Naming recovered symbols:** names not in FA.SMS follow the subsystem's existing
+prefix and casing (`OBJ…`, `T_…`, `Setup…`) so decompiled code reads uniformly;
+provenance lives in the DB `source` column (`sms`/`re`), not the name. **Definition
+of done** (enforced at `status=complete`): every code-referenced function in the
+subsystem's VA ranges is named, and every referenced global is named or carries a
+`waiver` row explaining why — see [`db/README.md`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md).
+
 ## Migration map (restructuring a legacy spec)
 
 | Old section | Goes to |

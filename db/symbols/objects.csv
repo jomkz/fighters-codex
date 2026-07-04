@@ -1,0 +1,209 @@
+va,kind,name,display,source,confidence,notes
+0x00436B30,func,_MoveObj@0,MoveObj,sms,confirmed,
+0x004382D0,func,MoveGoalValue,,re,inferred,resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj
+0x0043846C,data,,,waiver,confirmed,MoveGoalValue switch jump-table / tail data (computed access)
+0x004431B0,func,_GRAPHICAddYourObjs@4,GRAPHICAddYourObjs,sms,confirmed,
+0x00462600,func,_InitChain@0,InitChain,sms,confirmed,
+0x00462620,func,_RemoveFromChains@0,RemoveFromChains,sms,confirmed,
+0x00462640,func,ChainRemoveCurObj,,re,confirmed,unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1)
+0x004626B0,func,_ImmediateService@0,ImmediateService,sms,confirmed,
+0x004626D0,func,ChainInsertCurObj,,re,confirmed,ordered insert of the current object by service key (+0x68); honors correctChainPlacement
+0x004627B0,func,_RemoveCurObj@0,RemoveCurObj,sms,confirmed,
+0x004628B0,func,@GetCurObj@4,GetCurObj,sms,confirmed,
+0x00462980,func,@PutCurObj@0,PutCurObj,sms,confirmed,
+0x004629E0,func,_PushCurObj@4,PushCurObj,sms,confirmed,
+0x00462A20,func,_PopCurObj@0,PopCurObj,sms,confirmed,
+0x00462A50,func,_ServiceObjects,ServiceObjects,sms,confirmed,
+0x00462B70,func,ChainMergeSorted,,re,confirmed,merge the re-queue chain back into chainStart keeping +0x68 order
+0x00462C91,func,ProcessHitMsgs,,re,inferred,drain MSG 0x800B/0x800C remote hit events; raises event 0x4000 and spawns explosion via GRAPHICAddExp
+0x00462D40,func,ProcessEffectMsgs,,re,inferred,drain per-computer MSG 0x8003+n remote effect spawns: explosion / smoke / MANAdd
+0x00462E70,func,?Service@@YGXXZ,Service,sms,confirmed,
+0x004631B0,func,?CheckForEvents1@@YGXXZ,CheckForEvents1,sms,confirmed,
+0x004631F0,func,?CheckForEvents2@@YGXD@Z,CheckForEvents2,sms,confirmed,
+0x00463730,func,PadlockTarget,,re,inferred,"pick the object id the player is visually tracking (angle+distance gates, wingman fallback)"
+0x00463900,func,NearbyGroupLeader,,re,inferred,return the group leader id when the current object flies in role 2 within 0xC800
+0x00463980,func,_MaybeCallEventProc@8,MaybeCallEventProc,sms,confirmed,
+0x004639C0,func,_CallEventProc@8,CallEventProc,sms,confirmed,
+0x00463A20,func,_CreateMove@52,CreateMove,sms,confirmed,
+0x00463AF0,func,_CreateMoveGoal@20,CreateMoveGoal,sms,confirmed,
+0x00463B90,func,TimeAddSat,,re,confirmed,"saturating add to currentT, clamped at 0x7FFF"
+0x00463BC0,func,@ObjPlusAngleParm@8,ObjPlusAngleParm,sms,confirmed,
+0x00463BE0,func,@ObjPlusDeltaParm@12,ObjPlusDeltaParm,sms,confirmed,
+0x00463C50,func,@WriteCmdBuf@12,WriteCmdBuf,sms,confirmed,
+0x00463CA0,func,@WriteCmdBufProcptr@4,WriteCmdBufProcptr,sms,confirmed,
+0x00463CC0,func,@WriteCmdBufMove@4,WriteCmdBufMove,sms,confirmed,
+0x00463CD0,func,_WriteCmdBufEnd@0,WriteCmdBufEnd,sms,confirmed,
+0x00463CE0,func,@FinishCmdBuf@4,FinishCmdBuf,sms,confirmed,
+0x00463D00,func,_AllocCmdBuf@0,AllocCmdBuf,sms,confirmed,
+0x00463D40,func,_ReadCmdBuf,ReadCmdBuf,sms,confirmed,
+0x00463E50,func,_CancelCmdBuf@0,CancelCmdBuf,sms,confirmed,
+0x00463EA0,func,@MaskEvents@4,MaskEvents,sms,confirmed,
+0x00463EC0,func,@CallDamageProc@4,CallDamageProc,sms,confirmed,
+0x00463F30,func,GetObjProc,,re,confirmed,resolve a proc selector: entity override (+0x6C) else class proc (type +0x7D)
+0x00463F60,func,_CallUtilProc,CallUtilProc,sms,confirmed,
+0x00463FA0,func,@Ignore@4,Ignore,sms,confirmed,
+0x00464040,func,@Reaction@12,Reaction,sms,confirmed,
+0x00464300,func,@EnterState@4,EnterState,sms,confirmed,
+0x00464420,func,@InSearchArea@4,InSearchArea,sms,confirmed,
+0x0046442B,func,InSearchAreaBody,,re,confirmed,Ghidra mid-function split: body of @InSearchArea@4 (entry +0xB); route-corridor DistToLine test
+0x004644F0,func,_PreferredTargetId@0,PreferredTargetId,sms,confirmed,
+0x00464520,func,_PreferredProtectId@0,PreferredProtectId,sms,confirmed,
+0x00464550,func,@CloseToAnything@4,CloseToAnything,sms,confirmed,
+0x00464640,func,@SetScenarioEndTime@4,SetScenarioEndTime,sms,confirmed,
+0x00473A40,func,_OBJEventProc,OBJEventProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function
+0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function
+0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,
+0x00473C10,func,_Kill@0,Kill,sms,confirmed,
+0x00491240,func,@OBJGet@4,OBJGet,sms,confirmed,
+0x00491250,func,_OBJInit@4,OBJInit,sms,confirmed,
+0x004912C0,func,_OBJShutdown@0,OBJShutdown,sms,confirmed,
+0x00491300,func,_OBJAlloc@4,OBJAlloc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function
+0x00491320,func,_OBJStopAdding@0,OBJStopAdding,sms,confirmed,
+0x00491340,func,_OBJFindHumans@0,OBJFindHumans,sms,confirmed,
+0x004913E0,func,_OBJAdd@8,OBJAdd,sms,confirmed,
+0x00491490,func,_OBJSubtract@0,OBJSubtract,sms,confirmed,
+0x004914C0,func,@OBJAlias@8,OBJAlias,sms,confirmed,
+0x00491530,func,_OBJCreateAliases@0,OBJCreateAliases,sms,confirmed,
+0x00491610,func,_OBJAliasPreferred@16,OBJAliasPreferred,sms,confirmed,
+0x00491670,func,_OBJAliasAll@12,OBJAliasAll,sms,confirmed,
+0x00491720,func,_OBJAliasWaypoint@16,OBJAliasWaypoint,sms,confirmed,
+0x00491780,func,_OBJAliasForMulti@0,OBJAliasForMulti,sms,confirmed,
+0x004917D0,func,_OBJNextAliasForMulti@0,OBJNextAliasForMulti,sms,confirmed,
+0x004917F0,func,_OBJTempAlias@0,OBJTempAlias,sms,confirmed,
+0x00491810,func,_OBJSetControl@16,OBJSetControl,sms,confirmed,
+0x004918D0,func,_OBJHumanName@0,OBJHumanName,sms,confirmed,
+0x004A6B10,func,ResolveTypeRecord,,re,confirmed,resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step
+0x004A6EB0,func,_SetupOT,SetupOT,sms,confirmed,
+0x004A71C0,func,LoadShapeVariantPair,,re,confirmed,load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B)
+0x004A71E0,func,LoadShapeSlot,,re,confirmed,resolve one shape-slot filename to a loaded pointer via RMAccess (was proposed type_load_shape_slot)
+0x004A7200,func,_SetupNT,SetupNT,sms,confirmed,
+0x004A7220,func,_SetupPT,SetupPT,sms,confirmed,
+0x004A7230,func,_SetupJT,SetupJT,sms,confirmed,
+0x004AB450,func,@ShapeSetup@4,ShapeSetup,sms,confirmed,
+0x004EB612,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 1)
+0x004EB618,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 4)
+0x004EB61C,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 6)
+0x004EB64C,data,,,waiver,confirmed,view/camera state consumed read-only (FlyingLoop/HUDDraw/ViewPan/SlewKey); hud/shell-ui pass names it
+0x004EB64E,data,,,waiver,confirmed,view/camera state consumed read-only (FlyingLoop/HUDDraw/ViewPan/SlewKey); hud/shell-ui pass names it
+0x004EB650,data,,,waiver,confirmed,view/camera state consumed read-only (FlyingLoop/HUDDraw/ViewPan/SlewKey); hud/shell-ui pass names it
+0x004EB658,data,,,waiver,confirmed,view/camera state consumed read-only (FlyingLoop/HUDDraw/ViewPan/SlewKey); hud/shell-ui pass names it
+0x004F4868,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it
+0x004F6D6C,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit
+0x004F6D78,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit
+0x004F6D80,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit
+0x004F6FDC,data,_curObjStackTop,,re,inferred,PushCurObj/PopCurObj nesting stack for GetCurObj
+0x004F6FE0,data,_cmdBufWritePtr,,re,confirmed,command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf)
+0x004F6FE8,data,,,waiver,confirmed,command-buffer bookkeeping next to _cmdBufWritePtr; accessed via computed base - revisit
+0x004F6FF0,data,,,waiver,confirmed,command-buffer bookkeeping next to _cmdBufWritePtr; accessed via computed base - revisit
+0x004F7BFC,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it
+0x004F7C08,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it
+0x004F7C14,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it
+0x004F7C24,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it
+0x004FFE34,data,_objArena,,re,confirmed,entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding)
+0x004FFE38,data,,,waiver,confirmed,entity-arena bookkeeping next to _objArena
+0x0050CE84,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x04); named via structs.md, not a standalone global"
+0x0050CE89,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x09); named via structs.md, not a standalone global"
+0x0050CE8A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x0A); named via structs.md, not a standalone global"
+0x0050CE8E,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x0E health word); named via structs.md, not a standalone global"
+0x0050CE90,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x10); named via structs.md, not a standalone global"
+0x0050CE91,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11 pos X); named via structs.md, not a standalone global"
+0x0050CE95,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x15 pos Y); named via structs.md, not a standalone global"
+0x0050CE99,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x19 pos Z); named via structs.md, not a standalone global"
+0x0050CE9D,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1D heading); named via structs.md, not a standalone global"
+0x0050CE9F,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1F pitch); named via structs.md, not a standalone global"
+0x0050CEA1,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x21 goal angle param); named via structs.md, not a standalone global"
+0x0050CEA3,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x23 goal heading param); named via structs.md, not a standalone global"
+0x0050CEA5,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x25 goal altitude param); named via structs.md, not a standalone global"
+0x0050CEB4,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x34 speed (24.8)); named via structs.md, not a standalone global"
+0x0050CEB8,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x38 view-target mode+id); named via structs.md, not a standalone global"
+0x0050CEBC,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x3C); named via structs.md, not a standalone global"
+0x0050CED0,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x50); named via structs.md, not a standalone global"
+0x0050CED1,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x51); named via structs.md, not a standalone global"
+0x0050CED2,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x52); named via structs.md, not a standalone global"
+0x0050CED4,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x54); named via structs.md, not a standalone global"
+0x0050CED8,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x58); named via structs.md, not a standalone global"
+0x0050CEDA,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x5A); named via structs.md, not a standalone global"
+0x0050CEDE,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x5E); named via structs.md, not a standalone global"
+0x0050CEE2,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x62); named via structs.md, not a standalone global"
+0x0050CEE4,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x64 chain next id); named via structs.md, not a standalone global"
+0x0050CEE8,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x68 service key); named via structs.md, not a standalone global"
+0x0050CEEA,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x6A); named via structs.md, not a standalone global"
+0x0050CEF6,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x76); named via structs.md, not a standalone global"
+0x0050CF5E,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xDE); named via structs.md, not a standalone global"
+0x0050CF62,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xE2); named via structs.md, not a standalone global"
+0x0050CF68,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xE8 current waypoint); named via structs.md, not a standalone global"
+0x0050CF6E,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xEE padlock id); named via structs.md, not a standalone global"
+0x0050CF70,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xF0); named via structs.md, not a standalone global"
+0x0050CF74,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xF4); named via structs.md, not a standalone global"
+0x0050CF76,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xF6); named via structs.md, not a standalone global"
+0x0050CF78,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xF8); named via structs.md, not a standalone global"
+0x0050CF7A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0xFA); named via structs.md, not a standalone global"
+0x0050CF88,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x108); named via structs.md, not a standalone global"
+0x0050CF9A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11A); named via structs.md, not a standalone global"
+0x0050CF9C,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11C); named via structs.md, not a standalone global"
+0x0050CF9D,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11D); named via structs.md, not a standalone global"
+0x0050CFF7,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x177); named via structs.md, not a standalone global"
+0x0050CFFB,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x17B); named via structs.md, not a standalone global"
+0x0050CFFF,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x17F); named via structs.md, not a standalone global"
+0x0050D003,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x183); named via structs.md, not a standalone global"
+0x0050D007,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x187); named via structs.md, not a standalone global"
+0x0050D01B,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x19B); named via structs.md, not a standalone global"
+0x0050D033,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1B3); named via structs.md, not a standalone global"
+0x0050D037,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1B7); named via structs.md, not a standalone global"
+0x0050D03B,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1BB); named via structs.md, not a standalone global"
+0x0050D076,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1F6); named via structs.md, not a standalone global"
+0x0050D07A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1FA); named via structs.md, not a standalone global"
+0x0050D0B1,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x231); named via structs.md, not a standalone global"
+0x0050D0F3,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x273); named via structs.md, not a standalone global"
+0x0050D26D,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x05)
+0x0050D271,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x09 type flags dword; bit 0x400 = auto-remove when destroyed)
+0x0050D2B1,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x49)
+0x0050D2BD,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x55)
+0x0050D2BE,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x56)
+0x0050D2C3,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x5B)
+0x0050D2C9,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x61)
+0x0050D2CB,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x63)
+0x0050D2CD,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x65)
+0x0050D2E1,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x79)
+0x0050D30E,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0xA6)
+0x0050D32A,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0xC2)
+0x0050D32C,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0xC4)
+0x0050D390,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x128)
+0x0050D392,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x12A)
+0x00538260,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass
+0x00538264,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass
+0x00538268,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass
+0x00538278,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass
+0x0053827C,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass
+0x00538280,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass
+0x0053DAEB,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAEC,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAEE,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAF2,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAF6,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAFA,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAFC,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DAFE,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB4E,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB52,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB54,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB58,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB5C,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB60,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB62,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x0053DB64,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it
+0x00546B94,data,_curObjSize,,re,confirmed,byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6
+0x00546B9C,data,_curTypeSize,,re,confirmed,byte size of the current type-record mirror (from type +0x01)
+0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2"
+0x00546BA8,data,_requeueChain,,re,confirmed,objects serviced this frame; ChainMergeSorted folds it back into chainStart
+0x00546BB8,data,_lastCurZ,,re,inferred,previous frame Z of current object (CheckForEvents1)
+0x00553120,data,_objSizes,,re,confirmed,word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext
+0x00553124,data,,,waiver,confirmed,interior of _objSizes word[900] table
+0x00553828,data,_objArenaNext,,re,confirmed,bump cursor into the entity arena (OBJAdd memcpy target)
+0x0055382C,data,_tempAliasBase,,re,confirmed,lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999
+0x00553830,data,_tempAliasMax,,re,confirmed,highest temp-alias id: (-0x14 - thisComputer)*1000; OBJTempAlias wraps to base past it
+0x00553834,data,_multiAliasCursor,,re,inferred,OBJAliasForMulti/OBJNextAliasForMulti iteration cursor
+0x0055383C,data,_tempAliasNext,,re,confirmed,next temp alias returned by OBJTempAlias (negative per-computer id band)
+0x00553840,data,_objArenaSize,,re,confirmed,"arena byte capacity (OBJInit parameter), bounds OBJAdd"
+0x0055384C,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 1)
+0x00553850,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 2)

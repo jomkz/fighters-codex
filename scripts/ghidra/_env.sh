@@ -5,9 +5,17 @@
 #   FA_INSTALL  -- FA game files (FA.EXE, LIBs)    (default: $FA_PROJECT/game)
 #   GHIDRA_HOME -- Ghidra install                  (default: newest ~/tools/ghidra_*_PUBLIC, else /opt/ghidra*)
 #   JAVA_HOME   -- JDK 21+ with javac              (default: newest ~/tools/jdk-*, else system java)
+#   GHIDRA_HEADLESS_MAXMEM -- headless JVM heap    (default: 8G; Ghidra's own default is only 2G)
 
 export FA_PROJECT="${FA_PROJECT:-$HOME/src/fa}"
 export FA_INSTALL="${FA_INSTALL:-$FA_PROJECT/game}"
+
+# Ghidra ships a 2G headless heap, which throttles the whole-program decompile
+# sweeps (DumpAllFunctions fans out one native decompiler per core via
+# ParallelDecompiler). Give the JVM real room; core count is auto-detected by
+# Ghidra's thread pools and left uncapped (no -Dcpu.core.limit). Both are
+# overridable for smaller benches.
+export GHIDRA_HEADLESS_MAXMEM="${GHIDRA_HEADLESS_MAXMEM:-8G}"
 
 if [[ -z "${GHIDRA_HOME:-}" ]]; then
     for d in "$HOME"/tools/ghidra_*_PUBLIC /opt/ghidra*; do

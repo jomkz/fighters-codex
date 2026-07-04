@@ -4,6 +4,14 @@ Inventory of all named global variables recovered from FA.EXE.
 
 > **Provenance:** Ghidra static analysis of FA.EXE with [FA.SMS](formats/SMS.md) symbols applied; data sourced from `DumpGlobals.csv` (`DumpGlobals.java` headless run). Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
+> **Referenced-globals rule:** the [FA.EXE reconstruction program](reconstruction.md)
+> treats a data symbol as in-scope only when it is **referenced by code** (≥1 xref):
+> the 10,313 such globals in
+> [`db/inventory/globals.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/inventory/globals.csv)
+> are the mechanical universe a completed subsystem must name or explicitly waive. The
+> ~48k zero-xref entries are mostly struct/array interiors named at their base and are
+> not individually tracked.
+
 ---
 
 ## Summary

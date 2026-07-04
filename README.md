@@ -23,6 +23,7 @@ implementation is the proof that a format is truly understood.
 - **44 documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; per-format completeness, codec direction, and test coverage are tracked in the CI-enforced [status matrix](docs/fa/formats/STATUS.md); see [docs/fa/formats/](docs/fa/formats/README.md)
 - **Engine architecture notes** — runtime environment, asset pipeline, physics model, renderer, AI bytecode interpreter, network protocol, and Win32 overlay DLL system; see [docs/fa/architecture.md](docs/fa/architecture.md)
 - **3,829 recovered C++ symbols** from FA.EXE and all overlay DLLs — organized by subsystem with demangled names and virtual addresses; see [docs/fa/symbols.md](docs/fa/symbols.md)
+- **FA.EXE reconstruction program** — a machine-readable symbol database and per-subsystem docs that name and document every function and variable, subsystem by subsystem; progress is tracked in the CI-enforced [reconstruction matrix](docs/fa/reconstruction.md)
 - **Modding guides** — step-by-step recipes for textures, aircraft stats, missions, audio, and more; see [docs/fa/modding.md](docs/fa/modding.md)
 
 **Validation tools** *(proving the documentation by implementing it)*:

@@ -233,9 +233,15 @@ The object list is a flat array managed by `_OBJInit@4` / `_OBJAdd@8`. Key globa
 
 **`_T_ObjList@8` — `0x004A7DF0`**: the object iterator used for spatial queries. Iterates IDs `1..nextObjId-1`. For each entry where `objPtr[+1] & 1` (alive flag) and `_InBounds_8` (position within a query rect) pass, invokes a callback function pointer. Returns early if the callback returns `'\0'`.
 
-### `_ServiceObjects` (unresolved VA)
+### `_ServiceObjects` — `0x00462A50`
 
-Called from `?FlyingLoop@@YAXXZ` when `_frameTicks > 0`. Full decompile was not included in the analysis output; its virtual address is unresolved from the output. It is the function that iterates all live objects and dispatches per-frame procs including `_GVProc` and the projectile proc.
+Called from `?FlyingLoop@@YAXXZ` when `_frameTicks > 0`. Each frame it walks the
+`service chain` (`_chainStart`, ordered by each object's `+0x68` service key),
+mirrors the head object into the `_cg`/`_cgt` scratch buffers via `GetCurObj`,
+dispatches its update through the proc table (`_GVProc`, the projectile proc, …),
+writes the mirror back with `PutCurObj`, and re-queues it — then drains the remote
+hit/effect message queues. The full object system (chain, mirror, allocation, proc
+dispatch) is documented in **[objects.md](objects.md)**.
 
 ### `_GVProc` — `0x00473DB0` (FA.SMS: `_GVProc`)
 

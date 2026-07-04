@@ -57,10 +57,14 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 Every codec/CLI/GUI change updates, **in the same PR**: the format spec it validates,
 the relevant reference doc (docs/cli.md, docs/api.md, docs/gui.md), and the generated
 per-format status matrix (docs/fa/formats/STATUS.md — regenerate with
-`python3 tools/check_status.py --write-matrix`). Specs follow docs/spec-authoring.md;
-`tools/check_status.py --check` enforces the template, the front-matter claims, and
-matrix currency in CI (`docs-status` job) and in ctest (label `docs`); the rule covers
-the rest. The docs tree is also published as a site
+`python3 tools/check_status.py --write-matrix`). The same rule binds the **FA.EXE
+reconstruction program**: any change to the symbol database (db/) re-exports the Ghidra
+inventory (`scripts/ghidra/export_inventory.sh`) and regenerates the reconstruction
+matrix (docs/fa/reconstruction.md, same `--write-matrix`) in that PR; subsystem docs
+follow docs/spec-authoring.md § Subsystem docs. Specs follow docs/spec-authoring.md;
+`tools/check_status.py --check` enforces the template, the front-matter claims, symbol-DB
+coverage, and matrix currency in CI (`docs-status` job) and in ctest (label `docs`); the
+rule covers the rest. The docs tree is also published as a site
 (https://jomkz.github.io/fighters-codex/ — mkdocs.yml, `Docs` CI job): the strict build
 fails on broken links/anchors or pages missing from the nav, and links from docs/ to
 files outside the docs tree must be repo blob/tree URLs (also checked). The truth-pass

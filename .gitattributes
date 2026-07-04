@@ -8,6 +8,7 @@
 *.py   text eol=lf
 *.json text eol=lf
 *.sha256 text eol=lf
+*.csv  text eol=lf
 CMakeLists.txt text eol=lf
 
 # Fuzz corpus seeds are binary fixtures; their mostly-ASCII content must not

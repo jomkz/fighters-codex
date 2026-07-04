@@ -17,6 +17,7 @@ Reverse-engineering notes, format specifications, and modding guides for Jane's 
 | [fa/modding.md](fa/modding.md) | Step-by-step modding recipes |
 | [fa/formats/README.md](fa/formats/README.md) | All 44 file format specifications, categorized |
 | [fa/formats/STATUS.md](fa/formats/STATUS.md) | Generated per-format status matrix — spec completeness, codec direction, tests, fuzzing (CI-enforced) |
+| [fa/reconstruction.md](fa/reconstruction.md) | Generated FA.EXE reconstruction matrix — per-subsystem naming + documentation progress (CI-enforced) |
 
 Outstanding research is tracked on the [roadmap](roadmap.md) and the
 [issue tracker](https://github.com/jomkz/fighters-codex/issues) — there is no
