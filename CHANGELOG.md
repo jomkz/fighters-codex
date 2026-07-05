@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.9] - 2026-07-05
+
 Checkpoint release for Phase 4 (Codec & Test Completeness): **every documented
 FA format now has an `fx_lib` codec and `fx` CLI surface** (epic #49), and the
 fuzzing rollout is live in CI. Round-trip where the format warrants it,
@@ -369,7 +371,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.8...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.9...HEAD
+[0.5.9]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.9
 [0.5.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.8
 [0.5.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.7
 [0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
