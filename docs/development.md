@@ -280,6 +280,11 @@ links from `docs/` to files outside the docs tree (source, workflows, repo
 meta) are written as absolute `github.com/...` URLs — `check_status.py`
 verifies those URLs point at real paths, so they can't silently rot.
 
+The site also exposes a **Print / PDF** page (mkdocs-print-site-plugin, last
+in the `plugins:` list by requirement): every page concatenated into a single
+document with a cover and table of contents — use the browser's print-to-PDF
+for an offline copy of the whole knowledge base.
+
 ## IDE Setup
 
 ### VS Code (Linux and Windows)
