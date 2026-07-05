@@ -507,9 +507,12 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
         }
         if (op == 0x1E) { off += 1; continue; }             // Pad
         if (op == 0xF6 && avail >= 7) { off += 7; continue; } // VertexInfo
-        // A sub-stream is a pure geometry run; the first control/attribute
-        // opcode (jump, unmask, LOD, x86, …) ends it. Stop rather than walk on.
-        return;
+        // Other control/attribute opcodes (LOD/detail jumps, culls, render
+        // state, …): skip by size and keep collecting facets in this region
+        // rather than stopping, so the full model's geometry is recovered.
+        size_t sz = instr_skip(p, avail);
+        if (sz == 0) return;
+        off += sz;
     }
 }
 

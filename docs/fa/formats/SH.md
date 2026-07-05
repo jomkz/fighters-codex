@@ -348,9 +348,14 @@ not). The codec (`lib/src/sh.cpp`, `collect_reloc_targets` + `harvest_target`):
    are **not** `FF 25` trampolines (those reach the game executable's exports).
 2. From each target, walks the geometry (VertexBuffer / Face / TextureFile, plus
    Pad/VertexInfo) and **follows `Unmask`/`UnmaskLong` sub-model calls** into
-   their referenced sub-streams (bounded by a visited-set + recursion depth),
-   stopping at any other control/attribute opcode. This recovers articulated
-   parts — e.g. an F-16's landing gear renders deployed.
+   their referenced sub-streams (bounded by a visited-set + recursion depth).
+   Other control/attribute opcodes (LOD/detail jumps, `sh_op_78` bbox culls,
+   render-state) are **skipped by size and the walk continues**, rather than
+   stopping — so the full facet set of a sub-stream region is recovered, not just
+   the run before its first jump. This is what makes a complete airframe appear
+   (e.g. the A-10's left wing and the F-16's full planform); halting at the first
+   jump left half the model's facets — which reference already-loaded pool
+   vertices — uncollected.
 3. Writes vertices **append-only** (never below the base pool count) so
    state-variant sub-streams that reuse low pool slots cannot corrupt the base
    mesh; faces reference the shared pool.
@@ -735,13 +740,15 @@ Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 
 | Result | Count | % |
 |--------|-------|---|
-| Vertices + faces extracted | 1210 | 94.9% |
-| x86-only geometry (no OBJ output) | 65 | 5.1% |
+| Vertices + faces extracted | 1257 | 98.6% |
+| No geometry (no OBJ output) | 18 | 1.4% |
 | Parser crash / error | 0 | 0% |
 
-**x86-only files** are all procedural effects or complex models: `FIRE.SH`,
+The remaining **no-geometry files** are pure procedural effects that emit their
+geometry entirely from x86 (no static VertexBuffer/Face at all): `FIRE.SH`,
 `FLARE.SH`, `BULLET.SH`, `CHAFF.SH`, `CLOUD*.SH`, `CRATER.SH`, `DEBRIS.SH`,
-`EXP.SH`, `EJECT.SH`, `AC130.SH` (and variants), `CATGUY.SH`, etc.
+`EXP.SH`, `EJECT.SH`, etc. (Complex airframes that were previously x86-only, such
+as `AC130.SH`, now recover their facets via the walk-through harvest above.)
 
 **Shadow models** (`*_S.SH`): flat ground silhouettes, Z=0, typically 6-20 faces.
 
@@ -749,12 +756,12 @@ Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 
 | File | Scale | Verts | Faces | Textures |
 |------|-------|-------|-------|----------|
-| A10.SH | 8 (1x) | 361 | 81 | _a10.PIC |
+| A10.SH | 8 (1x) | 425 | 418 | _a10.PIC |
 | A10_B.SH | 8 (1x) | 71 | 98 | _a10_b.PIC |
 | A10_S.SH | 8 (1x) | 21 | 6 | (none) |
-| F22.SH | 8 (1x) | 290 | 89 | |
-| F15E.SH | 8 (1x) | 387 | 42 | |
-| AC130.SH | 9 (2x) | 0 | 0 | (x86-only) |
+| F22.SH | 8 (1x) | 476 | 422 | |
+| F15E.SH | 8 (1x) | 483 | 647 | |
+| AC130.SH | 9 (2x) | 283 | 488 | |
 
 **Texture coordinates.** Faces with `HAVE_TEXCOORDS` carry one `(s, t)` per
 corner (`ShFace::texcoords`, parallel to `indices`); the codec extracts them in
