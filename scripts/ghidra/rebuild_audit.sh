@@ -3,7 +3,7 @@
 #
 # Rebuilds the named Ghidra project FROM SCRATCH — a clean import of FA.EXE, a
 # fresh auto-analysis, FA.SMS symbols, then db/symbols/ applied via
-# ApplySymbols.java — and diffs the exported inventory against the committed
+# ApplySymbols.java — and diffs the exported inventory against the canonical
 # db/inventory/. A clean diff proves db/ is the true source of truth (no hidden
 # state lives only in the working project) and that ApplySymbols' function
 # materialisation holds from a clean analysis. See db/README.md.
@@ -52,7 +52,7 @@ echo "[audit 4/4] export fresh inventory -> $AUDIT_OUT"
     -postScript ExportInventory.java "$REPO_ROOT" "$AUDIT_OUT" \
     -scriptPath "$SCRIPT_DIR" -noanalysis -readOnly
 
-echo "[audit] diff fresh vs committed db/inventory/$BINARY/"
+echo "[audit] diff fresh vs canonical db/inventory/$BINARY/"
 python3 "$SCRIPT_DIR/rebuild_diff.py" "$REPO_ROOT/db/inventory/$BINARY" "$AUDIT_OUT" \
     | tee "$AUDIT_OUT/REPORT.md"
 echo "[audit] done. report: $AUDIT_OUT/REPORT.md"

@@ -23,10 +23,15 @@ it checks three layers:
                   editor in the repository is claimed by a spec.
 
 It also validates the game-executable reconstruction program (epic #209): the db/ symbol
-database (manifest + per-subsystem symbol files + committed Ghidra inventory),
-per-subsystem coverage for completed subsystems (every in-scope function named,
-every referenced global named or waived), subsystem-doc structure, and the
-generated docs/fa/reconstruction.md matrix. See db/README.md.
+database (manifest + per-subsystem symbol files), per-subsystem coverage for completed
+subsystems (every in-scope function named, every referenced global named or waived),
+subsystem-doc structure, and the generated docs/fa/reconstruction.md matrix. Coverage
+and matrix currency are ground-truthed against the Ghidra inventory export under
+db/inventory/ — which is local-only, never committed (#342): when a binary's export is
+absent (e.g. in CI) its coverage checks are skipped with a note, and the reconstruction
+matrix is neither rewritten nor currency-checked unless every binary's export is
+present. Registry regions (symbols.md/globals.md) derive from db/symbols/ alone and are
+always checked. See db/README.md.
 
 Stdlib-only; Python 3.8+.
 """
@@ -1026,7 +1031,14 @@ def load_symbols(symbols_dir, manifest):
 
 
 def load_inventory(inv_dir):
-    """Parse one binary's db/inventory/<binary>/*.csv -> (dict, errors)."""
+    """Parse one binary's db/inventory/<binary>/*.csv -> (dict, errors).
+
+    Returns (None, []) when the binary's directory is absent entirely — the
+    inventory is a local-only export (#342), so absence is expected (CI) and
+    downgrades checks rather than failing them. A *partial* directory (some
+    CSVs missing) is still a hard error: that's a broken export."""
+    if not inv_dir.is_dir():
+        return None, []
     errs = []
     inv = {"functions": {}, "globals": [], "ranges": []}
     fpath = inv_dir / "functions.csv"
@@ -1056,17 +1068,23 @@ def load_inventory(inv_dir):
 
 
 def load_inventories(inv_root, binaries):
-    """Load one inventory per binary from db/inventory/<binary>/ -> ({binary: inv}, errors).
+    """Load per-binary inventories from db/inventory/<binary>/
+    -> ({binary: inv}, errors, absent-binaries).
 
     Inventories are keyed by the exact `binary` value from subsystems.csv (the Ghidra
-    program name / imported filename, e.g. FA.EXE, WAIL32.DLL)."""
+    program name / imported filename, e.g. FA.EXE, WAIL32.DLL). Binaries whose export
+    directory is absent are listed in `absent` and omitted from the dict."""
     errs = []
     invs = {}
+    absent = []
     for binary in binaries:
         inv, ierrs = load_inventory(inv_root / binary)
-        invs[binary] = inv
+        if inv is None:
+            absent.append(binary)
+        else:
+            invs[binary] = inv
         errs += ierrs
-    return invs, errs
+    return invs, errs, absent
 
 
 def _claims_by_binary(symbols, slug_to_binary):
@@ -1267,8 +1285,9 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
         "[game-executable program](../roadmap.md#program-game-executable-reconstruction) (epic [#209](%s/209))" % ISSUE_URL,
         "and the [overlay-binary program](../roadmap.md#program-overlay-reconstruction) (epic [#247](%s/247))" % ISSUE_URL,
         "— one section per binary, one row per subsystem, generated from the",
-        "[symbol database](%s/db/README.md) and verified against the committed per-binary" % BLOB,
-        "Ghidra inventory by CI (`--check`).",
+        "[symbol database](%s/db/README.md) and verified against the per-binary Ghidra" % BLOB,
+        "inventory export (`db/inventory/`, local-only — regenerated and checked where the",
+        "canonical Ghidra project lives; see [db/README.md](%s/db/README.md))." % BLOB,
         "",
     ]
     p_named = p_funcs = p_gn = p_gt = p_done = p_subs = 0
@@ -1398,11 +1417,15 @@ def check_reconstruction(db_dir=DB_DIR):
         return errs, None, {}
     symbols, serrs = load_symbols(db_dir / "symbols", manifest)
     binaries = _ordered_binaries(manifest)
-    inventories, ierrs = load_inventories(db_dir / "inventory", binaries)
+    inventories, ierrs, absent = load_inventories(db_dir / "inventory", binaries)
     errs = errs + serrs + ierrs
     # Surface cross-file duplicate-name notes as warnings, not hard errors.
     warns = [e[len("note-dup: "):] for e in errs if e.startswith("note-dup: ")]
     errs = [e for e in errs if not e.startswith("note-dup: ")]
+    if absent:
+        warns.append("db/inventory/ export absent for %s — coverage not checked; "
+                     "reconstruction.md left as committed (export with "
+                     "scripts/ghidra/export_inventory.sh)" % ", ".join(absent))
     slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
     claims_by_binary = _claims_by_binary(symbols, slug_to_binary)
     slugs_by_binary = {}
@@ -1410,14 +1433,18 @@ def check_reconstruction(db_dir=DB_DIR):
         slugs_by_binary.setdefault(binary, set()).add(slug)
     for sub in manifest:
         binary = sub["binary"]
-        inv = inventories.get(binary, {"functions": {}, "globals": [], "ranges": []})
         claims = claims_by_binary.get(binary, {})
         if sub["status"] in ("active", "complete"):
             errs += check_subsystem_doc(sub, symbols)
-        if sub["status"] == "complete":
-            errs += check_coverage(sub, symbols, inv, claims,
+        # Coverage is ground-truthed against the local inventory export; a
+        # binary with no export (CI) is skipped — warned above, not failed.
+        if sub["status"] == "complete" and binary in inventories:
+            errs += check_coverage(sub, symbols, inventories[binary], claims,
                                    slugs_by_binary.get(binary, set()))
-    matrix = generate_recon_matrix(manifest, symbols, inventories, claims_by_binary)
+    # The matrix totals come from the inventories, so it can only be
+    # (re)generated when every binary's export is present.
+    matrix = None if absent else \
+        generate_recon_matrix(manifest, symbols, inventories, claims_by_binary)
     registries = {
         (SYMBOLS_MD, REGISTRY_TAGS["func"]): generate_registry(manifest, symbols, "func"),
         (GLOBALS_MD, REGISTRY_TAGS["data"]): generate_registry(manifest, symbols, "data"),
@@ -1445,24 +1472,27 @@ def run_checks(write_matrix):
     # matrices before hygiene so db/README's link to reconstruction.md resolves.
     recon_errs, recon_matrix, registries = check_reconstruction()
     matrix = generate_matrix(specs)
+    # recon_matrix is None when any binary's local inventory export is absent
+    # (#342): reconstruction.md is then neither rewritten nor currency-checked.
+    # The registries derive from db/symbols/ alone, so they are always handled.
     if write_matrix:
         STATUS_MD.write_bytes(matrix.encode("utf-8"))  # LF-only on every platform
         print("wrote %s" % STATUS_MD.relative_to(ROOT))
         if recon_matrix is not None:
             RECON_MD.write_bytes(recon_matrix.encode("utf-8"))
             print("wrote %s" % RECON_MD.relative_to(ROOT))
-            for (path, tag), block in registries.items():
-                if write_registry_region(path, tag, block):
-                    print("wrote %s [%s]" % (path.relative_to(ROOT), tag))
-                else:
-                    errs.append("%s: missing generated markers for '%s'"
-                                % (path.relative_to(ROOT).as_posix(), tag))
+        for (path, tag), block in registries.items():
+            if write_registry_region(path, tag, block):
+                print("wrote %s [%s]" % (path.relative_to(ROOT), tag))
+            else:
+                errs.append("%s: missing generated markers for '%s'"
+                            % (path.relative_to(ROOT).as_posix(), tag))
     else:
         _matrix_currency(STATUS_MD, matrix, errs)
         if recon_matrix is not None:
             _matrix_currency(RECON_MD, recon_matrix, errs)
-            for (path, tag), block in registries.items():
-                registry_currency(path, tag, block, errs)
+        for (path, tag), block in registries.items():
+            registry_currency(path, tag, block, errs)
 
     errs += check_docs_hygiene()
     errs += check_readme_index(specs)
@@ -1770,6 +1800,22 @@ def _recon_self_test(expect, tmpdir=None):
         expect(any("unnamed and unwaived" in x
                    for x in check_coverage(sub, symbols, inv_grf, claims, bslugs)),
                "recon: coverage catches unwaived referenced global")
+
+        # --- Local-only inventory export (#342) ---------------------------------
+        # An absent <binary>/ dir is expected (CI has no export) and downgrades
+        # checks; a *partial* dir is a broken export and stays a hard error.
+        no_inv, no_errs = load_inventory(base / "inventory" / "FA.EXE")
+        expect(no_inv is None and no_errs == [],
+               "recon: absent inventory dir is not an error")
+        invs, ierrs, iabsent = load_inventories(base / "inventory", ["FA.EXE"])
+        expect(invs == {} and ierrs == [] and iabsent == ["FA.EXE"],
+               "recon: absent binary reported in absent, not loaded")
+        (base / "inventory" / "FA.EXE").mkdir()
+        write("inventory/FA.EXE/functions.csv",
+              "va,name,size\n0x00462600,InitChain,10\n")
+        invs, ierrs, iabsent = load_inventories(base / "inventory", ["FA.EXE"])
+        expect(iabsent == [] and any("globals.csv" in x for x in ierrs),
+               "recon: partial export is a hard error")
 
         # --- Multi-binary (#252): VAs are unique only within a binary -----------
         # FA.EXE and IP.EXE both name 0x00462600 (their own images) — a collision

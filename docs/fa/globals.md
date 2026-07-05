@@ -6,8 +6,8 @@ Inventory of all named global variables recovered from the game executable.
 
 > **Referenced-globals rule:** the [game-executable reconstruction program](reconstruction.md)
 > treats a data symbol as in-scope only when it is **referenced by code** (≥1 xref):
-> the 10,313 such globals in
-> [`db/inventory/FA.EXE/globals.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/inventory/FA.EXE/globals.csv)
+> the 10,313 such globals in `db/inventory/FA.EXE/globals.csv` (the local-only Ghidra
+> inventory export — see [db/README.md](https://github.com/jomkz/fighters-codex/blob/main/db/README.md))
 > are the mechanical universe a completed subsystem must name or explicitly waive. The
 > ~48k zero-xref entries are mostly struct/array interiors named at their base and are
 > not individually tracked.

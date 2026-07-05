@@ -118,7 +118,7 @@ SVG flow diagram.
 named and every referenced global named or waived, each with a `docs/fa/` page and a theme-aware
 SVG. See the [reconstruction matrix](fa/reconstruction.md). A from-scratch
 [reproducibility audit](https://github.com/jomkz/fighters-codex/blob/main/db/reproducibility-audit.md)
-(rebuild the project from `db/`, diff against the committed inventory) confirms **zero name drift**
+(rebuild the project from `db/`, diff against the canonical inventory export) confirms **zero name drift**
 and that `db/` fully drives the named project — that audit surfaced the final subsystems the original
 map missed (the `.SEQ` cutscene player [#240](https://github.com/jomkz/fighters-codex/issues/240) and
 the in-flight VIEW camera/replay cluster [#257](https://github.com/jomkz/fighters-codex/issues/257)).
@@ -127,7 +127,8 @@ The program is driven by a machine-readable **symbol database** under
 [`db/`](https://github.com/jomkz/fighters-codex/blob/main/db/README.md): a manifest of
 the subsystems, per-subsystem `symbols/*.csv` files (the canonical VA→name record,
 applied to the Ghidra project by `scripts/ghidra/ApplySymbols.java` and checked against
-the committed inventory export), and the generated
+the local inventory export — Ghidra output itself is never committed,
+[#342](https://github.com/jomkz/fighters-codex/issues/342)), and the generated
 [reconstruction matrix](fa/reconstruction.md). `check_status.py` enforces, per completed
 subsystem, that **every code-referenced function is named and every referenced global is
 named or waived** (the referenced-globals rule), plus the subsystem doc's structure and
