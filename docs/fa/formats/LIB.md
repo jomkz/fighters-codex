@@ -15,7 +15,7 @@ codec:
   byte_identical: true
   lib: [lib/src/ealib.cpp, lib/src/blast.cpp]
   commands: [lib]
-  tests: [tests/test_ealib.cpp]
+  tests: [tests/test_ealib.cpp, tests/test_blast.cpp]
   fuzz: [fuzz/fuzz_ealib.cpp, fuzz/fuzz_blast.cpp]
   fixtures:
     synthetic: true
