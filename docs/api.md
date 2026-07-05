@@ -295,6 +295,69 @@ std::vector<std::string> cam_strings(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## txt.h — In-game text / directive engine
+
+```cpp
+namespace fx {
+struct TxtLine {
+    std::string raw;        // line bytes without the terminator
+    bool crlf, terminated;
+    std::vector<std::string> directives;  // ".section", "..button", ...
+};
+struct TxtDoc { std::vector<TxtLine> lines; };
+enum class TxtKind { CampaignDescription, UiTemplate, PlainText };
+
+TxtDoc txt_read(const uint8_t* data, size_t size);   // never fails
+std::vector<uint8_t> txt_write(const TxtDoc& doc);   // byte-identical inverse
+TxtKind txt_classify(const TxtDoc& doc);
+size_t  txt_count(const TxtDoc& doc, const std::string& directive);
+} // namespace fx
+```
+
+## cfg.h — EA.CFG game configuration
+
+```cpp
+namespace fx {
+constexpr size_t   EA_CFG_SIZE  = 347;
+constexpr uint32_t EA_CFG_MAGIC = 0x24;
+struct EaCfg { /* every documented CONFIG field; three untraced
+                  pass-through fields (#54) — see cfg.h */ };
+
+// Engine-faithful validation: exact size + magic
+bool cfg_read(const uint8_t* data, size_t size, EaCfg& out);
+std::vector<uint8_t> cfg_write(const EaCfg& cfg);  // byte-identical inverse
+} // namespace fx
+```
+
+## dat.h — CN_INFO network configuration
+
+```cpp
+namespace fx {
+constexpr size_t DAT_FILE_SIZE = 3552;  // checksum + 0xDDC CN_INFO (v3)
+struct CnInfo { /* typed documented fields; checksum + unmapped regions
+                   pass through verbatim — see dat.h */ };
+
+bool dat_read(const uint8_t* data, size_t size, CnInfo& out);
+std::vector<uint8_t> dat_write(const CnInfo& info); // byte-identical inverse
+const char* dat_transport_name(uint32_t transport);
+unsigned    dat_baud_rate(uint32_t baud_index);
+} // namespace fx
+```
+
+## mnu.h — Menu DLL reader
+
+```cpp
+namespace fx {
+struct MnuInfo {
+    bool        valid;  // MZ + "PL" signature with a CODE section
+    CodeSection code;   // section geometry (pe.h)
+};
+MnuInfo mnu_info(const uint8_t* data, size_t size);
+std::vector<std::string> mnu_strings(const uint8_t* data, size_t size,
+                                     size_t min_len = 3);
+} // namespace fx
+```
+
 ## cb8.h — FMV video decoder
 
 ```cpp

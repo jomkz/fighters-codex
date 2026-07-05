@@ -24,6 +24,10 @@ add_executable(fx_tests
     test_fbc.cpp
     test_bin.cpp
     test_cam.cpp
+    test_txt.cpp
+    test_cfg.cpp
+    test_dat.cpp
+    test_mnu.cpp
     render/test_render.cpp
 )
 

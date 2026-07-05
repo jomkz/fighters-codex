@@ -7,11 +7,15 @@ endianness: none
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 104
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/txt.cpp]
+  commands: [txt]
+  tests: [tests/test_txt.cpp]
+  fuzz: []
   gui: [gui/src/editors/txt_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [CAM, MNU, MT, P]
 ---
@@ -22,6 +26,18 @@ FA_2.LIB contains 8 `.TXT` files. The extension covers three distinct uses of
 the same directive engine: campaign selection descriptions, interactive UI
 screen templates, and plain-text content (credits). All are **plain ASCII,
 CRLF**.
+
+## Tools
+
+### fx
+
+```
+fx txt info <file.TXT>     # kind + directive structure + round-trip check
+```
+
+The parser is line-preserving — `txt_read`/`txt_write` round-trip any input
+byte-identically while exposing the directive structure — and is written for
+reuse by the `.MT` briefing codec (#108), which shares the directive engine.
 
 ## File Layout
 

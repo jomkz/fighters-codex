@@ -12,10 +12,14 @@ spec:
       issue: 54
       note: "CONFIG fields +0x004/+0x008/+0x0E2 semantics"
 codec:
-  direction: none
-  issue: 104
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/cfg.cpp]
+  commands: [cfg]
+  tests: [tests/test_cfg.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: false
 related: [P, DAT]
 ---
@@ -28,6 +32,20 @@ first run and updated whenever the player changes settings in-game; it
 persists graphics, controls, audio, and pilot selection state between
 sessions. `IP.CFG` is a small plain-text file read by `IP.EXE` (the
 multiplayer session launcher) on startup.
+
+## Tools
+
+### fx
+
+```
+fx cfg info <EA.CFG>       # dump the CONFIG struct + round-trip check
+```
+
+`cfg_read`/`cfg_write` map every documented field and pass the three
+untraced fields (+0x004/+0x008/+0x0E2, gap #54) through verbatim —
+byte-identical round-trip, verified against the install's live EA.CFG by an
+`FX_FA_ROOT`-gated test. IP.CFG is two lines of plain text and needs no
+codec.
 
 ## File Layout
 

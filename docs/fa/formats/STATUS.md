@@ -15,8 +15,8 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [BRF](BRF.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | — | `tests/test_brf.cpp` | syn | — | `gui/src/editors/brf_editor.cpp` |
 | [CAM](CAM.md) | mission | complete | — | read-only (by design) | `fx cam` | `tests/test_cam.cpp` | syn/real | — | `gui/src/editors/cam_editor.cpp` |
 | [CB8](CB8.md) | video | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54)<br>re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only [#95](https://github.com/jomkz/fighters-codex/issues/95) | `fx cb8` | — | real | — | `gui/src/editors/cb8_editor.cpp` |
-| [CFG](CFG.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#104](https://github.com/jomkz/fighters-codex/issues/104) | — | — | — | — | — |
-| [DAT](DAT.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#104](https://github.com/jomkz/fighters-codex/issues/104) | — | — | — | — | — |
+| [CFG](CFG.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx cfg` | `tests/test_cfg.cpp` | syn | — | — |
+| [DAT](DAT.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx dat` | `tests/test_dat.cpp` | syn | — | — |
 | [DLG](DLG.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#105](https://github.com/jomkz/fighters-codex/issues/105) | — | — | real | — | — |
 | [ECM](ECM.md) | typedef | complete | — | round-trip (byte-identical) | `fx ecm` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [FBC](FBC.md) | video | complete | — | round-trip (byte-identical) | `fx fbc` | `tests/test_fbc.cpp` | syn/real | — | `gui/src/editors/vdo_editor.cpp` |
@@ -31,7 +31,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [M](M.md) | mission | complete | — | round-trip (byte-identical) | `fx mission` | `tests/test_mission.cpp` | syn/real | — | `gui/src/editors/mission_editor.cpp` |
 | [MC](MC.md) | mission | complete | — | none [#109](https://github.com/jomkz/fighters-codex/issues/109) | — | — | real | — | — |
 | [MM](MM.md) | terrain | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx mm`<br>`fx mission` | `tests/test_mission.cpp` | syn/real | — | `gui/src/editors/mission_editor.cpp` |
-| [MNU](MNU.md) | ui-overlay | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#104](https://github.com/jomkz/fighters-codex/issues/104) | — | — | real | — | — |
+| [MNU](MNU.md) | ui-overlay | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mnu` | `tests/test_mnu.cpp` | syn/real | — | — |
 | [MT](MT.md) | mission | complete | — | none [#108](https://github.com/jomkz/fighters-codex/issues/108) | — | — | real | — | — |
 | [MUS](MUS.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx mus` | — | real | — | `gui/src/editors/mus_editor.cpp` |
 | [NT](NT.md) | typedef | complete | — | round-trip (byte-identical) | `fx nt` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
@@ -49,6 +49,6 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [SMS](SMS.md) | system | complete | — | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx sms` | — | real | — | — |
 | [SSF](SSF.md) | installer | complete | — | none [#109](https://github.com/jomkz/fighters-codex/issues/109) | — | — | — | — | — |
 | [T2](T2.md) | terrain | complete | — | read-only [#98](https://github.com/jomkz/fighters-codex/issues/98) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | — |
-| [TXT](TXT.md) | text | complete | — | none [#104](https://github.com/jomkz/fighters-codex/issues/104) | — | — | real | — | `gui/src/editors/txt_editor.cpp` |
+| [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | — | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | none [#55](https://github.com/jomkz/fighters-codex/issues/55) | — | — | real | — | `gui/src/editors/vdo_editor.cpp` |
 | [XMI](XMI.md) | audio | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#106](https://github.com/jomkz/fighters-codex/issues/106) | — | — | real | — | `gui/src/editors/xmi_editor.cpp` |

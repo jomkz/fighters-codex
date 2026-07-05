@@ -11,10 +11,14 @@ spec:
       issue: 54
       note: "menu-tree/control layout encoding in the CODE section unmapped"
 codec:
-  direction: none
-  issue: 104
+  direction: read
+  rationale: "engine-code container (menu DLL) with the tree/layout encoding still unmapped (#54): fx_lib surfaces the container geometry and label strings the spec has confirmed; writing compiled menu DLLs is fighters-legacy territory"
+  lib: [lib/src/mnu.cpp]
+  commands: [mnu]
+  tests: [tests/test_mnu.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [DLG]
 ---
@@ -26,6 +30,18 @@ screen. All are **Win32 PE DLLs** (MZ stub + PE32 image) loaded by the FA
 engine at runtime; they import rendering functions from `main.dll` (= the game executable —
 see [architecture.md](../architecture.md#overlay-system--win32-pe-dlls)) and
 embed their label strings directly in the PE data section.
+
+## Tools
+
+### fx
+
+```
+fx mnu info    <file.MNU>            # container check + CODE section geometry
+fx mnu strings <file.MNU> [-n MIN]   # embedded menu label strings
+```
+
+Same MZ + Phar Lap `PL` container family as [CAM](CAM.md) (verified against
+MAINMENU.MNU); the codec delegates to the shared PL reader.
 
 ## File Layout
 

@@ -27,6 +27,10 @@ int cmd_ai(int argc, char** argv);
 int cmd_fbc(int argc, char** argv);
 int cmd_bin(int argc, char** argv);
 int cmd_cam(int argc, char** argv);
+int cmd_txt(int argc, char** argv);
+int cmd_cfg(int argc, char** argv);
+int cmd_dat(int argc, char** argv);
+int cmd_mnu(int argc, char** argv);
 
 static void print_usage() {
     puts("fx -- Fighters Codex\n");
@@ -123,6 +127,17 @@ static void print_usage() {
     puts("Campaign DLL commands:");
     puts("  fx cam info    <file.CAM>");
     puts("  fx cam strings <file.CAM> [-n MIN]");
+    puts("");
+    puts("In-game text commands:");
+    puts("  fx txt info <file.TXT>");
+    puts("");
+    puts("Game configuration commands:");
+    puts("  fx cfg info <EA.CFG>");
+    puts("  fx dat info <NET.DAT|MODEM.DAT|SERIAL.DAT>");
+    puts("");
+    puts("Menu DLL commands:");
+    puts("  fx mnu info    <file.MNU>");
+    puts("  fx mnu strings <file.MNU> [-n MIN]");
 }
 
 int main(int argc, char** argv) {
@@ -174,6 +189,14 @@ int main(int argc, char** argv) {
         return cmd_bin(argc - 1, argv + 1);
     if (strcmp(cmd, "cam") == 0)
         return cmd_cam(argc - 1, argv + 1);
+    if (strcmp(cmd, "txt") == 0)
+        return cmd_txt(argc - 1, argv + 1);
+    if (strcmp(cmd, "cfg") == 0)
+        return cmd_cfg(argc - 1, argv + 1);
+    if (strcmp(cmd, "dat") == 0)
+        return cmd_dat(argc - 1, argv + 1);
+    if (strcmp(cmd, "mnu") == 0)
+        return cmd_mnu(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||

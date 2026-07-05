@@ -23,6 +23,10 @@
     cmd_fbc.cpp
     cmd_bin.cpp
     cmd_cam.cpp
+    cmd_txt.cpp
+    cmd_cfg.cpp
+    cmd_dat.cpp
+    cmd_mnu.cpp
 )
 
 target_link_libraries(fx PRIVATE fx_lib fx_warnings)
