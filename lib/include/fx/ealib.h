@@ -5,8 +5,13 @@
 #include <vector>
 
 // EALIB archive format.
-// Magic "EALIB" + uint16 count + 18-byte entries (13-byte name, 1-byte flags, uint32 offset).
-// File sizes are implicit: size[i] = offset[i+1] - offset[i]; last = EOF - offset[last].
+// Magic "EALIB" + uint16 count + (count+1) x 18-byte entries (13-byte name,
+// 1-byte flags, uint32 offset). The final entry is a terminator — all-zero
+// name and flags, offset = total file size — so sizes are uniformly
+// size[i] = offset[i+1] - offset[i], terminator included (every archive in
+// the FA install carries it; see LIB.md). Reading tolerates a missing
+// terminator (archives written by fx before it was understood) by falling
+// back to EOF for the last entry's size.
 //
 // Flags:
 //   0 = raw/uncompressed
@@ -43,9 +48,17 @@ std::vector<uint8_t> ealib_extract(const uint8_t* lib_data, size_t lib_size,
                                     const Entry& entry, bool decompress = true);
 
 // Build a new EALIB from a list of (filename, data) pairs.
-// All entries are stored as flags=0 (raw).
+// All entries are stored as flags=0 (raw); the terminator entry is written.
 std::vector<uint8_t> ealib_build(
     const std::vector<std::pair<std::string, std::vector<uint8_t>>>& files);
+
+// Rebuild the container from its own directory: payloads kept raw (still
+// compressed), name+flags bytes copied verbatim, offsets recomputed, the
+// terminator written. Byte-identical to the input for well-formed archives
+// (the full-tree FX_FA_ROOT test proves this against a real install); a
+// non-contiguous or out-of-order source normalizes instead. Returns empty
+// vector on error.
+std::vector<uint8_t> ealib_repack(const uint8_t* lib_data, size_t lib_size);
 
 // Patch one named file into an existing LIB.
 // The replacement is stored as flags=0 (raw). All other entries are preserved.

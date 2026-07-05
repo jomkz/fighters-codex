@@ -42,8 +42,14 @@ fx lib ls      <file.LIB>                      # list entries with flags and siz
 fx lib unpack  <file.LIB> [-o output_dir]      # extract all entries, decompressing
 fx lib extract <file.LIB> <ENTRY> [-o dir]     # extract one entry
 fx lib pack    <input_dir> <file.LIB>          # build an archive (byte-identical)
+fx lib repack  <file.LIB> <out.LIB>            # rebuild container from its own directory
 fx lib patch   <file.LIB> <ENTRY> <new_file>   # replace one entry in place
 ```
+
+`fx lib repack` keeps payloads raw (still compressed) and entry metadata
+verbatim while recomputing every offset — byte-identical output for
+well-formed archives. The `fa_repack_roundtrip` integration test (FX_FA_ROOT
+mode) runs it against every archive in a real install.
 
 `fx lib unpack` decompresses flags=0 and flags=4 automatically. Flags=1 and
 flags=3 are rare and passed through without decompression.
@@ -61,11 +67,19 @@ All multi-byte integers are little-endian.
 |--------|--------|--------|-------------|
 | `0x00` | 5      | char[5] | Magic `EALIB` (ASCII, no null terminator) |
 | `0x05` | 2      | u16    | Number of directory entries (N) |
-| `0x07` | 18 × N |        | Directory entries (see below) |
-| —      |        |        | File data blocks, immediately after the directory |
+| `0x07` | 18 × (N+1) |    | Directory entries (see below), then one terminator entry |
+| —      |        |        | File data blocks, contiguous and in directory order, immediately after the terminator |
 
-File sizes are **not stored**. Each entry's size = next entry's offset − this
-entry's offset. Last entry's size = file_size − last entry's offset.
+The directory carries one extra 18-byte **terminator entry** after the N real
+entries: name and flags bytes all zero, offset field = total file size. File
+sizes are therefore **not stored** — each entry's size, the last included, is
+the next entry's offset minus its own. Every archive in the FA install
+follows this layout exactly, with no padding or gaps: `fx lib repack`
+rebuilds each of the ten shipped `.LIB`s byte-identically from the parsed
+directory alone (offsets recomputed from scratch), which is the proof the
+layout claims here rest on. `fx_lib`'s reader also tolerates a *missing*
+terminator (archives written by fx before the terminator was understood) by
+falling back to end-of-file for the last entry's size.
 
 ### Directory Entry (18 bytes)
 

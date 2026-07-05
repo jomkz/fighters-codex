@@ -35,6 +35,7 @@ fx lib ls      <file.LIB>
 fx lib unpack  <file.LIB> [output_dir]
 fx lib extract <file.LIB> <NAME> [NAME ...] [-o output_dir]
 fx lib pack    <dir>      <output.LIB>
+fx lib repack  <src.LIB>  <output.LIB>
 fx lib patch   <src.LIB>  <name> <file> <output.LIB>
 ```
 
@@ -87,6 +88,15 @@ fx lib extract FA_2.LIB F16C_0.PIC F15C_0.PIC -o pics
 Pack all files in `dir` into a new `.LIB`. Files are stored uncompressed (flags=0)
 and ordered by name, so the same input directory produces a byte-identical
 archive on every platform. The game accepts both raw and compressed entries.
+
+#### `fx lib repack <src.LIB> <output.LIB>`
+
+Rebuild the container from its own directory: payloads stay raw (still
+compressed), entry metadata is copied verbatim, and every offset — including
+the directory's terminator entry — is recomputed from scratch. Output is
+byte-identical to the input for well-formed archives; the `fa_repack_roundtrip`
+integration test (FX_FA_ROOT mode) proves that against every `.LIB` in a real
+install.
 
 #### `fx lib patch <src.LIB> <name> <file> <output.LIB>`
 

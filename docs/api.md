@@ -56,6 +56,11 @@ std::vector<uint8_t> ealib_build(
 std::vector<uint8_t> ealib_patch(const uint8_t* data, size_t size,
                                   const std::string& name,
                                   const std::vector<uint8_t>& new_data);
+
+// Rebuild the container from its own directory (raw payloads, verbatim
+// entry metadata, recomputed offsets incl. the terminator entry) —
+// byte-identical for well-formed archives
+std::vector<uint8_t> ealib_repack(const uint8_t* data, size_t size);
 } // namespace fx
 ```
 
