@@ -8,6 +8,11 @@ build/
 site/
 .cache/
 
+# Ghidra inventory exports — local-only ground truth for check_status.py
+# coverage checks; Ghidra result output is never committed (#342). Export
+# with scripts/ghidra/export_inventory.sh from the canonical fa-re project.
+db/inventory/
+
 # Game asset files â€” never commit copyrighted game content
 *.LIB
 *.PIC

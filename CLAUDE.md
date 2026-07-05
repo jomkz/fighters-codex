@@ -60,10 +60,13 @@ per-format status matrix (docs/fa/formats/STATUS.md — regenerate with
 `python3 tools/check_status.py --write-matrix`). The same rule binds the **reconstruction
 programs** (game executable #209 + the overlay/companion binaries #247): any change to the symbol
 database (db/) re-exports the affected binary's Ghidra inventory
-(`scripts/ghidra/export_inventory.sh [BINARY]` → `db/inventory/<binary>/`) and regenerates the reconstruction
+(`scripts/ghidra/export_inventory.sh [BINARY]` → `db/inventory/<binary>/` — **local-only,
+gitignored**; Ghidra result output is never committed, #342) and regenerates the reconstruction
 matrix (docs/fa/reconstruction.md) plus the generated per-subsystem registry regions in
 docs/fa/symbols.md and docs/fa/globals.md (all via the same `--write-matrix`) in that PR;
-those registry blocks are marker-delimited and must not be hand-edited. Subsystem docs
+those registry blocks are marker-delimited and must not be hand-edited. Coverage and
+matrix-currency checks run only where a local inventory export exists (CI skips them
+with a note; registries are always checked). Subsystem docs
 follow docs/spec-authoring.md § Subsystem docs. Specs follow docs/spec-authoring.md;
 `tools/check_status.py --check` enforces the template, the front-matter claims, symbol-DB
 coverage, and matrix currency in CI (`docs-status` job) and in ctest (label `docs`); the

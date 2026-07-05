@@ -6,8 +6,9 @@ Progress of the FA reconstruction programs — the
 [game-executable program](../roadmap.md#program-game-executable-reconstruction) (epic [#209](https://github.com/jomkz/fighters-codex/issues/209))
 and the [overlay-binary program](../roadmap.md#program-overlay-reconstruction) (epic [#247](https://github.com/jomkz/fighters-codex/issues/247))
 — one section per binary, one row per subsystem, generated from the
-[symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/README.md) and verified against the committed per-binary
-Ghidra inventory by CI (`--check`).
+[symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/README.md) and verified against the per-binary Ghidra
+inventory export (`db/inventory/`, local-only — regenerated and checked where the
+canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/fighters-codex/blob/main/db/README.md)).
 
 ## FA.EXE
 

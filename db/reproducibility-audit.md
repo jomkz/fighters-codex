@@ -4,6 +4,10 @@
 
 # Reconstruction reproducibility audit
 
+> **Note (2026-07-05):** this audit predates [#342](https://github.com/jomkz/fighters-codex/issues/342)
+> — at the time it ran, `db/inventory/` was committed. The inventory is now a local-only
+> export (see [db/README.md](README.md)); "committed" below means that then-committed baseline.
+
 Clean rebuild (fresh project + FA.SMS + db/symbols) vs committed `db/inventory/`.
 **Verdict: 26 differences — see above (Ghidra analysis variance or hidden state).**
 
