@@ -184,6 +184,10 @@ mapped), and annotation (units, enum values). Changes are patched back via
   the model on selection
 - **Destroyed** toggle renders the damaged sub-model (`0xAC` JumpToDamage) instead
   of the intact geometry
+- **Texture** toggle (shown when the model references a PIC that resolves in the
+  same LIB) skins the textured faces with the decoded texture (via the current
+  palette); off falls back to flat shading. Untextured faces always shade flat.
+  Texture-swap damage (e.g. buildings) becomes visible here with **Destroyed** on
 - **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
   selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
   and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
