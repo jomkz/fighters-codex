@@ -418,7 +418,8 @@ static void walk_code(const uint8_t* code, size_t code_sz,
 static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
                            float scale_factor, std::vector<ShVertex>& vpool,
                            std::vector<ShFace>& faces, std::string cur_tex,
-                           size_t base_count, std::vector<char>& visited, int depth) {
+                           size_t base_count, std::vector<char>& visited, int depth,
+                           int frame, int& frame_count) {
     if (depth > 16) return;
     size_t off = start;
     size_t budget = 4096;  // a sub-stream is small; bound the walk
@@ -435,7 +436,7 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             size_t tgt = off + 4 + (int16_t)u16le(p + 2);
             if (tgt < code_sz)
                 harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
-                               cur_tex, base_count, visited, depth + 1);
+                               cur_tex, base_count, visited, depth + 1, frame, frame_count);
             off += 4;
             continue;
         }
@@ -443,8 +444,23 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             size_t tgt = off + 6 + (int32_t)u32le(p + 2);
             if (tgt < code_sz)
                 harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
-                               cur_tex, base_count, visited, depth + 1);
+                               cur_tex, base_count, visited, depth + 1, frame, frame_count);
             off += 6;
+            continue;
+        }
+
+        // JumpToFrame (0x40) inside a sub-stream: select the frame's block and
+        // keep walking there. This is how the animation of aircraft whose frame
+        // table lives in an x86-gated sub-stream (e.g. the F-16) is reached —
+        // the frame blocks are only referenced by this jump, never by a reloc.
+        if (op == 0x40 && avail >= 4 && p[1] == 0x00) {       // [40 00][nframes u16][rel16 x nframes]
+            uint16_t nframes = u16le(p + 2);
+            if (nframes == 0 || 4 + (size_t)nframes * 2 > avail) { off += 4; continue; }
+            if ((int)nframes > frame_count) frame_count = (int)nframes;
+            size_t idx    = (size_t)(frame % (int)nframes);
+            size_t slot   = off + 4 + idx * 2;
+            size_t target = slot + (size_t)(int16_t)u16le(code + slot);
+            off = (target < code_sz) ? target : (off + 4 + (size_t)nframes * 2);
             continue;
         }
 
@@ -521,7 +537,7 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
         if (to + 1 < cs.size && cs.data[to] == 0xFF && cs.data[to + 1] == 0x25) continue;
         harvest_target(cs.data, cs.size, to, mesh.scale, mesh.vertices, mesh.faces,
                        mesh.textures.empty() ? std::string() : mesh.textures.back(),
-                       base_count, visited, 0);
+                       base_count, visited, 0, state.frame, mesh.frame_count);
     }
     return mesh;
 }

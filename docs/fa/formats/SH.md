@@ -712,10 +712,15 @@ frame or the wreck rather than every block merged. `ShState` selects the state:
   `_frameCounter`), and reports the model's animation length as
   `ShMesh::frame_count` (the max `nframes` seen; `0` = static).
 
-Frame selection is applied to the **base sequential stream**, where the
-control-surface/rotor animation of the A-series aircraft lives; a `0x40` table
-that sits inside an x86-gated sub-stream (reached via the reloc harvest, e.g.
-the F-16's) is not yet frame-selected and reports `frame_count = 0`. The `fxs`
+Frame selection is applied both to the **base sequential stream** (where most
+aircraft's control-surface/rotor animation lives — 511/1275 FA_2.LIB shapes) and
+inside the **x86-gated sub-streams** recovered by the reloc harvest: `0x40` in a
+sub-stream selects the frame's block and the harvester keeps walking there (the
+frame blocks are only reachable through that jump, never through a reloc), so a
+handful more shapes animate and previously-dropped frame-0 geometry is recovered
+(5 FA_2.LIB shapes gain a face at frame 0; vertices unchanged, none lost). Some
+`0x40` tables remain gated behind control flow the harvester doesn't follow
+(e.g. the F-16's), and those shapes stay static (`frame_count = 0`). The `fxs`
 preview exposes both a **Destroyed** toggle and, when `frame_count > 1`, a
 **Frame** slider (docs/gui.md).
 
