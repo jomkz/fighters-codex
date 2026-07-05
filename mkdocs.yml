@@ -98,92 +98,117 @@ validation:
   unrecognized_links: warn
   anchors: warn
 
+# Learning-path nav (#344): a 90s player/modder walks concept-first —
+# Start Here -> the files they already know -> the engine -> reference.
+# Game Files groups the format specs by their front-matter `category`
+# (same grouping and order as fa/formats/README.md / check_status.py).
 nav:
   - Home: README.md
-  - Fighters Anthology:
-      - Overview: fa/README.md
-      - Architecture: fa/architecture.md
-      - External imports: fa/external-imports.md
-      - Reconstruction: fa/reconstruction.md
-      - Game Loop: fa/game-loop.md
-      - View & Camera: fa/view.md
-      - Renderer: fa/renderer.md
-      - Objects: fa/objects.md
-      - HUD: fa/hud.md
-      - Shape Selection: fa/shape-selection.md
-      - AI Interpreter: fa/ai-interpreter.md
-      - Physics: fa/physics.md
-      - Weapons: fa/weapons.md
-      - Collision: fa/collision.md
-      - Sound: fa/sound.md
-      - WAIL32 (audio): fa/wail32.md
-      - IP.EXE (support tool): fa/ip-tool.md
-      - Comms — Serial (CDRVDL32): fa/comms.md
-      - Comms — Modem (CDRVHF32): fa/comms-modem.md
-      - Comms — Transfer (CDRVXF32): fa/comms-transfer.md
-      - Comms — Terminal (COMMSC32): fa/comms-screen.md
-      - Wingman: fa/wingman.md
-      - Video Decode: fa/video-decode.md
-      - Memory & Resource: fa/memory-resource.md
-      - Terrain: fa/terrain.md
-      - Render Core: fa/render-core.md
-      - Network: fa/network.md
-      - Campaign: fa/campaign.md
-      - Input: fa/input.md
-      - Shell UI: fa/shell-ui.md
-      - Startup: fa/startup.md
-      - Sequence Player: fa/seq.md
-      - Globals: fa/globals.md
-      - Structs: fa/structs.md
-      - Symbols: fa/symbols.md
-      - Modding: fa/modding.md
-      - Formats:
-          - Index: fa/formats/README.md
-          - Status Matrix: fa/formats/STATUS.md
+  - Start Here:
+      - fa/start-here.md
+      - Knowledge Base Index: fa/README.md
+  - Game Files:
+      - fa/formats/README.md
+      - Archive:
+          - LIB: fa/formats/LIB.md
+      - Graphics & Images:
+          - PIC: fa/formats/PIC.md
+          - PAL: fa/formats/PAL.md
+          - RAW: fa/formats/RAW.md
+      - Terrain & Maps:
+          - T2: fa/formats/T2.md
+          - MM: fa/formats/MM.md
+      - 3D & Scene:
+          - SH: fa/formats/SH.md
+          - INF: fa/formats/INF.md
+          - HGR: fa/formats/HGR.md
+          - LAY: fa/formats/LAY.md
+      - Audio:
           - 11K: fa/formats/11K.md
+          - XMI: fa/formats/XMI.md
+          - MUS: fa/formats/MUS.md
+      - Video & Cutscenes:
+          - CB8: fa/formats/CB8.md
+          - VDO: fa/formats/VDO.md
+          - FBC: fa/formats/FBC.md
+          - SEQ: fa/formats/SEQ.md
+      - Mission & Campaign:
+          - M: fa/formats/M.md
+          - MT: fa/formats/MT.md
+          - CAM: fa/formats/CAM.md
+          - MC: fa/formats/MC.md
           - AI: fa/formats/AI.md
           - BI: fa/formats/BI.md
-          - BIN: fa/formats/BIN.md
+      - Type Definitions (BRF DSL):
           - BRF: fa/formats/BRF.md
-          - CAM: fa/formats/CAM.md
-          - CB8: fa/formats/CB8.md
+          - PT: fa/formats/PT.md
+          - JT: fa/formats/JT.md
+          - OT: fa/formats/OT.md
+          - NT: fa/formats/NT.md
+          - ECM: fa/formats/ECM.md
+          - GAS: fa/formats/GAS.md
+          - SEE: fa/formats/SEE.md
+      - UI & Win32 Overlays:
+          - DLG: fa/formats/DLG.md
+          - FNT: fa/formats/FNT.md
+          - HUD: fa/formats/HUD.md
+          - MNU: fa/formats/MNU.md
+          - PTS: fa/formats/PTS.md
+      - System & Config:
+          - BIN: fa/formats/BIN.md
           - CFG: fa/formats/CFG.md
           - DAT: fa/formats/DAT.md
-          - DLG: fa/formats/DLG.md
-          - ECM: fa/formats/ECM.md
-          - FBC: fa/formats/FBC.md
-          - FNT: fa/formats/FNT.md
-          - GAS: fa/formats/GAS.md
-          - HGR: fa/formats/HGR.md
-          - HUD: fa/formats/HUD.md
-          - INF: fa/formats/INF.md
-          - JT: fa/formats/JT.md
-          - LAY: fa/formats/LAY.md
-          - LIB: fa/formats/LIB.md
-          - M: fa/formats/M.md
-          - MC: fa/formats/MC.md
-          - MM: fa/formats/MM.md
-          - MNU: fa/formats/MNU.md
-          - MT: fa/formats/MT.md
-          - MUS: fa/formats/MUS.md
-          - NT: fa/formats/NT.md
-          - OT: fa/formats/OT.md
           - P: fa/formats/P.md
-          - PAL: fa/formats/PAL.md
-          - PIC: fa/formats/PIC.md
-          - PT: fa/formats/PT.md
-          - PTS: fa/formats/PTS.md
-          - RAW: fa/formats/RAW.md
-          - RGN: fa/formats/RGN.md
-          - SEE: fa/formats/SEE.md
-          - SEQ: fa/formats/SEQ.md
-          - SH: fa/formats/SH.md
           - SMS: fa/formats/SMS.md
+      - Installer:
+          - RGN: fa/formats/RGN.md
           - SSF: fa/formats/SSF.md
-          - T2: fa/formats/T2.md
+      - Text:
           - TXT: fa/formats/TXT.md
-          - VDO: fa/formats/VDO.md
-          - XMI: fa/formats/XMI.md
+  - Engine:
+      - fa/architecture.md
+      - Game Loop: fa/game-loop.md
+      - Startup & Shell:
+          - Startup: fa/startup.md
+          - Shell UI: fa/shell-ui.md
+          - Sequence Player: fa/seq.md
+          - Input: fa/input.md
+      - Simulation:
+          - Objects: fa/objects.md
+          - Physics: fa/physics.md
+          - AI Interpreter: fa/ai-interpreter.md
+          - Wingman: fa/wingman.md
+          - Weapons: fa/weapons.md
+          - Collision: fa/collision.md
+          - Campaign: fa/campaign.md
+      - Rendering:
+          - Renderer: fa/renderer.md
+          - Render Core: fa/render-core.md
+          - Terrain: fa/terrain.md
+          - View & Camera: fa/view.md
+          - Shape Selection: fa/shape-selection.md
+          - HUD: fa/hud.md
+      - Audio & Video:
+          - Sound: fa/sound.md
+          - WAIL32 (audio): fa/wail32.md
+          - Video Decode: fa/video-decode.md
+      - Comms & Multiplayer:
+          - Network: fa/network.md
+          - Comms — Serial (CDRVDL32): fa/comms.md
+          - Comms — Modem (CDRVHF32): fa/comms-modem.md
+          - Comms — Transfer (CDRVXF32): fa/comms-transfer.md
+          - Comms — Terminal (COMMSC32): fa/comms-screen.md
+      - Support:
+          - Memory & Resource: fa/memory-resource.md
+          - IP.EXE (support tool): fa/ip-tool.md
+  - Modding: fa/modding.md
+  - Reference:
+      - Format Status Matrix: fa/formats/STATUS.md
+      - Reconstruction Matrix: fa/reconstruction.md
+      - Symbols: fa/symbols.md
+      - Globals: fa/globals.md
+      - Structs: fa/structs.md
+      - External Imports: fa/external-imports.md
   - Toolkit:
       - CLI: cli.md
       - GUI: gui.md
