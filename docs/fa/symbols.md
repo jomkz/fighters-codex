@@ -1414,7 +1414,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D17BC` | `do_shape_name` | sms | SH opcode 0x42 (SourceName): consume null-terminated shape name into _shapeName |
 | `0x004D17E0` | `sh_op_stub` | re | shared no-op stub for 10 unassigned SH opcodes |
 | `0x004D17F0` | `sh_op_00` | re | SH opcode 0x00 (EndObject) handler entry (1 byte; falls into do_short_eof) |
-| `0x004D17F4` | `do_short_eof` | sms | SH opcode 0x1E (Pad/EOF) handler |
+| `0x004D17F4` | `do_short_eof` | sms | SH opcode 0x1E (ShortEOF): plain `ret` — returns from the current interpreter call frame (ends an Unmask/selector-called fragment; at top level ends the object). Trailing 0x1E runs are alignment after the return |
 | `0x004D17F8` | `sh_op_3A` | re | SH opcode 0x3A handler |
 | `0x004D18F4` | `sh_op_08` | re | SH opcode 0x08 handler |
 | `0x004D1974` | `sh_op_72` | re | SH opcode 0x72 handler (epic #52 placeholder name) |
@@ -1427,7 +1427,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D1F34` | `sh_op_22` | re | SH opcode 0x22/0x7E handler |
 | `0x004D1FC0` | `sh_op_80` | re | SH opcode 0x80 handler (epic #52 placeholder name; 796 bytes) |
 | `0x004D225E` | `sh_op_1A` | re | SH opcode 0x1A handler |
-| `0x004D2278` | `do_unmask` | re | SH opcode 0x12 (Unmask): call referenced sub-stream via dispatch call-form; renders articulated sub-part |
+| `0x004D2278` | `do_unmask` | re | SH opcode 0x12 (Unmask): dispatches the target sub-stream via the vector_table call-form; the callee chain runs until its ShortEOF (0x1E) `ret`s; control resumes after the opcode |
 | `0x004D22A8` | `do_sfcal_long` | sms | SH opcode 0x6E (UnmaskLong) |
 | `0x004D22D4` | `do_ifdestroyed` | sms | SH opcode 0xAC (JumpToDamage): esi+=rel16 if _destroyed (0x50C39C) |
 | `0x004D22FC` | `do_no_overlap` | sms | SH opcode 0xB8: clears overlap/collision flag via FUN_004d426c |
@@ -1435,11 +1435,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D2344` | `do_use_terrain_detail` | sms | SH opcode 0xB2 |
 | `0x004D2360` | `sh_op_B0` | re | SH opcode 0xB0 handler |
 | `0x004D2380` | `do_if_not_effect` | sms | SH opcodes 0x14/0x16/0x3C/0xA8/0xAA/0xC0: conditional skip keyed on effects setting |
-| `0x004D23AC` | `sh_op_6C` | re | SH opcode 0x6C handler (Unk6C; 13/14/16-byte variants) |
-| `0x004D2450` | `sh_op_06` | re | SH opcode 0x06 handler (Unk06; 16+u16 var-size) |
-| `0x004D24F8` | `sh_op_0C` | re | SH opcode 0x0C handler (Unk0C) |
-| `0x004D2580` | `sh_op_0E` | re | SH opcode 0x0E handler (Unk0E) |
-| `0x004D2608` | `sh_op_10` | re | SH opcode 0x10 handler (Unk10) |
+| `0x004D23AC` | `sh_op_6C` | re | SH opcode 0x6C (draw-order selector): compares object-record field [w0] to w1; ALWAYS renders both sub-chains — calls one (returns at its ShortEOF) and tail-continues the other; the condition only swaps the order (painter's sorting). Targets: call=opd+w3+8 / continue=opd+6+w2; 13/14/16-byte sizes are the trailing embedded 38/48/50 jump |
+| `0x004D2450` | `sh_op_06` | re | SH opcode 0x06 (plane-test draw-order selector): sign of nx*(x+_xv)+ny*(y+_yv)+nz*(z+_zv) picks the order; both sub-chains always render (call one / continue other). Operand: 3×(coeff i16 + coord i16) + size u16 + call-rel16 + embedded jump; call=opd+16+rel / continue=next instruction (opd+14+size) |
+| `0x004D24F8` | `sh_op_0C` | re | SH opcode 0x0C: two-axis (y/z) variant of the 0x06 plane-test draw-order selector; operand 2×(coeff+coord) + size u16 + call-rel16 + embedded jump; call=opd+12+rel / continue=next instruction |
+| `0x004D2580` | `sh_op_0E` | re | SH opcode 0x0E: two-axis (x/z) variant of the 0x06 plane-test draw-order selector (same layout as 0x0C) |
+| `0x004D2608` | `sh_op_10` | re | SH opcode 0x10: two-axis (x/y) variant of the 0x06 plane-test draw-order selector (same layout as 0x0C) |
 | `0x004D2690` | `sh_op_18` | re | SH opcode 0x18 handler |
 | `0x004D2740` | `sh_op_84` | re | SH opcode 0x84 handler (epic #52 placeholder name) |
 | `0x004D2798` | `load_dest` | re | interpreter helper: load destination operand |

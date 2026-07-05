@@ -46,10 +46,16 @@ struct ShPreview {
     int cached_lib   = -2;
     int cached_entry = -2;
     bool destroyed        = false;   // show the damaged sub-model (ShState)
+    int  lod              = 0;       // JumpToLOD level (ShState); 0 = finest
+    bool low_detail       = false;   // JumpToDetail preference (ShState detail=0)
     bool cached_destroyed = false;
     int  frame            = 0;       // JumpToFrame animation index (ShState)
     int  cached_frame     = -1;
+    int  cached_lod       = 0;
+    bool cached_lowdetail = false;
     int  frame_count      = 0;       // exposed by the last parse; 0 = static
+    int  lod_count        = 1;       // exposed by the last parse; 1 = no LODs
+    bool has_detail       = false;   // exposed by the last parse
     int  cached_palgen    = -1;      // reload the texture when the palette changes
     float azimuth    = 170.0f;
     float elevation  = 20.0f;
@@ -369,20 +375,28 @@ void DrawPreview(App& app) {
     if (ed.kind == EditorKind::Sh) {
         // Rebuild on selection change or when a state toggle (destroyed / frame) flips.
         bool sel_changed = (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry);
-        if (sel_changed) s_sh.frame = 0;  // reset animation on a new model
+        if (sel_changed) { s_sh.frame = 0; s_sh.lod = 0; s_sh.low_detail = false; }
         bool pal_changed = app.palGen != s_sh.cached_palgen;
         if (sel_changed || pal_changed || s_sh.destroyed != s_sh.cached_destroyed
-                        || s_sh.frame != s_sh.cached_frame) {
+                        || s_sh.frame != s_sh.cached_frame
+                        || s_sh.lod != s_sh.cached_lod
+                        || s_sh.low_detail != s_sh.cached_lowdetail) {
             s_sh.cached_lib       = ed.libIdx;
             s_sh.cached_entry     = ed.entryIdx;
             s_sh.cached_destroyed = s_sh.destroyed;
             s_sh.cached_frame     = s_sh.frame;
+            s_sh.cached_lod       = s_sh.lod;
+            s_sh.cached_lowdetail = s_sh.low_detail;
             s_sh.cached_palgen    = app.palGen;
 
             fx::ShInfo  info = fx::sh_parse_info(ed.data.data(), ed.data.size());
             fx::ShState st;  st.destroyed = s_sh.destroyed;  st.frame = s_sh.frame;
+            st.lod    = s_sh.lod;
+            st.detail = s_sh.low_detail ? 0 : 0xFFFF;
             fx::ShMesh  mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size(), st);
             s_sh.frame_count = mesh.frame_count;
+            s_sh.lod_count   = mesh.lod_count;
+            s_sh.has_detail  = mesh.has_detail;
 
             if (sel_changed) {
                 // Reset camera to fit the model (only on selection change). SH
@@ -419,6 +433,17 @@ void DrawPreview(App& app) {
             int last = s_sh.frame_count - 1;
             if (s_sh.frame > last) s_sh.frame = last;   // clamp if model changed
             ImGui::SliderInt("Frame", &s_sh.frame, 0, last);
+        }
+        if (s_sh.lod_count > 1) {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(120.0f);
+            int coarsest = s_sh.lod_count - 1;
+            if (s_sh.lod > coarsest) s_sh.lod = coarsest;
+            ImGui::SliderInt("LOD", &s_sh.lod, 0, coarsest);
+        }
+        if (s_sh.has_detail) {
+            ImGui::SameLine();
+            ImGui::Checkbox("Low detail", &s_sh.low_detail);
         }
 
         float  txt_h   = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;

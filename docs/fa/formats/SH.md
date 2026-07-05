@@ -160,7 +160,7 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
 | `0xFF` | Header | 14 | Always first; scale at `[6..8]` |
 | `0x00` | EndObject | all remaining | Triggers X86Unknown skip if `obj_end_off` set |
 | `0x01` | EndShape | all remaining | Terminates the shape |
-| `0x1E` | Pad | 1+ | Run of `0x1E` NOP bytes |
+| `0x1E` | ShortEOF | 1+ | Return from the current call frame (`do_short_eof` = `ret`); trailing `0x1E` run is alignment. See [Engine Notes](#fragment-calls-and-draw-order-selectors-traced) |
 | `0x38` | ShortJump | 3 | `[38][rel16]`; see [Engine Notes](#animation-opcodes-traced) |
 | `0xBC` | UnkBC | 2 | |
 | `0xF0` | X86Code | variable | Bail out -- x86 machine code |
@@ -171,11 +171,11 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
 
 | First byte | Name | Total size |
 |------------|------|------------|
-| `0x06` | Unk06 | `16 + u16@[14]` |
+| `0x06` | OrderPlane | `16 + u16@[14]` — plane-test draw-order selector; see [Engine Notes](#fragment-calls-and-draw-order-selectors-traced) |
 | `0x08` | Unk08 | 4 |
-| `0x0C` | Unk0C | `12 + u16@[10]` |
-| `0x0E` | Unk0E | `12 + u16@[10]` |
-| `0x10` | Unk10 | `12 + u16@[10]` |
+| `0x0C` | OrderPlaneYZ | `12 + u16@[10]` — two-axis (y/z) OrderPlane variant |
+| `0x0E` | OrderPlaneXZ | `12 + u16@[10]` — two-axis (x/z) OrderPlane variant |
+| `0x10` | OrderPlaneXY | `12 + u16@[10]` — two-axis (x/y) OrderPlane variant |
 | `0x12` | Unmask | 4 |
 | `0x2E` | Unk2E | 4 |
 | `0x3A` | Unk3A | 6 |
@@ -188,7 +188,7 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
 | `0x50` | LongJump | 6 |
 | `0x66` | Unk66 | 10 |
 | `0x68` | Unk68 | 8 |
-| `0x6C` | Unk6C | 13/14/16 (flag@[10]: 0x38=13, 0x48=14, 0x50=16) |
+| `0x6C` | OrderField | 13/14/16 (trailing embedded `38`/`48`/`50` jump) — object-field draw-order selector |
 | `0x6E` | UnmaskLong | 6 |
 | `0x72` | Unk72 | 4 |
 | `0x76` | Unk76 | 10 |
@@ -347,18 +347,21 @@ not). The codec (`lib/src/sh.cpp`, `collect_reloc_targets` + `harvest_target`):
 1. Parses the `.reloc` table; keeps targets that point into the code section and
    are **not** `FF 25` trampolines (those reach the game executable's exports).
 2. From each target, walks the geometry (VertexBuffer / Face / TextureFile, plus
-   Pad/VertexInfo) and **follows `Unmask`/`UnmaskLong` sub-model calls** into
-   their referenced sub-streams (bounded by a visited-set + recursion depth).
-   Other control/attribute opcodes (LOD/detail jumps, `sh_op_78` bbox culls,
-   render-state) are **skipped by size and the walk continues**, rather than
-   stopping — so the full facet set of a sub-stream region is recovered, not just
-   the run before its first jump. This is what makes a complete airframe appear
-   (e.g. the A-10's left wing and the F-16's full planform); halting at the first
-   jump left half the model's facets — which reference already-loaded pool
-   vertices — uncollected.
+   VertexInfo) **structurally**: it follows `Unmask`/`UnmaskLong` and
+   draw-order-selector calls into their fragments (which return at their
+   ShortEOF), follows `0x48`/`0x38` jumps, and applies the same
+   frame/damage/LOD/detail selection as the base walk (bounded by a
+   visited-set + recursion depth). Because some fragments are only reached by
+   calls the static walk cannot decode (x86, object-field conditions), a
+   reloc-entered walk also continues *through* top-level ShortEOFs instead of
+   stopping — the walk-through that recovers a complete airframe (the A-10's
+   left wing, the F-16's full planform).
 3. Writes vertices **append-only** (never below the base pool count) so
    state-variant sub-streams that reuse low pool slots cannot corrupt the base
-   mesh; faces reference the shared pool.
+   mesh. When a VertexBuffer *is* skipped by that guard, the faces that follow
+   it in the same walk are dropped too — they index the skipped buffer, and
+   collecting them drew coarse-LOD faces with finest-pool vertices (giant
+   garbage polygons).
 
 This yields the base mesh **plus every reloc-reachable sub-stream** — i.e. all
 articulation states merged, not the single game-accurate state (default landing
@@ -471,7 +474,7 @@ in-LIB **PTS overlay DLL** format documented in [PTS.md](PTS.md).)
 The instruction inventory above was audited against the
 [OpenFA](https://gitlab.com/openfa/openfa) `sh` crate (GPLv3; commit
 `7507fef5`, 2024-10-29). **Attribution:** the mnemonic names used here
-(Header, Pad, Unmask, XformUnmask, JumpToFrame/Detail/Damage/LOD,
+(Header, ShortEOF, Unmask, XformUnmask, JumpToFrame/Detail/Damage/LOD,
 VertexBuffer, VertexInfo, SourceName, TextureFile/Index, PtrToObjEnd,
 EndObject/EndShape, X86Code, and the `Unk*` scheme) originate from OpenFA's
 reverse engineering. Facts are documented here with attribution; no code
@@ -501,10 +504,13 @@ errors.
 Where this spec now exceeds OpenFA: the two header fields OpenFA marks
 unknown ("probably super important, but I don't know what they mean") are
 resolved as `radius` / `radius_world` by engine tracing — see
-[Engine Notes](#engine-notes). OpenFA's in-source hypotheses for still-open
-opcodes (`0x6C`/`0xC8` as low-detail fast-forwards; the Unmask family as
-manual backface culling) are recorded as leads for the #52 tracing work, not
-as facts.
+[Engine Notes](#engine-notes) — and OpenFA's in-source hypotheses for the
+formerly open opcodes are now adjudicated by the handler decompiles: `0xC8`
+is the distance LOD branch, and the `0x6C`/`0x06`-family ops OpenFA suspected
+of "manual backface culling" are the **draw-order selectors** (both chains
+always render; the plane/dot-product test only swaps the order — close to,
+but not, a culling gate). `0x1E`, which OpenFA treats as a NOP pad, is the
+fragment **return** (`do_short_eof` = `ret`).
 
 ## Engine Notes
 
@@ -564,7 +570,7 @@ which also materializes the handlers as Ghidra functions):
 
 | Op | Spec name | Handler | FA.SMS symbol |
 |----|-----------|---------|---------------|
-| `0x1E` | Pad | `0x4D17F4` | `do_short_eof` |
+| `0x1E` | ShortEOF | `0x4D17F4` | `do_short_eof` — plain `ret`: returns from the current call frame (fragment end) |
 | `0x38` | ShortJump | `0x4D30E4` | `do_short_ijmp` — `DEC ESI`, then falls into the `0x48` Jump handler |
 | `0x40` | JumpToFrame | `0x4D3134` | `do_anim_jmp` |
 | `0x42` | SourceName | `0x4D17BC` | `do_shape_name` |
@@ -641,13 +647,49 @@ noted, relative to the end of its own operand):
 | `0x38` | ShortJump — `do_short_ijmp` (`0x4D30E4`) | `[38][rel16]` (3 bytes) | identical to Jump; handler does `DEC ESI` then shares the `0x48` body | 724 files |
 | `0x50` | LongJump — `do_ijmp_long` (`0x4D3100`) | `[50 00][rel32]` | `esi += rel32` | **0** (engine-only) |
 
-*Sub-model draw (articulated parts).* `Unmask` (`0x12`, 728 files) and
-`UnmaskLong` (`0x6E`, unused) invoke a referenced sub-stream via the dispatch
-table's **call** form (`FF 14`, versus `FF 24` for the normal tail jump) with
-`esi` pushed, so the sub-stream renders and control resumes after the opcode.
-`XformUnmask` (`0xC4`, 2 files) / `XformUnmaskLong` (`0xC6`, unused) first save
-the view matrix and object-position globals and apply the operand offsets to the
-object position, so the sub-stream renders at a relative transform — the
+### Fragment calls and draw-order selectors (traced)
+
+A shape's stream is not a linear list — it is a **web of fragments** linked by
+call-and-continue selector opcodes. Three pieces make the structure:
+
+**`0x1E` ShortEOF — `do_short_eof` (`0x4D17F4`).** The handler is a plain
+`ret`: it pops the current interpreter call frame. A fragment invoked by any of
+the call-form opcodes below ends at its ShortEOF and control resumes in the
+caller; at top level it ends the object. A *run* of `0x1E` bytes is alignment
+after the return — only the first ever executes. (Previously read as a NOP pad;
+that misreading is what made static walks merge every alternative block.)
+
+**`0x12` Unmask — `do_unmask` (`0x4D2278`)** (728 files) and `UnmaskLong`
+(`0x6E`, unused) **call** the referenced sub-stream through the dispatch
+table's call form (`FF 14`, versus `FF 24` for the normal tail jump): the
+callee chain runs until its ShortEOF `ret`s, then control resumes after the
+opcode. The common idiom is `[12 → body][38 → join][body…, 1E]` — call the
+inline body, then jump past it.
+
+**Draw-order selectors** — the mid-stream conditionals. Each evaluates a
+condition, then **renders both of its sub-chains**: it *calls* one (which
+returns at its ShortEOF) and *tail-continues* at the other; the condition only
+swaps which is drawn first. They are painter's-algorithm ordering for
+overlapping parts, not visibility gates — a static reader must follow **both**
+links:
+
+| Op | Handler | Condition | Call target | Continue |
+|----|---------|-----------|-------------|----------|
+| `0x6C` OrderField | `sh_op_6C` (`0x4D23AC`) | object-record field `[w0]` vs `w1` | `opd + w3 + 8` | `opd + 6 + w2` |
+| `0x06` OrderPlane | `sh_op_06` (`0x4D2450`) | sign of `nx·(x+xv) + ny·(y+yv) + nz·(z+zv)` | `opd + 16 + rel` | next instruction |
+| `0x0C`/`0x0E`/`0x10` | `sh_op_0C/0E/10` | two-axis plane sign (y/z, x/z, x/y) | `opd + 12 + rel` | next instruction |
+
+(`opd` = operand start, two bytes past the opcode. For `0x6C` the 13/14/16-byte
+sizes are a trailing embedded `38`/`48`/`50` jump; for the plane forms the
+size-field u16 doubles as the continue link, which is why their total size is
+`base + u16`.) A fine-detail airframe is typically one long chain of these
+nodes — the A-10's fuselage, nose, and tail fragments are all reached through
+`0x06`/`0x6C` links, not linear fall-through.
+
+*Sub-model draw (articulated parts).* `XformUnmask` (`0xC4`, 2 files) /
+`XformUnmaskLong` (`0xC6`, unused) work like Unmask but first save the view
+matrix and object-position globals and apply the operand offsets to the object
+position, so the sub-stream renders at a relative transform — the
 attached-part mechanism. Their per-operand layout is only partially traced and
 stays in [Open Questions](#1-remaining-unk-opcode-semantics); they are not part
 of frame playback.
@@ -705,29 +747,42 @@ next, coarser block. Near-universal: 1098/1275 shapes (2064 opcodes).
 
 ### State-selected rendering (read codec)
 
-`sh_parse_mesh(data, size, ShState{})` interprets the animation and damage
-branches to emit **one** state's geometry, so the viewer can show a specific
-frame or the wreck rather than every block merged. `ShState` selects the state:
+`sh_parse_mesh(data, size, ShState{})` executes the stream **structurally** —
+following unconditional jumps (`0x48`/`0x38`), calling Unmask and draw-order
+selector fragments (which return at their ShortEOF), and branching each
+conditional the way the engine would for one selected state — so it emits
+**one** state's geometry rather than every block merged. `ShState` selects:
 
-- **`destroyed`** — follows `0xAC` JumpToDamage: `false` (default) falls through
-  to the intact geometry; `true` takes the branch into the damaged sub-model.
+- **`destroyed`** — `0xAC` JumpToDamage: `false` (default) falls through to
+  the intact geometry; `true` takes the branch into the damaged sub-model.
 - **`frame`** — the `0x40` JumpToFrame index. The codec computes
   `idx = frame mod nframes` per opcode and branches to that slot (the same
   `slot_address + rel16` the interpreter uses, with `frame` standing in for
   `_frameCounter`), and reports the model's animation length as
   `ShMesh::frame_count` (the max `nframes` seen; `0` = static).
+- **`lod`** — the `0xC8` JumpToLOD level: `0` (default) = finest …
+  `ShMesh::lod_count - 1` = coarsest. The engine compares the object's
+  projected on-screen size to each site's pixel threshold; the codec stands in
+  a synthetic size — level 0 exceeds every threshold (all sites fall through
+  to their finest block), level *k* sits just below the *k*-th largest
+  distinct threshold in the shape, so exactly the engine's blocks for that
+  apparent size render. `lod_count` = distinct thresholds + 1.
+- **`detail`** — the `0xA6` JumpToDetail preference word (the engine's
+  `_detail`): a site branches to its lower-detail block when
+  `detail < threshold`. Defaults to maximum (every full-detail block);
+  `ShMesh::has_detail` reports whether any site exists.
 
-Frame selection is applied both to the **base sequential stream** (where most
-aircraft's control-surface/rotor animation lives — 511/1275 FA_2.LIB shapes) and
-inside the **x86-gated sub-streams** recovered by the reloc harvest: `0x40` in a
-sub-stream selects the frame's block and the harvester keeps walking there (the
-frame blocks are only reachable through that jump, never through a reloc), so a
-handful more shapes animate and previously-dropped frame-0 geometry is recovered
-(5 FA_2.LIB shapes gain a face at frame 0; vertices unchanged, none lost). Some
-`0x40` tables remain gated behind control flow the harvester doesn't follow
-(e.g. the F-16's), and those shapes stay static (`frame_count = 0`). The `fxs`
-preview exposes both a **Destroyed** toggle and, when `frame_count > 1`, a
-**Frame** slider (docs/gui.md).
+Frame selection is applied in the base stream, inside called fragments, and
+inside the **x86-gated sub-streams** recovered by the reloc harvest (the F-16
+class keeps its `0x40` table behind control flow the harvest doesn't follow and
+stays `frame_count = 0`). The reloc harvest itself runs only for the finest
+intact path (`lod == 0`, no detail/LOD branch taken): its sub-streams are
+authored against the finest vertex pool, and a harvest walk that skips a
+VertexBuffer to protect the pool also drops the faces that follow it — they
+index the skipped buffer (this is what previously drew coarse-LOD faces with
+finest-pool vertices: the giant garbage polygons). The `fxs` preview exposes a
+**Destroyed** toggle, a **Frame** slider (`frame_count > 1`), a **LOD** slider
+(`lod_count > 1`), and a **Low detail** checkbox (`has_detail`) — docs/gui.md.
 
 ## Round-Trip Notes
 
@@ -744,6 +799,10 @@ Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 | No geometry (no OBJ output) | 18 | 1.4% |
 | Parser crash / error | 0 | 0% |
 
+(The counts are for the default state — finest LOD, full detail, intact,
+frame 0. Since the structural walk landed, per-shape face counts are one
+coherent state, no longer the union of every LOD/frame/damage block.)
+
 The remaining **no-geometry files** are pure procedural effects that emit their
 geometry entirely from x86 (no static VertexBuffer/Face at all): `FIRE.SH`,
 `FLARE.SH`, `BULLET.SH`, `CHAFF.SH`, `CLOUD*.SH`, `CRATER.SH`, `DEBRIS.SH`,
@@ -754,28 +813,30 @@ as `AC130.SH`, now recover their facets via the walk-through harvest above.)
 
 **Sample results:**
 
-| File | Scale | Verts | Faces | Textures |
-|------|-------|-------|-------|----------|
-| A10.SH | 8 (1x) | 425 | 418 | _a10.PIC |
-| A10_B.SH | 8 (1x) | 71 | 98 | _a10_b.PIC |
-| A10_S.SH | 8 (1x) | 21 | 6 | (none) |
-| F22.SH | 8 (1x) | 476 | 422 | |
-| F15E.SH | 8 (1x) | 483 | 647 | |
-| AC130.SH | 9 (2x) | 283 | 488 | |
+| File | Scale | Verts | Faces (state 0) | LODs | Textures |
+|------|-------|-------|-----------------|------|----------|
+| A10.SH | 8 (1x) | 425 | 377 | 3 (377/63/10 faces) | _a10.PIC |
+| A10_S.SH | 8 (1x) | 21 | 6 | 1 | (none) |
+| F22.SH | 8 (1x) | 452 | 407 | 3 | |
+| F15E.SH | 8 (1x) | 483 | 556 | 3 | |
+| AC130.SH | 9 (2x) | 283 | 335 | 3 | |
+| HANGAR.SH | 8 (1x) | 10 | 6 | 2 | |
+| TREEA.SH | 8 (1x) | 19 | 11 | 3 | _treea.PIC |
 
 **Texture coordinates.** Faces with `HAVE_TEXCOORDS` carry one `(s, t)` per
 corner (`ShFace::texcoords`, parallel to `indices`); the codec extracts them in
 **texel space** (origin top-left, pixels of the referenced PIC) since the shape
 does not record its texture's dimensions. `sh_to_obj` emits them as `vt` lines
 with `f v/vt` faces; a consumer normalizes by the PIC's width/height (and flips
-V) for a 0..1 sampler. Example: `A10.SH` — 40/122 faces textured, `s ∈ [0,251]`,
-`t ∈ [24,284]` against `_a10.PIC`.
+V) for a 0..1 sampler. Example: `A10.SH` — 202/377 faces textured against `_a10.PIC`.
 
-Further limitations: the OBJ export merges every block — animation frames, LOD
-variants, and damage states are not distinguished. The **in-memory** parse can
-select a single animation frame or the damaged sub-model via `ShState` (see
-[State-selected rendering](#state-selected-rendering-read-codec)); that
-selection is not plumbed through `sh_to_obj`.
+Further limitations: `sh_to_obj` exports whichever single state was parsed
+(the default `ShState` — finest LOD, full detail, intact, frame 0 — unless the
+caller selected otherwise via the in-memory parse; see
+[State-selected rendering](#state-selected-rendering-read-codec)). The
+articulation variants merged by the reloc harvest (gear up *and* down, …)
+remain undistinguished within that state, and there is no CLI flag to pick a
+state for export yet.
 
 ## Open Questions
 
@@ -783,17 +844,20 @@ selection is not plumbed through `sh_to_obj`.
 
 All opcodes have confirmed sizes (the parser walks every FA shape without
 error). The control-flow families are now traced — animation (`0x40`, `0x48`,
-`0x38`, `0x50`; see [Animation opcodes](#animation-opcodes-traced)) and
-LOD/damage (`0xA6`, `0xAC`, `0xC8`; see
-[LOD and damage-state opcodes](#lod-and-damage-state-opcodes-traced)) — as is
-the [dispatch mechanism](#interpreter-dispatch--vector_table-traced) that named
-a dozen render-state handlers. What remains untraced is the **render-state /
-attribute** set (`do_setcoarse`, `do_setlight`, the `do_brush_*` and
-`do_new_smap`/`do_new_rmap` family, the streamer pair, and the still-unnamed
-`Unk06…UnkEE` word-magic entries), the exact per-operand layout of the
-`Xform`/`Unmask` sub-model calls (`0xC4`/`0xC6`/`0x12`/`0x6E`), and the unknown
-Face flag bits. These affect surface appearance, not geometry or the
-animation/LOD/damage playback contract.
+`0x38`, `0x50`; see [Animation opcodes](#animation-opcodes-traced)), LOD/damage
+(`0xA6`, `0xAC`, `0xC8`; see
+[LOD and damage-state opcodes](#lod-and-damage-state-opcodes-traced)), and the
+fragment-call structure (`0x1E` ShortEOF, `0x12`/`0x6E` Unmask calls, the
+`0x06`/`0x0C`/`0x0E`/`0x10`/`0x6C` draw-order selectors; see
+[Fragment calls and draw-order selectors](#fragment-calls-and-draw-order-selectors-traced))
+— as is the [dispatch mechanism](#interpreter-dispatch--vector_table-traced)
+that named a dozen render-state handlers. What remains untraced is the
+**render-state / attribute** set (`do_setcoarse`, `do_setlight`, the
+`do_brush_*` and `do_new_smap`/`do_new_rmap` family, the streamer pair, and the
+remaining `Unk*` word-magic entries), the exact per-operand layout of the
+`Xform` sub-model calls (`0xC4`/`0xC6`), and the unknown Face flag bits. These
+affect surface appearance, not geometry or the animation/LOD/damage playback
+contract.
 
 *Status: open — re-static (#52)*
 

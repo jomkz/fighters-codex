@@ -27,13 +27,17 @@ struct ShInfo {
     int   vert_count;
     int   face_count;
     int   frame_count;  // animation frames (max JumpToFrame nframes); 0 = static
+    int   lod_count;    // selectable LOD levels (1 = no distance LODs)
+    bool  has_detail;   // any JumpToDetail (0xA6) preference switch present
     float bbox[6];    // min_x min_y min_z max_x max_y max_z (in feet)
     std::vector<std::string> textures;
 };
 
 struct ShMesh {
     float scale;
-    int   frame_count = 0;  // animation frames; 0 = static
+    int   frame_count = 0;   // animation frames; 0 = static
+    int   lod_count   = 1;   // selectable LOD levels (1 = no 0xC8 JumpToLOD sites)
+    bool  has_detail  = false; // any 0xA6 JumpToDetail present
     std::vector<ShVertex>    vertices;
     std::vector<ShFace>      faces;
     std::vector<std::string> textures;
@@ -41,10 +45,19 @@ struct ShMesh {
 
 // Selects which conditional-geometry state the interpreter emits, for the
 // state-aware viewer/exporter (see docs/fa/formats/SH.md § LOD and damage-state
-// opcodes). Defaults reproduce the ordinary in-cockpit render (intact geometry).
+// opcodes). Defaults reproduce the ordinary close-up render (intact geometry,
+// full detail, finest LOD).
 struct ShState {
     bool destroyed = false;   // JumpToDamage (0xAC): show the wreck sub-model
     int  frame     = 0;       // JumpToFrame (0x40): animation frame index
+    // JumpToLOD (0xC8) level: 0 = finest .. ShMesh::lod_count-1 = coarsest. The
+    // engine picks by projected on-screen size; level k stands in for a size
+    // just below the k-th largest pixel threshold in the shape.
+    int  lod       = 0;
+    // JumpToDetail (0xA6) preference (the engine's `_detail` word): a site
+    // branches to its lower-detail block when detail < its threshold. Default
+    // max keeps every full-detail block.
+    int  detail    = 0xFFFF;
 };
 
 ShInfo      sh_parse_info(const uint8_t* data, size_t size);

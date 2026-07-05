@@ -72,8 +72,18 @@ them, **trivially rejecting** the guarded geometry when the box falls outside a 
 emits no geometry — a cull/LOD gate, not a mesh op. (This matched OpenFA, which likewise treats
 `0x78` as an opaque fixed-size instruction, and explains why a static codec can skip it safely.)
 
-*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262); `sh_op_78`
-and `sh_op_80` characterized; the remaining larger handlers' fine state effects continue).*
+**Also characterized — the fragment-call structure.** `do_short_eof` (`0x4D17F4`, opcode
+`0x1E`) is a plain `ret` — the **fragment return**, not a NOP pad; `do_unmask` (`0x4D2278`,
+`0x12`) **calls** its target sub-stream via the dispatch call-form and resumes after the opcode
+when the callee's ShortEOF returns; and `sh_op_6C` / `sh_op_06` / `sh_op_0C` / `sh_op_0E` /
+`sh_op_10` are **draw-order selectors**: each always renders *both* of its sub-chains (call one,
+tail-continue the other) with an object-field or face-plane dot-product sign only swapping the
+order — painter's-algorithm sorting in bytecode. Layouts and the static-walk consequences are in
+[SH.md → Fragment calls and draw-order selectors](formats/SH.md#fragment-calls-and-draw-order-selectors-traced).
+
+*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262); `sh_op_78`,
+`sh_op_80`, the ShortEOF/Unmask call structure, and the `0x6C`/`0x06`-family selectors
+characterized; the remaining larger handlers' fine state effects continue).*
 
 ## Related
 
