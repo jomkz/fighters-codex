@@ -216,3 +216,142 @@ TEST_CASE("sh_to_obj on minimal mesh contains vertex and face lines") {
     REQUIRE(obj.find("v ") != std::string::npos);
     REQUIRE(obj.find("\nf ") != std::string::npos);
 }
+
+// ---- state selection: LOD / detail / draw-order selectors ---------------
+
+// Wraps arbitrary code-section bytes in the MZ/Phar-Lap shell the parser needs.
+static std::vector<uint8_t> wrap_sh(const std::vector<uint8_t>& code) {
+    const uint32_t PE_OFF   = 64;
+    const uint32_t SEC_OFF  = PE_OFF + 24;
+    const uint32_t CODE_OFF = SEC_OFF + 40;
+    std::vector<uint8_t> buf(CODE_OFF + code.size(), 0);
+    buf[0] = 'M'; buf[1] = 'Z';
+    buf[0x3C] = (uint8_t)PE_OFF;
+    buf[PE_OFF + 0] = 'P'; buf[PE_OFF + 1] = 'L';
+    buf[PE_OFF + 4] = 0x4C; buf[PE_OFF + 5] = 0x01;
+    buf[PE_OFF + 6] = 1;
+    memcpy(buf.data() + SEC_OFF, "CODE", 4);
+    buf[SEC_OFF + 8]  = (uint8_t)code.size();
+    buf[SEC_OFF + 12] = 0x80;
+    buf[SEC_OFF + 16] = (uint8_t)code.size();
+    buf[SEC_OFF + 20] = (uint8_t)(CODE_OFF & 0xFF);
+    buf[SEC_OFF + 21] = (uint8_t)((CODE_OFF >> 8) & 0xFF);
+    memcpy(buf.data() + CODE_OFF, code.data(), code.size());
+    return buf;
+}
+
+static void put16(std::vector<uint8_t>& v, size_t at, uint16_t x) {
+    v[at] = (uint8_t)(x & 0xFF); v[at + 1] = (uint8_t)(x >> 8);
+}
+
+// header + one conditional guard + fine block (VB + face colour 7 + ShortEOF)
+// + coarse block (VB + face colour 9 + EndShape). `guard_op` = 0xC8 or 0xA6.
+static std::vector<uint8_t> make_two_level_sh(uint8_t guard_op) {
+    std::vector<uint8_t> c(14, 0);
+    c[0] = 0xFF; c[1] = 0xFF; c[6] = 8;               // header, scale 8
+    c[8] = 10; c[10] = 10; c[12] = 10;
+    size_t guard = c.size();
+    if (guard_op == 0xC8) {
+        c.insert(c.end(), {0xC8, 0x00, 0,0, 0,0, 0,0}); // size/thr/rel patched below
+        put16(c, guard + 4, 20);                        // pixel threshold = 20
+    } else {
+        c.insert(c.end(), {0xA6, 0x00, 0,0, 0,0});      // rel/thr patched below
+        put16(c, guard + 4, 1);                         // detail threshold = 1
+    }
+    // fine block
+    std::vector<uint8_t> vb = {0x82, 0x00, 3, 0, 0, 0,
+        10,0, 0,0, 0,0,  (uint8_t)0xF6,(uint8_t)0xFF, 0,0, 0,0,  0,0, 10,0, 0,0};
+    c.insert(c.end(), vb.begin(), vb.end());
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 7, 0x00, 3, 0, 1, 2});  // colour 7
+    c.push_back(0x1E);                                            // ShortEOF
+    size_t coarse = c.size();
+    c.insert(c.end(), vb.begin(), vb.end());
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 9, 0x00, 3, 0, 1, 2});  // colour 9
+    c.push_back(0x01);                                            // EndShape
+    // patch the guard's branch to the coarse block (rel from end of operand)
+    if (guard_op == 0xC8) put16(c, guard + 6, (uint16_t)(coarse - (guard + 8)));
+    else                  put16(c, guard + 2, (uint16_t)(coarse - (guard + 6)));
+    return wrap_sh(c);
+}
+
+TEST_CASE("sh_parse_mesh selects the LOD level via ShState::lod") {
+    auto data = make_two_level_sh(0xC8);
+    ShMesh fine = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(fine.lod_count == 2);
+    REQUIRE(fine.faces.size() == 1);
+    REQUIRE((int)fine.faces[0].color == 7);      // fell through to the fine block
+    ShState st; st.lod = 1;
+    ShMesh coarse = sh_parse_mesh(data.data(), data.size(), st);
+    REQUIRE(coarse.lod_count == 2);
+    REQUIRE(coarse.faces.size() == 1);
+    REQUIRE((int)coarse.faces[0].color == 9);    // took the JumpToLOD branch
+}
+
+TEST_CASE("sh_parse_mesh honours the JumpToDetail preference") {
+    auto data = make_two_level_sh(0xA6);
+    ShMesh full = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(full.has_detail);
+    REQUIRE(full.faces.size() == 1);
+    REQUIRE((int)full.faces[0].color == 7);      // default detail >= threshold
+    ShState st; st.detail = 0;
+    ShMesh low = sh_parse_mesh(data.data(), data.size(), st);
+    REQUIRE(low.faces.size() == 1);
+    REQUIRE((int)low.faces[0].color == 9);       // detail < threshold branches
+}
+
+TEST_CASE("sh_parse_mesh renders both chains of a 0x6C draw-order selector") {
+    // header + VB + [6C: call A, continue B] + B-face(colour 7) + ShortEOF
+    // + A-fragment (face colour 5 + ShortEOF)
+    std::vector<uint8_t> c(14, 0);
+    c[0] = 0xFF; c[1] = 0xFF; c[6] = 8; c[8] = 10; c[10] = 10; c[12] = 10;
+    std::vector<uint8_t> vb = {0x82, 0x00, 3, 0, 0, 0,
+        10,0, 0,0, 0,0,  (uint8_t)0xF6,(uint8_t)0xFF, 0,0, 0,0,  0,0, 10,0, 0,0};
+    c.insert(c.end(), vb.begin(), vb.end());
+    size_t sel = c.size();
+    c.insert(c.end(), {0x6C, 0x00, 0,0, 0,0, 0,0, 0,0, 0x38, 0,0}); // 13 bytes
+    size_t bface = c.size();
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 7, 0x00, 3, 0, 1, 2});
+    c.push_back(0x1E);
+    size_t afrag = c.size();
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 5, 0x00, 3, 0, 1, 2});
+    c.push_back(0x1E);
+    put16(c, sel + 8, (uint16_t)(afrag - (sel + 2) - 8));  // relA: call target
+    put16(c, sel + 6, (uint16_t)(bface - (sel + 2) - 6));  // relB: continue
+    auto data = wrap_sh(c);
+    ShMesh m = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(m.faces.size() == 2);                 // both chains rendered
+    int c0 = m.faces[0].color, c1 = m.faces[1].color;
+    REQUIRE(((c0 == 5 && c1 == 7) || (c0 == 7 && c1 == 5)));
+}
+
+TEST_CASE("frame selection emits exactly one frame's block") {
+    // header + VB + JumpToFrame(2) + frame0(face 7, Jump join) + frame1(face 9)
+    // + join: ShortEOF
+    std::vector<uint8_t> c(14, 0);
+    c[0] = 0xFF; c[1] = 0xFF; c[6] = 8; c[8] = 10; c[10] = 10; c[12] = 10;
+    std::vector<uint8_t> vb = {0x82, 0x00, 3, 0, 0, 0,
+        10,0, 0,0, 0,0,  (uint8_t)0xF6,(uint8_t)0xFF, 0,0, 0,0,  0,0, 10,0, 0,0};
+    c.insert(c.end(), vb.begin(), vb.end());
+    size_t ftab = c.size();
+    c.insert(c.end(), {0x40, 0x00, 2, 0, 0,0, 0,0});       // 2 frames, slots patched
+    size_t f0 = c.size();
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 7, 0x00, 3, 0, 1, 2});
+    size_t jmp = c.size();
+    c.insert(c.end(), {0x48, 0x00, 0, 0});                  // Jump -> join
+    size_t f1 = c.size();
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 9, 0x00, 3, 0, 1, 2});
+    size_t join = c.size();
+    c.push_back(0x1E);
+    put16(c, ftab + 4, (uint16_t)(f0 - (ftab + 4)));        // slot 0 rel
+    put16(c, ftab + 6, (uint16_t)(f1 - (ftab + 6)));        // slot 1 rel
+    put16(c, jmp + 2, (uint16_t)(join - (jmp + 4)));        // frame0 skips frame1
+    auto data = wrap_sh(c);
+    ShMesh m0 = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(m0.frame_count == 2);
+    REQUIRE(m0.faces.size() == 1);
+    REQUIRE((int)m0.faces[0].color == 7);         // frame 0 only, not the union
+    ShState st; st.frame = 1;
+    ShMesh m1 = sh_parse_mesh(data.data(), data.size(), st);
+    REQUIRE(m1.faces.size() == 1);
+    REQUIRE((int)m1.faces[0].color == 9);
+}

@@ -204,6 +204,8 @@ struct ShInfo {
     float scale;             // multiplier: raw_coord * scale = feet
     int   vert_count, face_count;
     int   frame_count;       // animation frames (max JumpToFrame nframes); 0 = static
+    int   lod_count;         // selectable LOD levels (1 = no distance LODs)
+    bool  has_detail;        // any JumpToDetail preference switch present
     float bbox[6];           // min_x min_y min_z max_x max_y max_z (feet)
     std::vector<std::string> textures;
 };
@@ -211,6 +213,8 @@ struct ShInfo {
 struct ShMesh {
     float scale;
     int   frame_count = 0;   // animation frames; 0 = static
+    int   lod_count   = 1;   // selectable LOD levels (1 = no JumpToLOD sites)
+    bool  has_detail  = false;
     std::vector<ShVertex>    vertices;
     std::vector<ShFace>      faces;
     std::vector<std::string> textures;
@@ -219,6 +223,8 @@ struct ShMesh {
 struct ShState {                 // selects a conditional-geometry state
     bool destroyed = false;      // JumpToDamage: emit the wreck sub-model
     int  frame     = 0;          // JumpToFrame: animation frame index (mod nframes)
+    int  lod       = 0;          // JumpToLOD level: 0 = finest .. lod_count-1 = coarsest
+    int  detail    = 0xFFFF;     // JumpToDetail preference; max = full detail
 };
 
 ShInfo      sh_parse_info(const uint8_t* data, size_t size);

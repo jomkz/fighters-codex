@@ -301,20 +301,173 @@ static size_t parse_face(const uint8_t* p, size_t avail, ShFace& out, const std:
 
 // ---- code walker --------------------------------------------------------
 
+// The state the walk selects (from ShState; lod_size is the synthetic
+// projected-pixel-size scalar every JumpToLOD site compares its threshold to).
+struct WalkSel {
+    bool destroyed;
+    int  frame;
+    int  detail;
+    int  lod_size;
+};
+
+// What the walk reports back about the shape's selectable states.
+struct WalkScan {
+    int  frame_count = 0;
+    bool has_detail  = false;
+    bool left_finest = false; // a detail/LOD branch was taken: not the finest path
+    std::vector<uint16_t> lod_thresholds; // distinct 0xC8 pixel thresholds seen
+};
+
+static void note_lod_threshold(WalkScan& scan, uint16_t thr) {
+    if (thr == 0) return; // threshold 0 never branches: not a selectable level
+    for (uint16_t t : scan.lod_thresholds)
+        if (t == thr) return;
+    scan.lod_thresholds.push_back(thr);
+}
+
+static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
+                           float scale_factor, std::vector<ShVertex>& vpool,
+                           std::vector<ShFace>& faces, std::string cur_tex,
+                           size_t base_count, std::vector<char>& visited, int depth,
+                           const WalkSel& sel, WalkScan& scan, bool stop_at_eof);
+
 static void walk_code(const uint8_t* code, size_t code_sz,
                       float scale_factor,
                       std::vector<ShVertex>& vpool,
                       std::vector<ShFace>& faces,
                       std::vector<std::string>& textures,
-                      bool destroyed, int frame, int& frame_count) {
+                      std::vector<char>& visited,
+                      const WalkSel& sel, WalkScan& scan) {
     size_t off         = 0;
     size_t obj_end_off = SIZE_MAX;
     std::string cur_tex;
+    // Followed jumps can revisit join points; bound the walk so a malformed
+    // backward jump cannot loop forever.
+    size_t budget = code_sz * 4 + 256;
 
-    while (off < code_sz) {
+    while (off < code_sz && budget--) {
         const uint8_t* p    = code + off;
         size_t         avail = code_sz - off;
         uint8_t        op   = p[0];
+
+        // ShortEOF (0x1E, `do_short_eof` = plain `ret`): returns from the
+        // current interpreter call frame — at this level, end of the stream.
+        // (Runs of 0x1E are alignment after the return, never executed.)
+        if (op == 0x1E) break;
+
+        // Unmask (0x12) / UnmaskLong (0x6E): call the referenced sub-stream —
+        // it renders until its ShortEOF returns, then control resumes here.
+        // No pool guard (base_count 0): the callee is part of this state and
+        // its VertexBuffer writes are the real dataflow.
+        if (op == 0x12 && avail >= 4 && p[1] == 0x00) {
+            size_t tgt = off + 4 + (int16_t)u16le(p + 2);
+            if (tgt < code_sz)
+                harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
+                               cur_tex, 0, visited, 0, sel, scan, true);
+            off += 4;
+            continue;
+        }
+        if (op == 0x6E && avail >= 6 && p[1] == 0x00) {
+            size_t tgt = off + 6 + (int32_t)u32le(p + 2);
+            if (tgt < code_sz)
+                harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
+                               cur_tex, 0, visited, 0, sel, scan, true);
+            off += 6;
+            continue;
+        }
+
+        // Unconditional jumps (0x48 Jump, 0x38 ShortJump) end a selected block
+        // by skipping its alternatives (other frames, coarser LODs, the damage
+        // sub-model) — follow them or every alternative block merges in.
+        if (op == 0x48 && avail >= 4 && p[1] == 0x00) {
+            int64_t tgt = (int64_t)off + 4 + (int16_t)u16le(p + 2);
+            if (tgt < 0 || (size_t)tgt >= code_sz) break;
+            off = (size_t)tgt;
+            continue;
+        }
+        if (op == 0x38 && avail >= 3) {
+            int64_t tgt = (int64_t)off + 3 + (int16_t)u16le(p + 1);
+            if (tgt < 0 || (size_t)tgt >= code_sz) break;
+            off = (size_t)tgt;
+            continue;
+        }
+
+        // Plane-test draw-order selectors (0x06; 0x0C/0x0E/0x10 short forms):
+        // like 0x6C these render BOTH chains — the operand's plane/dot-product
+        // sign only swaps the order. Call the linked chain (returns at its
+        // ShortEOF), then fall through past the operand.
+        if (op == 0x06 && avail >= 18 && p[1] == 0x00) {
+            int64_t a  = (int64_t)off + 18 + (int16_t)u16le(p + 16);
+            size_t  sz = 16 + u16le(p + 14);
+            if (a >= 0 && (size_t)a < code_sz)
+                harvest_target(code, code_sz, (size_t)a, scale_factor, vpool,
+                               faces, cur_tex, 0, visited, 0, sel, scan, true);
+            off += sz;
+            continue;
+        }
+        if ((op == 0x0C || op == 0x0E || op == 0x10) && avail >= 14 && p[1] == 0x00) {
+            int64_t a  = (int64_t)off + 14 + (int16_t)u16le(p + 12);
+            size_t  sz = 12 + u16le(p + 10);
+            if (a >= 0 && (size_t)a < code_sz)
+                harvest_target(code, code_sz, (size_t)a, scale_factor, vpool,
+                               faces, cur_tex, 0, visited, 0, sel, scan, true);
+            off += sz;
+            continue;
+        }
+
+        // Draw-order selector (0x6C, `sh_op_6C`): always renders BOTH of its
+        // sub-chains — it calls one (which returns at its ShortEOF) and
+        // continues at the other; the object-field compare in the operand only
+        // swaps the order (painter's-algorithm sorting of overlapping parts).
+        // Statically: harvest the called chain, then continue at the link.
+        // Layout: [6C 00][field u16][cmp u16][relB u16][relA u16][jump op...]
+        // (the 13/14/16-byte sizes are a trailing embedded 38/48/50 jump).
+        if (op == 0x6C && avail >= 13 && p[1] == 0x00) {
+            int64_t a = (int64_t)off + 10 + (int16_t)u16le(p + 8);
+            int64_t b = (int64_t)off + 8  + (int16_t)u16le(p + 6);
+            if (a >= 0 && (size_t)a < code_sz)
+                harvest_target(code, code_sz, (size_t)a, scale_factor, vpool,
+                               faces, cur_tex, 0, visited, 0, sel, scan, true);
+            if (b >= 0 && (size_t)b < code_sz) { off = (size_t)b; continue; }
+            size_t sz6c = instr_skip(p, avail);
+            if (sz6c == 0) break;
+            off += sz6c;
+            continue;
+        }
+
+        // JumpToDetail (0xA6): [A6 00][rel16][threshold u16] — branch to the
+        // lower-detail block when the detail preference is below the threshold.
+        if (op == 0xA6 && avail >= 6 && p[1] == 0x00) {
+            scan.has_detail = true;
+            if (sel.detail < (int)u16le(p + 4)) {
+                int64_t tgt = (int64_t)off + 6 + (int16_t)u16le(p + 2);
+                if (tgt >= 0 && (size_t)tgt < code_sz) {
+                    scan.left_finest = true;
+                    off = (size_t)tgt;
+                    continue;
+                }
+            }
+            off += 6;
+            continue;
+        }
+
+        // JumpToLOD (0xC8): [C8 00][size u16][pixel_threshold u16][rel16] —
+        // jump past this LOD block to the coarser one when the projected
+        // on-screen size is below the threshold (SH.md).
+        if (op == 0xC8 && avail >= 8 && p[1] == 0x00) {
+            uint16_t thr = u16le(p + 4);
+            note_lod_threshold(scan, thr);
+            if (sel.lod_size < (int)thr) {
+                int64_t tgt = (int64_t)off + 8 + (int16_t)u16le(p + 6);
+                if (tgt >= 0 && (size_t)tgt < code_sz) {
+                    scan.left_finest = true;
+                    off = (size_t)tgt;
+                    continue;
+                }
+            }
+            off += 8;
+            continue;
+        }
 
         // JumpToFrame (0x40): [40 00][nframes u16][rel16 x nframes]. Select the
         // frame's block: idx = frame mod nframes; each rel16 is relative to its
@@ -323,8 +476,8 @@ static void walk_code(const uint8_t* code, size_t code_sz,
             uint16_t nframes = u16le(p + 2);
             size_t   table   = 4;                          // rel16 table start
             if (nframes == 0 || table + (size_t)nframes * 2 > avail) { off += 4; continue; }
-            if ((int)nframes > frame_count) frame_count = (int)nframes;
-            size_t idx    = (size_t)(frame % (int)nframes);
+            if ((int)nframes > scan.frame_count) scan.frame_count = (int)nframes;
+            size_t idx    = (size_t)(sel.frame % (int)nframes);
             size_t slot   = off + table + idx * 2;
             size_t target = slot + (size_t)(int16_t)u16le(code + slot);
             off = (target < code_sz) ? target : (off + table + (size_t)nframes * 2);
@@ -334,7 +487,7 @@ static void walk_code(const uint8_t* code, size_t code_sz,
         // JumpToDamage (0xAC): branch to the inline damaged sub-model only for
         // destroyed entities; intact geometry is the fall-through (SH.md).
         if (op == 0xAC && avail >= 4 && p[1] == 0x00) {
-            off += destroyed ? (size_t)(4 + (int16_t)u16le(p + 2)) : 4;
+            off += sel.destroyed ? (size_t)(4 + (int16_t)u16le(p + 2)) : 4;
             continue;
         }
 
@@ -426,10 +579,17 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
                            float scale_factor, std::vector<ShVertex>& vpool,
                            std::vector<ShFace>& faces, std::string cur_tex,
                            size_t base_count, std::vector<char>& visited, int depth,
-                           int frame, int& frame_count) {
-    if (depth > 16) return;
+                           const WalkSel& sel, WalkScan& scan, bool stop_at_eof) {
+    // The 0x6C draw-order web nests deeply on complex airframes; the visited
+    // map is the real cycle guard, so the depth cap is just a stack bound.
+    if (depth > 128) return;
     size_t off = start;
     size_t budget = 4096;  // a sub-stream is small; bound the walk
+    // Set when this walk skips a VertexBuffer to protect the base pool: the
+    // faces that follow were authored against that skipped buffer, so
+    // collecting them would index the wrong vertices (the giant garbage
+    // polygons). Cleared again by a buffer that does land in the pool.
+    bool pool_shadowed = false;
     while (off < code_sz && budget--) {
         if (visited[off]) return;   // already harvested / loop guard
         visited[off] = 1;
@@ -443,7 +603,7 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             size_t tgt = off + 4 + (int16_t)u16le(p + 2);
             if (tgt < code_sz)
                 harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
-                               cur_tex, base_count, visited, depth + 1, frame, frame_count);
+                               cur_tex, base_count, visited, depth + 1, sel, scan, true);
             off += 4;
             continue;
         }
@@ -451,8 +611,86 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             size_t tgt = off + 6 + (int32_t)u32le(p + 2);
             if (tgt < code_sz)
                 harvest_target(code, code_sz, tgt, scale_factor, vpool, faces,
-                               cur_tex, base_count, visited, depth + 1, frame, frame_count);
+                               cur_tex, base_count, visited, depth + 1, sel, scan, true);
             off += 6;
+            continue;
+        }
+
+        // Unconditional jumps end a selected block — follow them (the visited
+        // map stops the walk when it rejoins already-harvested code).
+        if (op == 0x48 && avail >= 4 && p[1] == 0x00) {
+            int64_t tgt = (int64_t)off + 4 + (int16_t)u16le(p + 2);
+            if (tgt < 0 || (size_t)tgt >= code_sz) return;
+            off = (size_t)tgt;
+            continue;
+        }
+        if (op == 0x38 && avail >= 3) {
+            int64_t tgt = (int64_t)off + 3 + (int16_t)u16le(p + 1);
+            if (tgt < 0 || (size_t)tgt >= code_sz) return;
+            off = (size_t)tgt;
+            continue;
+        }
+
+        // Plane-test draw-order selectors (0x06; 0x0C/0x0E/0x10): call the
+        // linked chain, then fall through (see walk_code).
+        if (op == 0x06 && avail >= 18 && p[1] == 0x00) {
+            int64_t a  = (int64_t)off + 18 + (int16_t)u16le(p + 16);
+            size_t  sz = 16 + u16le(p + 14);
+            if (a >= 0 && (size_t)a < code_sz)
+                harvest_target(code, code_sz, (size_t)a, scale_factor, vpool,
+                               faces, cur_tex, base_count, visited, depth + 1,
+                               sel, scan, true);
+            off += sz;
+            continue;
+        }
+        if ((op == 0x0C || op == 0x0E || op == 0x10) && avail >= 14 && p[1] == 0x00) {
+            int64_t a  = (int64_t)off + 14 + (int16_t)u16le(p + 12);
+            size_t  sz = 12 + u16le(p + 10);
+            if (a >= 0 && (size_t)a < code_sz)
+                harvest_target(code, code_sz, (size_t)a, scale_factor, vpool,
+                               faces, cur_tex, base_count, visited, depth + 1,
+                               sel, scan, true);
+            off += sz;
+            continue;
+        }
+
+        // Draw-order selector (0x6C): render both sub-chains (see walk_code).
+        if (op == 0x6C && avail >= 13 && p[1] == 0x00) {
+            int64_t a = (int64_t)off + 10 + (int16_t)u16le(p + 8);
+            int64_t b = (int64_t)off + 8  + (int16_t)u16le(p + 6);
+            if (a >= 0 && (size_t)a < code_sz)
+                harvest_target(code, code_sz, (size_t)a, scale_factor, vpool,
+                               faces, cur_tex, base_count, visited, depth + 1,
+                               sel, scan, true);
+            if (b >= 0 && (size_t)b < code_sz) { off = (size_t)b; continue; }
+            size_t sz6c = instr_skip(p, avail);
+            if (sz6c == 0) return;
+            off += sz6c;
+            continue;
+        }
+
+        // Conditional state branches: same selection as the base walk.
+        if (op == 0xA6 && avail >= 6 && p[1] == 0x00) {       // JumpToDetail
+            scan.has_detail = true;
+            if (sel.detail < (int)u16le(p + 4)) {
+                int64_t tgt = (int64_t)off + 6 + (int16_t)u16le(p + 2);
+                if (tgt >= 0 && (size_t)tgt < code_sz) { off = (size_t)tgt; continue; }
+            }
+            off += 6;
+            continue;
+        }
+        if (op == 0xC8 && avail >= 8 && p[1] == 0x00) {       // JumpToLOD
+            uint16_t thr = u16le(p + 4);
+            note_lod_threshold(scan, thr);
+            if (sel.lod_size < (int)thr) {
+                int64_t tgt = (int64_t)off + 8 + (int16_t)u16le(p + 6);
+                if (tgt >= 0 && (size_t)tgt < code_sz) { off = (size_t)tgt; continue; }
+            }
+            off += 8;
+            continue;
+        }
+        if (op == 0xAC && avail >= 4 && p[1] == 0x00) {       // JumpToDamage
+            off += sel.destroyed ? (size_t)(4 + (int16_t)u16le(p + 2)) : 4;
             continue;
         }
 
@@ -463,8 +701,8 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
         if (op == 0x40 && avail >= 4 && p[1] == 0x00) {       // [40 00][nframes u16][rel16 x nframes]
             uint16_t nframes = u16le(p + 2);
             if (nframes == 0 || 4 + (size_t)nframes * 2 > avail) { off += 4; continue; }
-            if ((int)nframes > frame_count) frame_count = (int)nframes;
-            size_t idx    = (size_t)(frame % (int)nframes);
+            if ((int)nframes > scan.frame_count) scan.frame_count = (int)nframes;
+            size_t idx    = (size_t)(sel.frame % (int)nframes);
             size_t slot   = off + 4 + idx * 2;
             size_t target = slot + (size_t)(int16_t)u16le(code + slot);
             off = (target < code_sz) ? target : (off + 4 + (size_t)nframes * 2);
@@ -478,7 +716,8 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             size_t pool_idx = pa / 8, needed = pool_idx + nv;
             // Append-only: never overwrite the base mesh (state variants reuse
             // low pool slots; merging them statically would corrupt the base).
-            if (pool_idx < base_count) { off += dsz; continue; }
+            // Shadow the faces that follow — they index the skipped buffer.
+            if (pool_idx < base_count) { pool_shadowed = true; off += dsz; continue; }
             if (needed > vpool.size()) vpool.resize(needed, {0.f, 0.f, 0.f});
             for (size_t i = 0; i < nv; ++i) {
                 size_t vo = 6 + i * 6;
@@ -487,14 +726,16 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
                     (int16_t)u16le(p + vo + 2) * scale_factor,
                     (int16_t)u16le(p + vo + 4) * scale_factor };
             }
+            pool_shadowed = false;
             off += dsz;
             continue;
         }
         if (op == 0xFC) {
             ShFace f;
             size_t fs = parse_face(p, avail, f, cur_tex);
-            if (fs == 0 || f.indices.empty()) return;
-            faces.push_back(std::move(f));
+            if (fs == 0) return;
+            if (!pool_shadowed && !f.indices.empty())
+                faces.push_back(std::move(f));
             off += fs;
             continue;
         }
@@ -505,7 +746,15 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             off += 16;
             continue;
         }
-        if (op == 0x1E) { off += 1; continue; }             // Pad
+        if (op == 0x1E) {
+            // ShortEOF (`do_short_eof` = ret): an Unmask-called fragment ends
+            // here. Reloc-entered walks keep going instead — the fragments
+            // that follow are reached by calls the static walk cannot decode
+            // (0x6C selectors, x86), and walking through recovers them.
+            if (stop_at_eof) return;
+            off += 1;
+            continue;
+        }
         if (op == 0xF6 && avail >= 7) { off += 7; continue; } // VertexInfo
         // Other control/attribute opcodes (LOD/detail jumps, culls, render
         // state, …): skip by size and keep collecting facets in this region
@@ -529,25 +778,66 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
 
     mesh.scale = read_scale(cs.data, cs.size);
 
-    // Base geometry (everything up to the first x86 selector).
+    // Pass 1 — the finest-path walk (lod_size = max: every JumpToLOD falls
+    // through). Because a shape stacks its LOD/detail guards ahead of the
+    // geometry they select, this path visits every 0xC8 site, so it doubles
+    // as the scan that collects the shape's distinct pixel thresholds.
+    WalkSel  sel{state.destroyed, state.frame, state.detail, INT_MAX};
+    WalkScan scan;
+    std::vector<char> visited(cs.size, 0);
     walk_code(cs.data, cs.size, mesh.scale,
-              mesh.vertices, mesh.faces, mesh.textures,
-              state.destroyed, state.frame, mesh.frame_count);
+              mesh.vertices, mesh.faces, mesh.textures, visited, sel, scan);
 
     // The x86 conditional selectors gate the articulation geometry. We can't
     // execute the x86, but its `esi` re-entry points are internal pointers in
-    // the PE base-relocation table (#297). Harvest each internal sub-stream.
-    PeInfo pe = parse_pe(data, size);
-    auto targets = collect_reloc_targets(data, size, pe, cs.size);
-    const size_t base_count = mesh.vertices.size();
-    std::vector<char> visited(cs.size, 0);
-    for (auto& t : targets) {
-        uint32_t to = t.second;
-        // skip trampolines (FF 25 -> external import) — those aren't geometry
-        if (to + 1 < cs.size && cs.data[to] == 0xFF && cs.data[to + 1] == 0x25) continue;
-        harvest_target(cs.data, cs.size, to, mesh.scale, mesh.vertices, mesh.faces,
-                       mesh.textures.empty() ? std::string() : mesh.textures.back(),
-                       base_count, visited, 0, state.frame, mesh.frame_count);
+    // the PE base-relocation table (#297). Harvest each internal sub-stream —
+    // but only when the walk stayed on the finest path: the sub-streams are
+    // authored against the finest pool, so pairing them with a lower-detail
+    // or coarser-LOD pool would mis-index the vertices. (The visited map is
+    // shared with the base walk's Unmask calls, so fragments the base state
+    // already rendered are not collected twice.)
+    if (state.lod <= 0 && !scan.left_finest) {
+        PeInfo pe = parse_pe(data, size);
+        auto targets = collect_reloc_targets(data, size, pe, cs.size);
+        const size_t base_count = mesh.vertices.size();
+        // Fresh visited map: the base walk's 0x6C chains mark code they
+        // executed, and reusing those marks would cut the reloc walks short
+        // mid-region. Re-collecting an already-collected face here emits the
+        // same polygon at the same coordinates, which is harmless.
+        std::vector<char> rvisited(cs.size, 0);
+        for (auto& t : targets) {
+            uint32_t to = t.second;
+            // skip trampolines (FF 25 -> external import) — those aren't geometry
+            if (to + 1 < cs.size && cs.data[to] == 0xFF && cs.data[to + 1] == 0x25) continue;
+            harvest_target(cs.data, cs.size, to, mesh.scale, mesh.vertices, mesh.faces,
+                           mesh.textures.empty() ? std::string() : mesh.textures.back(),
+                           base_count, rvisited, 0, sel, scan, false);
+        }
+    }
+
+    std::sort(scan.lod_thresholds.begin(), scan.lod_thresholds.end());
+    mesh.frame_count = scan.frame_count;
+    mesh.lod_count   = (int)scan.lod_thresholds.size() + 1;
+    mesh.has_detail  = scan.has_detail;
+
+    // Pass 2 — a coarser level: re-walk with a synthetic projected size just
+    // below the level's pixel threshold, so exactly the engine's block for
+    // that on-screen size renders.
+    if (state.lod > 0 && !scan.lod_thresholds.empty()) {
+        size_t k   = scan.lod_thresholds.size();
+        size_t lvl = std::min((size_t)state.lod, k);
+        WalkSel csel{state.destroyed, state.frame, state.detail,
+                     (int)scan.lod_thresholds[k - lvl] - 1};
+        ShMesh coarse{};
+        coarse.scale       = mesh.scale;
+        coarse.frame_count = mesh.frame_count;
+        coarse.lod_count   = mesh.lod_count;
+        coarse.has_detail  = mesh.has_detail;
+        WalkScan cscan;
+        std::vector<char> cvisited(cs.size, 0);
+        walk_code(cs.data, cs.size, coarse.scale,
+                  coarse.vertices, coarse.faces, coarse.textures, cvisited, csel, cscan);
+        return coarse;
     }
     return mesh;
 }
@@ -577,6 +867,8 @@ ShInfo sh_parse_info(const uint8_t* data, size_t size) {
     info.vert_count  = (int)mesh.vertices.size();
     info.face_count  = (int)mesh.faces.size();
     info.frame_count = mesh.frame_count;
+    info.lod_count   = mesh.lod_count;
+    info.has_detail  = mesh.has_detail;
     info.textures    = mesh.textures;
 
     // Refine bbox from actual vertices if available

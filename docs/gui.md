@@ -194,6 +194,11 @@ mapped), and annotation (units, enum values). Changes are patched back via
 - **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
   selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
   and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
+- **LOD** slider (shown when the model has distance LODs, i.e. `lod_count > 1`)
+  selects the level of detail (`0xC8` JumpToLOD): 0 = finest … coarsest; it
+  drives `fx::ShState::lod`. The **Low detail** checkbox (shown when the model
+  has a `0xA6` JumpToDetail switch) renders the low-detail preference blocks
+  (`fx::ShState::detail = 0`)
 - **Export OBJ…** writes a Wavefront OBJ (merges all state blocks; the selected
   frame/damage state is a preview-only choice, per the SH round-trip notes)
 
