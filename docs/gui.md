@@ -182,8 +182,12 @@ mapped), and annotation (units, enum values). Changes are patched back via
   referenced texture names in the editor
 - **Orbit** by dragging; **zoom** with the scroll wheel; the camera auto-frames
   the model on selection
-- **Destroyed** toggle renders the damaged sub-model (`0xAC` JumpToDamage) instead
-  of the intact geometry
+- **Destroyed** toggle renders the damaged state: the inline damaged sub-model
+  (`0xAC` JumpToDamage) when the shape carries one, else the whole-model wreck
+  sibling (`<name>_A.SH`, resolved from the same LIB per
+  [fa/shape-selection.md](fa/shape-selection.md) — the render-time swap the
+  engine performs for destroyed aircraft; a `(wreck: …)` hint shows which
+  sibling is displayed)
 - **Texture** toggle (shown when the model references a PIC that resolves in the
   same LIB) skins the textured faces with the decoded texture (via the current
   palette); off falls back to shaded palette colour. Faces without texture

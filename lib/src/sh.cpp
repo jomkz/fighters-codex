@@ -314,6 +314,7 @@ struct WalkSel {
 struct WalkScan {
     int  frame_count = 0;
     bool has_detail  = false;
+    bool has_damage  = false;
     bool left_finest = false; // a detail/LOD branch was taken: not the finest path
     std::vector<uint16_t> lod_thresholds; // distinct 0xC8 pixel thresholds seen
 };
@@ -487,6 +488,7 @@ static void walk_code(const uint8_t* code, size_t code_sz,
         // JumpToDamage (0xAC): branch to the inline damaged sub-model only for
         // destroyed entities; intact geometry is the fall-through (SH.md).
         if (op == 0xAC && avail >= 4 && p[1] == 0x00) {
+            scan.has_damage = true;
             off += sel.destroyed ? (size_t)(4 + (int16_t)u16le(p + 2)) : 4;
             continue;
         }
@@ -690,6 +692,7 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
             continue;
         }
         if (op == 0xAC && avail >= 4 && p[1] == 0x00) {       // JumpToDamage
+            scan.has_damage = true;
             off += sel.destroyed ? (size_t)(4 + (int16_t)u16le(p + 2)) : 4;
             continue;
         }
@@ -819,6 +822,7 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
     mesh.frame_count = scan.frame_count;
     mesh.lod_count   = (int)scan.lod_thresholds.size() + 1;
     mesh.has_detail  = scan.has_detail;
+    mesh.has_damage  = scan.has_damage;
 
     // Pass 2 — a coarser level: re-walk with a synthetic projected size just
     // below the level's pixel threshold, so exactly the engine's block for
@@ -833,6 +837,7 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
         coarse.frame_count = mesh.frame_count;
         coarse.lod_count   = mesh.lod_count;
         coarse.has_detail  = mesh.has_detail;
+        coarse.has_damage  = mesh.has_damage;
         WalkScan cscan;
         std::vector<char> cvisited(cs.size, 0);
         walk_code(cs.data, cs.size, coarse.scale,
@@ -840,6 +845,20 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
         return coarse;
     }
     return mesh;
+}
+
+std::string sh_variant_name(const std::string& base, char variant) {
+    char v = (char)((variant >= 'A' && variant <= 'Z') ? variant + 32 : variant);
+    if (v != 'a' && v != 'b' && v != 'c' && v != 'd' && v != 's') return {};
+    size_t dot = base.rfind('.');
+    std::string stem = (dot == std::string::npos) ? base : base.substr(0, dot);
+    if (stem.empty()) return {};
+    // Match the stem's case for the suffix letter (LIB entries are uppercase).
+    bool upper = false;
+    for (char c : stem) if (c >= 'A' && c <= 'Z') { upper = true; break; }
+    std::string out = stem + '_' + (char)(upper ? v - 32 : v);
+    out += ".SH";
+    return out;
 }
 
 ShInfo sh_parse_info(const uint8_t* data, size_t size) {
@@ -869,6 +888,7 @@ ShInfo sh_parse_info(const uint8_t* data, size_t size) {
     info.frame_count = mesh.frame_count;
     info.lod_count   = mesh.lod_count;
     info.has_detail  = mesh.has_detail;
+    info.has_damage  = mesh.has_damage;
     info.textures    = mesh.textures;
 
     // Refine bbox from actual vertices if available
