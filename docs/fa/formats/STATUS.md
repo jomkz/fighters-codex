@@ -51,4 +51,4 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [T2](T2.md) | terrain | complete | — | read-only [#98](https://github.com/jomkz/fighters-codex/issues/98) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | — |
 | [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | — | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | none [#55](https://github.com/jomkz/fighters-codex/issues/55) | — | — | real | — | `gui/src/editors/vdo_editor.cpp` |
-| [XMI](XMI.md) | audio | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#106](https://github.com/jomkz/fighters-codex/issues/106) | — | — | real | — | `gui/src/editors/xmi_editor.cpp` |
+| [XMI](XMI.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx xmi` | `tests/test_xmi.cpp` | syn/real | — | `gui/src/editors/xmi_editor.cpp` |

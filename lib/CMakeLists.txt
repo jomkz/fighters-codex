@@ -35,6 +35,7 @@
     src/mc.cpp
     src/hgr.cpp
     src/dlg.cpp
+    src/xmi.cpp
 )
 
 add_library(fx::lib ALIAS fx_lib)

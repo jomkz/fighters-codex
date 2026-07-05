@@ -447,6 +447,25 @@ std::vector<std::string> dlg_strings(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## xmi.h — Extended MIDI (XMI → MID)
+
+```cpp
+namespace fx {
+struct XmiChunk    { std::string tag; uint32_t offset, size; };
+struct XmiSequence { std::vector<XmiChunk> chunks; uint16_t timbres; };
+struct XmiFile     { bool valid; uint16_t seq_count;
+                     std::vector<XmiSequence> sequences; };
+
+// Parse the IFF envelope (FORM/XDIR + INFO + CAT XMID + per-seq FORM XMID)
+XmiFile xmi_parse(const uint8_t* data, size_t size);
+
+// Export one sequence to a Standard MIDI File (format 0); empty on error.
+// One-way translation: AIL delays -> SMF deltas, note durations -> note-offs
+std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
+                                size_t seq_index, uint16_t ppqn = 60);
+} // namespace fx
+```
+
 ## cb8.h — FMV video decoder
 
 ```cpp
