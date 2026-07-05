@@ -1,0 +1,62 @@
+/* Site theme (#343): custom mkdocs-material palette + typography touches.
+ * Readability first; the military hint stays in the header treatment and
+ * the slate/navy + amber palette, never in body text. */
+
+/* --- Palette: primary (header, nav highlights) -------------------------- */
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: #24384e;        /* slate navy */
+  --md-primary-fg-color--light: #3d5876;
+  --md-primary-fg-color--dark: #182636;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
+}
+
+/* --- Palette: accent (links on hover, controls, highlights) ------------- */
+[data-md-color-accent="custom"] {
+  --md-accent-fg-color: #e8590c;         /* international orange, dimmed for AA on white */
+  --md-accent-fg-color--transparent: rgba(232, 89, 12, 0.1);
+  --md-accent-bg-color: #ffffff;
+  --md-accent-bg-color--light: #ffffffb3;
+}
+
+/* Light scheme: navy link color, orange on hover/focus. */
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #2a4a66;
+}
+
+/* Dark scheme: shift material's slate hue toward steel blue-navy and
+ * brighten the accent so links keep AA contrast on the dark canvas. */
+[data-md-color-scheme="slate"] {
+  --md-hue: 215;
+  --md-typeset-a-color: #7aa5d2;
+}
+[data-md-color-scheme="slate"][data-md-color-accent="custom"] {
+  --md-accent-fg-color: #ffa94d;
+  --md-accent-fg-color--transparent: rgba(255, 169, 77, 0.1);
+}
+
+/* --- Header: the restrained military hint ------------------------------- */
+/* Site name in spaced uppercase (first topic only — page titles untouched). */
+.md-header__topic:first-child {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Thin accent rule under the header — instrument-panel stripe. */
+.md-header {
+  border-bottom: 2px solid var(--md-accent-fg-color);
+}
+
+/* --- Content readability ------------------------------------------------- */
+/* Slightly rounder, calmer code blocks and admonitions. */
+.md-typeset pre > code {
+  border-radius: 0.3rem;
+}
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 0.3rem;
+}
+/* Zebra striping for the long fact tables (formats, registries). */
+.md-typeset table:not([class]) tbody tr:nth-child(2n) {
+  background-color: var(--md-default-fg-color--lightest);
+}

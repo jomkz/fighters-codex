@@ -18,34 +18,67 @@ copyright: >-
 
 theme:
   name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
   icon:
-    logo: material/airplane
     repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+  # Custom palette (#343): slate/navy primary with an amber/orange accent —
+  # colors are defined in docs/assets/extra.css under `custom`. Three-state
+  # toggle: auto (system) -> light -> dark.
   palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: blue grey
-      accent: deep orange
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: blue grey
-      accent: deep orange
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
-        name: Switch to light mode
+        name: Switch to system preference
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
     - navigation.top
     - navigation.footer
     - toc.follow
     - search.suggest
     - search.highlight
+    - search.share
     - content.code.copy
+    - content.tabs.link
     - content.action.edit
+
+extra_css:
+  - assets/extra.css
+
+# Print/PDF export (#343): print-site concatenates every page into a single
+# /print_page/ for browser print-to-PDF. Must stay the LAST plugin listed.
+plugins:
+  - search
+  - print-site:
+      add_to_navigation: true
+      print_page_title: "Print / PDF"
+      add_cover_page: true
+      add_table_of_contents: true
+      toc_depth: 2
+      add_full_urls: true
+      enumerate_headings: false
 
 markdown_extensions:
   - admonition

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Fighters Codex">
+  <!-- Favicon (#343): colored twin of logo.svg for light browser chrome. -->
+  <circle cx="12" cy="12" r="10.4" fill="none" stroke="#24384e" stroke-width="1.5"/>
+  <path d="M12 4.6 L18.4 16.6 L12 14.2 L5.6 16.6 Z" fill="#e8590c"/>
+</svg>
