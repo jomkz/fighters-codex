@@ -83,7 +83,7 @@ ATF/USNF acquisition (#144) is external — start immediately.
 | 4 | [#49](https://github.com/jomkz/fighters-codex/issues/49) | Codecs for the 16 uncovered formats |
 | 4 | [#50](https://github.com/jomkz/fighters-codex/issues/50) | Test & fixture completeness |
 | 4 | [#51](https://github.com/jomkz/fighters-codex/issues/51) | Fuzzing rollout |
-| 4 | [#279](https://github.com/jomkz/fighters-codex/issues/279) | fx_lib asset interpreters — SH geometry + effect data |
+| 4 | [#279](https://github.com/jomkz/fighters-codex/issues/279) | fx_lib asset interpreters — SH geometry + effect data (complete — SH delivered; effect-data → [#315](https://github.com/jomkz/fighters-codex/issues/315) after [#128](https://github.com/jomkz/fighters-codex/issues/128)) |
 | 4 | [#281](https://github.com/jomkz/fighters-codex/issues/281) | fx_render — shared render abstraction (OpenGL + software backends) |
 | 5 | [#53](https://github.com/jomkz/fighters-codex/issues/53) | Renderer & effects internals — residual static closure |
 | 5 | [#54](https://github.com/jomkz/fighters-codex/issues/54) | Format-unknown closure (static) — residual tail |
