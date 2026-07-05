@@ -298,7 +298,8 @@ static void walk_code(const uint8_t* code, size_t code_sz,
                       float scale_factor,
                       std::vector<ShVertex>& vpool,
                       std::vector<ShFace>& faces,
-                      std::vector<std::string>& textures) {
+                      std::vector<std::string>& textures,
+                      bool destroyed) {
     size_t off         = 0;
     size_t obj_end_off = SIZE_MAX;
     std::string cur_tex;
@@ -307,6 +308,13 @@ static void walk_code(const uint8_t* code, size_t code_sz,
         const uint8_t* p    = code + off;
         size_t         avail = code_sz - off;
         uint8_t        op   = p[0];
+
+        // JumpToDamage (0xAC): branch to the inline damaged sub-model only for
+        // destroyed entities; intact geometry is the fall-through (SH.md).
+        if (op == 0xAC && avail >= 4 && p[1] == 0x00) {
+            off += destroyed ? (size_t)(4 + (int16_t)u16le(p + 2)) : 4;
+            continue;
+        }
 
         if (op == 0x01) break; // EndShape
 
@@ -470,6 +478,10 @@ static void harvest_target(const uint8_t* code, size_t code_sz, size_t start,
 // ---- public API ---------------------------------------------------------
 
 ShMesh sh_parse_mesh(const uint8_t* data, size_t size) {
+    return sh_parse_mesh(data, size, ShState{});
+}
+
+ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
     ShMesh mesh{};
     auto cs = find_code_section(data, size);
     if (!cs.data) return mesh;
@@ -478,7 +490,7 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size) {
 
     // Base geometry (everything up to the first x86 selector).
     walk_code(cs.data, cs.size, mesh.scale,
-              mesh.vertices, mesh.faces, mesh.textures);
+              mesh.vertices, mesh.faces, mesh.textures, state.destroyed);
 
     // The x86 conditional selectors gate the articulation geometry. We can't
     // execute the x86, but its `esi` re-entry points are internal pointers in

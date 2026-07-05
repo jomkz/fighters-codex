@@ -211,8 +211,13 @@ struct ShMesh {
     std::vector<std::string> textures;
 };
 
+struct ShState {                 // selects a conditional-geometry state
+    bool destroyed = false;      // JumpToDamage: emit the wreck sub-model
+};
+
 ShInfo      sh_parse_info(const uint8_t* data, size_t size);
-ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);
+ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);                        // intact
+ShMesh      sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state);  // state-aware
 std::string sh_to_obj(const ShMesh& mesh);   // returns Wavefront OBJ text
 } // namespace fx
 ```
