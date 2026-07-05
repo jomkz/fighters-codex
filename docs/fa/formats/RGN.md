@@ -7,10 +7,14 @@ endianness: little
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 108
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/rgn.cpp]
+  commands: [rgn]
+  tests: [tests/test_rgn.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: false
 related: [SSF]
 ---
@@ -23,6 +27,20 @@ screen clicks to button labels) and sprite-atlas lookups (BUTTONS.RGN maps
 button labels to pixel regions within the button-state sprite sheet). Both
 live in the Disc 1 root alongside the installer executable — not packed into
 any LIB archive.
+
+## Tools
+
+### fx
+
+```
+fx rgn info <file.RGN>     # record count + round-trip check
+fx rgn dump <file.RGN>     # per-record name and rectangle
+```
+
+`rgn_read`/`rgn_write` round-trip byte-identically and enforce the size
+invariant (`4 + 40 × count`). The shipped files live on Disc 1 (not in any
+LIB or the install directory), so the suite is synthetic-only until a bench
+session with the disc mounted spot-checks POSTER.RGN/BUTTONS.RGN.
 
 ## File Layout
 

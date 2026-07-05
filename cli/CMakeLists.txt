@@ -27,6 +27,9 @@
     cmd_cfg.cpp
     cmd_dat.cpp
     cmd_mnu.cpp
+    cmd_mt.cpp
+    cmd_pts.cpp
+    cmd_rgn.cpp
 )
 
 target_link_libraries(fx PRIVATE fx_lib fx_warnings)

@@ -609,3 +609,47 @@ Dump the embedded menu label strings — printable runs of at least `MIN`
 characters (default 3), one per line on stdout.
 
 *See also: [fa/formats/MNU.md](fa/formats/MNU.md)*
+
+## mt — Mission briefing text
+
+```
+fx mt info <file.MT>
+```
+
+#### `fx mt info <file.MT>`
+
+Extract the section-1 header facts (mission id, source name, title, mission
+type), count the sections (2 = briefing, 3–5 = debrief outcomes), and
+confirm the parse round-trips byte-identically.
+
+*See also: [fa/formats/MT.md](fa/formats/MT.md), [fa/formats/TXT.md](fa/formats/TXT.md)*
+
+## pts — Aircraft screen assets
+
+```
+fx pts info <file.PTS>
+```
+
+#### `fx pts info <file.PTS>`
+
+Validate the MZ + Phar Lap `PL` container and report the CODE section
+geometry plus the referenced `ICON*.PIC` aircraft icon.
+
+*See also: [fa/formats/PTS.md](fa/formats/PTS.md)*
+
+## rgn — Installer region maps
+
+```
+fx rgn info <file.RGN>
+fx rgn dump <file.RGN>
+```
+
+#### `fx rgn info <file.RGN>`
+
+Record count, rectangle count, and the byte-identical round-trip check.
+
+#### `fx rgn dump <file.RGN>`
+
+Per-record table: name, vertex count, and coordinates.
+
+*See also: [fa/formats/RGN.md](fa/formats/RGN.md)*

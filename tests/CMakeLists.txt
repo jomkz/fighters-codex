@@ -28,6 +28,9 @@ add_executable(fx_tests
     test_cfg.cpp
     test_dat.cpp
     test_mnu.cpp
+    test_mt.cpp
+    test_pts.cpp
+    test_rgn.cpp
     render/test_render.cpp
 )
 

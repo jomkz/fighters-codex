@@ -31,6 +31,9 @@ int cmd_txt(int argc, char** argv);
 int cmd_cfg(int argc, char** argv);
 int cmd_dat(int argc, char** argv);
 int cmd_mnu(int argc, char** argv);
+int cmd_mt(int argc, char** argv);
+int cmd_pts(int argc, char** argv);
+int cmd_rgn(int argc, char** argv);
 
 static void print_usage() {
     puts("fx -- Fighters Codex\n");
@@ -138,6 +141,16 @@ static void print_usage() {
     puts("Menu DLL commands:");
     puts("  fx mnu info    <file.MNU>");
     puts("  fx mnu strings <file.MNU> [-n MIN]");
+    puts("");
+    puts("Mission briefing text commands:");
+    puts("  fx mt info <file.MT>");
+    puts("");
+    puts("Aircraft screen asset commands:");
+    puts("  fx pts info <file.PTS>");
+    puts("");
+    puts("Installer region map commands:");
+    puts("  fx rgn info <file.RGN>");
+    puts("  fx rgn dump <file.RGN>");
 }
 
 int main(int argc, char** argv) {
@@ -197,6 +210,12 @@ int main(int argc, char** argv) {
         return cmd_dat(argc - 1, argv + 1);
     if (strcmp(cmd, "mnu") == 0)
         return cmd_mnu(argc - 1, argv + 1);
+    if (strcmp(cmd, "mt") == 0)
+        return cmd_mt(argc - 1, argv + 1);
+    if (strcmp(cmd, "pts") == 0)
+        return cmd_pts(argc - 1, argv + 1);
+    if (strcmp(cmd, "rgn") == 0)
+        return cmd_rgn(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||

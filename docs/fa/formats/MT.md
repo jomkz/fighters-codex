@@ -7,10 +7,14 @@ endianness: none
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 108
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/mt.cpp, lib/src/txt.cpp]
+  commands: [mt]
+  tests: [tests/test_mt.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [M, TXT]
 ---
@@ -21,6 +25,19 @@ FA_2.LIB contains 363 `.MT` files — roughly one per mission. Each stores the
 full text content for the pre-mission briefing and post-mission debrief
 screens. Format is **plain ASCII text** using a shared directive/markup engine
 with `.TXT` files.
+
+## Tools
+
+### fx
+
+```
+fx mt info <file.MT>       # mission id/title/type + section count + round-trip
+```
+
+Parsing rides the shared directive engine in `lib/src/txt.cpp` (the same
+line-preserving parser as [TXT](TXT.md)); `lib/src/mt.cpp` adds the
+section-1 header semantics. All 363 `.MT` files in FA_2.LIB round-trip
+byte-identically.
 
 ## File Layout
 
