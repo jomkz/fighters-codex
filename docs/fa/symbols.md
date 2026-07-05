@@ -626,7 +626,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00436140` | `MMPtrToHandle` | sms | linear scan mm_used_list for handle whose data(+8)==ptr |
 | `0x00436170` | `MMPushAllocId` | sms | save mmAllocId onto id save-stack @0x538250 (depth @0x4F3DCC); set new id |
 | `0x00436190` | `MMPopAllocId` | sms | restore mmAllocId from id save-stack |
-| `0x004361B0` | `MMCompactRAM` | sms | stub -> return 0 (no heap compaction on Win32) |
+| `0x004361B0` | `MMCompactRAM` | sms | stub -> return 0 (no heap compaction on Win32) — the Mac-heritage purger that would discard purgeable handles and set T_HANDLE flag 0x1000 (purged); its readers (RMFind/RMFindAndLoad/BrushFromIndex/MAPDrawBG free-and-reload on the flag) are dead recovery paths in the shipping build |
 | `0x004361C0` | `MMFreeAllId` | sms | walk mm_used_list; MMFreeHandle every handle whose allocId(+12)==id (group free) |
 | `0x004361F0` | `MMHandleLen` | sms | return handle->len(+C) if data non-null else 0 |
 | `0x00436210` | `MMLock` | sms |  |
@@ -1290,7 +1290,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004C5D30` | `T_InitDatabase` | sms | set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB) |
 | `0x004C5D50` | `T_ShutdownDatabase` | sms | zero _dbDynamicLow/High |
 | `0x004C5D60` | `T_Init` | sms |  |
-| `0x004C5D70` | `T_Load` | sms |  |
+| `0x004C5D70` | `T_Load` | sms | load <theater>.T2 via RMAccess on map change (T_Shutdown first); relocate the tile-summary (+0x85) and leaf (+0x91) array offsets into pointers; derive <theater>land.PIC (fallback land.PIC) |
 | `0x004C5F40` | `T_StripTildes` | re | remove '~' chars from a filename in place; used twice by T_Load |
 | `0x004C5F60` | `T_Init2` | sms |  |
 | `0x004C5FA0` | `T_Shutdown` | sms | mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change) |
