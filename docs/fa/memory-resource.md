@@ -53,13 +53,20 @@ boundary is explicit.
 
 ### 2. `T_HANDLE` flag bit `0x1000`
 
-Distinct from the `0x4000` mmap bit (unmap-on-free) and `0x0010` (RM-registered → `RMNotify`
-on free). No clean reader of `handle+0x10 & 0x1000` surfaced — the `& 0x1000` in
-`ConvertOldPreferredTargetId` is an unrelated 13-bit target-ID sign bit, not the handle flag —
-so pinning it needs a dedicated handle-flag write/read trace. Tracked in
-[#262](https://github.com/jomkz/fighters-codex/issues/262).
+**Resolved statically** (2026-07-05, [#262](https://github.com/jomkz/fighters-codex/issues/262)):
+`0x1000` is the **purged-handle mark** from the allocator's Mac heritage (a purgeable
+handle whose memory was discarded by compaction must be reloaded). The readers are
+real and all follow the same recovery contract — `RMFind` (`0x4A6990`) drops a
+registry entry whose entry flag `+0x0E & 2` is set and whose handle carries `0x1000`
+(frees the husk, returns miss), `RMFindAndLoad` re-loads in a loop on the same test,
+and `BrushFromIndex` (`0x4AB860`) / `MAPDrawBG` (`0x4224EE`) free-and-reload their
+cached PIC handles. But the **writer does not survive**: `MMUseHandle` stores caller
+flags verbatim and no call site passes `0x1000`, `MMFreeHandle` zeroes the flag word,
+and the one function that would purge — `MMCompactRAM` (`0x4361B0`) — is compiled to
+`return 0` on Win32. In the shipping game the flag can never be set; the recovery
+paths are vestigial.
 
-*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262)).*
+*Status: resolved — vestigial purge protocol; writer stubbed out on Win32.*
 
 ## Related
 

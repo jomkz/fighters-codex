@@ -77,7 +77,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004C5D30,func,_T_InitDatabase@0,T_InitDatabase,sms,confirmed,set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB),
 0x004C5D50,func,_T_ShutdownDatabase@0,T_ShutdownDatabase,sms,confirmed,zero _dbDynamicLow/High,
 0x004C5D60,func,_T_Init@0,T_Init,sms,confirmed,,
-0x004C5D70,func,@T_Load@4,T_Load,sms,confirmed,,
+0x004C5D70,func,@T_Load@4,T_Load,sms,confirmed,load <theater>.T2 via RMAccess on map change (T_Shutdown first); relocate the tile-summary (+0x85) and leaf (+0x91) array offsets into pointers; derive <theater>land.PIC (fallback land.PIC),
 0x004C5F40,func,T_StripTildes,,re,inferred,remove '~' chars from a filename in place; used twice by T_Load,
 0x004C5F60,func,_T_Init2@0,T_Init2,sms,confirmed,,
 0x004C5FA0,func,_T_Shutdown@0,T_Shutdown,sms,confirmed,mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change),

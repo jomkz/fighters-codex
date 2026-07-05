@@ -48,7 +48,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | — | `gui/src/editors/sh_editor.cpp` |
 | [SMS](SMS.md) | system | complete | — | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx sms` | — | real | — | — |
 | [SSF](SSF.md) | installer | complete | — | none [#109](https://github.com/jomkz/fighters-codex/issues/109) | — | — | — | — | — |
-| [T2](T2.md) | terrain | partial | re-gameplay [#56](https://github.com/jomkz/fighters-codex/issues/56)<br>re-gameplay [#56](https://github.com/jomkz/fighters-codex/issues/56) | read-only [#98](https://github.com/jomkz/fighters-codex/issues/98) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | — |
+| [T2](T2.md) | terrain | complete | — | read-only [#98](https://github.com/jomkz/fighters-codex/issues/98) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | — |
 | [TXT](TXT.md) | text | complete | — | none [#104](https://github.com/jomkz/fighters-codex/issues/104) | — | — | real | — | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | none [#55](https://github.com/jomkz/fighters-codex/issues/55) | — | — | real | — | `gui/src/editors/vdo_editor.cpp` |
 | [XMI](XMI.md) | audio | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | none [#106](https://github.com/jomkz/fighters-codex/issues/106) | — | — | real | — | `gui/src/editors/xmi_editor.cpp` |

@@ -55,14 +55,17 @@ Full record: [`db/symbols/terrain.csv`](https://github.com/jomkz/fighters-codex/
 
 ### 1. `.T2` sub-header bytes
 
-The exact meaning of several `.T2` sub-header fields (documented as partly-unknown in
-[T2.md](formats/T2.md)) is read here by the loader path; a targeted trace of the corner-height
-sampler would resolve them. The `.T2` loader / corner-height sampler was **not located in the
-analyzed code** (see § the T2 loader note), so the sub-header class constants cannot be pinned
-from the current inventory — it needs the loader path first. Tracked in
-[#262](https://github.com/jomkz/fighters-codex/issues/262).
+**Resolved statically** (2026-07-05, [#262](https://github.com/jomkz/fighters-codex/issues/262)).
+The "sub-header class constants" decode as the `.T2` header field map read by the
+loader path, which *was* in the analyzed code all along: `T_Load` (`0x4C5D70`)
+loads the theater file through `RMAccess` and relocates two file offsets into
+pointers — the tile-summary array (`+0x85`) and the leaf array (`+0x91`) — and
+`T_GetLeaf` (`0x4C6040`) indexes both arrays row-major using the grid fields
+(`+0x79` leaf step, `+0x7D`/`+0x81` tile grid, `+0x89`/`+0x8D` leaf grid). The
+payload is two flat arrays, not per-tile records; full field map and the
+superseded readings in [T2.md](formats/T2.md).
 
-*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262)).*
+*Status: resolved — see [T2.md](formats/T2.md) § Engine Notes.*
 
 ## Related
 

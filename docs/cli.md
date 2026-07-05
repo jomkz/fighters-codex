@@ -301,16 +301,19 @@ fx t2 info <file.T2>
 #### `fx t2 info <file.T2>`
 
 Print the terrain grid dimensions, tile count, and surface class distribution
-(water vs land tiles, top land classes by count).
+(water vs land, top land classes by count). Grid is width × height per the
+engine's field map, and the distribution counts the per-tile **summary
+records** (the authored far-LOD array — see
+[fa/formats/T2.md](fa/formats/T2.md) § Data Payload).
 
 ```
 > fx t2 info UKR.T2
 Theater:    UKR
-Grid:       25 x 26 (650 tiles)
-Surface:    water 176 (27.1%)  land 474 (72.9%)
+Grid:       26 x 25 (650 tiles)
+Surface:    water 195 (30.0%)  land 455 (70.0%)
 Land classes:
-  0xD4  315 tiles (48.5%)
-  0xD6   46 tiles (7.1%)
+  0xD0  21 tiles (3.2%)
+  0xD2  36 tiles (5.5%)
   ...
 ```
 

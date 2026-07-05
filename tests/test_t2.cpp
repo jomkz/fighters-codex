@@ -5,29 +5,39 @@
 
 using namespace fx;
 
-// Minimal T2 binary: 149-byte header + dim_x*dim_y*195 bytes of tile data.
-static std::vector<uint8_t> make_t2(uint32_t dim_x, uint8_t dim_y,
-                                     uint8_t surface_class = 0xFF) {
-    const uint32_t HEADER = 149;
-    const uint32_t TILE   = 195;
-    size_t total = HEADER + (size_t)dim_x * dim_y * TILE;
+// Minimal T2 binary in the engine layout: 0x95-byte header (field map in
+// fx/t2.h), a flat leaf array (leaves_w*leaves_h x 3 B), then the per-tile
+// summary array (tiles_w*tiles_h x 3 B).
+static std::vector<uint8_t> make_t2(uint32_t tiles_w, uint32_t tiles_h,
+                                     uint8_t surface_class = 0xFF,
+                                     uint32_t leaf_step = 8) {
+    const uint32_t HEADER      = 0x95;
+    uint32_t leaves_w    = tiles_w * leaf_step;
+    uint32_t leaves_h    = tiles_h * leaf_step;
+    uint32_t leaf_off    = HEADER;
+    uint32_t summary_off = leaf_off + leaves_w * leaves_h * 3;
+    size_t   total       = summary_off + tiles_w * tiles_h * 3;
     std::vector<uint8_t> buf(total, 0);
 
-    // Magic
     buf[0] = 'B'; buf[1] = 'I'; buf[2] = 'T'; buf[3] = '2';
-    // dim_x at 0x64 (u32 LE)
-    buf[0x64] = (uint8_t)(dim_x & 0xFF);
-    buf[0x65] = (uint8_t)((dim_x >> 8) & 0xFF);
-    buf[0x66] = (uint8_t)((dim_x >> 16) & 0xFF);
-    buf[0x67] = (uint8_t)((dim_x >> 24) & 0xFF);
-    // dim_y at 0x7D (u8)
-    buf[0x7D] = dim_y;
+    auto wr32 = [&](size_t at, uint32_t v) {
+        buf[at]     = (uint8_t)(v & 0xFF);
+        buf[at + 1] = (uint8_t)((v >> 8) & 0xFF);
+        buf[at + 2] = (uint8_t)((v >> 16) & 0xFF);
+        buf[at + 3] = (uint8_t)((v >> 24) & 0xFF);
+    };
+    wr32(0x64, tiles_h);       // legacy duplicate
+    wr32(0x79, leaf_step);
+    wr32(0x7D, tiles_w);
+    wr32(0x81, tiles_h);
+    wr32(0x85, summary_off);
+    wr32(0x89, leaves_w);
+    wr32(0x8D, leaves_h);
+    wr32(0x91, leaf_off);
 
-    // Fill record 0 byte 0 of each tile with the surface class
-    for (uint32_t t = 0; t < (uint32_t)dim_x * dim_y; t++) {
-        size_t tile_base = HEADER + (size_t)t * TILE;
-        buf[tile_base] = surface_class;
-    }
+    // Fill every summary record's class byte
+    for (uint32_t t = 0; t < tiles_w * tiles_h; t++)
+        buf[summary_off + (size_t)t * 3] = surface_class;
     return buf;
 }
 
@@ -46,7 +56,14 @@ TEST_CASE("t2_info rejects truncated buffer") {
 
 TEST_CASE("t2_info rejects inconsistent file size") {
     auto buf = make_t2(2, 2);
-    buf.push_back(0); // one extra byte breaks the size check
+    buf.push_back(0); // one extra byte breaks the array-extent check
+    T2Info info;
+    REQUIRE_FALSE(t2_info(buf.data(), buf.size(), &info));
+}
+
+TEST_CASE("t2_info rejects a leaf grid that disagrees with the tile grid") {
+    auto buf = make_t2(2, 2);
+    buf[0x89] = 15; // leaves_w != tiles_w * leaf_step
     T2Info info;
     REQUIRE_FALSE(t2_info(buf.data(), buf.size(), &info));
 }
@@ -58,10 +75,14 @@ TEST_CASE("t2_info parses 2x2 grid correctly") {
     REQUIRE(info.dim_x      == 2u);
     REQUIRE(info.dim_y      == 2u);
     REQUIRE(info.tile_count == 4u);
-    REQUIRE(info.tile_offset == 149u);
+    REQUIRE(info.leaf_step  == 8u);
+    REQUIRE(info.leaves_w   == 16u);
+    REQUIRE(info.leaves_h   == 16u);
+    REQUIRE(info.leaf_offset == 0x95u);
+    REQUIRE(info.summary_offset == 0x95u + 16u * 16u * 3u);
 }
 
-TEST_CASE("t2_info builds surface class distribution") {
+TEST_CASE("t2_info builds surface class distribution from tile summaries") {
     auto buf = make_t2(2, 2, 0xFF);
     T2Info info;
     REQUIRE(t2_info(buf.data(), buf.size(), &info));
@@ -79,12 +100,13 @@ TEST_CASE("t2_info handles 1x1 grid") {
 
 TEST_CASE("t2_info surface_dist sums to tile_count") {
     auto buf = make_t2(3, 3, 0xFF);
-    // Overwrite one tile's surface class
-    const size_t HEADER = 149, TILE = 195;
-    buf[HEADER + 2 * TILE] = 0xD2; // tile index 2 is land
     T2Info info;
+    REQUIRE(t2_info(buf.data(), buf.size(), &info));
+    // Overwrite one summary record's class
+    buf[info.summary_offset + 2 * 3] = 0xD2; // tile index 2 is land
     REQUIRE(t2_info(buf.data(), buf.size(), &info));
     uint32_t total = 0;
     for (auto& [k, v] : info.surface_dist) total += v;
     REQUIRE(total == info.tile_count);
+    REQUIRE(info.surface_dist.at(0xD2) == 1u);
 }

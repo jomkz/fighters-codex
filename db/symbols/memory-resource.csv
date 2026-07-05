@@ -15,7 +15,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00436140,func,@MMPtrToHandle@4,MMPtrToHandle,sms,confirmed,linear scan mm_used_list for handle whose data(+8)==ptr,
 0x00436170,func,@MMPushAllocId@4,MMPushAllocId,sms,confirmed,save mmAllocId onto id save-stack @0x538250 (depth @0x4F3DCC); set new id,
 0x00436190,func,@MMPopAllocId@0,MMPopAllocId,sms,confirmed,restore mmAllocId from id save-stack,
-0x004361B0,func,@MMCompactRAM@0,MMCompactRAM,sms,confirmed,stub -> return 0 (no heap compaction on Win32),
+0x004361B0,func,@MMCompactRAM@0,MMCompactRAM,sms,confirmed,stub -> return 0 (no heap compaction on Win32) — the Mac-heritage purger that would discard purgeable handles and set T_HANDLE flag 0x1000 (purged); its readers (RMFind/RMFindAndLoad/BrushFromIndex/MAPDrawBG free-and-reload on the flag) are dead recovery paths in the shipping build,
 0x004361C0,func,@MMFreeAllId@4,MMFreeAllId,sms,confirmed,walk mm_used_list; MMFreeHandle every handle whose allocId(+12)==id (group free),
 0x004361F0,func,@MMHandleLen@4,MMHandleLen,sms,confirmed,return handle->len(+C) if data non-null else 0,
 0x00436210,func,@MMLock@8,MMLock,sms,confirmed,,
