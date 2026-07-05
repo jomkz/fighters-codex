@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/ealib.cpp, lib/src/blast.cpp]
   commands: [lib]
   tests: [tests/test_ealib.cpp]
-  fuzz: [fuzz/fuzz_ealib.cpp]
+  fuzz: [fuzz/fuzz_ealib.cpp, fuzz/fuzz_blast.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

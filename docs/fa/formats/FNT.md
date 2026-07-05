@@ -11,8 +11,8 @@ codec:
   issue: 97
   lib: [lib/src/fnt.cpp, lib/src/pe.cpp]
   commands: [fnt]
-  tests: []
-  fuzz: []
+  tests: [tests/test_pe.cpp]
+  fuzz: [fuzz/fuzz_pe.cpp]
   gui: [gui/src/editors/fnt_editor.cpp]
   fixtures:
     synthetic: false

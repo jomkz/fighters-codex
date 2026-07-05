@@ -43,3 +43,5 @@ function(fx_add_fuzzer name)
 endfunction()
 
 fx_add_fuzzer(fuzz_ealib)
+fx_add_fuzzer(fuzz_blast)
+fx_add_fuzzer(fuzz_pe)
