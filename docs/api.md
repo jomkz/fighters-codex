@@ -397,6 +397,42 @@ std::string rgn_name(const RgnRecord& rec);
 } // namespace fx
 ```
 
+## ssf.h — Installer scripts
+
+```cpp
+namespace fx {
+struct SsfStatement {
+    size_t line;                    // index into the TxtDoc
+    std::string keyword;            // e.g. "INSTALL_FILES"
+    std::vector<std::string> args;  // unquoted argument values
+};
+struct SsfDoc { TxtDoc text; std::vector<SsfStatement> statements; };
+
+SsfDoc ssf_read(const uint8_t* data, size_t size);   // never fails
+std::vector<uint8_t> ssf_write(const SsfDoc& doc);   // byte-identical inverse
+} // namespace fx
+```
+
+## mc.h / hgr.h — Mission condition & hangar DLL readers
+
+```cpp
+namespace fx {
+struct McInfo  { bool valid; CodeSection code; };
+McInfo mc_info(const uint8_t* data, size_t size);
+std::vector<std::string> mc_strings(const uint8_t* data, size_t size,
+                                    size_t min_len = 3);
+
+struct HgrInfo {
+    bool valid;
+    CodeSection code;
+    std::vector<std::string> pics;  // referenced *.PIC assets, in order
+};
+HgrInfo hgr_info(const uint8_t* data, size_t size);
+std::vector<std::string> hgr_strings(const uint8_t* data, size_t size,
+                                     size_t min_len = 3);
+} // namespace fx
+```
+
 ## cb8.h — FMV video decoder
 
 ```cpp

@@ -7,10 +7,14 @@ endianness: none
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 109
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/ssf.cpp]
+  commands: [ssf]
+  tests: [tests/test_ssf.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: false
 related: [LIB, RGN]
 ---
@@ -20,6 +24,21 @@ related: [LIB, RGN]
 `.SSF` files are plain-text EA installer scripts that drive the FA
 installation process. All three files reside in the Disc 1 root alongside the
 installer executable. None are packed into any LIB archive.
+
+## Tools
+
+### fx
+
+```
+fx ssf info <file.SSF>     # keyword summary + round-trip check
+fx ssf dump <file.SSF>     # every statement with its arguments
+```
+
+Line storage rides the shared line-preserving engine (`lib/src/txt.cpp`), so
+any input round-trips byte-identically; keywords and their comma-separated
+arguments are extracted as an overlay. Disc-1-only format (like
+[RGN](RGN.md)), so the suite is synthetic until a bench session with the
+disc mounted spot-checks the three shipped scripts.
 
 ## File Layout
 

@@ -653,3 +653,57 @@ Record count, rectangle count, and the byte-identical round-trip check.
 Per-record table: name, vertex count, and coordinates.
 
 *See also: [fa/formats/RGN.md](fa/formats/RGN.md)*
+
+## ssf — Installer scripts
+
+```
+fx ssf info <file.SSF>
+fx ssf dump <file.SSF>
+```
+
+#### `fx ssf info <file.SSF>`
+
+Per-keyword statement counts and the byte-identical round-trip check.
+
+#### `fx ssf dump <file.SSF>`
+
+Every statement with its source line, keyword, and unquoted arguments.
+
+*See also: [fa/formats/SSF.md](fa/formats/SSF.md)*
+
+## mc — Mission condition DLLs
+
+```
+fx mc info    <file.MC>
+fx mc strings <file.MC> [-n MIN]
+```
+
+#### `fx mc info <file.MC>`
+
+Validate the MZ + Phar Lap `PL` container and report the CODE section
+geometry plus the embedded-string count.
+
+#### `fx mc strings <file.MC> [-n MIN]`
+
+Dump the embedded strings — including the imported mission-condition API
+names — one per line on stdout.
+
+*See also: [fa/formats/MC.md](fa/formats/MC.md)*
+
+## hgr — Hangar screen DLLs
+
+```
+fx hgr info    <file.HGR>
+fx hgr strings <file.HGR> [-n MIN]
+```
+
+#### `fx hgr info <file.HGR>`
+
+Validate the MZ + Phar Lap `PL` container and list the referenced PIC assets
+(hangar background layers and the selection-icon atlas).
+
+#### `fx hgr strings <file.HGR> [-n MIN]`
+
+Dump the embedded strings, one per line on stdout.
+
+*See also: [fa/formats/HGR.md](fa/formats/HGR.md)*

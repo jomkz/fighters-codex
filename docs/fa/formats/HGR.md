@@ -11,10 +11,14 @@ spec:
       issue: 54
       note: "sub-resource layout beyond the slot tables unmapped"
 codec:
-  direction: none
-  issue: 109
+  direction: read
+  rationale: "engine-code container (hangar DLL, PL family) whose slot-table sub-resource base is not yet pinned (#54): fx_lib surfaces the container geometry and the PIC asset references; slot decoding lands when the sub-resource offset is confirmed"
+  lib: [lib/src/hgr.cpp]
+  commands: [hgr]
+  tests: [tests/test_hgr.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [PIC, MNU]
 ---
@@ -24,6 +28,19 @@ related: [PIC, MNU]
 FA_2.LIB contains 2 `.HGR` files. Each defines a hangar screen — the aircraft
 selection and loadout interface shown at an airbase. Each is a **Win32 PE DLL**
 loaded at runtime; `H_AIRB.HGR` decompresses to 4608 bytes.
+
+## Tools
+
+### fx
+
+```
+fx hgr info    <file.HGR>            # container check + referenced PIC assets
+fx hgr strings <file.HGR> [-n MIN]   # embedded strings
+```
+
+Same MZ + Phar Lap `PL` container family as [CAM](CAM.md). Both shipped
+files surface their documented references (`h_airb.PIC` twice +
+`SELICONS.PIC`; the carrier variant `h_airb2.PIC` twice + `SELICON3.PIC`).
 
 ## File Layout
 

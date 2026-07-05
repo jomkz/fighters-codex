@@ -34,6 +34,9 @@ int cmd_mnu(int argc, char** argv);
 int cmd_mt(int argc, char** argv);
 int cmd_pts(int argc, char** argv);
 int cmd_rgn(int argc, char** argv);
+int cmd_ssf(int argc, char** argv);
+int cmd_mc(int argc, char** argv);
+int cmd_hgr(int argc, char** argv);
 
 static void print_usage() {
     puts("fx -- Fighters Codex\n");
@@ -151,6 +154,18 @@ static void print_usage() {
     puts("Installer region map commands:");
     puts("  fx rgn info <file.RGN>");
     puts("  fx rgn dump <file.RGN>");
+    puts("");
+    puts("Installer script commands:");
+    puts("  fx ssf info <file.SSF>");
+    puts("  fx ssf dump <file.SSF>");
+    puts("");
+    puts("Mission condition DLL commands:");
+    puts("  fx mc  info    <file.MC>");
+    puts("  fx mc  strings <file.MC> [-n MIN]");
+    puts("");
+    puts("Hangar screen DLL commands:");
+    puts("  fx hgr info    <file.HGR>");
+    puts("  fx hgr strings <file.HGR> [-n MIN]");
 }
 
 int main(int argc, char** argv) {
@@ -216,6 +231,12 @@ int main(int argc, char** argv) {
         return cmd_pts(argc - 1, argv + 1);
     if (strcmp(cmd, "rgn") == 0)
         return cmd_rgn(argc - 1, argv + 1);
+    if (strcmp(cmd, "ssf") == 0)
+        return cmd_ssf(argc - 1, argv + 1);
+    if (strcmp(cmd, "mc") == 0)
+        return cmd_mc(argc - 1, argv + 1);
+    if (strcmp(cmd, "hgr") == 0)
+        return cmd_hgr(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||

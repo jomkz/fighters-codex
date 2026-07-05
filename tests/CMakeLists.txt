@@ -31,6 +31,9 @@ add_executable(fx_tests
     test_mt.cpp
     test_pts.cpp
     test_rgn.cpp
+    test_ssf.cpp
+    test_mc.cpp
+    test_hgr.cpp
     render/test_render.cpp
 )
 
