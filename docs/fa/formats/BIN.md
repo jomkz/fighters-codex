@@ -8,11 +8,15 @@ endianness: none
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 107
+  direction: read
+  rationale: "opaque flat lookup tables — the bytes are the content; identity is the only write, so a writer would prove nothing (BIN.md documents each table's generator function instead)"
+  lib: [lib/src/bin.cpp]
+  commands: [bin]
+  tests: [tests/test_bin.cpp]
+  fuzz: []
   gui: [gui/src/editors/bin_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [P, PAL]
 ---
@@ -21,6 +25,18 @@ related: [P, PAL]
 
 FA_2.LIB contains 6 `.BIN` files. All are flat lookup tables used by the
 engine's color blending and insignia systems.
+
+## Tools
+
+### fx
+
+```
+fx bin info <file.BIN>     # kind (from the filename) + documented-size check
+```
+
+The bytes carry no self-describing structure, so `fx bin info` classifies by
+entry name (`bin_classify`) and verifies the size against the inventory
+below; the fxs BIN editor shows the same classification above its hex view.
 
 ## File Layout
 

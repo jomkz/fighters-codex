@@ -20,6 +20,9 @@ add_executable(fx_tests
     test_t2.cpp
     test_plt.cpp
     test_pe.cpp
+    test_fbc.cpp
+    test_bin.cpp
+    test_cam.cpp
     render/test_render.cpp
 )
 

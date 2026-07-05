@@ -24,6 +24,9 @@ int cmd_fnt(int argc, char** argv);
 int cmd_mus(int argc, char** argv);
 int cmd_bi(int argc, char** argv);
 int cmd_ai(int argc, char** argv);
+int cmd_fbc(int argc, char** argv);
+int cmd_bin(int argc, char** argv);
+int cmd_cam(int argc, char** argv);
 
 static void print_usage() {
     puts("fx -- Fighters Codex\n");
@@ -109,6 +112,17 @@ static void print_usage() {
     puts("");
     puts("AI compiler commands:");
     puts("  fx ai compile <file.AI> -o <file.BI>");
+    puts("");
+    puts("Video frame index commands:");
+    puts("  fx fbc info <file.FBC>");
+    puts("  fx fbc ls   <file.FBC>");
+    puts("");
+    puts("Lookup table commands:");
+    puts("  fx bin info <file.BIN>");
+    puts("");
+    puts("Campaign DLL commands:");
+    puts("  fx cam info    <file.CAM>");
+    puts("  fx cam strings <file.CAM> [-n MIN]");
 }
 
 int main(int argc, char** argv) {
@@ -154,6 +168,12 @@ int main(int argc, char** argv) {
         return cmd_bi(argc - 1, argv + 1);
     if (strcmp(cmd, "ai")  == 0)
         return cmd_ai(argc - 1, argv + 1);
+    if (strcmp(cmd, "fbc") == 0)
+        return cmd_fbc(argc - 1, argv + 1);
+    if (strcmp(cmd, "bin") == 0)
+        return cmd_bin(argc - 1, argv + 1);
+    if (strcmp(cmd, "cam") == 0)
+        return cmd_cam(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||
