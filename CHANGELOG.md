@@ -7,6 +7,58 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.9] - 2026-07-05
+
+Checkpoint release for Phase 4 (Codec & Test Completeness): **every documented
+FA format now has an `fx_lib` codec and `fx` CLI surface** (epic #49), and the
+fuzzing rollout is live in CI. Round-trip where the format warrants it,
+validated against a real install; read + rationale for the engine-code
+overlays and one-way translations.
+
+### Added
+- **fx-lib/fx-cli** **Codecs for the last sixteen formats (epic #49).** Every
+  documented format `fx` could not previously inspect now has a library codec
+  and a CLI command:
+  - **Text / config family** (#104) — `TXT`, `CFG`, `DAT`, `MNU`. The `.TXT`
+    directive engine is a line-preserving parser that round-trips any input
+    byte-identically; `EA.CFG` (347-byte CONFIG struct) and `NET.DAT`
+    (3552-byte CN_INFO) round-trip the install's live files through typed
+    structs, with the untraced fields passed through verbatim.
+  - **Small-binary A** (#108) — `MT`, `PTS`, `RGN`. All 363 `.MT` briefings
+    round-trip byte-identically on the shared directive engine; `RGN`
+    installer region maps get a full two-way codec.
+  - **Small-binary B** (#109) — `SSF` (installer script, byte-identical
+    round-trip), `MC`, `HGR`.
+  - **XMI → MID** (#106) — a clean-room exporter: the AIL `EVNT` stream (sum
+    -of-bytes delay encoding, note-on-with-duration) is decoded and written as
+    a Standard MIDI File (format 0). All 78 stock `.XMI` export to valid SMF.
+  - **Container inspectors** for the Phar Lap `PL` overlay DLLs — `CAM`/`MNU`
+    (#104), `PTS` (#108), `MC`/`HGR` (#109), `DLG` (#105): validated
+    container + embedded-string extraction, with the structural record
+    decode tracked under #54.
+  - **FBC/BIN/CAM** parsers lifted from the GUI into the library (#107).
+- **fx-lib** **LIB terminator entry + `ealib_repack` (#115).** Recovered the
+  container's directory terminator (the `(N+1)`th all-zero entry whose offset
+  is the file size); `fx lib repack` rebuilds any archive from its own
+  directory. The full-install round-trip test repacks every `.LIB` in a real
+  install byte-identically.
+- **build/ci** **Fuzzing rollout (epic #51 in progress).** Container fuzz
+  harnesses `fuzz_blast` and `fuzz_pe` (#116), plus a weekly deep fuzz CI job
+  (30 min/harness) with an auto-filing finding policy (#119).
+- **test** Synthetic-first fixture policy and a dedicated blast-decompressor
+  suite (#110, #111).
+
+### Changed
+- **repo** Extended the asset gitignore to every documented FA extension so
+  game content cannot be committed (#319).
+
+### Fixed
+- **fx-lib** `pe_code_section` computed section offsets in 32-bit arithmetic
+  that could wrap past the bounds checks into an out-of-bounds read on a
+  crafted overlay; found by `fuzz_pe` and now computed in 64-bit (#116).
+- **fx-cli** Embed the UTF-8 code-page manifest so non-ASCII file paths work
+  on Windows 10 1903+ (#165).
+
 ## [0.5.8] - 2026-07-05
 
 ### Added
@@ -319,7 +371,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.8...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.9...HEAD
+[0.5.9]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.9
 [0.5.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.8
 [0.5.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.7
 [0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
