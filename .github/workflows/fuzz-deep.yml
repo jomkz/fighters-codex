@@ -1,0 +1,95 @@
+name: Fuzz (deep)
+
+# Weekly 30-minute-per-target libFuzzer session over every committed harness
+# (#119). The per-PR 60-second smoke lives in ci.yml (fuzz-smoke); this run
+# goes deep enough to reach states the smoke never will. Findings fail the
+# run, upload as reproducer artifacts, and auto-file (or extend) a `fuzzing`
+# issue. Policy: docs/development.md § Fuzzing.
+
+on:
+  schedule:
+    - cron: "41 5 * * 2" # Tuesdays 05:41 UTC — offset from the CodeQL sweep
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  fuzz-deep:
+    name: fuzz-deep
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Configure
+        run: cmake --preset fuzz
+
+      - name: Build harnesses
+        run: cmake --build --preset fuzz --target fuzzers
+
+      - name: Deep run (30 min per harness)
+        run: |
+          status=0
+          for bin in build/fuzz/fuzz/fuzz_*; do
+            [ -f "$bin" ] && [ -x "$bin" ] || continue
+            name=$(basename "$bin")
+            work="build/fuzz/deep/$name"
+            mkdir -p "$work/corpus"
+            args=(-max_total_time=1800 -rss_limit_mb=2048 -malloc_limit_mb=512
+                  -max_len=1048576 -print_final_stats=1
+                  -artifact_prefix="$work/" "$work/corpus")
+            [ -d "fuzz/corpus/$name" ] && args+=("fuzz/corpus/$name")
+            [ -f "fuzz/$name.dict" ] && args+=("-dict=fuzz/$name.dict")
+            echo "::group::$name"
+            "$bin" "${args[@]}" || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
+      - name: Collect findings
+        id: findings
+        if: always()
+        run: |
+          found=$(find build/fuzz/deep -maxdepth 2 \
+                    \( -name 'crash-*' -o -name 'oom-*' \
+                       -o -name 'timeout-*' -o -name 'leak-*' \) 2>/dev/null | head -50)
+          if [ -n "$found" ]; then
+            echo "$found"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload reproducers
+        if: always() && steps.findings.outputs.found == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: fuzz-deep-findings
+          path: |
+            build/fuzz/deep/*/crash-*
+            build/fuzz/deep/*/oom-*
+            build/fuzz/deep/*/timeout-*
+            build/fuzz/deep/*/leak-*
+          if-no-files-found: ignore
+
+      - name: File or extend the findings issue
+        if: always() && steps.findings.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          body="Scheduled deep fuzz run found reproducers.
+
+          - Run: $run_url
+          - Reproducers: \`fuzz-deep-findings\` artifact on that run
+          - Policy (docs/development.md § Fuzzing): minimize with \`-minimize_crash=1\`, fix, and add a Catch2 regression test before merging."
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label fuzzing --state open \
+                       --search "in:title \"fuzz: scheduled deep-run findings\"" \
+                       --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "$body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label fuzzing \
+              --title "fuzz: scheduled deep-run findings" \
+              --body "$body"
+          fi

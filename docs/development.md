@@ -205,10 +205,22 @@ seeds under `fuzz/corpus/<name>/` — never game assets, and name them
 `fuzz/<name>.dict` is picked up automatically. The ctest smoke run and the CI
 fuzz job need no further wiring.
 
-Findings are written as `crash-*`/`oom-*`/`timeout-*` reproducers (gitignored;
-in CI they upload as the `fuzz-findings` artifact). Minimize with the
-harness's `-minimize_crash=1`, then fix and add a Catch2 regression test
-before merging.
+Fuzzing runs in two CI tiers (#119):
+
+- **Per-PR smoke** (`fuzz-smoke`, in ci.yml): 60 seconds per harness over its
+  committed seed corpus — cheap enough to run every harness on every PR, so
+  a parser regression on malformed input fails the PR that introduces it.
+- **Weekly deep run**
+  ([fuzz-deep.yml](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/fuzz-deep.yml),
+  Tuesdays + `workflow_dispatch`): 30 minutes per harness with the same
+  limits and dictionaries, deep enough to reach states the smoke never will.
+
+**Finding policy:** findings are written as `crash-*`/`oom-*`/`timeout-*`
+reproducers (gitignored; in CI they upload as the `fuzz-findings` /
+`fuzz-deep-findings` artifacts). The deep run also fails red and auto-files —
+or extends — an open `fuzzing`-labeled issue pointing at the run and its
+reproducer artifact. Minimize with the harness's `-minimize_crash=1`, then
+fix and add a Catch2 regression test in the same PR as the fix.
 
 ## Continuous Integration
 
@@ -224,6 +236,7 @@ Every PR to `main` (and every push to it) runs the
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
 | `macos (informational)` | macos-latest | AppleClang build + suite as an early-warning signal; `continue-on-error` — never blocks a PR |
 | `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
+| Fuzz (deep) | ubuntu-latest | Weekly scheduled [30-minute-per-harness run](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/fuzz-deep.yml); findings upload as reproducer artifacts and auto-file a `fuzzing` issue — see [Fuzzing](#fuzzing) |
 | `docs-status` | ubuntu-latest | [`tools/check_status.py`](https://github.com/jomkz/fighters-codex/blob/main/tools/check_status.py) `--self-test` + `--check`: format-spec front-matter and template conformance ([spec-authoring.md](spec-authoring.md)), encoding and link hygiene across all markdown — relative links resolve case-exactly, links in `docs/` stay inside the docs tree, repo `blob`/`tree` URLs point at real `main` paths — front-matter claims vs. `lib/`+`cli/`+`tests/`+`fuzz/` reality, and currency of the generated [status matrix](fa/formats/STATUS.md) — a stale matrix fails the PR |
 | `coverage` | ubuntu-latest | gcov line coverage over `lib/` + `cli/`, gcovr summary on the run's summary page + HTML artifact; enforces a floor that only ratchets **up** (raised by epic [#50](https://github.com/jomkz/fighters-codex/issues/50), never lowered) |
 | CodeQL | ubuntu-latest | Static analysis ([security-extended](https://github.com/jomkz/fighters-codex/blob/main/.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
