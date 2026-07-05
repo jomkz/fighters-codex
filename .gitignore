@@ -41,5 +41,65 @@ leak-*
 oom-*
 timeout-*
 
-# Game assets (never commit — see NOTICE). Uppercase = FA asset extensions.
+# Game assets — never commit copyrighted game content (see NOTICE). One
+# pattern per extension documented in docs/fa/formats/ front-matter
+# (regenerate: grep -h '^extensions:' docs/fa/formats/*.md), plus the game's
+# own binaries and EA audio containers. Uppercase = FA asset extension; on a
+# case-insensitive checkout (the Windows bench) these also match lowercase,
+# so colliding repo file types are re-included at the end.
+*.11K
+*.5K
+*.8K
+*.AI
+*.BI
+*.BIN
+*.CAM
+*.CB8
+*.CFG
+*.DAT
+*.DLG
+*.ECM
+*.FBC
+*.FNT
+*.GAS
+*.HGR
+*.HUD
+*.INF
+*.JT
+*.LAY
+*.LIB
+*.M
+*.MC
+*.MM
+*.MNU
+*.MT
+*.MUS
+*.NT
+*.OT
+*.P
+*.PAL
+*.PIC
+*.PT
+*.PTS
+*.RAW
+*.RGN
+*.SEE
+*.SEQ
 *.SH
+*.SMS
+*.SSF
+*.T2
+*.TXT
+*.VDO
+*.XMI
+*.EXE
+*.DLL
+*.eac
+
+# Repo file types the uppercase globs would otherwise shadow on
+# case-insensitive checkouts:
+!CMakeLists.txt
+!requirements*.txt
+!scripts/**/*.sh
+!seed-*.bin
+!tests/fixtures/**/*.bin
