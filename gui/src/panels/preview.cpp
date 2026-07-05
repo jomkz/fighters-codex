@@ -40,6 +40,8 @@ struct ShPreview {
     int rt_w = 0, rt_h = 0;
     int cached_lib   = -2;
     int cached_entry = -2;
+    bool destroyed        = false;   // show the damaged sub-model (ShState)
+    bool cached_destroyed = false;
     float azimuth    = 170.0f;
     float elevation  = 20.0f;
     float distance   = 100.0f;
@@ -285,35 +287,40 @@ void DrawPreview(App& app) {
 
     // ---- SH 3D preview -------------------------------------------------------
     if (ed.kind == EditorKind::Sh) {
-        // Rebuild mesh buffers when selection changes
-        if (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry) {
-            s_sh.cached_lib   = ed.libIdx;
-            s_sh.cached_entry = ed.entryIdx;
+        // Rebuild on selection change or when a state toggle (destroyed) flips.
+        bool sel_changed = (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry);
+        if (sel_changed || s_sh.destroyed != s_sh.cached_destroyed) {
+            s_sh.cached_lib       = ed.libIdx;
+            s_sh.cached_entry     = ed.entryIdx;
+            s_sh.cached_destroyed = s_sh.destroyed;
 
-            fx::ShInfo info = fx::sh_parse_info(ed.data.data(), ed.data.size());
-            fx::ShMesh mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size());
+            fx::ShInfo  info = fx::sh_parse_info(ed.data.data(), ed.data.size());
+            fx::ShState st;  st.destroyed = s_sh.destroyed;
+            fx::ShMesh  mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size(), st);
 
-            // Reset camera to fit the model. SH bbox is (X, Y, Z) =
-            // (right, forward, up); map its center to render Y-up.
-            float shCenter[3] = {
-                (info.bbox[0] + info.bbox[3]) * 0.5f,
-                (info.bbox[1] + info.bbox[4]) * 0.5f,
-                (info.bbox[2] + info.bbox[5]) * 0.5f,
-            };
-            platform::sh_to_render(shCenter, s_sh.target);
-            float spanX = info.bbox[3] - info.bbox[0];
-            float spanY = info.bbox[4] - info.bbox[1];
-            float spanZ = info.bbox[5] - info.bbox[2];
-            float maxSpan = std::max(spanX, std::max(spanY, spanZ));
-            s_sh.model_span = std::max(maxSpan, 1.0f);
-            // Camera INSIDE the room (room half-size = 2*max_span, orbit = 1*max_span)
-            s_sh.distance   = std::max(maxSpan * 1.0f, 20.0f);
-            s_sh.azimuth    = 45.0f;
-            s_sh.elevation  = 25.0f;
-
+            if (sel_changed) {
+                // Reset camera to fit the model (only on selection change). SH
+                // bbox is (X, Y, Z) = (right, forward, up); center -> render Y-up.
+                float shCenter[3] = {
+                    (info.bbox[0] + info.bbox[3]) * 0.5f,
+                    (info.bbox[1] + info.bbox[4]) * 0.5f,
+                    (info.bbox[2] + info.bbox[5]) * 0.5f,
+                };
+                platform::sh_to_render(shCenter, s_sh.target);
+                float spanX = info.bbox[3] - info.bbox[0];
+                float spanY = info.bbox[4] - info.bbox[1];
+                float spanZ = info.bbox[5] - info.bbox[2];
+                float maxSpan = std::max(spanX, std::max(spanY, spanZ));
+                s_sh.model_span = std::max(maxSpan, 1.0f);
+                s_sh.distance   = std::max(maxSpan * 1.0f, 20.0f);
+                s_sh.azimuth    = 45.0f;
+                s_sh.elevation  = 25.0f;
+                BuildBoxGridVB(info, s_sh.model_span);
+            }
             BuildMeshVB(mesh);
-            BuildBoxGridVB(info, s_sh.model_span);
         }
+
+        ImGui::Checkbox("Destroyed", &s_sh.destroyed);
 
         float  txt_h   = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;
         ImVec2 canvas  = ImGui::GetContentRegionAvail();

@@ -29,8 +29,16 @@ struct ShMesh {
     std::vector<std::string> textures;
 };
 
+// Selects which conditional-geometry state the interpreter emits, for the
+// state-aware viewer/exporter (see docs/fa/formats/SH.md § LOD and damage-state
+// opcodes). Defaults reproduce the ordinary in-cockpit render (intact geometry).
+struct ShState {
+    bool destroyed = false;   // JumpToDamage (0xAC): show the wreck sub-model
+};
+
 ShInfo      sh_parse_info(const uint8_t* data, size_t size);
 ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);
+ShMesh      sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state);
 std::string sh_to_obj(const ShMesh& mesh);
 
 } // namespace fx
