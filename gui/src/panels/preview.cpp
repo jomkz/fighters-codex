@@ -41,6 +41,7 @@ struct ShPreview {
     std::shared_ptr<fx_render::Image> tex_image;  // decoded PIC, or null
     int tex_w = 0, tex_h = 0;  // texture dims for UV normalization
     bool show_texture = true;  // texture toggle (only meaningful when tex_image)
+    fx::Palette palette{};     // preview palette for untextured face colours
     int rt_w = 0, rt_h = 0;
     int cached_lib   = -2;
     int cached_entry = -2;
@@ -131,9 +132,16 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
                 tverts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, t1.s * inv_tw, V(t1.t)});
                 tverts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, t2.s * inv_tw, V(t2.t)});
             } else {
-                verts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, 0.0f, 0.0f});
-                verts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, 0.0f, 0.0f});
-                verts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, 0.0f, 0.0f});
+                // Untextured faces carry a palette colour index (ShFace::color);
+                // shade the model colour rather than rendering flat grey, so
+                // flat-coloured surfaces (e.g. an aircraft's wings) match the
+                // textured body instead of appearing white.
+                float cr = s_sh.palette.r[face.color] / 255.0f * shade;
+                float cg = s_sh.palette.g[face.color] / 255.0f * shade;
+                float cb = s_sh.palette.b[face.color] / 255.0f * shade;
+                verts.push_back({r0[0], r0[1], r0[2], cr, cg, cb, 0.0f, 0.0f});
+                verts.push_back({r1[0], r1[1], r1[2], cr, cg, cb, 0.0f, 0.0f});
+                verts.push_back({r2[0], r2[1], r2[2], cr, cg, cb, 0.0f, 0.0f});
             }
         }
     }
@@ -396,6 +404,7 @@ void DrawPreview(App& app) {
                 BuildBoxGridVB(info, s_sh.model_span);
             }
             if (sel_changed || pal_changed) LoadShTexture(app, ed, mesh);
+            s_sh.palette = fxg::ResolvePreviewPalette(app);  // untextured face colours
             BuildMeshVB(mesh);
         }
 
