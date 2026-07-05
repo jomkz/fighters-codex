@@ -109,7 +109,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D37BC,func,sh_op_66,,re,inferred,SH opcode 0x66 handler,
 0x004D37F4,func,sh_op_68,,re,inferred,SH opcode 0x68 handler,
 0x004D382C,func,sh_op_58,,re,inferred,SH opcode 0x58 handler,
-0x004D3938,func,sh_op_78,,re,inferred,SH opcode 0x78 handler (Unk78; 2085 bytes — largest handler),
+0x004D3938,func,sh_op_78,,re,confirmed,SH opcode 0x78: oriented bounding-box visibility cull — transforms a center+-extent box by the view matrix and trivially-rejects the guarded geometry from its 8 corners (code_pnt Cohen-Sutherland outcodes); emits no geometry (largest handler; 2085 bytes),
 0x004D415D,func,thunk_FUN_004d416b,,sms,confirmed,2-byte thunk for ops 0xA4/0xBE -> FUN_004d416b,
 0x004D416B,func,sh_op_A4_body,,re,inferred,body reached via thunk (op 0xA4/0xBE),
 0x004D416C,func,do_jumpfar4,,sms,confirmed,SH opcode 0xC8 (JumpToLOD): distance/size LOD test; skips 6-byte operand when _effects&0x20000,

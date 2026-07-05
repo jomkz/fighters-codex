@@ -192,7 +192,7 @@ Instructions are either **Byte-magic** (1-byte opcode) or **Word-magic**
 | `0x6E` | UnmaskLong | 6 |
 | `0x72` | Unk72 | 4 |
 | `0x76` | Unk76 | 10 |
-| `0x78` | Unk78 | 12 |
+| `0x78` | BBoxCull | 12 |
 | `0x7A` | Unk7A | 10 |
 | `0x82` | VertexBuffer | `6 + u16@[2]*6` |
 | `0x96` | Unk96 | 6 |

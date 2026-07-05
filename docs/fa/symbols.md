@@ -1475,7 +1475,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D37BC` | `sh_op_66` | re | SH opcode 0x66 handler |
 | `0x004D37F4` | `sh_op_68` | re | SH opcode 0x68 handler |
 | `0x004D382C` | `sh_op_58` | re | SH opcode 0x58 handler |
-| `0x004D3938` | `sh_op_78` | re | SH opcode 0x78 handler (Unk78; 2085 bytes — largest handler) |
+| `0x004D3938` | `sh_op_78` | re | SH opcode 0x78: oriented bounding-box visibility cull — transforms a center+-extent box by the view matrix and trivially-rejects the guarded geometry from its 8 corners (code_pnt Cohen-Sutherland outcodes); emits no geometry (largest handler; 2085 bytes) |
 | `0x004D415D` | `thunk_FUN_004d416b` | sms | 2-byte thunk for ops 0xA4/0xBE -> FUN_004d416b |
 | `0x004D416B` | `sh_op_A4_body` | re | body reached via thunk (op 0xA4/0xBE) |
 | `0x004D416C` | `do_jumpfar4` | sms | SH opcode 0xC8 (JumpToLOD): distance/size LOD test; skips 6-byte operand when _effects&0x20000 |

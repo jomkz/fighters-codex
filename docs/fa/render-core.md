@@ -58,19 +58,22 @@ Full record: [`db/symbols/render-core.csv`](https://github.com/jomkz/fighters-co
 
 ### 1. Remaining `sh_op_*` handler semantics
 
-The `vector_table` handlers are named and materialised, but a handful of the larger
-handlers' exact geometry/state effects (e.g. `sh_op_78`, `sh_op_80`) are not fully traced —
-the highest-value remaining targets, and the substrate for finishing [SH.md](formats/SH.md)'s
+The `vector_table` handlers are named and materialised; the larger handlers' exact
+geometry/state effects are the remaining substrate for finishing [SH.md](formats/SH.md)'s
 `Unk*` opcodes.
 
-**Partially resolved.** `sh_op_80` (`0x4D1FC0`) is a **shading/colour-setup** opcode: it
-early-outs on `codes_and`, and when `gouraudOn == 0` calls `SetFlatColor(a, b)` — i.e. it
-selects flat vs. Gouraud shading and stages the primitive colour. `sh_op_78` (`0x4D3938`, the
-2085-byte largest handler) is the primary **polygon/mesh** op (vertex-list reads + clip/switch
-tables); its full geometry/state semantics need a dedicated SH trace and are tracked in
-[#262](https://github.com/jomkz/fighters-codex/issues/262) (successor to the closed #52).
+**Characterized.** `sh_op_80` (`0x4D1FC0`) is a **shading/colour-setup** opcode: it early-outs
+on `codes_and`, and when `gouraudOn == 0` calls `SetFlatColor(a, b)` — i.e. it selects flat vs.
+Gouraud shading and stages the primitive colour. `sh_op_78` (`0x4D3938`, the 2085-byte largest
+handler) is a **bounding-box visibility cull**: it reads a center point plus an extent vector,
+transforms the extent by the view matrix, and forms the box's **8 corners** (`center ± (±dx,
+±dy, ±dz)`); it projects each via `code_pnt` (a Cohen–Sutherland clip outcode) and range-tests
+them, **trivially rejecting** the guarded geometry when the box falls outside a frustum edge. It
+emits no geometry — a cull/LOD gate, not a mesh op. (This matched OpenFA, which likewise treats
+`0x78` as an opaque fixed-size instruction, and explains why a static codec can skip it safely.)
 
-*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262); `sh_op_80` characterized, `sh_op_78` deep semantics remain).*
+*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262); `sh_op_78`
+and `sh_op_80` characterized; the remaining larger handlers' fine state effects continue).*
 
 ## Related
 
