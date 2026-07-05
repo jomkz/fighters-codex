@@ -4,7 +4,7 @@
 
 A reverse-engineering effort for Jane's Fighters Anthology (1998). **The documentation is
 the primary output** — format specs (docs/fa/formats/), architecture notes (docs/fa/),
-recovered symbols. The `fx_lib` library, `fx` CLI, and `fx-gui` are the **validation
+recovered symbols. The `fx_lib` library, `fx` CLI, and `fxs` are the **validation
 layer**: a byte-identical codec is the proof that a format is understood. Never treat the
 tools as the product and the docs as an afterthought.
 
@@ -40,7 +40,7 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
 ## Conventions
 
 - Conventional Commits + branch names per [CONTRIBUTING.md](CONTRIBUTING.md)
-  (`<type>/<kebab-description>`; scopes `fx-lib`/`fx-cli`/`fx-gui`).
+  (`<type>/<kebab-description>`; scopes `fx-lib`/`fx-cli`/`fxs`).
 - Releases: `python3 scripts/draft-changelog.py` to draft, curate CHANGELOG.md, then
   `python3 scripts/release.py X.Y.Z` — main is protected, so the script commits on a
   `chore/release-vX.Y.Z` branch and never tags; land the PR (squash-merge), tag the

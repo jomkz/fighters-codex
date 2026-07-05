@@ -18,7 +18,7 @@ namespace fs = std::filesystem;
 static constexpr int kMaxRecent = 5;
 
 App::App() {
-    // Persist app settings (e.g. installDir) inside fx-gui.ini.
+    // Persist app settings (e.g. installDir) inside fxs.ini.
     ImGuiSettingsHandler h = {};
     h.TypeName   = "FightersToolkit";
     h.TypeHash   = ImHashStr("FightersToolkit");

@@ -12,6 +12,6 @@ target_include_directories(fx_render PUBLIC include)
 
 target_link_libraries(fx_render PRIVATE fx_warnings)
 
-# Consumers (fx-gui, fxc, and potentially fa-bridge) link this into shared
+# Consumers (fxs, fxe, and potentially fa-bridge) link this into shared
 # libraries / plugins, which need PIC on Linux.
 set_target_properties(fx_render PROPERTIES POSITION_INDEPENDENT_CODE ON)

@@ -28,7 +28,7 @@ endif()
 add_subdirectory(lib)
 
 # fx_render: the shared renderer (software backend always; OpenGL backend added
-# in fx_render #289). Embeddable like fx::lib — fx-gui and fxc both link it.
+# in fx_render #289). Embeddable like fx::lib — fxs and fxe both link it.
 add_subdirectory(render)
 
 # Everything below is built only when this repo is the top-level project.
@@ -41,9 +41,9 @@ if(PROJECT_IS_TOP_LEVEL)
 
     add_subdirectory(cli)
 
-    # fx-gui: SDL3 + OpenGL 3.3 + miniaudio on Linux and Windows (ADR-0001).
+    # fxs: SDL3 + OpenGL 3.3 + miniaudio on Linux and Windows (ADR-0001).
     # OFF in the coverage/fuzz presets — no value in instrumented SDL3 builds.
-    option(FX_BUILD_GUI "Build the fx-gui editor" ON)
+    option(FX_BUILD_GUI "Build the fxs editor" ON)
     option(FX_SDL3_VENDORED "Force the pinned FetchContent SDL3 (static)" OFF)
     if(FX_BUILD_GUI)
         add_subdirectory(gui)

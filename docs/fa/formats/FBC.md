@@ -54,5 +54,5 @@ invariant: sum(FBC[0 .. N-1]) == VDO_file_size - 816
 **Formats:** [VDO](VDO.md) — the video stream this file indexes; [11K](11K.md)
 — the audio track sharing the same stem.
 
-**Engine:** the fx-gui VDO editor renders this index (frame table); the
+**Engine:** the fxs VDO editor renders this index (frame table); the
 fx_lib codec is tracked in #107.

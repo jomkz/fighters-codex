@@ -20,7 +20,7 @@ populate `CHANGELOG.md` before each release.
 
 **Examples:**
 ```
-feat(fx-gui): add dark/light theming toggle
+feat(fxs): add dark/light theming toggle
 fix(fx-lib): correct CB8 stride calculation for odd-width images
 docs: document MUS opcode table
 refactor(fx-cli): simplify extract command argument parsing
@@ -50,7 +50,7 @@ Use a scope when the change is isolated to one component:
 |---|---|
 | `fx-lib` | `lib/` static library |
 | `fx-cli` | `cli/` command-line tool |
-| `fx-gui` | `gui/` GUI application |
+| `fxs` | `gui/` GUI application |
 
 **Omit the scope** when a change spans multiple components or is repo-wide. Do not
 combine scopes (e.g. `feat(fx-lib,fx-cli):`) — either split into separate commits or

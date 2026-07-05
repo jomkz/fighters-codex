@@ -18,7 +18,7 @@ sudo dnf install gcc-c++ clang cmake ninja-build python3 git SDL3-devel
 
 Any distribution works with the equivalents: a C++17 compiler, CMake 3.21+,
 Ninja, Python 3 (release scripts and the real-asset test harness), and Git.
-`SDL3-devel` serves the `fx-gui` build; where no system SDL3 exists, the
+`SDL3-devel` serves the `fxs` build; where no system SDL3 exists, the
 build automatically compiles a pinned, checksummed SDL3 from source instead
 (see [Vendored Dependencies](#vendored-dependencies) and
 [ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md)).
@@ -60,13 +60,13 @@ ctest --preset gcc            # run the test suite
 
 Swap `gcc` for `clang`, `asan-ubsan` (sanitized build), or `release`
 (optimized). Single targets: `cmake --build --preset gcc --target fx`.
-Binaries land in `build/<preset>/cli/fx`, `build/<preset>/gui/fx-gui`,
+Binaries land in `build/<preset>/cli/fx`, `build/<preset>/gui/fxs`,
 `build/<preset>/lib/libfx_lib.a`, and `build/<preset>/tests/fx_tests`.
 
 Two options steer the GUI build:
 
 - `FX_BUILD_GUI` (default `ON`; `OFF` in the `coverage` and `fuzz` presets) —
-  build `fx-gui` and its tests.
+  build `fxs` and its tests.
 - `FX_SDL3_VENDORED` (default `OFF`) — skip `find_package(SDL3)` and always
   build the pinned FetchContent SDL3 statically; CI and the release workflow
   set it so shipped binaries stay self-contained.
@@ -82,7 +82,7 @@ ctest --preset msvc                 # run the test suite (Release)
 
 The msvc preset uses the installed Visual Studio's default generator, so
 artifacts keep their historical multi-config paths: `build\cli\Release\fx.exe`,
-`build\gui\Release\fx-gui.exe`, `build\lib\Release\fx_lib.lib` (swap `Debug`
+`build\gui\Release\fxs.exe`, `build\lib\Release\fx_lib.lib` (swap `Debug`
 for debug builds).
 
 Plain `cmake -B build` still works on both OSes for one-off configures, and is
@@ -102,7 +102,7 @@ the path embedders use (see [api.md](api.md)).
 - `fx` reads arguments through narrow `argv`, so non-ASCII file paths on
   Windows depend on the active code page. FA's data is 8.3 ASCII throughout,
   so this doesn't bite in practice.
-- `fx-gui.exe` builds as a `WIN32`-subsystem app (no console window), so
+- `fxs.exe` builds as a `WIN32`-subsystem app (no console window), so
   PowerShell launches it detached without waiting. For the headless `--smoke`
   sweep, pipe the output so the shell waits and reports `$LASTEXITCODE` — see
   [gui.md](gui.md#platforms).
@@ -125,7 +125,7 @@ the path embedders use (see [api.md](api.md)).
 - **GUI tests** (label `gui`): `gui_tests` covers the display-free gui units
   (string helpers, async-dialog completion queue, preview matrix math, and
   the audio player state machine on miniaudio's null backend via
-  `FX_AUDIO_NULL=1`) on every leg; `gui_smoke` runs `fx-gui --smoke` — three
+  `FX_AUDIO_NULL=1`) on every leg; `gui_smoke` runs `fxs --smoke` — three
   frames rendered headlessly — on Linux (CI wraps it in `xvfb-run`).
 - **Fuzz smoke runs** (`fuzz` preset only, label `fuzz`): each libFuzzer
   harness fuzzes for 60 seconds from its committed seed corpus — see
@@ -273,7 +273,7 @@ OS (gcc preset on Linux, msvc on Windows):
 | Build fx (CLI) | — | Build all, restricted to the `fx` target |
 | Build fx_tests | — | Build the test binary |
 | Run tests | — | `ctest --preset gcc` / `ctest --preset msvc` |
-| Run fx-gui | — | Launches the GUI (both OSes) |
+| Run fxs | — | Launches the GUI (both OSes) |
 
 If cmake is not in `PATH` on Windows, add it via `terminal.integrated.env.windows`
 in your user `settings.json`.
@@ -283,7 +283,7 @@ in your user `settings.json`.
 Open the generated solution directly (`build\fighters-codex.sln` after
 `cmake --preset msvc`), or use **File → Open → CMake…** on the root
 `CMakeLists.txt` — VS configures the project automatically. Set the startup
-project to `fx-gui` for F5 debugging.
+project to `fxs` for F5 debugging.
 
 ## Project Structure
 
@@ -294,7 +294,7 @@ fighters-codex/
 │   ├── src/                # codec implementations
 │   └── vendor/             # stb (vendored)
 ├── cli/                    # fx CLI frontend
-├── gui/                    # fx-gui ImGui frontend (SDL3 + OpenGL 3.3, Linux + Windows)
+├── gui/                    # fxs ImGui frontend (SDL3 + OpenGL 3.3, Linux + Windows)
 │   ├── src/
 │   │   ├── main.cpp        # SDL3 + GL host, event loop, window placement, ImGui init
 │   │   ├── app.h / app.cpp # App class, session management, menu bar
@@ -325,7 +325,7 @@ and re-validate `app.editor` state on arrival (see
 
 ## What still needs the Windows bench
 
-- **fx-gui interactive verification on Windows** — CI compiles it and runs
+- **fxs interactive verification on Windows** — CI compiles it and runs
   the display-free `gui_tests`, but Windows runners expose no GL 3.3, so
   rendering, native dialogs, and theming need eyes on the bench
 - **Release packaging** verification for the Windows zips (the Linux tarballs
@@ -406,7 +406,7 @@ git tag v0.5.0 && git push origin v0.5.0
 ```
 
 5. After the release workflow publishes, verify all six artifacts (`fx`,
-   `fx-gui`, and `fx-lib` — one Windows zip and one Linux tarball each) and
+   `fxs`, and `fx-lib` — one Windows zip and one Linux tarball each) and
    bump fa-bridge's `extern/fx_lib` submodule to the new tag when the release
    changed `fx_lib`.
 

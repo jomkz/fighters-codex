@@ -9,7 +9,7 @@ comms, and the MSAPI matchmaking client — epics #247 / #272). Per-format compl
 direction are tracked in the CI-enforced [status matrix](formats/STATUS.md); per-subsystem naming/doc
 progress in the [reconstruction matrix](reconstruction.md); remaining open questions as issues on the
 [roadmap](../roadmap.md). The `fx_lib` codecs and `fx` CLI validate the format specs — a byte-identical
-round-trip is the proof a format is understood; the `fxc` source port is the same kind of proof for
+round-trip is the proof a format is understood; the `fxe` source port is the same kind of proof for
 the executable itself.
 
 ## Contents

@@ -1,17 +1,17 @@
-# fx-gui — Graphical Editor
+# fxs — Graphical Editor
 
-`fx-gui` is the interactive validation layer for the FA asset format research. It
+`fxs` is the interactive validation layer for the FA asset format research. It
 exercises the `fx_lib` codecs against real game data and makes format behaviour
 directly observable — loading a LIB archive, editing a type definition, or previewing
 a decoded image confirms that the underlying format understanding is correct.
 
 FATK (DuoSoft 1998), the original FA editor, is a 16-bit/32-bit VB6 application that
-does not run on 64-bit Windows. `fx-gui` covers the same ground and more, but
+does not run on 64-bit Windows. `fxs` covers the same ground and more, but
 replacing FATK is a byproduct rather than the goal.
 
 ## Platforms
 
-`fx-gui` runs natively on Linux and Windows from the same code: SDL3 windowing with
+`fxs` runs natively on Linux and Windows from the same code: SDL3 windowing with
 an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
 (backend rationale in [ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md)).
 
@@ -40,7 +40,7 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   the actual pixel dimensions on HiDPI). Intended for automated visual review
   of rendering changes — SH 3D orbit, PIC/RAW/CB8 images, and the editors.
 
-On Windows, `fx-gui.exe` is a `WIN32`-subsystem (GUI) binary, so shells launch
+On Windows, `fxs.exe` is a `WIN32`-subsystem (GUI) binary, so shells launch
 it detached: a bare `--smoke` invocation from PowerShell prints nothing,
 returns immediately, and never sets `$LASTEXITCODE`, while the sweep runs
 invisibly in the background. Pipe the output so the shell attaches stdout and
@@ -48,7 +48,7 @@ waits for the exit code:
 
 ```powershell
 $fa = "C:\path\to\Fighters Anthology"
-build\gui\Release\fx-gui.exe --smoke (Get-ChildItem "$fa\*.lib").FullName | Out-Host
+build\gui\Release\fxs.exe --smoke (Get-ChildItem "$fa\*.lib").FullName | Out-Host
 echo $LASTEXITCODE   # expect 0, with one "swept" line per LIB
 ```
 
@@ -194,9 +194,9 @@ Identity block fields (all editable):
 
 ## Settings / Preferences
 
-All settings persist automatically in `fx-gui.ini` in the per-user preferences
-directory (`~/.local/share/jomkz/fx-gui/` on Linux,
-`%APPDATA%\jomkz\fx-gui\` on Windows) across restarts.
+All settings persist automatically in `fxs.ini` in the per-user preferences
+directory (`~/.local/share/jomkz/fxs/` on Linux,
+`%APPDATA%\jomkz\fxs\` on Windows) across restarts.
 
 - **FA install directory** — set via File → Preferences; used by the one-click LIB install
 - **Theme** — Auto (follow the system), Dark, or Light; set via File → Preferences

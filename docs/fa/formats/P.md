@@ -51,9 +51,9 @@ fx plt info  PLT441.P        # identity block: name, rank, campaign, ordnance
 fx plt dump  PLT441.P        # full stats block: missions, kills, weapon accuracy
 ```
 
-The identity block (`0x01`–`0xAF`) is fully mapped and editable via the fx-gui
+The identity block (`0x01`–`0xAF`) is fully mapped and editable via the fxs
 PLT editor. The stats counters (`0x1F80`–`0x21F7`) are confirmed from RE and
-displayed by `fx plt dump` and the fx-gui stats pane. The four gap regions
+displayed by `fx plt dump` and the fxs stats pane. The four gap regions
 remain unmapped (see Open Questions).
 
 ### Other Tools

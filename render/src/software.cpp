@@ -4,7 +4,7 @@
 // transform by the MVP, perspective-divide to NDC, map to the viewport
 // (top-left origin), then fill with a barycentric inside-test and a shared
 // depth buffer. This is the foundation of the FA-faithful GG_/G_ software path
-// (fx_render #290); it owns no GPU state so it runs headless (tests, fxc).
+// (fx_render #290); it owns no GPU state so it runs headless (tests, fxe).
 #include "fx_render/render.h"
 
 #include <algorithm>

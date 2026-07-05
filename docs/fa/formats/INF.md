@@ -42,7 +42,7 @@ fx inf dump <file.INF>     # parsed directive/body listing
 Extract via `fx lib unpack` first. Edit in any plain text editor, re-pack into
 a custom LIB, and configure FA to load it.
 
-### fx-gui
+### fxs
 
 Opening an `.INF` record shows a **Styled** tab — each directive section
 rendered with its in-game alignment and title/body weight, editable per

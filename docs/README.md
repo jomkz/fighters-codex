@@ -31,7 +31,7 @@ Reference documentation for the validation tools.
 |----------|-------------|
 | [roadmap.md](roadmap.md) | Phased roadmap to 1.0 — gates, epics, and the 1.0 definition |
 | [cli.md](cli.md) | Full CLI command reference |
-| [gui.md](gui.md) | fx-gui graphical editor feature reference |
+| [gui.md](gui.md) | fxs graphical editor feature reference |
 | [api.md](api.md) | C++ library API reference |
 | [development.md](development.md) | Building, IDE setup, and project structure |
 | [spec-authoring.md](spec-authoring.md) | Format-spec template, front-matter schema, and vocabularies (CI-enforced) |

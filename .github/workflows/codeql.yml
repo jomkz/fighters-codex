@@ -32,7 +32,7 @@ jobs:
           config-file: ./.github/codeql/codeql-config.yml
 
       - name: Install GUI build deps
-        # fx-gui builds on Linux since epic #46; FetchContent SDL3 needs the
+        # fxs builds on Linux since epic #46; FetchContent SDL3 needs the
         # X11/Wayland dev headers at compile time (no libsdl3-dev on ubuntu)
         run: |
           sudo apt-get update
@@ -43,7 +43,7 @@ jobs:
 
       - name: Build
         # Manual build so the extractor sees exactly what we ship; the gcc
-        # preset covers fx_lib, fx, fx-gui, tools, and the test suite on
+        # preset covers fx_lib, fx, fxs, tools, and the test suite on
         # Linux. SDL3 sources land under build/** and are filtered below.
         run: |
           cmake --preset gcc

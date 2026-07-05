@@ -38,7 +38,7 @@ target_link_libraries(fx_gui_vendor PUBLIC SDL3::SDL3)
 
 # fx_render's OpenGL backend (render/src/gl_backend.cpp) is compiled here, where
 # the glad loader lives; its glad function pointers are resolved from
-# fx_gui_vendor's gl.cpp at the final fx-gui link (fx_render_gl is listed before
+# fx_gui_vendor's gl.cpp at the final fxs link (fx_render_gl is listed before
 # fx_gui_vendor below). Core fx_render stays dependency-free. See fx_render #289.
 add_library(fx_render_gl STATIC
     ${CMAKE_SOURCE_DIR}/render/src/gl_backend.cpp
@@ -48,7 +48,7 @@ target_include_directories(fx_render_gl SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 target_link_libraries(fx_render_gl PUBLIC fx_render PRIVATE fx_warnings)
 set_target_properties(fx_render_gl PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-add_executable(fx-gui WIN32
+add_executable(fxs WIN32
     src/main.cpp
     src/app.cpp
     src/palettes.cpp
@@ -85,17 +85,17 @@ add_executable(fx-gui WIN32
     src/editors/pal_editor.cpp
 )
 
-target_include_directories(fx-gui PRIVATE
+target_include_directories(fxs PRIVATE
     src
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/miniaudio
     ${CMAKE_SOURCE_DIR}/lib/include
     ${CMAKE_BINARY_DIR}/include
 )
-target_include_directories(fx-gui SYSTEM PRIVATE
+target_include_directories(fxs SYSTEM PRIVATE
     ${CMAKE_SOURCE_DIR}/lib/vendor
 )
 
-target_link_libraries(fx-gui PRIVATE
+target_link_libraries(fxs PRIVATE
     fx_lib
     fx_render_gl
     fx_gui_vendor
@@ -106,7 +106,7 @@ target_link_libraries(fx-gui PRIVATE
 # driver as fallback). Linux-only — GitHub's Windows runners expose no
 # GL 3.3; Windows gui coverage is the build plus the display-free gui_tests.
 if(UNIX)
-    add_test(NAME gui_smoke COMMAND fx-gui --smoke)
+    add_test(NAME gui_smoke COMMAND fxs --smoke)
     set_tests_properties(gui_smoke PROPERTIES
         LABELS "gui"
         TIMEOUT 60

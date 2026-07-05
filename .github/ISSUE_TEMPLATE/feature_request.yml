@@ -8,7 +8,7 @@ body:
       label: Component
       options:
         - fx (CLI)
-        - fx-gui
+        - fxs
         - fx_lib
         - new component / unsure
     validations:

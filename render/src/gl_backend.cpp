@@ -1,6 +1,6 @@
 // fx_render — OpenGL 3.3 core backend.
 //
-// The GPU path, extracted from the fx-gui SH preview so the OpenGL and software
+// The GPU path, extracted from the fxs SH preview so the OpenGL and software
 // renderers share one contract. Requires a current context with glad loaded
 // (the host provides both). Shaders and draw state match the original preview
 // so its output is unchanged.
