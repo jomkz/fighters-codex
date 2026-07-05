@@ -358,6 +358,45 @@ std::vector<std::string> mnu_strings(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## mt.h — Mission briefing text
+
+```cpp
+namespace fx {
+struct MtInfo {
+    std::string mission_id, source_name, title, mission_type;
+    size_t sections;
+};
+// Parsing rides txt.h (same directive engine); this adds MT semantics
+MtInfo mt_info(const TxtDoc& doc);
+} // namespace fx
+```
+
+## pts.h — Aircraft screen-assets DLL reader
+
+```cpp
+namespace fx {
+struct PtsInfo {
+    bool        valid;  // MZ + "PL" signature with a CODE section
+    CodeSection code;
+    std::string icon;   // the single ICON*.PIC reference; empty if absent
+};
+PtsInfo pts_info(const uint8_t* data, size_t size);
+} // namespace fx
+```
+
+## rgn.h — Installer UI region maps
+
+```cpp
+namespace fx {
+struct RgnRecord { uint8_t name[4]; uint32_t vertex_count; uint32_t xy[8]; };
+struct RgnFile   { std::vector<RgnRecord> records; };
+
+bool rgn_read(const uint8_t* data, size_t size, RgnFile& out);
+std::vector<uint8_t> rgn_write(const RgnFile& rgn);  // byte-identical inverse
+std::string rgn_name(const RgnRecord& rec);
+} // namespace fx
+```
+
 ## cb8.h — FMV video decoder
 
 ```cpp

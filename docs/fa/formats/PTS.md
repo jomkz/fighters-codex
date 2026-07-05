@@ -7,10 +7,14 @@ endianness: little
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 108
+  direction: read
+  rationale: "engine-code container (screen-assets DLL, same PL family as CAM/MNU): fx_lib surfaces the container geometry and the single documented icon reference; writing compiled DLLs is fighters-legacy territory"
+  lib: [lib/src/pts.cpp]
+  commands: [pts]
+  tests: [tests/test_pts.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [BRF, PIC, HUD]
 ---
@@ -24,6 +28,18 @@ loaded at runtime; all observed files decompress to 4608 bytes.
 
 (Unrelated to the community `.PTS` distribution rename of SH shadow shapes —
 see the note in [SH.md](SH.md).)
+
+## Tools
+
+### fx
+
+```
+fx pts info <file.PTS>     # container check + referenced icon PIC
+```
+
+Same MZ + Phar Lap `PL` container family as [CAM](CAM.md)/[MNU](MNU.md)
+(verified against F22.PTS); `pts_info` extracts the one icon reference.
+All 37 shipped files resolve to the inventory below.
 
 ## File Layout
 

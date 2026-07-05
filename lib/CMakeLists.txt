@@ -28,6 +28,9 @@
     src/cfg.cpp
     src/dat.cpp
     src/mnu.cpp
+    src/mt.cpp
+    src/pts.cpp
+    src/rgn.cpp
 )
 
 add_library(fx::lib ALIAS fx_lib)
