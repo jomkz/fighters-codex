@@ -264,7 +264,7 @@ int main(int argc, char** argv) {
             rw >= kMinW && rh >= kMinH) { winW = rw; winH = rh; }
     }
 
-    platform::WindowConfig cfg = {"Fighters Toolkit", winW, winH,
+    platform::WindowConfig cfg = {"Fighters Studio", winW, winH,
                                   kMinW, kMinH, headless};
     if (!platform::CreateWindowGL(cfg)) {
         if (!headless) return 1;
@@ -281,11 +281,11 @@ int main(int argc, char** argv) {
     // Settings live in the per-user preferences path, not the CWD.
     static std::string iniPath;
     if (!headless) {
-        if (char* pref = SDL_GetPrefPath("jomkz", "fx-gui")) {
-            iniPath = std::string(pref) + "fx-gui.ini";
+        if (char* pref = SDL_GetPrefPath("jomkz", "fxs")) {
+            iniPath = std::string(pref) + "fxs.ini";
             SDL_free(pref);
         } else {
-            iniPath = "fx-gui.ini";
+            iniPath = "fxs.ini";
         }
         io.IniFilename = iniPath.c_str();
     } else {
@@ -330,7 +330,7 @@ int main(int argc, char** argv) {
         std::string entry = positionals.size() > 1 ? positionals[1] : "";
         if (lib.empty() || entry.empty()) {
             std::fprintf(stderr,
-                "usage: fx-gui --render <LIB> <ENTRY> [--out file.png] [--size WxH]\n");
+                "usage: fxs --render <LIB> <ENTRY> [--out file.png] [--size WxH]\n");
             exitCode = 2;
         } else {
             std::string out = renderOut.empty() ? "render.png" : renderOut;

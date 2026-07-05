@@ -7,9 +7,9 @@
   color: "0075ca"
   description: "Affects the fx command-line tool"
 
-- name: "fx-gui"
+- name: "fxs"
   color: "0075ca"
-  description: "Affects the fx-gui application"
+  description: "Affects the fxs application"
 
 # Type labels
 - name: "bug"

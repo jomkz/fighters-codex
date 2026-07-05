@@ -35,7 +35,7 @@ fx pal info <file.PAL>     # summary
 fx pal dump <file.PAL>     # entry-by-entry listing
 ```
 
-### fx-gui
+### fxs
 
 Opening a `.PAL` record (in a LIB or standalone) shows a 16×16 swatch grid
 with per-index RGB tooltips, and can set the palette applied to PIC/CB8

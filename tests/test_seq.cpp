@@ -72,7 +72,7 @@ TEST_CASE("seq_parse preserves blank lines in round-trip") {
     REQUIRE(out == data);
 }
 
-// The fx-gui SEQ editor mutates the three parallel vectors directly and
+// The fxs SEQ editor mutates the three parallel vectors directly and
 // re-serializes; these tests pin that contract (issue #92).
 
 TEST_CASE("editor-style event insert round-trips and leaves other lines intact") {

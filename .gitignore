@@ -19,7 +19,7 @@ site/
 
 # ImGui layout state and user prefs
 imgui.ini
-fx-gui.ini
+fxs.ini
 
 # Visual Studio
 .vs/
@@ -40,3 +40,6 @@ crash-*
 leak-*
 oom-*
 timeout-*
+
+# Game assets (never commit — see NOTICE). Uppercase = FA asset extensions.
+*.SH

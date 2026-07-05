@@ -97,11 +97,11 @@
             "problemMatcher": []
         },
         {
-            "label": "Run fx-gui",
+            "label": "Run fxs",
             "type": "shell",
-            "command": "${workspaceFolder}/build/gcc/gui/fx-gui",
+            "command": "${workspaceFolder}/build/gcc/gui/fxs",
             "windows": {
-                "command": "${workspaceFolder}\\build\\gui\\Debug\\fx-gui.exe"
+                "command": "${workspaceFolder}\\build\\gui\\Debug\\fxs.exe"
             },
             "options": {
                 "cwd": "${workspaceFolder}"

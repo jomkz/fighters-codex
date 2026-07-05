@@ -2,7 +2,7 @@
 
 `fx_lib` and the tools built on it parse untrusted binary files (archives, images, video,
 save files). Malformed-input handling is in scope for security reports — a crafted file
-that crashes or corrupts memory in `fx`, `fx-gui`, or any `fx_lib` codec is a bug worth
+that crashes or corrupts memory in `fx`, `fxs`, or any `fx_lib` codec is a bug worth
 reporting even without a demonstrated exploit.
 
 ## Supported versions

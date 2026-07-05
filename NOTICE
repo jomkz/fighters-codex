@@ -3,13 +3,13 @@ Copyright (c) the fighters-codex contributors
 Licensed under the MIT License (see LICENSE).
 
 ================================================================================
-Reverse-engineering provenance and the fxc source port
+Reverse-engineering provenance and the fxe source port
 ================================================================================
 
 This project reverse-engineers Jane's Fighters Anthology (1998, Electronic Arts)
 for the purpose of documentation and interoperability. The reverse-engineering
-documentation is the primary output. The code (fx_lib, fx, fx-gui, fx_render,
-and the fxc source port) exists to validate that documentation.
+documentation is the primary output. The code (fx_lib, fx, fxs, fx_render,
+and the fxe source port) exists to validate that documentation.
 
 Clean-room provenance
 ---------------------
@@ -20,11 +20,11 @@ described in prose). It is NOT a transcription of the original program's
 compiled or decompiled expression. Decompiler output is used only to establish
 facts; it is never copied into this repository.
 
-fxc — source-port model, requires original content
+fxe — source-port model, requires original content
 ---------------------------------------------------
-fxc is a clean-room, modern C++ re-implementation ("source port") of the game
+fxe is a clean-room, modern C++ re-implementation ("source port") of the game
 executable, generated from this project's symbol database and subsystem
-documentation. fxc ships NO game data: no textures, audio, missions, models,
+documentation. fxe ships NO game data: no textures, audio, missions, models,
 text, or other assets from Jane's Fighters Anthology. It is inert without
 content that the user must supply from their own, legally obtained copy of the
 game (the same model used by ScummVM, OpenMW, and similar projects).

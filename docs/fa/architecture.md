@@ -432,6 +432,6 @@ Weapon / projectile entity offsets are documented separately in [formats/JT.md](
 
 **fighters-codex** (this repo):
 - `fx` CLI — LIB archive operations
-- `fx-gui` — GUI editor for LIB archives
+- `fxs` — GUI editor for LIB archives
 - `lib/src/blast.cpp` — DCL-Blast decompressor
 - `lib/src/brf.cpp` — BRF format parser

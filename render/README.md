@@ -4,8 +4,8 @@
 interchangeable backends, so the OpenGL and software render paths are built **once** and shared
 across the reconstruction's consumers instead of re-implemented three times:
 
-- **fx-gui** — the asset viewer (its SH 3D preview renders through this module).
-- **fxc** — the clean-room source port of the game executable.
+- **fxs** — the asset viewer (its SH 3D preview renders through this module).
+- **fxe** — the clean-room source port of the game executable.
 - **fighters-legacy** — the GPL engine may adopt it for its classic/parity path
   ([fighters-legacy#669](https://github.com/fighters-legacy/fighters-legacy/issues/669)).
 
@@ -40,16 +40,16 @@ fx_render::Image img; t->Read(img);   // img.pixels is now RGBA8
 ## Backends
 
 - **Software** — a context-free CPU rasteriser (barycentric Gouraud fill + shared depth buffer +
-  line/wireframe). No GPU, no window: the only backend usable in headless tests and `fxc`
+  line/wireframe). No GPU, no window: the only backend usable in headless tests and `fxe`
   validation, and the substrate for the FA-faithful `GG_/G_` pipeline (#290). Always available.
 - **OpenGL** — the GPU path (`#include <fx_render/gl.h>`, `MakeOpenGLRenderer()`), extracted from
-  fx-gui's preview. Targets are FBOs; `native_texture()` is the colour attachment for zero-copy
+  fxs's preview. Targets are FBOs; `native_texture()` is the colour attachment for zero-copy
   ImGui display. Requires a current GL 3.3 core context with glad loaded (the host provides both).
 
 ## Roadmap (sub-issues of #281)
 
 1. **#288** — module: API + software-backend foundation ✅
 2. **#289** — OpenGL backend, extracted from `gui/src/panels/preview.cpp` ✅
-3. **#291** — fx-gui refactored onto `fx::render` (SH preview) ✅
+3. **#291** — fxs refactored onto `fx::render` (SH preview) ✅
 4. **#290** — FA-faithful software rasteriser (painter's sort, fixed-point spans, flat/Gouraud)
-5. **#292** — fxc runtime render hook
+5. **#292** — fxe runtime render hook

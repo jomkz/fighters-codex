@@ -96,5 +96,5 @@ All six live in FA_2.LIB.
 cross-referenced by INSIGMAP.BIN; [PAL](PAL.md) — main VGA palette;
 VFONTPAL.BIN is a separate 16-color subset for video text.
 
-**Engine:** the fx-gui BIN editor renders these tables; the fx_lib codec is
+**Engine:** the fxs BIN editor renders these tables; the fx_lib codec is
 tracked in #107.

@@ -1,14 +1,14 @@
 // fx_render — a shared, backend-agnostic renderer for the FA reconstruction.
 //
 // One geometry->pixels API with interchangeable backends, so the OpenGL and
-// software render paths are built once and shared by fx-gui (the asset viewer),
-// fxc (the clean-room source port), and — if it adopts this module — the
+// software render paths are built once and shared by fxs (the asset viewer),
+// fxe (the clean-room source port), and — if it adopts this module — the
 // fighters-legacy engine, instead of three separate implementations.
 //
 // A frame is `Begin(target, clear)` then one or more `Draw(mesh, camera, opts)`
 // then `End()`. Targets are backend-owned offscreen surfaces: the OpenGL target
 // exposes a native texture for zero-copy display; every target can `Read` its
-// pixels into a CPU Image (for fxc validation, --render snapshots, and tests).
+// pixels into a CPU Image (for fxe validation, --render snapshots, and tests).
 //
 // The Software backend is context-free (no GPU, no window) — the only backend
 // usable headless, and the substrate for the FA-faithful GG_/G_ rasteriser.
@@ -34,7 +34,7 @@ struct Vertex {
 
 // A vertex list interpreted per the draw's Primitive: as a triangle list (every
 // 3 vertices) or a line list (every 2). Matches the interleaved upload the
-// fx-gui preview already produces.
+// fxs preview already produces.
 struct Mesh {
     std::vector<Vertex> vertices;
 };
@@ -75,7 +75,7 @@ struct DrawOptions {
     Primitive primitive = Primitive::Triangles;
     bool depth_test = true;
     bool depth_write = true;
-    // Draw triangles as a depth-offset grey line overlay (the fx-gui wireframe
+    // Draw triangles as a depth-offset grey line overlay (the fxs wireframe
     // pass). Ignored for Primitive::Lines.
     bool wireframe = false;
     bool backface_cull = false;

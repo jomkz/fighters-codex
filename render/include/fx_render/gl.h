@@ -2,7 +2,7 @@
 //
 // Separate header (and separate build target) because the GL backend needs a
 // current OpenGL 3.3 core context and the glad loader, which the dependency-free
-// core deliberately does not. The host (fx-gui, fxc) creates the context and
+// core deliberately does not. The host (fxs, fxe) creates the context and
 // loads glad before calling this.
 #pragma once
 

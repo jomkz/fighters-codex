@@ -3,7 +3,7 @@
 #include <cstring>
 #include <string>
 
-// Small portable string helpers shared across fx-gui sources. Case folding is
+// Small portable string helpers shared across fxs sources. Case folding is
 // ASCII-only by design — entry names and extensions are 8.3 ASCII per the LIB
 // format, and locale-dependent folding (tolower) would misbehave for bytes
 // >= 0x80 in e.g. a Turkish locale.

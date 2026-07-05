@@ -17,7 +17,7 @@ bool Fail(const char* what) {
     else
         // The WIN32 subsystem has no console — report fatal init errors
         // visibly. Falls through harmlessly when no display exists.
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "fx-gui",
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "fxs",
                                  msg.c_str(), nullptr);
     return false;
 }
