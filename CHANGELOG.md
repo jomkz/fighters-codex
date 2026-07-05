@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.8] - 2026-07-05
+
 ### Added
 - **fx-lib/fxs** **The SH shape interpreter — complete state-selected rendering (epics #279,
   #295).** `sh_parse_mesh` + `ShState` now select every state dimension a shape carries, and the
@@ -317,7 +319,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.7...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.8...HEAD
+[0.5.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.8
 [0.5.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.7
 [0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
 [0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
