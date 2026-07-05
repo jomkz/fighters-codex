@@ -725,3 +725,23 @@ geometry (the control dispatch table) plus the embedded-string count.
 Dump the dialog's embedded control label strings, one per line on stdout.
 
 *See also: [fa/formats/DLG.md](fa/formats/DLG.md)*
+
+## xmi — Extended MIDI
+
+```
+fx xmi info   <file.XMI>
+fx xmi export <file.XMI> [-s N] -o <out.mid>
+```
+
+#### `fx xmi info <file.XMI>`
+
+Report the sequence count, and per sequence its timbre count and chunk
+inventory (TIMB, EVNT, …).
+
+#### `fx xmi export <file.XMI> [-s N] -o <out.mid>`
+
+Export sequence `N` (default 0) to a Standard MIDI File (format 0): the AIL
+delay encoding becomes SMF variable-length deltas and each note-on's XMI
+duration becomes a scheduled note-off. One-way translation, not a round-trip.
+
+*See also: [fa/formats/XMI.md](fa/formats/XMI.md), [fa/formats/MUS.md](fa/formats/MUS.md)*

@@ -38,6 +38,7 @@ int cmd_ssf(int argc, char** argv);
 int cmd_mc(int argc, char** argv);
 int cmd_hgr(int argc, char** argv);
 int cmd_dlg(int argc, char** argv);
+int cmd_xmi(int argc, char** argv);
 
 static void print_usage() {
     puts("fx -- Fighters Codex\n");
@@ -171,6 +172,10 @@ static void print_usage() {
     puts("Menu dialog DLL commands:");
     puts("  fx dlg info    <file.DLG>");
     puts("  fx dlg strings <file.DLG> [-n MIN]");
+    puts("");
+    puts("Extended MIDI commands:");
+    puts("  fx xmi info   <file.XMI>");
+    puts("  fx xmi export <file.XMI> [-s N] -o <out.mid>");
 }
 
 int main(int argc, char** argv) {
@@ -244,6 +249,8 @@ int main(int argc, char** argv) {
         return cmd_hgr(argc - 1, argv + 1);
     if (strcmp(cmd, "dlg") == 0)
         return cmd_dlg(argc - 1, argv + 1);
+    if (strcmp(cmd, "xmi") == 0)
+        return cmd_xmi(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||

@@ -5,17 +5,21 @@ extensions: [".XMI"]
 category: audio
 endianness: big
 spec:
-  status: stub
+  status: partial
   gaps:
     - kind: re-static
       issue: 54
-      note: "EVNT/TIMB chunk internals not specified"
+      note: "AIL tempo-multiplier scaling and TIMB entry-field semantics unverified"
 codec:
-  direction: none
-  issue: 106
+  direction: read
+  rationale: "XMI→MID is a one-way format translation, not a round-trip back to XMI: the exporter reads the IFF/EVNT stream and emits a Standard MIDI File (AIL delays → SMF deltas, note durations → note-offs). Re-encoding MID→XMI would be a distinct converter, not an identity, so byte-round-trip does not apply."
+  lib: [lib/src/xmi.cpp]
+  commands: [xmi]
+  tests: [tests/test_xmi.cpp]
+  fuzz: []
   gui: [gui/src/editors/xmi_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [MUS, 11K]
 ---
@@ -30,10 +34,20 @@ is disc-2 content).
 
 ## Tools
 
-### Other Tools
+### fx
 
-Conversion to Standard MIDI (`.MID`) is possible with `xmi2mid` from the
-WildMIDI project or similar tools (an `fx` exporter is tracked in #106).
+```
+fx xmi info   <file.XMI>                     # sequences, timbres, chunk inventory
+fx xmi export <file.XMI> [-s N] -o out.mid   # sequence N (default 0) -> Standard MIDI
+```
+
+`fx xmi export` writes a Standard MIDI File (format 0) from the selected
+sequence: the AIL delay encoding is rewritten to SMF variable-length deltas
+and each note-on's XMI duration becomes a scheduled note-off. XMI→MID is a
+one-way translation, not a byte-identity round-trip. All 78 stock `.XMI`
+files export to structurally valid SMF (balanced note-on/note-off pairs,
+monotonic deltas, proper end-of-track); the output parses in independent
+MIDI libraries.
 
 ## File Layout
 
@@ -56,15 +70,44 @@ Key differences from Standard MIDI:
 - Delta times use AIL's variable-length encoding (not SMF)
 - Multiple sequences in one file via the `CAT`/`XMID` structure
 
+### TIMB chunk (instrument table)
+
+`u16` entry count (little-endian), then `count × 2` bytes — one `(patch,
+bank)` pair per timbre the sequence uses. AIR003.XMI carries 18 entries in a
+38-byte chunk (`2 + 18×2`). The per-entry field roles beyond patch/bank are
+not independently verified here (see Open Questions).
+
+### EVNT chunk (event stream) — decoded and validated
+
+The event stream is Standard-MIDI status bytes with two AIL differences,
+recovered from the 78-file corpus and validated by the `fx xmi export`
+round-trip to SMF:
+
+- **Delay (interval) encoding.** Between events, every byte `< 0x80`
+  accumulates into the delay for the next event (a sum-of-bytes VLQ, *not*
+  the SMF 7-bit VLQ). A delay of 256 ticks encodes as `7F 7F 02`. The first
+  byte `≥ 0x80` ends the delay and is the event's status byte.
+- **Note-on carries an explicit duration.** A `0x9n` note-on is followed by
+  note, velocity, and a **duration** as a standard 7-bit VLQ; there is no
+  matching note-off in the stream. The exporter emits the note-on at the
+  current tick and schedules a note-off `duration` ticks later.
+- **All other events are Standard MIDI**, with the usual data-byte counts:
+  `0x8n`/`0xAn`/`0xBn`/`0xEn` (two data bytes), `0xCn`/`0xDn` (one),
+  `0xF0`/`0xF7` sysex (SMF-VLQ length + data), and `0xFF` meta (type +
+  SMF-VLQ length + data). `FF 2F` ends the sequence. Status bytes are always
+  explicit — running status cannot occur because data bytes (`< 0x80`) would
+  be consumed as delay.
+
 ## Open Questions
 
-### 1. EVNT and TIMB chunk internals
+### 1. AIL tempo scaling and TIMB entry semantics
 
-The chunk-level outline above is coarse: the TIMB instrument table layout and
-the AIL delta encoding inside EVNT are documented externally (Miles Sound
-System) but not yet specified here from FA's own files. Closing this means
-documenting exactly what FA's engine consumes, verified against the 78-file
-corpus.
+Two residual details are externally documented (Miles Sound System) but not
+independently verified against FA's files here: the exact mapping from AIL's
+tempo multipliers to microseconds-per-quarter-note (the exporter emits a
+default 120 BPM and passes any in-stream `FF 51` tempo meta through
+unchanged), and the meaning of the TIMB entry fields beyond the `(patch,
+bank)` pair. Neither affects the note content of the exported MIDI.
 
 *Status: open — re-static (#54)*
 
