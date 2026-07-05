@@ -37,6 +37,7 @@ int cmd_rgn(int argc, char** argv);
 int cmd_ssf(int argc, char** argv);
 int cmd_mc(int argc, char** argv);
 int cmd_hgr(int argc, char** argv);
+int cmd_dlg(int argc, char** argv);
 
 static void print_usage() {
     puts("fx -- Fighters Codex\n");
@@ -166,6 +167,10 @@ static void print_usage() {
     puts("Hangar screen DLL commands:");
     puts("  fx hgr info    <file.HGR>");
     puts("  fx hgr strings <file.HGR> [-n MIN]");
+    puts("");
+    puts("Menu dialog DLL commands:");
+    puts("  fx dlg info    <file.DLG>");
+    puts("  fx dlg strings <file.DLG> [-n MIN]");
 }
 
 int main(int argc, char** argv) {
@@ -237,6 +242,8 @@ int main(int argc, char** argv) {
         return cmd_mc(argc - 1, argv + 1);
     if (strcmp(cmd, "hgr") == 0)
         return cmd_hgr(argc - 1, argv + 1);
+    if (strcmp(cmd, "dlg") == 0)
+        return cmd_dlg(argc - 1, argv + 1);
     if (strcmp(cmd, "ot")  == 0 || strcmp(cmd, "nt")  == 0 ||
         strcmp(cmd, "pt")  == 0 || strcmp(cmd, "jt")  == 0 ||
         strcmp(cmd, "see") == 0 || strcmp(cmd, "ecm") == 0 ||

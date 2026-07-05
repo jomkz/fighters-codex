@@ -707,3 +707,21 @@ Validate the MZ + Phar Lap `PL` container and list the referenced PIC assets
 Dump the embedded strings, one per line on stdout.
 
 *See also: [fa/formats/HGR.md](fa/formats/HGR.md)*
+
+## dlg — Menu dialog DLLs
+
+```
+fx dlg info    <file.DLG>
+fx dlg strings <file.DLG> [-n MIN]
+```
+
+#### `fx dlg info <file.DLG>`
+
+Validate the MZ + Phar Lap `PL` container and report the CODE section
+geometry (the control dispatch table) plus the embedded-string count.
+
+#### `fx dlg strings <file.DLG> [-n MIN]`
+
+Dump the dialog's embedded control label strings, one per line on stdout.
+
+*See also: [fa/formats/DLG.md](fa/formats/DLG.md)*

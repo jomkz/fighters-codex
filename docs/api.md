@@ -433,6 +433,20 @@ std::vector<std::string> hgr_strings(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## dlg.h — Menu dialog DLL reader
+
+```cpp
+namespace fx {
+struct DlgInfo {
+    bool        valid;  // MZ + "PL" signature with a CODE section
+    CodeSection code;   // control dispatch table (pe.h geometry)
+};
+DlgInfo dlg_info(const uint8_t* data, size_t size);
+std::vector<std::string> dlg_strings(const uint8_t* data, size_t size,
+                                     size_t min_len = 3);
+} // namespace fx
+```
+
 ## cb8.h — FMV video decoder
 
 ```cpp
