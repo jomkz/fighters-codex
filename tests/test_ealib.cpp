@@ -2,6 +2,8 @@
 #include <fx/ealib.h>
 #include <cstring>
 
+#include "support/fixture.h"
+
 using namespace fx;
 
 // ---------------------------------------------------------------------------
@@ -35,9 +37,13 @@ static std::vector<uint8_t> make_lib_with_entry(const char* name, uint8_t flags,
 }
 
 // Mark Adler's blast.c example stream: litmode 0, dictbits 4, decompresses
-// to "AIAIAIAIAIAIA" (13 bytes)
-static const std::vector<uint8_t> dcl_example =
-    { 0x00, 0x04, 0x82, 0x24, 0x25, 0x8F, 0x80, 0x7F };
+// to "AIAIAIAIAIAIA" (13 bytes) — the committed known-answer fixture
+// (tests/fixtures/blast/adler-ai.dcl).
+static const std::vector<uint8_t>& dcl_example() {
+    static const std::vector<uint8_t> s =
+        fx_test::load_fixture("blast/adler-ai.dcl");
+    return s;
+}
 
 // flags=4 payload: 4-byte LE EA decompressed-size prefix + DCL stream
 static std::vector<uint8_t> dcl_payload(uint32_t claimed_size) {
@@ -45,7 +51,7 @@ static std::vector<uint8_t> dcl_payload(uint32_t claimed_size) {
         (uint8_t)claimed_size, (uint8_t)(claimed_size >> 8),
         (uint8_t)(claimed_size >> 16), (uint8_t)(claimed_size >> 24)
     };
-    p.insert(p.end(), dcl_example.begin(), dcl_example.end());
+    p.insert(p.end(), dcl_example().begin(), dcl_example().end());
     return p;
 }
 

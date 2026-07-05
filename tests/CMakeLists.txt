@@ -24,6 +24,11 @@ add_executable(fx_tests
 
 target_link_libraries(fx_tests PRIVATE fx_lib fx_render fx_warnings Catch2::Catch2WithMain)
 
+# Committed synthetic fixtures (policy: tests/fixtures/README.md); loaded
+# through tests/support/fixture.h.
+target_compile_definitions(fx_tests PRIVATE
+    FX_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures")
+
 include(CTest)
 include(Catch)
 catch_discover_tests(fx_tests)

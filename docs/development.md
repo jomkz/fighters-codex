@@ -111,7 +111,10 @@ the path embedders use (see [api.md](api.md)).
 
 `ctest --preset <name>` runs several layers:
 
-- **Unit suite** (`fx_tests`): Catch2 codec tests against in-memory fixtures.
+- **Unit suite** (`fx_tests`): Catch2 codec tests against in-memory data and
+  the committed synthetic fixtures under
+  [tests/fixtures/](https://github.com/jomkz/fighters-codex/tree/main/tests/fixtures)
+  (loaded through `tests/support/fixture.h`).
   Catch2 is fetched with FetchContent on the *first configure of each preset
   directory*, which needs network access; for offline work point
   `FETCHCONTENT_SOURCE_DIR_CATCH2` at an existing Catch2 v3.7.1 checkout.
@@ -140,6 +143,13 @@ the path embedders use (see [api.md](api.md)).
   reconstruction symbol database (`db/`), per-subsystem coverage, and the
   generated [reconstruction matrix](fa/reconstruction.md). See
   [spec-authoring.md](spec-authoring.md) and [db/README.md](https://github.com/jomkz/fighters-codex/blob/main/db/README.md).
+
+Test data follows the **synthetic-first fixture policy**
+([tests/fixtures/README.md](https://github.com/jomkz/fighters-codex/blob/main/tests/fixtures/README.md)):
+everything committed is synthetic — produced by our own encoders or
+hand-assembled from the format specs — and validation against real game data
+runs only behind `FX_FA_ROOT` (below), under the ctest label `integration`,
+on the local benches. CI never sees a byte of game content.
 
 ### Real-asset integration mode (FX_FA_ROOT)
 
