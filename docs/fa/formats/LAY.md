@@ -15,8 +15,8 @@ codec:
   issue: 99
   lib: [lib/src/lay.cpp, lib/src/pe.cpp]
   commands: [lay]
-  tests: []
-  fuzz: []
+  tests: [tests/test_pe.cpp]
+  fuzz: [fuzz/fuzz_pe.cpp]
   gui: [gui/src/editors/lay_editor.cpp]
   fixtures:
     synthetic: false
