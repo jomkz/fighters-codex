@@ -25,18 +25,27 @@
 
 namespace fx_render {
 
-// Object-space position + linear RGB colour. Grows later (normals, UVs) as the
-// SH interpreter (fx_lib #279) supplies richer geometry.
+// Object-space position + linear RGB colour + texture coordinate. `u, v` are
+// normalized (0..1, top-left origin) and used only when the Mesh carries a
+// texture; otherwise the vertex colour is used (Gourad).
 struct Vertex {
     float x = 0.0f, y = 0.0f, z = 0.0f;
     float r = 1.0f, g = 1.0f, b = 1.0f;
+    float u = 0.0f, v = 0.0f;
 };
 
 // A vertex list interpreted per the draw's Primitive: as a triangle list (every
 // 3 vertices) or a line list (every 2). Matches the interleaved upload the
 // fxs preview already produces.
+//
+// When `texture` is set (and the draw is filled Triangles), the backends sample
+// it with the per-vertex `u, v` instead of the vertex colour. A single texture
+// per mesh covers the common SH case (most models reference one PIC); a
+// multi-texture model is split into one Mesh per texture by the caller.
+struct Image;  // defined below
 struct Mesh {
     std::vector<Vertex> vertices;
+    std::shared_ptr<const Image> texture;  // nullable; nearest-sampled RGBA
 };
 
 // Column-major 4x4 model-view-projection (element [col*4 + row]) — the OpenGL
