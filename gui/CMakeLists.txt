@@ -102,6 +102,13 @@ target_link_libraries(fxs PRIVATE
     fx_warnings
 )
 
+# UTF-8 active code page (#165) — same manifest as fx: SDL3's file dialogs
+# hand back UTF-8 paths, and this makes the narrow CRT open them correctly
+# on Windows 10 1903+.
+if(MSVC)
+    target_sources(fxs PRIVATE ${PROJECT_SOURCE_DIR}/cmake/win-utf8.manifest)
+endif()
+
 # Headless render smoke: three frames under Xvfb/llvmpipe in CI (offscreen
 # driver as fallback). Linux-only — GitHub's Windows runners expose no
 # GL 3.3; Windows gui coverage is the build plus the display-free gui_tests.
