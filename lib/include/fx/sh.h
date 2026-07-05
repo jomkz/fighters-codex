@@ -7,10 +7,18 @@ namespace fx {
 
 struct ShVertex { float x, y, z; };
 
+// Texel-space texture coordinate (origin top-left, in pixels of the referenced
+// PIC). Normalize by the texture's width/height for a 0..1 sampler; the SH bytes
+// carry raw texels because the shape does not know its texture's dimensions.
+struct ShTexCoord { float s, t; };
+
 struct ShFace {
     uint8_t  color;
     std::string texture;
     std::vector<uint32_t> indices; // 0-based into ShMesh::vertices
+    // Per-corner texel coordinates, parallel to `indices` (same count) when the
+    // face carries HAVE_TEXCOORDS; empty for untextured faces.
+    std::vector<ShTexCoord> texcoords;
 };
 
 struct ShInfo {

@@ -756,6 +756,14 @@ Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 | F15E.SH | 8 (1x) | 387 | 42 | |
 | AC130.SH | 9 (2x) | 0 | 0 | (x86-only) |
 
+**Texture coordinates.** Faces with `HAVE_TEXCOORDS` carry one `(s, t)` per
+corner (`ShFace::texcoords`, parallel to `indices`); the codec extracts them in
+**texel space** (origin top-left, pixels of the referenced PIC) since the shape
+does not record its texture's dimensions. `sh_to_obj` emits them as `vt` lines
+with `f v/vt` faces; a consumer normalizes by the PIC's width/height (and flips
+V) for a 0..1 sampler. Example: `A10.SH` — 40/122 faces textured, `s ∈ [0,251]`,
+`t ∈ [24,284]` against `_a10.PIC`.
+
 Further limitations: the OBJ export merges every block — animation frames, LOD
 variants, and damage states are not distinguished. The **in-memory** parse can
 select a single animation frame or the damaged sub-model via `ShState` (see
