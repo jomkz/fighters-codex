@@ -19,7 +19,7 @@ MIT, clean-room from this project's own documentation. Part of epic
 
 | Type | Role |
 |---|---|
-| `Vertex` / `Mesh` | interleaved position + linear RGB; a triangle **or** line list |
+| `Vertex` / `Mesh` | interleaved position + linear RGB + `u,v`; a triangle **or** line list. `Mesh::texture` (optional, nearest-sampled RGBA) textures a filled-triangle draw with the per-vertex `u,v` (0..1) instead of the colour — one texture per mesh (split multi-texture models caller-side) |
 | `Camera` | column-major 4×4 MVP (OpenGL convention) |
 | `Image` | owned RGBA8 CPU buffer (top-left origin) |
 | `DrawOptions` | primitive (triangles/lines), depth test/write, wireframe overlay, cull |

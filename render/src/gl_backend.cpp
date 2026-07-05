@@ -19,21 +19,29 @@ const char* kVS = R"glsl(
 #version 330 core
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aCol;
+layout(location = 2) in vec2 aUV;
 uniform mat4 uMvp;
 out vec3 vCol;
+out vec2 vUV;
 void main() {
     gl_Position = uMvp * vec4(aPos, 1.0);
     vCol = aCol;
+    vUV = aUV;
 }
 )glsl";
 
 const char* kFS = R"glsl(
 #version 330 core
 in vec3 vCol;
+in vec2 vUV;
 uniform bool uWire;
+uniform bool uTextured;
+uniform sampler2D uTex;
 out vec4 FragColor;
 void main() {
-    FragColor = uWire ? vec4(0.7, 0.7, 0.7, 1.0) : vec4(vCol, 1.0);
+    if (uWire)          FragColor = vec4(0.7, 0.7, 0.7, 1.0);
+    else if (uTextured) FragColor = vec4(texture(uTex, vUV).rgb, 1.0);
+    else                FragColor = vec4(vCol, 1.0);
 }
 )glsl";
 
@@ -108,6 +116,7 @@ public:
         if (prog_) glDeleteProgram(prog_);
         if (vbo_) glDeleteBuffers(1, &vbo_);
         if (vao_) glDeleteVertexArrays(1, &vao_);
+        if (tex_) glDeleteTextures(1, &tex_);
     }
 
     std::unique_ptr<RenderTarget> MakeTarget(int w, int h) override {
@@ -136,6 +145,18 @@ public:
 
         glUseProgram(prog_);
         glUniformMatrix4fv(loc_mvp_, 1, GL_FALSE, cam.mvp.data());
+
+        // Bind the mesh texture (filled triangles only); wireframe/line passes
+        // ignore it. Uploaded once per source Image and cached.
+        GLuint mesh_tex = 0;
+        if (mesh.texture && opts.primitive == Primitive::Triangles && !opts.wireframe)
+            mesh_tex = UploadTexture(*mesh.texture);
+        if (mesh_tex) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, mesh_tex);
+            glUniform1i(loc_tex_, 0);
+        }
+        glUniform1i(loc_textured_, mesh_tex ? 1 : 0);
 
         if (opts.depth_test) {
             glEnable(GL_DEPTH_TEST);
@@ -205,6 +226,8 @@ private:
         glDeleteShader(fs);
         loc_mvp_ = glGetUniformLocation(prog_, "uMvp");
         loc_wire_ = glGetUniformLocation(prog_, "uWire");
+        loc_textured_ = glGetUniformLocation(prog_, "uTextured");
+        loc_tex_ = glGetUniformLocation(prog_, "uTex");
     }
 
     void EnsureBuffers() {
@@ -219,12 +242,38 @@ private:
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                               reinterpret_cast<const void*>(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                              reinterpret_cast<const void*>(6 * sizeof(float)));
         glBindVertexArray(0);
     }
 
+    // Upload `img` into a cached GL texture, re-uploading only when the source
+    // pointer changes. Returns the texture id, or 0 if `img` is empty.
+    GLuint UploadTexture(const Image& img) {
+        if (img.width <= 0 || img.height <= 0 || img.pixels.empty()) return 0;
+        if (!tex_) {
+            glGenTextures(1, &tex_);
+            glBindTexture(GL_TEXTURE_2D, tex_);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+        if (&img != last_img_) {
+            glBindTexture(GL_TEXTURE_2D, tex_);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, img.width, img.height, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, img.pixels.data());
+            last_img_ = &img;
+        }
+        return tex_;
+    }
+
     GlTarget* cur_ = nullptr;
-    GLuint prog_ = 0, vao_ = 0, vbo_ = 0;
-    GLint loc_mvp_ = -1, loc_wire_ = -1;
+    GLuint prog_ = 0, vao_ = 0, vbo_ = 0, tex_ = 0;
+    const Image* last_img_ = nullptr;
+    GLint loc_mvp_ = -1, loc_wire_ = -1, loc_textured_ = -1, loc_tex_ = -1;
 };
 
 }  // namespace

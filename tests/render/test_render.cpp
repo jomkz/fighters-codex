@@ -48,6 +48,38 @@ TEST_CASE("Software backend fills a triangle and clears the rest", "[render]") {
     CHECK(corner[2] == 0);
 }
 
+TEST_CASE("Software backend samples the mesh texture instead of vertex colour", "[render]") {
+    auto r = MakeRenderer(Backend::Software);
+
+    // 2x2 texture: texel (0,0) is red; the rest distinct.
+    auto tex = std::make_shared<Image>();
+    tex->resize(2, 2);
+    auto set = [&](int x, int y, std::uint8_t rr, std::uint8_t gg, std::uint8_t bb) {
+        std::uint8_t* p = tex->at(x, y);
+        p[0] = rr; p[1] = gg; p[2] = bb; p[3] = 255;
+    };
+    set(0, 0, 255, 0, 0);  set(1, 0, 0, 255, 0);
+    set(0, 1, 0, 0, 255);  set(1, 1, 255, 255, 255);
+
+    // Vertex colour is GREEN, but every corner's UV points at texel (0,0)=red,
+    // so a textured draw must produce red — proving texture overrides colour.
+    Mesh mesh;
+    mesh.texture = tex;
+    mesh.vertices = {
+        {-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f, 0.1f},
+        { 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f, 0.1f},
+        { 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f, 0.1f},
+    };
+    Image img;
+    img.resize(64, 64);
+    RenderToImage(*r, mesh, Camera{}, img, {0, 0, 0, 255}, {});
+
+    const std::uint8_t* c = img.at(32, 32);
+    CHECK(c[0] > 200);  // red from the texture
+    CHECK(c[1] < 50);   // not the green vertex colour
+    CHECK(c[2] < 50);
+}
+
 TEST_CASE("Software backend respects the clear colour", "[render]") {
     auto r = MakeRenderer(Backend::Software);
     Image img;

@@ -39,8 +39,20 @@ std::uint8_t ToU8(float c) {
 struct ScreenVtx {
     float x, y, z;  // pixels, pixels, NDC depth
     float r, g, b;
+    float u, v;     // texture coordinate (0..1, top-left)
     bool clipped;   // behind the near plane
 };
+
+// Nearest-neighbour sample of an RGBA image at normalized (u, v), top-left
+// origin, clamped to the edges.
+void SampleNearest(const Image& img, float u, float v, float& r, float& g, float& b) {
+    int tx = std::clamp(static_cast<int>(u * img.width),  0, img.width - 1);
+    int ty = std::clamp(static_cast<int>(v * img.height), 0, img.height - 1);
+    const std::uint8_t* p = img.at(tx, ty);
+    r = p[0] / 255.0f;
+    g = p[1] / 255.0f;
+    b = p[2] / 255.0f;
+}
 
 class SoftwareTarget final : public RenderTarget {
 public:
@@ -93,8 +105,13 @@ public:
             s.r = src.r;
             s.g = src.g;
             s.b = src.b;
+            s.u = src.u;
+            s.v = src.v;
             return s;
         };
+
+        const Image* tex = (mesh.texture && mesh.texture->width > 0 &&
+                            mesh.texture->height > 0) ? mesh.texture.get() : nullptr;
 
         if (opts.primitive == Primitive::Lines) {
             for (std::size_t i = 0; i + 1 < mesh.vertices.size(); i += 2) {
@@ -147,9 +164,19 @@ public:
                     if (opts.depth_write) cur_->depth[di] = z;
 
                     std::uint8_t* p = &cur_->image.pixels[di * 4];
-                    p[0] = ToU8(b0 * v[0].r + b1 * v[1].r + b2 * v[2].r);
-                    p[1] = ToU8(b0 * v[0].g + b1 * v[1].g + b2 * v[2].g);
-                    p[2] = ToU8(b0 * v[0].b + b1 * v[1].b + b2 * v[2].b);
+                    if (tex) {
+                        float u = b0 * v[0].u + b1 * v[1].u + b2 * v[2].u;
+                        float tv = b0 * v[0].v + b1 * v[1].v + b2 * v[2].v;
+                        float r, g, b;
+                        SampleNearest(*tex, u, tv, r, g, b);
+                        p[0] = ToU8(r);
+                        p[1] = ToU8(g);
+                        p[2] = ToU8(b);
+                    } else {
+                        p[0] = ToU8(b0 * v[0].r + b1 * v[1].r + b2 * v[2].r);
+                        p[1] = ToU8(b0 * v[0].g + b1 * v[1].g + b2 * v[2].g);
+                        p[2] = ToU8(b0 * v[0].b + b1 * v[1].b + b2 * v[2].b);
+                    }
                     p[3] = 255;
                 }
             }
