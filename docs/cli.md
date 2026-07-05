@@ -547,3 +547,65 @@ weapon pool, state keys) — printable runs of at least `MIN` characters
 (default 3), one per line on stdout.
 
 *See also: [fa/formats/CAM.md](fa/formats/CAM.md)*
+
+## txt — In-game text
+
+```
+fx txt info <file.TXT>
+```
+
+#### `fx txt info <file.TXT>`
+
+Classify the file (campaign description / UI layout template / plain text),
+summarize its directive structure (sections, page breaks, buttons,
+pictures), and confirm the parse round-trips byte-identically.
+
+*See also: [fa/formats/TXT.md](fa/formats/TXT.md)*
+
+## cfg — Game configuration
+
+```
+fx cfg info <EA.CFG>
+```
+
+#### `fx cfg info <EA.CFG>`
+
+Dump the 347-byte CONFIG struct: input devices, sound and volume settings,
+preference flag words, pilot/callsign/squadron strings, and the three
+untraced pass-through fields — then confirm the byte-identical round-trip.
+
+*See also: [fa/formats/CFG.md](fa/formats/CFG.md)*
+
+## dat — Network configuration
+
+```
+fx dat info <NET.DAT|MODEM.DAT|SERIAL.DAT>
+```
+
+#### `fx dat info <file.DAT>`
+
+Dump the 3,552-byte CN_INFO struct shared by all three transport configs:
+version, callsign, active transport, serial/modem parameters, phone-book
+usage, and the TCP/IP address fields — then confirm the byte-identical
+round-trip (checksum and unmapped regions pass through verbatim).
+
+*See also: [fa/formats/DAT.md](fa/formats/DAT.md)*
+
+## mnu — Menu DLLs
+
+```
+fx mnu info    <file.MNU>
+fx mnu strings <file.MNU> [-n MIN]
+```
+
+#### `fx mnu info <file.MNU>`
+
+Validate the MZ + Phar Lap `PL` container and report the CODE section
+geometry plus the embedded-string count.
+
+#### `fx mnu strings <file.MNU> [-n MIN]`
+
+Dump the embedded menu label strings — printable runs of at least `MIN`
+characters (default 3), one per line on stdout.
+
+*See also: [fa/formats/MNU.md](fa/formats/MNU.md)*

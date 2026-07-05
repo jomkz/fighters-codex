@@ -24,6 +24,10 @@
     src/fbc.cpp
     src/bin.cpp
     src/cam.cpp
+    src/txt.cpp
+    src/cfg.cpp
+    src/dat.cpp
+    src/mnu.cpp
 )
 
 add_library(fx::lib ALIAS fx_lib)

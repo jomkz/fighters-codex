@@ -12,10 +12,14 @@ spec:
       issue: 54
       note: "~1,203-byte region [0x8f9]-[0xdab] unmapped"
 codec:
-  direction: none
-  issue: 104
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/dat.cpp]
+  commands: [dat]
+  tests: [tests/test_dat.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: false
 related: [CFG]
 ---
@@ -33,6 +37,21 @@ none packed into any LIB archive. All three share the same 3,552-byte
 | `NET.DAT` | Active transport selection; IPX/TCP/IP addresses and direct-connect info |
 | `MODEM.DAT` | Modem phone book (8 player name + phone number pairs) and COM port selection |
 | `SERIAL.DAT` | Serial (RS-232) COM port and baud rate preferences |
+
+## Tools
+
+### fx
+
+```
+fx dat info <NET.DAT|MODEM.DAT|SERIAL.DAT>   # dump CN_INFO + round-trip check
+```
+
+`dat_read`/`dat_write` type every documented field; the stored checksum, the
+8-byte gap after the transport dword, and the unmapped [0x8f9]–[0xdab]
+region (gap #54) pass through verbatim — byte-identical round-trip, verified
+against the install's live NET.DAT by an `FX_FA_ROOT`-gated test. (Editing
+fields would need `CfigChecksum` recomputed; that lands with a write verb
+when something needs one.)
 
 ## File Layout
 
