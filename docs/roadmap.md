@@ -16,8 +16,13 @@ the proof that the game executable is understood.
 [README](https://github.com/jomkz/fighters-codex/blob/main/README.md).)
 
 > **`fxs` direction (Fighters Studio):** beyond today's filesystem-style 3-panel LIB/entry chooser,
-> `fxs` grows an **object-based editing** surface — edit planes, campaigns, missions, and loadouts as
-> first-class objects, not just raw files. Tracked as its own scope under the fxs/GUI epics.
+> `fxs` grows an **entity-based editing** surface. A game *entity* — an aircraft, a campaign, a
+> mission, a loadout — is not a single file but an **aggregate of many LIB records**: e.g. an aircraft
+> ties together its `.SH` shape(s), `.PT` flight model, `.PIC` textures, `.JT`/`.SEE`/`.ECM` weapon and
+> countermeasure records, cockpit art, and audio. The Studio surface presents and edits that whole
+> entity as one first-class object — resolving and cross-linking its constituent files — instead of
+> requiring the user to edit each raw record in isolation. The existing filesystem chooser stays as the
+> low-level view. Tracked as its own scope under the fxs/GUI epics.
 
 ## The 1.0 definition
 
