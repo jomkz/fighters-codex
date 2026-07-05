@@ -30,6 +30,9 @@
     cmd_mt.cpp
     cmd_pts.cpp
     cmd_rgn.cpp
+    cmd_ssf.cpp
+    cmd_mc.cpp
+    cmd_hgr.cpp
 )
 
 target_link_libraries(fx PRIVATE fx_lib fx_warnings)

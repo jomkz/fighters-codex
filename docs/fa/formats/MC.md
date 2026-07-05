@@ -7,10 +7,14 @@ endianness: little
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 109
+  direction: read
+  rationale: "engine-code container (mission condition DLL, PL family like CAM/MNU/PTS): fx_lib surfaces the container geometry and embedded strings incl. the condition API imports; writing compiled DLLs is fighters-legacy territory"
+  lib: [lib/src/mc.cpp]
+  commands: [mc]
+  tests: [tests/test_mc.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [CAM, M]
 ---
@@ -21,6 +25,19 @@ FA_2.LIB contains 21 `.MC` files. Each implements the runtime condition checks
 for a specific mission event — trigger conditions, completion logic, and
 failure detection. Each is a **Win32 PE DLL** loaded at runtime; all observed
 files decompress to 4608 bytes.
+
+## Tools
+
+### fx
+
+```
+fx mc info    <file.MC>              # container check + CODE section geometry
+fx mc strings <file.MC> [-n MIN]     # embedded strings (incl. API imports)
+```
+
+Same MZ + Phar Lap `PL` container family as [CAM](CAM.md); all 21 shipped
+files validate. (The plain-text `.mc_M` campaign scripts described below are
+a separate mechanism, not covered by this codec.)
 
 ## File Layout
 

@@ -31,6 +31,9 @@
     src/mt.cpp
     src/pts.cpp
     src/rgn.cpp
+    src/ssf.cpp
+    src/mc.cpp
+    src/hgr.cpp
 )
 
 add_library(fx::lib ALIAS fx_lib)
