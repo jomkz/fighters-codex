@@ -35,8 +35,12 @@ static int        s_previewPalGen = -1;
 struct ShPreview {
     std::unique_ptr<fx_render::Renderer>     renderer;
     std::unique_ptr<fx_render::RenderTarget> rt;
-    fx_render::Mesh mesh;   // lit triangles
-    fx_render::Mesh grid;   // room line segments
+    fx_render::Mesh mesh;      // lit, untextured faces
+    fx_render::Mesh mesh_tex;  // textured faces (carry u,v; shade colour as fallback)
+    fx_render::Mesh grid;      // room line segments
+    std::shared_ptr<fx_render::Image> tex_image;  // decoded PIC, or null
+    int tex_w = 0, tex_h = 0;  // texture dims for UV normalization
+    bool show_texture = true;  // texture toggle (only meaningful when tex_image)
     int rt_w = 0, rt_h = 0;
     int cached_lib   = -2;
     int cached_entry = -2;
@@ -45,6 +49,7 @@ struct ShPreview {
     int  frame            = 0;       // JumpToFrame animation index (ShState)
     int  cached_frame     = -1;
     int  frame_count      = 0;       // exposed by the last parse; 0 = static
+    int  cached_palgen    = -1;      // reload the texture when the palette changes
     float azimuth    = 170.0f;
     float elevation  = 20.0f;
     float distance   = 100.0f;
@@ -56,9 +61,18 @@ struct ShPreview {
 // fx_render (Vertex = interleaved position + colour, same layout).
 static void BuildMeshVB(const fx::ShMesh& mesh) {
     s_sh.mesh.vertices.clear();
+    s_sh.mesh_tex.vertices.clear();
     if (mesh.vertices.empty() || mesh.faces.empty()) return;
 
+    // Faces split by whether they carry texture coordinates (and a texture is
+    // loaded): textured faces go into mesh_tex with normalized u,v; the rest
+    // stay flat-shaded in mesh. One texture per model (the common SH case).
+    const bool has_tex = s_sh.tex_w > 0 && s_sh.tex_h > 0;
+    const float inv_tw = has_tex ? 1.0f / s_sh.tex_w : 0.0f;
+    const float inv_th = has_tex ? 1.0f / s_sh.tex_h : 0.0f;
+
     std::vector<fx_render::Vertex> verts;
+    std::vector<fx_render::Vertex> tverts;
     verts.reserve(mesh.faces.size() * 6);
 
     // Fixed directional light — upper-left-front in render space (X=right, Y=up, Z=fwd)
@@ -67,6 +81,7 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
 
     for (const auto& face : mesh.faces) {
         if (face.indices.size() < 3) continue;
+        const bool textured = has_tex && face.texcoords.size() == face.indices.size();
         for (size_t i = 1; i + 1 < face.indices.size(); i++) {
             uint32_t i0 = face.indices[0];
             uint32_t i1 = face.indices[i];
@@ -104,13 +119,24 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
                 shade = ambient + diffuse * 0.3f;
             }
 
-            verts.push_back({r0[0], r0[1], r0[2], shade, shade, shade});
-            verts.push_back({r1[0], r1[1], r1[2], shade, shade, shade});
-            verts.push_back({r2[0], r2[1], r2[2], shade, shade, shade});
+            if (textured) {
+                // Fan corners 0, i, i+1 map to the parallel texcoord entries.
+                const auto& t0 = face.texcoords[0];
+                const auto& t1 = face.texcoords[i];
+                const auto& t2 = face.texcoords[i + 1];
+                tverts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, t0.s * inv_tw, t0.t * inv_th});
+                tverts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, t1.s * inv_tw, t1.t * inv_th});
+                tverts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, t2.s * inv_tw, t2.t * inv_th});
+            } else {
+                verts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, 0.0f, 0.0f});
+                verts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, 0.0f, 0.0f});
+                verts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, 0.0f, 0.0f});
+            }
         }
     }
 
-    s_sh.mesh.vertices = std::move(verts);
+    s_sh.mesh.vertices     = std::move(verts);
+    s_sh.mesh_tex.vertices = std::move(tverts);
 }
 
 // Build a 6-wall room around the model.
@@ -209,10 +235,14 @@ static void RenderSh(int w, int h) {
 
     // Dark background; draw only when there's a model (as the old path did).
     s_sh.renderer->Begin(*s_sh.rt, {20, 20, 31, 255});  // (0.08, 0.08, 0.12)
-    if (s_sh.mesh.vertices.empty()) {
+    if (s_sh.mesh.vertices.empty() && s_sh.mesh_tex.vertices.empty()) {
         s_sh.renderer->End();
         return;
     }
+
+    // Bind the texture only when the toggle is on; otherwise the textured faces
+    // fall back to their flat-shade colour (fx_render ignores u,v without one).
+    s_sh.mesh_tex.texture = s_sh.show_texture ? s_sh.tex_image : nullptr;
 
     // Orbit camera in the renderer's right-handed Y-up space; the SH mesh is
     // mapped there by platform::sh_to_render, so look_at/perspective apply as-is.
@@ -239,15 +269,51 @@ static void RenderSh(int w, int h) {
     // Room grid first so the model's depth writes occlude it naturally.
     opts.primitive = fx_render::Primitive::Lines;
     if (!s_sh.grid.vertices.empty()) s_sh.renderer->Draw(s_sh.grid, cam, opts);
-    // Solid mesh.
+    // Solid meshes (untextured + textured passes).
     opts.primitive = fx_render::Primitive::Triangles;
-    s_sh.renderer->Draw(s_sh.mesh, cam, opts);
+    if (!s_sh.mesh.vertices.empty())     s_sh.renderer->Draw(s_sh.mesh, cam, opts);
+    if (!s_sh.mesh_tex.vertices.empty()) s_sh.renderer->Draw(s_sh.mesh_tex, cam, opts);
     // Grey wireframe overlay — depth-biased, no depth write.
     opts.wireframe = true;
     opts.depth_write = false;
-    s_sh.renderer->Draw(s_sh.mesh, cam, opts);
+    if (!s_sh.mesh.vertices.empty())     s_sh.renderer->Draw(s_sh.mesh, cam, opts);
+    if (!s_sh.mesh_tex.vertices.empty()) s_sh.renderer->Draw(s_sh.mesh_tex, cam, opts);
 
     s_sh.renderer->End();
+}
+
+// Resolve the SH's referenced texture PIC (e.g. _a10.PIC) from the same LIB
+// session, decode it against the current palette, and stash it as an
+// fx_render::Image. Clears the texture when the SH is untextured, standalone,
+// or the PIC is missing.
+static void LoadShTexture(App& app, const EditorState& ed, const fx::ShMesh& mesh) {
+    s_sh.tex_image.reset();
+    s_sh.tex_w = s_sh.tex_h = 0;
+
+    std::string tex_name;
+    for (const auto& t : mesh.textures)
+        if (!t.empty()) { tex_name = t; break; }
+    if (tex_name.empty()) return;
+    if (ed.libIdx < 0 || ed.libIdx >= (int)app.sessions.size()) return;
+
+    const auto& sess = app.sessions[ed.libIdx];
+    const fx::Entry* e = fx::ealib_find(sess.entries, tex_name);
+    if (!e) return;
+    auto pic = fx::ealib_extract(sess.data.data(), sess.data.size(), *e, true);
+    if (pic.empty()) return;
+
+    fx::PicInfo info;
+    if (!fx::pic_info(pic.data(), pic.size(), &info)) return;
+    fx::Palette sysPal = fxg::ResolvePreviewPalette(app);
+    auto rgba = fx::pic_decode(pic.data(), pic.size(), &sysPal);
+    if (rgba.empty()) return;
+
+    auto img = std::make_shared<fx_render::Image>();
+    img->resize((int)info.width, (int)info.height);
+    std::memcpy(img->pixels.data(), rgba.data(), rgba.size());
+    s_sh.tex_image = std::move(img);
+    s_sh.tex_w = (int)info.width;
+    s_sh.tex_h = (int)info.height;
 }
 
 // ---------------------------------------------------------------------------
@@ -293,12 +359,14 @@ void DrawPreview(App& app) {
         // Rebuild on selection change or when a state toggle (destroyed / frame) flips.
         bool sel_changed = (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry);
         if (sel_changed) s_sh.frame = 0;  // reset animation on a new model
-        if (sel_changed || s_sh.destroyed != s_sh.cached_destroyed
+        bool pal_changed = app.palGen != s_sh.cached_palgen;
+        if (sel_changed || pal_changed || s_sh.destroyed != s_sh.cached_destroyed
                         || s_sh.frame != s_sh.cached_frame) {
             s_sh.cached_lib       = ed.libIdx;
             s_sh.cached_entry     = ed.entryIdx;
             s_sh.cached_destroyed = s_sh.destroyed;
             s_sh.cached_frame     = s_sh.frame;
+            s_sh.cached_palgen    = app.palGen;
 
             fx::ShInfo  info = fx::sh_parse_info(ed.data.data(), ed.data.size());
             fx::ShState st;  st.destroyed = s_sh.destroyed;  st.frame = s_sh.frame;
@@ -324,10 +392,15 @@ void DrawPreview(App& app) {
                 s_sh.elevation  = 25.0f;
                 BuildBoxGridVB(info, s_sh.model_span);
             }
+            if (sel_changed || pal_changed) LoadShTexture(app, ed, mesh);
             BuildMeshVB(mesh);
         }
 
         ImGui::Checkbox("Destroyed", &s_sh.destroyed);
+        if (s_sh.tex_image) {
+            ImGui::SameLine();
+            ImGui::Checkbox("Texture", &s_sh.show_texture);
+        }
         if (s_sh.frame_count > 1) {
             ImGui::SameLine();
             ImGui::SetNextItemWidth(160.0f);
