@@ -175,6 +175,21 @@ mapped), and annotation (units, enum values). Changes are patched back via
 - Decoded preview shown in the Preview panel via `fx::raw_decode`
 - To export as PNG use `fx raw unpack <file>`
 
+## 3D Model Viewer (SH)
+
+- Selecting a `.SH` record shows a shaded 3D orbit view (grey wireframe overlay)
+  in the Preview panel, plus scale, vertex/face counts, bounding box, and the
+  referenced texture names in the editor
+- **Orbit** by dragging; **zoom** with the scroll wheel; the camera auto-frames
+  the model on selection
+- **Destroyed** toggle renders the damaged sub-model (`0xAC` JumpToDamage) instead
+  of the intact geometry
+- **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
+  selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
+  and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
+- **Export OBJ…** writes a Wavefront OBJ (merges all state blocks; the selected
+  frame/damage state is a preview-only choice, per the SH round-trip notes)
+
 ## Pilot Editing (PLT)
 
 Identity block fields (all editable):
