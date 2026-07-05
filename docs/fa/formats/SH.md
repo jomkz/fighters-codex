@@ -755,6 +755,10 @@ conditional the way the engine would for one selected state — so it emits
 
 - **`destroyed`** — `0xAC` JumpToDamage: `false` (default) falls through to
   the intact geometry; `true` takes the branch into the damaged sub-model.
+  `ShMesh::has_damage` reports whether the shape carries an inline branch at
+  all — aircraft usually don't (their destruction is the whole-model `_A`…`_D`
+  swap, [shape-selection.md](../shape-selection.md)); `sh_variant_name`
+  derives those sibling names for callers that resolve the swap themselves.
 - **`frame`** — the `0x40` JumpToFrame index. The codec computes
   `idx = frame mod nframes` per opcode and branches to that slot (the same
   `slot_address + rel16` the interpreter uses, with `frame` standing in for

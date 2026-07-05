@@ -48,6 +48,7 @@ struct ShPreview {
     bool destroyed        = false;   // show the damaged sub-model (ShState)
     int  lod              = 0;       // JumpToLOD level (ShState); 0 = finest
     bool low_detail       = false;   // JumpToDetail preference (ShState detail=0)
+    std::string wreck_name;          // non-empty: Destroyed shows this _A sibling
     bool cached_destroyed = false;
     int  frame            = 0;       // JumpToFrame animation index (ShState)
     int  cached_frame     = -1;
@@ -377,6 +378,7 @@ void DrawPreview(App& app) {
         bool sel_changed = (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry);
         if (sel_changed) { s_sh.frame = 0; s_sh.lod = 0; s_sh.low_detail = false; }
         bool pal_changed = app.palGen != s_sh.cached_palgen;
+        bool dam_changed = s_sh.destroyed != s_sh.cached_destroyed;
         if (sel_changed || pal_changed || s_sh.destroyed != s_sh.cached_destroyed
                         || s_sh.frame != s_sh.cached_frame
                         || s_sh.lod != s_sh.cached_lod
@@ -394,6 +396,36 @@ void DrawPreview(App& app) {
             st.lod    = s_sh.lod;
             st.detail = s_sh.low_detail ? 0 : 0xFFFF;
             fx::ShMesh  mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size(), st);
+
+            // Whole-model damage swap: aircraft wrecks are separate _A.SH
+            // siblings picked at render time, not inline 0xAC branches
+            // (docs/fa/shape-selection.md). When Destroyed is on and the
+            // shape has no inline damage, show the wreck sibling instead.
+            s_sh.wreck_name.clear();
+            if (s_sh.destroyed && !mesh.has_damage
+                && ed.libIdx >= 0 && ed.libIdx < (int)app.sessions.size()
+                && ed.entryIdx >= 0) {
+                const auto& sess = app.sessions[ed.libIdx];
+                if (ed.entryIdx < (int)sess.entries.size()) {
+                    std::string wname =
+                        fx::sh_variant_name(sess.entries[ed.entryIdx].name, 'a');
+                    const fx::Entry* we =
+                        wname.empty() ? nullptr : fx::ealib_find(sess.entries, wname);
+                    if (we) {
+                        auto wdata = fx::ealib_extract(sess.data.data(),
+                                                       sess.data.size(), *we, true);
+                        fx::ShState wst = st;  wst.destroyed = false;
+                        fx::ShMesh  wmesh = wdata.empty()
+                            ? fx::ShMesh{}
+                            : fx::sh_parse_mesh(wdata.data(), wdata.size(), wst);
+                        if (!wmesh.vertices.empty()) {
+                            mesh = std::move(wmesh);
+                            s_sh.wreck_name = wname;
+                        }
+                    }
+                }
+            }
+
             s_sh.frame_count = mesh.frame_count;
             s_sh.lod_count   = mesh.lod_count;
             s_sh.has_detail  = mesh.has_detail;
@@ -417,12 +449,17 @@ void DrawPreview(App& app) {
                 s_sh.elevation  = 25.0f;
                 BuildBoxGridVB(info, s_sh.model_span);
             }
-            if (sel_changed || pal_changed) LoadShTexture(app, ed, mesh);
+            // Destroyed can swap to the wreck sibling, which has its own PIC.
+            if (sel_changed || pal_changed || dam_changed) LoadShTexture(app, ed, mesh);
             s_sh.palette = fxg::ResolvePreviewPalette(app);  // untextured face colours
             BuildMeshVB(mesh);
         }
 
         ImGui::Checkbox("Destroyed", &s_sh.destroyed);
+        if (!s_sh.wreck_name.empty()) {
+            ImGui::SameLine();
+            ImGui::TextDisabled("(wreck: %s)", s_sh.wreck_name.c_str());
+        }
         if (s_sh.tex_image) {
             ImGui::SameLine();
             ImGui::Checkbox("Texture", &s_sh.show_texture);

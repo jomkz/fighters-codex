@@ -29,6 +29,7 @@ struct ShInfo {
     int   frame_count;  // animation frames (max JumpToFrame nframes); 0 = static
     int   lod_count;    // selectable LOD levels (1 = no distance LODs)
     bool  has_detail;   // any JumpToDetail (0xA6) preference switch present
+    bool  has_damage;   // any JumpToDamage (0xAC) inline damage branch present
     float bbox[6];    // min_x min_y min_z max_x max_y max_z (in feet)
     std::vector<std::string> textures;
 };
@@ -38,6 +39,7 @@ struct ShMesh {
     int   frame_count = 0;   // animation frames; 0 = static
     int   lod_count   = 1;   // selectable LOD levels (1 = no 0xC8 JumpToLOD sites)
     bool  has_detail  = false; // any 0xA6 JumpToDetail present
+    bool  has_damage  = false; // any 0xAC JumpToDamage present
     std::vector<ShVertex>    vertices;
     std::vector<ShFace>      faces;
     std::vector<std::string> textures;
@@ -59,6 +61,15 @@ struct ShState {
     // max keeps every full-detail block.
     int  detail    = 0xFFFF;
 };
+
+// Derive an engine-generated sibling shape name for a base shape name:
+// variant 'a'..'d' = the wreck/damage-swap models SetupOT builds at type-load
+// time, 's' = the shadow shape (docs/fa/shape-selection.md). "A10.SH" + 'a'
+// -> "A10_A.SH". Which slots the engine actually fills depends on the type
+// record's obj_class, which the shape alone does not carry — callers probe
+// which siblings exist (e.g. in the same LIB). Returns "" for an invalid
+// variant letter or an empty stem.
+std::string sh_variant_name(const std::string& base, char variant);
 
 ShInfo      sh_parse_info(const uint8_t* data, size_t size);
 ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);

@@ -355,3 +355,46 @@ TEST_CASE("frame selection emits exactly one frame's block") {
     REQUIRE(m1.faces.size() == 1);
     REQUIRE((int)m1.faces[0].color == 9);
 }
+
+TEST_CASE("sh_variant_name derives the engine's sibling names") {
+    REQUIRE(sh_variant_name("A10.SH", 'a') == "A10_A.SH");
+    REQUIRE(sh_variant_name("A10.SH", 'd') == "A10_D.SH");
+    REQUIRE(sh_variant_name("A10.SH", 's') == "A10_S.SH");
+    REQUIRE(sh_variant_name("a10.sh", 'A') == "a10_a.SH");   // case follows the stem
+    REQUIRE(sh_variant_name("F15E.SH", 'c') == "F15E_C.SH");
+    REQUIRE(sh_variant_name("NOEXT", 'a') == "NOEXT_A.SH");  // extension optional
+    REQUIRE(sh_variant_name("A10.SH", 'x').empty());          // invalid letter
+    REQUIRE(sh_variant_name(".SH", 'a').empty());             // empty stem
+}
+
+TEST_CASE("has_damage reports an inline JumpToDamage branch") {
+    // header + [AC -> damaged] + intact face(colour 7) + ShortEOF
+    //        + damaged face(colour 9) + EndShape
+    std::vector<uint8_t> c(14, 0);
+    c[0] = 0xFF; c[1] = 0xFF; c[6] = 8; c[8] = 10; c[10] = 10; c[12] = 10;
+    std::vector<uint8_t> vb = {0x82, 0x00, 3, 0, 0, 0,
+        10,0, 0,0, 0,0,  (uint8_t)0xF6,(uint8_t)0xFF, 0,0, 0,0,  0,0, 10,0, 0,0};
+    c.insert(c.end(), vb.begin(), vb.end());
+    size_t guard = c.size();
+    c.insert(c.end(), {0xAC, 0x00, 0, 0});
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 7, 0x00, 3, 0, 1, 2});
+    c.push_back(0x1E);
+    size_t dmg = c.size();
+    c.insert(c.end(), {0xFC, 0x00, 0x00, 9, 0x00, 3, 0, 1, 2});
+    c.push_back(0x01);
+    put16(c, guard + 2, (uint16_t)(dmg - (guard + 4)));
+    auto data = wrap_sh(c);
+
+    ShMesh intact = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(intact.has_damage);
+    REQUIRE(intact.faces.size() == 1);
+    REQUIRE((int)intact.faces[0].color == 7);
+    ShState st; st.destroyed = true;
+    ShMesh wreck = sh_parse_mesh(data.data(), data.size(), st);
+    REQUIRE(wreck.faces.size() == 1);
+    REQUIRE((int)wreck.faces[0].color == 9);
+
+    // and a shape without 0xAC reports no inline damage
+    auto plain = make_two_level_sh(0xC8);
+    REQUIRE_FALSE(sh_parse_mesh(plain.data(), plain.size()).has_damage);
+}
