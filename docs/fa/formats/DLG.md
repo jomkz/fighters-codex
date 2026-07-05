@@ -11,10 +11,14 @@ spec:
       issue: 54
       note: "type-4 list / type-7 scrollbar: a few engine-managed interior bytes unmapped"
 codec:
-  direction: none
-  issue: 105
+  direction: read
+  rationale: "engine-code container (dialog DLL, PL family like CAM/MNU/MC): fx_lib validates the container and extracts the control label strings; the structural per-record decode is a larger RE task (the on-disk record layout differs from the documented in-memory layout) tracked under #54"
+  lib: [lib/src/dlg.cpp]
+  commands: [dlg]
+  tests: [tests/test_dlg.cpp]
+  fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [MNU]
 ---
@@ -28,6 +32,23 @@ runtime; they import rendering functions from `main.dll` (= the game executable 
 their label strings in the PE data section. The engine associates dialogs with
 their parent MNU file; the DLG is loaded when the corresponding menu item is
 selected.
+
+## Tools
+
+### fx
+
+```
+fx dlg info    <file.DLG>            # container check + CODE section geometry
+fx dlg strings <file.DLG> [-n MIN]   # embedded control label strings
+```
+
+Container-level surface for now: same MZ + Phar Lap `PL` family as
+[CAM](CAM.md)/[MNU](MNU.md); all 92 shipped dialogs validate and surface
+their label strings. The structural record-table decode below is a larger
+reverse-engineering task — the on-disk record layout differs from the
+in-memory layout documented here (records begin at the `draw_fn_ptr` thunk
+VA; the `type_flags`/`next_record_ptr` header fields are engine-written) —
+and is tracked under #54.
 
 ## File Layout
 

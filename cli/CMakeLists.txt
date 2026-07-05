@@ -33,6 +33,7 @@
     cmd_ssf.cpp
     cmd_mc.cpp
     cmd_hgr.cpp
+    cmd_dlg.cpp
 )
 
 target_link_libraries(fx PRIVATE fx_lib fx_warnings)
