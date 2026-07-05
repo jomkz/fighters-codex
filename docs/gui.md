@@ -186,8 +186,11 @@ mapped), and annotation (units, enum values). Changes are patched back via
   of the intact geometry
 - **Texture** toggle (shown when the model references a PIC that resolves in the
   same LIB) skins the textured faces with the decoded texture (via the current
-  palette); off falls back to flat shading. Untextured faces always shade flat.
-  Texture-swap damage (e.g. buildings) becomes visible here with **Destroyed** on
+  palette); off falls back to shaded palette colour. Faces without texture
+  coordinates are shaded with their **palette colour** (`ShFace::color`), so
+  flat-coloured surfaces (e.g. an aircraft's wings) match the textured body
+  instead of appearing white. Texture-swap damage (e.g. buildings) becomes
+  visible here with **Destroyed** on
 - **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
   selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
   and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
