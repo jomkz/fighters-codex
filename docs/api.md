@@ -190,10 +190,13 @@ namespace fx {
 
 struct ShVertex { float x, y, z; };   // world coordinates, feet
 
+struct ShTexCoord { float s, t; };  // texel-space (pixels of the referenced PIC)
+
 struct ShFace {
     uint8_t  color;          // palette index for untextured rendering
     std::string texture;     // filename from last TextureFile instruction
-    std::vector<uint32_t> indices;  // 0-based into ShMesh::vertices
+    std::vector<uint32_t>    indices;    // 0-based into ShMesh::vertices
+    std::vector<ShTexCoord>  texcoords;  // per-corner (parallel to indices); empty if untextured
 };
 
 struct ShInfo {

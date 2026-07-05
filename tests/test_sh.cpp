@@ -82,6 +82,74 @@ static std::vector<uint8_t> make_minimal_sh() {
     return buf;
 }
 
+// Like make_minimal_sh but the face carries HAVE_TEXCOORDS (byte mode): three
+// (s,t) texel pairs after the indices.
+static std::vector<uint8_t> make_textured_sh() {
+    const uint32_t PE_OFF   = 64;
+    const uint32_t SEC_OFF  = PE_OFF + 24;
+    const uint32_t CODE_OFF = SEC_OFF + 40;
+    const uint32_t CODE_SZ  = 60;
+
+    std::vector<uint8_t> buf(CODE_OFF + CODE_SZ, 0);
+    buf[0] = 'M'; buf[1] = 'Z';
+    buf[0x3C] = (uint8_t)(PE_OFF & 0xFF);
+    buf[0x3D] = (uint8_t)((PE_OFF >> 8) & 0xFF);
+    buf[PE_OFF + 0] = 'P'; buf[PE_OFF + 1] = 'L';
+    buf[PE_OFF + 4] = 0x4C; buf[PE_OFF + 5] = 0x01;
+    buf[PE_OFF + 6] = 1;
+    memcpy(buf.data() + SEC_OFF, "CODE", 4);
+    buf[SEC_OFF + 8]  = CODE_SZ;
+    buf[SEC_OFF + 12] = 0x80;
+    buf[SEC_OFF + 16] = CODE_SZ;
+    buf[SEC_OFF + 20] = (uint8_t)(CODE_OFF & 0xFF);
+    buf[SEC_OFF + 21] = (uint8_t)((CODE_OFF >> 8) & 0xFF);
+
+    uint8_t* c = buf.data() + CODE_OFF;
+    c[0]=0xFF; c[1]=0xFF; c[6]=8; c[8]=10; c[10]=10; c[12]=10;   // header, scale 8
+    // VertexBuffer: 3 verts
+    c[14]=0x82; c[15]=0x00; c[16]=3;
+    c[20]=10;                                   // v0.x = 10
+    c[26]=0xF6; c[27]=0xFF;                      // v1.x = -10
+    c[32]=0; c[34]=10;                           // v2.y = 10
+    // Face 0xFC with HAVE_TEXCOORDS (content 0x04), byte texcoords (layout 0x01)
+    c[38]=0xFC; c[39]=0x04; c[40]=0x01; c[41]=0x07; c[42]=0x00;
+    c[43]=3;    c[44]=0; c[45]=1; c[46]=2;        // 3 indices
+    c[47]=0;  c[48]=0;                            // (s,t) corner 0 = (0,0)
+    c[49]=255; c[50]=0;                           // corner 1 = (255,0)
+    c[51]=128; c[52]=200;                         // corner 2 = (128,200)
+    c[53]=0x01;                                   // EndShape
+    return buf;
+}
+
+TEST_CASE("sh_parse_mesh extracts per-corner texcoords when HAVE_TEXCOORDS") {
+    auto data = make_textured_sh();
+    ShMesh m = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(m.faces.size() == 1u);
+    const auto& f = m.faces[0];
+    REQUIRE(f.indices.size() == 3u);
+    REQUIRE(f.texcoords.size() == 3u);
+    REQUIRE(f.texcoords[0].s == Catch::Approx(0.0f));
+    REQUIRE(f.texcoords[0].t == Catch::Approx(0.0f));
+    REQUIRE(f.texcoords[1].s == Catch::Approx(255.0f));
+    REQUIRE(f.texcoords[2].s == Catch::Approx(128.0f));
+    REQUIRE(f.texcoords[2].t == Catch::Approx(200.0f));
+}
+
+TEST_CASE("sh_parse_mesh leaves texcoords empty for untextured faces") {
+    auto data = make_minimal_sh();
+    ShMesh m = sh_parse_mesh(data.data(), data.size());
+    REQUIRE(m.faces.size() == 1u);
+    REQUIRE(m.faces[0].texcoords.empty());
+}
+
+TEST_CASE("sh_to_obj emits vt and v/vt faces for textured meshes") {
+    auto data = make_textured_sh();
+    ShMesh m  = sh_parse_mesh(data.data(), data.size());
+    auto obj  = sh_to_obj(m);
+    REQUIRE(obj.find("\nvt ") != std::string::npos);
+    REQUIRE(obj.find("f 1/1 2/2 3/3") != std::string::npos);
+}
+
 TEST_CASE("sh_parse_mesh on empty data returns empty mesh") {
     ShMesh m = sh_parse_mesh(nullptr, 0);
     REQUIRE(m.vertices.empty());
