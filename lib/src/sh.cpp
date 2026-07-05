@@ -299,7 +299,7 @@ static void walk_code(const uint8_t* code, size_t code_sz,
                       std::vector<ShVertex>& vpool,
                       std::vector<ShFace>& faces,
                       std::vector<std::string>& textures,
-                      bool destroyed) {
+                      bool destroyed, int frame, int& frame_count) {
     size_t off         = 0;
     size_t obj_end_off = SIZE_MAX;
     std::string cur_tex;
@@ -308,6 +308,21 @@ static void walk_code(const uint8_t* code, size_t code_sz,
         const uint8_t* p    = code + off;
         size_t         avail = code_sz - off;
         uint8_t        op   = p[0];
+
+        // JumpToFrame (0x40): [40 00][nframes u16][rel16 x nframes]. Select the
+        // frame's block: idx = frame mod nframes; each rel16 is relative to its
+        // own slot (SH.md). frame_count exposes the animation length.
+        if (op == 0x40 && avail >= 4 && p[1] == 0x00) {
+            uint16_t nframes = u16le(p + 2);
+            size_t   table   = 4;                          // rel16 table start
+            if (nframes == 0 || table + (size_t)nframes * 2 > avail) { off += 4; continue; }
+            if ((int)nframes > frame_count) frame_count = (int)nframes;
+            size_t idx    = (size_t)(frame % (int)nframes);
+            size_t slot   = off + table + idx * 2;
+            size_t target = slot + (size_t)(int16_t)u16le(code + slot);
+            off = (target < code_sz) ? target : (off + table + (size_t)nframes * 2);
+            continue;
+        }
 
         // JumpToDamage (0xAC): branch to the inline damaged sub-model only for
         // destroyed entities; intact geometry is the fall-through (SH.md).
@@ -490,7 +505,8 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
 
     // Base geometry (everything up to the first x86 selector).
     walk_code(cs.data, cs.size, mesh.scale,
-              mesh.vertices, mesh.faces, mesh.textures, state.destroyed);
+              mesh.vertices, mesh.faces, mesh.textures,
+              state.destroyed, state.frame, mesh.frame_count);
 
     // The x86 conditional selectors gate the articulation geometry. We can't
     // execute the x86, but its `esi` re-entry points are internal pointers in
@@ -532,9 +548,10 @@ ShInfo sh_parse_info(const uint8_t* data, size_t size) {
 
     // Full parse for counts
     ShMesh mesh = sh_parse_mesh(data, size);
-    info.vert_count = (int)mesh.vertices.size();
-    info.face_count = (int)mesh.faces.size();
-    info.textures   = mesh.textures;
+    info.vert_count  = (int)mesh.vertices.size();
+    info.face_count  = (int)mesh.faces.size();
+    info.frame_count = mesh.frame_count;
+    info.textures    = mesh.textures;
 
     // Refine bbox from actual vertices if available
     if (!mesh.vertices.empty()) {

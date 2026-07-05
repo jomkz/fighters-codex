@@ -698,6 +698,27 @@ with `xv/yv/zv` (`0x51CDAA/AC/AE`) the object's viewer-relative position,
 its block when the object is large enough on screen, else jumps past it to the
 next, coarser block. Near-universal: 1098/1275 shapes (2064 opcodes).
 
+### State-selected rendering (read codec)
+
+`sh_parse_mesh(data, size, ShState{})` interprets the animation and damage
+branches to emit **one** state's geometry, so the viewer can show a specific
+frame or the wreck rather than every block merged. `ShState` selects the state:
+
+- **`destroyed`** — follows `0xAC` JumpToDamage: `false` (default) falls through
+  to the intact geometry; `true` takes the branch into the damaged sub-model.
+- **`frame`** — the `0x40` JumpToFrame index. The codec computes
+  `idx = frame mod nframes` per opcode and branches to that slot (the same
+  `slot_address + rel16` the interpreter uses, with `frame` standing in for
+  `_frameCounter`), and reports the model's animation length as
+  `ShMesh::frame_count` (the max `nframes` seen; `0` = static).
+
+Frame selection is applied to the **base sequential stream**, where the
+control-surface/rotor animation of the A-series aircraft lives; a `0x40` table
+that sits inside an x86-gated sub-stream (reached via the reloc harvest, e.g.
+the F-16's) is not yet frame-selected and reports `frame_count = 0`. The `fxs`
+preview exposes both a **Destroyed** toggle and, when `frame_count > 1`, a
+**Frame** slider (docs/gui.md).
+
 ## Round-Trip Notes
 
 The codec is deliberately export-only: OBJ→SH is out of scope because a shape
@@ -730,9 +751,11 @@ Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 | F15E.SH | 8 (1x) | 387 | 42 | |
 | AC130.SH | 9 (2x) | 0 | 0 | (x86-only) |
 
-Further limitations: animation frames, LOD variants, and damage states are not
-distinguished — all geometry from the main sequential stream is emitted into a
-single OBJ.
+Further limitations: the OBJ export merges every block — animation frames, LOD
+variants, and damage states are not distinguished. The **in-memory** parse can
+select a single animation frame or the damaged sub-model via `ShState` (see
+[State-selected rendering](#state-selected-rendering-read-codec)); that
+selection is not plumbed through `sh_to_obj`.
 
 ## Open Questions
 

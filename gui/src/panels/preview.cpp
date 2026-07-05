@@ -42,6 +42,9 @@ struct ShPreview {
     int cached_entry = -2;
     bool destroyed        = false;   // show the damaged sub-model (ShState)
     bool cached_destroyed = false;
+    int  frame            = 0;       // JumpToFrame animation index (ShState)
+    int  cached_frame     = -1;
+    int  frame_count      = 0;       // exposed by the last parse; 0 = static
     float azimuth    = 170.0f;
     float elevation  = 20.0f;
     float distance   = 100.0f;
@@ -287,16 +290,20 @@ void DrawPreview(App& app) {
 
     // ---- SH 3D preview -------------------------------------------------------
     if (ed.kind == EditorKind::Sh) {
-        // Rebuild on selection change or when a state toggle (destroyed) flips.
+        // Rebuild on selection change or when a state toggle (destroyed / frame) flips.
         bool sel_changed = (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry);
-        if (sel_changed || s_sh.destroyed != s_sh.cached_destroyed) {
+        if (sel_changed) s_sh.frame = 0;  // reset animation on a new model
+        if (sel_changed || s_sh.destroyed != s_sh.cached_destroyed
+                        || s_sh.frame != s_sh.cached_frame) {
             s_sh.cached_lib       = ed.libIdx;
             s_sh.cached_entry     = ed.entryIdx;
             s_sh.cached_destroyed = s_sh.destroyed;
+            s_sh.cached_frame     = s_sh.frame;
 
             fx::ShInfo  info = fx::sh_parse_info(ed.data.data(), ed.data.size());
-            fx::ShState st;  st.destroyed = s_sh.destroyed;
+            fx::ShState st;  st.destroyed = s_sh.destroyed;  st.frame = s_sh.frame;
             fx::ShMesh  mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size(), st);
+            s_sh.frame_count = mesh.frame_count;
 
             if (sel_changed) {
                 // Reset camera to fit the model (only on selection change). SH
@@ -321,6 +328,13 @@ void DrawPreview(App& app) {
         }
 
         ImGui::Checkbox("Destroyed", &s_sh.destroyed);
+        if (s_sh.frame_count > 1) {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(160.0f);
+            int last = s_sh.frame_count - 1;
+            if (s_sh.frame > last) s_sh.frame = last;   // clamp if model changed
+            ImGui::SliderInt("Frame", &s_sh.frame, 0, last);
+        }
 
         float  txt_h   = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;
         ImVec2 canvas  = ImGui::GetContentRegionAvail();
