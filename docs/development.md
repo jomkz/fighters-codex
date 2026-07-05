@@ -99,9 +99,13 @@ the path embedders use (see [api.md](api.md)).
 - The `msvc` preset assumes the platform-default generator is Visual Studio;
   a `CMAKE_GENERATOR` environment override (e.g. to Ninja) conflicts with its
   `x64` architecture setting.
-- `fx` reads arguments through narrow `argv`, so non-ASCII file paths on
-  Windows depend on the active code page. FA's data is 8.3 ASCII throughout,
-  so this doesn't bite in practice.
+- `fx` and `fxs` read arguments through narrow `argv`, but both embed an
+  application manifest
+  ([cmake/win-utf8.manifest](https://github.com/jomkz/fighters-codex/blob/main/cmake/win-utf8.manifest))
+  declaring the UTF-8 active code page, so on Windows 10 1903+ non-ASCII
+  file paths arrive and open correctly. On older Windows the manifest entry
+  is ignored and paths outside the ANSI code page can still fail to open —
+  harmless for FA's own data, which is 8.3 ASCII throughout (#165).
 - `fxs.exe` builds as a `WIN32`-subsystem app (no console window), so
   PowerShell launches it detached without waiting. For the headless `--smoke`
   sweep, pipe the output so the shell waits and reports `$LASTEXITCODE` — see
