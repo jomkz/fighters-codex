@@ -12,6 +12,7 @@ Reverse-engineering notes, format specifications, and modding guides for Jane's 
 
 | Document | Description |
 |----------|-------------|
+| [fa/start-here.md](fa/start-here.md) | **Start here** — the learning path from game concepts to internals, for players and modders |
 | [fa/README.md](fa/README.md) | FA knowledge base index |
 | [fa/architecture.md](fa/architecture.md) | Runtime environment, asset system, and subsystem architecture |
 | [fa/modding.md](fa/modding.md) | Step-by-step modding recipes |

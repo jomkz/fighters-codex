@@ -16,6 +16,7 @@ the executable itself.
 
 | Document | Description |
 |----------|-------------|
+| [start-here.md](start-here.md) | **Start here** — the learning path from game concepts to internals, for players and modders |
 | [formats/](formats/README.md) | Binary and text format specifications — all 46 formats, categorized |
 | [formats/STATUS.md](formats/STATUS.md) | Generated per-format status matrix (spec, codec, tests, fuzzing) |
 | [reconstruction.md](reconstruction.md) | Generated reconstruction matrix — per-subsystem naming/doc progress across all 7 binaries (epics #209 / #247) |
