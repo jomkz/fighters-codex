@@ -1,31 +1,15 @@
 #include "cam_editor.h"
 #include "../app.h"
 #include "imgui.h"
+#include <fx/cam.h>
 #include <cstdint>
 #include <cstdio>
 #include <cctype>
 #include <string>
 #include <vector>
 
-// CAM — Campaign file. Phar Lap PE DLL, format partially unknown.
-// We extract embedded null-terminated strings and show a hex dump of the header.
-
-static std::vector<std::string> ExtractStrings(const uint8_t* data, size_t size) {
-    std::vector<std::string> result;
-    std::string cur;
-    for (size_t i = 0; i < size; i++) {
-        uint8_t c = data[i];
-        if (c >= 0x20 && c < 0x7F) {
-            cur += (char)c;
-        } else {
-            if (cur.size() >= 3)   // discard very short fragments
-                result.push_back(cur);
-            cur.clear();
-        }
-    }
-    if (cur.size() >= 3) result.push_back(cur);
-    return result;
-}
+// CAM — Campaign definition DLL (CAM.md). Parsing lives in fx_lib (#107);
+// this editor renders the container info, embedded strings, and a hex dump.
 
 void DrawCamEditor(App& app) {
     auto& ed = app.editor;
@@ -33,7 +17,13 @@ void DrawCamEditor(App& app) {
     const uint8_t* data = ed.data.data();
     size_t size = ed.data.size();
 
-    ImGui::TextDisabled("Campaign file — format partially unknown  |  %zu bytes", size);
+    auto info = fx::cam_info(data, size);
+    if (info.valid)
+        ImGui::TextDisabled(
+            "Campaign DLL (MZ + \"PL\")  |  CODE %zu bytes at VMA 0x%X  |  %zu bytes",
+            info.code.size, info.code.vma, size);
+    else
+        ImGui::TextDisabled("Campaign file — container not recognized  |  %zu bytes", size);
     ImGui::Separator();
 
     // Header hex dump (first 256 bytes)
@@ -76,7 +66,7 @@ void DrawCamEditor(App& app) {
 
     // Extracted strings
     if (ImGui::CollapsingHeader("Embedded Strings", ImGuiTreeNodeFlags_DefaultOpen)) {
-        auto strings = ExtractStrings(data, size);
+        auto strings = fx::cam_strings(data, size);
         if (strings.empty()) {
             ImGui::TextDisabled("(no printable strings found)");
         } else {

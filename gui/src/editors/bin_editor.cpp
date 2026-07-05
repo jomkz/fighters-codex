@@ -1,31 +1,31 @@
 #include "bin_editor.h"
 #include "../app.h"
-#include "../util.h"
 #include "imgui.h"
+#include <fx/bin.h>
 #include <cstdio>
 #include <cstring>
 #include <cctype>
 #include <string>
-
-static const char* BinHint(const char* name) {
-    if (fxg::ci_prefix(name, "MIX2"))     return "Half-intensity mixing table (256\xc3\x97""256 bytes)";
-    if (fxg::ci_prefix(name, "VFONTPAL")) return "16-color VGA font palette";
-    if (fxg::ci_prefix(name, "BITMAPV"))  return "Bitmap variant table";
-    return nullptr;
-}
 
 void DrawBinEditor(App& app) {
     auto& ed = app.editor;
     const uint8_t* data = ed.data.data();
     size_t         size = ed.data.size();
 
-    // Name-based interpretation hint
+    // Name-based interpretation (BIN.md: the bytes carry no structure; the
+    // entry name identifies the table)
     std::string entryName;
     if (ed.libIdx >= 0 && ed.libIdx < (int)app.sessions.size())
         entryName = app.sessions[ed.libIdx].entries[ed.entryIdx].name;
-    const char* hint = BinHint(entryName.c_str());
-    if (hint)
-        ImGui::TextColored({0.85f,0.82f,0.78f,1}, "%s", hint);
+    fx::BinKind kind = fx::bin_classify(entryName);
+    if (kind != fx::BinKind::Unknown) {
+        ImGui::TextColored({0.85f,0.82f,0.78f,1}, "%s", fx::bin_kind_desc(kind));
+        size_t expected = fx::bin_expected_size(kind);
+        if (expected != 0 && expected != size)
+            ImGui::TextColored({1.f,0.7f,0.2f,1.f},
+                "Size %zu differs from the documented %zu bytes.",
+                size, expected);
+    }
 
     static constexpr size_t kMaxDisplay = 4096;
     bool truncated = size > kMaxDisplay;

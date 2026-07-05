@@ -20,6 +20,9 @@
     cmd_mus.cpp
     cmd_bi.cpp
     cmd_ai.cpp
+    cmd_fbc.cpp
+    cmd_bin.cpp
+    cmd_cam.cpp
 )
 
 target_link_libraries(fx PRIVATE fx_lib fx_warnings)

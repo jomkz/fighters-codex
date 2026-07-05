@@ -246,6 +246,55 @@ std::string sh_to_obj(const ShMesh& mesh);   // returns Wavefront OBJ text
 } // namespace fx
 ```
 
+## fbc.h — Video frame index
+
+```cpp
+namespace fx {
+// Parse the flat u32le frame-size array (*ok=false if size % 4 != 0)
+std::vector<uint32_t> fbc_read(const uint8_t* data, size_t size,
+                               bool* ok = nullptr);
+
+// Serialize — byte-identical inverse of fbc_read
+std::vector<uint8_t> fbc_write(const std::vector<uint32_t>& frame_sizes);
+
+// Byte offset of frame n inside the paired .VDO (816-byte header + prefix
+// sum); n == frame count yields the expected VDO file size
+uint64_t fbc_frame_offset(const std::vector<uint32_t>& frame_sizes, size_t n);
+} // namespace fx
+```
+
+## bin.h — Lookup-table identification
+
+```cpp
+namespace fx {
+enum class BinKind { Insigmap, Mix2, Mix2L, Mix4, Mix4L, VFontPal, Unknown };
+
+// Classify by entry name (case-insensitive, .BIN optional)
+BinKind bin_classify(const std::string& entry_name);
+
+// One-line description / documented table size (0 for Unknown)
+const char* bin_kind_desc(BinKind kind);
+size_t bin_expected_size(BinKind kind);
+} // namespace fx
+```
+
+## cam.h — Campaign DLL reader
+
+```cpp
+namespace fx {
+struct CamInfo {
+    bool        valid;  // MZ + "PL" signature with a CODE section
+    CodeSection code;   // section geometry (pe.h)
+};
+
+CamInfo cam_info(const uint8_t* data, size_t size);
+
+// Printable-ASCII runs >= min_len — the embedded campaign string tables
+std::vector<std::string> cam_strings(const uint8_t* data, size_t size,
+                                     size_t min_len = 3);
+} // namespace fx
+```
+
 ## cb8.h — FMV video decoder
 
 ```cpp

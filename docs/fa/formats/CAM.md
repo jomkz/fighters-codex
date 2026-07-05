@@ -7,11 +7,15 @@ endianness: little
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 107
+  direction: read
+  rationale: "engine-code container (campaign DLL): fx_lib reads the section geometry and embedded config strings; writing would mean emitting compiled DLL code, which is fighters-legacy territory, not asset tooling"
+  lib: [lib/src/cam.cpp]
+  commands: [cam]
+  tests: [tests/test_cam.cpp]
+  fuzz: []
   gui: [gui/src/editors/cam_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [P, M, MC, BRF]
 ---
@@ -22,11 +26,27 @@ FA_2.LIB contains 6 `.CAM` files — one per built-in campaign. Pilot save files
 (`.P`) store the active campaign by this filename. Each is a **Win32 PE DLL**
 loaded by the FA engine at runtime.
 
+## Tools
+
+### fx
+
+```
+fx cam info    <file.CAM>            # container check + CODE section geometry
+fx cam strings <file.CAM> [-n MIN]   # embedded campaign string tables
+```
+
+Read-only by design: the campaign *configuration* is what the tooling
+surfaces; the surrounding DLL machine code is engine territory
+(fighters-legacy), not asset tooling.
+
 ## File Layout
 
 All multi-byte integers are little-endian.
 
-Win32 PE DLL (`MZ` stub + PE32 image). The standard DOS stub message
+Win32-style DLL: `MZ` stub + a **Phar Lap `PL\0\0`** image (PE32 section
+layout with a COFF section table — `pe_code_section` in `lib/src/pe.cpp`
+reads it; verified against BALTIC.CAM: sections `CODE`/`.idata`/`.reloc`/
+`$$DOSX`, CODE at raw `0x400`, VMA `0x1000`). The standard DOS stub message
 `"!This program cannot be run in DOS mode."` is present, followed by standard
 PE sections `.idata` and `.reloc`. `BALTIC.CAM` decompresses to **8704
 bytes**; `UKRAINE.CAM` is larger to accommodate its 50-mission list.

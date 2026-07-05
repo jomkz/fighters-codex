@@ -7,11 +7,15 @@ endianness: little
 spec:
   status: complete
 codec:
-  direction: none
-  issue: 107
+  direction: round-trip
+  byte_identical: true
+  lib: [lib/src/fbc.cpp]
+  commands: [fbc]
+  tests: [tests/test_fbc.cpp]
+  fuzz: []
   gui: [gui/src/editors/vdo_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [VDO, 11K]
 ---
@@ -21,6 +25,18 @@ related: [VDO, 11K]
 Companion index file for a `.VDO` video. Provides the byte size of each frame
 so that a decoder can seek directly to any frame without scanning the video
 data. Found in `FA_7.LIB`, paired with every `.VDO` and `.11K` of the same stem.
+
+## Tools
+
+### fx
+
+```
+fx fbc info <file.FBC>     # frame count + expected paired-VDO size
+fx fbc ls   <file.FBC>     # per-frame size and VDO offset table
+```
+
+`fx_lib` round-trips the format byte-identically (`fbc_read`/`fbc_write`);
+the fxs VDO editor renders the same index through the library.
 
 ## File Layout
 

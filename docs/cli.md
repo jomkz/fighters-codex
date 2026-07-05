@@ -494,3 +494,56 @@ game's AI interpreter loads. All nine stock flight AIs compile to valid
 bytecode.
 
 *See also: [fa/formats/AI.md](fa/formats/AI.md), [fa/formats/BI.md](fa/formats/BI.md)*
+
+## fbc — Video frame index
+
+```
+fx fbc info <file.FBC>
+fx fbc ls   <file.FBC>
+```
+
+#### `fx fbc info <file.FBC>`
+
+Frame count, total frame-data bytes, and the file size the paired `.VDO` is
+expected to have (816-byte header plus the sum of all frame sizes).
+
+#### `fx fbc ls <file.FBC>`
+
+Per-frame table: frame number, byte size, and the frame's byte offset inside
+the paired `.VDO`.
+
+*See also: [fa/formats/FBC.md](fa/formats/FBC.md), [fa/formats/VDO.md](fa/formats/VDO.md)*
+
+## bin — Lookup tables
+
+```
+fx bin info <file.BIN>
+```
+
+#### `fx bin info <file.BIN>`
+
+Identify the table from the filename (the bytes carry no structure — see the
+spec) and check the size against the documented inventory. Exits nonzero on a
+size mismatch for a known table.
+
+*See also: [fa/formats/BIN.md](fa/formats/BIN.md)*
+
+## cam — Campaign DLLs
+
+```
+fx cam info    <file.CAM>
+fx cam strings <file.CAM> [-n MIN]
+```
+
+#### `fx cam info <file.CAM>`
+
+Validate the MZ + Phar Lap `PL` container and report the CODE section
+geometry plus the embedded-string count.
+
+#### `fx cam strings <file.CAM> [-n MIN]`
+
+Dump the campaign's embedded string tables (mission list, aircraft types,
+weapon pool, state keys) — printable runs of at least `MIN` characters
+(default 3), one per line on stdout.
+
+*See also: [fa/formats/CAM.md](fa/formats/CAM.md)*

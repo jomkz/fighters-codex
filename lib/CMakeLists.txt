@@ -21,6 +21,9 @@
     src/fnt.cpp
     src/bi.cpp
     src/ai.cpp
+    src/fbc.cpp
+    src/bin.cpp
+    src/cam.cpp
 )
 
 add_library(fx::lib ALIAS fx_lib)

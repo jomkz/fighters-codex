@@ -1,6 +1,7 @@
 #include "vdo_editor.h"
 #include "../app.h"
 #include "imgui.h"
+#include <fx/fbc.h>
 #include <cstdint>
 #include <cstdio>
 #include <cctype>
@@ -22,14 +23,20 @@ static inline float vga6(uint8_t v) { return (v * 255.f) / 63.f; }
 // ---- FBC viewer -----------------------------------------------------------
 
 static void DrawFbc(const std::vector<uint8_t>& data) {
-    size_t frameCount = data.size() / 4;
+    bool ok = false;
+    auto sizes = fx::fbc_read(data.data(), data.size(), &ok);
+    if (!ok) {
+        ImGui::TextColored({1.f,0.4f,0.4f,1.f},
+            "File size %zu is not a multiple of 4 — not a valid FBC index.",
+            data.size());
+        return;
+    }
     ImGui::TextDisabled("FBC Frame Index  |  %zu frame(s)  |  %zu bytes",
-                        frameCount, data.size());
+                        sizes.size(), data.size());
     ImGui::Separator();
 
-    if (frameCount == 0) { ImGui::TextDisabled("(empty)"); return; }
+    if (sizes.empty()) { ImGui::TextDisabled("(empty)"); return; }
 
-    uint64_t totalBytes = 0;
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(4,2));
     if (ImGui::BeginTable("##fbc", 3,
             ImGuiTableFlags_ScrollY       |
@@ -42,14 +49,14 @@ static void DrawFbc(const std::vector<uint8_t>& data) {
         ImGui::TableSetupColumn("VDO offset",  ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        for (size_t i = 0; i < frameCount; i++) {
-            uint32_t fsz = u32le(data.data() + i * 4);
+        uint64_t off = fx::fbc_frame_offset(sizes, 0);
+        for (size_t i = 0; i < sizes.size(); i++) {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0); ImGui::Text("%zu", i);
-            ImGui::TableSetColumnIndex(1); ImGui::Text("%u", fsz);
+            ImGui::TableSetColumnIndex(1); ImGui::Text("%u", sizes[i]);
             ImGui::TableSetColumnIndex(2); ImGui::TextDisabled("0x%06llX",
-                                           (unsigned long long)(816 + totalBytes));
-            totalBytes += fsz;
+                                           (unsigned long long)off);
+            off += sizes[i];
         }
         ImGui::EndTable();
     }
