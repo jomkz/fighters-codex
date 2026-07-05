@@ -163,6 +163,26 @@ static int cmd_pack(int argc, char** argv) {
     return 0;
 }
 
+// lib repack <src.LIB> <output.LIB> — rebuild the container from its own
+// directory (raw payloads, verbatim entry metadata, recomputed offsets).
+// Byte-identical for well-formed archives; the FX_FA_ROOT integration test
+// proves that against every LIB in a real install (#115).
+static int cmd_repack(int argc, char** argv) {
+    if (argc < 3) { fprintf(stderr, "Usage: fx lib repack <src.LIB> <output.LIB>\n"); return 1; }
+    auto lib = read_file(argv[1]);
+    if (lib.empty()) { fprintf(stderr, "Cannot read: %s\n", argv[1]); return 1; }
+
+    auto out_lib = ealib_repack(lib.data(), lib.size());
+    if (out_lib.empty()) { fprintf(stderr, "Not a valid EALIB: %s\n", argv[1]); return 1; }
+    if (!write_file(argv[2], out_lib)) { fprintf(stderr, "Cannot write: %s\n", argv[2]); return 1; }
+
+    bool identical = out_lib.size() == lib.size() &&
+                     memcmp(out_lib.data(), lib.data(), lib.size()) == 0;
+    printf("Repacked %s -> %s (%zu bytes, %s)\n", argv[1], argv[2],
+           out_lib.size(), identical ? "byte-identical" : "normalized");
+    return 0;
+}
+
 // lib patch <src.LIB> <name> <file> <output.LIB>
 static int cmd_patch(int argc, char** argv) {
     if (argc < 5) {
@@ -184,7 +204,7 @@ static int cmd_patch(int argc, char** argv) {
 
 int cmd_lib(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: fx lib <ls|unpack|extract|pack|patch> ...\n");
+        fprintf(stderr, "Usage: fx lib <ls|unpack|extract|pack|repack|patch> ...\n");
         return 1;
     }
     const char* sub = argv[1];
@@ -192,6 +212,7 @@ int cmd_lib(int argc, char** argv) {
     if (strcmp(sub, "unpack")  == 0) return cmd_unpack(argc - 1, argv + 1);
     if (strcmp(sub, "extract") == 0) return cmd_extract(argc - 1, argv + 1);
     if (strcmp(sub, "pack")    == 0) return cmd_pack(argc - 1, argv + 1);
+    if (strcmp(sub, "repack")  == 0) return cmd_repack(argc - 1, argv + 1);
     if (strcmp(sub, "patch")   == 0) return cmd_patch(argc - 1, argv + 1);
     fprintf(stderr, "Unknown lib subcommand: %s\n", sub);
     return 1;

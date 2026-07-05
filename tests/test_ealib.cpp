@@ -323,3 +323,65 @@ TEST_CASE("ealib_safe_name replaces path characters from crafted archives") {
 TEST_CASE("ealib_safe_name on all-special input") {
     REQUIRE(ealib_safe_name("&*?\"<>|/\\:") == "__________");
 }
+
+// ---------------------------------------------------------------------------
+// Terminator entry + ealib_repack (#115)
+// ---------------------------------------------------------------------------
+
+static uint32_t u32at(const std::vector<uint8_t>& b, size_t off) {
+    return (uint32_t)(b[off] | (b[off + 1] << 8) |
+                      (b[off + 2] << 16) | (b[off + 3] << 24));
+}
+
+TEST_CASE("ealib_build writes the all-zero terminator entry") {
+    auto lib = ealib_build(make_files({ { "a.bin", bytes({ 1, 2, 3 }) } }));
+    // header 7 + one real entry + terminator, then the payload
+    REQUIRE(lib.size() == 7 + 2 * 18 + 3);
+    const size_t term = 7 + 18;
+    for (size_t k = 0; k < 14; k++) REQUIRE(lib[term + k] == 0);
+    REQUIRE(u32at(lib, term + 14) == lib.size());
+}
+
+TEST_CASE("ealib_read_dir sizes the last entry from the terminator") {
+    auto lib = ealib_build(make_files({ { "a.bin", bytes({ 1, 2, 3 }) } }));
+    lib.push_back(0xEE); // trailing junk past the terminator offset
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+    REQUIRE(entries[0].size == 3); // terminator wins over EOF
+}
+
+TEST_CASE("ealib_read_dir falls back to EOF sizing without a terminator") {
+    // make_lib_with_entry builds the legacy pre-terminator layout
+    auto lib = make_lib_with_entry("x.bin", 0, bytes({ 9, 9, 9, 9 }));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+    REQUIRE(entries[0].size == 4);
+}
+
+TEST_CASE("ealib_repack round-trips its own build byte-identically") {
+    auto lib = ealib_build(make_files({
+        { "a.bin", bytes({ 1, 2, 3 }) },
+        { "b.bin", bytes({ 4, 5 }) },
+    }));
+    auto re = ealib_repack(lib.data(), lib.size());
+    REQUIRE(re == lib);
+}
+
+TEST_CASE("ealib_repack normalizes a legacy archive and preserves payloads") {
+    // Legacy (unterminated) archive with a compressed entry: repack adds the
+    // terminator slot but must keep flags and the compressed bytes verbatim.
+    auto lib = make_lib_with_entry("dcl.bin", 4, dcl_payload(13));
+    auto re = ealib_repack(lib.data(), lib.size());
+    REQUIRE(re.size() == lib.size() + 18);
+    auto entries = ealib_read_dir(re.data(), re.size());
+    REQUIRE(entries.size() == 1);
+    REQUIRE(entries[0].flags == 4);
+    auto out = ealib_extract(re.data(), re.size(), entries[0]);
+    REQUIRE(std::string(out.begin(), out.end()) == "AIAIAIAIAIAIA");
+}
+
+TEST_CASE("ealib_repack rejects a corrupt archive") {
+    auto lib = ealib_build(make_files({ { "a.bin", bytes({ 1 }) } }));
+    lib[0] = 'X';
+    REQUIRE(ealib_repack(lib.data(), lib.size()).empty());
+}

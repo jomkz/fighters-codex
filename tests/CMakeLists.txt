@@ -134,4 +134,17 @@ if(FX_FA_ROOT)
     set_tests_properties(fa_extract_manifest PROPERTIES
         LABELS "integration"
         TIMEOUT 3600)
+
+    # Full-tree container round-trip (#115): repack every LIB in the install
+    # and byte-compare against the shipped bytes — container-level proof,
+    # independent of per-format codecs.
+    add_test(NAME fa_repack_roundtrip
+        COMMAND Python3::Interpreter
+            "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa_repack.py"
+            --fx "$<TARGET_FILE:fx>"
+            --fa-root "${FX_FA_ROOT}"
+            --work-dir "${CMAKE_CURRENT_BINARY_DIR}/fa-repack-work")
+    set_tests_properties(fa_repack_roundtrip PROPERTIES
+        LABELS "integration"
+        TIMEOUT 3600)
 endif()

@@ -57,8 +57,22 @@ std::vector<Entry> ealib_read_dir(const uint8_t* data, size_t size) {
         entries[i].size = (next > cur) ? (next - cur) : 0;
     }
     if (count > 0) {
+        // The shipped format ends the directory with an all-zero terminator
+        // entry whose offset field is the total file size — the last real
+        // entry is sized against it like any other. Fall back to EOF when
+        // it is absent (archives written by fx before it was understood).
+        uint32_t end_off =
+            (size > 0xFFFFFFFFu) ? 0xFFFFFFFFu : (uint32_t)size;
+        if (dir_end + ENTRY_SZ <= size) {
+            const uint8_t* t = data + dir_end;
+            bool zeros = true;
+            for (int k = 0; k < 14; k++)
+                if (t[k]) { zeros = false; break; }
+            uint32_t toff = read_u32(t + 14);
+            if (zeros && toff <= size) end_off = toff;
+        }
         uint32_t last_off = entries[count - 1].offset;
-        entries[count - 1].size = (size > last_off) ? (uint32_t)(size - last_off) : 0;
+        entries[count - 1].size = (end_off > last_off) ? (end_off - last_off) : 0;
     }
 
     return entries;
@@ -113,7 +127,8 @@ std::vector<uint8_t> ealib_build(
     const std::vector<std::pair<std::string, std::vector<uint8_t>>>& files) {
 
     uint16_t count = (uint16_t)files.size();
-    size_t dir_size = HDR_BASE + (size_t)count * ENTRY_SZ;
+    // +1 slot: the all-zero terminator entry (offset = total file size).
+    size_t dir_size = HDR_BASE + ((size_t)count + 1) * ENTRY_SZ;
 
     size_t data_size = 0;
     for (auto& f : files) data_size += f.second.size();
@@ -133,12 +148,48 @@ std::vector<uint8_t> ealib_build(
         write_u32(e + 14, offset);
         offset += (uint32_t)files[i].second.size();
     }
+    write_u32(out.data() + dir_size - 4, (uint32_t)(dir_size + data_size));
 
     size_t pos = dir_size;
     for (auto& f : files) {
         memcpy(out.data() + pos, f.second.data(), f.second.size());
         pos += f.second.size();
     }
+
+    return out;
+}
+
+std::vector<uint8_t> ealib_repack(const uint8_t* lib_data, size_t lib_size) {
+    if (lib_size < (size_t)HDR_BASE) return {};
+    if (memcmp(lib_data, MAGIC, MAGIC_LEN) != 0) return {};
+    uint16_t count = read_u16(lib_data + 5);
+    auto entries = ealib_read_dir(lib_data, lib_size);
+    if (entries.size() != count) return {};
+
+    size_t dir_size = HDR_BASE + ((size_t)count + 1) * ENTRY_SZ;
+    size_t total = dir_size;
+    for (auto& e : entries) {
+        if ((size_t)e.offset + e.size > lib_size) return {};
+        total += e.size;
+    }
+    if (total > 0xFFFFFFFFu) return {};
+
+    std::vector<uint8_t> out(total, 0);
+    memcpy(out.data(), MAGIC, MAGIC_LEN);
+    write_u16(out.data() + 5, count);
+
+    uint32_t offset = (uint32_t)dir_size;
+    for (int i = 0; i < (int)count; i++) {
+        uint8_t* e = out.data() + HDR_BASE + i * ENTRY_SZ;
+        // name+flags verbatim from the source directory: Entry::name zeroes
+        // byte 12, and repack must not normalize bytes it did not parse.
+        memcpy(e, lib_data + HDR_BASE + i * ENTRY_SZ, 14);
+        write_u32(e + 14, offset);
+        memcpy(out.data() + offset, lib_data + entries[i].offset,
+               entries[i].size);
+        offset += entries[i].size;
+    }
+    write_u32(out.data() + dir_size - 4, (uint32_t)total);
 
     return out;
 }
