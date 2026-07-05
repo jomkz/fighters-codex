@@ -7,6 +7,56 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.8] - 2026-07-05
+
+### Added
+- **fx-lib/fxs** **The SH shape interpreter — complete state-selected rendering (epics #279,
+  #295).** `sh_parse_mesh` + `ShState` now select every state dimension a shape carries, and the
+  `fxs` orbit view exposes each as a control:
+  - **Animation frames** (#302, #304) — `0x40` JumpToFrame interpreted in the base stream, called
+    fragments, and x86-gated sub-streams; **Frame** slider.
+  - **Damage** — the inline `0xAC` sub-model (#300) *and* the whole-model wreck swap (#314):
+    `sh_variant_name` derives the engine-generated `_A`…`_D`/`_S` sibling names, `has_damage`
+    reports inline branches, and the **Destroyed** toggle falls back to the `_A.SH` wreck from the
+    same LIB — the render-time swap the engine performs for destroyed aircraft.
+  - **LOD and detail** (#312) — `0xC8` JumpToLOD levels (synthetic projected-size scalar against
+    each site's pixel threshold) and the `0xA6` JumpToDetail preference; **LOD** slider +
+    **Low detail** checkbox.
+  - **The structural stream walk** (#312), from new engine tracing: `0x1E` is ShortEOF — a
+    fragment *return* (`do_short_eof` = `ret`), not a pad; `0x12` Unmask *calls* its sub-stream;
+    `0x6C` and the `0x06`/`0x0C`/`0x0E`/`0x10` family are **draw-order selectors** whose both
+    sub-chains always render; `0x48`/`0x38` jumps are followed. One coherent state renders instead
+    of every frame/LOD/damage block merged — the A-10 yields three clean LODs (377/63/10 faces),
+    FA_2.LIB coverage 1257/1275 shapes (98.6%), zero crashes.
+  - **Texturing** (#305–#307, #311) — per-face texel coords extracted (+ OBJ `vt`), sampled in
+    both render backends, **Texture** toggle resolving the skin PIC from the same LIB, and
+    untextured faces shaded by their palette colour instead of flat grey.
+  - **Full-model recovery** (#298, #299, #309) — x86-gated articulation geometry recovered via PE
+    base-relocation targets, Unmask calls followed, and walk-through harvesting; complete
+    airframes (A-10 both halves, AC130 from zero).
+- **fx-render** — the shared renderer module chartered in #281: software rasterizer backend
+  (#293), OpenGL backend + `fxs` SH preview refactored onto `fx::render` (#294), and texture
+  sampling in both backends (#306).
+- **fx-lib/re** **`.T2` terrain decoded to the engine's model (#313, closes #262).** The
+  "sub-header class constants" are the loader's field map (`T_Load`/`T_GetLeaf`): the payload is
+  two flat row-major arrays — the leaf grid plus a per-tile far-LOD summary array — not 195-byte
+  tiles; the codec is rewritten to validate both array extents and T2.md flips to **complete**.
+  Same PR resolves `T_HANDLE` flag `0x1000`: the vestigial Mac-heritage purged-handle mark (its
+  readers survive; the purger `MMCompactRAM` is stubbed on Win32).
+- **re** `sh_op_78` characterized as an oriented bounding-box visibility cull (8-corner
+  Cohen–Sutherland trivial-reject; emits no geometry) (#310).
+
+### Changed
+- **roadmap** mid-2026 realignment: reconstruction folded into Phase 5, `fxe`/`fx_render`
+  chartered, interleaved release train (#286); "FA.EXE" genericized to "the game executable" and
+  architecture.md reframed as the reconstruction hub (#287); fxs Studio direction framed as
+  entity-based editing (#303); epic #279 marked complete in the epic index (effect-data → #315)
+  (#316).
+
+### Fixed
+- **fxs** SH textures mapped upside-down: SH texel `t` is bottom-left origin — flip V against the
+  top-left decoded PIC (#308).
+
 ## [0.5.7] - 2026-07-04
 
 ### Added
@@ -269,7 +319,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.7...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.8...HEAD
+[0.5.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.8
 [0.5.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.7
 [0.5.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.6
 [0.5.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.5
