@@ -121,12 +121,15 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
 
             if (textured) {
                 // Fan corners 0, i, i+1 map to the parallel texcoord entries.
+                // SH texel t is bottom-left origin, so flip V for the top-left
+                // decoded PIC (verified against _a10.PIC — camo maps correctly).
                 const auto& t0 = face.texcoords[0];
                 const auto& t1 = face.texcoords[i];
                 const auto& t2 = face.texcoords[i + 1];
-                tverts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, t0.s * inv_tw, t0.t * inv_th});
-                tverts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, t1.s * inv_tw, t1.t * inv_th});
-                tverts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, t2.s * inv_tw, t2.t * inv_th});
+                auto V = [&](float t){ return 1.0f - t * inv_th; };
+                tverts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, t0.s * inv_tw, V(t0.t)});
+                tverts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, t1.s * inv_tw, V(t1.t)});
+                tverts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, t2.s * inv_tw, V(t2.t)});
             } else {
                 verts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, 0.0f, 0.0f});
                 verts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, 0.0f, 0.0f});
