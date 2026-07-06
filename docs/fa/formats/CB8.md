@@ -9,20 +9,18 @@ spec:
   gaps:
     - kind: re-static
       issue: 54
-      note: "playback palette is engine-internal, not yet recovered"
-    - kind: re-static
-      issue: 54
-      note: "unknown fields in DRBC/MRFA/MRFI headers"
+      note: "MRFA payload dwords, DRBC +0x10 field, EDB palette-half global"
 codec:
-  direction: read
-  issue: 95
+  direction: round-trip
+  byte_identical: false
+  rationale: "VQ re-encode is pixel-exact (decode→repack→decode identical; audio and container fields carry verbatim) but the encoder chooses its own codebook packing — byte identity is a non-goal for FMV"
   lib: [lib/src/cb8.cpp]
   commands: [cb8]
-  tests: []
+  tests: [tests/test_cb8.cpp]
   fuzz: []
   gui: [gui/src/editors/cb8_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [11K, PAL, LIB]
 ---
@@ -40,11 +38,17 @@ and `FA_11B.LIB`.
 ### fx
 
 ```
-fx cb8 info   <file.CB8>               # header and chunk summary
-fx cb8 frames <file.CB8> [output_dir]  # decode every frame to PGM images
+fx cb8 info   <file.CB8>                       # header and chunk summary
+fx cb8 frames <file.CB8> [-o output_dir]       # decode every frame to PGM (indices)
+fx cb8 unpack <file.CB8> [-o output_dir]       # decode every frame to colour PNG
+fx cb8 repack <orig.CB8> <png_dir> [-o out]    # rebuild the movie around edited frames
 ```
 
-There is no repack command (#95) — frame-level edits only.
+`unpack` renders through each frame's embedded palette. `repack` re-encodes
+the video (each PNG must use ≤ 256 distinct colours; the per-frame palette is
+rebuilt) while the DRBC header, every audio chunk, the stream order, and the
+VooM timing carry over from the original verbatim — the decode→edit→repack
+loop is pixel-exact (#95).
 
 ### Other Tools
 
@@ -79,11 +83,19 @@ Chunk structure:
 
 | Offset | Size | Type | Description |
 |--------|------|------|-------------|
-| `0x00` | 4  | char[4] | Magic `DRBC` |
-| `0x04` | 4  | u32 | flags (observed: 0x00000000 or 0x00000001) |
-| `0x08` | 8  | ?   | **Unknown** constant (observed identical across all files) |
+| `0x00` | 4  | char[4] | Magic `DRBC` — the fourth **generation** of the format: `InitCobra` explicitly rejects `ARBC`, `BRBC`, and `CRBC` as too old (confirmed) |
+| `0x04` | 4  | u32 | Flags: bit 0 = audio interleaved (MRFA chunks present), bit 1 = pixel-doubled playback (confirmed from `InitCobra`) |
+| `0x08` | 2  | u16 | Audio timing divisor `P` (observed: 150) |
+| `0x0A` | 2  | u16 | Audio rate term `Q` (observed: 22050); samples per MRFA chunk = `Q × 50 / P` = 7350 (confirmed: `InitCobra` primes two chunks of exactly this size) |
+| `0x0C` | 4  | u32 | Format version — the engine requires `< 0x67` (observed: 0x65) |
 | `0x10` | 2  | ?   | **Unknown** (observed: 0x0000 or 0x0080) |
 | `0x12` | 46 | u8[46] | 0xFF padding |
+
+The engine reads the file **sequentially** — header, two priming MRFA chunks
+(when flag bit 0 is set; the first sample of each is forced to 0x80 silence),
+the VooM index, then frames — and never checks the MRFI/MRFA/VooM tags: the
+index is trusted for every seek (confirmed; the tags exist for the file
+format, not the player).
 
 ### Chunk Type: MRFA — Audio Block
 
@@ -102,54 +114,74 @@ samples at 11025 Hz (matching the `.11K` convention). Silence is 0x80.
 
 7350 samples ÷ 11025 Hz = 666.7 ms = exactly 10 video frames at 15 fps.
 
-### Chunk Type: MRFI — Inter Video Frame
+### Chunk Type: MRFI — Video Key Frame
 
-A single delta-coded (P-frame) video frame. The chunk carries a skip map
-identifying which 4×4 pixel blocks changed, followed by the new block data.
+One **self-contained, vector-quantized key frame** (confirmed — engine trace
+#95, `DecodeSVGA8Frame` at `0x456EC0`; the `DecodeFrame` dispatcher at
+`0x442370` has **no inter decoder for the 8-bit submode**, so nothing carries
+over between frames). Every frame brings its own palette and codebooks.
+
+> An earlier revision of this section documented a delta/skip-map model with
+> block data at `+0x18`; that model was wrong — the region at `+0x18` is the
+> **palette** — and it never decoded real frames. The layout below is read
+> from the engine and validated by a pixel-exact decoder.
 
 | Offset | Size | Type | Description |
 |--------|------|------|-------------|
-| `+0x00` | 4   | char[4] | Magic `MRFI` |
-| `+0x04` | 4   | u32 | Chunk size (variable, minimum 8240) |
-| `+0x08` | 16  | u32[4] | Payload header — **unknown** purpose, constant across frames |
-| `+0x18` | 600 | u8[600] | Skip map: 4800 bits, one bit per 4×4 block (LSB-first per byte). Bit = 1: block changed; bit = 0: block unchanged |
-| `+0x270`| var |  | Block data (chunk_size − 624 bytes; see below) |
+| `+0x00` | 4 | char[4] | Magic `MRFI` (unchecked by the player) |
+| `+0x04` | 4 | u32 | Chunk size, padded to a 4-byte multiple |
+| `+0x08` | 1 | u8  | Frame kind: 0 = key (the only kind used by CB8) |
+| `+0x09` | 1 | u8  | Submode: 5 = 8-bit paletted (6 = the 15/16/24-bit VDO path) |
+| `+0x0A` | 2 | u16 | `A` — detail-book entries for pixel rows `< X` |
+| `+0x0C` | 2 | u16 | `B` — detail-book entries for pixel rows `>= X` |
+| `+0x0E` | 2 | u16 | `C` — single-book entries |
+| `+0x10` | 2 | u16 | `S` — mode-bitmap bytes (`((cells + 31) / 32) × 4`; 600 for 320×240) |
+| `+0x12` | 2 | u16 | `D` — palette bytes (768) |
+| `+0x14` | 2 | u16 | `X` — detail-book switch row in pixels (0xFFFF = never) |
+| `+0x16` | 2 | u16 | Padding (0) |
+| `+0x18` | `D` | u8[] | **Palette**: 256 × 3 bytes of 6-bit VGA RGB — every frame carries its own |
+| — | `(A+B)×4` | u8[] | **Detail book**: 2×2-pixel entries (4 palette indices, row-major); entries `0..A-1` serve rows `< X`, `A..A+B-1` rows `>= X` |
+| — | `C×4` | u8[] | **Single book**: 2×2-pixel entries expanded to 4×4 at decode |
+| — | `S` | u8[] | **Mode bitmap**: one bit per 4×4 cell, row-major, continuous across rows; consumed as u32-LE words **MSB-first** |
+| — | var | u8[] | **Index stream** (to end of chunk, zero-padded to the 4-byte boundary) |
 
-**Block grid.** Video is divided into non-overlapping 4×4 pixel blocks. For
-320×240 video: 80 columns × 60 rows = 4800 blocks. Block index `b` maps to
-pixel coordinates `((b % 80) * 4, (b / 80) * 4)`.
+**Cell grid.** The frame divides into 4×4-pixel cells, row-major (80 × 60 =
+4,800 for 320×240). For each cell, its mode bit selects the coding:
 
-**Block data — two sections.** Let `bdSize = chunk_size − 624` and
-`n_changed` = number of set bits in the skip map.
-
-**Section 1** (bytes `0 .. n_changed×16 − 1`): delta blocks for each changed
-position, stored in skip-map order (ascending block index). Each entry is 16
-raw 8-bit palette index bytes covering the 4×4 pixel block in row-major order.
-
-**Section 2** (bytes `n_changed×16 .. bdSize − 1`, present when
-`bdSize > n_changed×16`): full-state overwrite starting from block 0.
-`⌊(bdSize − n_changed×16) / 16⌋` complete blocks replace the canvas from
-block 0 upward. Any trailing bytes (< 16) are ignored. Trailing zero bytes may
-be omitted from the end of section 2.
+- **Bit 0 — single** (`CopySB8`): one index byte into the single book. The
+  4-byte entry `(a, b, c, d)` is a 2×2 block expanded to 4×4 — plainly, each
+  value pixel-doubled into its quadrant (`ExpandDB`), or with a dither when
+  the display path enables it (`EDB`, below).
+- **Bit 1 — detail** (`CopyDB8`): four index bytes selecting detail-book
+  entries placed as the TL, TR, BL, BR **2×2 quadrants**; each 4-byte entry
+  is one 2×2 block (row 0: bytes 0–1, row 1: bytes 2–3). Rows `>= X` index
+  the second book half (the `B` entries).
 
 **Decode algorithm:**
 
 ```
-canvas  = uint8_t[4800 × 16]   // persistent across frames; init to 0x00
-changed = [b for b in 0..4799 if skip_map bit b is set]
-
-// Section 1: apply delta blocks
-for i in 0..len(changed)-1:
-    canvas[changed[i] * 16 .. +15] = block_data[i*16 .. i*16+15]
-
-// Section 2: overwrite from block 0 (when extra data present)
-extra = (bdSize - len(changed)*16) / 16   // integer division
-for i in 0..extra-1:
-    canvas[i * 16 .. +15] = block_data[len(changed)*16 + i*16 .. +15]
+parse A,B,C,S,D,X; locate palette/detail/single/bitmap/index regions
+cell = 0
+for cy in 0..cell_rows-1:
+    book = detail[0..A)        if cy*4 <  X or X == 0xFFFF
+         = detail[A..A+B)      otherwise
+    for cx in 0..cell_cols-1:
+        word = u32le(bitmap[(cell/32)*4 ..])       // MSB-first bit order
+        bit  = (word >> (31 - cell%32)) & 1
+        if bit == 0:  expand single[next_index()] into the 4x4 cell
+        else:         place book[next_index()] at TL, TR, BL, BR (4 indices)
+        cell += 1
 ```
 
-To render frame: for each block `b`, copy `canvas[b*16..+15]` to the 4×4 pixel
-area at `((b%80)*4, (b/80)*4)` in row-major order.
+**EDB dither (display-time option).** When the SVGA path enables dithering,
+each single-book value `v` expands not by plain doubling but as a 2×2
+checkerboard of `v` and a partner `p`: the neighbour index (`v−1` or `v+1`,
+within the same 128-entry palette half, guarded at 0/0x7F/0x80/0xFF) whose
+RGB — looked up in **this frame's palette** — is nearest to `v`'s with
+squared distance ≤ 8; `p = v` when neither qualifies. The expanded rows are
+`(a, pa, b, pb) / (pa, a, pb, b)` and likewise for `(c, d)`. `fx` decodes
+with the plain expansion (deterministic and exactly invertible); the dither
+is a player-side rendering variant, not stream data.
 
 ### Chunk Type: VooM — Video Index / Key Frame
 
@@ -179,32 +211,25 @@ Index entry (16 bytes each):
 
 ```
 DRBC header
-MRFA  — silent/blank audio lead-in
-MRFA  — first audio block
-VooM  — A/V index (N entries) + video key frame marker
-MRFI  — delta frame 0
-MRFI  — delta frame 1
-...
-MRFI  — delta frame N-1
-MRFA  — trailing audio
+MRFA  — priming audio block (first sample forced to 0x80 silence)
+MRFA  — second priming block
+VooM  — A/V index (N entries)
+MRFI  — key frame 0
+MRFI  — key frame 1
+...   — MRFA blocks interleaved roughly every 10 frames
+MRFI  — key frame N-1
 ```
 
 ### Palette and Colour
 
-CB8 frame data consists entirely of 8-bit palette indices. The palette used to
-render those indices is **not stored in any LIB file**. It is an
-engine-internal table loaded at startup from a resource embedded in the game executable (or
-a companion file loaded before the cutscene begins).
+**Every MRFI frame embeds its own 768-byte palette** (256 × 3 bytes of 6-bit
+VGA RGB at payload offset `+0x18`) — resolved by the #95 engine trace. No
+external palette exists or is needed: decoding is fully self-contained, and
+palettes can change per frame (the movies fade by animating them).
 
-**PALETTE.PAL is the wrong palette for CB8.** Indices 1–46 in PALETTE.PAL are
-all set to `(63, 0, 63)` (magenta in 6-bit VGA). CB8 frame data is heavily
-saturated with index `0x01` (the sky / background colour for cutscene videos),
-so applying PALETTE.PAL produces a garbled pink/magenta image.
-
-**Greyscale fallback:** mapping each index byte directly to a grey value
-(`R = G = B = index`) is always spatially correct and produces a legible
-monochrome image. It is the recommended display mode until the true engine
-palette is recovered.
+PALETTE.PAL never applies to CB8 (its low indices are magenta placeholders);
+the earlier greyscale-fallback advice is obsolete now that the in-band
+palette decodes true colour.
 
 ## File Inventory
 
@@ -219,21 +244,45 @@ JANELOGO.CB8 (6,496,064 bytes): VooM at offset 14812 with 466 index entries
 (chunk_size 7476 = 20 + 466×16). Frame 0 offset: 22288, duration: ~31.1 s
 @ 15 fps.
 
+## Engine Notes
+
+### Provenance: the Cobra framework
+
+CB8's player is **"Cobra"**, EA's in-house movie framework — not licensed
+middleware (confirmed, #95 engine trace). The evidence: the decoder is
+first-party C++ compiled into the game executable (`InitCobra`, `SetupCobra`,
+`PlayCobra`, `DecodeFrame` — MSVC-mangled names from EA's own FA.SMS
+symbols), it shares engine-internal structs (`GlobalData`, `MovieContext`,
+`FrameHeader`), reads movies through the engine's own [LIB](LIB.md) resource
+layer rather than a middleware I/O callback, and renders through the engine's
+VGA banking (`SetVESABank`, `DrawAcrossBank`). The magic's generation lineage
+— `InitCobra` rejects `ARBC`, `BRBC`, and `CRBC` as too old before accepting
+`DRBC`, plus an internal version gate (`< 0x67`) — is a format evolving
+privately across the USNF-line titles this anthology collects; licensed FMV
+of the era (RAD's Smacker, and Bink from 1999) shipped as self-contained
+libraries with their own containers. "CB8" reads as *CodeBook, 8-bit*; the
+same Cobra dispatcher also serves the 15/16/24-bit submode used by the
+[VDO](VDO.md) hi-color movies, so Cobra is the umbrella for both. The name's
+origin is unrecorded in the binary — an internal codename (inferred).
+
 ## Open Questions
 
-### 1. Playback palette recovery
+### 1. Playback palette recovery — resolved
 
-The CB8 palette is engine-internal (an game-executable-embedded resource or a
-pre-cutscene companion load); until it is located, decoded frames render
-correctly only in greyscale.
+**Resolved by the #95 engine trace:** the palette is embedded per frame
+(768 bytes at MRFI `+0x18`); nothing engine-internal or external exists.
+`DecodeSVGA8Frame` reads it from the frame, and `EDB`'s dither computes
+neighbour distances against it.
 
-*Status: open — re-static (#54)*
+*Status: resolved — re-static (#95)*
 
 ### 2. Unknown header fields
 
-The DRBC header's 8-byte constant and 2-byte field, the four MRFA dwords at
-`+0x08..+0x17`, and the MRFI 16-byte payload header are stable across the
-corpus but semantically unmapped.
+The four MRFA payload dwords at `+0x08..+0x17` (observed 128, 0, 8, 1), the
+DRBC field at `+0x10` (0x0000 or 0x0080), and the global palette-half selector
+`EDB` consults (`GlobalData+0xc1b0` bit 0) remain semantically unmapped. The
+DRBC audio-timing pair and version gate are now confirmed (see the header
+table); the MRFI payload header is fully mapped.
 
 *Status: open — re-static (#54)*
 

@@ -14,7 +14,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [BIN](BIN.md) | system | complete | — | read-only (by design) | `fx bin` | `tests/test_bin.cpp` | syn/real | — | `gui/src/editors/bin_editor.cpp` |
 | [BRF](BRF.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | — | `tests/test_brf.cpp` | syn | — | `gui/src/editors/brf_editor.cpp` |
 | [CAM](CAM.md) | mission | complete | — | read-only (by design) | `fx cam` | `tests/test_cam.cpp` | syn/real | — | `gui/src/editors/cam_editor.cpp` |
-| [CB8](CB8.md) | video | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54)<br>re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only [#95](https://github.com/jomkz/fighters-codex/issues/95) | `fx cb8` | — | real | — | `gui/src/editors/cb8_editor.cpp` |
+| [CB8](CB8.md) | video | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (by design) | `fx cb8` | `tests/test_cb8.cpp` | syn/real | — | `gui/src/editors/cb8_editor.cpp` |
 | [CFG](CFG.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx cfg` | `tests/test_cfg.cpp` | syn | — | — |
 | [DAT](DAT.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx dat` | `tests/test_dat.cpp` | syn | — | — |
 | [DLG](DLG.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx dlg` | `tests/test_dlg.cpp` | syn/real | — | — |

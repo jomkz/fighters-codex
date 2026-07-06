@@ -472,7 +472,7 @@ std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
-## cb8.h — FMV video decoder
+## cb8.h — FMV video codec
 
 ```cpp
 namespace fx {
@@ -490,18 +490,34 @@ bool cb8_info(const uint8_t* data, size_t size, Cb8Info* out);
 
 struct Cb8Decoder;  // opaque
 
-// Open a decoder for sequential frame access.  Returns nullptr on bad input.
-// `data` must remain valid for the lifetime of the decoder.
+// Open a decoder. Returns nullptr on bad input. `data` must remain valid
+// for the lifetime of the decoder.
 Cb8Decoder* cb8_open(const uint8_t* data, size_t size);
 void        cb8_close(Cb8Decoder* dec);
 
-// Decode frame `frame_idx` and return palette index bytes (width x height),
-// row-major, top-to-bottom.  Seeking backward resets the canvas to frame 0.
-// Returns empty on error or out-of-range frame_idx.
+// Decode frame `frame_idx` to palette index bytes (width x height,
+// row-major). Every frame is a self-contained key frame: frames decode in
+// any order. Empty on error.
 std::vector<uint8_t> cb8_decode_frame(Cb8Decoder* dec, uint32_t frame_idx);
+
+// The frame's embedded 768-byte palette, widened 6->8 bit like pal_load.
+bool cb8_frame_palette(Cb8Decoder* dec, uint32_t frame_idx, Palette* out);
+
+// RGBA8 decode through the frame's embedded palette.
+std::vector<uint8_t> cb8_decode_frame_rgba(Cb8Decoder* dec, uint32_t frame_idx);
+
+// One re-encodable frame: indices plus the 6-bit palette to embed.
+struct Cb8Frame {
+    std::vector<uint8_t> indices;         // width * height
+    std::array<uint8_t, 768> palette6{};  // 6-bit VGA RGB
+};
+
+// Rebuild a CB8 around new video frames. The DRBC header, audio chunks,
+// stream order, and VooM timing carry from `orig` verbatim; each MRFI is
+// re-encoded (pixel-exact; byte identity is a non-goal). Empty if a frame
+// needs more than 256 codebook entries per band after splitting.
+std::vector<uint8_t> cb8_repack(const uint8_t* orig, size_t orig_size,
+                                const std::vector<Cb8Frame>& frames);
 
 } // namespace fx
 ```
-
-For best performance iterate frames in forward order; backward seeks replay
-from frame 0.
