@@ -244,6 +244,8 @@ AC130, etc.) and produce no OBJ output. All others extract cleanly.
 ```
 fx cb8 info   <file.CB8>
 fx cb8 frames <file.CB8> [-o output_dir]
+fx cb8 unpack <file.CB8> [-o output_dir]
+fx cb8 repack <orig.CB8> <png_dir> [-o out.CB8]
 ```
 
 #### `fx cb8 info <file.CB8>`
@@ -258,13 +260,23 @@ audio: 11025 Hz PCM, 400 sync ticks/frame
 
 #### `fx cb8 frames <file.CB8> [-o output_dir]`
 
-Decode every frame to a PGM image (8-bit palette indices as greyscale) in
-`output_dir` (default: current directory). Files are named `frame0000.pgm`,
-`frame0001.pgm`, etc.
+Decode every frame to a PGM image (raw 8-bit palette indices) in `output_dir`
+(default: current directory). Files are named `frame0000.pgm`, etc. Every
+frame is a self-contained key frame; frames decode in any order.
 
-The decoder maintains a persistent canvas across frames; each MRFI chunk
-applies a delta to the previous state. Output values are raw palette indices —
-apply the appropriate PAL file separately to get RGB colours.
+#### `fx cb8 unpack <file.CB8> [-o output_dir]`
+
+Decode every frame to a **colour PNG** through its embedded per-frame palette
+(no external PAL applies to CB8). Files are named `frame0000.png`, etc.
+
+#### `fx cb8 repack <orig.CB8> <png_dir> [-o out.CB8]`
+
+Rebuild a movie around edited frames: the PNGs (one per original frame, same
+dimensions, ≤ 256 distinct colours each) are re-encoded as CB8 key frames
+with rebuilt per-frame palettes and codebooks, while the DRBC header, every
+audio chunk, the stream order, and the VooM timing carry over from
+`orig.CB8` verbatim. The unpack→repack loop is pixel-exact; byte identity is
+a non-goal (the encoder chooses its own codebook packing).
 
 *See also: [fa/formats/CB8.md](fa/formats/CB8.md)*
 
