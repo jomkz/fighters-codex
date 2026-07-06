@@ -8,7 +8,7 @@ spec:
   status: complete
 codec:
   direction: read
-  issue: 101
+  rationale: "FA.SMS is a debugger symbol map (address → mangled name) read for reconstruction; it has no game-consumed write direction — the engine never loads a codex-authored .SMS — so `fx sms dump` emits CSV and there is nothing to serialize back (round-trip decision, #101)"
   lib: [lib/src/sms.cpp]
   commands: [sms]
   tests: [tests/test_sms.cpp]

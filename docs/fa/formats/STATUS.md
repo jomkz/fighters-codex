@@ -33,7 +33,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [MM](MM.md) | terrain | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx mm`<br>`fx mission` | `tests/test_mission.cpp` | syn/real | — | `gui/src/editors/mission_editor.cpp` |
 | [MNU](MNU.md) | ui-overlay | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mnu` | `tests/test_mnu.cpp` | syn/real | — | — |
 | [MT](MT.md) | mission | complete | — | round-trip (byte-identical) | `fx mt` | `tests/test_mt.cpp` | syn/real | — | — |
-| [MUS](MUS.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx mus` | `tests/test_mus.cpp` | syn/real | — | `gui/src/editors/mus_editor.cpp` |
+| [MUS](MUS.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mus` | `tests/test_mus.cpp` | syn/real | — | `gui/src/editors/mus_editor.cpp` |
 | [NT](NT.md) | typedef | complete | — | round-trip (byte-identical) | `fx nt` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [OT](OT.md) | typedef | complete | — | round-trip (byte-identical) | `fx ot` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [P](P.md) | system | partial | re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29) | read-only [#103](https://github.com/jomkz/fighters-codex/issues/103) | `fx plt` | `tests/test_plt.cpp` | syn | — | `gui/src/editors/plt_editor.cpp` |
@@ -46,7 +46,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [SEE](SEE.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx see` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [SEQ](SEQ.md) | video | complete | — | round-trip (byte-identical) | `fx seq` | `tests/test_seq.cpp` | syn/real | `fuzz/fuzz_seq.cpp` | `gui/src/editors/seq_editor.cpp` |
 | [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | — | `gui/src/editors/sh_editor.cpp` |
-| [SMS](SMS.md) | system | complete | — | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx sms` | `tests/test_sms.cpp` | real | — | — |
+| [SMS](SMS.md) | system | complete | — | read-only (by design) | `fx sms` | `tests/test_sms.cpp` | real | — | — |
 | [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf` | `tests/test_ssf.cpp` | syn | — | — |
 | [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | `gui/src/editors/terrain_preview.cpp` |
 | [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | — | `gui/src/editors/txt_editor.cpp` |
