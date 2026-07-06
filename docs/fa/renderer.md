@@ -119,7 +119,11 @@ flat YLR span fills with the `_no_overlap` exclusive-right-edge rule — with th
 conventions recorded as inferred: edge x evaluated per integer scanline from the 16.16 slope,
 span endpoints truncated (`x >> 16`, inclusive right by default), and vertical coverage
 half-open (`⌈y_min⌉ … ⌈y_max⌉ − 1`, so vertically abutting polygons never overdraw). Pinned by
-`tests/render/test_fa.cpp` (#329).
+`tests/render/test_fa.cpp` (#329). The shaded variant (`G_SUPolygon`) rides `c_packed` — a
+**palette/shade index**, not an RGB blend — through the same edge/span stepping, evaluated at
+each pixel's integer x and clamped to the palette range (both inferred); flat-vs-Gouraud
+selection is the `_cFillType` dispatch the SH interpreter stages via `sh_op_80`/`SetFlatColor`
+(#330).
 
 ### 3.2 Near-plane mapped (NPM) floating-point path
 

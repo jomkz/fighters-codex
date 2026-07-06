@@ -273,6 +273,72 @@ TEST_CASE("degenerate polygons and fully clipped spans are no-ops", "[render][fa
     CHECK(CountIndex(s, 1) == 0);
 }
 
+TEST_CASE("Gouraud spans interpolate the packed index; endpoints exact", "[render][fa]") {
+    // Horizontal shade ramp: c from 10 at x=0 to 74 at x=64 -> pixel x gets
+    // index 10+x, exactly (renderer.md s3.1: c_packed rides the same 16.16
+    // stepping as x). The ramp is an index ramp, not an RGB blend.
+    fa::PolyVertex quad[4] = {V(0, 0), V(64, 0), V(64, 8), V(0, 8)};
+    quad[0].c = fa::ToFx(10);
+    quad[3].c = fa::ToFx(10);
+    quad[1].c = fa::ToFx(74);
+    quad[2].c = fa::ToFx(74);
+
+    fa::Surface s(64, 8);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SUPolygon(quad, 4);
+    for (int x = 0; x < 64; ++x) {
+        CHECK(s.row(3)[x] == 10 + x);  // monotonic, endpoint-exact
+    }
+
+    // Vertical ramp: c follows the edges scanline by scanline.
+    fa::PolyVertex vquad[4] = {V(0, 0), V(16, 0), V(16, 16), V(0, 16)};
+    vquad[2].c = fa::ToFx(16);
+    vquad[3].c = fa::ToFx(16);
+    fa::Surface sv(16, 16);
+    sv.Clear(255);
+    fa::Raster rv(sv);
+    rv.SUPolygon(vquad, 4);
+    for (int y = 0; y < 16; ++y) {
+        CHECK(sv.row(y)[8] == y);
+    }
+}
+
+TEST_CASE("fill-type dispatch selects flat vs Gouraud like sh_op_80 stages it", "[render][fa]") {
+    // sh_op_80 (render-core.md): gouraudOn == 0 -> SetFlatColor; otherwise
+    // the shaded path. Here: FillType::Flat ignores per-vertex c and paints
+    // _cColor; FillType::Shaded interpolates c through the same Polygon call.
+    fa::PolyVertex quad[4] = {V(0, 0), V(32, 0), V(32, 8), V(0, 8)};
+    quad[1].c = fa::ToFx(200);
+    quad[2].c = fa::ToFx(200);
+
+    fa::Surface s(32, 8);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetColor(7);
+    r.SetFillType(fa::FillType::Flat);
+    r.Polygon(quad, 4);
+    CHECK(s.row(4)[1] == 7);
+    CHECK(s.row(4)[30] == 7);  // flat: c ignored
+
+    r.SetFillType(fa::FillType::Shaded);
+    r.Polygon(quad, 4);
+    CHECK(s.row(4)[0] == 0);    // shaded: left endpoint c=0
+    CHECK(s.row(4)[16] == 100); // midpoint of the 0..200 ramp over 32 px
+    CHECK(s.row(4)[31] > 190);  // approaching the right endpoint
+}
+
+TEST_CASE("Gouraud c clamps to the palette range", "[render][fa]") {
+    // Out-of-range c (inferred: the engine never emits it) must not wrap.
+    fa::PolyVertex quad[4] = {V(0, 0), V(8, 0), V(8, 4), V(0, 4)};
+    for (auto& p : quad) p.c = fa::ToFx(500);
+    fa::Surface s(8, 4);
+    s.Clear(1);
+    fa::Raster r(s);
+    r.SUPolygon(quad, 4);
+    CHECK(s.row(2)[4] == 255);
+}
+
 TEST_CASE("fa spans stay correct past the 1024 ceiling", "[render][fa]") {
     // Resolution-independence acceptance (#329): the span core at 2560x1440.
     fa::Surface s(2560, 1440);
