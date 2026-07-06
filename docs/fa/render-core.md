@@ -24,6 +24,10 @@ depth-sorts (painter's order, no z-buffer). The public API (`GRInit3d`, `GRRende
 `GRTo2d`, `GRSinCos`, `GRAddBrentObj`, `GRSetLightSource`) is how the rest of the engine
 drives it; `GRAddBrentObj` queues a shape into the render-sort list.
 
+The clip and sort stages are reproduced in `fx_render::fa`: the screen-edge clip order and
+crossing interpolation (#331) and the `GRAddBrentObj` → `sort_objs_wrapper` painter's-order
+submission list on the centroid+size key (#332), both pinned by `tests/render/test_fa.cpp`.
+
 ![Render core: transform + project + clip, depth-sort, then the SH interpreter executes each shape's bytecode into the G_ rasterizer.](diagrams/render-core.svg)
 
 ## The SH interpreter

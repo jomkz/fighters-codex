@@ -466,6 +466,66 @@ TEST_CASE("near-plane straddling polygons are clipped, not dropped", "[render][f
     CHECK(CountIndex(s, 5) > 0);
 }
 
+TEST_CASE("painter's sort key orders back-to-front, size-biased, stable", "[render][fa]") {
+    using Key = fa::PaintersList::Key;
+    // Farther (greater depth) draws first; the size term biases larger
+    // objects deeper; equal keys keep submission order.
+    CHECK(fa::PaintersList::DrawsBefore(Key{fa::ToFx(100), 0}, Key{fa::ToFx(50), 0}));
+    CHECK_FALSE(fa::PaintersList::DrawsBefore(Key{fa::ToFx(50), 0}, Key{fa::ToFx(100), 0}));
+    CHECK(fa::PaintersList::DrawsBefore(Key{fa::ToFx(50), fa::ToFx(60)},
+                                        Key{fa::ToFx(100), 0}));
+    CHECK_FALSE(fa::PaintersList::DrawsBefore(Key{fa::ToFx(50), 0}, Key{fa::ToFx(50), 0}));
+
+    // Flush order: sorted back-to-front, submission order on ties, cleared.
+    fa::Surface s(4, 4);
+    fa::Raster r(s);
+    fa::PaintersList list;
+    std::vector<int> order;
+    list.Add({fa::ToFx(10), 0}, [&](fa::Raster&) { order.push_back(1); });  // nearest
+    list.Add({fa::ToFx(90), 0}, [&](fa::Raster&) { order.push_back(2); });  // farthest
+    list.Add({fa::ToFx(40), 0}, [&](fa::Raster&) { order.push_back(3); });
+    list.Add({fa::ToFx(40), 0}, [&](fa::Raster&) { order.push_back(4); });  // tie with 3
+    REQUIRE(list.size() == 4);
+    list.Flush(r);
+    CHECK(order == std::vector<int>{2, 3, 4, 1});
+    CHECK(list.size() == 0);
+}
+
+TEST_CASE("painter's order occludes where a z-buffer would disagree", "[render][fa]") {
+    // Nearer object submitted FIRST: raw submission order would leave the
+    // farther quad on top (wrong); the painter's list reorders so the
+    // nearer one paints last and wins the overlap — no depth buffer exists
+    // anywhere in the fa path (renderer.md s3.3).
+    const fa::PolyVertex near_quad[4] = {V(8, 8), V(24, 8), V(24, 24), V(8, 24)};
+    const fa::PolyVertex far_quad[4] = {V(0, 0), V(16, 0), V(16, 16), V(0, 16)};
+
+    fa::Surface wrong(32, 32);
+    wrong.Clear(0);
+    fa::Raster rw(wrong);
+    rw.SetColor(1);
+    rw.UPolygon(near_quad, 4);  // submission order: near first...
+    rw.SetColor(2);
+    rw.UPolygon(far_quad, 4);   // ...far last -> far wrongly on top
+    CHECK(wrong.row(12)[12] == 2);
+
+    fa::Surface s(32, 32);
+    s.Clear(0);
+    fa::Raster r(s);
+    fa::PaintersList list;
+    list.Add({fa::ToFx(10), 0}, [&](fa::Raster& rr) {  // near, submitted first
+        rr.SetColor(1);
+        rr.UPolygon(near_quad, 4);
+    });
+    list.Add({fa::ToFx(90), 0}, [&](fa::Raster& rr) {  // far
+        rr.SetColor(2);
+        rr.UPolygon(far_quad, 4);
+    });
+    list.Flush(r);
+    CHECK(s.row(12)[12] == 1);   // overlap: nearer quad wins
+    CHECK(s.row(2)[2] == 2);     // far-only region intact
+    CHECK(s.row(20)[20] == 1);   // near-only region intact
+}
+
 TEST_CASE("fa spans stay correct past the 1024 ceiling", "[render][fa]") {
     // Resolution-independence acceptance (#329): the span core at 2560x1440.
     fa::Surface s(2560, 1440);

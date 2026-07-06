@@ -364,6 +364,22 @@ unsigned CodePnt(const ClipVertex& v, float near_w) {
     return v.w < near_w ? kClipNear : 0;
 }
 
+bool PaintersList::DrawsBefore(const Key& a, const Key& b) {
+    return static_cast<std::int64_t>(a.depth) + a.size >
+           static_cast<std::int64_t>(b.depth) + b.size;
+}
+
+void PaintersList::Add(Key key, std::function<void(Raster&)> draw) {
+    items_.push_back({key, std::move(draw)});
+}
+
+void PaintersList::Flush(Raster& r) {
+    std::stable_sort(items_.begin(), items_.end(),
+                     [](const Item& a, const Item& b) { return DrawsBefore(a.key, b.key); });
+    for (Item& it : items_) it.draw(r);
+    items_.clear();
+}
+
 int NearClipPolygon(const ClipVertex* in, int n, float near_w, ClipVertex* out) {
     if (!in || !out || n < 3) return 0;
     unsigned and_code = ~0u, or_code = 0;

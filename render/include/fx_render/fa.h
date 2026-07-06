@@ -17,6 +17,7 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <vector>
 
 namespace fx_render {
@@ -212,6 +213,41 @@ private:
     std::uint8_t color_ = 0;
     FillType fill_type_ = FillType::Flat;
     bool no_overlap_ = false;
+};
+
+// The painter's-order submission list — the fa path's only occlusion
+// mechanism. There is no depth buffer anywhere in this pipeline
+// (renderer.md §3.3): objects queue with the documented centroid+size sort
+// key (`GRAddBrentObj` into `sort_objs_wrapper`, render-core.md) and flush
+// back-to-front; face order *within* an object stays exactly as submitted
+// (the SH interpreter's draw-order selectors already encode it).
+class PaintersList {
+public:
+    struct Key {
+        Fx depth = 0;  // view-space centroid depth (farther = greater), 16.16
+        Fx size = 0;   // object extent/radius, 16.16
+    };
+
+    // Back-to-front: greater composite depth+size draws first; the exact
+    // combination of the documented centroid+size pair is inferred (larger
+    // objects bias deeper). Equal keys keep submission order (stable).
+    static bool DrawsBefore(const Key& a, const Key& b);
+
+    // GRAddBrentObj — queue one object's draw under its sort key.
+    void Add(Key key, std::function<void(Raster&)> draw);
+
+    // sort_objs_wrapper + draw pass: stable back-to-front sort, run each
+    // object's draw in order, then clear the list.
+    void Flush(Raster& r);
+
+    int size() const { return static_cast<int>(items_.size()); }
+
+private:
+    struct Item {
+        Key key;
+        std::function<void(Raster&)> draw;
+    };
+    std::vector<Item> items_;
 };
 
 }  // namespace fa
