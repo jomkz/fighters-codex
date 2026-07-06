@@ -85,6 +85,24 @@ enum class FillType : std::uint8_t {
     Textured = 2,
 };
 
+// A polygon vertex — the documented five-word 16.16 record
+// (renderer.md §3.1: [x_fp, y_fp, u_fp, v_fp, c_packed]). The span core
+// (#329) consumes x/y; c feeds the Gouraud path (#330) and u/v the textured
+// fills (#333).
+struct PolyVertex {
+    Fx x = 0, y = 0;
+    Fx u = 0, v = 0;
+    Fx c = 0;
+};
+
+// UPolygonToYLR output: the polygon reduced to per-scanline Left/Right span
+// bounds (16.16 screen x), one entry per scanline from `y_top`.
+struct YlrList {
+    int y_top = 0;
+    std::vector<Fx> left, right;
+    int height() const { return static_cast<int>(left.size()); }
+};
+
 // The G_* raster-state block over one target surface: the active clip box
 // (G_Init / G_SetClipBox), the current colour (`_cColor`), and the current
 // fill type (`_cFillType`). Construction is G_Init: full-surface clip box.
@@ -113,13 +131,34 @@ public:
     // G_Rect — filled rectangle (inclusive corners), clipped to the clip box.
     void Rect(int left, int top, int right, int bottom);
 
+    // `_no_overlap` — when set, a span's right edge is exclusive, so
+    // horizontally abutting polygons paint every seam pixel exactly once.
+    void SetNoOverlap(bool on) { no_overlap_ = on; }
+    bool no_overlap() const { return no_overlap_; }
+
+    // UPolygonToYLR — reduce a convex polygon to its Y/Left/Right scanline
+    // list. Stepping conventions (inferred; see renderer.md §3.1): edge x is
+    // evaluated at integer scanlines from the edge's 16.16 slope, and a
+    // polygon's vertical coverage is half-open [ceil(y_min), ceil(y_max)),
+    // so vertically abutting polygons never overdraw. Returns false for
+    // degenerate input (fewer than 3 vertices, or an empty scanline range).
+    static bool PolygonToYlr(const PolyVertex* v, int n, YlrList& out);
+
+    // G_UPolygon — fill a convex polygon with the current flat colour.
+    // Span endpoints truncate the 16.16 bounds ([left >> 16, right >> 16],
+    // inclusive unless `_no_overlap`), then clamp to the clip box.
+    void UPolygon(const PolyVertex* v, int n);
+
     Surface& target() { return *target_; }
 
 private:
+    void FillYlrFlat(const YlrList& ylr);  // the _G_DrawYLR_4 flat loop
+
     Surface* target_;
     int clip_left_ = 0, clip_top_ = 0, clip_right_ = 0, clip_bottom_ = 0;
     std::uint8_t color_ = 0;
     FillType fill_type_ = FillType::Flat;
+    bool no_overlap_ = false;
 };
 
 }  // namespace fa

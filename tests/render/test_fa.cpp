@@ -154,3 +154,135 @@ TEST_CASE("fa fixed-point helpers round-trip pixel coordinates", "[render][fa]")
     CHECK(fa::FxFloor(fa::ToFx(7680) + fa::kFxOne / 2) == 7680);
     CHECK(fa::FxFloor(-fa::kFxOne) == -1);
 }
+
+namespace {
+fa::PolyVertex V(int x, int y) {
+    fa::PolyVertex p;
+    p.x = fa::ToFx(x);
+    p.y = fa::ToFx(y);
+    return p;
+}
+int CountIndex(const fa::Surface& s, std::uint8_t index) {
+    int n = 0;
+    for (int y = 0; y < s.height(); ++y) {
+        const std::uint8_t* row = s.row(y);
+        for (int x = 0; x < s.width(); ++x) {
+            if (row[x] == index) ++n;
+        }
+    }
+    return n;
+}
+}  // namespace
+
+TEST_CASE("UPolygonToYLR matches hand-computed span endpoints", "[render][fa]") {
+    // Right triangle (10,10)-(20,10)-(10,30): left edge vertical at x=10,
+    // hypotenuse x(y) = 20 - (y-10)/2 (renderer.md s3.1 edge stepping).
+    const fa::PolyVertex tri[3] = {V(10, 10), V(20, 10), V(10, 30)};
+    fa::YlrList ylr;
+    REQUIRE(fa::Raster::PolygonToYlr(tri, 3, ylr));
+    REQUIRE(ylr.y_top == 10);
+    REQUIRE(ylr.height() == 20);  // half-open [10, 30)
+    for (int row = 0; row < 20; ++row) {
+        CHECK(ylr.left[static_cast<std::size_t>(row)] == fa::ToFx(10));
+    }
+    CHECK(ylr.right[0] == fa::ToFx(20));                       // y=10 -> 20.0
+    CHECK(ylr.right[1] == fa::ToFx(19) + fa::kFxOne / 2);      // y=11 -> 19.5
+    CHECK(ylr.right[19] == fa::ToFx(10) + fa::kFxOne / 2);     // y=29 -> 10.5
+
+    // Filled with truncated inclusive spans: widths 11,10,10,9,9,...,1 = 120.
+    fa::Surface s(64, 64);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetColor(1);
+    r.UPolygon(tri, 3);
+    CHECK(CountIndex(s, 1) == 120);
+    CHECK(s.row(10)[20] == 1);  // right endpoint inclusive on the top row
+    CHECK(s.row(10)[21] == 0);
+    CHECK(s.row(29)[10] == 1);  // last covered scanline
+    CHECK(s.row(30)[10] == 0);  // y_max excluded (half-open vertical)
+}
+
+TEST_CASE("no_overlap makes horizontally abutting tiles seam-exact", "[render][fa]") {
+    const fa::PolyVertex tile_a[4] = {V(0, 0), V(32, 0), V(32, 16), V(0, 16)};
+    const fa::PolyVertex tile_b[4] = {V(32, 0), V(64, 0), V(64, 16), V(32, 16)};
+
+    // Default (inclusive right): both tiles paint the shared column x=32.
+    fa::Surface sa(64, 16), sb(64, 16);
+    sa.Clear(0);
+    sb.Clear(0);
+    fa::Raster ra(sa), rb(sb);
+    ra.SetColor(1);
+    ra.UPolygon(tile_a, 4);
+    rb.SetColor(2);
+    rb.UPolygon(tile_b, 4);
+    CHECK(sa.row(5)[32] == 1);
+    CHECK(sb.row(5)[32] == 2);  // overdraw at the seam without the flag
+
+    // _no_overlap: every pixel of the row is painted exactly once, no gap.
+    fa::Surface s(64, 16);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetNoOverlap(true);
+    r.SetColor(1);
+    r.UPolygon(tile_a, 4);
+    r.SetColor(2);
+    r.UPolygon(tile_b, 4);
+    CHECK(CountIndex(s, 1) == 32 * 16);
+    CHECK(CountIndex(s, 2) == 32 * 16);
+    CHECK(CountIndex(s, 0) == 0);
+    CHECK(s.row(5)[31] == 1);
+    CHECK(s.row(5)[32] == 2);
+}
+
+TEST_CASE("vertically abutting tiles never overdraw (half-open scanlines)", "[render][fa]") {
+    const fa::PolyVertex top[4] = {V(0, 0), V(16, 0), V(16, 16), V(0, 16)};
+    const fa::PolyVertex bottom[4] = {V(0, 16), V(16, 16), V(16, 32), V(0, 32)};
+    fa::Surface s(16, 32);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetNoOverlap(true);
+    r.SetColor(1);
+    r.UPolygon(top, 4);
+    r.SetColor(2);
+    r.UPolygon(bottom, 4);
+    CHECK(CountIndex(s, 1) == 16 * 16);
+    CHECK(CountIndex(s, 2) == 16 * 16);
+    CHECK(s.row(15)[8] == 1);
+    CHECK(s.row(16)[8] == 2);
+}
+
+TEST_CASE("degenerate polygons and fully clipped spans are no-ops", "[render][fa]") {
+    fa::YlrList ylr;
+    const fa::PolyVertex two[2] = {V(0, 0), V(10, 10)};
+    CHECK_FALSE(fa::Raster::PolygonToYlr(two, 2, ylr));
+
+    // A sub-scanline sliver (y from ~10.2 to ~10.8) covers no scanline.
+    fa::PolyVertex sliver[3] = {V(0, 0), V(10, 0), V(5, 0)};
+    sliver[0].y = fa::ToFx(10) + 13107;   // ~10.2
+    sliver[1].y = fa::ToFx(10) + 13107;
+    sliver[2].y = fa::ToFx(10) + 52429;   // ~10.8
+    CHECK_FALSE(fa::Raster::PolygonToYlr(sliver, 3, ylr));
+
+    // A polygon entirely right of the clip box paints nothing.
+    fa::Surface s(64, 64);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetColor(1);
+    const fa::PolyVertex off[4] = {V(100, 0), V(200, 0), V(200, 50), V(100, 50)};
+    r.UPolygon(off, 4);
+    CHECK(CountIndex(s, 1) == 0);
+}
+
+TEST_CASE("fa spans stay correct past the 1024 ceiling", "[render][fa]") {
+    // Resolution-independence acceptance (#329): the span core at 2560x1440.
+    fa::Surface s(2560, 1440);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetColor(6);
+    const fa::PolyVertex quad[4] = {V(1900, 700), V(2400, 700), V(2400, 900), V(1900, 900)};
+    r.UPolygon(quad, 4);
+    CHECK(CountIndex(s, 6) == 501 * 200);  // inclusive right edge, half-open rows
+    CHECK(s.row(800)[2300] == 6);
+    CHECK(s.row(800)[1899] == 0);
+    CHECK(s.row(800)[2401] == 0);
+}
