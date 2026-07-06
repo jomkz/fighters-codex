@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.11] - 2026-07-06
+
 Phase 4 (Codec & Test Completeness), Wave 4 opener — **the `.T2` terrain
 format goes end-to-end**: a read API that exposes per-tile heights and
 texture indices, a byte-identical write path, and a textured 3D terrain
@@ -469,7 +471,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.10...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.11...HEAD
+[0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
 [0.5.10]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.10
 [0.5.9]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.9
 [0.5.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.8
