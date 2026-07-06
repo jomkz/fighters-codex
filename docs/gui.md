@@ -67,7 +67,7 @@ Three-panel window:
 |---|---|
 | Left — LIB Browser | Tree of open LIB files; filterable list of records by name or type |
 | Center — Editor | Form/text/timeline editor for the selected record |
-| Right — Preview | Live preview: images (PIC with palette switcher, RAW screenshots) and the SH 3D orbit view |
+| Right — Preview | Live preview: images (PIC with palette switcher, RAW screenshots), the SH 3D orbit view, and the T2 terrain viewer |
 
 Menu bar: **File** · **View** · **Tools** · **Help**
 
@@ -254,6 +254,26 @@ Gouraud banding are documented behaviour.
   Colours quantize to the active preview palette (the stand-in for the
   engine's shade tables); geometry, spans, clipping, and occlusion are the
   faithful part. Same toggle headless via `--render … --software`
+
+## Terrain Viewer (T2)
+
+- Selecting a `.T2` record shows a textured 3D terrain — the leaf grid as a
+  heightfield (elevation band → height), drawn through the shared
+  [fx_render](fa/renderer.md) module like the SH viewer. Drag to orbit,
+  scroll to zoom; a **Software (FA)** toggle switches to `fx_render::fa`.
+- Each leaf is textured with its `texture_variant` tile
+  (`<theater><N>.PIC`); water is drawn as flat sea. The tiles ship in a
+  **sibling LIB** from the `.T2` (e.g. terrain textures in `FA_1.LIB`, the
+  maps in `FA_2.LIB`), so open both — the viewer resolves tiles across every
+  open session, and the status line shows the tile count. See
+  [fa/formats/T2.md](fa/formats/T2.md#terrain-texturing) for the texturing
+  model.
+- **Fidelity boundary.** The terrain-band palette (indices 192–255, which
+  the engine fills from the atmosphere/sky state) is a default earthy ramp
+  here, and the orbit camera is a stand-in for the engine's VIEW-subsystem
+  framing — the faithful camera is reproduced in fxe and consumed here
+  ([#387](https://github.com/jomkz/fighters-codex/issues/387)). The mesh,
+  per-leaf tile mapping, and the fx_render draw path are the faithful part.
 
 ## Pilot Editing (PLT)
 

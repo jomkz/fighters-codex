@@ -48,7 +48,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | — | `gui/src/editors/sh_editor.cpp` |
 | [SMS](SMS.md) | system | complete | — | read-only [#101](https://github.com/jomkz/fighters-codex/issues/101) | `fx sms` | `tests/test_sms.cpp` | real | — | — |
 | [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf` | `tests/test_ssf.cpp` | syn | — | — |
-| [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | — |
+| [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | `gui/src/editors/terrain_preview.cpp` |
 | [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | — | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | none [#55](https://github.com/jomkz/fighters-codex/issues/55) | — | — | real | — | `gui/src/editors/vdo_editor.cpp` |
 | [XMI](XMI.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx xmi` | `tests/test_xmi.cpp` | syn/real | — | `gui/src/editors/xmi_editor.cpp` |

@@ -69,7 +69,9 @@ superseded readings in [T2.md](formats/T2.md).
 
 ## Related
 
-- [formats/T2.md](formats/T2.md) — the `.T2` terrain heightfield format.
+- [formats/T2.md](formats/T2.md) — the `.T2` terrain heightfield format, and
+  its § Terrain Texturing (per-leaf `texture_variant` → `<theater><N>.PIC`
+  tile), the model the fxs terrain viewer draws.
 - [render-core.md](render-core.md) — the 3D pipeline `T_EmitCells` feeds geometry into.
 - [collision.md](collision.md) — the terrain grid (`T_GetLeaf`/`T_Normal`) collision uses.
 - [renderer.md](renderer.md) — the rasterizer that draws the emitted cells.
