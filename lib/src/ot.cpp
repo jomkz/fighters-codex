@@ -291,11 +291,13 @@ const int GAS_COUNT = (int)(sizeof(GAS_FIELDS) / sizeof(GAS_FIELDS[0]));
 // Info printer
 // ---------------------------------------------------------------------------
 
-static void print_field(int idx, const BrfField& f, const OtField* schema, int schema_count,
-                         const BrfDoc& doc) {
-    const char* name = (schema && idx < schema_count && schema[idx].name[0])
-                       ? schema[idx].name : "";
-    const char* note = (schema && idx < schema_count) ? schema[idx].note : "";
+// idx is the absolute field number (the printed [nnn] column); sidx is the
+// index into `schema`, which restarts at 0 for each extension section.
+static void print_field(int idx, int sidx, const BrfField& f, const OtField* schema,
+                         int schema_count, const BrfDoc& doc) {
+    const char* name = (schema && sidx < schema_count && schema[sidx].name[0])
+                       ? schema[sidx].name : "";
+    const char* note = (schema && sidx < schema_count) ? schema[sidx].note : "";
 
     if (f.type == "ptr") {
         // Resolve the pointer to its string table
@@ -338,29 +340,29 @@ void brf_print_info(const BrfDoc& doc, const char* format) {
     int si = 0; // schema index into OT_GENERAL_FIELDS[]
 
     for (; fi < (int)doc.fields.size() && si < OT_GENERAL_COUNT; ++fi, ++si) {
-        print_field(fi, doc.fields[fi], OT_GENERAL_FIELDS, OT_GENERAL_COUNT, doc);
+        print_field(fi, si, doc.fields[fi], OT_GENERAL_FIELDS, OT_GENERAL_COUNT, doc);
     }
 
     if (struct_type == 7 || is_jt) {
         printf("\n--- JT/Projectile Extension (struct_type=7) ---\n");
-        for (; fi < (int)doc.fields.size(); ++fi) {
-            print_field(fi, doc.fields[fi], JT_FIELDS, JT_COUNT, doc);
+        for (int ji = 0; fi < (int)doc.fields.size(); ++fi, ++ji) {
+            print_field(fi, ji, doc.fields[fi], JT_FIELDS, JT_COUNT, doc);
         }
     } else if (struct_type >= 3 || is_nt || is_pt) {
         printf("\n--- NT/Npc Extension (struct_type>=3) ---\n");
         for (int ni = 0; fi < (int)doc.fields.size() && ni < NT_COUNT; ++fi, ++ni) {
-            print_field(fi, doc.fields[fi], NT_FIELDS, NT_COUNT, doc);
+            print_field(fi, ni, doc.fields[fi], NT_FIELDS, NT_COUNT, doc);
         }
         if (struct_type >= 5 || is_pt) {
             printf("\n--- PT/Plane Extension (struct_type>=5) ---\n");
-            for (; fi < (int)doc.fields.size(); ++fi) {
-                print_field(fi, doc.fields[fi], PT_FIELDS, PT_COUNT, doc);
+            for (int pi = 0; fi < (int)doc.fields.size(); ++fi, ++pi) {
+                print_field(fi, pi, doc.fields[fi], PT_FIELDS, PT_COUNT, doc);
             }
         }
     } else {
         // Print any remaining unlabeled fields
         for (; fi < (int)doc.fields.size(); ++fi) {
-            print_field(fi, doc.fields[fi], nullptr, 0, doc);
+            print_field(fi, 0, doc.fields[fi], nullptr, 0, doc);
         }
     }
 

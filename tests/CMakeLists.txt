@@ -39,6 +39,7 @@ add_executable(fx_tests
     test_cb8.cpp
     test_raw.cpp
     test_fnt.cpp
+    test_ot.cpp
     render/test_render.cpp
     render/test_fa.cpp
 )

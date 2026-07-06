@@ -179,3 +179,34 @@ TEST_CASE("cb8 full-movie repack is pixel-identical on a real install movie") {
     cb8_close(dec2);
     cb8_close(dec);
 }
+
+TEST_CASE("cb8 rejects bad magic and truncated files") {
+    Cb8Info info;
+
+    auto bad = tiny_cb8();
+    bad[0] = 'X';  // not 'DRBC'
+    CHECK_FALSE(cb8_info(bad.data(), bad.size(), &info));
+    CHECK(cb8_open(bad.data(), bad.size()) == nullptr);
+
+    auto file = tiny_cb8();
+    CHECK_FALSE(cb8_info(file.data(), 32, &info));   // shorter than the header
+    CHECK(cb8_open(file.data(), 32) == nullptr);
+
+    auto cut = tiny_cb8();
+    cut.resize(70);  // cut inside the VooM chunk header
+    CHECK_FALSE(cb8_info(cut.data(), cut.size(), &info));
+    CHECK(cb8_open(cut.data(), cut.size()) == nullptr);
+}
+
+TEST_CASE("cb8 out-of-range frames and mismatched repack counts fail cleanly") {
+    auto file = tiny_cb8();
+    Cb8Decoder* dec = cb8_open(file.data(), file.size());
+    REQUIRE(dec);
+    CHECK(cb8_decode_frame(dec, 1).empty());   // only frame 0 exists
+    Palette p;
+    CHECK_FALSE(cb8_frame_palette(dec, 1, &p));
+    cb8_close(dec);
+
+    // frames.size() must equal the original frame count
+    CHECK(cb8_repack(file.data(), file.size(), {}).empty());
+}

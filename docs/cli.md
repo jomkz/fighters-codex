@@ -179,9 +179,9 @@ Override with `-r`. Input WAV for packing must be mono and 8-bit.
 All seven type definition formats share the same subcommand pattern:
 
 ```
-ft <type> info   <file>
-ft <type> unpack <file> [-o out.txt]
-ft <type> pack   <in.txt> -o <out>
+fx <type> info   <file>
+fx <type> unpack <file> [-o out.txt]
+fx <type> pack   <in.txt> -o <out>
 ```
 
 | Command | Format | Contents |
@@ -194,13 +194,31 @@ ft <type> pack   <in.txt> -o <out>
 | `fx ecm` | `.ECM` | ECM pod type |
 | `fx gas` | `.GAS` | Gas / smoke type |
 
+`info` prints every field annotated with the schema tables from
+[fa/formats/OT.md](fa/formats/OT.md) and its extensions; each extension
+section restarts its schema at the section's first field. Version-dependent
+fields can shift label alignment mid-section — see the format specs' Open
+Questions.
+
 ```
 > fx pt info F16C.PT
-Name:        F-16C Fighting Falcon
-Thrust:      28000 lbf (AB) / 17000 lbf (dry)
-Max speed:   1327 mph
-Ceiling:     50000 ft
-Fuel:        6972 lb
+File: F16C.PT  (219 fields, 20 tables)
+
+--- OT/General Section (struct_type=5) ---
+  [  0] struct_type              = 5            (5)  ; 1=OT 3=NT 5=PT 7=JT
+  [  3] names                    = ot_names -> "F-16C"  ; ptr -> short, long, filename
+  [  6] shape                    = shape -> "f16.SH"  ; ptr -> .SH filename
+  ...
+--- NT/Npc Extension (struct_type>=3) ---
+  [ 60] npc_flags                = 0            (0)  ; u32 bitfield; bits 18-20/25-26 control AI state
+  ...
+--- PT/Plane Extension (struct_type>=5) ---
+  [ 69] pt_flags                 = 32767        (32767)  ; $1=Jet $2=Hook $4=TwoSeat $8=Helo $10=Eject $20=VTOL $40=Carrier $80=Bay
+  ...
+--- Pointer Tables ---
+  :ot_names
+    "F-16C"
+    ...
 ```
 
 *See also: [fa/formats/BRF.md](fa/formats/BRF.md) · [fa/formats/OT.md](fa/formats/OT.md) · [fa/formats/NT.md](fa/formats/NT.md) · [fa/formats/PT.md](fa/formats/PT.md) · [fa/formats/JT.md](fa/formats/JT.md) · [fa/formats/SEE.md](fa/formats/SEE.md) · [fa/formats/ECM.md](fa/formats/ECM.md) · [fa/formats/GAS.md](fa/formats/GAS.md)*
