@@ -8,7 +8,8 @@
 
 using namespace fx;
 
-// stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
+// stb declarations only — implementations compiled in cmd_pic.cpp / pic.cpp
+#include "stb_image.h"
 #include "stb_image_write.h"
 
 namespace fs = std::filesystem;
@@ -79,14 +80,50 @@ static int cmd_unpack(int argc, char** argv) {
     return 0;
 }
 
+// raw pack <file.png> [-o output.RAW] — PNG -> RAW screenshot (#96). The
+// image must use at most 256 distinct colours (the palette is rebuilt).
+static int cmd_pack(int argc, char** argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: fx raw pack <file.png> [-o out.RAW]\n");
+        return 1;
+    }
+    const char* png_path = argv[1];
+    const char* out_path = nullptr;
+    for (int i = 2; i < argc; i++) {
+        if (strcmp(argv[i], "-o") == 0 && i + 1 < argc) out_path = argv[++i];
+    }
+
+    int w = 0, h = 0, ch = 0;
+    uint8_t* rgba = stbi_load(png_path, &w, &h, &ch, 4);
+    if (!rgba) { fprintf(stderr, "Cannot load image: %s\n", png_path); return 1; }
+    auto out = raw_encode(rgba, w, h);
+    stbi_image_free(rgba);
+    if (out.empty()) {
+        fprintf(stderr, "Encode failed (image exceeds 256 distinct colours?): %s\n", png_path);
+        return 1;
+    }
+
+    std::string out_str = out_path
+        ? out_path
+        : fs::path(png_path).replace_extension(".RAW").string();
+    std::ofstream f(out_str, std::ios::binary);
+    if (!f || !f.write((const char*)out.data(), (std::streamsize)out.size())) {
+        fprintf(stderr, "Cannot write: %s\n", out_str.c_str());
+        return 1;
+    }
+    printf("%s -> %s (%dx%d, %zu bytes)\n", png_path, out_str.c_str(), w, h, out.size());
+    return 0;
+}
+
 int cmd_raw(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: fx raw <info|unpack> ...\n");
+        fprintf(stderr, "Usage: fx raw <info|unpack|pack> ...\n");
         return 1;
     }
     const char* sub = argv[1];
     if (strcmp(sub, "info")   == 0) return cmd_info(argc - 1, argv + 1);
     if (strcmp(sub, "unpack") == 0) return cmd_unpack(argc - 1, argv + 1);
+    if (strcmp(sub, "pack")   == 0) return cmd_pack(argc - 1, argv + 1);
     fprintf(stderr, "Unknown raw subcommand: %s\n", sub);
     return 1;
 }

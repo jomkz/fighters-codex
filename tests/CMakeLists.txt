@@ -37,6 +37,7 @@ add_executable(fx_tests
     test_dlg.cpp
     test_xmi.cpp
     test_cb8.cpp
+    test_raw.cpp
     render/test_render.cpp
     render/test_fa.cpp
 )
