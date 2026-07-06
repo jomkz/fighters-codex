@@ -114,6 +114,13 @@ Clip globals used by `G_UPolygon`:
 | `_no_overlap` | When non-zero, right edge is exclusive — avoids overdraw at tile seams |
 | `_overflow_ptr` | Exception-handler slot — set to `_divide_by_ebp_handler` during raster inner loops |
 
+The `fx_render::fa` span core reproduces this path — `PolygonToYlr` (`UPolygonToYLR`) feeding
+flat YLR span fills with the `_no_overlap` exclusive-right-edge rule — with the stepping
+conventions recorded as inferred: edge x evaluated per integer scanline from the 16.16 slope,
+span endpoints truncated (`x >> 16`, inclusive right by default), and vertical coverage
+half-open (`⌈y_min⌉ … ⌈y_max⌉ − 1`, so vertically abutting polygons never overdraw). Pinned by
+`tests/render/test_fa.cpp` (#329).
+
 ### 3.2 Near-plane mapped (NPM) floating-point path
 
 Used for perspective-correct texture-mapped polygons that may cross the near plane.

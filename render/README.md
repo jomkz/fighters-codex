@@ -62,9 +62,9 @@ fx_render::Image img; t->Read(img);   // img.pixels is now RGBA8
 Dimensions are runtime parameters: FA.EXE's 1024×768 ceiling is a `GG_`/DirectDraw *device*
 limit the fa path does not inherit (resolution-independence guards in `tests/render/`).
 
-Sub-issue progress: **#328** surface/palette/state ✅ · #329 16.16 YLR spans · #330 Gouraud ·
-#331 clipping · #332 painter's order · #333 textured spans · #334 fxs software mode +
-fidelity sweep.
+Sub-issue progress: **#328** surface/palette/state ✅ · **#329** 16.16 YLR spans ✅ ·
+#330 Gouraud · #331 clipping · #332 painter's order · #333 textured spans · #334 fxs software
+mode + fidelity sweep.
 
 ## Roadmap (sub-issues of #281)
 

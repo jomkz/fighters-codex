@@ -1,10 +1,18 @@
-// fx_render::fa — indexed surface, VGA palette, raster state (#328).
-// Clean-room from docs/fa/renderer.md §7 + Key Global Reference.
+// fx_render::fa — indexed surface, VGA palette, raster state (#328) and the
+// fixed-16.16 YLR span core (#329).
+// Clean-room from docs/fa/renderer.md §3.1, §7 + Key Global Reference.
 #include "fx_render/fa.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <limits>
 
 #include "fx_render/render.h"
+
+// The 16.16 helpers shift signed values; every supported toolchain (gcc,
+// clang, msvc) implements arithmetic right shift, which C++17 leaves
+// implementation-defined.
+static_assert((-2 >> 1) == -1, "fa requires arithmetic right shift of signed values");
 
 namespace fx_render {
 namespace fa {
@@ -99,6 +107,72 @@ void Raster::Rect(int left, int top, int right, int bottom) {
         std::uint8_t* row = target_->row(y);
         for (int x = left; x <= right; ++x) row[x] = color_;
     }
+}
+
+namespace {
+int FxCeil(Fx v) { return static_cast<int>((v + (kFxOne - 1)) >> 16); }
+}  // namespace
+
+bool Raster::PolygonToYlr(const PolyVertex* v, int n, YlrList& out) {
+    if (!v || n < 3) return false;
+    Fx y_min = v[0].y, y_max = v[0].y;
+    for (int i = 1; i < n; ++i) {
+        y_min = std::min(y_min, v[i].y);
+        y_max = std::max(y_max, v[i].y);
+    }
+    const int top = FxCeil(y_min);
+    const int bottom = FxCeil(y_max);  // half-open vertical coverage
+    if (bottom <= top) return false;
+
+    out.y_top = top;
+    const std::size_t h = static_cast<std::size_t>(bottom - top);
+    out.left.assign(h, std::numeric_limits<Fx>::max());
+    out.right.assign(h, std::numeric_limits<Fx>::min());
+
+    // Walk every non-horizontal edge, stepping its 16.16 x per scanline;
+    // for a convex polygon min/max per row is exactly the Left/Right pair.
+    for (int i = 0; i < n; ++i) {
+        Fx x0 = v[i].x, y0 = v[i].y;
+        Fx x1 = v[(i + 1) % n].x, y1 = v[(i + 1) % n].y;
+        if (y0 == y1) continue;
+        if (y0 > y1) {
+            std::swap(x0, x1);
+            std::swap(y0, y1);
+        }
+        const int ey0 = FxCeil(y0), ey1 = FxCeil(y1);
+        for (int y = ey0; y < ey1; ++y) {
+            const std::int64_t num =
+                static_cast<std::int64_t>(ToFx(y) - y0) * (x1 - x0);
+            const Fx x = x0 + static_cast<Fx>(num / (y1 - y0));
+            const std::size_t row = static_cast<std::size_t>(y - top);
+            out.left[row] = std::min(out.left[row], x);
+            out.right[row] = std::max(out.right[row], x);
+        }
+    }
+    return true;
+}
+
+void Raster::FillYlrFlat(const YlrList& ylr) {
+    const int y0 = std::max(ylr.y_top, clip_top_);
+    const int y1 = std::min(ylr.y_top + ylr.height() - 1, clip_bottom_);
+    for (int y = y0; y <= y1; ++y) {
+        const std::size_t row = static_cast<std::size_t>(y - ylr.y_top);
+        if (ylr.left[row] > ylr.right[row]) continue;  // row untouched by any edge
+        int xl = FxFloor(ylr.left[row]);
+        int xr = FxFloor(ylr.right[row]);
+        if (no_overlap_) --xr;
+        xl = std::max(xl, clip_left_);
+        xr = std::min(xr, clip_right_);
+        if (xl > xr) continue;
+        std::uint8_t* p = target_->row(y);
+        for (int x = xl; x <= xr; ++x) p[x] = color_;
+    }
+}
+
+void Raster::UPolygon(const PolyVertex* v, int n) {
+    YlrList ylr;
+    if (!PolygonToYlr(v, n, ylr)) return;
+    FillYlrFlat(ylr);
 }
 
 }  // namespace fa
