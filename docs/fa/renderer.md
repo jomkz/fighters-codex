@@ -249,6 +249,10 @@ pointers at the handle's data area starting at offset `+0x32`. The the game exec
 | `+10` | Row stride (bytes) |
 | `+0x22` | Row-pointer array pointer |
 
+The `fx_render::fa` surface reproduces this record's semantics — runtime width/height/stride
+with row-pointer access — as the reconstruction's software render target; the layout and the
+192-entry 6-bit palette presentation are pinned by `tests/render/test_fa.cpp` (#328).
+
 `G_DoubleBitmapX_4` (`0x4b?`) doubles a bitmap's width by duplicating each pixel horizontally,
 used when upscaling to higher resolutions.
 
@@ -435,6 +439,10 @@ the `JPEGMEM` environment variable to override its memory pool size (default fro
 | `DAT_0057cd08` | Sun disc colour/brightness for GRExec |
 | `_realPalette` / `_curPalette` | 0xC0-entry (192) VGA 6-bit RGB palette (base + sky range) |
 | `_lastPalette` | Copy of the last-uploaded palette; zeroed by `_WRForcePaletteUpdate` to trigger re-upload |
+
+The raster-state subset of these globals — the clip box, `_cColor`, `_cFillType`, and the
+192-entry palette — is reproduced by the `fx_render::fa` state block and pinned by
+`tests/render/test_fa.cpp` (#328).
 
 ## Pipeline
 

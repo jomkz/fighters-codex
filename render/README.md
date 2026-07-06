@@ -46,10 +46,30 @@ fx_render::Image img; t->Read(img);   // img.pixels is now RGBA8
   fxs's preview. Targets are FBOs; `native_texture()` is the colour attachment for zero-copy
   ImGui display. Requires a current GL 3.3 core context with glad loaded (the host provides both).
 
+## FA-faithful path (`fx_render::fa`)
+
+`#include <fx_render/fa.h>` — the faithful reproduction of the game's `GG_/G_` pixel pipeline
+([renderer.md](../docs/fa/renderer.md) + [render-core.md](../docs/fa/render-core.md), issue
+[#290](https://github.com/jomkz/fighters-codex/issues/290)), growing per sub-issue:
+
+| Type | Role |
+|---|---|
+| `fa::Surface` | 8-bit indexed target with the documented bitmap record's semantics — runtime width/height/stride + row-pointer table |
+| `fa::Palette` | 192-entry 6-bit VGA palette; `Present` → RGBA8 `Image`, `Nearest` → index remap (`G_RemapBitmapToPalette`) |
+| `fa::Raster` | the `G_*` state block — clip box (`G_Init`/`G_SetClipBox`), `_cColor`, `_cFillType` — plus `Point`/`Rect` |
+| `fa::Fx` | 16.16 fixed-point screen coordinates (`ToFx` / `FxFloor`) |
+
+Dimensions are runtime parameters: FA.EXE's 1024×768 ceiling is a `GG_`/DirectDraw *device*
+limit the fa path does not inherit (resolution-independence guards in `tests/render/`).
+
+Sub-issue progress: **#328** surface/palette/state ✅ · #329 16.16 YLR spans · #330 Gouraud ·
+#331 clipping · #332 painter's order · #333 textured spans · #334 fxs software mode +
+fidelity sweep.
+
 ## Roadmap (sub-issues of #281)
 
 1. **#288** — module: API + software-backend foundation ✅
 2. **#289** — OpenGL backend, extracted from `gui/src/panels/preview.cpp` ✅
 3. **#291** — fxs refactored onto `fx::render` (SH preview) ✅
-4. **#290** — FA-faithful software rasteriser (painter's sort, fixed-point spans, flat/Gouraud)
-5. **#292** — fxe runtime render hook
+4. **#290** — FA-faithful software rasteriser — in progress, decomposed into #328–#334 (section above)
+5. **#292** — fxe runtime render hook — re-homed to the fxe milestone (#280)

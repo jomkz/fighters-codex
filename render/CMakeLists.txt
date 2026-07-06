@@ -2,6 +2,7 @@
 # Core + software backend have no dependencies and build everywhere; the
 # OpenGL backend is added under a GL-available guard in fx_render #289.
 add_library(fx_render STATIC
+    src/fa.cpp
     src/render.cpp
     src/software.cpp
 )
