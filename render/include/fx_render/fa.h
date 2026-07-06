@@ -96,10 +96,12 @@ struct PolyVertex {
 };
 
 // UPolygonToYLR output: the polygon reduced to per-scanline Left/Right span
-// bounds (16.16 screen x), one entry per scanline from `y_top`.
+// bounds (16.16 screen x), one entry per scanline from `y_top`, with the
+// packed shade term `c` carried along each edge for the shaded fill (#330).
 struct YlrList {
     int y_top = 0;
-    std::vector<Fx> left, right;
+    std::vector<Fx> left, right;      // span bounds, 16.16 x
+    std::vector<Fx> left_c, right_c;  // c_packed at each bound, 16.16
     int height() const { return static_cast<int>(left.size()); }
 };
 
@@ -149,10 +151,23 @@ public:
     // inclusive unless `_no_overlap`), then clamp to the clip box.
     void UPolygon(const PolyVertex* v, int n);
 
+    // G_SUPolygon — the shaded (Gouraud) variant: the packed vertex term `c`
+    // interpolates along the edges and across each span with the same 16.16
+    // stepping, and each pixel writes its interpolated index (clamped to the
+    // palette range — inferred; renderer.md §3.1).
+    void SUPolygon(const PolyVertex* v, int n);
+
+    // Fill-type dispatch (the `_fillTypes` selection): Flat uses `_cColor`
+    // via UPolygon, Shaded interpolates via SUPolygon — the flat-vs-Gouraud
+    // choice the SH interpreter stages through `sh_op_80`/`SetFlatColor`
+    // (render-core.md). Textured falls back to flat until #333.
+    void Polygon(const PolyVertex* v, int n);
+
     Surface& target() { return *target_; }
 
 private:
-    void FillYlrFlat(const YlrList& ylr);  // the _G_DrawYLR_4 flat loop
+    void FillYlrFlat(const YlrList& ylr);    // the _G_DrawYLR_4 flat loop
+    void FillYlrShaded(const YlrList& ylr);  // the Gouraud span loop
 
     Surface* target_;
     int clip_left_ = 0, clip_top_ = 0, clip_right_ = 0, clip_bottom_ = 0;

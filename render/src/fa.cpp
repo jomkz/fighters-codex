@@ -128,25 +128,37 @@ bool Raster::PolygonToYlr(const PolyVertex* v, int n, YlrList& out) {
     const std::size_t h = static_cast<std::size_t>(bottom - top);
     out.left.assign(h, std::numeric_limits<Fx>::max());
     out.right.assign(h, std::numeric_limits<Fx>::min());
+    out.left_c.assign(h, 0);
+    out.right_c.assign(h, 0);
 
-    // Walk every non-horizontal edge, stepping its 16.16 x per scanline;
-    // for a convex polygon min/max per row is exactly the Left/Right pair.
+    // Walk every non-horizontal edge, stepping its 16.16 x (and the packed
+    // shade term c) per scanline; for a convex polygon min/max per row is
+    // exactly the Left/Right pair, and c follows whichever edge holds it.
     for (int i = 0; i < n; ++i) {
-        Fx x0 = v[i].x, y0 = v[i].y;
-        Fx x1 = v[(i + 1) % n].x, y1 = v[(i + 1) % n].y;
+        Fx x0 = v[i].x, y0 = v[i].y, c0 = v[i].c;
+        Fx x1 = v[(i + 1) % n].x, y1 = v[(i + 1) % n].y, c1 = v[(i + 1) % n].c;
         if (y0 == y1) continue;
         if (y0 > y1) {
             std::swap(x0, x1);
             std::swap(y0, y1);
+            std::swap(c0, c1);
         }
         const int ey0 = FxCeil(y0), ey1 = FxCeil(y1);
         for (int y = ey0; y < ey1; ++y) {
-            const std::int64_t num =
-                static_cast<std::int64_t>(ToFx(y) - y0) * (x1 - x0);
-            const Fx x = x0 + static_cast<Fx>(num / (y1 - y0));
+            const Fx dy = ToFx(y) - y0;
+            const Fx x = x0 + static_cast<Fx>(
+                static_cast<std::int64_t>(dy) * (x1 - x0) / (y1 - y0));
+            const Fx c = c0 + static_cast<Fx>(
+                static_cast<std::int64_t>(dy) * (c1 - c0) / (y1 - y0));
             const std::size_t row = static_cast<std::size_t>(y - top);
-            out.left[row] = std::min(out.left[row], x);
-            out.right[row] = std::max(out.right[row], x);
+            if (x < out.left[row]) {
+                out.left[row] = x;
+                out.left_c[row] = c;
+            }
+            if (x > out.right[row]) {
+                out.right[row] = x;
+                out.right_c[row] = c;
+            }
         }
     }
     return true;
@@ -173,6 +185,54 @@ void Raster::UPolygon(const PolyVertex* v, int n) {
     YlrList ylr;
     if (!PolygonToYlr(v, n, ylr)) return;
     FillYlrFlat(ylr);
+}
+
+void Raster::FillYlrShaded(const YlrList& ylr) {
+    const int y0 = std::max(ylr.y_top, clip_top_);
+    const int y1 = std::min(ylr.y_top + ylr.height() - 1, clip_bottom_);
+    for (int y = y0; y <= y1; ++y) {
+        const std::size_t row = static_cast<std::size_t>(y - ylr.y_top);
+        const Fx x_l = ylr.left[row], x_r = ylr.right[row];
+        if (x_l > x_r) continue;
+        int xl = FxFloor(x_l);
+        int xr = FxFloor(x_r);
+        if (no_overlap_) --xr;
+        xl = std::max(xl, clip_left_);
+        xr = std::min(xr, clip_right_);
+        if (xl > xr) continue;
+
+        // c per one-pixel step; c is evaluated at each pixel's integer x
+        // (inferred convention), so clip clamping needs no special-casing.
+        const Fx span = x_r - x_l;
+        const Fx dcdx = span > 0
+            ? static_cast<Fx>(static_cast<std::int64_t>(ylr.right_c[row] - ylr.left_c[row]) *
+                              kFxOne / span)
+            : 0;
+        Fx c = ylr.left_c[row] + static_cast<Fx>(
+            static_cast<std::int64_t>(ToFx(xl) - x_l) * dcdx / kFxOne);
+        std::uint8_t* p = target_->row(y);
+        for (int x = xl; x <= xr; ++x, c += dcdx) {
+            p[x] = static_cast<std::uint8_t>(std::clamp(FxFloor(c), 0, 255));
+        }
+    }
+}
+
+void Raster::SUPolygon(const PolyVertex* v, int n) {
+    YlrList ylr;
+    if (!PolygonToYlr(v, n, ylr)) return;
+    FillYlrShaded(ylr);
+}
+
+void Raster::Polygon(const PolyVertex* v, int n) {
+    switch (fill_type_) {
+        case FillType::Shaded:
+            SUPolygon(v, n);
+            return;
+        case FillType::Flat:
+        case FillType::Textured:  // textured fills arrive with #333
+            UPolygon(v, n);
+            return;
+    }
 }
 
 }  // namespace fa
