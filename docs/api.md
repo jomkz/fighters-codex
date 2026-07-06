@@ -472,6 +472,37 @@ std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## fnt.h — Font glyph compiler
+
+```cpp
+namespace fx {
+
+struct FntGlyph { uint8_t ch; uint32_t width, height; std::vector<uint8_t> pixels; };
+struct FntFile  { bool valid; uint32_t font_height, glyph_fn_va[256], glyph_width[256];
+                  std::vector<FntGlyph> glyphs; };
+
+// Parse the FONT struct from the PE DLL's CODE section.
+FntFile fnt_parse(const uint8_t* data, size_t size);
+
+// Interpret the x86 glyph functions into bitmaps (all 256 characters). The
+// vocabulary — byte/word/dword run writes, row advance, RET — is complete
+// across every install font.
+void fnt_render_glyphs(FntFile& fnt, const uint8_t* cs_data, size_t cs_size, uint32_t cs_vma);
+
+// Emit one glyph body with the original compiler's canonical encoding
+// (greedy 4/2/1 pixel runs; byte-identical over all install bodies).
+std::vector<uint8_t> fnt_emit_glyph(const uint8_t* pixels, uint32_t width, uint32_t height);
+
+// Rebuild a FNT DLL around edited glyphs: bodies re-emitted in character
+// order, the function-VA table rebuilt, the rest of the container carried
+// verbatim. Empty if the code would overrun the original region.
+std::vector<uint8_t> fnt_repack(const uint8_t* orig, size_t orig_size,
+                                uint32_t height, const uint32_t widths[256],
+                                const std::vector<FntGlyph>& glyphs);
+
+} // namespace fx
+```
+
 ## raw.h — Screenshot codec
 
 ```cpp
