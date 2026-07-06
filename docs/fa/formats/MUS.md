@@ -12,7 +12,7 @@ spec:
       note: "FA/FB sub-opcode semantics are Miles-internal; WAIL32.DLL untraced"
 codec:
   direction: read
-  issue: 101
+  rationale: "the .MUS is a compiled PE/LE DLL consumed by Miles at runtime; the sequencer bytecode has no authoring format and the FA/FB sub-opcodes are Miles-internal (#54). Music is modded by replacing the referenced XMI tracks (§ Replacing in-game music), not by re-emitting the DLL, so the disassembler is read-only (round-trip decision, #101)"
   lib: [lib/src/mus.cpp]
   commands: [mus]
   tests: [tests/test_mus.cpp]
@@ -41,9 +41,11 @@ fx mus dump <file.MUS>    # raw opcode stream; FB <idx> resolved to XMI filename
 
 The disassembler is `fx::mus_disassemble` in `lib/src/mus.cpp`
 ([api.md](../../api.md) § mus.h); the `fx mus dump` CLI and the fxs music
-editor are thin consumers of it. Direction is **read** only — the MUS CODE
-section is consumed by Miles as-is at runtime, so #101 tracks whether a
-write path (or a written one-way rationale) is the right end state.
+editor are thin consumers of it. Direction is **read** only: the MUS CODE
+section is a compiled DLL consumed by Miles as-is, with no authoring format
+to write back — music is modded by swapping the referenced XMI tracks
+(§ Replacing in-game music), not by re-emitting the DLL (round-trip
+decision resolved in #101; see the front-matter rationale).
 
 ## File Layout
 
