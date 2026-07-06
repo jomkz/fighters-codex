@@ -159,6 +159,11 @@ hardware and relies entirely on painter's-order submission (objects sorted back-
 scene graph before draw calls). The `_lineStats` array (base `0x5568a8`) is a per-scanline byte
 flag used to mark which scanlines are occupied by a polygon, preventing re-scan of empty rows.
 
+`fx_render::fa` reproduces this property structurally: the fa surface carries no depth buffer,
+and occlusion comes only from the painter's-order submission list (`PaintersList`, the
+`GRAddBrentObj` → `sort_objs_wrapper` stage) sorting back-to-front on the centroid+size key —
+pinned, including a case where a z-buffer would disagree, by `tests/render/test_fa.cpp` (#332).
+
 ---
 
 ## 4. Sprite and Billboard Rendering
