@@ -13,13 +13,13 @@ spec:
 codec:
   direction: read
   issue: 101
-  lib: []
+  lib: [lib/src/mus.cpp]
   commands: [mus]
-  tests: []
+  tests: [tests/test_mus.cpp]
   fuzz: []
   gui: [gui/src/editors/mus_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [XMI, SEQ, 11K]
 ---
@@ -39,9 +39,11 @@ playback; the `.XMI` files in FA_2.LIB are the actual audio.
 fx mus dump <file.MUS>    # raw opcode stream; FB <idx> resolved to XMI filenames
 ```
 
-The parser lives in `cli/cmd_mus.cpp` — no fx_lib codec exists yet; the MUS
-CODE section is consumed by Miles as-is at runtime, so #101 tracks whether a
-library codec (or a written rationale) is the right end state.
+The disassembler is `fx::mus_disassemble` in `lib/src/mus.cpp`
+([api.md](../../api.md) § mus.h); the `fx mus dump` CLI and the fxs music
+editor are thin consumers of it. Direction is **read** only — the MUS CODE
+section is consumed by Miles as-is at runtime, so #101 tracks whether a
+write path (or a written one-way rationale) is the right end state.
 
 ## File Layout
 

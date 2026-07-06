@@ -17,6 +17,7 @@
     src/inf.cpp
     src/hud.cpp
     src/pe.cpp
+    src/mus.cpp
     src/lay.cpp
     src/fnt.cpp
     src/bi.cpp

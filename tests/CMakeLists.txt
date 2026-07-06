@@ -29,6 +29,7 @@ add_executable(fx_tests
     test_dat.cpp
     test_mnu.cpp
     test_mt.cpp
+    test_mus.cpp
     test_pts.cpp
     test_rgn.cpp
     test_ssf.cpp

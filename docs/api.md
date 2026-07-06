@@ -472,6 +472,30 @@ std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## mus.h — Music playlist sequencer
+
+```cpp
+namespace fx {
+
+// One decoded sequencer instruction; fields carry meaning per `op`:
+//   FF playlist id -> playlist_id · FA setup -> sub,value · FB play track ->
+//   mode,track_idx,xmi · FC shuffle · FD jump -> value · FE branch -> value
+struct MusOp     { uint32_t offset; uint8_t op, sub, mode, track_idx;
+                   uint32_t value; std::string playlist_id, xmi; };
+struct MusScript { bool valid; std::vector<MusOp> ops;
+                   bool stopped_early; uint8_t stop_byte; };
+
+// Map an XMI track index to its filename (1 -> VALK01.XMI, else AIRnnn.XMI).
+std::string mus_xmi_name(uint8_t index);
+
+// Disassemble the playlist bytecode from a .MUS DLL's CODE section.
+// Read-only (the CODE section is Miles-consumed as-is; see #101).
+// MusScript{valid=false} when there is no CODE section.
+MusScript mus_disassemble(const uint8_t* data, size_t size);
+
+} // namespace fx
+```
+
 ## fnt.h — Font glyph compiler
 
 ```cpp
