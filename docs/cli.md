@@ -16,7 +16,7 @@ fx mission info / unpack / pack         # .M / .MM mission and map files
 fx sh      info / unpack                # .SH 3D shapes → Wavefront OBJ
 fx raw     info / unpack / pack         # .RAW in-game screenshots ↔ PNG
 fx sms     dump                         # FA.SMS symbol map → CSV
-fx t2      info                         # .T2 terrain map grid info
+fx t2      info / dump / heightmap      # .T2 terrain maps (heights, textures)
 fx plt     info / dump                  # .P pilot save file
 fx pal     info / dump                  # .PAL VGA palettes
 fx inf     dump                         # .INF aircraft tech sheets
@@ -350,27 +350,45 @@ or IDA Pro to auto-label all known functions and data symbols.
 ## t2 — Terrain map
 
 ```
-fx t2 info <file.T2>
+fx t2 info      <file.T2>
+fx t2 dump      <file.T2> [--leaves]
+fx t2 heightmap <file.T2> <out.png>
 ```
 
 #### `fx t2 info <file.T2>`
 
-Print the terrain grid dimensions, tile count, and surface class distribution
-(water vs land, top land classes by count). Grid is width × height per the
-engine's field map, and the distribution counts the per-tile **summary
-records** (the authored far-LOD array — see
-[fa/formats/T2.md](fa/formats/T2.md) § Data Payload).
+Print the theater name and texture atlas, grid dimensions, leaf grid, the
+leaf elevation-band range, and the surface class distribution (water vs
+land, top land classes by count). Grid is width × height per the engine's
+field map, and the distribution counts the per-tile **summary records**
+(the authored far-LOD array — see [fa/formats/T2.md](fa/formats/T2.md)
+§ Data Payload).
 
 ```
 > fx t2 info UKR.T2
-Theater:    UKR
+Theater:    UKR (Ukraine)
+Atlas:      ukr.PIC
 Grid:       26 x 25 (650 tiles)
+Leaves:     208 x 200 (8 per tile side)
+Elevation:  leaf bands 0..6
 Surface:    water 195 (30.0%)  land 455 (70.0%)
 Land classes:
   0xD0  21 tiles (3.2%)
   0xD2  36 tiles (5.5%)
   ...
 ```
+
+#### `fx t2 dump <file.T2> [--leaves]`
+
+CSV of the terrain records to stdout — `x,y,surface_class,elevation,
+texture_variant`, row-major. By default dumps the per-tile summary array;
+`--leaves` dumps the full-resolution leaf grid (8×8 leaves per tile).
+
+#### `fx t2 heightmap <file.T2> <out.png>`
+
+Export the leaf elevation bands as a grayscale PNG, one pixel per leaf
+(e.g. 256×256 for a 32×32-tile theater). Bands are normalized to the
+file's own maximum so the relief is visible.
 
 T2 files are stored in `FA_2.LIB`; unpack the archive first.
 
