@@ -1,0 +1,6 @@
+; opening comment
+	1000 fadein
+	+500 palette DATA.PAL
+	200 sync sound GUN.11K
+	100 wait
+

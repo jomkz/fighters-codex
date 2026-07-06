@@ -17,7 +17,7 @@ codec:
   lib: [lib/src/pic.cpp]
   commands: [pic]
   tests: [tests/test_pic.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_pic.cpp]
   gui: [gui/src/editors/pic_editor.cpp]
   fixtures:
     synthetic: true

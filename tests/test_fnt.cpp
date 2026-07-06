@@ -211,3 +211,30 @@ TEST_CASE("fnt_parse and fnt_repack reject invalid input") {
     CHECK(fnt_repack(img.data(), img.size(),
                      fnt.font_height, fnt.glyph_width, grown).empty());
 }
+
+// fuzz_fnt (#117): fnt_repack's glyph-body walk read cs.data[pc+1]/[pc+2]
+// for its displacement disambiguation without bounds-checking, so a body
+// truncated at the CODE section end read past it. The walk now bounds those
+// reads and rejects a body that never reaches a RET.
+TEST_CASE("fnt_repack rejects a glyph body truncated at the section end") {
+    const uint32_t vma = 0x1000;
+    const size_t kStruct = 4 + 256 * 4 + 256 * 4;
+    std::vector<uint8_t> payload(kStruct + 1, 0);
+    fx_test::put32(payload, 0, 1);  // font_height = 1
+    for (int i = 0; i < 256; ++i) {
+        fx_test::put32(payload, 4 + (size_t)i * 4, (uint32_t)(vma + kStruct));
+        fx_test::put32(payload, 4 + 1024 + (size_t)i * 4, 8);
+    }
+    // A 0x66-prefixed op as the section's final byte: no room for its operand
+    // byte, and no RET follows.
+    payload[kStruct] = 0x66;
+    auto img = fx_test::make_le(payload);
+
+    FntFile fnt = fnt_parse(img.data(), img.size());
+    REQUIRE(fnt.valid);
+    CodeSection cs = pe_code_section(img.data(), img.size());
+    REQUIRE(cs.data != nullptr);
+    fnt_render_glyphs(fnt, cs.data, cs.size, cs.vma);
+    CHECK(fnt_repack(img.data(), img.size(), fnt.font_height,
+                     fnt.glyph_width, fnt.glyphs).empty());
+}

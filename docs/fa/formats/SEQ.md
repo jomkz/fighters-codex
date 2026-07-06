@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/seq.cpp]
   commands: [seq]
   tests: [tests/test_seq.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_seq.cpp]
   gui: [gui/src/editors/seq_editor.cpp]
   fixtures:
     synthetic: true

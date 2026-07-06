@@ -217,3 +217,32 @@ TEST_CASE("pic_repack is byte-identical for every PIC in the FA install") {
     WARN("PIC repack census: total=" << total << " dense=" << dense
          << " sparse=" << sparse << " jpeg=" << jpeg);
 }
+
+// fuzz_pic (#117): pixels_offset (u32) + w*h wrapped 32 bits, so an
+// out-of-range offset passed the bounds check and pic_decode read a pixel
+// row from far outside the buffer. Guard now uses 64-bit math.
+TEST_CASE("pic_decode rejects a pixels_offset that overflows the size check") {
+    std::vector<uint8_t> buf(128, 0);
+    // fmt=0 (dense), width=8, height=8
+    buf[2] = 8; buf[6] = 8;
+    // pixels_offset = 0xFFFFFFFF: 0xFFFFFFFF + 64 wraps to 63 in 32 bits
+    buf[10] = buf[11] = buf[12] = buf[13] = 0xFF;
+    Palette pal{};
+    auto out = pic_decode(buf.data(), buf.size(), &pal);
+    CHECK(out.empty());  // must reject, not read out of bounds
+}
+
+// fuzz_pic (#117), second finding: the inline-palette guard had the same
+// 32-bit wrap — palette_offset + palette_size overflowed, so an out-of-range
+// fragment offset passed and the overlay read from outside the buffer.
+TEST_CASE("pic_decode ignores a palette fragment whose offset overflows the check") {
+    std::vector<uint8_t> buf(128, 0);
+    buf[2] = 8; buf[6] = 8;  // fmt=0 (dense), width=8, height=8
+    // palette_offset = 0xFFFFFFFF, palette_size = 3: sum wraps to 2 in 32 bits
+    buf[18] = buf[19] = buf[20] = buf[21] = 0xFF;
+    buf[22] = 3;
+    Palette pal{};
+    auto out = pic_decode(buf.data(), buf.size(), &pal);
+    // Decodes past the skipped fragment (pixels at offset 0), no OOB read.
+    CHECK(out.size() == (size_t)8 * 8 * 4);
+}

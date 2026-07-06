@@ -45,3 +45,11 @@ endfunction()
 fx_add_fuzzer(fuzz_ealib)
 fx_add_fuzzer(fuzz_blast)
 fx_add_fuzzer(fuzz_pe)
+
+# Batch 2 (#117): images and A/V
+fx_add_fuzzer(fuzz_pic)
+fx_add_fuzzer(fuzz_cb8)
+fx_add_fuzzer(fuzz_raw)
+fx_add_fuzzer(fuzz_fnt)
+fx_add_fuzzer(fuzz_seq)
+fx_add_fuzzer(fuzz_audio)
