@@ -6,9 +6,9 @@
 
 // FA.SMS symbol map parser.
 //
-// File layout:
+// File layout (docs/fa/formats/SMS.md):
 //   0       4    uint32 LE: symbol count N
-//   4    N*8    records: [va: u32 LE, str_off: u32 LE] x N
+//   4    N*8    records: [str_off: u32 LE, va: u32 LE] x N
 //   4+N*8   *    null-terminated string table (densely packed)
 //
 // str_off is a byte offset into the string table.
