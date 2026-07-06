@@ -526,6 +526,102 @@ TEST_CASE("painter's order occludes where a z-buffer would disagree", "[render][
     CHECK(s.row(20)[20] == 1);   // near-only region intact
 }
 
+TEST_CASE("affine textured spans sample texels, remap, clamp, and fall back", "[render][fa]") {
+    // 4x4 indexed texture; a quad mapped 1:1 texels->pixels reproduces the
+    // texel grid exactly (u/v ride the five-word vertex, renderer.md s3.1).
+    fa::Texture tex;
+    tex.width = 4;
+    tex.height = 4;
+    tex.texels.resize(16);
+    for (int i = 0; i < 16; ++i) tex.texels[static_cast<std::size_t>(i)] = static_cast<std::uint8_t>(10 + i);
+
+    fa::PolyVertex quad[4] = {V(0, 0), V(4, 0), V(4, 4), V(0, 4)};
+    quad[0].u = fa::ToFx(0); quad[0].v = fa::ToFx(0);
+    quad[1].u = fa::ToFx(4); quad[1].v = fa::ToFx(0);
+    quad[2].u = fa::ToFx(4); quad[2].v = fa::ToFx(4);
+    quad[3].u = fa::ToFx(0); quad[3].v = fa::ToFx(4);
+
+    fa::Surface s(8, 8);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetTexture(&tex);
+    r.SetFillType(fa::FillType::Textured);
+    r.Polygon(quad, 4);
+    for (int y = 0; y < 4; ++y) {
+        for (int x = 0; x < 4; ++x) {
+            REQUIRE(s.row(y)[x] == 10 + y * 4 + x);
+        }
+    }
+
+    // The tmap remap (SetTmapRemaps): texel indices pushed through the
+    // 256-entry shade/tint table before hitting the surface.
+    std::uint8_t table[256];
+    for (int i = 0; i < 256; ++i) table[i] = static_cast<std::uint8_t>(255 - i);
+    r.SetTmapRemap(table);
+    r.Polygon(quad, 4);
+    CHECK(s.row(0)[0] == 255 - 10);
+    CHECK(s.row(3)[3] == 255 - 25);
+    r.SetTmapRemap(nullptr);  // identity restored
+    r.Polygon(quad, 4);
+    CHECK(s.row(0)[0] == 10);
+
+    // Out-of-range u clamps to the texture edge (inferred).
+    fa::PolyVertex wide[4] = {V(0, 6), V(4, 6), V(4, 7), V(0, 7)};
+    wide[0].u = fa::ToFx(-4); wide[1].u = fa::ToFx(4);
+    wide[2].u = fa::ToFx(4);  wide[3].u = fa::ToFx(-4);
+    r.Polygon(wide, 4);
+    CHECK(s.row(6)[0] == 10);  // u=-4 clamped to texel 0 (row v=0)
+    CHECK(s.row(6)[1] == 10);  // u=-2 still clamped
+
+    // Unbound texture: the Textured fill type falls back to flat.
+    r.SetTexture(nullptr);
+    r.SetColor(99);
+    r.Polygon(quad, 4);
+    CHECK(s.row(1)[1] == 99);
+}
+
+TEST_CASE("perspective texture correction differs from linear on an oblique quad", "[render][fa]") {
+    // A 64-texel stripe texture (index = u/8 + 1) across a quad whose right
+    // edge sits 4x deeper (rw 1 -> 0.25). The linear kernel puts stripe 5 at
+    // the midpoint; the perspective kernel compresses the far half so the
+    // midpoint shows stripe 2 (renderer.md s3.2).
+    fa::Texture tex;
+    tex.width = 64;
+    tex.height = 1;
+    tex.texels.resize(64);
+    for (int u = 0; u < 64; ++u) tex.texels[static_cast<std::size_t>(u)] = static_cast<std::uint8_t>(u / 8 + 1);
+
+    const fa::FVertex t0{0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+    const fa::FVertex t1{64.0f, 0.0f, 64.0f, 0.0f, 0.25f};
+    const fa::FVertex t2{0.0f, 8.0f, 0.0f, 0.0f, 1.0f};
+    const fa::FVertex t3{64.0f, 8.0f, 64.0f, 0.0f, 0.25f};
+
+    auto draw = [&](bool perspective) {
+        fa::Surface s(64, 8);
+        s.Clear(0);
+        fa::Raster r(s);
+        r.SetTexture(&tex);
+        const fa::FVertex tri_a[3] = {t0, t1, t2};
+        const fa::FVertex tri_b[3] = {t1, t3, t2};
+        if (perspective) {
+            r.TextureTriPerspective(tri_a);
+            r.TextureTriPerspective(tri_b);
+        } else {
+            r.TextureTriLinear(tri_a);
+            r.TextureTriLinear(tri_b);
+        }
+        return std::vector<std::uint8_t>(s.row(4), s.row(4) + 64);
+    };
+    const auto lin = draw(false);
+    const auto per = draw(true);
+
+    CHECK(lin[32] == 5);  // linear midpoint: u = 32 -> stripe 5
+    CHECK(per[32] == 2);  // perspective midpoint: u = 12.8 -> stripe 2
+    CHECK(lin[1] == per[1]);    // the near endpoint agrees
+    CHECK(lin[62] == per[62]);  // the far endpoint agrees
+    CHECK(lin[62] == 8);
+}
+
 TEST_CASE("fa spans stay correct past the 1024 ceiling", "[render][fa]") {
     // Resolution-independence acceptance (#329): the span core at 2560x1440.
     fa::Surface s(2560, 1440);

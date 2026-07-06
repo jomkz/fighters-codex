@@ -332,6 +332,13 @@ evicted and `_DoSetTmapRemaps_0` regenerates the table.
 For double-resolution modes, `_G_DoubleBitmapX_4` (`0x4b3?`) doubles a PIC's width by pixel
 duplication, creating a 2× stretched copy for the higher-resolution renderer path.
 
+`fx_render::fa` reproduces the textured fills over indexed texels: the affine u/v span
+stepping on the five-word vertex (`G__Texture`), the NPM linear and perspective triangle
+kernels (u·w′/v·w′/w′ interpolation with a per-pixel `carefulDiv`-guarded divide), and the
+256-entry `_tmapRemapTable` shade/tint remap (`SetTmapRemaps`) applied per sampled texel —
+pinned, including a linear-vs-perspective divergence golden, by `tests/render/test_fa.cpp`
+(#333).
+
 ---
 
 ## 10. Horizon / Sky Integration
