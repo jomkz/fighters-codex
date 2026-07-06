@@ -17,7 +17,7 @@ codec:
   commands: [hud]
   tests: [tests/test_hud.cpp]
   fuzz: []
-  gui: [gui/src/editors/hud_editor.cpp]
+  gui: [gui/src/editors/hud_editor.cpp, gui/src/editors/overlay_preview.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

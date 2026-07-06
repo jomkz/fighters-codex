@@ -178,6 +178,46 @@ mapped), and annotation (units, enum values). Changes are patched back via
 - Decoded preview shown in the Preview panel via `fx::raw_decode`
 - To export as PNG use `fx raw unpack <file>`
 
+## HUD & Sky Overlay Preview (HUD / LAY)
+
+Both editors carry an in-game-style preview (#283) drawn through
+`fx_render::fa` — the project's documented stand-in for the `G_*` raster
+layer the engine's own HUD and horizon code draw through
+([fa/hud.md](fa/hud.md), [fa/renderer.md](fa/renderer.md)) — alongside the
+structural tables.
+
+**HUD editor — Preview**
+
+- Symbology positions come from the selected file's gauge parameters
+  (flight-path marker anchor, heading/speed/altitude tapes, annunciators,
+  readouts), so editing a `.HUD` moves the elements the way the engine
+  would place them
+- Flight state (heading/speed/altitude sliders, gear/flap/brake/hook and
+  warning toggles) is simulated; the annunciators show the file's own
+  advisory icon labels
+- Text uses an install FNT resolved from the open sessions (the file's
+  font asset prefixes, then `HUD*`/`4X6`); a built-in 4x6 block font is
+  the fallback
+
+**LAY editor — Sky Preview**
+
+- Renders one layer's sky per its gradient ramps: the zenith→horizon ramp
+  above the horizon line, the horizon-downward ramp below, each band
+  Gouraud-interpolated between adjacent ramp entries — the
+  `GouraudHorizon` palette-index banding
+  ([fa/formats/LAY.md](fa/formats/LAY.md) § Engine Notes)
+- The info line reports the documented per-angle band selection
+  (`SetActiveLayerByAngle`) at level flight
+
+**Fidelity boundary** (same spirit as the renderer's, see
+[fa/renderer.md](fa/renderer.md) §3.1): element geometry inside each HUD
+gauge (tick counts, label styling) and the HUD colour are preview
+stand-ins — the engine takes them from `HUDInit`'s layout block, which is
+not part of the `.HUD` file; only the per-element positions/sizes are the
+file's. The LAY preview's angle-unit scale for band selection is inferred
+(~256 units per quadrant fits every install file); the ramp order and
+Gouraud banding are documented behaviour.
+
 ## 3D Model Viewer (SH)
 
 - Selecting a `.SH` record shows a shaded 3D orbit view (grey wireframe overlay)
