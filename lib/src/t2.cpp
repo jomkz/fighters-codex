@@ -105,4 +105,54 @@ bool t2_read(const uint8_t* data, size_t size, T2Map* map) {
     return true;
 }
 
+static void write_records(const std::vector<T2Record>& recs,
+                          std::vector<uint8_t>* out) {
+    for (const auto& r : recs) {
+        out->push_back(r.surface_class);
+        out->push_back(r.elevation);
+        out->push_back(r.texture_variant);
+    }
+}
+
+std::vector<uint8_t> t2_write(const T2Map& map) {
+    // The header is authoritative and carries every unresolved byte; validate
+    // its grid fields the same way parse_header does, then require the record
+    // vectors and the header's own array offsets to agree, so the emitted
+    // bytes re-parse (and a t2_read round-trip is byte-identical).
+    if (map.header.size() < 0x95) return {};
+    const uint8_t* h = map.header.data();
+    if (memcmp(h, "BIT2", 4) != 0) return {};
+
+    uint32_t leaf_step   = rd32(h + 0x79);
+    uint32_t tiles_w     = rd32(h + 0x7D);
+    uint32_t tiles_h     = rd32(h + 0x81);
+    uint32_t summary_off = rd32(h + 0x85);
+    uint32_t leaves_w    = rd32(h + 0x89);
+    uint32_t leaves_h    = rd32(h + 0x8D);
+    uint32_t leaf_off    = rd32(h + 0x91);
+
+    if (leaf_step == 0 || tiles_w == 0 || tiles_h == 0) return {};
+    if (leaves_w != tiles_w * leaf_step || leaves_h != tiles_h * leaf_step)
+        return {};
+    if (leaf_off != map.header.size()) return {};
+    if (map.leaves.size() != (size_t)leaves_w * leaves_h) return {};
+    if (map.summaries.size() != (size_t)tiles_w * tiles_h) return {};
+
+    uint64_t leaf_bytes = (uint64_t)leaves_w * leaves_h * 3;
+    if ((uint64_t)leaf_off + leaf_bytes != summary_off) return {};
+
+    std::vector<uint8_t> out;
+    out.reserve(map.header.size() + (map.leaves.size() + map.summaries.size()) * 3);
+    out.insert(out.end(), map.header.begin(), map.header.end());
+    write_records(map.leaves, &out);
+    write_records(map.summaries, &out);
+    return out;
+}
+
+std::vector<uint8_t> t2_repack(const uint8_t* data, size_t size) {
+    T2Map map;
+    if (!t2_read(data, size, &map)) return {};
+    return t2_write(map);
+}
+
 } // namespace fx

@@ -284,3 +284,113 @@ TEST_CASE("t2_read decodes every stock theater losslessly") {
     CHECK(total == 16);
     WARN("T2 read census: " << total << " theaters decoded losslessly");
 }
+
+TEST_CASE("t2_write reassembles a read map byte-identically") {
+    auto buf = make_t2(3, 2, 0xD2);
+    buf[0x40] = 0xAB;  // an unresolved sub-header byte
+    for (size_t i = 0x95; i < buf.size(); i++) buf[i] = (uint8_t)(i * 31);
+    T2Map map;
+    REQUIRE(t2_read(buf.data(), buf.size(), &map));
+    REQUIRE(t2_write(map) == buf);
+}
+
+TEST_CASE("t2_repack is byte-identical and rejects garbage") {
+    auto buf = make_t2(2, 2, 0xFF);
+    REQUIRE(t2_repack(buf.data(), buf.size()) == buf);
+
+    buf.push_back(0);  // a trailing byte the layout does not describe
+    CHECK(t2_repack(buf.data(), buf.size()).empty());
+
+    std::vector<uint8_t> tiny(50, 0);
+    CHECK(t2_repack(tiny.data(), tiny.size()).empty());
+}
+
+TEST_CASE("t2_write serializes edited records, preserving everything else") {
+    auto buf = make_t2(2, 2, 0xFF);
+    T2Map map;
+    REQUIRE(t2_read(buf.data(), buf.size(), &map));
+
+    // Raise one leaf and retexture one summary tile.
+    map.leaves[0].elevation       = 9;
+    map.leaves[0].texture_variant = 4;
+    map.summaries[3].surface_class = 0xD2;
+
+    auto out = t2_write(map);
+    REQUIRE(out.size() == buf.size());
+    T2Map back;
+    REQUIRE(t2_read(out.data(), out.size(), &back));
+    REQUIRE(back.leaf(0, 0).elevation        == 9);
+    REQUIRE(back.leaf(0, 0).texture_variant  == 4);
+    REQUIRE(back.summary(1, 1).surface_class == 0xD2);
+    // Header and the untouched records are unchanged.
+    REQUIRE(back.header == map.header);
+    REQUIRE(back.summary(0, 0).surface_class == 0xFF);
+}
+
+TEST_CASE("t2_write rejects a map whose records disagree with its header") {
+    auto buf = make_t2(2, 2, 0xFF);
+    T2Map map;
+    REQUIRE(t2_read(buf.data(), buf.size(), &map));
+
+    SECTION("too few leaves") {
+        auto bad = map;
+        bad.leaves.pop_back();
+        CHECK(t2_write(bad).empty());
+    }
+    SECTION("too many summaries") {
+        auto bad = map;
+        bad.summaries.push_back({0, 0, 0});
+        CHECK(t2_write(bad).empty());
+    }
+    SECTION("truncated header") {
+        auto bad = map;
+        bad.header.resize(0x50);
+        CHECK(t2_write(bad).empty());
+    }
+    SECTION("header longer than its own leaf offset") {
+        auto bad = map;
+        bad.header.push_back(0);  // leaf_off [0x91] no longer equals header size
+        CHECK(t2_write(bad).empty());
+    }
+    SECTION("wrong magic") {
+        auto bad = map;
+        bad.header[0] = 'X';
+        CHECK(t2_write(bad).empty());
+    }
+}
+
+TEST_CASE("t2_repack is byte-identical for every stock theater") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root)
+        SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    namespace fs = std::filesystem;
+    auto lower = [](std::string s) {
+        for (char& c : s) c = (char)std::tolower((unsigned char)c);
+        return s;
+    };
+    std::vector<uint8_t> lib;
+    for (const auto& de : fs::directory_iterator(root)) {
+        if (!de.is_regular_file()) continue;
+        if (lower(de.path().filename().string()) != "fa_2.lib") continue;
+        std::ifstream f(de.path(), std::ios::binary | std::ios::ate);
+        lib.resize((size_t)f.tellg());
+        f.seekg(0);
+        f.read((char*)lib.data(), (std::streamsize)lib.size());
+        break;
+    }
+    if (lib.empty()) SKIP("fa_2.lib not present in this install");
+
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    int total = 0;
+    for (const auto& e : entries) {
+        std::string name = lower(e.name);
+        if (name.size() < 3 || name.substr(name.size() - 3) != ".t2") continue;
+        auto data = ealib_extract(lib.data(), lib.size(), e, true);
+        REQUIRE_FALSE(data.empty());
+        INFO(name);
+        REQUIRE(t2_repack(data.data(), data.size()) == data);
+        ++total;
+    }
+    CHECK(total == 16);
+    WARN("T2 repack census: " << total << " theaters byte-identical");
+}

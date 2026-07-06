@@ -83,4 +83,19 @@ struct T2Map {
 // inconsistency; *map is unspecified on failure.
 bool t2_read(const uint8_t* data, size_t size, T2Map* map);
 
+// Serialize a terrain map back to file bytes: the verbatim header followed
+// by the leaf array then the tile-summary array (the format has no other
+// content). `map.header` carries every pre-payload byte — including the
+// unresolved sub-header fields — so a t2_read → t2_write round-trip is
+// byte-identical. The record vectors may be edited in place first; their
+// sizes must still match the header's grid (leaves_w*leaves_h and
+// tiles_w*tiles_h) and the header must be at least 0x95 bytes with the
+// leaf-array offset (`[0x91]`) equal to its length. Returns an empty
+// vector on any such mismatch.
+std::vector<uint8_t> t2_write(const T2Map& map);
+
+// Read then write: a byte-identical round-trip for valid T2 data, an empty
+// vector for anything t2_read rejects. Convenience for the codec census.
+std::vector<uint8_t> t2_repack(const uint8_t* data, size_t size);
+
 } // namespace fx

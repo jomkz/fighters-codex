@@ -666,5 +666,15 @@ bool t2_info(const uint8_t* data, size_t size, T2Info* info);
 // Returns false on any structural inconsistency.
 bool t2_read(const uint8_t* data, size_t size, T2Map* map);
 
+// Serialize a map back to file bytes: verbatim header + leaf array + summary
+// array. The record vectors may be edited first but must still match the
+// header's grid; empty on any mismatch. A t2_read -> t2_write round-trip is
+// byte-identical.
+std::vector<uint8_t> t2_write(const T2Map& map);
+
+// Read then write — a byte-identical round-trip for valid T2 data, empty for
+// anything t2_read rejects.
+std::vector<uint8_t> t2_repack(const uint8_t* data, size_t size);
+
 } // namespace fx
 ```
