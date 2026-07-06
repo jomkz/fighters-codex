@@ -11,6 +11,7 @@
 #include "fx/sh.h"
 #include "fx_render/render.h"
 #include "fx_render/gl.h"
+#include "fx_render/fa_backend.h"
 
 #include <algorithm>
 #include <cmath>
@@ -42,6 +43,10 @@ struct ShPreview {
     int tex_w = 0, tex_h = 0;  // texture dims for UV normalization
     bool show_texture = true;  // texture toggle (only meaningful when tex_image)
     fx::Palette palette{};     // preview palette for untextured face colours
+    bool software          = false;  // FA-faithful software backend (#290/#334)
+    bool renderer_software = false;  // backend the current renderer was built as
+    bool renderer_pal_dirty = false; // rebuild the fa renderer on palette change
+    platform::GpuTexture sw_tex;     // display upload for the software target
     int rt_w = 0, rt_h = 0;
     int cached_lib   = -2;
     int cached_entry = -2;
@@ -241,9 +246,38 @@ static void BuildBoxGridVB(const fx::ShInfo& info, float max_span) {
     s_sh.grid.vertices = std::move(lines);
 }
 
+// The preview palette as the fa path's 192-entry 6-bit palette: fx::Palette
+// stores VGA components widened to 8-bit, so >>2 recovers them exactly.
+static fx_render::fa::Palette ToFaPalette(const fx::Palette& pal) {
+    fx_render::fa::Palette out;
+    for (int i = 0; i < fx_render::fa::Palette::kEntries; ++i) {
+        out.entries[static_cast<std::size_t>(i)] = {
+            static_cast<std::uint8_t>(pal.r[i] >> 2),
+            static_cast<std::uint8_t>(pal.g[i] >> 2),
+            static_cast<std::uint8_t>(pal.b[i] >> 2)};
+    }
+    return out;
+}
+
+void PreviewForceSoftwareBackend(bool on) { s_sh.software = on; }
+
 static void RenderSh(int w, int h) {
     if (w <= 0 || h <= 0) return;
-    if (!s_sh.renderer) s_sh.renderer = fx_render::MakeOpenGLRenderer();
+    // Rebuild the renderer when the backend toggles (or, for the fa path,
+    // when the palette it quantizes against changes).
+    if (s_sh.renderer && (s_sh.renderer_software != s_sh.software ||
+                          (s_sh.software && s_sh.renderer_pal_dirty))) {
+        s_sh.rt.reset();
+        s_sh.renderer.reset();
+        s_sh.rt_w = s_sh.rt_h = 0;
+    }
+    if (!s_sh.renderer) {
+        s_sh.renderer = s_sh.software
+                            ? fx_render::MakeFaRenderer(ToFaPalette(s_sh.palette))
+                            : fx_render::MakeOpenGLRenderer();
+        s_sh.renderer_software = s_sh.software;
+        s_sh.renderer_pal_dirty = false;
+    }
     if (!s_sh.renderer) return;
     if (!s_sh.rt || s_sh.rt_w != w || s_sh.rt_h != h) {
         s_sh.rt = s_sh.renderer->MakeTarget(w, h);
@@ -452,6 +486,7 @@ void DrawPreview(App& app) {
             // Destroyed can swap to the wreck sibling, which has its own PIC.
             if (sel_changed || pal_changed || dam_changed) LoadShTexture(app, ed, mesh);
             s_sh.palette = fxg::ResolvePreviewPalette(app);  // untextured face colours
+            if (pal_changed) s_sh.renderer_pal_dirty = true;  // fa backend requantizes
             BuildMeshVB(mesh);
         }
 
@@ -459,6 +494,12 @@ void DrawPreview(App& app) {
         if (!s_sh.wreck_name.empty()) {
             ImGui::SameLine();
             ImGui::TextDisabled("(wreck: %s)", s_sh.wreck_name.c_str());
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Software (FA)", &s_sh.software);
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetTooltip("Render through the FA-faithful software rasteriser\n"
+                              "(fx_render::fa — indexed spans, painter's order; #290)");
         }
         if (s_sh.tex_image) {
             ImGui::SameLine();
@@ -496,11 +537,22 @@ void DrawPreview(App& app) {
             ImGui::InvisibleButton("##sh3d", canvas);
             bool held    = ImGui::IsItemActive();
             bool hovered = ImGui::IsItemHovered();
-            // FBO content is bottom-up in GL — flip V when displaying.
-            ImGui::GetWindowDrawList()->AddImage(
-                (ImTextureID)(intptr_t)s_sh.rt->native_texture(),
-                pos, {pos.x + canvas.x, pos.y + canvas.y},
-                ImVec2(0, 1), ImVec2(1, 0));
+            if (ImTextureID gl_tex = (ImTextureID)(intptr_t)s_sh.rt->native_texture()) {
+                // FBO content is bottom-up in GL — flip V when displaying.
+                ImGui::GetWindowDrawList()->AddImage(
+                    gl_tex, pos, {pos.x + canvas.x, pos.y + canvas.y},
+                    ImVec2(0, 1), ImVec2(1, 0));
+            } else {
+                // Software target: present the indexed surface and upload it
+                // for display (top-left origin, no flip).
+                fx_render::Image img;
+                s_sh.rt->Read(img);
+                s_sh.sw_tex.Release();
+                s_sh.sw_tex = platform::UploadTexture(img.pixels.data(), img.width, img.height);
+                ImGui::GetWindowDrawList()->AddImage(
+                    (ImTextureID)(intptr_t)s_sh.sw_tex.id,
+                    pos, {pos.x + canvas.x, pos.y + canvas.y});
+            }
 
             if (held) {
                 ImVec2 delta = ImGui::GetIO().MouseDelta;
@@ -556,8 +608,9 @@ void DrawPreview(App& app) {
 
 void PreviewShutdown() {
     // Order matters only in that both need the live GL context (the caller
-    // guarantees it). Targets before the renderer, then the image texture.
+    // guarantees it). Targets before the renderer, then the image textures.
     s_sh.rt.reset();
     s_sh.renderer.reset();
+    s_sh.sw_tex.Release();
     s_preview.Release();
 }

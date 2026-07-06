@@ -60,18 +60,19 @@ fx_render::Image img; t->Read(img);   // img.pixels is now RGBA8
 | `fa::Fx` | 16.16 fixed-point screen coordinates (`ToFx` / `FxFloor`) |
 | `fa::Texture` / `fa::FVertex` | indexed texels (16.16 texel sampling) and the projected NPM vertex (screen x/y, texel u/v, 1/w) |
 | `fa::PaintersList` | the `GRAddBrentObj` → `sort_objs_wrapper` painter's-order submission stage (no z-buffer anywhere) |
+| `MakeFaRenderer(palette)` | `fx_render/fa_backend.h`: the fa pipeline behind the generic `Renderer` API — colours quantize via `Palette::Nearest` (the shade-table stand-in); spans/clip/occlusion are the faithful part. fxs's **Software (FA)** preview mode and `--render --software` run on it |
 
 Dimensions are runtime parameters: FA.EXE's 1024×768 ceiling is a `GG_`/DirectDraw *device*
 limit the fa path does not inherit (resolution-independence guards in `tests/render/`).
 
 Sub-issue progress: **#328** surface/palette/state ✅ · **#329** 16.16 YLR spans ✅ ·
 **#330** Gouraud ✅ · **#331** clipping ✅ · **#332** painter's order ✅ · **#333** textured
-spans ✅ · #334 fxs software mode + fidelity sweep.
+spans ✅ · **#334** fxs software mode + fidelity sweep ✅.
 
 ## Roadmap (sub-issues of #281)
 
 1. **#288** — module: API + software-backend foundation ✅
 2. **#289** — OpenGL backend, extracted from `gui/src/panels/preview.cpp` ✅
 3. **#291** — fxs refactored onto `fx::render` (SH preview) ✅
-4. **#290** — FA-faithful software rasteriser — in progress, decomposed into #328–#334 (section above)
+4. **#290** — FA-faithful software rasteriser ✅ — decomposed into #328–#334 (section above)
 5. **#292** — fxe runtime render hook — re-homed to the fxe milestone (#280)
