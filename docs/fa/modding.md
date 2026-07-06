@@ -134,6 +134,27 @@ speed_ft_per_sec = ktas * 1.6878         # 1 knot = 1.6878 ft/s
 altitude_ft      = altitude_as_read      # already in feet
 ```
 
+## Font mod (.FNT)
+
+FA's fonts are compiled x86 inside PE DLLs, but the `fx` round trip makes
+them editable as images (#97):
+
+1. `fx lib extract FA_1.LIB 4X6.FNT` — pull the font from the archive.
+2. `fx fnt unpack 4X6.FNT -o work/` — renders `glyph_sheet.png` (printable
+   glyphs in a 16-column grid) and `metrics.csv` (per-character advance
+   widths and the font height).
+3. Edit `glyph_sheet.png` in any editor — white pixels are set, black are
+   transparent. Keep each glyph inside its cell; widths can be adjusted in
+   `metrics.csv`.
+4. `fx fnt pack 4X6.FNT work/ -o 4X6.FNT` — recompiles the glyphs to x86
+   with the engine's own encoding and rebuilds the function table. The
+   recompiled code must fit the original code region (roughly: similar ink
+   coverage) — `pack` refuses if it would overrun.
+5. `fx lib patch` the font back into FA_1.LIB.
+
+An unedited unpack→pack loop reproduces the original file byte-for-byte, so
+any diff you ship is exactly your edit.
+
 ## Tips
 
 - The game loads flags=0 (uncompressed) LIB entries just as well as flags=4 (compressed).

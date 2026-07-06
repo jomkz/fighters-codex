@@ -7,15 +7,15 @@ endianness: little
 spec:
   status: complete
 codec:
-  direction: read
-  issue: 97
+  direction: round-trip
+  byte_identical: true
   lib: [lib/src/fnt.cpp, lib/src/pe.cpp]
   commands: [fnt]
-  tests: [tests/test_pe.cpp]
+  tests: [tests/test_pe.cpp, tests/test_fnt.cpp]
   fuzz: [fuzz/fuzz_pe.cpp]
   gui: [gui/src/editors/fnt_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [PIC, HUD]
 ---
@@ -34,12 +34,16 @@ function code covering the full printable ASCII range.
 
 ```
 fx fnt info   <file.FNT>              # font height and glyph metrics
-fx fnt unpack <file.FNT> [-o dir]     # render each glyph to an image + metrics
+fx fnt unpack <file.FNT> [-o dir]     # render glyphs to glyph_sheet.png + metrics.csv
+fx fnt pack   <orig.FNT> <dir> [-o out.FNT]   # recompile glyphs back into the DLL
 ```
 
 Glyph extraction works by *interpreting* each glyph's x86 write pattern
-against a pixel buffer — see File Layout. Building a FNT from glyph images is
-#97.
+against a pixel buffer; `pack` inverts it, **recompiling** edited glyph
+bitmaps to x86 with the original compiler's canonical encoding (below) and
+rebuilding the function table — an unedited unpack→pack loop is
+**byte-identical** for every install font. Edited glyph code must fit the
+original code region (the container is otherwise carried verbatim).
 
 ## File Layout
 
@@ -88,9 +92,26 @@ glyph body at raw file offset `0xA25`):
 | Sequence | Meaning |
 |----------|---------|
 | `03 F9` = `ADD EDI, ECX` | Advance to next row |
-| `88 07` = `MOV [EDI], AL` | Write pixel at current position |
+| `88 07` / `88 47 NN` = `MOV [EDI(+NN)], AL` | 1-pixel write at column 0 / NN |
+| `66 89 07` / `66 89 47 NN` = `MOV [EDI(+NN)], AX` | 2-pixel run write |
+| `89 07` / `89 47 NN` = `MOV [EDI(+NN)], EAX` | 4-pixel run write |
 | `ADD EDI, ECX` alone | Skip a blank row (no pixel written) |
 | `C3` = `RET` | End of glyph |
+
+`G_Print` primes `AL`/`AX`/`EAX` with the colour replicated per byte, so the
+word/dword forms paint uniform horizontal runs. This vocabulary is
+**complete**: every glyph function of all 15 install fonts decodes with it
+(#97 census, 3,840 bodies).
+
+**Canonical encoding (confirmed — all 3,840 install bodies re-emit
+byte-identically):** per pixel row, ascending runs split greedily into
+4/2/1-pixel writes (dword, then word, then byte; the short `[EDI]` forms
+whenever the column is 0), followed by one row advance; a glyph therefore
+carries exactly `font_height` advances — writes for row *r* appear **before**
+the *(r+1)*-th advance, so a lit top row writes before the first `ADD`. An
+all-blank glyph is a lone `RET` with no advances. Bodies are laid out
+back-to-back in character order (0–255, one body per character, no sharing
+and no gaps), starting immediately after the FONT struct.
 
 **`0xC3` = `RET`** — the blank/space glyph is a single-byte function that
 returns immediately, writing nothing. Control characters (ASCII 0–31) and
@@ -100,19 +121,23 @@ Printable character functions begin at VA 0x1825 (raw file offset `0xA25`).
 Confirmed disassembly of ASCII 33 (`!`):
 
 ```asm
-ADD  EDI, ECX      ; row 0 — lit (bar)
-MOV  [EDI], AL
-ADD  EDI, ECX      ; row 1 — lit
-MOV  [EDI], AL
-ADD  EDI, ECX      ; row 2 — lit
-MOV  [EDI], AL
-ADD  EDI, ECX      ; row 3 — blank
-ADD  EDI, ECX      ; row 4 — lit (dot)
-MOV  [EDI], AL
-ADD  EDI, ECX      ; row 5 — blank
-ADD  EDI, ECX      ; row 6 — trailing advance
+ADD  EDI, ECX      ; row 0 blank — advance
+MOV  [EDI], AL     ; row 1 — lit (bar)
+ADD  EDI, ECX
+MOV  [EDI], AL     ; row 2 — lit
+ADD  EDI, ECX
+MOV  [EDI], AL     ; row 3 — lit
+ADD  EDI, ECX
+ADD  EDI, ECX      ; row 4 blank — advance only
+MOV  [EDI], AL     ; row 5 — lit (dot)
+ADD  EDI, ECX
+ADD  EDI, ECX      ; row 6 blank (inter-line spacing)
 RET
 ```
+
+(An earlier revision put each write *before* its label's advance; the #97
+census fixed the row accounting: writes belong to the row **preceding** the
+next advance, and row-0 writes come before any `ADD`.)
 
 7 row advances for a font named `4X6` confirms `cFont[0]` (font height) = 7 —
 the cell is 6 glyph rows + 1 inter-line spacing row. The raw bytes

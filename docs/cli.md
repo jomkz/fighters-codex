@@ -22,7 +22,7 @@ fx pal     info / dump                  # .PAL VGA palettes
 fx inf     dump                         # .INF aircraft tech sheets
 fx hud     dump                         # .HUD layout overlays
 fx lay     dump / gradient              # .LAY sky/atmosphere layers
-fx fnt     info / unpack                # .FNT bitmap fonts
+fx fnt     info / unpack / pack         # .FNT bitmap fonts (x86 glyph recompiler)
 fx mus     dump                         # .MUS music sequencer bytecode
 fx bi      dump                         # .BI compiled AI disassembler
 fx ai      compile                      # .AI → .BI compiler
@@ -468,6 +468,7 @@ Render the atmosphere gradient tables to a PNG.
 ```
 fx fnt info   <file.FNT>
 fx fnt unpack <file.FNT> [-o output_dir]
+fx fnt pack   <orig.FNT> <dir> [-o out.FNT]
 ```
 
 #### `fx fnt info <file.FNT>`
@@ -479,6 +480,15 @@ Print glyph count and font metrics from a font overlay DLL.
 Extract every glyph as an image into the output directory, plus a `metrics.csv`
 (`ascii,char,width,height`). The CSV uses LF line endings on every platform
 (previously CRLF on Windows).
+
+#### `fx fnt pack <orig.FNT> <dir> [-o out.FNT]`
+
+Rebuild the font DLL from an unpack directory: printable glyphs re-read from
+`glyph_sheet.png` (white = set), widths and height from `metrics.csv`, and
+each glyph **recompiled to x86** with the original compiler's canonical
+encoding. Everything else in the container carries over from `orig.FNT`
+verbatim; an unedited unpack→pack loop is byte-identical. Edited glyph code
+must fit the original code region.
 
 *See also: [fa/formats/FNT.md](fa/formats/FNT.md)*
 

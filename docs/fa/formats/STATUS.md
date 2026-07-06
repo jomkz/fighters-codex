@@ -20,7 +20,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [DLG](DLG.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx dlg` | `tests/test_dlg.cpp` | syn/real | — | — |
 | [ECM](ECM.md) | typedef | complete | — | round-trip (byte-identical) | `fx ecm` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [FBC](FBC.md) | video | complete | — | round-trip (byte-identical) | `fx fbc` | `tests/test_fbc.cpp` | syn/real | — | `gui/src/editors/vdo_editor.cpp` |
-| [FNT](FNT.md) | ui-overlay | complete | — | read-only [#97](https://github.com/jomkz/fighters-codex/issues/97) | `fx fnt` | `tests/test_pe.cpp` | real | `fuzz/fuzz_pe.cpp` | `gui/src/editors/fnt_editor.cpp` |
+| [FNT](FNT.md) | ui-overlay | complete | — | round-trip (byte-identical) | `fx fnt` | `tests/test_pe.cpp`<br>`tests/test_fnt.cpp` | syn/real | `fuzz/fuzz_pe.cpp` | `gui/src/editors/fnt_editor.cpp` |
 | [GAS](GAS.md) | typedef | complete | — | round-trip (byte-identical) | `fx gas` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [HGR](HGR.md) | 3d | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx hgr` | `tests/test_hgr.cpp` | syn/real | — | — |
 | [HUD](HUD.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only [#99](https://github.com/jomkz/fighters-codex/issues/99) | `fx hud` | — | real | — | `gui/src/editors/hud_editor.cpp` |
