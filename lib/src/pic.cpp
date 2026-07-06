@@ -133,6 +133,93 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
     return rgba;
 }
 
+std::vector<uint8_t> pic_repack(const uint8_t* data, size_t size) {
+    if (!data || size < 2) return {};
+    const uint16_t fmt = r16(data, 0);
+    // JPEG PICs are the JPEG stream itself (0xFFD8 SOI read LE): the whole
+    // file passes through.
+    if (fmt == 0xD8FF) return std::vector<uint8_t>(data, data + size);
+    if (size < (size_t)HEADER_SIZE) return {};
+
+    PicInfo info;
+    if (!pic_info(data, size, &info)) return {};
+    if (fmt != 0 && fmt != 1) return {};
+
+    std::vector<uint8_t> out(size, 0);
+    std::vector<uint8_t> covered(size, 0);
+
+    // Copy one header-described region through at its recorded offset,
+    // refusing overlaps — a double-covered byte means the layout is not
+    // what the header claims.
+    auto place = [&](uint32_t off, uint32_t sz) -> bool {
+        if (sz == 0) return true;
+        if ((uint64_t)off + sz > size) return false;
+        for (uint32_t i = 0; i < sz; i++) {
+            if (covered[off + i]) return false;
+            covered[off + i] = 1;
+        }
+        memcpy(out.data() + off, data + off, sz);
+        return true;
+    };
+
+    // Header: re-serialize the parsed fields (proving them), carry the tail
+    // at 42..63 verbatim (font_data_offset etc. — the re-static #54 gap).
+    out[0] = (uint8_t)(info.format);
+    out[1] = (uint8_t)(info.format >> 8);
+    w32(out.data(),  2, info.width);
+    w32(out.data(),  6, info.height);
+    w32(out.data(), 10, info.pixels_offset);
+    w32(out.data(), 14, info.pixels_size);
+    w32(out.data(), 18, info.palette_offset);
+    w32(out.data(), 22, info.palette_size);
+    w32(out.data(), 26, info.spans_offset);
+    w32(out.data(), 30, info.spans_size);
+    w32(out.data(), 34, info.rowheads_offset);
+    w32(out.data(), 38, info.rowheads_size);
+    memcpy(out.data() + 42, data + 42, HEADER_SIZE - 42);
+    std::fill(covered.begin(), covered.begin() + HEADER_SIZE, 1);
+
+    // A real region lives past the header. Dense files carry a vestigial
+    // spans_size with spans_offset == 0 — stale tool output the engine
+    // never reads (font PICs even hold another image's value); it is
+    // re-serialized verbatim in the header and never placed as a region.
+    auto place_real = [&](uint32_t off, uint32_t sz) -> bool {
+        if (sz == 0 || off < (uint32_t)HEADER_SIZE) return true;
+        return place(off, sz);
+    };
+    if (!place_real(info.pixels_offset,   info.pixels_size))   return {};
+    if (!place_real(info.palette_offset,  info.palette_size))  return {};
+    if (!place_real(info.spans_offset,    info.spans_size))    return {};
+    if (!place_real(info.rowheads_offset, info.rowheads_size)) return {};
+
+    // Font PICs: the header-tail field at 0x2A points at a trailing block
+    // (256 x 6-byte glyph records in every install file) running to end of
+    // file, 16-aligned like the other late regions.
+    const uint32_t font_off = r32(data, 42);
+    if (font_off) {
+        if (font_off < (uint32_t)HEADER_SIZE || font_off > size) return {};
+        if (!place(font_off, (uint32_t)(size - font_off))) return {};
+    }
+
+    // The only bytes no region accounts for are short all-zero runs padding
+    // the next region to a 16-byte boundary (sparse span tables and font
+    // blocks in the install). Anything else is unknown structure — fail
+    // rather than silently copy it.
+    for (size_t i = 0; i < size;) {
+        if (covered[i]) {
+            i++;
+            continue;
+        }
+        size_t j = i;
+        while (j < size && !covered[j] && data[j] == 0) j++;
+        const bool ends_at_aligned_region =
+            j < size && covered[j] && (j % 16 == 0) && (j - i) < 16;
+        if (!ends_at_aligned_region) return {};
+        i = j;  // pad accepted; `out` is already zero there
+    }
+    return out;
+}
+
 std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
                                  const Palette& pal) {
     if (!rgba || w <= 0 || h <= 0) return {};

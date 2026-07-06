@@ -103,6 +103,12 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
 // Pixels with alpha < 128 become transparent (index 0xFF).
 std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
                                  const Palette& pal);
+
+// Byte-identical structural repack: re-derive every region from the parsed
+// header and re-emit by construction (whole-file passthrough for JPEG).
+// Returns empty if any byte is unaccounted for; a non-empty result is
+// always byte-identical to the input.
+std::vector<uint8_t> pic_repack(const uint8_t* data, size_t size);
 } // namespace fx
 ```
 

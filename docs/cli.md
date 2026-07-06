@@ -115,6 +115,7 @@ fx lib patch FA_3.LIB F16C_0.PIC F16C_mod.PIC FA_3_mod.LIB
 fx pic info   <file.PIC>
 fx pic unpack <file.PIC> [-p PALETTE.PAL] [-o output.png]
 fx pic pack   <file.png> [-p PALETTE.PAL] [-o output.PIC]
+fx pic repack <file.PIC> [-o output.PIC]
 ```
 
 #### `fx pic info <file.PIC>`
@@ -131,6 +132,14 @@ Decode to PNG. Handles all three sub-formats: JPEG, dense (format 0), and sparse
 Encode to a dense PIC (format 0) with a full 256-color inline palette. Pixels with
 alpha < 128 map to transparent (index 0xFF). Always provide the same `PALETTE.PAL`
 used during unpack.
+
+#### `fx pic repack <file.PIC> [-o output.PIC]`
+
+Byte-identical structural repack: re-derives every region from the parsed header
+and re-emits the file by construction (whole-file passthrough for JPEG PICs).
+Without `-o` it verifies only — exit 0 means the file re-emits byte-identically;
+a byte no documented region accounts for fails the repack instead of being
+silently copied.
 
 *See also: [fa/formats/PIC.md](fa/formats/PIC.md) · [fa/formats/PAL.md](fa/formats/PAL.md)*
 

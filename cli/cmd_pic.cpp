@@ -173,15 +173,50 @@ static int cmd_pack(int argc, char** argv) {
     return 0;
 }
 
+// pic repack <file.PIC> [-o out.PIC] — byte-identical structural repack
+// (#175). Without -o it verifies only: exit 0 means the file re-emits
+// byte-identically from its parsed structure.
+static int cmd_repack(int argc, char** argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: fx pic repack <file.PIC> [-o out.PIC]\n");
+        return 1;
+    }
+    const char* pic_path = argv[1];
+    const char* out_path = nullptr;
+    for (int i = 2; i < argc; i++) {
+        if (strcmp(argv[i], "-o") == 0 && i + 1 < argc) out_path = argv[++i];
+    }
+
+    auto data = read_file(pic_path);
+    if (data.empty()) { fprintf(stderr, "Cannot read: %s\n", pic_path); return 1; }
+
+    auto out = pic_repack(data.data(), data.size());
+    if (out.empty()) {
+        fprintf(stderr, "Repack failed (structure not fully accounted for): %s\n", pic_path);
+        return 1;
+    }
+    const bool identical = out.size() == data.size() &&
+                           memcmp(out.data(), data.data(), data.size()) == 0;
+    if (out_path && !write_file(out_path, out)) {
+        fprintf(stderr, "Cannot write: %s\n", out_path);
+        return 1;
+    }
+    printf("%s: %zu bytes, %s%s%s\n", pic_path, out.size(),
+           identical ? "byte-identical" : "DIFFERS",
+           out_path ? " -> " : "", out_path ? out_path : "");
+    return identical ? 0 : 1;
+}
+
 int cmd_pic(int argc, char** argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: fx pic <info|unpack|pack> ...\n");
+        fprintf(stderr, "Usage: fx pic <info|unpack|pack|repack> ...\n");
         return 1;
     }
     const char* sub = argv[1];
     if (strcmp(sub, "info")   == 0) return cmd_info(argc - 1, argv + 1);
     if (strcmp(sub, "unpack") == 0) return cmd_unpack(argc - 1, argv + 1);
     if (strcmp(sub, "pack")   == 0) return cmd_pack(argc - 1, argv + 1);
+    if (strcmp(sub, "repack") == 0) return cmd_repack(argc - 1, argv + 1);
     fprintf(stderr, "Unknown pic subcommand: %s\n", sub);
     return 1;
 }

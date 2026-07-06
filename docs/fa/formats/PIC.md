@@ -13,8 +13,7 @@ spec:
       note: "font_data_offset field semantics"
 codec:
   direction: round-trip
-  byte_identical: false
-  issue: 175
+  byte_identical: true
   lib: [lib/src/pic.cpp]
   commands: [pic]
   tests: [tests/test_pic.cpp]
@@ -173,11 +172,26 @@ the `_0` exterior photo in contexts where a thumbnail is needed.
 
 ## Round-Trip Notes
 
-- `fx pic pack` always encodes as format=0 (dense) with a full inline palette.
-  The game accepts format=0 in place of any sub-format, including JPEG
-  originals — but the repack is therefore **not byte-identical** for sparse or
-  JPEG inputs, and dense repacks are not yet asserted byte-exact (#175 tracks
-  the upgrade).
+- `fx pic repack` re-emits any PIC **byte-identically** from its parsed
+  structure: the header fields are re-serialized (proving them), the 22-byte
+  header tail at `0x2A`–`0x3F` is carried verbatim, and every region is
+  copied through at its recorded offset under full-coverage verification —
+  an unaccounted or overlapping byte fails the repack rather than being
+  silently copied. Validated against every PIC in the full install (census
+  in tests/test_pic.cpp; 2,693 dense + 493 sparse, no JPEG PICs ship inside
+  the LIBs).
+- Layout facts established by the whole-install census (inferred):
+  **dense** = header · pixels (`width×height` at 64) · row-heads (`4×height`)
+  · optional 768-byte palette, with `spans_offset = 0` and a **vestigial
+  `spans_size`** the engine never reads (commonly `10×(height+1)`; the font
+  PICs carry another image's stale value). **Sparse** = header · pixel runs ·
+  span table · optional palette, the span table **16-byte aligned** over
+  short all-zero padding. **Font PICs** end with a trailing **1,536-byte
+  block (256 × 6-byte glyph records)** named by header field `0x2A`, also
+  16-aligned (open question 1).
+- `fx pic pack` (PNG import) always encodes as format=0 (dense) with a full
+  inline palette. The game accepts format=0 in place of any sub-format,
+  including JPEG originals; use `repack` when byte identity matters.
 - Keep image dimensions unchanged — the engine does not resize at load time.
 - Pixels are quantized to the nearest palette color on re-encode; alpha < 128
   maps to 0xFF.
@@ -187,10 +201,16 @@ the `_0` exterior photo in contexts where a thumbnail is needed.
 ### 1. font_data_offset semantics
 
 Header field `0x2A` is nonzero in only a handful of files and its consumer in
-The game executable has not been traced; the FNT overlay DLLs carry the actual fonts, so the
+the game executable has not been traced; the FNT overlay DLLs carry the actual fonts, so the
 field's role (legacy, or an alternate glyph path) is unconfirmed.
 
-*Status: open — re-static (#54)*
+**Layout characterized (#175 census):** in all 25 nonzero cases (the `*FNT`
+and video-title PICs) the field points at a trailing block that runs to end
+of file, is 16-byte aligned over zero padding, and is always **1,536 bytes =
+256 × 6-byte records** — glyph metrics for the 256 code points (inferred).
+The engine-side consumer remains untraced.
+
+*Status: open — re-static (#54); on-disk layout characterized 2026-07-06*
 
 ## Related
 
