@@ -45,6 +45,7 @@ enum class EditorKind {
     Vdo,        // VDO/FBC video metadata
     Cam,        // CAM campaign
     Pal,        // PAL palette swatch viewer
+    T2,         // T2 terrain 3D preview
 };
 
 struct EditorState {

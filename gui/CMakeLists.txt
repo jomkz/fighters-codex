@@ -76,6 +76,7 @@ add_executable(fxs WIN32
     src/editors/lay_editor.cpp
     src/editors/hud_editor.cpp
     src/editors/overlay_preview.cpp
+    src/editors/terrain_preview.cpp
     src/editors/mus_editor.cpp
     src/editors/fnt_editor.cpp
     src/editors/cb8_editor.cpp

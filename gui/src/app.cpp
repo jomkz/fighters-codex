@@ -504,6 +504,7 @@ void App::OpenEntry(int libIdx, int entryIdx) {
     else if (es.ext == "vdo" || es.ext == "fbc")   es.kind = EditorKind::Vdo;
     else if (es.ext == "cam")                      es.kind = EditorKind::Cam;
     else if (es.ext == "pal")                      es.kind = EditorKind::Pal;
+    else if (es.ext == "t2")                       es.kind = EditorKind::T2;
 
     if (es.kind == EditorKind::None) {
         statusMsg  = "No editor for ." + es.ext + " files";

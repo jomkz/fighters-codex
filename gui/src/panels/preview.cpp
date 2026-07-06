@@ -9,14 +9,18 @@
 #include "fx/ealib.h"
 #include "fx/raw.h"
 #include "fx/sh.h"
+#include "fx/t2.h"
 #include "fx_render/render.h"
 #include "fx_render/gl.h"
 #include "fx_render/fa_backend.h"
+#include "../editors/terrain_preview.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <memory>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 // ---------------------------------------------------------------------------
@@ -372,6 +376,151 @@ static void LoadShTexture(App& app, const EditorState& ed, const fx::ShMesh& mes
 // DrawPreview
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// T2 terrain 3D preview (#285). The heightfield mesh is built in the
+// display-free terrain_preview core and drawn through fx_render, the same
+// path the SH model preview uses. Texture tiles and the base palette live in
+// sibling LIBs (tiles in FA_1, the .T2 in FA_2), so assets are resolved
+// across every open session. The orbit camera here is a stand-in for the
+// engine's VIEW subsystem framing (docs/fa/view.md); a shared fx_render
+// camera from that RE is tracked in #387.
+// ---------------------------------------------------------------------------
+
+struct T2Preview {
+    std::unique_ptr<fx_render::Renderer>     renderer;
+    std::unique_ptr<fx_render::RenderTarget> rt;
+    fxg::TerrainScene scene;
+    fx::Palette       palette{};       // PALETTE.PAL base + default terrain band
+    bool  software          = false;
+    bool  renderer_software = false;
+    platform::GpuTexture sw_tex;
+    int   rt_w = 0, rt_h = 0;
+    int   cached_lib = -2, cached_entry = -2, cached_palgen = -1;
+    bool  have = false;
+    int   tiles_found = 0;
+    float azimuth = 40.0f, elevation = 30.0f, distance = 100.0f;
+    float target[3] = {};
+    float span = 1.0f;
+} s_t2;
+
+// Extract an entry by name from whichever open session holds it (tiles and
+// the palette live in different LIBs from the .T2).
+static std::vector<uint8_t> ExtractAcrossSessions(App& app, const std::string& name) {
+    for (const auto& sess : app.sessions) {
+        const fx::Entry* e = fx::ealib_find(sess.entries, name);
+        if (!e) continue;
+        auto d = fx::ealib_extract(sess.data.data(), sess.data.size(), *e, true);
+        if (!d.empty()) return d;
+    }
+    return {};
+}
+
+// Base theater name from a .T2 entry name ("APA.T2" -> "APA").
+static std::string TheaterStem(const std::string& entry_name) {
+    std::string s = entry_name;
+    auto dot = s.find_last_of('.');
+    if (dot != std::string::npos) s.resize(dot);
+    return s;
+}
+
+static void LoadT2Scene(App& app, const EditorState& ed) {
+    s_t2.have = false;
+    s_t2.scene = fxg::TerrainScene{};
+    s_t2.tiles_found = 0;
+
+    fx::T2Map map;
+    if (!fx::t2_read(ed.data.data(), ed.data.size(), &map)) return;
+
+    // Terrain palette: PALETTE.PAL base (across sessions) + the default
+    // terrain band (192..255), the stand-in for the atmosphere/LAY-driven
+    // band the engine fills at scene init (docs/fa/formats/T2.md).
+    auto palb = ExtractAcrossSessions(app, "PALETTE.PAL");
+    s_t2.palette = fx::pal_load(palb.data(), palb.size());
+    fxg::FillDefaultTerrainBand(s_t2.palette);
+
+    std::string theater;
+    if (ed.entryIdx >= 0 && ed.libIdx >= 0 && ed.libIdx < (int)app.sessions.size()) {
+        const auto& es = app.sessions[ed.libIdx].entries;
+        if (ed.entryIdx < (int)es.size()) theater = TheaterStem(es[ed.entryIdx].name);
+    }
+
+    // Decode <theater><N>.PIC tiles on demand into fx_render images.
+    std::unordered_map<uint8_t, std::shared_ptr<const fx_render::Image>> cache;
+    auto provider = [&](uint8_t v) -> std::shared_ptr<const fx_render::Image> {
+        auto it = cache.find(v); if (it != cache.end()) return it->second;
+        std::shared_ptr<const fx_render::Image> img;
+        std::string name = theater + std::to_string(v) + ".PIC";
+        auto picb = ExtractAcrossSessions(app, name);
+        fx::PicInfo info;
+        if (!picb.empty() && fx::pic_info(picb.data(), picb.size(), &info)) {
+            auto rgba = fx::pic_decode(picb.data(), picb.size(), &s_t2.palette);
+            if (!rgba.empty()) {
+                auto m = std::make_shared<fx_render::Image>();
+                m->resize((int)info.width, (int)info.height);
+                std::memcpy(m->pixels.data(), rgba.data(), rgba.size());
+                img = m;
+                s_t2.tiles_found++;
+            }
+        }
+        cache.emplace(v, img); return img;
+    };
+
+    fxg::TerrainBuildOptions opts;  // height_scale 1.0 default suits the coarse bands
+    s_t2.scene = fxg::BuildTerrainScene(map, provider, opts);
+    s_t2.target[0] = s_t2.scene.center[0];
+    s_t2.target[1] = s_t2.scene.center[1];
+    s_t2.target[2] = s_t2.scene.center[2];
+    s_t2.span      = s_t2.scene.span;
+    s_t2.distance  = std::max(s_t2.span * 1.1f, 20.0f);
+    s_t2.azimuth   = 40.0f;
+    s_t2.elevation = 30.0f;
+    s_t2.have = !s_t2.scene.textured.empty() || !s_t2.scene.flat.vertices.empty();
+}
+
+static void RenderT2(int w, int h) {
+    if (w <= 0 || h <= 0) return;
+    if (s_t2.renderer && s_t2.renderer_software != s_t2.software) {
+        s_t2.rt.reset(); s_t2.renderer.reset(); s_t2.rt_w = s_t2.rt_h = 0;
+    }
+    if (!s_t2.renderer) {
+        s_t2.renderer = s_t2.software
+                            ? fx_render::MakeFaRenderer(ToFaPalette(s_t2.palette))
+                            : fx_render::MakeOpenGLRenderer();
+        s_t2.renderer_software = s_t2.software;
+    }
+    if (!s_t2.renderer) return;
+    if (!s_t2.rt || s_t2.rt_w != w || s_t2.rt_h != h) {
+        s_t2.rt = s_t2.renderer->MakeTarget(w, h);
+        s_t2.rt_w = w; s_t2.rt_h = h;
+    }
+
+    s_t2.renderer->Begin(*s_t2.rt, {28, 34, 46, 255});
+    if (!s_t2.have) { s_t2.renderer->End(); return; }
+
+    const float kPi = 3.14159265358979f;
+    float azRad = s_t2.azimuth * kPi / 180.0f, elRad = s_t2.elevation * kPi / 180.0f;
+    float eye[3] = {
+        s_t2.target[0] + s_t2.distance * cosf(elRad) * sinf(azRad),
+        s_t2.target[1] + s_t2.distance * sinf(elRad),
+        s_t2.target[2] + s_t2.distance * cosf(elRad) * cosf(azRad),
+    };
+    float up[3] = {0.0f, 1.0f, 0.0f};
+    platform::Mat4 view = platform::mat4_look_at(eye, s_t2.target, up);
+    float near_p = std::max(1.0f, s_t2.distance * 0.01f);
+    float far_p  = s_t2.distance + s_t2.span * 6.0f;
+    platform::Mat4 proj = platform::mat4_perspective(
+        55.0f * kPi / 180.0f, (float)w / (float)h, near_p, far_p);
+    platform::Mat4 mvp = platform::mat4_mul(proj, view);
+
+    fx_render::Camera cam;
+    std::memcpy(cam.mvp.data(), mvp.m, sizeof(float) * 16);
+    fx_render::DrawOptions opts;
+    opts.primitive = fx_render::Primitive::Triangles;
+    if (!s_t2.scene.flat.vertices.empty()) s_t2.renderer->Draw(s_t2.scene.flat, cam, opts);
+    for (const auto& m : s_t2.scene.textured) s_t2.renderer->Draw(m, cam, opts);
+    s_t2.renderer->End();
+}
+
 void DrawPreview(App& app) {
 
     const auto& ed = app.editor;
@@ -581,6 +730,78 @@ void DrawPreview(App& app) {
         return;
     }
 
+    // ---- T2 terrain 3D preview ----------------------------------------------
+    if (ed.kind == EditorKind::T2) {
+        bool sel_changed = (ed.libIdx != s_t2.cached_lib || ed.entryIdx != s_t2.cached_entry);
+        bool pal_changed = app.palGen != s_t2.cached_palgen;
+        if (sel_changed || pal_changed) {
+            s_t2.cached_lib    = ed.libIdx;
+            s_t2.cached_entry  = ed.entryIdx;
+            s_t2.cached_palgen = app.palGen;
+            LoadT2Scene(app, ed);
+        }
+
+        ImGui::Checkbox("Software (FA)", &s_t2.software);
+        if (ImGui::IsItemHovered())
+            ImGui::SetTooltip("Render through the FA-faithful software rasteriser\n"
+                              "(fx_render::fa — indexed spans, painter's order; #290)");
+        ImGui::SameLine();
+        ImGui::TextDisabled("%d tiles  |  water %d  land %d", s_t2.tiles_found,
+                            s_t2.scene.water_leaves, s_t2.scene.land_leaves);
+
+        float  txt_h  = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;
+        ImVec2 canvas = ImGui::GetContentRegionAvail();
+        if (canvas.x < 4) canvas.x = 4;
+        canvas.y = std::max(4.0f, canvas.y - txt_h);
+        int iw = (int)canvas.x, ih = (int)canvas.y;
+        RenderT2(iw, ih);
+
+        if (s_t2.rt && s_t2.have) {
+            ImVec2 pos = ImGui::GetCursorScreenPos();
+            ImGui::InvisibleButton("##t23d", canvas);
+            bool held    = ImGui::IsItemActive();
+            bool hovered = ImGui::IsItemHovered();
+            if (ImTextureID gl_tex = (ImTextureID)(intptr_t)s_t2.rt->native_texture()) {
+                ImGui::GetWindowDrawList()->AddImage(
+                    gl_tex, pos, {pos.x + canvas.x, pos.y + canvas.y},
+                    ImVec2(0, 1), ImVec2(1, 0));
+            } else {
+                fx_render::Image img;
+                s_t2.rt->Read(img);
+                s_t2.sw_tex.Release();
+                s_t2.sw_tex = platform::UploadTexture(img.pixels.data(), img.width, img.height);
+                ImGui::GetWindowDrawList()->AddImage(
+                    (ImTextureID)(intptr_t)s_t2.sw_tex.id, pos,
+                    {pos.x + canvas.x, pos.y + canvas.y});
+            }
+            if (held) {
+                ImVec2 delta = ImGui::GetIO().MouseDelta;
+                s_t2.azimuth   += delta.x * 0.4f;
+                s_t2.elevation -= delta.y * 0.4f;
+                s_t2.elevation  = std::max(5.0f, std::min(89.0f, s_t2.elevation));
+                s_t2.azimuth    = fmodf(s_t2.azimuth + 360.0f, 360.0f);
+            }
+            if (hovered) {
+                float wheel = ImGui::GetIO().MouseWheel;
+                if (wheel != 0.0f) {
+                    s_t2.distance *= powf(0.85f, wheel);
+                    s_t2.distance  = std::max(s_t2.span * 0.2f,
+                                              std::min(s_t2.span * 3.0f, s_t2.distance));
+                    ImGui::SetScrollY(0.0f);
+                }
+            }
+            // Orbit is a stand-in for the engine's VIEW-subsystem framing;
+            // the faithful camera is reproduced in fxe and consumed here (#387).
+            ImGui::TextDisabled("az=%.0f el=%.0f dist=%.0f  span=%.0f",
+                s_t2.azimuth, s_t2.elevation, s_t2.distance, s_t2.span);
+            ImGui::TextDisabled("Drag to orbit  |  Scroll to zoom");
+        } else {
+            ImGui::TextDisabled("No terrain tiles found \xe2\x80\x94 also open the "
+                                "theater texture LIB (e.g. FA_1.LIB).");
+        }
+        return;
+    }
+
     // ---- Static image preview -----------------------------------------------
     if (s_preview.id) {
         fx::PicInfo pi;
@@ -612,5 +833,8 @@ void PreviewShutdown() {
     s_sh.rt.reset();
     s_sh.renderer.reset();
     s_sh.sw_tex.Release();
+    s_t2.rt.reset();
+    s_t2.renderer.reset();
+    s_t2.sw_tex.Release();
     s_preview.Release();
 }
