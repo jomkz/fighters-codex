@@ -11,15 +11,15 @@ spec:
       issue: 54
       note: "struct byte +0x238 has no xrefs; state-flag bit 14 SP writer untraced"
 codec:
-  direction: read
-  issue: 99
+  direction: round-trip
+  byte_identical: true
   lib: [lib/src/hud.cpp]
   commands: [hud]
-  tests: []
+  tests: [tests/test_hud.cpp]
   fuzz: []
   gui: [gui/src/editors/hud_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [BRF, FNT, PIC]
 ---
@@ -36,7 +36,8 @@ bytes.
 ### fx
 
 ```
-fx hud dump <file.HUD>    # gauge parameter table and sprite name references
+fx hud dump <file.HUD>                                     # gauge parameter table and sprite name references
+fx hud set  <file.HUD> <gauge.field=value ...> [-o out]    # edit gauge params / icon_a..icon_d labels
 ```
 
 ## File Layout
@@ -206,6 +207,24 @@ The command dispatcher is `FlightKey`. Each input case passes
 clear = currently retracted) and retracts it when FALSE (bit set = currently
 deployed). The actuator function updates the 3D model state and writes the
 advisory bit.
+
+## Round-Trip Notes
+
+`hud_repack` (#99) rebuilds a HUD DLL around edited gauge parameters and
+advisory icon labels. The write path re-emits only what the parser models:
+
+- **Gauge parameters** — written back at their fixed struct offsets, with
+  range checks for the s8/u8 fields. All known fields must be supplied
+  exactly once; unknown names reject rather than silently no-op.
+- **Advisory icon labels** — written into their fixed 8-byte slots with a
+  terminating NUL when shorter than the slot (mirroring the reader, which
+  stops at a NUL or 8 bytes); slot bytes past the NUL carry over.
+- **Everything else** — PE headers, asset-string regions, and unmodelled
+  struct bytes carry over verbatim. Asset strings are informational in
+  `HudFile` and not editable through the repack.
+
+An unedited parse→repack is therefore byte-identical; proven per-overlay
+over all 46 install HUDs (`tests/test_hud.cpp`, `FX_FA_ROOT` census).
 
 ## Open Questions
 

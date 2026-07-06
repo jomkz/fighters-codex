@@ -124,4 +124,67 @@ HudFile hud_parse(const uint8_t* data, size_t size) {
     return result;
 }
 
+// Write an icon label into its fixed 8-byte slot: content, then a NUL when
+// shorter than the slot (mirrors rd_str, which stops at a NUL or 8 bytes).
+// Slot bytes past the NUL carry over verbatim.
+static bool wr_icon(uint8_t* cs, size_t sz, uint32_t off, const std::string& s) {
+    if (s.size() > 8) return false;
+    if (off + 8 > sz) return false;
+    memcpy(cs + off, s.data(), s.size());
+    if (s.size() < 8) cs[off + s.size()] = 0;
+    return true;
+}
+
+std::vector<uint8_t> hud_repack(const uint8_t* orig, size_t orig_size,
+                                const HudFile& hud) {
+    CodeSection cs = pe_code_section(orig, orig_size);
+    if (!cs.data || cs.size < 0x2BB) return {};
+
+    const size_t n_gauges = sizeof(kGauges) / sizeof(kGauges[0]);
+    if (hud.params.size() != n_gauges) return {};
+
+    std::vector<uint8_t> out(orig, orig + orig_size);
+    uint8_t* ocs = out.data() + (cs.data - orig);
+
+    // Every known gauge field must be supplied exactly once (any order);
+    // unknown names reject rather than silently no-op.
+    std::vector<bool> used(hud.params.size(), false);
+    for (const auto& g : kGauges) {
+        int found = -1;
+        for (size_t i = 0; i < hud.params.size(); ++i) {
+            if (used[i]) continue;
+            if (hud.params[i].gauge == g.gauge && hud.params[i].field == g.field) {
+                found = (int)i;
+                break;
+            }
+        }
+        if (found < 0) return {};
+        used[(size_t)found] = true;
+
+        const int16_t v = hud.params[(size_t)found].value;
+        switch (g.type) {
+        case GaugeEntry::S16:
+            ocs[g.offset]     = (uint8_t)v;
+            ocs[g.offset + 1] = (uint8_t)((uint16_t)v >> 8);
+            break;
+        case GaugeEntry::S8:
+            if (v < -128 || v > 127) return {};
+            ocs[g.offset] = (uint8_t)(int8_t)v;
+            break;
+        case GaugeEntry::U8:
+            if (v < 0 || v > 255) return {};
+            ocs[g.offset] = (uint8_t)v;
+            break;
+        }
+    }
+
+    if (!wr_icon(ocs, cs.size, 0x245, hud.icon_a)) return {};
+    if (!wr_icon(ocs, cs.size, 0x24D, hud.icon_b)) return {};
+    if (!wr_icon(ocs, cs.size, 0x255, hud.icon_c)) return {};
+    if (!wr_icon(ocs, cs.size, 0x25D, hud.icon_d)) return {};
+
+    // asset_strings are informational: the string regions carry verbatim.
+    return out;
+}
+
 } // namespace fx

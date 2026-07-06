@@ -20,8 +20,8 @@ fx t2      info                         # .T2 terrain map grid info
 fx plt     info / dump                  # .P pilot save file
 fx pal     info / dump                  # .PAL VGA palettes
 fx inf     dump                         # .INF aircraft tech sheets
-fx hud     dump                         # .HUD layout overlays
-fx lay     dump / gradient              # .LAY sky/atmosphere layers
+fx hud     dump / set                   # .HUD layout overlays
+fx lay     dump / gradient / set        # .LAY sky/atmosphere layers
 fx fnt     info / unpack / pack         # .FNT bitmap fonts (x86 glyph recompiler)
 fx mus     dump                         # .MUS music sequencer bytecode
 fx bi      dump                         # .BI compiled AI disassembler
@@ -455,12 +455,26 @@ data (RTF text section and scene parameters).
 
 ```
 fx hud dump <file.HUD>
+fx hud set  <file.HUD> <gauge.field=value ...> [-o out.HUD]
 ```
 
 #### `fx hud dump <file.HUD>`
 
-Print the HUD overlay DLL's element table — positions, flags, and resource
-references for each HUD element.
+Print the HUD overlay DLL's gauge parameter table, advisory icon labels,
+and asset-string references as JSON.
+
+#### `fx hud set <file.HUD> <gauge.field=value ...> [-o out.HUD]`
+
+Edit gauge parameters (keys as `fx hud dump` prints them, e.g.
+`speed_tape.dx=-40`) and advisory icon labels (`icon_a`…`icon_d`, up to 8
+characters). Everything else — asset strings, PE container, unmodelled
+bytes — carries over verbatim; with no edits the output is byte-identical
+(proven over all 46 install HUDs).
+
+```
+> fx hud set F16C.HUD speed_tape.dx=-40 icon_d=BAY -o F16C_mod.HUD
+F16C.HUD -> F16C_mod.HUD (4608 bytes, 2 edit(s))
+```
 
 *See also: [fa/formats/HUD.md](fa/formats/HUD.md)*
 
@@ -469,6 +483,7 @@ references for each HUD element.
 ```
 fx lay dump     <file.LAY>
 fx lay gradient <file.LAY> [-o output.png]
+fx lay set      <file.LAY> <key=value ...> [-o out.LAY]
 ```
 
 #### `fx lay dump <file.LAY>`
@@ -478,6 +493,20 @@ Print the sky and atmosphere lookup-table structure of a `.LAY` overlay DLL.
 #### `fx lay gradient <file.LAY> [-o output.png]`
 
 Render the atmosphere gradient tables to a PNG.
+
+#### `fx lay set <file.LAY> <key=value ...> [-o out.LAY]`
+
+Edit header scalars (`sky_angle_scale`, `below_angle_scale`) and per-layer
+fields addressed as `layerN.<field>` — the scalar names `fx lay dump`
+prints, plus `cloud_pic` / `sky_pic` (up to 22 characters). The gradient
+ramps are editable through the library API only. The layer count and end
+sentinel cannot change; unmodelled bytes carry over verbatim, so with no
+edits the output is byte-identical (proven over all 24 install LAYs).
+
+```
+> fx lay set DAY1.LAY layer0.fog_density=9 sky_angle_scale=123 -o DAY1_mod.LAY
+DAY1.LAY -> DAY1_mod.LAY (20992 bytes, 2 edit(s))
+```
 
 *See also: [fa/formats/LAY.md](fa/formats/LAY.md)*
 

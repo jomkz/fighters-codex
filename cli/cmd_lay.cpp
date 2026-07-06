@@ -1,7 +1,9 @@
 ﻿#include "fx/lay.h"
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <string>
 #include <vector>
 
 // stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
@@ -28,6 +30,10 @@ static void usage_lay() {
     puts("Usage:");
     puts("  fx lay dump     <file.LAY>");
     puts("  fx lay gradient <file.LAY> [-o output.png]");
+    puts("  fx lay set      <file.LAY> <key=value ...> [-o out.LAY]");
+    puts("    keys: sky_angle_scale, below_angle_scale, or layerN.<field>");
+    puts("    layer fields: the scalars fx lay dump prints, plus cloud_pic /");
+    puts("    sky_pic (gradient ramps are lib/GUI-only)");
 }
 
 static int cmd_lay_dump(const char* path) {
@@ -165,6 +171,96 @@ static int cmd_lay_gradient(int argc, char** argv) {
     return 0;
 }
 
+// Apply one scalar edit to a layer by dump-field name. Returns false for an
+// unknown field.
+static bool lay_set_field(fx::LayLayer& L, const std::string& field,
+                          const std::string& val) {
+    const int32_t iv = (int32_t)atol(val.c_str());
+    struct F { const char* name; int32_t* p; };
+    const F ints[] = {
+        {"sel_alt_min", &L.sel_alt_min}, {"sel_alt_max", &L.sel_alt_max},
+        {"alt_min", &L.alt_min},         {"alt_max", &L.alt_max},
+        {"fog_alt_low", &L.fog_alt_low}, {"vis_lo", &L.vis_lo},
+        {"fog_alt_high", &L.fog_alt_high}, {"vis_hi", &L.vis_hi},
+        {"extinction_param", &L.extinction_param},
+        {"gradient_alt_start", &L.gradient_alt_start},
+        {"gradient_val_start", &L.gradient_val_start},
+        {"gradient_alt_end", &L.gradient_alt_end},
+        {"gradient_val_end", &L.gradient_val_end},
+    };
+    for (const auto& f : ints) {
+        if (field == f.name) { *f.p = iv; return true; }
+    }
+    if (field == "flags")       { L.flags = (uint8_t)iv; return true; }
+    if (field == "fog_density") { L.fog_density = (uint32_t)iv; return true; }
+    if (field == "visibility")  { L.visibility = (uint8_t)iv; return true; }
+    if (field == "cloud_pic")   { L.cloud_pic = val; return true; }
+    if (field == "sky_pic")     { L.sky_pic = val; return true; }
+    return false;
+}
+
+static int cmd_lay_set(int argc, char** argv) {
+    const char* src = nullptr;
+    const char* dst = nullptr;
+    std::vector<const char*> edits;
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "-o") == 0 && i + 1 < argc) dst = argv[++i];
+        else if (!src) src = argv[i];
+        else edits.push_back(argv[i]);
+    }
+    if (!src || edits.empty()) { usage_lay(); return 1; }
+
+    std::ifstream f(src, std::ios::binary | std::ios::ate);
+    if (!f) { fprintf(stderr, "Cannot open: %s\n", src); return 1; }
+    std::vector<uint8_t> buf((size_t)f.tellg());
+    f.seekg(0);
+    f.read((char*)buf.data(), (std::streamsize)buf.size());
+
+    fx::LayFile lay = fx::lay_parse(buf.data(), buf.size());
+    if (!lay.valid) { fprintf(stderr, "Failed to parse LAY: %s\n", src); return 1; }
+
+    for (const char* e : edits) {
+        const char* eq = strchr(e, '=');
+        if (!eq || eq == e) { fprintf(stderr, "Bad edit (want key=value): %s\n", e); return 1; }
+        std::string key(e, (size_t)(eq - e));
+        std::string val(eq + 1);
+
+        if (key == "sky_angle_scale")   { lay.sky_angle_scale = (uint32_t)atol(val.c_str()); continue; }
+        if (key == "below_angle_scale") { lay.below_angle_scale = (uint32_t)atol(val.c_str()); continue; }
+
+        // layerN.<field>
+        if (key.rfind("layer", 0) == 0) {
+            size_t dot = key.find('.');
+            if (dot != std::string::npos && dot > 5) {
+                char* end = nullptr;
+                long n = strtol(key.c_str() + 5, &end, 10);
+                if (end == key.c_str() + dot && n >= 0 &&
+                    (size_t)n < lay.layers.size()) {
+                    if (lay_set_field(lay.layers[(size_t)n], key.substr(dot + 1), val))
+                        continue;
+                }
+            }
+        }
+        fprintf(stderr, "Unknown key: %s\n", key.c_str());
+        return 1;
+    }
+
+    auto out = fx::lay_repack(buf.data(), buf.size(), lay);
+    if (out.empty()) {
+        fprintf(stderr, "Repack failed (sentinel bit moved or oversized pic name?)\n");
+        return 1;
+    }
+    std::string out_path = dst ? dst : (std::string(src) + ".out");
+    std::ofstream ofs(out_path, std::ios::binary);
+    if (!ofs || !ofs.write((const char*)out.data(), (std::streamsize)out.size())) {
+        fprintf(stderr, "Cannot write: %s\n", out_path.c_str());
+        return 1;
+    }
+    printf("%s -> %s (%zu bytes, %zu edit(s))\n", src, out_path.c_str(),
+           out.size(), edits.size());
+    return 0;
+}
+
 int cmd_lay(int argc, char** argv) {
     if (argc < 2) { usage_lay(); return 1; }
     const char* sub = argv[1];
@@ -174,6 +270,9 @@ int cmd_lay(int argc, char** argv) {
     }
     if (strcmp(sub, "gradient") == 0) {
         return cmd_lay_gradient(argc - 1, argv + 1);
+    }
+    if (strcmp(sub, "set") == 0) {
+        return cmd_lay_set(argc - 1, argv + 1);
     }
     fprintf(stderr, "Unknown subcommand: %s\n", sub);
     usage_lay();

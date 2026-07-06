@@ -107,10 +107,12 @@ static void print_usage() {
     puts("");
     puts("HUD layout commands:");
     puts("  fx hud dump   <file.HUD>");
+    puts("  fx hud set    <file.HUD> <gauge.field=value ...> [-o out.HUD]");
     puts("");
     puts("Sky/atmosphere layer commands:");
     puts("  fx lay dump     <file.LAY>");
     puts("  fx lay gradient <file.LAY> [-o output.png]");
+    puts("  fx lay set      <file.LAY> <key=value ...> [-o out.LAY]");
     puts("");
     puts("Font commands:");
     puts("  fx fnt info   <file.FNT>");

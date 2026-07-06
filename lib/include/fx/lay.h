@@ -52,4 +52,19 @@ struct LayFile {
 
 LayFile lay_parse(const uint8_t* data, size_t size);
 
+// Rebuild a LAY DLL around edited header fields and layers (#99).
+// `lay.layers` must match the original layer count, and each layer's
+// end-sentinel bit (flags bit 0) must match the original's — moving the
+// sentinel would change the array length the engine walks. cloud_pic and
+// sky_pic fit their fixed 22-byte slots (a NUL is kept when shorter than
+// 22). The structural VAs (layer_array_va, colour_entry_table_va,
+// palette_buffer_va) must match the original — their tables cannot be
+// relocated; the sky/below band tables stay editable. Bytes the parser
+// does not model — PE headers, colour tables, reserved layer regions —
+// carry over verbatim, so an unedited parse→repack is byte-identical.
+// Returns empty on a count/sentinel/VA mismatch or oversized picture
+// names.
+std::vector<uint8_t> lay_repack(const uint8_t* orig, size_t orig_size,
+                                const LayFile& lay);
+
 } // namespace fx
