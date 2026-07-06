@@ -7,6 +7,67 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.10] - 2026-07-06
+
+Checkpoint release for Phase 4 (Codec & Test Completeness), Wave 3 — **the
+image and cockpit-UI formats round-trip**: PIC, CB8, RAW, and FNT gain
+byte-identical repack, HUD and LAY gain write paths and an in-game-style
+preview, and the whole image/A-V codec surface is hardened by a new fuzz
+batch that found and fixed five memory-safety bugs on contact. Alongside
+Wave 3, the `fx_render` **software rasterizer** (the `fa` backend) is
+complete, and the documentation site is rebuilt as a learning experience.
+
+### Added
+- **fx-lib** **Byte-identical repack for the image formats.** `PIC`
+  (dense + sparse, proven over a full-install census, #175), `CB8` (the
+  FMV container — an engine-traced VQ-keyframe model with per-frame
+  palette, #95), `RAW` (screenshot import + repack, header confirmed at
+  four resolutions, #96), and `FNT` (an x86 glyph recompiler that
+  reproduces every install font byte-for-byte, #97).
+- **fx-lib** **HUD and LAY write paths (#99).** `hud_repack` / `lay_repack`
+  rebuild the cockpit-overlay DLLs around edited gauge parameters, icon
+  labels, and atmosphere layers, byte-identical over all 46 HUD and 24 LAY
+  files; exposed as `fx hud set` and `fx lay set`.
+- **fxs** **HUD and LAY in-game-style previews (#283).** Both editors draw
+  a true draw-semantics preview through `fx_render` — HUD symbology
+  positioned from the file's gauge parameters, LAY sky rendered as the
+  engine's Gouraud horizon banding.
+- **fx-render** **The `fa` software rasterizer (#328–#334).** A faithful
+  reimplementation of the game's `G_*` raster layer behind the generic
+  Renderer API: 8-bit indexed surface + VGA palette + raster state, a
+  16.16 fixed-point span core, Gouraud (packed-index) spans,
+  Sutherland–Hodgman / Cohen–Sutherland / near-plane clipping,
+  painter's-order occlusion (no z-buffer), and affine + perspective
+  textured spans — with an fxs **Software (FA)** rendering mode.
+- **test** Codec suites: `cb8`/`ot`/`fnt` error paths and a synthetic FNT
+  round-trip (#112); `hud`/`inf`/`lay`/`raw`/`sms` suites, including the
+  `FA.SMS` symbol-map parser cross-checked against the reconstruction
+  (#113).
+- **build/ci** **Fuzz harness batch 2 (#117)** — `pic`, `cb8`, `raw`,
+  `fnt`, `seq`, `audio`, with synthetic seed corpora and format
+  dictionaries, wired into the per-PR smoke and weekly deep runs.
+- **docs-site** A rebuilt documentation experience: modernized theme with
+  print/PDF export (#343) and a "Start Here" learning path with
+  concept-first navigation (#344).
+
+### Changed
+- **docs** Explanatory byte-layout diagrams for the format specs (#345),
+  and shell-neutral modding recipes (#346).
+- **ci** `cpp/path-injection` is rule-scoped out of `cli/` in the CodeQL
+  filter (#382): an argv path reaching a file open is a command-line
+  tool's contract, not injection. The rule stays live for `lib/`, where
+  archive-entry-name paths are a real extraction surface.
+
+### Fixed
+- **fx-lib** **Five memory-safety bugs in the image/A-V decoders**, found
+  by the new fuzz harnesses and fixed with regression tests (#117): two
+  32-bit-overflow bounds checks in `pic_decode` (the pixel and palette
+  offsets) that let an out-of-range offset read outside the buffer; a
+  `cb8_decode_frame` mode-bitmap guard that checked bits but not whole
+  words; an unbounded `fnt_repack` glyph-body walk past a truncated code
+  section; and a `wav_to_pcm` `fmt ` chunk that read 16 bytes past a
+  truncated file.
+
 ## [0.5.9] - 2026-07-05
 
 Checkpoint release for Phase 4 (Codec & Test Completeness): **every documented
@@ -371,7 +432,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.9...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.10...HEAD
+[0.5.10]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.10
 [0.5.9]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.9
 [0.5.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.8
 [0.5.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.7
