@@ -7,6 +7,43 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Phase 4 (Codec & Test Completeness), Wave 4 opener — **the `.T2` terrain
+format goes end-to-end**: a read API that exposes per-tile heights and
+texture indices, a byte-identical write path, and a textured 3D terrain
+viewer in fxs that draws each theater through the shared `fx_render`
+module. Alongside it, the MUS music-sequencer disassembler moves into
+`fx_lib` (correcting a stale opcode model the GUI carried), and the
+remaining read-only codec directions are settled.
+
+### Added
+- **fx-lib** **`.T2` terrain read API (#158).** `t2_read` decodes a
+  theater into a `T2Map` — header strings, the per-leaf records (surface
+  class, elevation band, texture variant) and the per-tile summary array —
+  with row-major accessors; plus `fx t2 dump` (records as CSV) and
+  `fx t2 heightmap` (leaf elevation → grayscale PNG). Proven lossless over
+  all 16 stock theaters — the tile-level data fa-bridge's terrain bridging
+  consumes.
+- **fx-lib** **`.T2` write path (#98).** `t2_write` / `t2_repack` serialize
+  a map back to bytes; a `t2_read` → `t2_write` round-trip is
+  byte-identical across every theater, with the editable record vectors
+  validated against the header grid.
+- **fxs** **`.T2` terrain 3D viewer (#285).** Selecting a `.T2` renders a
+  textured 3D heightfield through `fx_render` (GL + FA-faithful software
+  backends, orbit camera) — each leaf textured with its `texture_variant`
+  tile, water as flat sea. The RE-resolved terrain-texturing model
+  (`texture_variant` → `<theater><N>.PIC`, palette band 192–255) is
+  documented in the T2 spec.
+
+### Changed
+- **fx-lib** **MUS disassembler lifted into `fx_lib` (#157).** `fx/mus.h` /
+  `lib/src/mus.cpp` (`mus_disassemble`) is now the single source; the
+  `fx mus dump` CLI and the fxs music editor are thin consumers — which
+  corrects the editor's previous, wrong opcode model.
+- **docs** **Read-only codec directions settled (#101).** `.INF` already
+  round-trips byte-identically; `.SMS` (a debugger symbol map) and `.MUS`
+  (a compiled Miles DLL) are read-only by design and now carry a written
+  rationale in their spec front-matter.
+
 ## [0.5.10] - 2026-07-06
 
 Checkpoint release for Phase 4 (Codec & Test Completeness), Wave 3 — **the
