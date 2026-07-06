@@ -37,6 +37,7 @@ add_executable(fx_tests
     test_dlg.cpp
     test_xmi.cpp
     render/test_render.cpp
+    render/test_fa.cpp
 )
 
 target_link_libraries(fx_tests PRIVATE fx_lib fx_render fx_warnings Catch2::Catch2WithMain)
