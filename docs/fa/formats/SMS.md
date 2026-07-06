@@ -11,7 +11,7 @@ codec:
   issue: 101
   lib: [lib/src/sms.cpp]
   commands: [sms]
-  tests: []
+  tests: [tests/test_sms.cpp]
   fuzz: []
   fixtures:
     synthetic: false
