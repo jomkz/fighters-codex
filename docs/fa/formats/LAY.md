@@ -17,7 +17,7 @@ codec:
   commands: [lay]
   tests: [tests/test_pe.cpp, tests/test_lay.cpp]
   fuzz: [fuzz/fuzz_pe.cpp]
-  gui: [gui/src/editors/lay_editor.cpp]
+  gui: [gui/src/editors/lay_editor.cpp, gui/src/editors/overlay_preview.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

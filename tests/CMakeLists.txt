@@ -68,14 +68,16 @@ if(FX_BUILD_GUI)
         gui/test_dialog_queue.cpp
         gui/test_math3d.cpp
         gui/test_audio_player.cpp
+        gui/test_overlay_preview.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/dialog_queue.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/audio_player.cpp
+        ${PROJECT_SOURCE_DIR}/gui/src/editors/overlay_preview.cpp
     )
     target_include_directories(gui_tests PRIVATE ${PROJECT_SOURCE_DIR}/gui/src)
     target_include_directories(gui_tests SYSTEM PRIVATE
         ${PROJECT_SOURCE_DIR}/gui/vendor/miniaudio)
-    target_link_libraries(gui_tests PRIVATE fx_warnings Threads::Threads
-        Catch2::Catch2WithMain ${CMAKE_DL_LIBS})
+    target_link_libraries(gui_tests PRIVATE fx_lib fx_render fx_warnings
+        Threads::Threads Catch2::Catch2WithMain ${CMAKE_DL_LIBS})
     catch_discover_tests(gui_tests PROPERTIES
         LABELS "gui"
         ENVIRONMENT "FX_AUDIO_NULL=1")
