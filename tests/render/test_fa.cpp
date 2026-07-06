@@ -339,6 +339,133 @@ TEST_CASE("Gouraud c clamps to the palette range", "[render][fa]") {
     CHECK(s.row(2)[4] == 255);
 }
 
+TEST_CASE("Sutherland-Hodgman polygon clip agrees with span clamping", "[render][fa]") {
+    // The clipped entry (G_Polygon) and the span-clamped unclipped entry
+    // (G_UPolygon) must paint identical pixels, flat and shaded.
+    fa::PolyVertex quad[4] = {V(-20, -10), V(90, -10), V(90, 70), V(-20, 70)};
+    quad[1].c = fa::ToFx(110);
+    quad[2].c = fa::ToFx(110);
+
+    for (int shaded = 0; shaded < 2; ++shaded) {
+        fa::Surface s1(64, 64), s2(64, 64);
+        s1.Clear(255);
+        s2.Clear(255);
+        fa::Raster r1(s1), r2(s2);
+        r1.SetClipBox(4, 4, 59, 59);
+        r2.SetClipBox(4, 4, 59, 59);
+        r1.SetColor(9);
+        r2.SetColor(9);
+        const fa::FillType ft = shaded ? fa::FillType::Shaded : fa::FillType::Flat;
+        r1.SetFillType(ft);
+        r2.SetFillType(ft);
+        r1.Polygon(quad, 4);         // span clamping only
+        r2.PolygonClipped(quad, 4);  // Sutherland-Hodgman, then fill
+        for (int y = 0; y < 64; ++y) {
+            for (int x = 0; x < 64; ++x) {
+                REQUIRE(s1.row(y)[x] == s2.row(y)[x]);
+            }
+        }
+    }
+}
+
+TEST_CASE("polygon clip emits the corner pentagon and handles trivial cases", "[render][fa]") {
+    fa::Surface s(64, 64);
+    fa::Raster r(s);
+    r.SetClipBox(0, 0, 31, 31);
+    std::vector<fa::PolyVertex> out;
+
+    // A triangle lopped off across the top-right corner gains two vertices.
+    const fa::PolyVertex corner[3] = {V(10, -10), V(50, 10), V(10, 20)};
+    CHECK(r.ClipPolygon(corner, 3, out) == 5);
+
+    // Fully inside: unchanged.
+    const fa::PolyVertex inside[3] = {V(5, 5), V(20, 6), V(10, 25)};
+    REQUIRE(r.ClipPolygon(inside, 3, out) == 3);
+    CHECK(out[0].x == fa::ToFx(5));
+    CHECK(out[2].y == fa::ToFx(25));
+
+    // Fully outside one plane: rejected.
+    const fa::PolyVertex outside[3] = {V(40, 0), V(60, 0), V(50, 20)};
+    CHECK(r.ClipPolygon(outside, 3, out) == 0);
+}
+
+TEST_CASE("Cohen-Sutherland line clip and G_Line stay inside the box", "[render][fa]") {
+    fa::Surface s(64, 64);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetClipBox(8, 8, 55, 55);
+
+    int x0 = 10, y0 = 10, x1 = 50, y1 = 50;  // fully inside: unchanged
+    REQUIRE(r.ClipLine(x0, y0, x1, y1));
+    CHECK(x0 == 10);
+    CHECK(y1 == 50);
+
+    x0 = 0; y0 = 32; x1 = 63; y1 = 32;  // horizontal, both ends outside
+    REQUIRE(r.ClipLine(x0, y0, x1, y1));
+    CHECK(x0 == 8);
+    CHECK(x1 == 55);
+
+    x0 = 0; y0 = 0; x1 = 5; y1 = 63;  // fully left of the box: rejected
+    CHECK_FALSE(r.ClipLine(x0, y0, x1, y1));
+
+    // G_Line paints only inside the clip box.
+    r.SetColor(3);
+    r.Line(0, 32, 63, 32);
+    CHECK(s.row(32)[8] == 3);
+    CHECK(s.row(32)[55] == 3);
+    CHECK(s.row(32)[7] == 0);
+    CHECK(s.row(32)[56] == 0);
+    // A diagonal is connected and clipped.
+    r.SetColor(4);
+    r.Line(-10, -10, 70, 70);
+    CHECK(s.row(8)[8] == 4);
+    CHECK(s.row(55)[55] == 4);
+    CHECK(s.row(7)[7] == 0);
+}
+
+TEST_CASE("near-plane straddling polygons are clipped, not dropped", "[render][fa]") {
+    // The NPM outcode scheme (renderer.md s3.2): AND rejects, OR==0 accepts,
+    // a straddler is cut at the plane with attributes interpolated.
+    const float kNear = 0.125f;
+    fa::ClipVertex tri[3];
+    tri[0] = {0.0f, 0.0f, 0.0f, 1.0f, 0, 0, 0};      // in front
+    tri[1] = {4.0f, 0.0f, 0.0f, 1.0f, 0, 0, 200.0f}; // in front
+    tri[2] = {0.0f, 4.0f, 0.0f, -1.0f, 0, 0, 0};     // behind the eye
+
+    CHECK(fa::CodePnt(tri[0], kNear) == 0);
+    CHECK(fa::CodePnt(tri[2], kNear) == fa::kClipNear);
+
+    fa::ClipVertex out[4];
+    const int n = fa::NearClipPolygon(tri, 3, kNear, out);
+    REQUIRE(n == 4);  // one vertex behind -> quad
+    for (int i = 0; i < n; ++i) {
+        CHECK(out[i].w >= kNear);  // nothing survives behind the plane
+    }
+
+    // Fully behind: trivially rejected. Fully in front: passed through.
+    fa::ClipVertex behind[3] = {tri[2], tri[2], tri[2]};
+    CHECK(fa::NearClipPolygon(behind, 3, kNear, out) == 0);
+    fa::ClipVertex front[3] = {tri[0], tri[1], tri[0]};
+    CHECK(fa::NearClipPolygon(front, 3, kNear, out) == 3);
+
+    // Observable difference from the old placeholder (which dropped the
+    // whole primitive): the clipped quad projects and paints pixels.
+    fa::Surface s(32, 32);
+    s.Clear(0);
+    fa::Raster r(s);
+    r.SetColor(5);
+    std::vector<fa::PolyVertex> poly;
+    for (int i = 0; i < n; ++i) {
+        fa::PolyVertex p;
+        // Trivial screen mapping for the test: x/w, y/w scaled to pixels.
+        p.x = static_cast<fa::Fx>((out[i].x / out[i].w) * fa::kFxOne) + fa::ToFx(4);
+        p.y = static_cast<fa::Fx>((out[i].y / out[i].w) * fa::kFxOne) + fa::ToFx(4);
+        poly.push_back(p);
+    }
+    r.PolygonClipped(poly.data(), static_cast<int>(poly.size()));
+    CHECK(CountIndex(s, 5) > 0);
+}
+
 TEST_CASE("fa spans stay correct past the 1024 ceiling", "[render][fa]") {
     // Resolution-independence acceptance (#329): the span core at 2560x1440.
     fa::Surface s(2560, 1440);

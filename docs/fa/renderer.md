@@ -145,6 +145,13 @@ Texture coordinate interpolation sets up six `_DAT_0058b7??` doubles as gradient
 (du/dx, dv/dx, dw/dx, du/dy, dv/dy, dw/dy), then calls `(*(code *)_gbuffer)()` which is a
 function pointer to the actual scanline fill kernel selected at startup.
 
+`fx_render::fa` reproduces the clip stages: the outcode near-plane scheme (`CodePnt`,
+AND-reject / OR-accept guard words, straddlers cut with attributes interpolated —
+`NearClipPolygon`), the screen-edge Sutherland–Hodgman polygon clip in the render-core
+`clip_edge_{left,right,top,bottom}` order (`G_Polygon`'s clipped entry), and the
+Cohen–Sutherland `G_ClipLine` for `G_Line`. The clipped and span-clamped paths are
+cross-validated pixel-identical by `tests/render/test_fa.cpp` (#331).
+
 ### 3.3 Z-buffer
 
 No dedicated Z-buffer write was observed in the rasteriser output — the game executable predates z-buffer

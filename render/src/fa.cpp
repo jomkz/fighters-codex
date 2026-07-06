@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <limits>
 
 #include "fx_render/render.h"
@@ -233,6 +234,169 @@ void Raster::Polygon(const PolyVertex* v, int n) {
             UPolygon(v, n);
             return;
     }
+}
+
+namespace {
+
+// One Sutherland–Hodgman pass against an axis-aligned plane. `Coord` picks
+// the tested coordinate; `keep_below` selects which side is inside. Vertex
+// attributes interpolate linearly at each crossing (int64 lerp in 16.16).
+template <typename Coord>
+void ClipEdge(const std::vector<PolyVertex>& in, std::vector<PolyVertex>& out,
+              Fx bound, bool keep_below, Coord coord) {
+    out.clear();
+    const std::size_t n = in.size();
+    for (std::size_t i = 0; i < n; ++i) {
+        const PolyVertex& a = in[i];
+        const PolyVertex& b = in[(i + 1) % n];
+        const bool a_in = keep_below ? coord(a) <= bound : coord(a) >= bound;
+        const bool b_in = keep_below ? coord(b) <= bound : coord(b) >= bound;
+        if (a_in) out.push_back(a);
+        if (a_in == b_in) continue;
+        const std::int64_t num = static_cast<std::int64_t>(bound - coord(a));
+        const std::int64_t den = static_cast<std::int64_t>(coord(b) - coord(a));
+        auto lerp = [&](Fx pa, Fx pb) {
+            return pa + static_cast<Fx>((static_cast<std::int64_t>(pb - pa) * num) / den);
+        };
+        PolyVertex c;
+        c.x = lerp(a.x, b.x);
+        c.y = lerp(a.y, b.y);
+        c.u = lerp(a.u, b.u);
+        c.v = lerp(a.v, b.v);
+        c.c = lerp(a.c, b.c);
+        out.push_back(c);
+    }
+}
+
+}  // namespace
+
+int Raster::ClipPolygon(const PolyVertex* in, int n, std::vector<PolyVertex>& out) const {
+    out.clear();
+    if (!in || n < 3) return 0;
+    std::vector<PolyVertex> a(in, in + n), b;
+    // clip_edge_left / _right / _top / _bottom — the render-core order. The
+    // right/bottom planes sit at the last representable 16.16 value inside
+    // the boundary pixel (the clip bounds are inclusive).
+    ClipEdge(a, b, ToFx(clip_left_), false, [](const PolyVertex& p) { return p.x; });
+    ClipEdge(b, a, ToFx(clip_right_) + (kFxOne - 1), true, [](const PolyVertex& p) { return p.x; });
+    ClipEdge(a, b, ToFx(clip_top_), false, [](const PolyVertex& p) { return p.y; });
+    ClipEdge(b, a, ToFx(clip_bottom_) + (kFxOne - 1), true, [](const PolyVertex& p) { return p.y; });
+    if (a.size() < 3) return 0;
+    out = std::move(a);
+    return static_cast<int>(out.size());
+}
+
+void Raster::PolygonClipped(const PolyVertex* v, int n) {
+    std::vector<PolyVertex> clipped;
+    if (ClipPolygon(v, n, clipped) < 3) return;
+    Polygon(clipped.data(), static_cast<int>(clipped.size()));
+}
+
+namespace {
+// Cohen–Sutherland outcodes for the integer clip box.
+constexpr unsigned kOutLeft = 1, kOutRight = 2, kOutTop = 4, kOutBottom = 8;
+unsigned OutCode(int x, int y, int l, int t, int r, int b) {
+    unsigned code = 0;
+    if (x < l) code |= kOutLeft;
+    if (x > r) code |= kOutRight;
+    if (y < t) code |= kOutTop;
+    if (y > b) code |= kOutBottom;
+    return code;
+}
+}  // namespace
+
+bool Raster::ClipLine(int& x0, int& y0, int& x1, int& y1) const {
+    const int l = clip_left_, t = clip_top_, r = clip_right_, b = clip_bottom_;
+    unsigned c0 = OutCode(x0, y0, l, t, r, b);
+    unsigned c1 = OutCode(x1, y1, l, t, r, b);
+    while (true) {
+        if (!(c0 | c1)) return true;   // trivially accepted
+        if (c0 & c1) return false;     // trivially rejected
+        const unsigned out = c0 ? c0 : c1;
+        std::int64_t x = 0, y = 0;
+        if (out & kOutLeft) {
+            y = y0 + static_cast<std::int64_t>(y1 - y0) * (l - x0) / (x1 - x0);
+            x = l;
+        } else if (out & kOutRight) {
+            y = y0 + static_cast<std::int64_t>(y1 - y0) * (r - x0) / (x1 - x0);
+            x = r;
+        } else if (out & kOutTop) {
+            x = x0 + static_cast<std::int64_t>(x1 - x0) * (t - y0) / (y1 - y0);
+            y = t;
+        } else {
+            x = x0 + static_cast<std::int64_t>(x1 - x0) * (b - y0) / (y1 - y0);
+            y = b;
+        }
+        if (out == c0) {
+            x0 = static_cast<int>(x);
+            y0 = static_cast<int>(y);
+            c0 = OutCode(x0, y0, l, t, r, b);
+        } else {
+            x1 = static_cast<int>(x);
+            y1 = static_cast<int>(y);
+            c1 = OutCode(x1, y1, l, t, r, b);
+        }
+    }
+}
+
+void Raster::Line(int x0, int y0, int x1, int y1) {
+    if (!ClipLine(x0, y0, x1, y1)) return;
+    // Integer line walk between the clipped endpoints (inclusive).
+    const int dx = std::abs(x1 - x0), dy = -std::abs(y1 - y0);
+    const int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+    int err = dx + dy;
+    while (true) {
+        target_->row(y0)[x0] = color_;
+        if (x0 == x1 && y0 == y1) break;
+        const int e2 = 2 * err;
+        if (e2 >= dy) {
+            err += dy;
+            x0 += sx;
+        }
+        if (e2 <= dx) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
+unsigned CodePnt(const ClipVertex& v, float near_w) {
+    return v.w < near_w ? kClipNear : 0;
+}
+
+int NearClipPolygon(const ClipVertex* in, int n, float near_w, ClipVertex* out) {
+    if (!in || !out || n < 3) return 0;
+    unsigned and_code = ~0u, or_code = 0;
+    for (int i = 0; i < n; ++i) {
+        const unsigned c = CodePnt(in[i], near_w);
+        and_code &= c;
+        or_code |= c;
+    }
+    if (and_code) return 0;  // trivial reject: every vertex behind the plane
+    if (!or_code) {          // trivial accept: no guard bit set
+        for (int i = 0; i < n; ++i) out[i] = in[i];
+        return n;
+    }
+    int m = 0;
+    for (int i = 0; i < n; ++i) {
+        const ClipVertex& a = in[i];
+        const ClipVertex& b = in[(i + 1) % n];
+        const bool a_in = a.w >= near_w;
+        const bool b_in = b.w >= near_w;
+        if (a_in) out[m++] = a;
+        if (a_in == b_in) continue;
+        const float t = (near_w - a.w) / (b.w - a.w);
+        ClipVertex c;
+        c.x = a.x + (b.x - a.x) * t;
+        c.y = a.y + (b.y - a.y) * t;
+        c.z = a.z + (b.z - a.z) * t;
+        c.w = near_w;
+        c.u = a.u + (b.u - a.u) * t;
+        c.v = a.v + (b.v - a.v) * t;
+        c.c = a.c + (b.c - a.c) * t;
+        out[m++] = c;
+    }
+    return m;
 }
 
 }  // namespace fa
