@@ -14,7 +14,7 @@ fx pt      info / unpack / pack         # aircraft type definitions
 fx nt / jt / see / ecm / gas ...        # other type definitions
 fx mission info / unpack / pack         # .M / .MM mission and map files
 fx sh      info / unpack                # .SH 3D shapes → Wavefront OBJ
-fx raw     info / unpack                # .RAW in-game screenshots → PNG
+fx raw     info / unpack / pack         # .RAW in-game screenshots ↔ PNG
 fx sms     dump                         # FA.SMS symbol map → CSV
 fx t2      info                         # .T2 terrain map grid info
 fx plt     info / dump                  # .P pilot save file
@@ -285,18 +285,24 @@ a non-goal (the encoder chooses its own codebook packing).
 ```
 fx raw info   <file.RAW>
 fx raw unpack <file.RAW> [-o out.png]
+fx raw pack   <file.png> [-o out.RAW]
 ```
 
 #### `fx raw info <file.RAW>`
 
-Print the capture header: magic, dimensions (height derived from file size),
-and palette presence.
+Print the capture header: magic and dimensions (width and height are u16
+big-endian at +8/+10 — confirmed against captures at four resolutions).
 
 #### `fx raw unpack <file.RAW> [-o out.png]`
 
 Convert an in-game screenshot (Ctrl-Alt-Shift-V, written to the install
-directory) to PNG using the file's embedded 8-bit palette. There is no pack
-command — RAW files are engine output, not game assets.
+directory) to PNG using the file's embedded 8-bit palette.
+
+#### `fx raw pack <file.png> [-o out.RAW]`
+
+Convert a PNG back to a RAW screenshot: the embedded palette is rebuilt from
+the image's distinct colours in first-seen order (max 256; alpha ignored).
+The PNG→RAW→PNG loop is pixel-exact.
 
 *See also: [fa/formats/RAW.md](fa/formats/RAW.md)*
 

@@ -41,7 +41,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [PIC](PIC.md) | graphics | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx pic` | `tests/test_pic.cpp` | syn/real | — | `gui/src/editors/pic_editor.cpp` |
 | [PT](PT.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54)<br>re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx pt` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [PTS](PTS.md) | ui-overlay | complete | — | read-only (by design) | `fx pts` | `tests/test_pts.cpp` | syn/real | — | — |
-| [RAW](RAW.md) | graphics | partial | re-gameplay [#56](https://github.com/jomkz/fighters-codex/issues/56) | read-only [#96](https://github.com/jomkz/fighters-codex/issues/96) | `fx raw` | — | — | — | `gui/src/editors/raw_viewer.cpp` |
+| [RAW](RAW.md) | graphics | complete | — | round-trip (byte-identical) | `fx raw` | `tests/test_raw.cpp` | syn | — | `gui/src/editors/raw_viewer.cpp` |
 | [RGN](RGN.md) | installer | complete | — | round-trip (byte-identical) | `fx rgn` | `tests/test_rgn.cpp` | syn | — | — |
 | [SEE](SEE.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx see` | `tests/test_brf.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [SEQ](SEQ.md) | video | complete | — | round-trip (byte-identical) | `fx seq` | `tests/test_seq.cpp` | syn/real | — | `gui/src/editors/seq_editor.cpp` |

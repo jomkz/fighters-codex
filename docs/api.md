@@ -472,6 +472,30 @@ std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
 } // namespace fx
 ```
 
+## raw.h — Screenshot codec
+
+```cpp
+namespace fx {
+
+struct RawInfo { uint32_t width, height; };
+
+// Parse the mhwanh header (width/height u16 big-endian at +8/+10).
+bool raw_info(const uint8_t* data, size_t size, RawInfo* info);
+
+// Decode to width*height*4 RGBA through the embedded 8-bit palette.
+std::vector<uint8_t> raw_decode(const uint8_t* data, size_t size);
+
+// Encode RGBA to a RAW screenshot: palette rebuilt from distinct colours in
+// first-seen order (max 256; alpha ignored). Empty on overflow.
+std::vector<uint8_t> raw_encode(const uint8_t* rgba, int w, int h);
+
+// Byte-identical structural repack; a non-empty result always equals the
+// input. Trailing undescribed bytes fail.
+std::vector<uint8_t> raw_repack(const uint8_t* data, size_t size);
+
+} // namespace fx
+```
+
 ## cb8.h — FMV video codec
 
 ```cpp

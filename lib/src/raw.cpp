@@ -1,5 +1,6 @@
 ﻿#include "fx/raw.h"
 #include <cstring>
+#include <map>
 
 namespace fx {
 
@@ -41,6 +42,62 @@ std::vector<uint8_t> raw_decode(const uint8_t* data, size_t size) {
         rgba[i*4+3] = 255;
     }
     return rgba;
+}
+
+static void w16be(uint8_t* d, int o, uint16_t v) {
+    d[o]     = (uint8_t)(v >> 8);
+    d[o + 1] = (uint8_t)v;
+}
+
+std::vector<uint8_t> raw_encode(const uint8_t* rgba, int w, int h) {
+    if (!rgba || w <= 0 || h <= 0 || w > 0xFFFF || h > 0xFFFF) return {};
+
+    std::vector<uint8_t> out((size_t)DATA_OFFSET + (size_t)w * h, 0);
+    memcpy(out.data(), "mhwanh", 6);
+    out[6] = 0x00;             // constant across every observed resolution
+    out[7] = 0x04;
+    w16be(out.data(), 8, (uint16_t)w);
+    w16be(out.data(), 10, (uint16_t)h);
+    out[12] = 0x01;            // constant
+    out[13] = 0x00;
+
+    // Exact-colour palette in first-seen order; 8-bit RGB, alpha ignored.
+    uint8_t* pal = out.data() + HEADER_SIZE;
+    uint8_t* pix = out.data() + DATA_OFFSET;
+    std::map<uint32_t, uint8_t> seen;
+    for (int i = 0; i < w * h; i++) {
+        const uint32_t key = (uint32_t)rgba[i*4] << 16 |
+                             (uint32_t)rgba[i*4+1] << 8 | rgba[i*4+2];
+        auto it = seen.find(key);
+        if (it == seen.end()) {
+            if (seen.size() >= 256) return {};
+            const uint8_t id = (uint8_t)seen.size();
+            it = seen.emplace(key, id).first;
+            pal[id*3+0] = rgba[i*4+0];
+            pal[id*3+1] = rgba[i*4+1];
+            pal[id*3+2] = rgba[i*4+2];
+        }
+        pix[i] = it->second;
+    }
+    return out;
+}
+
+std::vector<uint8_t> raw_repack(const uint8_t* data, size_t size) {
+    RawInfo info;
+    if (!raw_info(data, size, &info)) return {};
+    const size_t total = (size_t)DATA_OFFSET + (size_t)info.width * info.height;
+    if (size != total) return {};  // trailing bytes = unknown structure
+
+    std::vector<uint8_t> out(total, 0);
+    memcpy(out.data(), "mhwanh", 6);
+    out[6] = data[6];              // constant field carried verbatim
+    out[7] = data[7];
+    w16be(out.data(), 8, (uint16_t)info.width);   // re-serialized (proving them)
+    w16be(out.data(), 10, (uint16_t)info.height);
+    memcpy(out.data() + 12, data + 12, HEADER_SIZE - 12);  // constant + padding
+    memcpy(out.data() + HEADER_SIZE, data + HEADER_SIZE,
+           PALETTE_SIZE + (size_t)info.width * info.height);
+    return out;
 }
 
 } // namespace fx
