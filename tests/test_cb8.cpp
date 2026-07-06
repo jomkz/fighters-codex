@@ -210,3 +210,39 @@ TEST_CASE("cb8 out-of-range frames and mismatched repack counts fail cleanly") {
     // frames.size() must equal the original frame count
     CHECK(cb8_repack(file.data(), file.size(), {}).empty());
 }
+
+TEST_CASE("cb8_decode_frame rejects a bitmap too small for a whole word") {
+    // fuzz_cb8: the mode bitmap is read a u32 word at a time, but the guard
+    // only ensured enough *bits* (S*8 >= cells). A 1-byte bitmap backing a
+    // 4-byte word read walked off the frame. 8x8 -> 4 cells needs one word.
+    std::vector<uint8_t> f;
+    f.insert(f.end(), {'D', 'R', 'B', 'C'});
+    w32v(f, 0); w16v(f, 150); w16v(f, 22050); w32v(f, 0x65);
+    f.resize(64, 0xFF);
+    const uint32_t voom_sz = 20 + 16;
+    const uint32_t mrfi_off = 64 + voom_sz;
+    f.insert(f.end(), {'V', 'o', 'o', 'M'});
+    w32v(f, voom_sz);
+    w32v(f, 8);              // width
+    w32v(f, 8);              // height  (cells = 4)
+    w32v(f, 6000);
+    const uint32_t chunk = 0x18 + 1 + 1;  // header + 1-byte bitmap + 1 idx byte
+    w32v(f, mrfi_off); w32v(f, chunk); w32v(f, 0); w32v(f, 400);
+    f.insert(f.end(), {'M', 'R', 'F', 'I'});
+    w32v(f, chunk);
+    f.push_back(0); f.push_back(5);  // key frame, 8-bit submode
+    w16v(f, 0);        // A
+    w16v(f, 0);        // B
+    w16v(f, 0);        // C
+    w16v(f, 1);        // S = 1 byte: S*8=8 >= 4 cells, but < one 4-byte word
+    w16v(f, 0);        // D
+    w16v(f, 0xFFFF);   // X: no band switch
+    w16v(f, 0);        // pad
+    f.push_back(0);    // bitmap: 1 byte
+    f.push_back(0);    // idx: 1 byte
+
+    Cb8Decoder* dec = cb8_open(f.data(), f.size());
+    REQUIRE(dec);
+    CHECK(cb8_decode_frame(dec, 0).empty());  // reject, not read past the frame
+    cb8_close(dec);
+}

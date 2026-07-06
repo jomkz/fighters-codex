@@ -176,18 +176,19 @@ std::vector<uint8_t> fnt_repack(const uint8_t* orig, size_t orig_size,
         size_t off = of.glyph_fn_va[i] - cs.vma;
         // walk to RET with the known vocabulary to find this body's end
         size_t pc = off;
+        bool ret_seen = false;
         while (pc < cs.size) {
             const uint8_t b = cs.data[pc];
-            if (b == 0xC3) { ++pc; break; }
+            if (b == 0xC3) { ++pc; ret_seen = true; break; }
+            // The displacement disambiguation reads pc+1/pc+2; a body
+            // truncated at the section end must not read past it (fuzz_fnt).
             if (b == 0x03) pc += 2;
-            else if (b == 0x88 && cs.data[pc + 1] == 0x47) pc += 3;
-            else if (b == 0x88) pc += 2;
-            else if (b == 0x66 && cs.data[pc + 2] == 0x47) pc += 4;
-            else if (b == 0x66) pc += 3;
-            else if (b == 0x89 && cs.data[pc + 1] == 0x47) pc += 3;
-            else if (b == 0x89) pc += 2;
+            else if (b == 0x88) pc += (pc + 1 < cs.size && cs.data[pc + 1] == 0x47) ? 3 : 2;
+            else if (b == 0x66) pc += (pc + 2 < cs.size && cs.data[pc + 2] == 0x47) ? 4 : 3;
+            else if (b == 0x89) pc += (pc + 1 < cs.size && cs.data[pc + 1] == 0x47) ? 3 : 2;
             else return {};
         }
+        if (!ret_seen) return {};  // body ran off the section without a RET
         if (pc > tail_off) tail_off = pc;
     }
 

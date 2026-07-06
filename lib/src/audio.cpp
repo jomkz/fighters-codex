@@ -119,7 +119,7 @@ std::vector<uint8_t> wav_to_pcm(const uint8_t* wav, size_t wav_size,
         uint32_t chunk_size = read_u32le(wav + pos + 4);
         pos += 8;
 
-        if (memcmp(tag, "fmt ", 4) == 0 && chunk_size >= 16) {
+        if (memcmp(tag, "fmt ", 4) == 0 && chunk_size >= 16 && pos + 16 <= wav_size) {
             audio_format    = read_u16le(wav + pos);
             num_channels    = read_u16le(wav + pos + 2);
             sample_rate     = read_u32le(wav + pos + 4);

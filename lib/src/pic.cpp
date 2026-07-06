@@ -77,7 +77,10 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
 
     // Build effective palette: sys_pal base + inline fragment overlay
     Palette pal = sys_pal ? *sys_pal : Palette{};
-    if (info.palette_size > 0 && info.palette_offset + info.palette_size <= size) {
+    // 64-bit: palette_offset (u32) + palette_size (u32) can wrap 32 bits,
+    // passing an out-of-range offset into the read below (fuzz_pic).
+    if (info.palette_size > 0 &&
+        (uint64_t)info.palette_offset + info.palette_size <= size) {
         const uint8_t* p = data + info.palette_offset;
         int count = (int)std::min(info.palette_size / 3u, 256u);
         for (int i = 0; i < count; i++) {
@@ -104,7 +107,9 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
     };
 
     if (fmt == 0) {
-        if (info.pixels_offset + (uint32_t)(w * h) > size) return {};
+        // 64-bit math: pixels_offset (u32) + w*h can wrap 32 bits, letting an
+        // out-of-range offset slip past the guard (fuzz_pic).
+        if ((uint64_t)info.pixels_offset + (uint64_t)w * h > size) return {};
         const uint8_t* pix = data + info.pixels_offset;
         for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)

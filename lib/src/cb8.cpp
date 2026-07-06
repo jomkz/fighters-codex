@@ -157,7 +157,11 @@ std::vector<uint8_t> cb8_decode_frame(Cb8Decoder* dec, uint32_t frame_idx) {
     if (!parse_frame(dec, frame_idx, &r)) return {};
     const uint32_t w = dec->width, h = dec->height;
     const uint32_t cw = w / 4, ch = h / 4, cells = cw * ch;
-    if ((uint64_t)r.S * 8 < cells) return {};
+    // The bitmap is read a u32 word at a time (one bit per cell), so it must
+    // hold whole words, not just enough bits: a bit-granular check (S*8 <
+    // cells) let a 1-byte bitmap back a 4-byte word read (fuzz_cb8).
+    const uint32_t bitmap_words = (cells + 31) / 32;
+    if ((uint64_t)bitmap_words * 4 > r.S) return {};
 
     std::vector<uint8_t> frame((size_t)w * h, 0);
     size_t ip = 0;

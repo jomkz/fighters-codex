@@ -72,3 +72,18 @@ TEST_CASE("audio_to_wav round-trip preserves sample rate for 8K audio") {
     REQUIRE(rate == 8000u);
     REQUIRE(recovered == pcm);
 }
+
+// fuzz_audio (#117): a "fmt " chunk claiming size >= 16 but whose body runs
+// past the file end let wav_to_pcm read 16 bytes out of bounds. The read is
+// now gated on the body actually fitting.
+TEST_CASE("wav_to_pcm rejects a fmt chunk body that runs past the file") {
+    std::vector<uint8_t> wav;
+    auto put = [&](const char* s, size_t n) { for (size_t i=0;i<n;i++) wav.push_back((uint8_t)s[i]); };
+    auto w32 = [&](uint32_t v){ for(int i=0;i<4;i++) wav.push_back((uint8_t)(v>>(8*i))); };
+    put("RIFF", 4); w32(0x24); put("WAVE", 4);
+    put("fmt ", 4); w32(16);   // claims a 16-byte body...
+    wav.push_back(1); wav.push_back(0); wav.push_back(1); wav.push_back(0);  // ...but only 4 follow
+    uint32_t rate = 0;
+    auto pcm = wav_to_pcm(wav.data(), wav.size(), &rate);
+    CHECK(pcm.empty());  // must reject, not read past the buffer
+}

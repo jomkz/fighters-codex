@@ -1,0 +1,5 @@
+# RIFF/WAV chunk ids walked by wav_to_pcm
+"RIFF"
+"WAVE"
+"fmt "
+"data"

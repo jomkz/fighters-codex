@@ -1,0 +1,13 @@
+# MZ/LE container tokens (as fuzz_pe.dict) plus the glyph interpreter's
+# x86 vocabulary (docs/fa/formats/FNT.md)
+"MZ"
+"PL\x00\x00"
+"CODE"
+"\x88\x07"
+"\x88\x47"
+"\x66\x89\x07"
+"\x66\x89\x47"
+"\x89\x07"
+"\x89\x47"
+"\x03\xf9"
+"\xc3"

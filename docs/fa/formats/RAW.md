@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/raw.cpp]
   commands: [raw]
   tests: [tests/test_raw.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_raw.cpp]
   gui: [gui/src/editors/raw_viewer.cpp]
   fixtures:
     synthetic: true

@@ -17,7 +17,7 @@ codec:
   lib: [lib/src/cb8.cpp]
   commands: [cb8]
   tests: [tests/test_cb8.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_cb8.cpp]
   gui: [gui/src/editors/cb8_editor.cpp]
   fixtures:
     synthetic: true

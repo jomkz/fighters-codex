@@ -139,3 +139,22 @@ TEST_CASE("editor-composed tab-separated line parses to full metadata") {
     REQUIRE(ev.args[0]     == "\"BOOM\"");
     REQUIRE(ev.args[1]     == "22");
 }
+
+// fuzz_seq (#117): the serializer normalizes every line terminator to CRLF,
+// so byte-identity holds only for already-CRLF input — but serialize must be
+// a fixed point of parse (idempotent) for ANY input. A bare CR and an
+// LF-only line both collapse to CRLF; a second round trip then changes
+// nothing.
+TEST_CASE("seq serialize normalizes line endings and is idempotent") {
+    // bare CR mid-file, an LF-only terminator, and a trailing DOS-EOF byte
+    const char* src = "; c\r\n\t100 wait\ra\n\t+5 x\r\n\x1A";
+    auto data = bytes(src);
+    auto once = seq_serialize(seq_parse(data.data(), data.size()));
+    auto twice = seq_serialize(seq_parse(once.data(), once.size()));
+    REQUIRE(once == twice);            // serialize is a fixed point of parse
+    // and the normalized form carries no bare CR / LF-only terminators
+    for (size_t i = 0; i + 1 < once.size(); ++i) {
+        if (once[i] == '\r') CHECK(once[i + 1] == '\n');
+        if (once[i] == '\n') CHECK((i > 0 && once[i - 1] == '\r'));
+    }
+}

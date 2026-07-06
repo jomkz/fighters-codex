@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/fnt.cpp, lib/src/pe.cpp]
   commands: [fnt]
   tests: [tests/test_pe.cpp, tests/test_fnt.cpp]
-  fuzz: [fuzz/fuzz_pe.cpp]
+  fuzz: [fuzz/fuzz_pe.cpp, fuzz/fuzz_fnt.cpp]
   gui: [gui/src/editors/fnt_editor.cpp]
   fixtures:
     synthetic: true
