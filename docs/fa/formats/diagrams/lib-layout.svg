@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="LIB archive byte layout: EALIB magic, entry count, an 18-byte-per-entry directory with a terminator entry, then contiguous file data blocks; callouts expand one directory entry and the flags=4 EA/DCL compression wrapper.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .hub   { fill: #fdf4e3; stroke: #b8892f; stroke-width: 1.5; }
+    .fmt   { fill: #e8f0fb; stroke: #3d6aa8; stroke-width: 1.5; }
+    .sys   { fill: #eaf4ec; stroke: #3f7d4f; stroke-width: 1.5; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 11.5px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; }
+    .lanetitle { fill: #33424e; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    .cut   { fill: none; stroke: #9aa7b2; stroke-width: 1; stroke-dasharray: 5 4; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #232a31; stroke: #7f8f9d; } .hub { fill: #322a1a; stroke: #d9b45f; }
+      .fmt { fill: #1e2c3e; stroke: #6f9bd6; } .sys { fill: #1d2c22; stroke: #6fae7f; }
+      .lbl { fill: #dce4ea; } .sub { fill: #a6b3bd; } .lanetitle { fill: #c7d2da; }
+      .edge { stroke: #8a99a5; } .cut { stroke: #55636e; }
+    }
+    :root[data-theme="dark"] .box { fill: #232a31; stroke: #7f8f9d; }
+    :root[data-theme="dark"] .hub { fill: #322a1a; stroke: #d9b45f; }
+    :root[data-theme="dark"] .fmt { fill: #1e2c3e; stroke: #6f9bd6; }
+    :root[data-theme="dark"] .sys { fill: #1d2c22; stroke: #6fae7f; }
+    :root[data-theme="dark"] .lbl { fill: #dce4ea; }
+    :root[data-theme="dark"] .sub { fill: #a6b3bd; }
+    :root[data-theme="dark"] .lanetitle { fill: #c7d2da; }
+    :root[data-theme="dark"] .edge { stroke: #8a99a5; }
+    :root[data-theme="dark"] .cut { stroke: #55636e; }
+    :root[data-theme="light"] .box { fill: #f4f6f8; stroke: #5b6b7a; }
+    :root[data-theme="light"] .hub { fill: #fdf4e3; stroke: #b8892f; }
+    :root[data-theme="light"] .fmt { fill: #e8f0fb; stroke: #3d6aa8; }
+    :root[data-theme="light"] .sys { fill: #eaf4ec; stroke: #3f7d4f; }
+    :root[data-theme="light"] .lbl { fill: #22303c; }
+    :root[data-theme="light"] .sub { fill: #4a5a67; }
+    :root[data-theme="light"] .lanetitle { fill: #33424e; }
+    :root[data-theme="light"] .edge { stroke: #5b6b7a; }
+    :root[data-theme="light"] .cut { stroke: #9aa7b2; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8f9d"/>
+    </marker>
+  </defs>
+
+  <text class="lanetitle" x="215" y="40" text-anchor="middle">FILE (top = offset 0)</text>
+
+  <!-- file stack -->
+  <text class="sub mono" x="82" y="80" text-anchor="end">0x00</text>
+  <rect class="box" x="90" y="60" width="250" height="32" rx="4"/>
+  <text class="lbl" x="102" y="81">Magic <tspan class="mono">"EALIB"</tspan></text>
+  <text class="sub" x="332" y="81" text-anchor="end">char[5]</text>
+
+  <text class="sub mono" x="82" y="112" text-anchor="end">0x05</text>
+  <rect class="box" x="90" y="92" width="250" height="32" rx="4"/>
+  <text class="lbl" x="102" y="113">Entry count N</text>
+  <text class="sub" x="332" y="113" text-anchor="end">u16</text>
+
+  <text class="sub mono" x="82" y="144" text-anchor="end">0x07</text>
+  <rect class="hub" x="90" y="124" width="250" height="76" rx="4"/>
+  <text class="lbl" x="102" y="146">Directory</text>
+  <text class="sub" x="332" y="146" text-anchor="end">18 B × (N+1)</text>
+  <text class="sub" x="102" y="166">N entries + one terminator entry</text>
+  <text class="sub" x="102" y="182">(name/flags zero, offset = file size)</text>
+
+  <rect class="fmt" x="90" y="200" width="250" height="180" rx="4"/>
+  <text class="sub mono" x="82" y="220" text-anchor="end">[offset]</text>
+  <text class="lbl" x="102" y="224">File data blocks</text>
+  <line class="cut" x1="100" y1="256" x2="330" y2="256"/>
+  <line class="cut" x1="100" y1="292" x2="330" y2="292"/>
+  <line class="cut" x1="100" y1="328" x2="330" y2="328"/>
+  <text class="sub" x="102" y="348">contiguous, in directory order</text>
+  <text class="sub" x="102" y="364">size = next entry's offset − own offset</text>
+  <text class="sub mono" x="82" y="384" text-anchor="end">EOF</text>
+
+  <!-- callout: one directory entry -->
+  <text class="lanetitle" x="470" y="64">DIRECTORY ENTRY (18 BYTES)</text>
+  <rect class="hub" x="470" y="76" width="180" height="40" rx="4"/>
+  <text class="lbl" x="560" y="94" text-anchor="middle">filename</text>
+  <text class="sub" x="560" y="109" text-anchor="middle">8.3, null-padded</text>
+  <rect class="hub" x="650" y="76" width="70" height="40" rx="4"/>
+  <text class="lbl" x="685" y="100" text-anchor="middle">flags</text>
+  <rect class="hub" x="720" y="76" width="130" height="40" rx="4"/>
+  <text class="lbl" x="785" y="94" text-anchor="middle">data offset</text>
+  <text class="sub" x="785" y="109" text-anchor="middle">absolute, u32</text>
+  <text class="sub mono" x="470" y="130">+0x00 · char[13]</text>
+  <text class="sub mono" x="685" y="130" text-anchor="middle">+0x0D u8</text>
+  <text class="sub mono" x="785" y="130" text-anchor="middle">+0x0E u32</text>
+
+  <!-- flags legend -->
+  <text class="lanetitle" x="470" y="168">FLAGS</text>
+  <text class="sub" x="470" y="190"><tspan class="mono">0</tspan> raw — stored verbatim</text>
+  <text class="sub" x="470" y="208"><tspan class="mono">1</tspan> LZSS — u32 decompressed-size prefix</text>
+  <text class="sub" x="470" y="226"><tspan class="mono">3</tspan> PXPK — raw with 4-byte inline header</text>
+  <text class="sub" x="470" y="244"><tspan class="mono">4</tspan> DCL ("Blast") — 6-byte EA wrapper:</text>
+
+  <!-- EA wrapper strip (flags=4) -->
+  <rect class="box" x="490" y="258" width="130" height="36" rx="4"/>
+  <text class="sub" x="555" y="274" text-anchor="middle">decompressed size</text>
+  <text class="sub mono" x="555" y="288" text-anchor="middle">u32</text>
+  <rect class="box" x="620" y="258" width="80" height="36" rx="4"/>
+  <text class="sub" x="660" y="274" text-anchor="middle">litmode</text>
+  <text class="sub mono" x="660" y="288" text-anchor="middle">u8 = 0</text>
+  <rect class="box" x="700" y="258" width="80" height="36" rx="4"/>
+  <text class="sub" x="740" y="274" text-anchor="middle">dictbits</text>
+  <text class="sub mono" x="740" y="288" text-anchor="middle">u8: 4–6</text>
+  <rect class="fmt" x="780" y="258" width="130" height="36" rx="4"/>
+  <text class="sub" x="845" y="274" text-anchor="middle">DCL bitstream</text>
+  <text class="sub mono" x="845" y="288" text-anchor="middle">LSB-first …</text>
+
+  <!-- edges -->
+  <path class="edge" d="M340 162 C 400 162, 410 96, 466 96" marker-end="url(#arr)"/>
+  <path class="edge" d="M785 122 C 935 150, 935 260, 880 320 C 820 390, 480 402, 346 330" marker-end="url(#arr)"/>
+  <text class="sub" x="630" y="368" text-anchor="middle">offset → data block</text>
+
+  <!-- footnote -->
+  <text class="sub" x="90" y="428">Sizes are not stored anywhere: each entry ends where the next one starts; the terminator's</text>
+  <text class="sub" x="90" y="444">offset field closes the last block. <tspan class="mono">fx lib repack</tspan> rebuilds all ten shipped archives byte-identically.</text>
+</svg>

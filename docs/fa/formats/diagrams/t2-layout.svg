@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="T2 terrain layout: BIT2 header with theater name, atlas reference, grid dimensions and two array offsets; payload is a full-resolution leaf array plus a coarse tile-summary array; each 3-byte record holds surface class, elevation band, and texture variant.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .hub   { fill: #fdf4e3; stroke: #b8892f; stroke-width: 1.5; }
+    .fmt   { fill: #e8f0fb; stroke: #3d6aa8; stroke-width: 1.5; }
+    .sys   { fill: #eaf4ec; stroke: #3f7d4f; stroke-width: 1.5; }
+    .dim   { fill: none; stroke: #9aa7b2; stroke-width: 1.2; stroke-dasharray: 5 4; }
+    .grid  { fill: none; stroke: #9aa7b2; stroke-width: 0.8; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 11.5px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; }
+    .lanetitle { fill: #33424e; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #232a31; stroke: #7f8f9d; } .hub { fill: #322a1a; stroke: #d9b45f; }
+      .fmt { fill: #1e2c3e; stroke: #6f9bd6; } .sys { fill: #1d2c22; stroke: #6fae7f; }
+      .dim { stroke: #55636e; } .grid { stroke: #55636e; }
+      .lbl { fill: #dce4ea; } .sub { fill: #a6b3bd; } .lanetitle { fill: #c7d2da; }
+      .edge { stroke: #8a99a5; }
+    }
+    :root[data-theme="dark"] .box { fill: #232a31; stroke: #7f8f9d; }
+    :root[data-theme="dark"] .hub { fill: #322a1a; stroke: #d9b45f; }
+    :root[data-theme="dark"] .fmt { fill: #1e2c3e; stroke: #6f9bd6; }
+    :root[data-theme="dark"] .sys { fill: #1d2c22; stroke: #6fae7f; }
+    :root[data-theme="dark"] .dim { stroke: #55636e; }
+    :root[data-theme="dark"] .grid { stroke: #55636e; }
+    :root[data-theme="dark"] .lbl { fill: #dce4ea; }
+    :root[data-theme="dark"] .sub { fill: #a6b3bd; }
+    :root[data-theme="dark"] .lanetitle { fill: #c7d2da; }
+    :root[data-theme="dark"] .edge { stroke: #8a99a5; }
+    :root[data-theme="light"] .box { fill: #f4f6f8; stroke: #5b6b7a; }
+    :root[data-theme="light"] .hub { fill: #fdf4e3; stroke: #b8892f; }
+    :root[data-theme="light"] .fmt { fill: #e8f0fb; stroke: #3d6aa8; }
+    :root[data-theme="light"] .sys { fill: #eaf4ec; stroke: #3f7d4f; }
+    :root[data-theme="light"] .dim { stroke: #9aa7b2; }
+    :root[data-theme="light"] .grid { stroke: #9aa7b2; }
+    :root[data-theme="light"] .lbl { fill: #22303c; }
+    :root[data-theme="light"] .sub { fill: #4a5a67; }
+    :root[data-theme="light"] .lanetitle { fill: #33424e; }
+    :root[data-theme="light"] .edge { stroke: #5b6b7a; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8f9d"/>
+    </marker>
+  </defs>
+
+  <text class="lanetitle" x="250" y="40" text-anchor="middle">FILE (top = offset 0)</text>
+
+  <text class="sub mono" x="102" y="76" text-anchor="end">0x00</text>
+  <rect class="box" x="110" y="58" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="75">Magic <tspan class="mono">"BIT2"</tspan></text>
+  <text class="sub" x="382" y="75" text-anchor="end">char[4]</text>
+
+  <text class="sub mono" x="102" y="102" text-anchor="end">0x04</text>
+  <rect class="box" x="110" y="84" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="101">Theater name ("Panama")</text>
+  <text class="sub" x="382" y="101" text-anchor="end">char[60]</text>
+
+  <text class="sub mono" x="102" y="128" text-anchor="end">0x40</text>
+  <rect class="dim" x="110" y="110" width="280" height="22" rx="4"/>
+  <text class="sub" x="120" y="125">unknown (observed zero)</text>
+  <text class="sub" x="382" y="125" text-anchor="end">20 B</text>
+
+  <text class="sub mono" x="102" y="154" text-anchor="end">0x54</text>
+  <rect class="box" x="110" y="136" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="153">PIC texture-atlas ref ("apa.PIC")</text>
+  <text class="sub" x="382" y="153" text-anchor="end">char[12]</text>
+
+  <text class="sub mono" x="102" y="180" text-anchor="end">0x64</text>
+  <rect class="box" x="110" y="162" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="179">Map dimension (25 or 32)</text>
+  <text class="sub" x="382" y="179" text-anchor="end">u32 · dup @0x6C</text>
+
+  <text class="sub mono" x="102" y="206" text-anchor="end">0x79</text>
+  <rect class="box" x="110" y="188" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="205"><tspan class="mono">leaf_step</tspan> = 8 leaves per tile side</text>
+  <text class="sub" x="382" y="205" text-anchor="end">u32, unaligned</text>
+
+  <text class="sub mono" x="102" y="232" text-anchor="end">0x7D</text>
+  <rect class="box" x="110" y="214" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="231"><tspan class="mono">tiles_w</tspan> · <tspan class="mono">tiles_h</tspan></text>
+  <text class="sub" x="382" y="231" text-anchor="end">u32 ×2 (@0x81)</text>
+
+  <text class="sub mono" x="102" y="258" text-anchor="end">0x85</text>
+  <rect class="hub" x="110" y="240" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="257">offset → tile-summary array</text>
+  <text class="sub" x="382" y="257" text-anchor="end">u32</text>
+
+  <text class="sub mono" x="102" y="284" text-anchor="end">0x89</text>
+  <rect class="box" x="110" y="266" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="283"><tspan class="mono">leaves_w</tspan> · <tspan class="mono">leaves_h</tspan> = tiles × 8</text>
+  <text class="sub" x="382" y="283" text-anchor="end">u32 ×2</text>
+
+  <text class="sub mono" x="102" y="310" text-anchor="end">0x91</text>
+  <rect class="hub" x="110" y="292" width="280" height="26" rx="4"/>
+  <text class="sub" x="120" y="309">offset → leaf array (always 0x95)</text>
+  <text class="sub" x="382" y="309" text-anchor="end">u32</text>
+
+  <text class="sub mono" x="102" y="340" text-anchor="end">0x95</text>
+  <rect class="fmt" x="110" y="322" width="280" height="84" rx="4"/>
+  <text class="lbl" x="120" y="344">Leaf array</text>
+  <text class="sub mono" x="120" y="362">leaves_w × leaves_h × 3 B</text>
+  <text class="sub" x="120" y="378">full-resolution grid, row-major</text>
+  <text class="sub mono" x="120" y="394">index = (row × leaves_w + col) × 3</text>
+
+  <text class="sub mono" x="102" y="432" text-anchor="end">[0x85]</text>
+  <rect class="fmt" x="110" y="414" width="280" height="56" rx="4"/>
+  <text class="lbl" x="120" y="436">Tile-summary array — one per tile</text>
+  <text class="sub mono" x="120" y="454">tiles_w × tiles_h × 3 B</text>
+
+  <path class="edge" d="M390 305 C 430 305, 430 330, 406 340" marker-end="url(#arr)"/>
+  <path class="edge" d="M390 253 C 445 253, 445 425, 406 432" marker-end="url(#arr)"/>
+
+  <!-- right: grids -->
+  <text class="lanetitle" x="590" y="40" text-anchor="middle">THEATER = tiles_w × tiles_h TILES</text>
+  <rect class="box" x="490" y="58" width="200" height="200" rx="2"/>
+  <line class="grid" x1="490" y1="108" x2="690" y2="108"/>
+  <line class="grid" x1="490" y1="158" x2="690" y2="158"/>
+  <line class="grid" x1="490" y1="208" x2="690" y2="208"/>
+  <line class="grid" x1="540" y1="58" x2="540" y2="258"/>
+  <line class="grid" x1="590" y1="58" x2="590" y2="258"/>
+  <line class="grid" x1="640" y1="58" x2="640" y2="258"/>
+  <rect class="hub" x="590" y="108" width="50" height="50"/>
+
+  <text class="lanetitle" x="840" y="40" text-anchor="middle">ONE TILE = 8 × 8 LEAVES</text>
+  <rect class="hub" x="760" y="58" width="160" height="160" rx="2"/>
+  <line class="grid" x1="760" y1="78" x2="920" y2="78"/><line class="grid" x1="760" y1="98" x2="920" y2="98"/>
+  <line class="grid" x1="760" y1="118" x2="920" y2="118"/><line class="grid" x1="760" y1="138" x2="920" y2="138"/>
+  <line class="grid" x1="760" y1="158" x2="920" y2="158"/><line class="grid" x1="760" y1="178" x2="920" y2="178"/>
+  <line class="grid" x1="760" y1="198" x2="920" y2="198"/>
+  <line class="grid" x1="780" y1="58" x2="780" y2="218"/><line class="grid" x1="800" y1="58" x2="800" y2="218"/>
+  <line class="grid" x1="820" y1="58" x2="820" y2="218"/><line class="grid" x1="840" y1="58" x2="840" y2="218"/>
+  <line class="grid" x1="860" y1="58" x2="860" y2="218"/><line class="grid" x1="880" y1="58" x2="880" y2="218"/>
+  <line class="grid" x1="900" y1="58" x2="900" y2="218"/>
+  <path class="edge" d="M640 133 C 700 133, 700 138, 756 138" marker-end="url(#arr)"/>
+
+  <!-- record card -->
+  <text class="lanetitle" x="490" y="312">3-BYTE RECORD (leaf and summary)</text>
+  <rect class="box" x="490" y="324" width="150" height="44" rx="4"/>
+  <text class="sub" x="565" y="342" text-anchor="middle">surface class</text>
+  <text class="sub" x="565" y="358" text-anchor="middle">0xFF water; others land</text>
+  <rect class="box" x="640" y="324" width="130" height="44" rx="4"/>
+  <text class="sub" x="705" y="342" text-anchor="middle">elevation band</text>
+  <text class="sub" x="705" y="358" text-anchor="middle">0 = sea level</text>
+  <rect class="box" x="770" y="324" width="150" height="44" rx="4"/>
+  <text class="sub" x="845" y="342" text-anchor="middle">texture variant</text>
+  <text class="sub" x="845" y="358" text-anchor="middle">0–31 → atlas sub-texture</text>
+
+  <!-- engine note -->
+  <rect class="sys" x="490" y="396" width="430" height="84" rx="6"/>
+  <text class="lbl" x="502" y="418">Engine access — <tspan class="mono">T_Load</tspan> / <tspan class="mono">T_GetLeaf</tspan></text>
+  <text class="sub" x="502" y="438"><tspan class="mono">T_GetLeaf(x, y, step)</tspan>: step &lt; 8 reads the leaf array;</text>
+  <text class="sub" x="502" y="454">coarser requests fall back to the tile summaries —</text>
+  <text class="sub" x="502" y="470">the pre-baked far-LOD terrain.</text>
+
+  <text class="sub" x="110" y="506">Offsets from 0x79 on are byte-unaligned (the header packs u32 fields off word boundaries).</text>
+  <text class="sub" x="110" y="522">Grid sizes shipped: 32×32 (11 theaters), 26×25 (4), 25×25 (1).</text>
+</svg>
