@@ -105,6 +105,27 @@ struct YlrList {
     int height() const { return static_cast<int>(left.size()); }
 };
 
+// FVERTEX-style pre-projection vertex for the near-plane stage
+// (renderer.md §3.2): camera-space position with `w` the depth divisor,
+// plus the attributes the fa fills consume after projection.
+struct ClipVertex {
+    float x = 0, y = 0, z = 0, w = 1;
+    float u = 0, v = 0, c = 0;
+};
+
+// The near guard bit of the per-vertex clip-flag word (FVERTEX bit 2).
+inline constexpr unsigned kClipNear = 0x4;
+
+// code_pnt — the outcode for one vertex against the near plane `w = near_w`.
+unsigned CodePnt(const ClipVertex& v, float near_w);
+
+// The NPM near-plane scheme (renderer.md §3.2): the AND of the outcodes
+// trivially rejects, an OR of zero trivially accepts, and a straddling
+// polygon is clipped at the plane with attributes interpolated — clipped,
+// never dropped. Writes up to n + 1 vertices to `out`; returns the count
+// (0 = fully behind the plane).
+int NearClipPolygon(const ClipVertex* in, int n, float near_w, ClipVertex* out);
+
 // The G_* raster-state block over one target surface: the active clip box
 // (G_Init / G_SetClipBox), the current colour (`_cColor`), and the current
 // fill type (`_cFillType`). Construction is G_Init: full-surface clip box.
@@ -162,6 +183,23 @@ public:
     // choice the SH interpreter stages through `sh_op_80`/`SetFlatColor`
     // (render-core.md). Textured falls back to flat until #333.
     void Polygon(const PolyVertex* v, int n);
+
+    // Sutherland–Hodgman clip of a convex polygon against the clip box, in
+    // the render-core edge order (`clip_edge_left/right/top/bottom`), with
+    // the vertex attributes (u, v, c) interpolated at each crossing.
+    // Returns the number of vertices appended to `out` (0 = fully outside).
+    int ClipPolygon(const PolyVertex* in, int n, std::vector<PolyVertex>& out) const;
+
+    // G_Polygon / G_SPolygon — the clipped entries: Sutherland–Hodgman
+    // against the clip box, then the current fill-type dispatch.
+    void PolygonClipped(const PolyVertex* v, int n);
+
+    // G_ClipLine — Cohen–Sutherland segment clip against the clip box
+    // (inclusive integer pixel bounds). False = trivially rejected.
+    bool ClipLine(int& x0, int& y0, int& x1, int& y1) const;
+
+    // G_Line — clipped line in the current colour.
+    void Line(int x0, int y0, int x1, int y1);
 
     Surface& target() { return *target_; }
 
