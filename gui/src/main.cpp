@@ -241,6 +241,7 @@ static int RunRender(App& app, const std::string& lib, const std::string& entry,
 int main(int argc, char** argv) {
     bool smoke = false;
     bool render = false;
+    bool software = false;  // --software: SH preview on the fa rasteriser (#290)
     std::string renderOut, renderSize;
     std::vector<std::string> positionals; // LIB paths (smoke) or LIB + ENTRY (render)
     for (int i = 1; i < argc; ++i) {
@@ -252,6 +253,8 @@ int main(int argc, char** argv) {
             renderOut = argv[++i];
         else if (std::strcmp(argv[i], "--size") == 0 && i + 1 < argc)
             renderSize = argv[++i];
+        else if (std::strcmp(argv[i], "--software") == 0)
+            software = true;
         else
             positionals.push_back(argv[i]);
     }
@@ -324,13 +327,15 @@ int main(int argc, char** argv) {
     bool done        = false;
     int  smokeFrames = smoke ? 3 : -1;
 
+    if (software) PreviewForceSoftwareBackend(true);
+
     if (render) {
         SDL_GL_SetSwapInterval(0);
         std::string lib   = positionals.size() > 0 ? positionals[0] : "";
         std::string entry = positionals.size() > 1 ? positionals[1] : "";
         if (lib.empty() || entry.empty()) {
             std::fprintf(stderr,
-                "usage: fxs --render <LIB> <ENTRY> [--out file.png] [--size WxH]\n");
+                "usage: fxs --render <LIB> <ENTRY> [--out file.png] [--size WxH] [--software]\n");
             exitCode = 2;
         } else {
             std::string out = renderOut.empty() ? "render.png" : renderOut;

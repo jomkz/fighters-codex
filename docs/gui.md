@@ -30,10 +30,13 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   entry through its editor and the preview — one rendered frame per record —
   exercising extraction, every parser, and the GPU upload paths against real
   game data.
-- **`--render <LIB> <ENTRY> [--out file.png] [--size WxH]`** — headless PNG
-  snapshot: opens the archive, selects the entry (by 8.3 name like `A10.SH`
-  or numeric index), settles the preview, and writes a PNG of the whole
-  window through the same render path the interactive app uses. Like
+- **`--render <LIB> <ENTRY> [--out file.png] [--size WxH] [--software]`** —
+  headless PNG snapshot: opens the archive, selects the entry (by 8.3 name
+  like `A10.SH` or numeric index), settles the preview, and writes a PNG of
+  the whole window through the same render path the interactive app uses.
+  `--software` renders the SH preview through the FA-faithful software
+  rasteriser (`fx_render::fa`, #290) instead of OpenGL — the headless way to
+  produce software/GL side-by-side captures. Like
   `--smoke` it needs no visible window (offscreen fallback when there is no
   display server). `--out` defaults to `render.png`; `--size` defaults to the
   standard window size and is clamped to the minimum (the compositor may scale
@@ -205,6 +208,12 @@ mapped), and annotation (units, enum values). Changes are patched back via
   (`fx::ShState::detail = 0`)
 - **Export OBJ…** writes a Wavefront OBJ (merges all state blocks; the selected
   frame/damage state is a preview-only choice, per the SH round-trip notes)
+- **Software (FA)** switches the preview from OpenGL onto the FA-faithful
+  software rasteriser (`fx_render::fa`, #290): indexed 16.16 spans, painter's
+  order, no depth buffer — the pixel pipeline the game executable used.
+  Colours quantize to the active preview palette (the stand-in for the
+  engine's shade tables); geometry, spans, clipping, and occlusion are the
+  faithful part. Same toggle headless via `--render … --software`
 
 ## Pilot Editing (PLT)
 

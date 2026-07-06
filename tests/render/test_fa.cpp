@@ -3,6 +3,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "fx_render/fa_backend.h"
 #include "fx_render/render.h"
 
 using namespace fx_render;
@@ -634,4 +635,100 @@ TEST_CASE("fa spans stay correct past the 1024 ceiling", "[render][fa]") {
     CHECK(s.row(800)[2300] == 6);
     CHECK(s.row(800)[1899] == 0);
     CHECK(s.row(800)[2401] == 0);
+}
+
+TEST_CASE("fa backend drives meshes through the faithful pipeline", "[render][fa]") {
+    // The generic Renderer adapter (#334): vertex/texel colours quantize to
+    // palette indices, pixels present as exact palette colours (no blending).
+    fa::Palette pal;
+    pal.entries[1] = {63, 0, 0};  // red
+    pal.entries[2] = {0, 63, 0};  // green
+    auto r = MakeFaRenderer(pal);
+    REQUIRE(r);
+    CHECK(r->backend() == Backend::Software);
+
+    Mesh tri;
+    tri.vertices = {{-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
+                    {0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
+                    {0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f}};
+    auto t = r->MakeTarget(64, 64);
+    r->Begin(*t, {0, 0, 0, 255});
+    r->Draw(tri, Camera{}, {});
+    r->End();
+    Image img;
+    t->Read(img);
+    const std::uint8_t* c = img.at(32, 32);
+    CHECK(c[0] == 255);  // exact palette entry 1, VGA-widened
+    CHECK(c[1] == 0);
+    const std::uint8_t* corner = img.at(1, 1);
+    CHECK(corner[0] == 0);
+
+    // Textured draw: RGBA texels quantize through the same palette.
+    auto tex = std::make_shared<Image>();
+    tex->resize(1, 1);
+    tex->at(0, 0)[0] = 0;
+    tex->at(0, 0)[1] = 255;
+    tex->at(0, 0)[2] = 0;
+    tex->at(0, 0)[3] = 255;
+    tri.texture = tex;
+    r->Begin(*t, {0, 0, 0, 255});
+    r->Draw(tri, Camera{}, {});
+    r->End();
+    t->Read(img);
+    c = img.at(32, 32);
+    CHECK(c[1] == 255);  // palette entry 2 via the quantized texture
+    CHECK(c[0] == 0);
+}
+
+TEST_CASE("fa backend orders draws painter-style by mean depth", "[render][fa]") {
+    // w = z under this matrix (column-major, m[11] = 1). The near quad is
+    // submitted FIRST but must win the overlap: End() flushes back-to-front
+    // and no depth buffer exists anywhere in the fa path.
+    Camera cam;
+    cam.mvp = {{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}};
+
+    auto quad = [](float e, float z, float r, float g, float b) {
+        Mesh m;
+        auto vx = [&](float x, float y) { return Vertex{x, y, z, r, g, b}; };
+        m.vertices = {vx(-e, -e), vx(e, -e), vx(e, e),
+                      vx(-e, -e), vx(e, e), vx(-e, e)};
+        return m;
+    };
+    // Near: z=1, NDC half-extent 0.2. Far: z=4, NDC half-extent 0.45.
+    Mesh near_q = quad(0.2f, 1.0f, 1.0f, 0.0f, 0.0f);
+    Mesh far_q = quad(1.8f, 4.0f, 0.0f, 1.0f, 0.0f);
+
+    fa::Palette pal;
+    pal.entries[1] = {63, 0, 0};
+    pal.entries[2] = {0, 63, 0};
+    auto r = MakeFaRenderer(pal);
+    auto t = r->MakeTarget(64, 64);
+    r->Begin(*t, {0, 0, 0, 255});
+    r->Draw(near_q, cam, {});  // nearer submitted first
+    r->Draw(far_q, cam, {});
+    r->End();
+    Image img;
+    t->Read(img);
+    CHECK(img.at(32, 32)[0] == 255);  // overlap: near quad on top
+    CHECK(img.at(32, 32)[1] == 0);
+    CHECK(img.at(43, 20)[1] == 255);  // far-only ring intact
+}
+
+TEST_CASE("fa backend targets scale past the ceiling", "[render][fa]") {
+    fa::Palette pal;
+    pal.entries[1] = {63, 63, 63};
+    auto r = MakeFaRenderer(pal);
+    auto t = r->MakeTarget(1920, 1440);  // above 1024x768 in both axes
+    Mesh quad;
+    auto vx = [](float x, float y) { return Vertex{x, y, 0.0f, 1.0f, 1.0f, 1.0f}; };
+    quad.vertices = {vx(-0.7f, -0.7f), vx(0.7f, -0.7f), vx(0.7f, 0.7f),
+                     vx(-0.7f, -0.7f), vx(0.7f, 0.7f), vx(-0.7f, 0.7f)};
+    r->Begin(*t, {0, 0, 0, 255});
+    r->Draw(quad, Camera{}, {});
+    r->End();
+    Image img;
+    t->Read(img);
+    REQUIRE(img.width == 1920);
+    CHECK(img.at(1500, 720)[0] == 255);  // painted past x=1024
+    CHECK(img.at(10, 10)[0] == 0);       // clear corner
 }

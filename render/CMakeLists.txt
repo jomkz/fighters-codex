@@ -3,6 +3,7 @@
 # OpenGL backend is added under a GL-available guard in fx_render #289.
 add_library(fx_render STATIC
     src/fa.cpp
+    src/fa_backend.cpp
     src/render.cpp
     src/software.cpp
 )
