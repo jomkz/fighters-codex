@@ -4,6 +4,7 @@
 #include "fx_render/fa.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <limits>
@@ -132,37 +133,61 @@ bool Raster::PolygonToYlr(const PolyVertex* v, int n, YlrList& out) {
     out.left_c.assign(h, 0);
     out.right_c.assign(h, 0);
 
+    out.left_u.assign(h, 0);
+    out.right_u.assign(h, 0);
+    out.left_v.assign(h, 0);
+    out.right_v.assign(h, 0);
+
     // Walk every non-horizontal edge, stepping its 16.16 x (and the packed
-    // shade term c) per scanline; for a convex polygon min/max per row is
-    // exactly the Left/Right pair, and c follows whichever edge holds it.
+    // shade term c and texel u/v) per scanline; for a convex polygon min/max
+    // per row is exactly the Left/Right pair, and the attributes follow
+    // whichever edge holds each bound.
     for (int i = 0; i < n; ++i) {
-        Fx x0 = v[i].x, y0 = v[i].y, c0 = v[i].c;
-        Fx x1 = v[(i + 1) % n].x, y1 = v[(i + 1) % n].y, c1 = v[(i + 1) % n].c;
-        if (y0 == y1) continue;
-        if (y0 > y1) {
-            std::swap(x0, x1);
-            std::swap(y0, y1);
-            std::swap(c0, c1);
-        }
-        const int ey0 = FxCeil(y0), ey1 = FxCeil(y1);
+        PolyVertex a = v[i];
+        PolyVertex b = v[(i + 1) % n];
+        if (a.y == b.y) continue;
+        if (a.y > b.y) std::swap(a, b);
+        const Fx dy_edge = b.y - a.y;
+        const int ey0 = FxCeil(a.y), ey1 = FxCeil(b.y);
         for (int y = ey0; y < ey1; ++y) {
-            const Fx dy = ToFx(y) - y0;
-            const Fx x = x0 + static_cast<Fx>(
-                static_cast<std::int64_t>(dy) * (x1 - x0) / (y1 - y0));
-            const Fx c = c0 + static_cast<Fx>(
-                static_cast<std::int64_t>(dy) * (c1 - c0) / (y1 - y0));
+            const Fx dy = ToFx(y) - a.y;
+            auto step = [&](Fx p0, Fx p1) {
+                return p0 + static_cast<Fx>(
+                    static_cast<std::int64_t>(dy) * (p1 - p0) / dy_edge);
+            };
+            const Fx x = step(a.x, b.x);
             const std::size_t row = static_cast<std::size_t>(y - top);
             if (x < out.left[row]) {
                 out.left[row] = x;
-                out.left_c[row] = c;
+                out.left_c[row] = step(a.c, b.c);
+                out.left_u[row] = step(a.u, b.u);
+                out.left_v[row] = step(a.v, b.v);
             }
             if (x > out.right[row]) {
                 out.right[row] = x;
-                out.right_c[row] = c;
+                out.right_c[row] = step(a.c, b.c);
+                out.right_u[row] = step(a.u, b.u);
+                out.right_v[row] = step(a.v, b.v);
             }
         }
     }
     return true;
+}
+
+std::uint8_t Texture::at(Fx u, Fx v) const {
+    if (width <= 0 || height <= 0) return 0;
+    const int tu = std::clamp(FxFloor(u), 0, width - 1);
+    const int tv = std::clamp(FxFloor(v), 0, height - 1);
+    return texels[static_cast<std::size_t>(tv) * width + tu];
+}
+
+void Raster::SetTmapRemap(const std::uint8_t* table256) {
+    if (!table256) {
+        remap_identity_ = true;
+        return;
+    }
+    std::copy(table256, table256 + 256, tmap_remap_.begin());
+    remap_identity_ = false;
 }
 
 void Raster::FillYlrFlat(const YlrList& ylr) {
@@ -224,17 +249,136 @@ void Raster::SUPolygon(const PolyVertex* v, int n) {
     FillYlrShaded(ylr);
 }
 
+void Raster::FillYlrTextured(const YlrList& ylr) {
+    const int y0 = std::max(ylr.y_top, clip_top_);
+    const int y1 = std::min(ylr.y_top + ylr.height() - 1, clip_bottom_);
+    for (int y = y0; y <= y1; ++y) {
+        const std::size_t row = static_cast<std::size_t>(y - ylr.y_top);
+        const Fx x_l = ylr.left[row], x_r = ylr.right[row];
+        if (x_l > x_r) continue;
+        int xl = FxFloor(x_l);
+        int xr = FxFloor(x_r);
+        if (no_overlap_) --xr;
+        xl = std::max(xl, clip_left_);
+        xr = std::min(xr, clip_right_);
+        if (xl > xr) continue;
+
+        const Fx span = x_r - x_l;
+        auto gradient = [&](Fx e_l, Fx e_r) {
+            return span > 0 ? static_cast<Fx>(static_cast<std::int64_t>(e_r - e_l) *
+                                              kFxOne / span)
+                            : 0;
+        };
+        const Fx dudx = gradient(ylr.left_u[row], ylr.right_u[row]);
+        const Fx dvdx = gradient(ylr.left_v[row], ylr.right_v[row]);
+        const Fx off = ToFx(xl) - x_l;
+        Fx u = ylr.left_u[row] + static_cast<Fx>(static_cast<std::int64_t>(off) * dudx / kFxOne);
+        Fx v = ylr.left_v[row] + static_cast<Fx>(static_cast<std::int64_t>(off) * dvdx / kFxOne);
+        std::uint8_t* p = target_->row(y);
+        for (int x = xl; x <= xr; ++x, u += dudx, v += dvdx) {
+            const std::uint8_t texel = texture_->at(u, v);
+            p[x] = remap_identity_ ? texel : tmap_remap_[texel];
+        }
+    }
+}
+
+void Raster::TexturedUPolygon(const PolyVertex* v, int n) {
+    if (!texture_) {
+        UPolygon(v, n);  // no binding: flat fallback
+        return;
+    }
+    YlrList ylr;
+    if (!PolygonToYlr(v, n, ylr)) return;
+    FillYlrTextured(ylr);
+}
+
 void Raster::Polygon(const PolyVertex* v, int n) {
     switch (fill_type_) {
         case FillType::Shaded:
             SUPolygon(v, n);
             return;
+        case FillType::Textured:
+            TexturedUPolygon(v, n);
+            return;
         case FillType::Flat:
-        case FillType::Textured:  // textured fills arrive with #333
             UPolygon(v, n);
             return;
     }
 }
+
+void Raster::TextureTriScan(const FVertex t[3], bool perspective) {
+    if (!texture_) return;
+    // Y-sorted float scanline walk over one triangle, matching the integer
+    // path's conventions (integer scanlines, truncated inclusive spans).
+    // The linear kernel interpolates u/v directly; the perspective kernel
+    // interpolates u*rw, v*rw, rw and divides per pixel.
+    const FVertex* s[3] = {&t[0], &t[1], &t[2]};
+    std::sort(s, s + 3, [](const FVertex* a, const FVertex* b) { return a->y < b->y; });
+    const float y_min = s[0]->y, y_mid = s[1]->y, y_max = s[2]->y;
+    if (y_max <= y_min) return;
+
+    const int top = std::max(static_cast<int>(std::ceil(y_min)), clip_top_);
+    const int bottom = std::min(static_cast<int>(std::ceil(y_max)) - 1, clip_bottom_);
+
+    struct Attr {
+        float x, u, v, rw;
+    };
+    auto edge_at = [&](const FVertex& a, const FVertex& b, float fy) {
+        const float tt = (fy - a.y) / (b.y - a.y);
+        Attr r;
+        r.x = a.x + (b.x - a.x) * tt;
+        if (perspective) {
+            r.u = a.u * a.rw + (b.u * b.rw - a.u * a.rw) * tt;
+            r.v = a.v * a.rw + (b.v * b.rw - a.v * a.rw) * tt;
+            r.rw = a.rw + (b.rw - a.rw) * tt;
+        } else {
+            r.u = a.u + (b.u - a.u) * tt;
+            r.v = a.v + (b.v - a.v) * tt;
+            r.rw = 1.0f;
+        }
+        return r;
+    };
+
+    for (int y = top; y <= bottom; ++y) {
+        const float fy = static_cast<float>(y);
+        Attr ea = edge_at(*s[0], *s[2], fy);  // the long edge
+        // Scanlines below y_mid pair with the upper short edge, the rest
+        // with the lower one; the integer scanline range makes both
+        // denominators non-zero by construction.
+        Attr eb = fy >= y_mid ? edge_at(*s[1], *s[2], fy) : edge_at(*s[0], *s[1], fy);
+        if (eb.x < ea.x) std::swap(ea, eb);
+
+        int xl = std::max(static_cast<int>(ea.x), clip_left_);
+        int xr = std::min(static_cast<int>(eb.x), clip_right_);
+        if (xl > xr) continue;
+
+        const float dx = eb.x - ea.x;
+        const float inv = dx > 0 ? 1.0f / dx : 0.0f;
+        const float dudx = (eb.u - ea.u) * inv;
+        const float dvdx = (eb.v - ea.v) * inv;
+        const float drwdx = (eb.rw - ea.rw) * inv;
+        float u = ea.u + (xl - ea.x) * dudx;
+        float v = ea.v + (xl - ea.x) * dvdx;
+        float rw = ea.rw + (xl - ea.x) * drwdx;
+
+        std::uint8_t* p = target_->row(y);
+        for (int x = xl; x <= xr; ++x, u += dudx, v += dvdx, rw += drwdx) {
+            float su = u, sv = v;
+            if (perspective) {
+                if (rw <= 0.0f) continue;  // the carefulDiv guard
+                su = u / rw;
+                sv = v / rw;
+            }
+            const std::uint8_t texel = texture_->at(
+                static_cast<Fx>(su * kFxOne), static_cast<Fx>(sv * kFxOne));
+            p[x] = remap_identity_ ? texel : tmap_remap_[texel];
+        }
+    }
+}
+
+void Raster::TextureTriLinear(const FVertex t[3]) { TextureTriScan(t, false); }
+
+void Raster::TextureTriPerspective(const FVertex t[3]) { TextureTriScan(t, true); }
 
 namespace {
 

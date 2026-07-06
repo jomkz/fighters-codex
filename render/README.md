@@ -58,13 +58,15 @@ fx_render::Image img; t->Read(img);   // img.pixels is now RGBA8
 | `fa::Palette` | 192-entry 6-bit VGA palette; `Present` → RGBA8 `Image`, `Nearest` → index remap (`G_RemapBitmapToPalette`) |
 | `fa::Raster` | the `G_*` state block — clip box (`G_Init`/`G_SetClipBox`), `_cColor`, `_cFillType` — plus `Point`/`Rect` |
 | `fa::Fx` | 16.16 fixed-point screen coordinates (`ToFx` / `FxFloor`) |
+| `fa::Texture` / `fa::FVertex` | indexed texels (16.16 texel sampling) and the projected NPM vertex (screen x/y, texel u/v, 1/w) |
+| `fa::PaintersList` | the `GRAddBrentObj` → `sort_objs_wrapper` painter's-order submission stage (no z-buffer anywhere) |
 
 Dimensions are runtime parameters: FA.EXE's 1024×768 ceiling is a `GG_`/DirectDraw *device*
 limit the fa path does not inherit (resolution-independence guards in `tests/render/`).
 
 Sub-issue progress: **#328** surface/palette/state ✅ · **#329** 16.16 YLR spans ✅ ·
-**#330** Gouraud ✅ · **#331** clipping ✅ · **#332** painter's order ✅ · #333 textured spans ·
-#334 fxs software mode + fidelity sweep.
+**#330** Gouraud ✅ · **#331** clipping ✅ · **#332** painter's order ✅ · **#333** textured
+spans ✅ · #334 fxs software mode + fidelity sweep.
 
 ## Roadmap (sub-issues of #281)
 

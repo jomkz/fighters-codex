@@ -98,12 +98,32 @@ struct PolyVertex {
 
 // UPolygonToYLR output: the polygon reduced to per-scanline Left/Right span
 // bounds (16.16 screen x), one entry per scanline from `y_top`, with the
-// packed shade term `c` carried along each edge for the shaded fill (#330).
+// packed shade term `c` (#330) and the texel coordinates u/v (#333) carried
+// along each edge.
 struct YlrList {
     int y_top = 0;
     std::vector<Fx> left, right;      // span bounds, 16.16 x
     std::vector<Fx> left_c, right_c;  // c_packed at each bound, 16.16
+    std::vector<Fx> left_u, right_u;  // u texels at each bound, 16.16
+    std::vector<Fx> left_v, right_v;  // v texels at each bound, 16.16
     int height() const { return static_cast<int>(left.size()); }
+};
+
+// An indexed texture — PIC pixels are palette indices (renderer.md §9).
+// `u, v` sample in 16.16 texel coordinates, truncating and clamping to the
+// edges (inferred).
+struct Texture {
+    int width = 0, height = 0;
+    std::vector<std::uint8_t> texels;  // width * height, row-major
+    std::uint8_t at(Fx u, Fx v) const;
+};
+
+// FVERTEX after projection (renderer.md §3.2): screen position, texel u/v,
+// and rw = 1/w — the reciprocal the perspective kernel interpolates.
+struct FVertex {
+    float x = 0, y = 0;
+    float u = 0, v = 0;
+    float rw = 1;
 };
 
 // FVERTEX-style pre-projection vertex for the near-plane stage
@@ -185,6 +205,28 @@ public:
     // (render-core.md). Textured falls back to flat until #333.
     void Polygon(const PolyVertex* v, int n);
 
+    // G_AcTexture — bind the active texture (null unbinds; the Textured
+    // fill type then falls back to flat).
+    void SetTexture(const Texture* tex) { texture_ = tex; }
+    const Texture* texture() const { return texture_; }
+
+    // SetTmapRemaps / `_tmapRemapTable` — the 256-entry texel-index →
+    // screen-index remap (64 dwords in the original) applying the current
+    // shade/tint. Null restores the identity mapping.
+    void SetTmapRemap(const std::uint8_t* table256);
+
+    // G__Texture — the affine textured span fill: u/v ride the five-word
+    // vertex through the same 16.16 edge/span stepping as c, sampled per
+    // pixel and pushed through the tmap remap.
+    void TexturedUPolygon(const PolyVertex* v, int n);
+
+    // The NPM float triangle kernels (renderer.md §3.2), on the bound
+    // texture. Linear interpolates u/v directly in screen space
+    // (NPM_TextureLinearTri); Perspective interpolates u·rw, v·rw, rw and
+    // divides per pixel (NPM_TexturePerspectiveTri, carefulDiv-guarded).
+    void TextureTriLinear(const FVertex t[3]);
+    void TextureTriPerspective(const FVertex t[3]);
+
     // Sutherland–Hodgman clip of a convex polygon against the clip box, in
     // the render-core edge order (`clip_edge_left/right/top/bottom`), with
     // the vertex attributes (u, v, c) interpolated at each crossing.
@@ -205,14 +247,19 @@ public:
     Surface& target() { return *target_; }
 
 private:
-    void FillYlrFlat(const YlrList& ylr);    // the _G_DrawYLR_4 flat loop
-    void FillYlrShaded(const YlrList& ylr);  // the Gouraud span loop
+    void FillYlrFlat(const YlrList& ylr);      // the _G_DrawYLR_4 flat loop
+    void FillYlrShaded(const YlrList& ylr);    // the Gouraud span loop
+    void FillYlrTextured(const YlrList& ylr);  // the affine G__Texture loop
+    void TextureTriScan(const FVertex t[3], bool perspective);
 
     Surface* target_;
     int clip_left_ = 0, clip_top_ = 0, clip_right_ = 0, clip_bottom_ = 0;
     std::uint8_t color_ = 0;
     FillType fill_type_ = FillType::Flat;
     bool no_overlap_ = false;
+    const Texture* texture_ = nullptr;
+    std::array<std::uint8_t, 256> tmap_remap_{};
+    bool remap_identity_ = true;
 };
 
 // The painter's-order submission list — the fa path's only occlusion
