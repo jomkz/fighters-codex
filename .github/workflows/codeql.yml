@@ -55,18 +55,27 @@ jobs:
           upload: failure-only
           output: sarif-results
 
-      - name: Filter third-party paths from results
+      - name: Filter third-party paths and CLI argv false positives
         # For compiled languages the config's paths-ignore does not filter
         # results (verified on the first main analyses: vendored stb and
         # FetchContent'd Catch2 alerts came through both with and without
         # /** globs) — filtering the SARIF before upload is the supported
         # mechanism
+        #
+        # cpp/path-injection is rule-scoped out of cli/ only: fx is a CLI
+        # whose job is opening user-named files, so an argv path reaching a
+        # file open is user intent, not injection — every new verb minted a
+        # fresh alert that needed a manual false-positive dismissal. The
+        # rule stays live everywhere else (lib/, gui/, fxe/): paths derived
+        # from *archive entry names* during extraction are a real injection
+        # surface, and that is where this rule earns its keep.
         uses: advanced-security/filter-sarif@2da736ff05ef065cb2894ac6892e47b5eac2c3c0 # v1.1
         with:
           patterns: |
             -build/**
             -lib/vendor/**
             -gui/vendor/**
+            -cli/**:cpp/path-injection
           input: sarif-results/cpp.sarif
           output: sarif-results/cpp.sarif
 

@@ -9,6 +9,11 @@ queries:
 # only scopes extraction for interpreted languages. First-party-only results
 # are enforced by the filter-sarif step in codeql.yml (same patterns). This
 # block stays as documentation of intent and future-proofing.
+#
+# The filter-sarif step also rule-scopes cpp/path-injection out of cli/**:
+# argv paths reaching file opens are the CLI's contract, not injection.
+# There is no per-rule syntax in this config file, so that exclusion lives
+# only in the workflow's filter patterns.
 paths-ignore:
   - build/**
   - lib/vendor/**
