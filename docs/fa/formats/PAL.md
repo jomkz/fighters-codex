@@ -74,6 +74,8 @@ uint8_t to_8bit(uint8_t v6) { return (v6 << 2) | (v6 >> 6); }
 - Palette index **0xFF (255)** is reserved as transparent across all PIC
   sub-formats.
 
+![Palette pipeline: PALETTE.PAL is extracted DCL-compressed from FA_2.LIB as 256 six-bit RGB triplets and scaled to an 8-bit lookup table; PIC pixel bytes index that table to produce screen colors, and fx pic pack quantizes modded art back through the same palette](diagrams/palette-pipeline.svg)
+
 ## Round-Trip Notes
 
 The format has no derived or redundant fields, so decode → encode reproduces

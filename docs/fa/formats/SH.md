@@ -83,6 +83,8 @@ be edited with FASHion and require direct x86 disassembly for modification.
 
 All multi-byte integers are little-endian.
 
+![SH shape structure: the Phar Lap executable container chain leading to the CODE section, whose 14-byte header precedes an instruction stream of geometry records with three conditional selectors — detail, LOD, damage — branching to alternative geometry blocks](diagrams/sh-structure.svg)
+
 ### Container: Phar Lap PE/LE Executable
 
 SH files are **Phar Lap PE/LE executables**. The shape bytecode lives in the

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="SH shape structure: Phar Lap executable container chain to the CODE section; inside, a 14-byte header then an instruction stream of geometry records with three conditional selectors (detail, LOD, damage) branching to alternative geometry blocks.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .hub   { fill: #fdf4e3; stroke: #b8892f; stroke-width: 1.5; }
+    .fmt   { fill: #e8f0fb; stroke: #3d6aa8; stroke-width: 1.5; }
+    .sys   { fill: #eaf4ec; stroke: #3f7d4f; stroke-width: 1.5; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 11.5px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; }
+    .lanetitle { fill: #33424e; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #232a31; stroke: #7f8f9d; } .hub { fill: #322a1a; stroke: #d9b45f; }
+      .fmt { fill: #1e2c3e; stroke: #6f9bd6; } .sys { fill: #1d2c22; stroke: #6fae7f; }
+      .lbl { fill: #dce4ea; } .sub { fill: #a6b3bd; } .lanetitle { fill: #c7d2da; }
+      .edge { stroke: #8a99a5; }
+    }
+    :root[data-theme="dark"] .box { fill: #232a31; stroke: #7f8f9d; }
+    :root[data-theme="dark"] .hub { fill: #322a1a; stroke: #d9b45f; }
+    :root[data-theme="dark"] .fmt { fill: #1e2c3e; stroke: #6f9bd6; }
+    :root[data-theme="dark"] .sys { fill: #1d2c22; stroke: #6fae7f; }
+    :root[data-theme="dark"] .lbl { fill: #dce4ea; }
+    :root[data-theme="dark"] .sub { fill: #a6b3bd; }
+    :root[data-theme="dark"] .lanetitle { fill: #c7d2da; }
+    :root[data-theme="dark"] .edge { stroke: #8a99a5; }
+    :root[data-theme="light"] .box { fill: #f4f6f8; stroke: #5b6b7a; }
+    :root[data-theme="light"] .hub { fill: #fdf4e3; stroke: #b8892f; }
+    :root[data-theme="light"] .fmt { fill: #e8f0fb; stroke: #3d6aa8; }
+    :root[data-theme="light"] .sys { fill: #eaf4ec; stroke: #3f7d4f; }
+    :root[data-theme="light"] .lbl { fill: #22303c; }
+    :root[data-theme="light"] .sub { fill: #4a5a67; }
+    :root[data-theme="light"] .lanetitle { fill: #33424e; }
+    :root[data-theme="light"] .edge { stroke: #5b6b7a; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8f9d"/>
+    </marker>
+  </defs>
+
+  <!-- container chain -->
+  <text class="lanetitle" x="90" y="40">CONTAINER — PHAR LAP PE/LE EXECUTABLE</text>
+  <rect class="box" x="90" y="56" width="180" height="56" rx="6"/>
+  <text class="lbl" x="180" y="80" text-anchor="middle">MZ header</text>
+  <text class="sub mono" x="180" y="98" text-anchor="middle">e_lfanew @ 0x3C</text>
+  <rect class="box" x="320" y="56" width="180" height="56" rx="6"/>
+  <text class="lbl" x="410" y="80" text-anchor="middle">"PL" header</text>
+  <text class="sub" x="410" y="98" text-anchor="middle">same shape as PE</text>
+  <rect class="box" x="550" y="56" width="180" height="56" rx="6"/>
+  <text class="lbl" x="640" y="80" text-anchor="middle">Section table</text>
+  <text class="sub" x="640" y="98" text-anchor="middle">40 B per entry</text>
+  <rect class="fmt" x="780" y="56" width="150" height="56" rx="6"/>
+  <text class="lbl" x="855" y="80" text-anchor="middle">CODE</text>
+  <text class="sub" x="855" y="98" text-anchor="middle">first raw section</text>
+  <path class="edge" d="M270 84 H 316" marker-end="url(#arr)"/>
+  <path class="edge" d="M500 84 H 546" marker-end="url(#arr)"/>
+  <path class="edge" d="M730 84 H 776" marker-end="url(#arr)"/>
+  <text class="sub mono" x="293" y="76" text-anchor="middle">e_lfanew</text>
+  <text class="sub mono" x="753" y="70" text-anchor="middle">PointerTo</text>
+  <text class="sub mono" x="753" y="82" text-anchor="middle">RawData</text>
+
+  <!-- CODE section -->
+  <text class="lanetitle" x="90" y="156">CODE SECTION</text>
+
+  <!-- 14-byte header strip -->
+  <text class="sub mono" x="82" y="192" text-anchor="end">+0</text>
+  <rect class="box" x="90" y="172" width="70" height="40" rx="4"/>
+  <text class="lbl mono" x="125" y="196" text-anchor="middle">FF FF</text>
+  <rect class="box" x="160" y="172" width="130" height="40" rx="4"/>
+  <text class="sub" x="225" y="188" text-anchor="middle">radius_world</text>
+  <text class="sub mono" x="225" y="204" text-anchor="middle">i16 (authoring)</text>
+  <rect class="box" x="290" y="172" width="90" height="40" rx="4"/>
+  <text class="sub" x="335" y="188" text-anchor="middle">radius</text>
+  <text class="sub mono" x="335" y="204" text-anchor="middle">i16</text>
+  <rect class="box" x="380" y="172" width="90" height="40" rx="4"/>
+  <text class="sub" x="425" y="188" text-anchor="middle">scale</text>
+  <text class="sub mono" x="425" y="204" text-anchor="middle">i16</text>
+  <rect class="box" x="470" y="172" width="200" height="40" rx="4"/>
+  <text class="sub" x="570" y="188" text-anchor="middle">extents x · y · z</text>
+  <text class="sub mono" x="570" y="204" text-anchor="middle">3 × i16 (half-sizes)</text>
+  <text class="sub" x="690" y="196">14-byte header, then the stream:</text>
+
+  <!-- instruction stream -->
+  <rect class="fmt" x="90" y="232" width="300" height="88" rx="6"/>
+  <text class="lbl" x="102" y="254">Geometry records</text>
+  <text class="sub mono" x="102" y="274">0x82 VertexBuffer · 0xF6 VertexInfo</text>
+  <text class="sub mono" x="102" y="290">0xE2 TextureFile · 0xFC Face</text>
+  <text class="sub mono" x="102" y="306">0x42 SourceName · jumps, x86 islands …</text>
+
+  <rect class="hub" x="90" y="340" width="300" height="52" rx="6"/>
+  <text class="lbl" x="102" y="360">0xA6 JumpToDetail</text>
+  <text class="sub" x="102" y="378">if user detail pref &lt; threshold → branch</text>
+  <rect class="hub" x="90" y="400" width="300" height="52" rx="6"/>
+  <text class="lbl" x="102" y="420">0xC8 JumpToLOD</text>
+  <text class="sub" x="102" y="438">if beyond distance → branch</text>
+  <rect class="hub" x="90" y="460" width="300" height="52" rx="6"/>
+  <text class="lbl" x="102" y="480">0xAC JumpToDamage</text>
+  <text class="sub" x="102" y="498">if entity destroyed → branch</text>
+
+  <rect class="sys" x="90" y="532" width="300" height="52" rx="6"/>
+  <text class="lbl" x="102" y="552">Primary geometry (fall-through)</text>
+  <text class="sub mono" x="102" y="570">0x1E = return · 0x00/0x01 = end</text>
+
+  <path class="edge" d="M240 320 L 240 336" marker-end="url(#arr)"/>
+  <path class="edge" d="M240 392 L 240 396" marker-end="url(#arr)"/>
+  <path class="edge" d="M240 452 L 240 456" marker-end="url(#arr)"/>
+  <path class="edge" d="M240 512 L 240 528" marker-end="url(#arr)"/>
+
+  <!-- alternative blocks -->
+  <text class="lanetitle" x="560" y="336">ALTERNATIVE GEOMETRY (forward rel16)</text>
+  <rect class="fmt" x="560" y="348" width="300" height="44" rx="6"/>
+  <text class="lbl" x="572" y="366">Low-detail block</text>
+  <text class="sub" x="572" y="382">static quality switch — 1094/1275 shapes</text>
+  <rect class="fmt" x="560" y="408" width="300" height="44" rx="6"/>
+  <text class="lbl" x="572" y="426">Far-LOD block</text>
+  <text class="sub" x="572" y="442">distance-selected simplification</text>
+  <rect class="fmt" x="560" y="468" width="300" height="44" rx="6"/>
+  <text class="lbl" x="572" y="486">Damaged sub-model</text>
+  <text class="sub" x="572" y="502">wreck geometry — 62/1275 shapes</text>
+
+  <path class="edge" d="M390 366 C 470 366, 480 370, 556 370" marker-end="url(#arr)"/>
+  <path class="edge" d="M390 426 C 470 426, 480 430, 556 430" marker-end="url(#arr)"/>
+  <path class="edge" d="M390 486 C 470 486, 480 490, 556 490" marker-end="url(#arr)"/>
+
+  <text class="sub" x="560" y="552">Each branch jumps forward past the primary block; every block</text>
+  <text class="sub" x="560" y="568">ends with <tspan class="mono">0x1E</tspan> returns. Wreck variants may swap whole shapes</text>
+  <text class="sub" x="560" y="584">upstream (shape-selection) before the interpreter ever runs.</text>
+
+  <text class="sub" x="90" y="616">Instructions are byte-magic (1 op byte) or word-magic (<tspan class="mono">[op][0x00]</tspan>); dispatch is on the first byte. Full opcode table in the spec below.</text>
+</svg>

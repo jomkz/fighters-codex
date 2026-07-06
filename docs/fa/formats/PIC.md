@@ -54,6 +54,8 @@ fx pic pack   <file.png> [-o out.PIC]   # re-encode (see Round-Trip Notes)
 
 All multi-byte integers are little-endian.
 
+![PIC codec modes: a common 64-byte header whose format field selects dense row-major pixels with a row-head table, sparse 10-byte span records, or a whole-file JPEG; the palette is inline or the system PALETTE.PAL, and index 0xFF is transparent](diagrams/pic-modes.svg)
+
 ### Header (64 bytes)
 
 | Offset | Size | Type | Description |

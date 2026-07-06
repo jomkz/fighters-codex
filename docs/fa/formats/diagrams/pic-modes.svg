@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="PIC codec modes: a common 64-byte header whose format field selects dense (row-major pixels plus row-head table), sparse (10-byte span records), or whole-file JPEG; palette comes inline or from the system PALETTE.PAL, with index 0xFF transparent.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box   { fill: #f4f6f8; stroke: #5b6b7a; stroke-width: 1.5; }
+    .hub   { fill: #fdf4e3; stroke: #b8892f; stroke-width: 1.5; }
+    .fmt   { fill: #e8f0fb; stroke: #3d6aa8; stroke-width: 1.5; }
+    .sys   { fill: #eaf4ec; stroke: #3f7d4f; stroke-width: 1.5; }
+    .lbl   { fill: #22303c; font-size: 14px; }
+    .sub   { fill: #4a5a67; font-size: 11.5px; }
+    .mono  { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; }
+    .lanetitle { fill: #33424e; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+    .edge  { fill: none; stroke: #5b6b7a; stroke-width: 1.6; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #232a31; stroke: #7f8f9d; } .hub { fill: #322a1a; stroke: #d9b45f; }
+      .fmt { fill: #1e2c3e; stroke: #6f9bd6; } .sys { fill: #1d2c22; stroke: #6fae7f; }
+      .lbl { fill: #dce4ea; } .sub { fill: #a6b3bd; } .lanetitle { fill: #c7d2da; }
+      .edge { stroke: #8a99a5; }
+    }
+    :root[data-theme="dark"] .box { fill: #232a31; stroke: #7f8f9d; }
+    :root[data-theme="dark"] .hub { fill: #322a1a; stroke: #d9b45f; }
+    :root[data-theme="dark"] .fmt { fill: #1e2c3e; stroke: #6f9bd6; }
+    :root[data-theme="dark"] .sys { fill: #1d2c22; stroke: #6fae7f; }
+    :root[data-theme="dark"] .lbl { fill: #dce4ea; }
+    :root[data-theme="dark"] .sub { fill: #a6b3bd; }
+    :root[data-theme="dark"] .lanetitle { fill: #c7d2da; }
+    :root[data-theme="dark"] .edge { stroke: #8a99a5; }
+    :root[data-theme="light"] .box { fill: #f4f6f8; stroke: #5b6b7a; }
+    :root[data-theme="light"] .hub { fill: #fdf4e3; stroke: #b8892f; }
+    :root[data-theme="light"] .fmt { fill: #e8f0fb; stroke: #3d6aa8; }
+    :root[data-theme="light"] .sys { fill: #eaf4ec; stroke: #3f7d4f; }
+    :root[data-theme="light"] .lbl { fill: #22303c; }
+    :root[data-theme="light"] .sub { fill: #4a5a67; }
+    :root[data-theme="light"] .lanetitle { fill: #33424e; }
+    :root[data-theme="light"] .edge { stroke: #5b6b7a; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8f9d"/>
+    </marker>
+  </defs>
+
+  <!-- common header -->
+  <text class="sub mono" x="82" y="60" text-anchor="end">0x00</text>
+  <rect class="box" x="90" y="40" width="780" height="66" rx="4"/>
+  <text class="lbl" x="102" y="62">Header (64 bytes, little-endian)</text>
+  <text class="sub mono" x="102" y="82">format u16 · width u32 · height u32 · pixels off/size · palette off/size ·</text>
+  <text class="sub mono" x="102" y="97">spans off/size (format 1) · rowheads off/size (format 0) · padding to 0x40</text>
+
+  <!-- branch -->
+  <text class="lbl mono" x="480" y="140" text-anchor="middle">format @ 0x00 ?</text>
+  <path class="edge" d="M420 146 C 300 156, 230 160, 215 176" marker-end="url(#arr)"/>
+  <path class="edge" d="M480 150 L 480 176" marker-end="url(#arr)"/>
+  <path class="edge" d="M540 146 C 660 156, 730 160, 745 176" marker-end="url(#arr)"/>
+
+  <!-- format 0 -->
+  <rect class="fmt" x="90" y="180" width="250" height="200" rx="6"/>
+  <text class="lbl" x="215" y="204" text-anchor="middle">format = <tspan class="mono">0</tspan> — dense</text>
+  <rect class="box" x="106" y="216" width="218" height="60" rx="4"/>
+  <text class="sub" x="215" y="236" text-anchor="middle">pixels, row-major</text>
+  <text class="sub mono" x="215" y="252" text-anchor="middle">width × height × 1 B</text>
+  <text class="sub" x="215" y="268" text-anchor="middle">1 byte = palette index</text>
+  <rect class="hub" x="106" y="284" width="218" height="48" rx="4"/>
+  <text class="sub" x="215" y="303" text-anchor="middle">row-head table</text>
+  <text class="sub mono" x="215" y="319" text-anchor="middle">height × u32 row offsets</text>
+  <text class="sub" x="215" y="352" text-anchor="middle">aircraft skins, terrain tiles,</text>
+  <text class="sub" x="215" y="368" text-anchor="middle">full-screen art</text>
+
+  <!-- format 1 -->
+  <rect class="fmt" x="355" y="180" width="250" height="200" rx="6"/>
+  <text class="lbl" x="480" y="204" text-anchor="middle">format = <tspan class="mono">1</tspan> — sparse</text>
+  <rect class="hub" x="371" y="216" width="218" height="76" rx="4"/>
+  <text class="sub" x="480" y="234" text-anchor="middle">span records, 10 B each</text>
+  <text class="sub mono" x="480" y="250" text-anchor="middle">row u16 · start u16 · end u16</text>
+  <text class="sub mono" x="480" y="266" text-anchor="middle">pixel-data offset u32</text>
+  <text class="sub mono" x="480" y="282" text-anchor="middle">terminator: row = 0xFFFF</text>
+  <rect class="box" x="371" y="300" width="218" height="32" rx="4"/>
+  <text class="sub" x="480" y="320" text-anchor="middle">pixels per span = end − start + 1</text>
+  <text class="sub" x="480" y="352" text-anchor="middle">HUD overlays, UI elements —</text>
+  <text class="sub" x="480" y="368" text-anchor="middle">everything else stays transparent</text>
+
+  <!-- format JPEG -->
+  <rect class="fmt" x="620" y="180" width="250" height="200" rx="6"/>
+  <text class="lbl" x="745" y="204" text-anchor="middle">format = <tspan class="mono">0xD8FF</tspan> — JPEG</text>
+  <rect class="box" x="636" y="216" width="218" height="60" rx="4"/>
+  <text class="sub" x="745" y="240" text-anchor="middle">the whole .PIC file is a</text>
+  <text class="sub" x="745" y="256" text-anchor="middle">standard JPEG stream</text>
+  <text class="sub" x="745" y="308" text-anchor="middle">(the u16 is JPEG's FF D8</text>
+  <text class="sub" x="745" y="324" text-anchor="middle">start-of-image, read LE)</text>
+  <text class="sub" x="745" y="352" text-anchor="middle">encyclopedia reference photos —</text>
+  <text class="sub" x="745" y="368" text-anchor="middle">all of FA_3.LIB</text>
+
+  <!-- palette strip -->
+  <rect class="sys" x="90" y="404" width="780" height="72" rx="6"/>
+  <text class="lbl" x="102" y="428">Palette</text>
+  <text class="sub" x="102" y="448"><tspan class="mono">palette_size &gt; 0</tspan> → inline VGA palette at <tspan class="mono">palette_offset</tspan>: palette_size/3 RGB triplets, 6-bit channels (0–63), scale (v&lt;&lt;2)|(v&gt;&gt;6);</text>
+  <text class="sub" x="102" y="464">a partial palette overrides only the first entries. <tspan class="mono">palette_size = 0</tspan> → system <tspan class="mono">PALETTE.PAL</tspan>. Index <tspan class="mono">0xFF</tspan> is transparent in every mode.</text>
+
+  <text class="sub" x="90" y="512">Dense and sparse pixels are palette indices; JPEG carries its own color. See PAL.md for the palette pipeline.</text>
+</svg>

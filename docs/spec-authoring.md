@@ -152,6 +152,28 @@ File Layout preamble; per-field suffixes (`u16 BE`) only for deviations.
 BRF-DSL annotated listings of *file content* stay as fenced code blocks — they
 are examples, not layout tables.
 
+### Explanatory diagrams (format specs)
+
+Format specs *may* embed explanatory SVGs — byte layouts, mode trees, pipelines
+(epic [#341](https://github.com/jomkz/fighters-codex/issues/341), issue
+[#345](https://github.com/jomkz/fighters-codex/issues/345)). They are editorial:
+unlike the subsystem flow diagram below, nothing enforces their presence. When you
+add one, it lives in `docs/fa/formats/diagrams/`, uses the same theme-aware CSS
+recipe as the flow diagrams, and follows the shared **byte-layout grammar** so
+diagrams read uniformly across specs (exemplar:
+[`diagrams/lib-layout.svg`](https://github.com/jomkz/fighters-codex/blob/main/docs/fa/formats/diagrams/lib-layout.svg)):
+
+- a vertical stack of field boxes, top = offset 0; a monospace offset gutter on
+  the left (`0x00`; bracketed `[offset]` for positions known only at runtime);
+- each box: field name on the left, type · size on the right; variable-length
+  regions are taller and state their size formula; unknown/reserved fields get a
+  dashed outline;
+- record expansions (one directory entry, one span) pop out beside the stack,
+  connected by an arrow;
+- color semantics match the flow-diagram palette: neutral = fixed header fields,
+  amber = directory/index/selector structures, blue = payload data, green =
+  engine-side consumption notes.
+
 ## Subsystem docs (reconstruction program)
 
 The [FA.EXE reconstruction program](fa/reconstruction.md) (epic #209) documents

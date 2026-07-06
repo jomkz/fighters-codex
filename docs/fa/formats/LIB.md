@@ -63,6 +63,8 @@ flags=3 are rare and passed through without decompression.
 
 All multi-byte integers are little-endian.
 
+![LIB archive byte layout: EALIB magic and entry count, an 18-byte-per-entry directory ending in a terminator entry, then contiguous file data blocks; callouts expand one directory entry (filename, flags, offset) and the flags=4 EA/DCL compression wrapper](diagrams/lib-layout.svg)
+
 | Offset | Size   | Type   | Description |
 |--------|--------|--------|-------------|
 | `0x00` | 5      | char[5] | Magic `EALIB` (ASCII, no null terminator) |
