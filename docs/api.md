@@ -632,3 +632,39 @@ std::vector<uint8_t> lay_repack(const uint8_t* orig, size_t orig_size,
 
 } // namespace fx
 ```
+
+## t2.h — Terrain map
+
+```cpp
+namespace fx {
+
+struct T2Info   { uint32_t dim_x, dim_y, tile_count, leaf_step,
+                  leaves_w, leaves_h, leaf_offset, summary_offset;
+                  std::map<uint8_t, uint32_t> surface_dist; };
+
+// One 3-byte terrain record (leaf or tile summary).
+struct T2Record { uint8_t surface_class;    // 0xFF = water
+                  uint8_t elevation;        // elevation band
+                  uint8_t texture_variant;  // 0-31 atlas sub-texture
+};
+
+struct T2Map    { std::string theater, atlas_pic;
+                  uint32_t tiles_w, tiles_h, leaves_w, leaves_h, leaf_step;
+                  std::vector<uint8_t> header;      // pre-payload bytes, verbatim
+                  std::vector<T2Record> leaves;     // leaves_w*leaves_h row-major
+                  std::vector<T2Record> summaries;  // tiles_w*tiles_h row-major
+                  const T2Record& leaf(uint32_t x, uint32_t y) const;
+                  const T2Record& summary(uint32_t col, uint32_t row) const; };
+
+// Parse the header and build the per-tile surface class distribution.
+bool t2_info(const uint8_t* data, size_t size, T2Info* info);
+
+// Decode the full terrain map: header strings, the per-leaf records
+// (surface class / elevation band / texture variant), and the per-tile
+// summary array (the engine's far-LOD fallback). The raw header is kept
+// verbatim, so header + records reassemble the file byte-identically.
+// Returns false on any structural inconsistency.
+bool t2_read(const uint8_t* data, size_t size, T2Map* map);
+
+} // namespace fx
+```

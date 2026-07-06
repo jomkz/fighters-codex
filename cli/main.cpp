@@ -96,7 +96,9 @@ static void print_usage() {
     puts("  fx sms dump   <FA.SMS> [-o out.csv]");
     puts("");
     puts("Terrain map commands:");
-    puts("  fx t2  info   <file.T2>");
+    puts("  fx t2  info      <file.T2>");
+    puts("  fx t2  dump      <file.T2> [--leaves]");
+    puts("  fx t2  heightmap <file.T2> <out.png>");
     puts("");
     puts("Palette commands:");
     puts("  fx pal info   <file.PAL>");
