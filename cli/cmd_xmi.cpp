@@ -1,6 +1,7 @@
 #include "fx/xmi.h"
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 #include <vector>
 
 static void usage_xmi() {
@@ -22,11 +23,10 @@ static std::vector<uint8_t> read_all(const char* path) {
 }
 
 static bool write_all(const char* path, const std::vector<uint8_t>& data) {
-    FILE* f = fopen(path, "wb");
+    std::ofstream f(path, std::ios::binary);
     if (!f) return false;
-    bool ok = fwrite(data.data(), 1, data.size(), f) == data.size();
-    fclose(f);
-    return ok;
+    f.write((const char*)data.data(), (std::streamsize)data.size());
+    return f.good();
 }
 
 static int cmd_xmi_info(const char* path) {

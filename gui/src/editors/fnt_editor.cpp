@@ -29,9 +29,10 @@ static GpuTexture BuildGlyphAtlas(const fx::FntFile& fnt) {
     int atlasW = cols * (int)cellW;
     int atlasH = rows * (int)cellH;
 
-    std::vector<uint8_t> rgba(atlasW * atlasH * 4, 0x20); // dark grey background
+    const size_t atlasBytes = (size_t)atlasW * atlasH * 4;
+    std::vector<uint8_t> rgba(atlasBytes, 0x20); // dark grey background
     // Make every 4th byte (alpha) fully opaque
-    for (int i = 3; i < atlasW * atlasH * 4; i += 4)
+    for (size_t i = 3; i < atlasBytes; i += 4)
         rgba[i] = 0xFF;
 
     // Blit each glyph into its cell
