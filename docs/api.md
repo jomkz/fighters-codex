@@ -576,3 +576,59 @@ std::vector<uint8_t> cb8_repack(const uint8_t* orig, size_t orig_size,
 
 } // namespace fx
 ```
+
+## hud.h — HUD overlay codec
+
+```cpp
+namespace fx {
+
+struct HudParam { std::string gauge, field; int16_t value; };
+struct HudFile  { bool valid; std::vector<std::string> asset_strings;
+                  std::string icon_a, icon_b, icon_c, icon_d;
+                  std::vector<HudParam> params; };
+
+// Parse the fixed 0x2BB-byte HUD struct from the PE DLL's CODE section:
+// asset strings, four advisory icon labels, and the named gauge parameters.
+HudFile hud_parse(const uint8_t* data, size_t size);
+
+// Rebuild a HUD DLL around edited gauge params and icon labels. `params`
+// must hold exactly one entry per known gauge field (any order); icons fit
+// their 8-byte slots. Asset strings and every unmodelled byte carry over
+// verbatim — an unedited parse→repack is byte-identical. Empty on
+// unknown/missing params, out-of-range values, or oversized labels.
+std::vector<uint8_t> hud_repack(const uint8_t* orig, size_t orig_size,
+                                const HudFile& hud);
+
+} // namespace fx
+```
+
+## lay.h — Sky/atmosphere codec
+
+```cpp
+namespace fx {
+
+struct LayGrad  { uint8_t r, g, b; };
+struct LayLayer { uint8_t flags; int32_t sel_alt_min, /* ... */ gradient_val_end;
+                  uint8_t base_rgb[3]; LayGrad zenith_grad[31], horizon_grad[32];
+                  uint8_t horizon_base_rgb[3]; uint32_t fog_density;
+                  std::string cloud_pic, sky_pic; uint8_t visibility; };
+struct LayFile  { bool valid; uint32_t sky_angle_scale, below_angle_scale;
+                  uint32_t sky_layer_va[10], below_layer_va[10];
+                  uint32_t colour_entry_table_va, palette_buffer_va, layer_array_va;
+                  std::vector<LayLayer> layers; };
+
+// Parse the DLL data header and walk the LAYER array to its end sentinel
+// (flags bit 0).
+LayFile lay_parse(const uint8_t* data, size_t size);
+
+// Rebuild a LAY DLL around edited header fields and layers. The layer
+// count and each layer's sentinel bit must match the original, and the
+// structural VAs (layer array, colour table, palette buffer) cannot be
+// relocated; the sky/below band tables stay editable. cloud_pic/sky_pic
+// fit their 22-byte slots. Unmodelled bytes carry over verbatim — an
+// unedited parse→repack is byte-identical. Empty on any mismatch.
+std::vector<uint8_t> lay_repack(const uint8_t* orig, size_t orig_size,
+                                const LayFile& lay);
+
+} // namespace fx
+```

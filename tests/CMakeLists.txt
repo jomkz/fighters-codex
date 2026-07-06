@@ -40,6 +40,8 @@ add_executable(fx_tests
     test_raw.cpp
     test_fnt.cpp
     test_ot.cpp
+    test_hud.cpp
+    test_lay.cpp
     render/test_render.cpp
     render/test_fa.cpp
 )

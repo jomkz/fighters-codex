@@ -28,4 +28,15 @@ struct HudFile {
 
 HudFile hud_parse(const uint8_t* data, size_t size);
 
+// Rebuild a HUD DLL around edited gauge parameters and advisory icon
+// labels (#99). `hud.params` must hold exactly one entry per known gauge
+// field (any order); icon labels fit their fixed 8-byte slots (a NUL is
+// kept when shorter than 8). Every byte the parser does not model — PE
+// headers, asset strings, reserved regions — carries over verbatim, so an
+// unedited parse→repack is byte-identical. Returns empty on
+// unknown/missing/duplicate params, out-of-range values, or oversized
+// icon labels.
+std::vector<uint8_t> hud_repack(const uint8_t* orig, size_t orig_size,
+                                const HudFile& hud);
+
 } // namespace fx

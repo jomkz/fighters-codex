@@ -88,4 +88,100 @@ LayFile lay_parse(const uint8_t* data, size_t size) {
     return result;
 }
 
+static void w32(uint8_t* p, uint32_t v) {
+    p[0] = (uint8_t)v;
+    p[1] = (uint8_t)(v >> 8);
+    p[2] = (uint8_t)(v >> 16);
+    p[3] = (uint8_t)(v >> 24);
+}
+
+// Write a picture name into its fixed 22-byte slot: content, then a NUL
+// when shorter than the slot (mirrors read_asciiz); tail bytes carry over.
+static bool wr_pic(uint8_t* slot, const std::string& s) {
+    if (s.size() > 22) return false;
+    memcpy(slot, s.data(), s.size());
+    if (s.size() < 22) slot[s.size()] = 0;
+    return true;
+}
+
+std::vector<uint8_t> lay_repack(const uint8_t* orig, size_t orig_size,
+                                const LayFile& lay) {
+    CodeSection cs = pe_code_section(orig, orig_size);
+    if (!cs.data || cs.size < 0x78) return {};
+
+    // Walk the ORIGINAL layer array for the slot offsets and sentinel
+    // pattern; the edited struct must keep the same shape.
+    size_t arr_off = pe_va_to_offset(cs, u32le(cs.data + 0x74));
+    if (arr_off == (size_t)-1) return {};
+    const size_t LAYER_SZ = 0x160;
+    std::vector<size_t> slots;
+    std::vector<uint8_t> sentinels;
+    for (size_t n = 0;; ++n) {
+        size_t off = arr_off + n * LAYER_SZ;
+        if (off + LAYER_SZ > cs.size) break;
+        slots.push_back(off);
+        sentinels.push_back((uint8_t)(cs.data[off] & 0x01));
+        if (cs.data[off] & 0x01) break;
+    }
+    if (lay.layers.size() != slots.size()) return {};
+    for (size_t i = 0; i < slots.size(); ++i)
+        if ((lay.layers[i].flags & 0x01) != sentinels[i]) return {};
+
+    // The structural VAs anchor tables that cannot be relocated by a field
+    // rewrite — reject edits instead of writing a header that lies.
+    if (lay.layer_array_va != u32le(cs.data + 0x74) ||
+        lay.colour_entry_table_va != u32le(cs.data + 0x6C) ||
+        lay.palette_buffer_va != u32le(cs.data + 0x70)) return {};
+
+    std::vector<uint8_t> out(orig, orig + orig_size);
+    uint8_t* ocs = out.data() + (cs.data - orig);
+
+    // Header fields (offsets mirror lay_parse); the sky/below band tables
+    // stay writable — they select which LAYER each altitude band uses.
+    w32(ocs + 0x14, lay.sky_angle_scale);
+    for (int i = 0; i < 10; ++i) w32(ocs + 0x18 + i * 4, lay.sky_layer_va[i]);
+    w32(ocs + 0x40, lay.below_angle_scale);
+    for (int i = 0; i < 10; ++i) w32(ocs + 0x44 + i * 4, lay.below_layer_va[i]);
+
+    for (size_t i = 0; i < slots.size(); ++i) {
+        const LayLayer& L = lay.layers[i];
+        uint8_t* e = ocs + slots[i];
+        e[0x00] = L.flags;
+        w32(e + 0x02, (uint32_t)L.sel_alt_min);
+        w32(e + 0x06, (uint32_t)L.sel_alt_max);
+        w32(e + 0x0A, (uint32_t)L.alt_min);
+        w32(e + 0x0E, (uint32_t)L.alt_max);
+        w32(e + 0x12, (uint32_t)L.fog_alt_low);
+        w32(e + 0x16, (uint32_t)L.vis_lo);
+        w32(e + 0x1A, (uint32_t)L.fog_alt_high);
+        w32(e + 0x1E, (uint32_t)L.vis_hi);
+        w32(e + 0x22, (uint32_t)L.extinction_param);
+        w32(e + 0x26, (uint32_t)L.gradient_alt_start);
+        w32(e + 0x2A, (uint32_t)L.gradient_val_start);
+        w32(e + 0x2E, (uint32_t)L.gradient_alt_end);
+        w32(e + 0x32, (uint32_t)L.gradient_val_end);
+        e[0x36] = L.base_rgb[0];
+        e[0x37] = L.base_rgb[1];
+        e[0x38] = L.base_rgb[2];
+        for (int j = 0; j < 31; ++j) {
+            e[0x3E + j * 3] = L.zenith_grad[j].r;
+            e[0x3F + j * 3] = L.zenith_grad[j].g;
+            e[0x40 + j * 3] = L.zenith_grad[j].b;
+        }
+        for (int j = 0; j < 32; ++j) {
+            e[0x9B + j * 3] = L.horizon_grad[j].r;
+            e[0x9C + j * 3] = L.horizon_grad[j].g;
+            e[0x9D + j * 3] = L.horizon_grad[j].b;
+        }
+        e[0xFB] = L.horizon_base_rgb[0];
+        e[0xFC] = L.horizon_base_rgb[1];
+        e[0xFD] = L.horizon_base_rgb[2];
+        w32(e + 0xFE, L.fog_density);
+        if (!wr_pic(e + 0x102, L.cloud_pic)) return {};
+        if (!wr_pic(e + 0x118, L.sky_pic)) return {};
+        e[0x14E] = L.visibility;
+    }
+    return out;
+}
+
 } // namespace fx

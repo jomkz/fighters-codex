@@ -11,15 +11,15 @@ spec:
       issue: 54
       note: "DLL data header field +0x00 semantics"
 codec:
-  direction: read
-  issue: 99
+  direction: round-trip
+  byte_identical: true
   lib: [lib/src/lay.cpp, lib/src/pe.cpp]
   commands: [lay]
-  tests: [tests/test_pe.cpp]
+  tests: [tests/test_pe.cpp, tests/test_lay.cpp]
   fuzz: [fuzz/fuzz_pe.cpp]
   gui: [gui/src/editors/lay_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [MM, SH, PIC]
 ---
@@ -37,8 +37,9 @@ loaded at runtime.
 ### fx
 
 ```
-fx lay dump     <file.LAY>                    # atmosphere parameters as JSON
-fx lay gradient <file.LAY> -o gradient.png    # sky colour ramp as a PNG strip
+fx lay dump     <file.LAY>                            # atmosphere parameters as JSON
+fx lay gradient <file.LAY> -o gradient.png            # sky colour ramp as a PNG strip
+fx lay set      <file.LAY> <key=value ...> [-o out]   # edit header scalars / layerN.<field>
 ```
 
 ## File Layout
@@ -388,6 +389,28 @@ used by the rendering pipeline).
 | `0x004b4790` | `ClearAtmosphereBuffer` | Clears 0x843 dwords at `DAT_00581140`; called at end of `ParseLayerFile` |
 | `0x004cc4b4` | `SetActiveLayerByAngle` | Sets `currentShadeTable` (secondary active-layer ptr) from a signed 16-bit elevation angle: above horizon → `sky_layer_array[angle × sky_angle_scale >> 8]`; near/at horizon → `sky_layer_array[0]`; below −0xC0 → `below_layer_array[(−0xC0 − angle) × below_angle_scale >> 6]` |
 | `0x004aacf0` | `T_DefaultHorizon` | Default horizon renderer (the game executable); reads colour bytes from `currentTintTable+0xD4..+0xFC` (active LAYER colour table); calls `SolidHorizon` / `GouraudHorizon` for gradient rendering |
+
+## Round-Trip Notes
+
+`lay_repack` (#99) rebuilds a LAY DLL around edited header fields and
+layers. The write path re-emits only what the parser models:
+
+- **Header** — the angle scales and the sky/below band tables (which
+  select the LAYER each altitude band uses) are editable. The structural
+  VAs (`layer_array_va`, `colour_entry_table_va`, `palette_buffer_va`)
+  must match the original — their tables cannot be relocated by a field
+  rewrite, so edits reject.
+- **Layers** — every parsed field, including both gradient ramps, is
+  written back at its slot offset. The layer count and each layer's
+  end-sentinel bit (flags bit 0) must match the original: moving the
+  sentinel would change the array length the engine walks. `cloud_pic` /
+  `sky_pic` fit their fixed 22-byte slots (NUL kept when shorter).
+- **Everything else** — PE headers, the colour/palette lookup tables, and
+  unmodelled layer bytes (`+0x01`, `+0x39–0x3D`, `+0x12E–0x14D`,
+  `+0x14F–0x15F`) carry over verbatim.
+
+An unedited parse→repack is therefore byte-identical; proven per-overlay
+over all 24 install LAYs (`tests/test_lay.cpp`, `FX_FA_ROOT` census).
 
 ## Open Questions
 
