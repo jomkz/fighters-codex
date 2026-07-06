@@ -44,4 +44,16 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
 std::vector<uint8_t> pic_encode(const uint8_t* rgba, int w, int h,
                                  const Palette& pal);
 
+// Byte-identical structural repack (#175): re-derive every region from the
+// parsed header and re-emit the file by construction. Accounts for every
+// byte: the re-serialized header (tail at 0x2A..0x3F carried verbatim), the
+// real regions (pixels/palette/spans/row-heads at offsets past the header —
+// dense files carry a vestigial spans_size with offset 0 that is header
+// data, not a region), the trailing font block named by the 0x2A field in
+// font PICs, and short all-zero runs padding a following region to a
+// 16-byte boundary. Anything else returns empty. JPEG PICs (format 0xD8FF)
+// are the JPEG stream itself: whole-file passthrough. A non-empty result is
+// always byte-identical to the input.
+std::vector<uint8_t> pic_repack(const uint8_t* data, size_t size);
+
 } // namespace fx
