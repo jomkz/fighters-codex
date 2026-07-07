@@ -37,7 +37,9 @@ void Surface::Clear(std::uint8_t index) {
 }
 
 namespace {
-// Conventional VGA 6-bit -> 8-bit widening.
+// Conventional VGA 6-bit -> 8-bit widening (bit replication; 63 -> 255). Kept
+// local so fx_render stays independent of fx_lib; the same convention lives in
+// fx_lib as fx::pal_widen6 (#369).
 std::uint8_t Widen6(std::uint8_t c6) {
     return static_cast<std::uint8_t>((c6 << 2) | (c6 >> 4));
 }

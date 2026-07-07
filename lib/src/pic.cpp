@@ -85,9 +85,9 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
         int count = (int)std::min(info.palette_size / 3u, 256u);
         for (int i = 0; i < count; i++) {
             uint8_t rv = p[i*3+0], gv = p[i*3+1], bv = p[i*3+2];
-            pal.r[i] = (uint8_t)((rv << 2) | (rv >> 6));
-            pal.g[i] = (uint8_t)((gv << 2) | (gv >> 6));
-            pal.b[i] = (uint8_t)((bv << 2) | (bv >> 6));
+            pal.r[i] = pal_widen6(rv);
+            pal.g[i] = pal_widen6(gv);
+            pal.b[i] = pal_widen6(bv);
         }
     }
 

@@ -4,7 +4,7 @@
 namespace fx {
 
 static inline uint8_t vga_to_8(uint8_t v) {
-    return (uint8_t)((v << 2) | (v >> 6));
+    return pal_widen6(v);  // (v<<2)|(v>>4) — bit replication, 63 → 255 (#369)
 }
 
 Palette pal_load(const uint8_t* data, size_t size) {

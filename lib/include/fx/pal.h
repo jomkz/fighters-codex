@@ -3,9 +3,15 @@
 #include <cstdint>
 
 // VGA 6-bit palette (256 colors x 3 bytes = 768 bytes raw).
-// Each channel is 0-63; scale to 8-bit with rotate_left(2): (c << 2) | (c >> 6).
 
 namespace fx {
+
+// Widen a 6-bit VGA channel (0-63) to 8-bit by bit replication — the standard
+// VGA DAC expansion, so 63 maps to full-range 255. The single source of truth
+// for palette widening across fx_lib and fx_render (#369).
+inline uint8_t pal_widen6(uint8_t c6) {
+    return (uint8_t)((c6 << 2) | (c6 >> 4));
+}
 
 struct Palette {
     uint8_t r[256];

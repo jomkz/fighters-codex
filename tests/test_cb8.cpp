@@ -101,12 +101,12 @@ TEST_CASE("cb8 decodes a hand-built keyframe movie") {
 
     Palette pal;
     REQUIRE(cb8_frame_palette(dec, 0, &pal));
-    CHECK(pal.r[1] == 252);    // 6-bit 63 widened per pal_load: (v<<2)|(v>>6)
-    CHECK(pal.g[2] == 252);
+    CHECK(pal.r[1] == 255);    // 6-bit 63 widened per pal_widen6: (v<<2)|(v>>4) (#369)
+    CHECK(pal.g[2] == 255);
 
     auto rgba = cb8_decode_frame_rgba(dec, 0);
     REQUIRE(rgba.size() == 64u * 4u);
-    CHECK(rgba[0] == 252);     // pixel 0 wears palette entry 1 = red
+    CHECK(rgba[0] == 255);     // pixel 0 wears palette entry 1 = red
     CHECK(rgba[1] == 0);
     cb8_close(dec);
 }
