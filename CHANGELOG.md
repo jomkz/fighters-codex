@@ -7,6 +7,51 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-07
+
+**Phase 4 — Codec & Test Completeness — complete.** All four Phase 4 epics
+are closed: round-trip upgrades for one-way codecs (#48), codecs for the 16
+uncovered formats (#49), test & fixture completeness (#50), and the fuzzing
+rollout (#51). Every format in the status matrix now carries a codec, a test
+suite, and a fuzz target; the AI-script toolchain gains a decompiler; and
+pilot saves and missions become structured, editable data.
+
+The fuzzing rollout paid for itself: harnessing every game-data parser found
+and fixed **eight** decoder memory-safety and undefined-behaviour bugs —
+32-bit-overflow bounds checks and a deref-before-bounds walk in the SH/BI
+readers, and two UB sites in the AI compiler — each pinned by a regression
+test and a committed reproducer.
+
+### Added
+- **fx-lib** `mission_parse_objects` — the full placed-object list (typed
+  geometry + every field preserved) plus waypoint blocks for `.M`/`.MM`
+  missions; validated across all 592 stock missions (#156).
+- **fx-lib** BI→AI decompiler (`fx bi decompile`) and the P/PLT pilot-save
+  round-trip serializer with opaque passthrough of the unmapped regions
+  (#392, #103).
+- **fuzz** libFuzzer coverage for every remaining codec — game-data batch 3,
+  the epic-#49 formats batch 4, and a completeness sweep — so every status
+  matrix row now has a fuzz target (#118, #318, #186).
+- **ci** a workflow that auto-closes an epic once its last sub-issue closes.
+
+### Changed
+- **fx-lib, fx-render** unified the 6-bit VGA palette widening on bit
+  replication (`(v<<2)|(v>>4)`, so 63 → full 255), matching the renderer;
+  presentation only, byte-level codecs unaffected (#369).
+- **ci** the fuzz smoke now runs one parallel job per harness and skips PRs
+  that touch no fuzzable sources — flat wall-clock as the batches grow (#396).
+
+### Fixed
+- **fx-lib** hardened the SH and BI decoders against malformed headers — six
+  memory-safety bugs (32-bit `offset+size` / `pe_off` overflows and an
+  import-name walk that dereferenced before its bounds check) (#118, #394).
+- **fx-lib** two AI-compiler UB fixes surfaced by fuzzing: a `memcpy` of a
+  null pointer for a source that compiles to no bytecode, and an integer
+  overflow in the tokenizer's literal parser (#186, #399).
+- **fx-lib** `ealib_extract` now surfaces LZSS/PXPK entries as unsupported
+  (empty payload + a flag) instead of silently returning still-compressed
+  bytes; the decoders are deferred to #54 (#159).
+
 ## [0.5.11] - 2026-07-06
 
 Phase 4 (Codec & Test Completeness), Wave 4 opener — **the `.T2` terrain
@@ -471,7 +516,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.11...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
 [0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
 [0.5.10]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.10
 [0.5.9]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.9
