@@ -51,8 +51,15 @@ verbatim while recomputing every offset — byte-identical output for
 well-formed archives. The `fa_repack_roundtrip` integration test (FX_FA_ROOT
 mode) runs it against every archive in a real install.
 
-`fx lib unpack` decompresses flags=0 and flags=4 automatically. Flags=1 and
-flags=3 are rare and passed through without decompression.
+`fx lib unpack` decompresses flags=0 and flags=4 automatically. Flags=1 (LZSS)
+and flags=3 (PXPK) are **surfaced as unsupported**, not silently handed back
+still-compressed: `ealib_extract` returns an empty payload and sets its
+`unsupported` out-param (the CLI prints `SKIP … (flags=N, unsupported)`), so a
+consumer walking a whole install never mistakes compressed bytes for the
+decoded payload. Their decoders are tracked in #54; both are absent from the
+Anthology install (100% flags 0/4). Container operations that do not decode —
+`fx lib repack` and `fx lib pack` — still preserve such entries byte-identically
+(raw bytes and flags copied verbatim).
 
 ### Other Tools
 
@@ -96,8 +103,8 @@ falling back to end-of-file for the last entry's size.
 | Value | Name | Description |
 |-------|------|-------------|
 | 0 | raw | Uncompressed — data stored verbatim |
-| 1 | lzss | LZSS compressed (4-byte decompressed-size prefix) |
-| 3 | pxpk | Raw with a 4-byte `PXPK` inline header |
+| 1 | lzss | LZSS compressed (4-byte decompressed-size prefix) — decoder tracked in #54; extraction surfaces it as unsupported |
+| 3 | pxpk | Raw with a 4-byte `PXPK` inline header — decoder tracked in #54; extraction surfaces it as unsupported |
 | 4 | dcl | PKWare DCL ("Blast") with 6-byte EA prefix |
 
 ### Filename Conventions
@@ -258,10 +265,11 @@ directory, not the on-disk names, so packing survives the `&` → `_` mapping.
 
 ### 1. LZSS (flags=1) and PXPK (flags=3) payload formats
 
-Both flag values are identified and `fx lib unpack` passes such entries through
-untouched, but the LZSS bitstream parameters and the `PXPK` inline header have
-no written spec — no FA archive contains either flavour, so closing this needs
-samples from the wider Fighters family (ATF/USNF).
+Both flag values are identified, and `ealib_extract` now surfaces such entries
+as unsupported (empty payload + `unsupported` flag) rather than returning them
+still-compressed (#159). The LZSS bitstream parameters and the `PXPK` inline
+header still have no written spec — no FA archive contains either flavour, so
+writing the decoders needs samples from the wider Fighters family (ATF/USNF).
 
 *Status: open — re-static (#54)*
 
