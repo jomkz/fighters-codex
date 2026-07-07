@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/dlg.cpp]
   commands: [dlg]
   tests: [tests/test_dlg.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_dlg.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

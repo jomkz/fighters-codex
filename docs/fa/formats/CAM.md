@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/cam.cpp]
   commands: [cam]
   tests: [tests/test_cam.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_cam.cpp]
   gui: [gui/src/editors/cam_editor.cpp]
   fixtures:
     synthetic: true

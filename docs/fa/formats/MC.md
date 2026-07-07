@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/mc.cpp]
   commands: [mc]
   tests: [tests/test_mc.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_mc.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

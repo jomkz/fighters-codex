@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/txt.cpp]
   commands: [txt]
   tests: [tests/test_txt.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_txt.cpp]
   gui: [gui/src/editors/txt_editor.cpp]
   fixtures:
     synthetic: true

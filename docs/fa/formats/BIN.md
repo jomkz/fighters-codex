@@ -13,7 +13,7 @@ codec:
   lib: [lib/src/bin.cpp]
   commands: [bin]
   tests: [tests/test_bin.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_bin.cpp]
   gui: [gui/src/editors/bin_editor.cpp]
   fixtures:
     synthetic: true

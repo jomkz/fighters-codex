@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/xmi.cpp]
   commands: [xmi]
   tests: [tests/test_xmi.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_xmi.cpp]
   gui: [gui/src/editors/xmi_editor.cpp]
   fixtures:
     synthetic: true

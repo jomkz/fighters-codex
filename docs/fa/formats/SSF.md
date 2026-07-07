@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/ssf.cpp]
   commands: [ssf]
   tests: [tests/test_ssf.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_ssf.cpp]
   fixtures:
     synthetic: true
     real_manifest: false
