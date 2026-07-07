@@ -82,3 +82,8 @@ fx_add_fuzzer(fuzz_hgr)
 fx_add_fuzzer(fuzz_xmi)
 fx_add_fuzzer(fuzz_mt)
 fx_add_fuzzer(fuzz_bin)
+
+# Matrix-completeness sweep (#186 gate): the last uncovered codec rows
+fx_add_fuzzer(fuzz_ai)
+fx_add_fuzzer(fuzz_mus)
+fx_add_fuzzer(fuzz_pal)

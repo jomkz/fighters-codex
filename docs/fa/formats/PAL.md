@@ -13,7 +13,7 @@ codec:
   commands: [pal]
   gui: [gui/src/editors/pal_editor.cpp]
   tests: [tests/test_pal.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_pal.cpp]
   fixtures:
     synthetic: true
     real_manifest: true
