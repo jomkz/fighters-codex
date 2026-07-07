@@ -13,7 +13,7 @@ codec:
   lib: [lib/src/brf.cpp, lib/src/ot.cpp]
   commands: [gas]
   tests: [tests/test_brf.cpp, tests/test_ot.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_brf.cpp]
   gui: [gui/src/editors/brf_editor.cpp]
   fixtures:
     synthetic: true

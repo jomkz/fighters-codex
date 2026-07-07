@@ -13,7 +13,7 @@ codec:
   lib: [lib/src/ai.cpp]
   commands: [ai]
   tests: [tests/test_ai.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_ai.cpp]
   gui: [gui/src/editors/ai_editor.cpp]
   fixtures:
     synthetic: true

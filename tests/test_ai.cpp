@@ -94,6 +94,24 @@ TEST_CASE("ai_decompile rejects input with no CODE section") {
     REQUIRE(ai_decompile(nullptr, 0).empty());
 }
 
+// Regression (#186 fuzz, UBSan): a source that compiles to no bytecode reached
+// memcpy(dst, nullptr, 0) — UB. The compile must succeed without it.
+TEST_CASE("ai_compile handles a source that yields no bytecode") {
+    std::vector<AiCompileError> errs;
+    auto bi = ai_compile("", errs);  // empty bytecode path — must not be UB
+    REQUIRE_FALSE(bi.empty());        // still emits the PE container + END
+}
+
+// Regression (#186 fuzz, UBSan): an oversized integer literal overflowed int in
+// the tokenizer (v = v*10 + d). It must saturate instead.
+TEST_CASE("ai_compile clamps an oversized integer literal without overflow") {
+    std::vector<AiCompileError> errs;
+    std::string src(400, '9');       // lexes to one enormous T_NUMBER
+    auto bi = ai_compile(src, errs);  // v*10 must saturate, not overflow int
+    (void)bi;
+    SUCCEED();
+}
+
 // Acceptance criterion for #102: every stock flight AI is a fixed point of the
 // fx toolchain — compile → decompile → recompile reproduces the bytecode
 // exactly. Real-asset mode; runs where FX_FA_ROOT points at an FA install.

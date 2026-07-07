@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cctype>
+#include <climits>
 #include <cstring>
 #include <map>
 #include <set>
@@ -106,8 +107,11 @@ struct Lexer {
             if (isdigit((unsigned char)c)) {
                 bool ps = had_space;
                 int v = 0;
-                while (pos < len && isdigit((unsigned char)src[pos]))
-                    v = v*10 + (src[pos++] - '0');
+                while (pos < len && isdigit((unsigned char)src[pos])) {
+                    int d = src[pos++] - '0';
+                    v = (v > (INT_MAX - d) / 10) ? INT_MAX  // saturate; never overflow int
+                                                 : v * 10 + d;
+                }
                 toks.push_back({T_NUMBER,"",v,line,ps});
                 had_space = false;
                 continue;
@@ -839,7 +843,8 @@ static std::vector<uint8_t> build_pe(const std::vector<uint8_t>& bytecode) {
     // CODE data: bytecode + '%' END terminator
     {
         uint8_t* dst = out.data() + code_raw_ptr;
-        memcpy(dst, bytecode.data(), bytecode.size());
+        if (!bytecode.empty())  // memcpy(_, nullptr, 0) is UB; a valid source can compile to no bytecode
+            memcpy(dst, bytecode.data(), bytecode.size());
         dst[bytecode.size()] = 0x25; // '%' = END
     }
 

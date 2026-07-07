@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/mus.cpp]
   commands: [mus]
   tests: [tests/test_mus.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_mus.cpp]
   gui: [gui/src/editors/mus_editor.cpp]
   fixtures:
     synthetic: true
