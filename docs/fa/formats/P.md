@@ -20,8 +20,8 @@ spec:
       issue: 29
       note: "0x21F8-0x25DF (~1,000 B) — fort/campaign-phase stats"
 codec:
-  direction: read
-  issue: 103
+  direction: round-trip
+  byte_identical: true
   lib: [lib/src/plt.cpp]
   commands: [plt]
   tests: [tests/test_plt.cpp]
@@ -55,6 +55,13 @@ The identity block (`0x01`–`0xAF`) is fully mapped and editable via the fxs
 PLT editor. The stats counters (`0x1F80`–`0x21F7`) are confirmed from RE and
 displayed by `fx plt dump` and the fxs stats pane. The four gap regions
 remain unmapped (see Open Questions).
+
+The `fx_lib` write API (`plt_read` → edit → `plt_write`, [api.md](../../api.md)
+§ plt.h) serializes a pilot file back to bytes, overlaying only the mapped
+fields and passing the unmapped regions through verbatim — a `plt_read` →
+`plt_write` round-trip is byte-identical (see § Round-Trip Notes). Editing is
+done in `fx_lib`, not from the CLI: there is no `fx plt` write verb, so the
+tool never takes an output path for a save file.
 
 ### Other Tools
 
@@ -212,6 +219,34 @@ Confirmed engine functions (FA.SMS + `DumpAllFunctions.txt`):
 `PilotSave` saves the full struct as a single 9,696-byte block via
 `_SaveFile`. The stats counters are accumulated by the functions above into
 `_campaignPilot` directly.
+
+## Round-Trip Notes
+
+`plt_write` is a **byte-exact passthrough serializer**: it starts from a copy
+of the original file bytes (`PltFile::raw`) and overlays only the fixed-offset
+mapped fields — the identity block (`0x00`–`0xAF`) and, when present, the stats
+counters (`0x1F80`–`0x21F7`). Everything else — the four unmapped gap regions
+and the variable-length campaign/ordnance region (`0xB0`–`0x1F7F`) — is copied
+through unchanged. A `plt_read` → `plt_write` round-trip is therefore
+byte-identical, and Phase 6 (#29) can map the gaps without touching the codec.
+
+Two details keep the round-trip exact even before the gaps are understood:
+
+- **Unedited string fields are left verbatim.** An identity field is only
+  rewritten when its value differs from what the original bytes decode to.
+  Untouched fields — including any non-zero bytes left *past* a field's null
+  terminator (a shorter callsign written over a longer one in-engine) — pass
+  through unmodified rather than being re-zero-padded.
+- **The variable-length campaign region is never re-encoded.** `PltInfo`'s
+  `cam_file` / `aircraft` / `ordnance` views come from a heuristic forward
+  scan; they are read-only display state. The bytes themselves pass through, so
+  the scan's imprecision cannot perturb the file.
+
+Validation: `plt_repack` (read → write) is byte-identical across all 7 real
+pilot files in the reference install (`PLT441/628/937/991/992/993/994.P`,
+`FX_FA_ROOT`-gated) and the synthetic fixtures in `tests/test_plt.cpp`, which
+also exercise full-width fields, stale terminator bytes, and single-field
+edits.
 
 ## Open Questions
 

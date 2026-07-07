@@ -1,4 +1,5 @@
 ﻿#include "fx/plt.h"
+#include <algorithm>
 #include <cstring>
 
 namespace fx {
@@ -165,6 +166,125 @@ bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* st) {
     st->wpn_kill_d       = read_wpn_group(b, 0x21D0);
 
     return true;
+}
+
+// ─── Write path (issue #103) ────────────────────────────────────────────────
+// plt_write overlays only the fixed-offset mapped fields onto a copy of the
+// original bytes; the four unmapped gap regions and the variable-length
+// campaign/ordnance region pass through verbatim.
+
+// Overlay a null-padded fixed-width string field. `out` still holds the
+// original bytes (plt_write copied raw and fields are disjoint), so if `value`
+// matches what those bytes already decode to, the field is left untouched —
+// any stale bytes past the terminator pass through and the round-trip stays
+// byte-identical. Only a genuine edit zero-fills and rewrites the field (up to
+// `len` bytes, so a value that fills the field with no terminator is kept).
+static void overlay_field(std::vector<uint8_t>& out, size_t off, size_t len,
+                          const std::string& value) {
+    size_t cur_len = strnlen((const char*)out.data() + off, len);
+    if (value.size() == cur_len &&
+        std::memcmp(out.data() + off, value.data(), cur_len) == 0)
+        return;
+    std::memset(out.data() + off, 0, len);
+    std::memcpy(out.data() + off, value.data(), std::min(value.size(), len));
+}
+
+static void write_u32le(uint8_t* p, uint32_t v) {
+    p[0] = (uint8_t)(v);        p[1] = (uint8_t)(v >> 8);
+    p[2] = (uint8_t)(v >> 16);  p[3] = (uint8_t)(v >> 24);
+}
+
+static void write_kill(uint8_t* base, size_t offset, const PltKill& k) {
+    write_u32le(base + offset,     k.player);
+    write_u32le(base + offset + 4, k.wingman);
+}
+
+static void write_wpn_slot(uint8_t* p, const PltWpnSlot& s) {
+    write_u32le(p,      s.damage_total);
+    write_u32le(p + 4,  s.shots_fired);
+    write_u32le(p + 8,  s.hits);
+    write_u32le(p + 12, s.type3);
+    write_u32le(p + 16, s.kills);
+}
+
+static void write_wpn_group(uint8_t* base, size_t offset, const PltWpnGroup& g) {
+    write_wpn_slot(base + offset,        g.player);
+    write_wpn_slot(base + offset + 0x14, g.wingman);
+}
+
+static void overlay_stats(std::vector<uint8_t>& out, const PltStats& st) {
+    uint8_t* b = out.data();
+    // Mission counters (12 u32s at 0x1F80)
+    write_u32le(b + 0x1F80, st.missions_flown);
+    write_u32le(b + 0x1F84, st.wingman_missions);
+    write_u32le(b + 0x1F88, st.missions_failed);
+    write_u32le(b + 0x1F8C, st.shots_fired_total);
+    write_u32le(b + 0x1F90, st.ejections);
+    write_u32le(b + 0x1F94, st.wingman_kia);
+    write_u32le(b + 0x1F98, st.player_damage_pct);
+    write_u32le(b + 0x1F9C, st.wingman_damage_pct);
+    write_u32le(b + 0x1FA0, st.player_landings);
+    write_u32le(b + 0x1FA4, st.wingman_landings);
+    write_u32le(b + 0x1FA8, st.player_landing_score);
+    write_u32le(b + 0x1FAC, st.wingman_landing_score);
+
+    // Kill tallies (13 categories x 8 bytes at 0x1FB0)
+    write_kill(b, 0x1FB0, st.kills_air_fighter);
+    write_kill(b, 0x1FB8, st.kills_air_fighter_b);
+    write_kill(b, 0x1FC0, st.kills_air_crash);
+    write_kill(b, 0x1FC8, st.kills_naval);
+    write_kill(b, 0x1FD0, st.kills_sam);
+    write_kill(b, 0x1FD8, st.kills_aaa);
+    write_kill(b, 0x1FE0, st.kills_armor);
+    write_kill(b, 0x1FE8, st.kills_apc);
+    write_kill(b, 0x1FF0, st.kills_vehicle);
+    write_kill(b, 0x1FF8, st.kills_infantry);
+    write_kill(b, 0x2000, st.kills_friendly_fire);
+    write_kill(b, 0x2008, st.kills_air_nonfighter);
+    write_kill(b, 0x2010, st.kills_capital_ship);
+
+    // Weapon accuracy groups (8 x 0x28 bytes at 0x20B8)
+    write_wpn_group(b, 0x20B8, st.wpn_aa_gun);
+    write_wpn_group(b, 0x20E0, st.wpn_aa_missile);
+    write_wpn_group(b, 0x2108, st.wpn_ground);
+    write_wpn_group(b, 0x2130, st.wpn_naval);
+    write_wpn_group(b, 0x2158, st.wpn_kill_aircraft);
+    write_wpn_group(b, 0x2180, st.wpn_kill_b);
+    write_wpn_group(b, 0x21A8, st.wpn_kill_c);
+    write_wpn_group(b, 0x21D0, st.wpn_kill_d);
+}
+
+bool plt_read(const uint8_t* data, size_t size, PltFile* out) {
+    if (!plt_parse(data, size, &out->info)) return false;
+    out->raw.assign(data, data + size);
+    out->has_stats = plt_parse_stats(data, size, &out->stats);
+    return true;
+}
+
+std::vector<uint8_t> plt_write(const PltFile& f) {
+    if (f.raw.size() < 0xB0) return {};  // no valid identity block to overlay
+
+    std::vector<uint8_t> out = f.raw;    // pass-through backbone
+    out[0x00] = f.info.version_tag;
+    overlay_field(out, 0x01, 63, f.info.name);
+    overlay_field(out, 0x40, 32, f.info.callsign);
+    overlay_field(out, 0x61, 13, f.info.voice_file);
+    overlay_field(out, 0x6E, 13, f.info.nose_art);
+    overlay_field(out, 0x7B, 13, f.info.left_decal);
+    overlay_field(out, 0x88, 13, f.info.right_decal);
+    overlay_field(out, 0x95, 13, f.info.portrait);
+    overlay_field(out, 0xA2, 14, f.info.rank);
+
+    if (f.has_stats && out.size() >= 0x21F8)
+        overlay_stats(out, f.stats);
+
+    return out;
+}
+
+std::vector<uint8_t> plt_repack(const uint8_t* data, size_t size) {
+    PltFile f;
+    if (!plt_read(data, size, &f)) return {};
+    return plt_write(f);
 }
 
 } // namespace fx

@@ -727,3 +727,49 @@ std::vector<uint8_t> t2_repack(const uint8_t* data, size_t size);
 
 } // namespace fx
 ```
+
+## plt.h — Pilot save
+
+```cpp
+namespace fx {
+
+struct PltInfo  { uint8_t version_tag;
+                  std::string name, callsign, voice_file, nose_art,
+                              left_decal, right_decal, portrait, rank;
+                  std::string cam_file, cam_name, aircraft;   // campaign block
+                  std::vector<std::string> aircraft_pool, sensors;
+                  std::vector<PltOrdnance>  ordnance; };
+
+struct PltStats { /* mission counters, 13 kill tallies, 8 weapon-accuracy
+                     groups — see plt.h for the full field list */ };
+
+// A pilot file decoded for round-trip editing: `raw` is every original byte
+// verbatim (the pass-through backbone); `info`/`stats` are decoded views over
+// the mapped regions (`stats` valid only when `has_stats`).
+struct PltFile  { std::vector<uint8_t> raw;
+                  PltInfo info; PltStats stats; bool has_stats; };
+
+// Parse the identity block (+ campaign scan). False if size < 0xB0 or the
+// version tag != 0x0F.
+bool plt_parse(const uint8_t* data, size_t size, PltInfo* info);
+
+// Parse the confirmed stats block. False if size < 0x21F8 (stats not present).
+bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* stats);
+
+// Read a pilot file: keep the full bytes in out->raw and decode the identity
+// and stats views. Same validity criteria as plt_parse.
+bool plt_read(const uint8_t* data, size_t size, PltFile* out);
+
+// Serialize a pilot file: overlay only the fixed-offset mapped fields (the
+// identity block, and the stats counters when has_stats) onto a copy of
+// f.raw. The four unmapped gap regions and the variable-length
+// campaign/ordnance region pass through verbatim, so a plt_read -> plt_write
+// round-trip is byte-identical. Empty if f.raw is shorter than 0xB0.
+std::vector<uint8_t> plt_write(const PltFile& f);
+
+// Read then write — a byte-identical round-trip for a valid pilot file, empty
+// for anything plt_read rejects.
+std::vector<uint8_t> plt_repack(const uint8_t* data, size_t size);
+
+} // namespace fx
+```

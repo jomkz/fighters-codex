@@ -125,4 +125,34 @@ bool plt_parse(const uint8_t* data, size_t size, PltInfo* info);
 // Parse confirmed stats block. Returns false if size < 0x21F8 (stats not present).
 bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* stats);
 
+// A pilot file decoded for round-trip editing. `raw` holds every original byte
+// verbatim — the pass-through backbone. `info` and `stats` are decoded views
+// over the mapped regions (`stats` valid only when `has_stats`). Editing is
+// done by mutating the views; `plt_write` overlays them back onto a copy of
+// `raw`, so the four unmapped gap regions and the variable-length
+// campaign/ordnance region are preserved exactly (see P.md § Round-Trip Notes).
+struct PltFile {
+    std::vector<uint8_t> raw;
+    PltInfo  info;
+    PltStats stats{};
+    bool     has_stats = false;
+};
+
+// Read a pilot file: keep the full bytes in `out->raw` and decode the identity
+// (+ campaign) and stats views. Returns false if the identity block is invalid
+// (same criteria as plt_parse); *out is unspecified on failure.
+bool plt_read(const uint8_t* data, size_t size, PltFile* out);
+
+// Serialize a pilot file: start from a copy of `f.raw` and overlay only the
+// fixed-offset mapped fields — the identity block, and (when `f.has_stats`) the
+// stats counters. Every other byte passes through verbatim, so a
+// plt_read → plt_write round-trip is byte-identical. Edit `f.info` / `f.stats`
+// first to change those fields. Returns an empty vector if `f.raw` is shorter
+// than the identity block (0xB0 bytes).
+std::vector<uint8_t> plt_write(const PltFile& f);
+
+// Read then write: a byte-identical round-trip for a valid pilot file, an empty
+// vector for anything plt_read rejects. Convenience for the codec census.
+std::vector<uint8_t> plt_repack(const uint8_t* data, size_t size);
+
 } // namespace fx
