@@ -22,6 +22,7 @@ add_executable(fx_tests
     test_plt.cpp
     test_pe.cpp
     test_ai.cpp
+    test_bi.cpp
     test_fbc.cpp
     test_bin.cpp
     test_cam.cpp

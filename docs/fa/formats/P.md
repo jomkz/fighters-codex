@@ -25,7 +25,7 @@ codec:
   lib: [lib/src/plt.cpp]
   commands: [plt]
   tests: [tests/test_plt.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_plt.cpp]
   gui: [gui/src/editors/plt_editor.cpp]
   fixtures:
     synthetic: true

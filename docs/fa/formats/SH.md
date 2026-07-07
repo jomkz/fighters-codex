@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/sh.cpp]
   commands: [sh]
   tests: [tests/test_sh.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_sh.cpp]
   gui: [gui/src/editors/sh_editor.cpp]
   fixtures:
     synthetic: true

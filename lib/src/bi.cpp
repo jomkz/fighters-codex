@@ -25,15 +25,15 @@ static std::vector<BiSection> parse_bi_sections(const uint8_t* data, size_t size
     std::vector<BiSection> secs;
     if (size < 0x40) return secs;
     uint32_t pe_off = u32le_bi(data + 0x3C);
-    if (pe_off + 24 > size) return secs;
+    if ((size_t)pe_off + 24 > size) return secs;  // size_t: a huge pe_off must not wrap
     const uint8_t* pe = data + pe_off;
     if ((pe[0] != 'P') || (pe[1] != 'L' && pe[1] != 'E') || pe[2] != 0 || pe[3] != 0)
         return secs;
     uint16_t num_sec = u16le_bi(pe + 6);
     uint16_t opt_sz  = u16le_bi(pe + 20);
-    uint32_t sec_tbl = pe_off + 24 + opt_sz;
+    size_t   sec_tbl = (size_t)pe_off + 24 + opt_sz;
     for (uint16_t i = 0; i < num_sec; ++i) {
-        uint32_t off = sec_tbl + (uint32_t)i * 40;
+        size_t off = sec_tbl + (size_t)i * 40;  // size_t: no 32-bit wrap
         if (off + 40 > size) break;
         BiSection s;
         memcpy(s.name, data + off, 8);
@@ -60,7 +60,7 @@ static std::map<uint32_t, std::string> build_import_map(
         if (strncmp(s.name, ".idata", 8) == 0) idata_sec = &s;
     }
     if (!code_sec || !idata_sec) return m;
-    if (idata_sec->raw_ptr + idata_sec->raw_sz > size) return m;
+    if ((size_t)idata_sec->raw_ptr + idata_sec->raw_sz > size) return m;  // no 32-bit wrap
     if (idata_sec->raw_sz < 20) return m;
 
     const uint8_t* idata    = data + idata_sec->raw_ptr;
@@ -93,13 +93,13 @@ static std::map<uint32_t, std::string> build_import_map(
         const uint8_t* np = va2idata(entry_va + 2);
         if (!np) { names.push_back(""); continue; }
         std::string fname;
-        while (*np && (uint32_t)(np - idata) < idata_sz)
+        while ((uint32_t)(np - idata) < idata_sz && *np)  // bound before deref
             fname += (char)(*np++);
         names.push_back(fname);
     }
 
     // Scan CODE for JMP [mem] thunks: FF 25 <u32>
-    if (code_sec->raw_ptr + code_sec->raw_sz > size) return m;
+    if ((size_t)code_sec->raw_ptr + code_sec->raw_sz > size) return m;  // no 32-bit wrap
     const uint8_t* code = data + code_sec->raw_ptr;
     for (uint32_t i = 0; i + 6 <= code_sec->raw_sz; ++i) {
         if (code[i] == 0xFF && code[i+1] == 0x25) {

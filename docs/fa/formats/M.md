@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/mission.cpp]
   commands: [mission]
   tests: [tests/test_mission.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_mission.cpp]
   gui: [gui/src/editors/mission_editor.cpp]
   fixtures:
     synthetic: true

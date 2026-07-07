@@ -10,9 +10,9 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 |---|---|---|---|---|---|---|---|---|---|
 | [11K](11K.md) | audio | complete | — | round-trip (byte-identical) | `fx audio` | `tests/test_audio.cpp` | syn/real | `fuzz/fuzz_audio.cpp` | `gui/src/editors/audio_editor.cpp` |
 | [AI](AI.md) | mission | complete | — | round-trip (by design) | `fx ai` | `tests/test_ai.cpp` | syn/real | — | `gui/src/editors/ai_editor.cpp` |
-| [BI](BI.md) | mission | complete | — | round-trip (by design) | `fx bi` | `tests/test_ai.cpp` | syn/real | — | — |
+| [BI](BI.md) | mission | complete | — | round-trip (by design) | `fx bi` | `tests/test_ai.cpp`<br>`tests/test_bi.cpp` | syn/real | `fuzz/fuzz_bi.cpp` | — |
 | [BIN](BIN.md) | system | complete | — | read-only (by design) | `fx bin` | `tests/test_bin.cpp` | syn/real | — | `gui/src/editors/bin_editor.cpp` |
-| [BRF](BRF.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | — | `tests/test_brf.cpp` | syn | — | `gui/src/editors/brf_editor.cpp` |
+| [BRF](BRF.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | — | `tests/test_brf.cpp` | syn | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |
 | [CAM](CAM.md) | mission | complete | — | read-only (by design) | `fx cam` | `tests/test_cam.cpp` | syn/real | — | `gui/src/editors/cam_editor.cpp` |
 | [CB8](CB8.md) | video | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (by design) | `fx cb8` | `tests/test_cb8.cpp` | syn/real | `fuzz/fuzz_cb8.cpp` | `gui/src/editors/cb8_editor.cpp` |
 | [CFG](CFG.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx cfg` | `tests/test_cfg.cpp` | syn | — | — |
@@ -23,12 +23,12 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [FNT](FNT.md) | ui-overlay | complete | — | round-trip (byte-identical) | `fx fnt` | `tests/test_pe.cpp`<br>`tests/test_fnt.cpp` | syn/real | `fuzz/fuzz_pe.cpp`<br>`fuzz/fuzz_fnt.cpp` | `gui/src/editors/fnt_editor.cpp` |
 | [GAS](GAS.md) | typedef | complete | — | round-trip (byte-identical) | `fx gas` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [HGR](HGR.md) | 3d | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx hgr` | `tests/test_hgr.cpp` | syn/real | — | — |
-| [HUD](HUD.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx hud` | `tests/test_hud.cpp` | syn/real | — | `gui/src/editors/hud_editor.cpp`<br>`gui/src/editors/overlay_preview.cpp` |
-| [INF](INF.md) | 3d | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx inf` | `tests/test_inf.cpp` | syn | — | `gui/src/editors/inf_editor.cpp` |
+| [HUD](HUD.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx hud` | `tests/test_hud.cpp` | syn/real | `fuzz/fuzz_hud.cpp` | `gui/src/editors/hud_editor.cpp`<br>`gui/src/editors/overlay_preview.cpp` |
+| [INF](INF.md) | 3d | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx inf` | `tests/test_inf.cpp` | syn | `fuzz/fuzz_inf.cpp` | `gui/src/editors/inf_editor.cpp` |
 | [JT](JT.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx jt` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
-| [LAY](LAY.md) | 3d | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx lay` | `tests/test_pe.cpp`<br>`tests/test_lay.cpp` | syn/real | `fuzz/fuzz_pe.cpp` | `gui/src/editors/lay_editor.cpp`<br>`gui/src/editors/overlay_preview.cpp` |
+| [LAY](LAY.md) | 3d | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx lay` | `tests/test_pe.cpp`<br>`tests/test_lay.cpp` | syn/real | `fuzz/fuzz_pe.cpp`<br>`fuzz/fuzz_lay.cpp` | `gui/src/editors/lay_editor.cpp`<br>`gui/src/editors/overlay_preview.cpp` |
 | [LIB](LIB.md) | archive | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx lib` | `tests/test_ealib.cpp`<br>`tests/test_blast.cpp` | syn/real | `fuzz/fuzz_ealib.cpp`<br>`fuzz/fuzz_blast.cpp` | — |
-| [M](M.md) | mission | complete | — | round-trip (byte-identical) | `fx mission` | `tests/test_mission.cpp` | syn/real | — | `gui/src/editors/mission_editor.cpp` |
+| [M](M.md) | mission | complete | — | round-trip (byte-identical) | `fx mission` | `tests/test_mission.cpp` | syn/real | `fuzz/fuzz_mission.cpp` | `gui/src/editors/mission_editor.cpp` |
 | [MC](MC.md) | mission | complete | — | read-only (by design) | `fx mc` | `tests/test_mc.cpp` | syn/real | — | — |
 | [MM](MM.md) | terrain | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx mm`<br>`fx mission` | `tests/test_mission.cpp` | syn/real | — | `gui/src/editors/mission_editor.cpp` |
 | [MNU](MNU.md) | ui-overlay | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mnu` | `tests/test_mnu.cpp` | syn/real | — | — |
@@ -36,7 +36,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [MUS](MUS.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mus` | `tests/test_mus.cpp` | syn/real | — | `gui/src/editors/mus_editor.cpp` |
 | [NT](NT.md) | typedef | complete | — | round-trip (byte-identical) | `fx nt` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [OT](OT.md) | typedef | complete | — | round-trip (byte-identical) | `fx ot` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
-| [P](P.md) | system | partial | re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29) | round-trip (byte-identical) | `fx plt` | `tests/test_plt.cpp` | syn | — | `gui/src/editors/plt_editor.cpp` |
+| [P](P.md) | system | partial | re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29)<br>re-gameplay [#29](https://github.com/jomkz/fighters-codex/issues/29) | round-trip (byte-identical) | `fx plt` | `tests/test_plt.cpp` | syn | `fuzz/fuzz_plt.cpp` | `gui/src/editors/plt_editor.cpp` |
 | [PAL](PAL.md) | graphics | complete | — | round-trip (byte-identical) | `fx pal` | `tests/test_pal.cpp` | syn/real | — | `gui/src/editors/pal_editor.cpp` |
 | [PIC](PIC.md) | graphics | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx pic` | `tests/test_pic.cpp` | syn/real | `fuzz/fuzz_pic.cpp` | `gui/src/editors/pic_editor.cpp` |
 | [PT](PT.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54)<br>re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx pt` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
@@ -45,10 +45,10 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [RGN](RGN.md) | installer | complete | — | round-trip (byte-identical) | `fx rgn` | `tests/test_rgn.cpp` | syn | — | — |
 | [SEE](SEE.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx see` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | — | `gui/src/editors/brf_editor.cpp` |
 | [SEQ](SEQ.md) | video | complete | — | round-trip (byte-identical) | `fx seq` | `tests/test_seq.cpp` | syn/real | `fuzz/fuzz_seq.cpp` | `gui/src/editors/seq_editor.cpp` |
-| [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | — | `gui/src/editors/sh_editor.cpp` |
-| [SMS](SMS.md) | system | complete | — | read-only (by design) | `fx sms` | `tests/test_sms.cpp` | real | — | — |
+| [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | `fuzz/fuzz_sh.cpp` | `gui/src/editors/sh_editor.cpp` |
+| [SMS](SMS.md) | system | complete | — | read-only (by design) | `fx sms` | `tests/test_sms.cpp` | real | `fuzz/fuzz_sms.cpp` | — |
 | [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf` | `tests/test_ssf.cpp` | syn | — | — |
-| [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | — | `gui/src/editors/terrain_preview.cpp` |
+| [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | `fuzz/fuzz_t2.cpp` | `gui/src/editors/terrain_preview.cpp` |
 | [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | — | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | none [#55](https://github.com/jomkz/fighters-codex/issues/55) | — | — | real | — | `gui/src/editors/vdo_editor.cpp` |
 | [XMI](XMI.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx xmi` | `tests/test_xmi.cpp` | syn/real | — | `gui/src/editors/xmi_editor.cpp` |
