@@ -105,34 +105,94 @@ jobs:
       - name: Test
         run: ctest --test-dir build-macos --output-on-failure --no-tests=error
 
-  fuzz:
-    name: fuzz-smoke
+  # Gate + fan-out for the fuzz smoke. Decides whether the smoke needs to run
+  # (skip docs- or workflow-only PRs) and enumerates the harnesses so each runs
+  # as its own parallel job below — wall-clock stays flat as batches grow.
+  fuzz-changes:
+    name: fuzz-changes
     runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.filter.outputs.run }}
+      harnesses: ${{ steps.filter.outputs.harnesses }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        run: |
+          # Pushes to main always run; PRs run only when fuzzable sources, the
+          # build config, or this workflow changed.
+          run=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base='${{ github.event.pull_request.base.sha }}'
+            if git diff --name-only "$base"...HEAD \
+                 | grep -qE '^(lib/|fuzz/|CMakeLists\.txt|CMakePresets\.json|\.github/workflows/ci\.yml)'; then
+              run=true
+            else
+              run=false
+            fi
+          fi
+          harnesses=$(ls fuzz/fuzz_*.cpp | xargs -n1 basename | sed 's/\.cpp$//' \
+                        | jq -R . | jq -sc .)
+          echo "run=$run"          >> "$GITHUB_OUTPUT"
+          echo "harnesses=$harnesses" >> "$GITHUB_OUTPUT"
+          echo "run=$run harnesses=$harnesses"
+
+  # One 60-second libFuzzer smoke per harness, in parallel. Each job builds
+  # only its own target and runs that harness's ctest over the committed corpus.
+  fuzz-run:
+    name: fuzz-run (${{ matrix.harness }})
+    needs: fuzz-changes
+    if: needs.fuzz-changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        harness: ${{ fromJson(needs.fuzz-changes.outputs.harnesses) }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure
         run: cmake --preset fuzz
 
-      - name: Build harnesses
-        run: cmake --build --preset fuzz --target fuzzers
+      - name: Build ${{ matrix.harness }}
+        run: cmake --build --preset fuzz --target ${{ matrix.harness }}
 
-      - name: Smoke run
-        # Each harness fuzzes for 60s from its committed seed corpus
-        # (fuzz/CMakeLists.txt registers one ctest per harness, label "fuzz")
-        run: ctest --preset fuzz
+      - name: Smoke run (60s)
+        run: ctest --preset fuzz -R "^fuzz_smoke_${{ matrix.harness }}$" --output-on-failure
 
       - name: Upload findings
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: fuzz-findings
+          name: fuzz-findings-${{ matrix.harness }}
           path: |
-            build/fuzz/fuzz/*-work/crash-*
-            build/fuzz/fuzz/*-work/oom-*
-            build/fuzz/fuzz/*-work/timeout-*
-            build/fuzz/fuzz/*-work/leak-*
+            build/fuzz/fuzz/${{ matrix.harness }}-work/crash-*
+            build/fuzz/fuzz/${{ matrix.harness }}-work/oom-*
+            build/fuzz/fuzz/${{ matrix.harness }}-work/timeout-*
+            build/fuzz/fuzz/${{ matrix.harness }}-work/leak-*
           if-no-files-found: ignore
+
+  # Stable required-check name: green when the matrix passed or was skipped
+  # (docs-only PR), red if any harness smoke failed.
+  fuzz-smoke:
+    name: fuzz-smoke
+    needs: [fuzz-changes, fuzz-run]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate
+        run: |
+          if [ "${{ needs.fuzz-changes.result }}" != "success" ]; then
+            echo "fuzz-changes did not succeed."; exit 1
+          fi
+          if [ "${{ needs.fuzz-changes.outputs.run }}" != "true" ]; then
+            echo "No fuzz-relevant changes — smoke skipped."; exit 0
+          fi
+          echo "fuzz-run matrix result: ${{ needs.fuzz-run.result }}"
+          [ "${{ needs.fuzz-run.result }}" = "success" ] && exit 0
+          echo "One or more harness smoke runs failed."; exit 1
 
   coverage:
     name: coverage
