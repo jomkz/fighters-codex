@@ -191,10 +191,38 @@ std::vector<uint8_t> pt_serialize(const PlaneType&);
 ```cpp
 namespace fx {
 
-struct MissionFile { /* map name, time, wind, clouds, object list */ };
+struct MissionInfo { bool is_mission; std::string map_file, layer_file;
+                     int layer_index, clouds, wind_dir, wind_speed,
+                         time_h, time_m, obj_count;
+                     std::vector<std::string> screen_flags; };
 
-MissionFile          mission_parse(const uint8_t* data, size_t size);
-std::vector<uint8_t> mission_serialize(const MissionFile&);
+// One "key value..." line; values kept as raw text tokens.
+struct MissionField    { std::string key; std::vector<std::string> values; };
+
+struct MissionWaypoint { int index;                       // w_index
+                         std::vector<MissionField> fields; // other w_* fields
+                         const std::vector<std::string>* get(const std::string&) const; };
+
+struct MissionObj      { std::string type_file;           // type
+                         int64_t pos[3]; int angle[3];     // pos / angle
+                         std::vector<MissionField> fields; // all other fields
+                         const std::vector<std::string>* get(const std::string&) const; };
+
+struct MissionWaypointBlock { int count; std::vector<MissionWaypoint> waypoints; };
+struct MissionObjects  { std::vector<MissionObj> objects;
+                         std::vector<MissionWaypointBlock> waypoint_blocks; };
+
+// Summary: map/layer/wind/time/clouds + object count + screen flags.
+MissionInfo          mission_parse_info(const uint8_t* data, size_t size);
+
+// Verbatim re-emit with CRLF normalization (byte-identical for canonical input).
+std::vector<uint8_t> mission_roundtrip(const uint8_t* data, size_t size);
+
+// Full placed-object decode: every `obj … .` block (type/pos/angle typed, other
+// fields preserved) plus the `waypoint2` blocks, both in file order. The
+// object↔waypoint-block ownership is not encoded in the file (M.md § Waypoint
+// block), so blocks are a parallel list.
+MissionObjects       mission_parse_objects(const uint8_t* data, size_t size);
 } // namespace fx
 ```
 
