@@ -7,15 +7,16 @@ endianness: none
 spec:
   status: complete
 codec:
-  direction: read
-  issue: 102
+  direction: round-trip
+  byte_identical: false
+  rationale: "AI↔BI round-trips semantically: `fx ai compile` parses the script and `fx bi decompile` regenerates equivalent source that recompiles byte-identically, but comments and the original identifier/label spelling are discarded, so the recovered text is not byte-identical to the authored source"
   lib: [lib/src/ai.cpp]
   commands: [ai]
-  tests: []
+  tests: [tests/test_ai.cpp]
   fuzz: []
   gui: [gui/src/editors/ai_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [BI, BRF]
 ---
@@ -32,11 +33,15 @@ the same base name — see [BI.md](BI.md).
 ### fx
 
 ```
-fx ai compile <file.AI> -o <file.BI>    # full parse + compile to BI bytecode DLL
+fx ai compile   <file.AI> -o <file.BI>  # full parse + compile to BI bytecode DLL
+fx bi decompile <file.BI>               # recover AI source from fx-compiled bytecode
 ```
 
 `fx ai compile` is a complete parser/validator for the language documented
-below; nothing writes `.AI` yet — the BI→AI decompiler is #102.
+below. `fx bi decompile` ([BI.md](BI.md)) is its inverse: it reconstructs AI
+source whose recompilation is byte-identical to the input, closing the
+compile→decompile→recompile loop for every BI `fx` produces. Synthesized labels
+(`L####`) replace the original label names, and comments are not recovered.
 
 ## File Layout
 

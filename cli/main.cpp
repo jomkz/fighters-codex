@@ -124,7 +124,8 @@ static void print_usage() {
     puts("  fx mus dump   <file.MUS>");
     puts("");
     puts("BI disassembler commands:");
-    puts("  fx bi dump    <file.BI>");
+    puts("  fx bi dump      <file.BI>");
+    puts("  fx bi decompile <file.BI>");
     puts("");
     puts("AI compiler commands:");
     puts("  fx ai compile <file.AI> -o <file.BI>");

@@ -1,4 +1,5 @@
 ﻿#include "fx/ai.h"
+#include "fx/pe.h"
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -867,6 +868,335 @@ std::vector<uint8_t> ai_compile(const std::string& source,
     if (!errors.empty()) return {};
 
     return build_pe(cg.code);
+}
+
+// ---- Decompiler (BI bytecode → AI source) -----------------------------------
+//
+// The exact inverse of the compiler above. It reconstructs AI source whose
+// recompilation reproduces the input BI's bytecode byte-for-byte, i.e.
+// ai_compile(ai_decompile(bi)) == bi for every BI this toolchain emits.
+//
+// The compiler emits a small, fixed set of statement shapes; the decompiler
+// recognises each shape and regenerates the source construct that produced it.
+// FRAME numbering, PUSH width selection, and CALL_BY_NAME name mangling are all
+// regenerated deterministically by ai_compile, so only the statement structure
+// and the (offset-derived) labels need to be recovered here.
+
+namespace {
+
+// One decoded bytecode instruction.
+struct DcIns {
+    uint32_t             off = 0;
+    uint8_t              op  = 0;
+    int32_t              imm = 0;   // PUSH value / VAR index / GOTO|IF_FALSE target
+    std::string          str;       // 0x07 PUSH_ADDR / 0x27 CALL_BY_NAME name
+    std::vector<int32_t> sw;        // 0x24 SWITCH targets
+};
+
+static uint16_t dc_u16(const uint8_t* p) { return (uint16_t)(p[0] | ((uint16_t)p[1] << 8)); }
+static uint32_t dc_u32(const uint8_t* p) {
+    return p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+}
+
+// Decode the CODE bytecode into a flat instruction list. Stops at END (0x25) or
+// on any truncated operand (bounds-safe against malformed input).
+static std::vector<DcIns> dc_decode(const uint8_t* code, size_t n) {
+    std::vector<DcIns> out;
+    size_t p = 0;
+    auto need = [&](size_t k) { return p + k <= n; };
+    while (p < n) {
+        DcIns in;
+        in.off = (uint32_t)p;
+        in.op  = code[p];
+        uint8_t op = in.op;
+        if (op == 0x25) { out.push_back(in); break; }
+        if (op == 0x07 || op == 0x27) {
+            size_t q = p + 1;
+            while (q < n && code[q]) in.str += (char)code[q++];
+            if (q >= n) break;              // unterminated string
+            out.push_back(in); p = q + 1; continue;
+        }
+        if (op == 0x24) {
+            if (!need(2)) break;
+            uint8_t cnt = code[p + 1];
+            if (!need(2 + (size_t)cnt * 2)) break;
+            for (uint8_t i = 0; i < cnt; ++i)
+                in.sw.push_back((int16_t)dc_u16(code + p + 2 + i * 2));
+            out.push_back(in); p += 2 + (size_t)cnt * 2; continue;
+        }
+        switch (op) {
+        case 0x01: if (!need(5)) return out; in.imm = (int32_t)dc_u32(code + p + 1); out.push_back(in); p += 5; break;
+        case 0x02: if (!need(3)) return out; in.imm = (int16_t)dc_u16(code + p + 1); out.push_back(in); p += 3; break;
+        case 0x03: if (!need(2)) return out; in.imm = (int8_t)code[p + 1];           out.push_back(in); p += 2; break;
+        case 0x05:
+        case 0x06: if (!need(2)) return out; in.imm = code[p + 1];                   out.push_back(in); p += 2; break;
+        case 0x20:
+        case 0x21:
+        case 0x23: if (!need(3)) return out; in.imm = (int16_t)dc_u16(code + p + 1); out.push_back(in); p += 3; break;
+        case 0x28: if (!need(5)) return out; out.push_back(in); p += 5; break;       // FRAME (operands regenerated on recompile)
+        default:   out.push_back(in); p += 1; break;
+        }
+    }
+    return out;
+}
+
+// Binary/unary/prefix operator spellings that reparse to the same opcode.
+static const char* dc_binop(uint8_t op) {
+    switch (op) {
+    case 0x08: return "*";  case 0x09: return "/";  case 0x0A: return "%";
+    case 0x0B: return "+";  case 0x0C: return "-";
+    case 0x0D: return "&";  case 0x0E: return "|";  case 0x0F: return "^";
+    case 0x10: return "<<"; case 0x11: return ">>";
+    case 0x12: return "<";  case 0x13: return "<="; case 0x14: return ">=";
+    case 0x15: return ">";  case 0x16: return "=="; case 0x17: return "!=";
+    case 0x18: return "&&"; case 0x19: return "||";
+    default:   return nullptr;
+    }
+}
+
+static bool dc_is_expr(const DcIns& in) {
+    if (in.op == 0x27) return in.str.rfind("_CTEval_", 0) == 0;
+    switch (in.op) {
+    case 0x01: case 0x02: case 0x03: case 0x06: case 0x07:
+    case 0x08: case 0x09: case 0x0A: case 0x0B: case 0x0C:
+    case 0x0D: case 0x0E: case 0x0F: case 0x10: case 0x11:
+    case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:
+    case 0x18: case 0x19: case 0x1A: case 0x1B: case 0x1C:
+    case 0x1D: case 0x1E: case 0x1F:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// A reconstructed statement. Expressions are kept as already-rendered source
+// strings (the grammar is precedence-sorted, so paren-free in-order text
+// reparses to the identical tree).
+struct Stmt {
+    enum Kind { ASSIGN, GOTO, INSTR, SWITCH, IFGOTO, IFSTMT, BLOCKIF } kind = INSTR;
+    uint32_t              off    = 0;
+    int                   var    = 0;      // ASSIGN
+    uint32_t              target = 0;      // GOTO / IFGOTO
+    std::string           cond;            // condition / SWITCH selector / assign RHS
+    std::string           name;            // INSTR name
+    std::vector<std::string> args;         // INSTR args (source order)
+    std::vector<uint32_t> targets;         // SWITCH labels
+    std::vector<Stmt>     body, els, inner; // BLOCKIF bodies / IFSTMT inner (size 1)
+    bool                  has_else = false;
+};
+
+struct Decompiler {
+    const std::vector<DcIns>& ins;
+    std::set<uint32_t>        labels;
+    bool                      ok = true;
+
+    explicit Decompiler(const std::vector<DcIns>& v) : ins(v) {}
+
+    void need(uint32_t off) { labels.insert(off); }
+
+    static std::string num(int32_t v) { char b[16]; snprintf(b, sizeof b, "%d", v); return b; }
+
+    // Decode a run of expression opcodes into value strings (RPN → infix).
+    std::vector<std::string> forest(size_t& i) {
+        std::vector<std::string> st;
+        while (i < ins.size() && dc_is_expr(ins[i])) {
+            const DcIns& x = ins[i];
+            uint8_t op = x.op;
+            if (op == 0x01)      st.push_back((uint32_t)x.imm == 0x7FFFFFFFu ? "any" : num(x.imm));
+            else if (op == 0x02 || op == 0x03) st.push_back(num(x.imm));
+            else if (op == 0x06) st.push_back(std::string("%") + (char)('a' + (x.imm & 3)));
+            else if (op == 0x07) st.push_back("\"" + x.str + "\"");
+            else if (op == 0x27) st.push_back(x.str.substr(8)); // strip "_CTEval_"
+            else if (const char* b = dc_binop(op)) {
+                if (st.size() < 2) { ok = false; return st; }
+                std::string a = st.back(); st.pop_back();
+                std::string l = st.back(); st.pop_back();
+                st.push_back(l + " " + b + " " + a);
+            } else if (op == 0x1A || op == 0x1B || op == 0x1C) {
+                if (st.empty()) { ok = false; return st; }
+                std::string a = st.back(); st.pop_back();
+                const char* kw = op == 0x1A ? "abs" : op == 0x1B ? "neg" : "not";
+                st.push_back(std::string(kw) + " " + a);
+            } else { // 0x1D/0x1E/0x1F random/percent/chance
+                if (st.empty()) { ok = false; return st; }
+                std::string a = st.back(); st.pop_back();
+                const char* kw = op == 0x1D ? "random" : op == 0x1E ? "percent" : "chance";
+                st.push_back(std::string(kw) + " " + a);
+            }
+            ++i;
+        }
+        return st;
+    }
+
+    // Decode one statement starting at index i. Advances i past it.
+    Stmt stmt(size_t& i) {
+        Stmt s;
+        if (i >= ins.size()) { ok = false; return s; }
+        s.off = ins[i].off;
+        std::vector<std::string> roots = forest(i);
+        if (!ok || i >= ins.size()) { ok = false; return s; }
+        const DcIns& t = ins[i];
+        if (t.op == 0x28) {                     // FRAME
+            if (roots.empty()) { ++i; return framed_body(s.off, i); }
+            if (roots.size() != 1) { ok = false; return s; }
+            ++i;                                // consume FRAME
+            return inline_if_tail(s.off, roots[0], i);
+        }
+        if (t.op == 0x05) {                     // frameless assignment (inline-if inner)
+            if (roots.size() != 1) { ok = false; return s; }
+            s.kind = Stmt::ASSIGN; s.var = t.imm & 3; s.cond = roots[0]; ++i; return s;
+        }
+        if (t.op == 0x20) {                     // frameless goto/restart
+            s.kind = Stmt::GOTO; s.target = (uint32_t)t.imm; need(s.target); ++i; return s;
+        }
+        if (t.op == 0x27 && t.str.rfind("_CTDo_", 0) == 0) { // frameless exit
+            s.kind = Stmt::INSTR; s.name = t.str.substr(6);
+            if (i + 1 >= ins.size() || ins[i + 1].op != 0x04) { ok = false; return s; }
+            i += 2; return s;
+        }
+        ok = false; return s;
+    }
+
+    // Decode the body of a framed statement (FRAME already consumed).
+    Stmt framed_body(uint32_t off, size_t& i) {
+        Stmt s; s.off = off;
+        std::vector<std::string> roots = forest(i);
+        if (!ok || i >= ins.size()) { ok = false; return s; }
+        const DcIns& t = ins[i];
+        if (t.op == 0x05) {                     // STORE_VAR → assignment
+            if (roots.size() != 1) { ok = false; return s; }
+            s.kind = Stmt::ASSIGN; s.var = t.imm & 3; s.cond = roots[0]; ++i; return s;
+        }
+        if (t.op == 0x20) {                     // GOTO / restart
+            s.kind = Stmt::GOTO; s.target = (uint32_t)t.imm; need(s.target); ++i; return s;
+        }
+        if (t.op == 0x24) {                     // SWITCH
+            if (roots.size() != 1 || roots[0].rfind("random ", 0) != 0) { ok = false; return s; }
+            s.kind = Stmt::SWITCH; s.cond = roots[0];
+            for (int32_t tg : t.sw) { s.targets.push_back((uint32_t)tg); need((uint32_t)tg); }
+            ++i; return s;
+        }
+        if (t.op == 0x27 && t.str.rfind("_CTDo_", 0) == 0) { // instruction call
+            s.kind = Stmt::INSTR; s.name = t.str.substr(6);
+            for (auto it = roots.rbegin(); it != roots.rend(); ++it) s.args.push_back(*it);
+            if (i + 1 >= ins.size() || ins[i + 1].op != 0x04) { ok = false; return s; }
+            i += 2; return s;
+        }
+        if (t.op == 0x23) {                     // IF_FALSE → block-if
+            if (roots.size() != 1) { ok = false; return s; }
+            uint32_t T = (uint32_t)ins[i].imm; ++i;
+            return block_if(off, roots[0], T, i);
+        }
+        ok = false; return s;
+    }
+
+    // Decode the tail of an inline if (cond + FRAME already consumed); i at IF_FALSE.
+    Stmt inline_if_tail(uint32_t off, const std::string& cond, size_t& i) {
+        Stmt s; s.off = off;
+        if (i >= ins.size() || ins[i].op != 0x23) { ok = false; return s; }
+        uint32_t S = (uint32_t)ins[i].imm; ++i;
+        if (i < ins.size() && ins[i].op == 0x20 && S == ins[i].off + 3) {
+            s.kind = Stmt::IFGOTO; s.cond = cond; s.target = (uint32_t)ins[i].imm;
+            need(s.target); ++i; return s;
+        }
+        Stmt inner = stmt(i);
+        if (!ok || i > ins.size()) { ok = false; return s; }
+        uint32_t end = (i < ins.size()) ? ins[i].off : (uint32_t)-1;
+        if (end != S) { ok = false; return s; }
+        s.kind = Stmt::IFSTMT; s.cond = cond; s.inner.push_back(std::move(inner));
+        return s;
+    }
+
+    // Decode a .if block: cond + IF_FALSE consumed; i at first body statement.
+    Stmt block_if(uint32_t off, const std::string& cond, uint32_t T, size_t& i) {
+        Stmt s; s.off = off; s.kind = Stmt::BLOCKIF; s.cond = cond;
+        while (i < ins.size() && ins[i].off < T) {
+            if (ins[i].op == 0x20) {            // bare GOTO = else-skip
+                uint32_t E = (uint32_t)ins[i].imm; ++i;
+                s.has_else = true;
+                while (i < ins.size() && ins[i].off < E) {
+                    s.els.push_back(stmt(i));
+                    if (!ok) return s;
+                }
+                return s;
+            }
+            s.body.push_back(stmt(i));
+            if (!ok) return s;
+        }
+        return s;
+    }
+
+    std::vector<Stmt> program() {
+        std::vector<Stmt> out;
+        size_t i = 0;
+        while (i < ins.size() && ins[i].op != 0x25) {
+            out.push_back(stmt(i));
+            if (!ok) break;
+        }
+        return out;
+    }
+
+    // ---- printing ----
+    static std::string lbl(uint32_t off) { char b[16]; snprintf(b, sizeof b, "L%04X", off); return b; }
+
+    std::string render_simple(const Stmt& s) {
+        switch (s.kind) {
+        case Stmt::ASSIGN: return std::string("%") + (char)('a' + s.var) + " = " + s.cond;
+        case Stmt::GOTO:   return "goto " + lbl(s.target);
+        case Stmt::INSTR:
+            if (s.name == "exit" && s.args.empty()) return "exit";
+            if (s.args.empty()) return s.name;
+            {
+                std::string r = s.name;
+                for (const auto& a : s.args) r += " " + a;
+                return r;
+            }
+        case Stmt::SWITCH: {
+            std::string r = "switch " + s.cond;
+            for (uint32_t t : s.targets) r += " " + lbl(t);
+            return r;
+        }
+        case Stmt::IFGOTO: return "if " + s.cond + " goto " + lbl(s.target);
+        case Stmt::IFSTMT: return "if " + s.cond + " " + render_simple(s.inner[0]);
+        case Stmt::BLOCKIF: ok = false; return "";  // block-if never nests inline (unused)
+        }
+        return "";
+    }
+
+    void print(const std::vector<Stmt>& v, int indent, std::string& out) {
+        std::string pad(indent * 4, ' ');
+        for (const auto& s : v) {
+            if (labels.count(s.off)) out += lbl(s.off) + ":\n";
+            if (s.kind == Stmt::BLOCKIF) {
+                out += pad + ".if " + s.cond + "\n";
+                print(s.body, indent + 1, out);
+                if (s.has_else) { out += pad + ".else\n"; print(s.els, indent + 1, out); }
+                out += pad + ".endif\n";
+            } else {
+                out += pad + render_simple(s) + "\n";
+            }
+        }
+    }
+};
+
+} // namespace
+
+std::string ai_decompile(const uint8_t* data, size_t size) {
+    CodeSection cs = pe_code_section(data, size);
+    if (!cs.data || cs.size == 0) return "";
+
+    std::vector<DcIns> ins = dc_decode(cs.data, cs.size);
+    if (ins.empty()) return "";
+
+    Decompiler d(ins);
+    std::vector<Stmt> prog = d.program();
+    if (!d.ok) return "";
+
+    std::string out =
+        "; AI source recovered from compiled BI bytecode by `fx bi decompile`.\n"
+        "; Labels (L####) are synthesized from bytecode offsets.\n\n";
+    d.print(prog, 0, out);
+    return out;
 }
 
 } // namespace fx

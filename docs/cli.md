@@ -24,7 +24,7 @@ fx hud     dump / set                   # .HUD layout overlays
 fx lay     dump / gradient / set        # .LAY sky/atmosphere layers
 fx fnt     info / unpack / pack         # .FNT bitmap fonts (x86 glyph recompiler)
 fx mus     dump                         # .MUS music sequencer bytecode
-fx bi      dump                         # .BI compiled AI disassembler
+fx bi      dump / decompile             # .BI disassembler + BI→AI decompiler
 fx ai      compile                      # .AI → .BI compiler
 ```
 
@@ -573,13 +573,24 @@ and opcode listing.
 ## bi — Compiled AI bytecode
 
 ```
-fx bi dump <file.BI>
+fx bi dump      <file.BI>
+fx bi decompile <file.BI>
 ```
 
 #### `fx bi dump <file.BI>`
 
 Disassemble compiled `.BI` AI bytecode to readable mnemonics with
 cross-referenced label annotations and resolved `CALL_BY_NAME` targets.
+
+#### `fx bi decompile <file.BI>`
+
+Recover recompilable `.AI` source from `.BI` bytecode (printed to stdout) — the
+inverse of `fx ai compile`. The reconstructed source recompiles byte-identically
+to the input, so `fx ai compile` and `fx bi decompile` form a round-trip for any
+BI `fx` produced. Only the `fx` `CALL_BY_NAME` bytecode dialect is accepted; the
+stock game BIs use the original toolchain's `CALL_DIRECT` thunks and are
+rejected (use `fx bi dump` for those). Labels are synthesized (`L####`) and
+comments are not recovered.
 
 *See also: [fa/formats/BI.md](fa/formats/BI.md)*
 
