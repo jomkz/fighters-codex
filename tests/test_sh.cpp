@@ -163,6 +163,33 @@ TEST_CASE("sh_parse_mesh on garbage data returns empty mesh") {
     REQUIRE(m.faces.empty());
 }
 
+// Regression (#118 fuzz): a hostile PE-header offset must be rejected, not run
+// through a 32-bit bounds check that wraps — a huge pe_off used to produce a
+// wild pointer and an out-of-bounds read (SEGV) in find_code_section.
+TEST_CASE("sh_parse rejects an out-of-range PE header offset") {
+    std::vector<uint8_t> buf(0x80, 0);
+    buf[0] = 'M'; buf[1] = 'Z';
+    buf[0x3C] = 0xF0; buf[0x3D] = 0xFF; buf[0x3E] = 0xFF; buf[0x3F] = 0xFF;  // 0xFFFFFFF0
+    ShInfo info = sh_parse_info(buf.data(), buf.size());
+    REQUIRE(info.vert_count == 0);
+    ShMesh mesh = sh_parse_mesh(buf.data(), buf.size());
+    REQUIRE(mesh.vertices.empty());
+    REQUIRE(mesh.faces.empty());
+}
+
+// Regression (#118 fuzz): a section whose SizeOfRawData is near UINT32_MAX must
+// not pass raw_ptr+raw_sz <= size by wrapping — that returned a bogus multi-GB
+// code section and a malloc(~4 GB) OOM in sh_parse_mesh's visited map.
+TEST_CASE("sh_parse rejects a section with an overflowing raw size") {
+    auto buf = make_minimal_sh();
+    const size_t rawsz = 64 + 24 + 16;  // PE_OFF + section table + SizeOfRawData
+    buf[rawsz + 0] = 0xFF; buf[rawsz + 1] = 0xFF;
+    buf[rawsz + 2] = 0xFF; buf[rawsz + 3] = 0xFF;
+    ShMesh mesh = sh_parse_mesh(buf.data(), buf.size());  // must not OOM
+    REQUIRE(mesh.vertices.empty());
+    REQUIRE(mesh.faces.empty());
+}
+
 TEST_CASE("sh_parse_mesh extracts vertices from VertexBuffer instruction") {
     auto data = make_minimal_sh();
     ShMesh m = sh_parse_mesh(data.data(), data.size());

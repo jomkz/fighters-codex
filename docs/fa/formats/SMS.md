@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/sms.cpp]
   commands: [sms]
   tests: [tests/test_sms.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_sms.cpp]
   fixtures:
     synthetic: false
     real_manifest: true

@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/inf.cpp]
   commands: [inf]
   tests: [tests/test_inf.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_inf.cpp]
   gui: [gui/src/editors/inf_editor.cpp]
   fixtures:
     synthetic: true

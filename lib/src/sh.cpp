@@ -25,7 +25,7 @@ static CodeSection find_code_section(const uint8_t* data, size_t size) {
     if (size < 0x40 || data[0] != 'M' || data[1] != 'Z')
         return {nullptr, 0};
     uint32_t pe_off = u32le(data + 0x3C);
-    if (pe_off + 24 + 2 > size)
+    if ((size_t)pe_off + 24 + 2 > size)  // size_t math: a huge pe_off must not wrap
         return {nullptr, 0};
     const uint8_t* pe = data + pe_off;
     if (pe[0] != 'P' || pe[2] != 0 || pe[3] != 0)
@@ -33,14 +33,14 @@ static CodeSection find_code_section(const uint8_t* data, size_t size) {
     // COFF header at pe+4
     uint16_t num_sec    = u16le(pe + 6);
     uint16_t opt_hdr_sz = u16le(pe + 20);
-    uint32_t sec_table  = pe_off + 24 + opt_hdr_sz;
+    size_t   sec_table  = (size_t)pe_off + 24 + opt_hdr_sz;
     for (uint16_t i = 0; i < num_sec; ++i) {
-        uint32_t sec_off = sec_table + (uint32_t)i * 40;
+        size_t sec_off = sec_table + (size_t)i * 40;  // size_t: no 32-bit wrap
         if (sec_off + 40 > size) break;
         const uint8_t* sec = data + sec_off;
         uint32_t raw_sz  = u32le(sec + 16);
         uint32_t raw_ptr = u32le(sec + 20);
-        if (raw_sz > 0 && raw_ptr + raw_sz <= size)
+        if (raw_sz > 0 && (size_t)raw_ptr + raw_sz <= size)  // no wrap on a huge raw_sz
             return {data + raw_ptr, raw_sz};
     }
     return {nullptr, 0};
