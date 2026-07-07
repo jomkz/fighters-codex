@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/pts.cpp]
   commands: [pts]
   tests: [tests/test_pts.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_pts.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

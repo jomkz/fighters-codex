@@ -17,7 +17,7 @@ codec:
   lib: [lib/src/dat.cpp]
   commands: [dat]
   tests: [tests/test_dat.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_dat.cpp]
   fixtures:
     synthetic: true
     real_manifest: false

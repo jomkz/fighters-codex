@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/rgn.cpp]
   commands: [rgn]
   tests: [tests/test_rgn.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_rgn.cpp]
   fixtures:
     synthetic: true
     real_manifest: false

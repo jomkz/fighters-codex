@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/mt.cpp, lib/src/txt.cpp]
   commands: [mt]
   tests: [tests/test_mt.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_mt.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

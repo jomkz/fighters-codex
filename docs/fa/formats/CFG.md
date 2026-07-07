@@ -17,7 +17,7 @@ codec:
   lib: [lib/src/cfg.cpp]
   commands: [cfg]
   tests: [tests/test_cfg.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_cfg.cpp]
   fixtures:
     synthetic: true
     real_manifest: false

@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/hgr.cpp]
   commands: [hgr]
   tests: [tests/test_hgr.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_hgr.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

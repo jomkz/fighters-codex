@@ -16,7 +16,7 @@ codec:
   lib: [lib/src/mnu.cpp]
   commands: [mnu]
   tests: [tests/test_mnu.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_mnu.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

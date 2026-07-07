@@ -12,7 +12,7 @@ codec:
   lib: [lib/src/fbc.cpp]
   commands: [fbc]
   tests: [tests/test_fbc.cpp]
-  fuzz: []
+  fuzz: [fuzz/fuzz_fbc.cpp]
   gui: [gui/src/editors/vdo_editor.cpp]
   fixtures:
     synthetic: true
