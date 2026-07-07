@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-07
+
 **Phase 4 — Codec & Test Completeness — complete.** All four Phase 4 epics
 are closed: round-trip upgrades for one-way codecs (#48), codecs for the 16
 uncovered formats (#49), test & fixture completeness (#50), and the fuzzing
@@ -514,7 +516,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.5.11...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
 [0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
 [0.5.10]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.10
 [0.5.9]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.9
