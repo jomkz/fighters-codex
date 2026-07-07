@@ -214,9 +214,9 @@ bool cb8_frame_palette(Cb8Decoder* dec, uint32_t frame_idx, Palette* out) {
         const uint8_t rv = r.palette[i * 3 + 0];
         const uint8_t gv = r.palette[i * 3 + 1];
         const uint8_t bv = r.palette[i * 3 + 2];
-        out->r[i] = (uint8_t)((rv << 2) | (rv >> 6));
-        out->g[i] = (uint8_t)((gv << 2) | (gv >> 6));
-        out->b[i] = (uint8_t)((bv << 2) | (bv >> 6));
+        out->r[i] = pal_widen6(rv);
+        out->g[i] = pal_widen6(gv);
+        out->b[i] = pal_widen6(bv);
     }
     return true;
 }
