@@ -15,9 +15,15 @@
 //
 // Flags:
 //   0 = raw/uncompressed
-//   1 = LZSS (4-byte decompressed size prefix) -- not yet implemented
-//   3 = PxPk (raw + inline PXPK header) -- not yet implemented
+//   1 = LZSS (4-byte decompressed size prefix) -- decoder tracked in #54
+//   3 = PxPk (raw + inline PXPK header)         -- decoder tracked in #54
 //   4 = PKWare DCL with 4-byte EA decompressed-size prefix
+//
+// The LZSS and PXPK payload formats are undocumented (no sample exists in the
+// Anthology install: it is 100% flags 0/4). Rather than silently hand back
+// still-compressed bytes, ealib_extract surfaces those entries as unsupported
+// (see below); their decoders land under #54 once a sample from the wider
+// game family is available.
 
 namespace fx {
 
@@ -41,11 +47,17 @@ const Entry* ealib_find(const std::vector<Entry>& entries, const std::string& na
 // against crafted archives. Legitimate 8.3 names pass through unchanged.
 std::string ealib_safe_name(const char* name);
 
-// Extract one entry's data.
-// If decompress=true and flags==4, runs blast decompression automatically.
-// Returns empty vector on error.
+// Extract one entry's data. With decompress=true, flags==0 is returned
+// verbatim and flags==4 is blast-decompressed automatically. Flags 1 (LZSS),
+// 3 (PXPK), and any unknown compression are *unsupported*: instead of returning
+// still-compressed bytes, the function returns an empty vector and, if
+// `unsupported` is non-null, sets `*unsupported = true` (it is set to false on
+// every other path, including a genuinely empty entry). With decompress=false
+// the stored bytes are returned verbatim for any flags and `unsupported` stays
+// false. Returns an empty vector on a bounds/decode error as well.
 std::vector<uint8_t> ealib_extract(const uint8_t* lib_data, size_t lib_size,
-                                    const Entry& entry, bool decompress = true);
+                                    const Entry& entry, bool decompress = true,
+                                    bool* unsupported = nullptr);
 
 // Build a new EALIB from a list of (filename, data) pairs.
 // All entries are stored as flags=0 (raw); the terminator entry is written.

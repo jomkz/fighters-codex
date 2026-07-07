@@ -42,11 +42,15 @@ const Entry*         ealib_find(const std::vector<Entry>& entries,
 // every platform: & * ? " < > | / \ : each become '_'
 std::string          ealib_safe_name(const char* name);
 
-// Extract one entry (decompress if decompress=true and flags=4).
-// Decompressed-size claims above 64 MiB are rejected as malformed (empty
-// return) — the size prefix is attacker-controlled in a crafted archive
+// Extract one entry. With decompress=true, flags=0 is verbatim and flags=4 is
+// blast-decompressed; flags 1 (LZSS) / 3 (PXPK) / unknown are unsupported —
+// returns empty and sets *unsupported=true (decoders tracked in #54) rather
+// than handing back still-compressed bytes. decompress=false returns the stored
+// bytes for any flags. Decompressed-size claims above 64 MiB are rejected as
+// malformed (empty return) — the size prefix is attacker-controlled.
 std::vector<uint8_t> ealib_extract(const uint8_t* data, size_t size,
-                                    const Entry& entry, bool decompress = true);
+                                    const Entry& entry, bool decompress = true,
+                                    bool* unsupported = nullptr);
 
 // Build a new .LIB from a list of (name, data) pairs (stored uncompressed)
 std::vector<uint8_t> ealib_build(

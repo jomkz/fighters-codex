@@ -103,24 +103,38 @@ std::string ealib_safe_name(const char* name) {
 }
 
 std::vector<uint8_t> ealib_extract(const uint8_t* lib_data, size_t lib_size,
-                                    const Entry& entry, bool decompress) {
-    if (entry.offset + entry.size > lib_size) return {};
+                                    const Entry& entry, bool decompress,
+                                    bool* unsupported) {
+    if (unsupported) *unsupported = false;
+    if ((size_t)entry.offset + entry.size > lib_size) return {};  // size_t: no 32-bit wrap
     const uint8_t* src = lib_data + entry.offset;
     size_t src_size = entry.size;
 
-    if (!decompress || entry.flags != 4) {
+    // decompress=false is an explicit opt-out: hand back the stored bytes as-is
+    // (the caller takes responsibility for any compression).
+    if (!decompress) return std::vector<uint8_t>(src, src + src_size);
+
+    switch (entry.flags) {
+    case 0:  // raw / uncompressed
         return std::vector<uint8_t>(src, src + src_size);
+
+    case 4: {  // EA-wrapped PKWare DCL
+        if (src_size < 4) return {};
+        uint32_t expected = read_u32(src);
+        if (expected > MAX_DECOMP) return {};
+        std::vector<uint8_t> out(expected);
+        int got = blast_decompress_ea(src, src_size, out.data(), expected);
+        if (got < 0) return {};
+        out.resize((size_t)got);
+        return out;
     }
 
-    // flags==4: EA-wrapped PKWare DCL
-    if (src_size < 4) return {};
-    uint32_t expected = read_u32(src);
-    if (expected > MAX_DECOMP) return {};
-    std::vector<uint8_t> out(expected);
-    int got = blast_decompress_ea(src, src_size, out.data(), expected);
-    if (got < 0) return {};
-    out.resize((size_t)got);
-    return out;
+    default:  // flags 1 (LZSS), 3 (PXPK), or any unknown compression: surface
+              // "still compressed" instead of returning the compressed bytes.
+              // Decoders are tracked in #54.
+        if (unsupported) *unsupported = true;
+        return {};
+    }
 }
 
 std::vector<uint8_t> ealib_build(
@@ -208,7 +222,13 @@ std::vector<uint8_t> ealib_patch(const uint8_t* lib_data, size_t lib_size,
         if (ename == name) {
             files.push_back({ ename, new_data });
         } else {
-            auto data = ealib_extract(lib_data, lib_size, e, true);
+            // Passthrough entries are re-stored raw (ealib_build writes flags=0),
+            // so they must be extractable. An LZSS/PXPK entry can't be faithfully
+            // preserved through a raw rebuild — fail the patch rather than write a
+            // silently corrupt archive. (Absent from the real install; see #54.)
+            bool unsupported = false;
+            auto data = ealib_extract(lib_data, lib_size, e, true, &unsupported);
+            if (unsupported) return {};
             files.push_back({ ename, std::move(data) });
         }
     }

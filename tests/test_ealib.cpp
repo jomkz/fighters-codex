@@ -189,6 +189,56 @@ TEST_CASE("ealib_extract accepts a decompressed-size claim at the ceiling") {
     REQUIRE(std::string(out.begin(), out.end()) == "AIAIAIAIAIAIA");
 }
 
+// #159: LZSS (flags=1) and PXPK (flags=3) are surfaced as unsupported rather
+// than returned still-compressed; their decoders are tracked in #54.
+TEST_CASE("ealib_extract surfaces flags==1/3 as unsupported, not compressed bytes") {
+    for (uint8_t flags : { (uint8_t)1, (uint8_t)3 }) {
+        auto lib = make_lib_with_entry("comp.bin", flags, bytes({ 0xAA, 0xBB, 0xCC, 0xDD }));
+        auto entries = ealib_read_dir(lib.data(), lib.size());
+        REQUIRE(entries.size() == 1);
+        REQUIRE(entries[0].flags == flags);
+
+        bool unsupported = false;
+        auto out = ealib_extract(lib.data(), lib.size(), entries[0], true, &unsupported);
+        INFO("flags=" << (int)flags);
+        REQUIRE(out.empty());          // not the still-compressed bytes
+        REQUIRE(unsupported);          // explicit signal
+    }
+}
+
+TEST_CASE("ealib_extract with decompress=false hands back raw bytes for flags==1/3") {
+    auto lib = make_lib_with_entry("comp.bin", 1, bytes({ 0xAA, 0xBB, 0xCC, 0xDD }));
+    auto entries = ealib_read_dir(lib.data(), lib.size());
+    REQUIRE(entries.size() == 1);
+
+    bool unsupported = true;  // must be cleared
+    auto out = ealib_extract(lib.data(), lib.size(), entries[0], false, &unsupported);
+    REQUIRE(out == bytes({ 0xAA, 0xBB, 0xCC, 0xDD }));
+    REQUIRE_FALSE(unsupported);
+}
+
+TEST_CASE("ealib_extract clears unsupported for raw and DCL entries") {
+    bool unsupported = true;
+    auto raw = make_lib_with_entry("raw.bin", 0, bytes({ 1, 2, 3 }));
+    auto re = ealib_read_dir(raw.data(), raw.size());
+    ealib_extract(raw.data(), raw.size(), re[0], true, &unsupported);
+    REQUIRE_FALSE(unsupported);
+
+    unsupported = true;
+    auto dcl = make_lib_with_entry("dcl.bin", 4, dcl_payload(13));
+    auto de = ealib_read_dir(dcl.data(), dcl.size());
+    ealib_extract(dcl.data(), dcl.size(), de[0], true, &unsupported);
+    REQUIRE_FALSE(unsupported);
+}
+
+TEST_CASE("ealib_patch fails cleanly when a passthrough entry is unsupported") {
+    // A LIB whose non-target entry is LZSS/PXPK can't be faithfully rebuilt raw;
+    // the patch must fail rather than silently drop or corrupt that entry.
+    auto lib = make_lib_with_entry("lzss.bin", 1, bytes({ 0xAA, 0xBB, 0xCC, 0xDD }));
+    auto patched = ealib_patch(lib.data(), lib.size(), "other.bin", bytes({ 9 }));
+    REQUIRE(patched.empty());
+}
+
 TEST_CASE("ealib_extract returns empty vector for out-of-bounds entry") {
     auto lib = ealib_build(make_files({ { "x.bin", bytes({ 1 }) } }));
     auto entries = ealib_read_dir(lib.data(), lib.size());
