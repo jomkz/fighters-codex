@@ -194,6 +194,31 @@ std::vector<uint8_t> mission_serialize(const MissionFile&);
 } // namespace fx
 ```
 
+## ai.h / bi.h — Compiled AI script codec
+
+```cpp
+namespace fx {
+
+struct AiCompileError { int line; std::string message; };
+
+// AI source (text) → BI Phar Lap PE DLL bytes. Empty on failure (see errors).
+std::vector<uint8_t> ai_compile(const std::string& source,
+                                std::vector<AiCompileError>& errors);
+
+// BI bytecode → AI source (the inverse of ai_compile). The recovered text
+// recompiles byte-identically for any BI this toolchain produced, i.e.
+// ai_compile(ai_decompile(bi)) == bi. Reads the fx CALL_BY_NAME dialect only;
+// returns "" on failure (no CODE section, or a foreign CALL_DIRECT dialect).
+std::string ai_decompile(const uint8_t* data, size_t size);
+
+struct BiInstr { uint32_t offset; std::string text; };
+
+// Disassemble BI bytecode to mnemonics, resolving CALL_DIRECT thunks via
+// .idata. Handles both fx-compiled and stock game BIs. Empty on failure.
+std::vector<BiInstr> bi_disasm(const uint8_t* data, size_t size);
+} // namespace fx
+```
+
 ## sh.h — 3D shape / model
 
 ```cpp

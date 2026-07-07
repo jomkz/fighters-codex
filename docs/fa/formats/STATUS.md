@@ -9,8 +9,8 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | Format | Category | Spec | Gaps | Codec | Commands | Tests | Fixtures | Fuzz | GUI |
 |---|---|---|---|---|---|---|---|---|---|
 | [11K](11K.md) | audio | complete | — | round-trip (byte-identical) | `fx audio` | `tests/test_audio.cpp` | syn/real | `fuzz/fuzz_audio.cpp` | `gui/src/editors/audio_editor.cpp` |
-| [AI](AI.md) | mission | complete | — | read-only [#102](https://github.com/jomkz/fighters-codex/issues/102) | `fx ai` | — | real | — | `gui/src/editors/ai_editor.cpp` |
-| [BI](BI.md) | mission | complete | — | round-trip [#102](https://github.com/jomkz/fighters-codex/issues/102) | `fx bi` | — | real | — | — |
+| [AI](AI.md) | mission | complete | — | round-trip (by design) | `fx ai` | `tests/test_ai.cpp` | syn/real | — | `gui/src/editors/ai_editor.cpp` |
+| [BI](BI.md) | mission | complete | — | round-trip (by design) | `fx bi` | `tests/test_ai.cpp` | syn/real | — | — |
 | [BIN](BIN.md) | system | complete | — | read-only (by design) | `fx bin` | `tests/test_bin.cpp` | syn/real | — | `gui/src/editors/bin_editor.cpp` |
 | [BRF](BRF.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | — | `tests/test_brf.cpp` | syn | — | `gui/src/editors/brf_editor.cpp` |
 | [CAM](CAM.md) | mission | complete | — | read-only (by design) | `fx cam` | `tests/test_cam.cpp` | syn/real | — | `gui/src/editors/cam_editor.cpp` |

@@ -9,13 +9,13 @@ spec:
 codec:
   direction: round-trip
   byte_identical: false
-  issue: 102
+  rationale: "BI→AI→BI is byte-identical for every BI fx compiles — a fixed point of the toolchain, proven by tests/test_ai.cpp over all 9 stock scripts. The stock game BIs were built by FA's original toolchain (linked CALL_DIRECT thunks; FRAME emitted before the condition, not after) which fx's compiler does not reproduce, so an original-game BI does not round-trip byte-identically"
   lib: [lib/src/bi.cpp, lib/src/ai.cpp]
   commands: [bi]
-  tests: []
+  tests: [tests/test_ai.cpp]
   fuzz: []
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [AI]
 ---
@@ -32,13 +32,17 @@ references live in the game executable.
 ### fx
 
 ```
-fx bi dump    <file.BI>                 # disassemble bytecode to mnemonics
-fx ai compile <file.AI> -o <file.BI>    # produce a BI from AI source
+fx bi dump      <file.BI>               # disassemble bytecode to mnemonics
+fx bi decompile <file.BI>               # recover recompilable AI source
+fx ai compile   <file.AI> -o <file.BI>  # produce a BI from AI source
 ```
 
-Both directions exist (`fx ai compile` writes BI, `fx bi dump` reads it), but
-a dumped-and-recompiled BI is not asserted byte-identical to the original —
-#102 (the BI→AI decompiler) closes that loop.
+`fx bi decompile` is the inverse of `fx ai compile`: it reconstructs AI source
+whose recompilation is byte-identical to the input, so
+`ai_compile(ai_decompile(bi)) == bi` for every BI `fx` produces. It reads the
+`fx` bytecode dialect (`CALL_BY_NAME`); the stock game BIs use the original
+toolchain's linked `CALL_DIRECT` thunks, so `fx bi decompile` rejects them —
+use `fx bi dump` to disassemble those (see § Round-Trip Notes).
 
 ## File Layout
 
@@ -318,6 +322,39 @@ target = `roll` arg.
 4. target heading in binary degrees (`arg * 182`, i.e. `arg * 65536/360`)
 5. ctrl
 6. duration
+
+## Round-Trip Notes
+
+`fx bi decompile` reconstructs AI source from BI bytecode; recompiling that
+source with `fx ai compile` reproduces the bytecode exactly. This closes the
+loop as a **fixed point of the fx toolchain** — for any BI that `fx` itself
+compiled, `ai_compile(ai_decompile(bi)) == bi` byte-for-byte
+(tests/test_ai.cpp verifies this over all 9 stock scripts). Labels are
+synthesized from bytecode offsets (`L####`) since the original names are not
+encoded, and comments are not recoverable; neither affects the emitted
+bytecode.
+
+The **stock game BIs are a different dialect** and are *not* reproducible by
+`fx ai compile`, so they do not round-trip byte-identically:
+
+- **Call linkage.** The stock BIs resolve their `_CTDo_*`/`_CTEval_*` references
+  through the `.idata` import table and invoke them with `CALL_DIRECT` (`0x26`)
+  thunks. `fx` emits self-describing `CALL_BY_NAME` (`0x27`) with the name
+  inline — a different opcode and a different byte length. `fx bi decompile`
+  reads only the `CALL_BY_NAME` form and rejects `CALL_DIRECT` inputs; use
+  `fx bi dump`, which resolves the thunks via `.idata`, to disassemble stock
+  BIs.
+- **FRAME placement.** For an inline conditional (`if <cond> goto …`), the
+  original toolchain emits `FRAME` *before* the condition expression; `fx`
+  emits it *after*. The `FRAME` operands (a statement index and a source-line
+  number) are also assigned differently — `fx` uses a monotonic index and a
+  zero line. Because `FRAME` is a save-state metadata opcode with no scalar
+  consumer (§ Engine Notes), these differences are behaviourally inert but
+  place the two toolchains' output on distinct byte layouts.
+
+Reproducing the original toolchain's exact encoding would require reverse
+engineering that compiler and is out of scope here; the recovered source is
+semantically faithful and recompiles cleanly under `fx`.
 
 ## Related
 
