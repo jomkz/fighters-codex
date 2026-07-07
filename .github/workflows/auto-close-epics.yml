@@ -1,0 +1,75 @@
+name: Auto-close epics
+
+# GitHub has no native setting to close a parent issue when its last sub-issue
+# closes — sub-issues only surface a progress bar. This closes the gap for the
+# repo's `epic`-labelled parents: when a sub-issue closes, if its parent is an
+# open epic whose sub-issues are now all closed, close the epic as completed.
+
+on:
+  issues:
+    types: [closed]
+
+# Serialize runs so two sub-issues closing at once can't both close+comment on
+# the same parent (the second run then sees it already closed and skips).
+concurrency:
+  group: auto-close-epics
+  cancel-in-progress: false
+
+permissions:
+  issues: write
+
+jobs:
+  close-parent-epic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close parent epic when all sub-issues are done
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+
+          parent=$(gh api graphql -f query='
+            query($owner:String!, $repo:String!, $number:Int!) {
+              repository(owner:$owner, name:$repo) {
+                issue(number:$number) {
+                  parent {
+                    number
+                    state
+                    labels(first: 50) { nodes { name } }
+                    subIssuesSummary { total completed }
+                  }
+                }
+              }
+            }' -F owner="$OWNER" -F repo="$REPO" -F number="$NUMBER" \
+            --jq '.data.repository.issue.parent')
+
+          if [ -z "$parent" ] || [ "$parent" = "null" ]; then
+            echo "Issue #$NUMBER has no parent — nothing to do."
+            exit 0
+          fi
+
+          pnum=$(jq -r '.number' <<<"$parent")
+          pstate=$(jq -r '.state' <<<"$parent")
+          total=$(jq -r '.subIssuesSummary.total' <<<"$parent")
+          done=$(jq -r '.subIssuesSummary.completed' <<<"$parent")
+          is_epic=$(jq -r '[.labels.nodes[].name] | index("epic") != null' <<<"$parent")
+
+          echo "Parent #$pnum: state=$pstate epic=$is_epic sub-issues=$done/$total"
+
+          if [ "$pstate" != "OPEN" ]; then
+            echo "Parent already closed — skipping."; exit 0
+          fi
+          if [ "$is_epic" != "true" ]; then
+            echo "Parent is not labelled 'epic' — skipping."; exit 0
+          fi
+          if [ "$total" -eq 0 ] || [ "$done" -ne "$total" ]; then
+            echo "Sub-issues not all closed ($done/$total) — skipping."; exit 0
+          fi
+
+          echo "All $total sub-issues closed — closing epic #$pnum."
+          gh issue comment "$pnum" --repo "$OWNER/$REPO" \
+            --body "All $total sub-issues are closed — auto-closing this epic. 🤖 (auto-close-epics workflow)"
+          gh issue close "$pnum" --repo "$OWNER/$REPO" --reason completed
