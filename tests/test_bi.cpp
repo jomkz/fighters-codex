@@ -1,9 +1,21 @@
 #include <catch2/catch_test_macros.hpp>
 #include <fx/bi.h>
 #include <cstring>
+#include <string>
 #include <vector>
 
+#include "support/le_image.h"
+
 using namespace fx;
+using fx_test::make_le;
+
+// The disassembly text lines, in order, for snapshot comparison.
+static std::vector<std::string> disasm_text(const std::vector<uint8_t>& img) {
+    std::vector<std::string> out;
+    for (const auto& in : bi_disasm(img.data(), img.size()))
+        out.push_back(in.text);
+    return out;
+}
 
 static void put_u16(std::vector<uint8_t>& v, size_t at, uint16_t x) {
     v[at] = (uint8_t)(x & 0xFF); v[at + 1] = (uint8_t)(x >> 8);
@@ -62,4 +74,35 @@ TEST_CASE("bi_disasm handles a container with a bounded empty .idata") {
     auto instrs = bi_disasm(buf.data(), buf.size());
     (void)instrs;
     SUCCEED();
+}
+
+// Dump snapshot (#114): a hand-crafted opcode stream disassembles to a fixed
+// listing — push/load/store, an arithmetic op, EVAL, END.
+TEST_CASE("bi_disasm renders a stable listing for a value expression") {
+    auto img = make_le({
+        0x03, 0x05,   // PUSH_BYTE 5
+        0x06, 0x01,   // LOAD_VAR %b
+        0x0B,         // ADD
+        0x05, 0x00,   // STORE_VAR %a
+        0x04,         // EVAL
+        0x25,         // END
+    });
+    REQUIRE(disasm_text(img) == std::vector<std::string>{
+        "PUSH_BYTE 5", "LOAD_VAR %b", "ADD", "STORE_VAR %a", "EVAL", "END",
+    });
+}
+
+// Dump snapshot (#114): a forward GOTO plants a jump target, and the target
+// instruction is annotated with an @offset label in the listing.
+TEST_CASE("bi_disasm annotates a jump target with a label") {
+    auto img = make_le({
+        0x20, 0x05, 0x00,   // GOTO @0005  (offset value 5)
+        0x04,               // EVAL
+        0x04,               // EVAL
+        0x03, 0x07,         // @0005: PUSH_BYTE 7
+        0x25,               // END
+    });
+    REQUIRE(disasm_text(img) == std::vector<std::string>{
+        "GOTO @0005", "EVAL", "EVAL", "@0005:", "PUSH_BYTE 7", "END",
+    });
 }
