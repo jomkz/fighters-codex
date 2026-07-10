@@ -62,8 +62,8 @@ static int cmd_cfg_info(const char* path) {
            field_str(c.campaign_pilot, 33).c_str(),
            field_str(c.callsign, 32).c_str(),
            field_str(c.squadron, 13).c_str());
-    printf("Untraced (#54, passed through): +0x004=0x%08X +0x008=0x%08X +0x0E2=0x%02X\n",
-           c.unk_004, c.unk_008, c.unk_0e2);
+    printf("Video: menu-mode=%u flight-mode=%u   Music: %s\n",
+           c.menu_video_mode, c.flight_video_mode, c.music_on ? "on" : "off");
 
     auto out = fx::cfg_write(c);
     printf("Round-trip: %s\n",

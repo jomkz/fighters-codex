@@ -6,10 +6,9 @@
 // CFG — game configuration (see CFG.md). EA.CFG is the 347-byte binary
 // CONFIG struct written by UCONFIG_save_EA_CFG (0x4b2980): magic 0x24 and
 // exact size 0x15B or the engine falls back to defaults. Every field below
-// is mapped from the load/save decompiles; the three fields the RE hasn't
-// traced (+0x004, +0x008, +0x0E2 — gap #54) pass through verbatim, and the
-// string fields keep their full raw bytes (the engine only null-checks the
-// first byte), so cfg_write is the byte-identical inverse of cfg_read.
+// is mapped from the load/save decompiles. The string fields keep their full
+// raw bytes (the engine only null-checks the first byte), so cfg_write is the
+// byte-identical inverse of cfg_read.
 
 namespace fx {
 
@@ -18,15 +17,15 @@ constexpr uint32_t EA_CFG_MAGIC = 0x24;
 
 struct EaCfg {
     uint32_t magic;              // +0x000 — always 0x24
-    uint32_t unk_004;            // +0x004 — untraced (#54), pass-through
-    uint32_t unk_008;            // +0x008 — untraced (#54), pass-through
+    uint32_t menu_video_mode;    // +0x004 — shell/menu graphics mode (InitGraphicsMode arg)
+    uint32_t flight_video_mode;  // +0x008 — in-flight 3D graphics mode (options-menu 1/2/4/8)
     uint32_t stick_device;       // +0x00C
     uint32_t rudder_device;      // +0x010
     uint32_t throttle_device;    // +0x014
     uint32_t throttle_100;       // +0x018 — 100% throttle calibration
     uint32_t axis_map[48];       // +0x01C — joystick axis/button table
     uint8_t  window_types[6];    // +0x0DC — display window mode per view
-    uint8_t  unk_0e2;            // +0x0E2 — untraced (#54), pass-through
+    uint8_t  music_on;           // +0x0E2 — music enable (counterpart to sound_on)
     uint8_t  sound_on;           // +0x0E3
     uint8_t  stereo_swap;        // +0x0E4
     uint16_t overall_vol;        // +0x0E5
