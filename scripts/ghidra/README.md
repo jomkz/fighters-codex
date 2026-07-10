@@ -52,10 +52,11 @@ shared box, export `GHIDRA_HEADLESS_JAVA_OPTIONS="-Dcpu.core.limit=<n>"`.
 
 FA.EXE is small and its functions are mostly tiny, so the whole-image decompile
 is only a few seconds and per-invocation JVM+project-load overhead dominates a
-single run (≈14 s wall for all 2.8k functions here). The remaining serialization
-is `run_all.sh` invoking each analysis script in its own cold Ghidra process;
-parallelizing those is gated on read-only project sharing and is left as a
-follow-up rather than risk write-lock contention on the shared project.
+single run (≈14 s wall for all 2.8k functions here). Each analysis script still
+runs in its own cold Ghidra process, so `run_all.sh -j N` (#414) fans them across
+N workers: Ghidra locks the project directory, so each worker gets its own 50 MB
+copy of `fa-re` and runs a slice of the roster `-readOnly` against it (N capped to
+`nproc-2`). Outputs are byte-identical to a serial run and reproducible run to run.
 
 ---
 
@@ -315,7 +316,7 @@ overlay-only scripts (below), so this inventory *is* the roster — a new
 | `_env.sh` | Shared env resolution + `fa_find` (case-insensitive game-file lookup), sourced by every `.sh` launcher |
 | `bootstrap.sh [--evidence]` | One command: empty `$FA_PROJECT` → built `fa-re`, db applied, inventory exported, `check_status --check` green |
 | `run_ghidra.sh` | Run a single analysis script against FA.EXE |
-| `run_all.sh` | Run all analysis scripts; `--setup` flag rebuilds the project first |
+| `run_all.sh [-j N]` | Run all analysis scripts (`-j N` fans across N workers); `--setup` rebuilds the project first |
 | `setup_project.sh` | One-shot: create project, import FA.EXE, load FA.SMS symbols |
 | `extract_overlays.sh` | Unpack FA_1/FA_2.LIB and sort overlays by extension |
 | `import_overlays.sh` | Patch PL→PE signature and import format-overlay DLLs into Ghidra |
