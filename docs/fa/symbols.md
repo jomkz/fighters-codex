@@ -805,7 +805,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 114 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 118 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -918,6 +918,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004C77D0` | `G_SUPolygon` | sms |  |
 | `0x004C8A38` | `G_Polygon` | sms |  |
 | `0x004C8A74` | `G_SPolygon` | sms |  |
+| `0x004C8FD4` | `Horizon2d` | re | scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10) |
+| `0x004C9224` | `NoHorizon` | re | off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output |
+| `0x004C924C` | `SolidHorizon` | re | solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10) |
+| `0x004C942C` | `GouraudHorizon` | re | Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10) |
 | `0x004CA028` | `G__AC_Texture` | sms |  |
 | `0x004CAE38` | `G__Texture` | sms |  |
 | `0x004CBD0B` | `G__Perspective` | sms |  |

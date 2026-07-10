@@ -8,12 +8,15 @@ polygons, text, bitmap blit/scale, and the polygon/triangle span fillers (`G_*` 
 virtual address (VA) and SMS name where available.
 
 > **Scope:** this is the [reconstruction-program](reconstruction.md) `renderer` subsystem
-> (#211) — the device + rasterizer. The **3D scene pipeline** that drives it (`GR_*`:
-> transform, project, scene dispatch, camera, culling, sky/horizon) is the separate
-> **render-core** subsystem (#228, forthcoming); the sections below that describe that
-> pipeline (§1 Scene Dispatch, §5 Camera, §6 Visibility, §10 Horizon) are provisional and
-> migrate to `render-core.md` when it lands. [Terrain](reconstruction.md) and the
-> [SH shape format](formats/SH.md) are their own subsystems.
+> (#211) — the device + rasterizer. The generic **3D scene pipeline** that drives it (`GR_*`:
+> transform, project, scene dispatch, camera, culling) is the separate **render-core**
+> subsystem, documented in [render-core.md](render-core.md) (#228, landed). The horizon/sky
+> path (§1 Scene Dispatch, §10 Horizon) is kept here because it is the concrete consumer of
+> the device — its entry point `T_DrawHorizon` is filed under the
+> [terrain](reconstruction.md) subsystem in the symbol database and is cross-referenced from
+> [LAY.md](formats/LAY.md), which owns the atmosphere lookup-table side. §5 Camera and §6
+> Visibility remain provisional pending consolidation into render-core.md. The
+> [SH shape format](formats/SH.md) is its own subsystem.
 
 > **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols
 > applied; every symbol here is recorded in the
@@ -25,15 +28,17 @@ virtual address (VA) and SMS name where available.
 
 ## 1. Scene Dispatch
 
-The per-frame scene is built inside `FUN_004aacfe`, which is the sole caller of `@G_Tile@32`
-(`0x447aa5`) and is itself called by `T_DefaultHorizon` (`0x4aacf0`). The dispatch chain is:
+The per-frame scene is built inside `T_DrawHorizon` (`0x4aacfe`), the sole caller of `@G_Tile@32`
+(`0x447aa5`). It is reached through the adjacent `_T_DefaultHorizon` horizon descriptor
+(`0x4aacf0`); the LAY DLL's dispatch table resolves the horizon slot to this render path at load
+time. The dispatch chain is:
 
 | VA | SMS name | Role |
 |----|----------|------|
-| `0x4aacf0` | `T_DefaultHorizon` | Exported entry point for the horizon/scene render; called by LAY DLL dispatch table and by the main game loop |
-| `0x4aacfe` | — (inlined under `T_DefaultHorizon`) | Core per-frame scene builder — clips the viewport, selects colour tables, calls `_SolidHorizon`, `_GouraudHorizon`, `@G_Tile@32`, and `_GRExec_4` |
+| `0x4aacf0` | `_T_DefaultHorizon` | Default horizon descriptor record (14 B, symbol DB · `terrain`) — the data the horizon/scene render is reached through |
+| `0x4aacfe` | `T_DrawHorizon` | Core per-frame scene builder — clips the viewport, selects colour tables, calls `_SolidHorizon`, `_GouraudHorizon`, `@G_Tile@32`, and `@GRExec@4` |
 
-`FUN_004aacfe` takes 13 parameters encoding clip rect, fog colour entries, and atmosphere flags. Its
+`T_DrawHorizon` takes 13 parameters encoding clip rect, fog colour entries, and atmosphere flags. Its
 first act is to test `DAT_00583a58` and `DAT_00573396` to choose between a sky-tile path and a
 straight solid-horizon path.
 
@@ -46,10 +51,10 @@ Key globals read at scene start:
 | `_currentTimeOfDay` | Used to gate sun rendering against `DAT_00583a82`–`DAT_00583a86` window |
 | `_hackSky` / `_hackHorizonUp` / `_hackHorizonDown` / `_hackGround` | Debug overrides for sky palette — skips `_currentTintTable` lookup when non-zero |
 | `DAT_00573394` | Cloud/tile quality level (0 = no tile, 1 = reduced, 2+ = full) |
-| `_currentTintTable` | Per-layer atmosphere colour table; offsets `0xd4`–`0xfc` select individual band colours |
+| `_currentTintTable` | Per-layer atmosphere colour table (the active LAYER's tint LUT, set at load — see [LAY.md](formats/LAY.md#layer-struct-layout-0x160-bytes)). `T_DrawHorizon` reads individual band colours as single bytes at `+0xd4`/`+0xdf` (sky-top / horizon-down, clear) and `+0xed`/`+0xfc` (overcast), `+0xe5`/`+0xec` (upper sky / horizon-up), `+0xf0` (ground), and `+0xf1`/`+0xf3`/`+0xf4` (Gouraud gradient endpoints), then passes them as the colour arguments to `_SolidHorizon`/`_GouraudHorizon`. `_hackSky`/`_hackHorizon*`/`_hackGround` override this whole lookup when non-zero |
 
 The scene dispatch builds a `GRExec` command list on the stack (a `0xf8`-terminated short-int
-stream), then calls `_GRExec_4` (`0x4ab?`) to execute it, which renders the sky gradient and
+stream), then calls `@GRExec@4` (`0x4d6498`) to execute it, which renders the sky gradient and
 cloud tiles.
 
 ---
@@ -208,7 +213,7 @@ draw code reads `_mainV` (`DAT_00521084`) for the main viewpoint object index, a
 `_xscale` / `_yscale` for screen-resolution scale factors (0 = 640×480 reference, non-zero for
 higher resolutions).
 
-Viewport clip bounds set by `FUN_004aacfe`:
+Viewport clip bounds set by `T_DrawHorizon` (`0x4aacfe`):
 
 - `_clipLeft`, `_clipRight`, `_clipTop`, `_clipBottom` — integer pixel bounds of the active clip rect
 - `_clipWidth` / `_clipHeight` — derived dimensions; compared against 200/300 thresholds to select
@@ -240,7 +245,7 @@ clip-flags word — if all three bits are set (`DAT_00584834 != 0`), the triangl
 the near plane and discarded.
 
 No LOD system was found in the analysed range. Terrain tile LOD is implicit in `@G_Tile@32` via
-the `tileExpand__3JA` flag (set by `_tileExpand__3JA = (DAT_00573394 < 2)` in `FUN_004aacfe`).
+the `tileExpand__3JA` flag (set by `_tileExpand__3JA = (DAT_00573394 < 2)` in `T_DrawHorizon`).
 
 ---
 
@@ -296,7 +301,7 @@ were found in the dark zone `0x4B4200`–`0x4BEDFF` (see section 10).
 | `0x4b4720` | `_WRWeatherEffects` | Queries visibility percentage for an altitude range — walks LAYER structs between two altitudes, returns the minimum `+0x14e` visibility byte |
 | `0x4b4790` | `?InitTmapRemaps@@YIXXZ` | Clears the texture-remap cache (`DAT_00581140`, 0x843 entries) and resets `DAT_00583aa0` |
 | `0x4b47b0` | `@SetTmapRemaps@0` | Checks the texture-remap cache for the current `_currentShadeTable`/`_currentTintTable`/`DAT_005843c4`/`DAT_005843c8`/`_globalColorAdd` combination; if not found, evicts LRU entry and calls `_DoSetTmapRemaps_0` to regenerate a 64-entry remap table, which is then copied into `_tmapRemapTable` |
-| `0x4b4840` (approx) | `@WRMakeHazeList@12` | Builds a haze-distance list for sky rendering — interpolates per-pixel fog density across the LAYER visibility ramps (`+0x12`, `+0x16`, `+0x1a`, `+0x1e`) |
+| `0x4b48c0` | `@WRMakeHazeList@12` | Builds a haze-distance list for sky rendering — walks the active LAYER's `+0x3a` colour-entry list and interpolates fog density across its visibility ramp (`+0x12` `fog_alt_low`, `+0x16` `vis_lo`, `+0x1a` `fog_alt_high`, `+0x1e` `vis_hi` — see [LAY.md § LAYER struct](formats/LAY.md#layer-struct-layout-0x160-bytes)), emitting `(distance, colour)` pairs terminated by `0x7fffffff` into the `0x583940` buffer |
 | `0x4b4990` | `@WRLensFlare@0` | Draws lens-flare halos when `_gamePrefs` bit 7 is set, `(*DAT_00580d90 & 8) != 0`, and `DAT_0050c8a2 > 0xb5` (sun above horizon); uses `_sunPoint` and `DAT_00583dbe` for projected sun position; calls `_G_Circle_16` for each flare disc from `DAT_0050c8d8` table |
 | `0x4b4b30` | `@WRCanSee@8` | See section 6 |
 | `0x4b3190` | `_WRGetLayer@8` | Returns the LAYER struct pointer for a given altitude (right-shifts by 8, clamps to LAYER array bounds) |
@@ -343,21 +348,26 @@ pinned, including a linear-vs-perspective divergence golden, by `tests/render/te
 
 ## 10. Horizon / Sky Integration
 
-`T_DefaultHorizon` (`0x4aacf0`) is the exported the game executable function that LAY DLLs invoke for sky
-rendering. It is called indirectly — the LAY DLL's dispatch table entry for the horizon slot
-contains a pointer to this function (resolved at load time when the engine patches the LAY DLL's
-IAT). `FUN_004aacfe` is the only direct caller confirmed in the analysis output.
+This section traces the sky/horizon pipeline **end-to-end**: from the LAY atmosphere lookup
+tables through colour selection to the raster fills that put pixels on the surface. The
+lookup-table side — how a `.LAY` DLL is loaded, how the active LAYER's tint/shade tables and
+colour-entry list are resolved, and the fog/brightness/angle mechanics that populate them — is
+documented in [LAY.md](formats/LAY.md) (§ [Engine Notes](formats/LAY.md#engine-notes)); this
+section is that data's consumer.
 
-The horizon sequence inside `FUN_004aacfe`:
+`T_DrawHorizon` (`0x4aacfe`) is the per-frame scene builder; it is reached through the
+`_T_DefaultHorizon` descriptor (`0x4aacf0`) whose slot the LAY DLL dispatch table resolves at
+load time. Its sequence:
 
 1. **`_T_Info_24`** — query atmosphere parameters into a local buffer.
-2. **`_WRMakeHazeList_12`** — build fog-density list into a stack buffer at `0x583940`.
-3. **`_SolidHorizon`** — draw a solid-colour sky band (clear sky or overcast).
-4. **`@G_Tile@32`** (`0x447aa5`) — if `DAT_00583a42` is non-zero (cloud tiles enabled), draw cloud tile layer from the tile bitmap at `DAT_00583a50`×`DAT_00583a54`.
-5. **`_GouraudHorizon`** — draw the horizon gradient band.
-6. **`_GRExec_4`** — execute the GR command list (sky dome elements, sun disc).
-7. Second `_SolidHorizon` + optional `@G_Tile@32` — draw the ground colour band.
-8. Second `_GouraudHorizon` — draw the lower-horizon gradient.
+2. **`_WRMakeHazeList_12`** (`0x4b48c0`) — build the fog-density list into a stack buffer at `0x583940` from the active LAYER's visibility ramp (§8).
+3. **colour selection** — unless a `_hack*` override is set, read the sky/horizon/ground band colours as single bytes from `_currentTintTable` (offsets listed in §1) — the LAY tint LUT.
+4. **`_SolidHorizon`** — draw a solid-colour sky band (clear sky or overcast).
+5. **`@G_Tile@32`** (`0x447aa5`) — if `DAT_00583a42` is non-zero (cloud tiles enabled), draw cloud tile layer from the tile bitmap at `DAT_00583a50`×`DAT_00583a54`.
+6. **`_GouraudHorizon`** — draw the horizon gradient band.
+7. **`@GRExec@4`** (`0x4d6498`) — execute the GR command list (sky dome elements, sun disc).
+8. Second `_SolidHorizon` + optional `@G_Tile@32` — draw the ground colour band.
+9. Second `_GouraudHorizon` — draw the lower-horizon gradient.
 
 The sun element is appended to the GRExec command list only when `_currentLayer & 8`, the current
 time of day is inside `[DAT_00583a82, DAT_00583a86]`, and `DAT_0050c8a2 > -0x71d`. The sun entry
@@ -367,6 +377,36 @@ is a 4-short record: `[0xF8, _sunAngle, DAT_0050c8a2, 0]` followed by one dword 
 The `_landFilename` global selects the terrain tile bitmap used for the distant ground plane when
 `_currentLayer & 0x10` is clear. `DAT_00583a58` and `DAT_00583a66` / `DAT_00583a6a` control the
 terrain tile distance fade thresholds.
+
+### Solid horizon band — `_SolidHorizon` (`0x4c924c`)
+
+The solid path draws a flat sky (or ground) band clipped to the tilted horizon line. It stores the
+selected sky/ground colour bytes into `_sky_color_data` / `_ground_color_data`, then computes the
+four horizon-line endpoints (`DAT_0050fd96`–`0x9c`) from the camera up-vector components
+(`top_up`, `right_up`, `forward_up`) plus `__amtMoveHorizon` — the vertical horizon offset staged
+by `T_DrawHorizon` — so the band tilts and slides with pitch/roll. A 4-iteration sign-bit loop
+tests those endpoints against the viewport (`wleft_data`/`wright_data`/`wtop_data`/`wbot_data`) to
+decide visibility. When the band is on-screen it clamps the four viewport edges
+(`FUN_004c93c3`/`FUN_004c93f6`), orders the span endpoints into `hhigh`/`hxlow`/`hxhigh`/`hlow`,
+and calls **`Horizon2d()`** — the scanline fill that writes the colour band into the raster
+surface; otherwise it calls **`NoHorizon()`**. This is the terminal "through raster" step of the
+solid path.
+
+### Gouraud horizon gradient — `_GouraudHorizon` (`0x4c942c`)
+
+The gradient path renders the sky/ground colour ramp as shaded polygons through the shared SH
+interpreter. It saves and zeroes the viewer position (`__viewer_x/y/z`, so the gradient is drawn
+in view space) and the `_effects`/`_effectsAllowed` flags, then stages a fixed set of gradient
+quads into the `0x50fda0`–`0x50fe40` command region: the up/horizon/ground colour bytes (params
+from the tint-table lookup) fill the per-vertex colour slots, and the screen-space deltas are
+derived from the camera heading vector (`_headv_x`, `_headv_z`, right-shifted) so the bands tilt
+with the horizon. It then **dispatches the staged polygons through `vector_table`**
+(`(*vector_table[DAT_0050fda0*2])()` and `[DAT_0050fdfe*2]`) — i.e. the gradient sky is
+rasterized by the same Gouraud draw-opcodes as any SH shape (see
+[SH.md § Interpreter dispatch](formats/SH.md#interpreter-dispatch--vector_table-traced) and
+[render-core.md](render-core.md#the-sh-interpreter)). Finally it restores the effects flags and
+viewer position. The polygons land in the same triangle/span fillers documented in §3 and §8, so
+both horizon paths converge on the rasterizer's fill kernels.
 
 ---
 
