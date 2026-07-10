@@ -37,7 +37,38 @@ The window title is registered as `"Fighters Anthology"` (string at `0x004EB834`
 
 ### `?usnfmain@@YAXXZ` — `0x00403700` (FA.SMS: `?usnfmain@@YAXXZ`)
 
-This is the game's own "main" function invoked after the window is set up. It references the `"Fighters Anthology"` window class string at `0x004EB760` (from offset `0x00403D41`). Its body is not transcribed in full in this doc; the notable reference is the window-class string.
+This is the game's own "main" — the **outer shell / mission state machine** that runs for the
+whole session, complementing the inner in-flight loop `FlyingLoop` (§4). After one-time setup
+(config load, `_MOUSEInit`, `_InitGraphicsMode`/`_GRInit3d`, `_ShellMusic`) it enters a
+`do { switch (_curScreen) … } while (_curScreen != 0x12)` loop: each iteration renders one shell
+screen, and the screen handler returns the next `_curScreen`. When a mission has been selected the
+state reaches the **launch state `0x12`**, at which point `usnfmain` calls
+`_CallMissionProc_8(&_missionName, …)` to build the mission and then `?FlyingLoop@@YAXXZ` (§4) to
+fly it; on return it runs a post-mission dispatch (debrief / results) that sets `_curScreen` back
+into the shell, and the outer loop repeats. Multiplayer sessions are kept in step throughout via
+`_MPConnect` / `_MPShellSendScreen` / `_MPWaitEveryoneStatus` / `_MPCheckConnection`.
+
+The `_curScreen` states (the `switch` arms):
+
+| State | Screen / action | Handler |
+|-------|-----------------|---------|
+| `0` | Shell main menu (activity chooser) | `_ChooseActivity@0` (`0x4a08a0`) |
+| `1` | Single Mission | `_SingleMission_0` |
+| `2` | Quick-Mission creator | `_CreateQuickMission_4` |
+| `3` | Pro-Mission creator | `_CreateProMission_0` |
+| `4` | Replay | `_CanReplay_0` |
+| `5` | Start Campaign | `_StartCampaign_0` → `_LoadCampaignProc` / `_CallCampaignProc_4` |
+| `6` | Continue Campaign | `_ContinueCampaign_0` |
+| `8` | Aircraft Reference (CD-gated) | `_AircraftReference_0`, `_CheckCD` |
+| `0xA` | View Pilots | `_ViewPilots_0` |
+| `0x12` | **Launch — run the loaded mission** | `_CallMissionProc_8` → `_FlyingLoop` |
+| `0x17`/`0x18` | Serial / Modem configuration | `_RunSerialConfigurationScreen` / `_RunModemConfigurationScreen` |
+| `0x19`/`0x1A` | Net configuration (modes 1 / 4) | `_RunNetConfigurationScreen_4` |
+| `0x1B` | Disconnect | `_RunDisconnectScreen` |
+| `0x1D` | Fort-Mission creator | `_CreateFortMission_4` |
+
+It also references the `"Fighters Anthology"` window-class string at `0x004EB760` (from offset
+`0x00403D41`).
 
 ---
 
@@ -457,7 +488,7 @@ All addresses are virtual addresses from the game executable (base `0x00400000`)
 | `0x004D9D00` | `_WinMainCRTStartup` | PE entry point / CRT startup |
 | `0x00476120` | `_WinMain@16` | Win32 WinMain; message loop |
 | `0x004764B0` | `?InitApplication@@YAHPAX@Z` | Window class registration and creation |
-| `0x00403700` | `?usnfmain@@YAXXZ` | Game's internal main; body not transcribed in full here |
+| `0x00403700` | `?usnfmain@@YAXXZ` | Game's internal main — outer shell/mission state machine (`switch (_curScreen)`); launches `FlyingLoop` at state `0x12` |
 | `0x00476660` | `?CreateGameThread@@YAHXZ` | Spawns game simulation thread |
 | `0x00476700` | `?EndGame@@YAXXZ` | Tears down game and timer threads |
 | `0x00436320` | `?StartGameThread@@YAKPAK@Z` | Game thread entry point |

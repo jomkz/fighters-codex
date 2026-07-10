@@ -281,8 +281,8 @@ The `fx_render::fa` surface reproduces this record's semantics — runtime width
 with row-pointer access — as the reconstruction's software render target; the layout and the
 192-entry 6-bit palette presentation are pinned by `tests/render/test_fa.cpp` (#328).
 
-`G_DoubleBitmapX_4` (`0x4b?`) doubles a bitmap's width by duplicating each pixel horizontally,
-used when upscaling to higher resolutions.
+`@G_DoubleBitmapX@4` (`0x4b8bf0`) doubles a bitmap's width by duplicating each pixel horizontally,
+used when upscaling to higher resolutions (`@G_DoubleBitmapY@4` at `0x4b8960` is the height twin).
 
 ---
 
@@ -334,7 +334,7 @@ a generation counter, the effects mask (`_effects & 0x14`), five table pointers
 and a 64-dword copy of `_tmapRemapTable`. On a cache miss, the LRU entry (lowest generation) is
 evicted and `_DoSetTmapRemaps_0` regenerates the table.
 
-For double-resolution modes, `_G_DoubleBitmapX_4` (`0x4b3?`) doubles a PIC's width by pixel
+For double-resolution modes, `@G_DoubleBitmapX@4` (`0x4b8bf0`) doubles a PIC's width by pixel
 duplication, creating a 2× stretched copy for the higher-resolution renderer path.
 
 `fx_render::fa` reproduces the textured fills over indexed texels: the affine u/v span
@@ -454,8 +454,8 @@ Functions found within the zone:
 | `0x4b7bf0` | `@G_FreeSurfaceBitmap@4` | DirectDraw surface release — see section 7 |
 | `0x4b7c30` | `?RemapAdd@@YAXPAUT_HANDLE@@H@Z` | PIC palette shift |
 | `0x4b7c60` | `?RemapRelocate@@YAXPAUT_HANDLE@@F@Z` | PIC palette relocation |
-| `0x4b7??? ` | `_G_DoubleBitmapX_4` | Double-width bitmap duplication |
-| `0x4b7a?? ` | `_G_AllocBitmap_8` | Software-only fallback bitmap allocation |
+| `0x4b8bf0` | `@G_DoubleBitmapX@4` | Double-width bitmap duplication (height twin `@G_DoubleBitmapY@4` at `0x4b8960`) |
+| `0x4b79b0` | `_G_AllocBitmap@12` | Software-only fallback bitmap allocation |
 | `0x4b80??` | Various `G_Color*`, `G_Scale*`, `G_Texture*`, `G_Print*` wrappers | 2D graphics utility functions |
 | `0x4b8d90` | `?carefulDiv@@YANPAMMM@Z` | Float divide with NaN/zero guard for texture gradient setup |
 | `0x4b8e10` | `?NPM_clipTop@@YIJPAUFVERTEX@@0@Z` | Near-plane top-clip — see section 3.2 |
