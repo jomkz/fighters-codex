@@ -16,9 +16,9 @@ fi
 
 echo "PROJECT_DIR=$FA_PROJECT   INSTALL=$FA_INSTALL"
 for b in "${TARGETS[@]}"; do
-    src="$FA_INSTALL/$b"
-    if [[ ! -f "$src" ]]; then
-        echo "SKIP $b — not found at $src" >&2
+    src="$(fa_find "$b" || true)"   # case-insensitive; empty if absent
+    if [[ -z "$src" ]]; then
+        echo "SKIP $b — not found under $FA_INSTALL" >&2
         continue
     fi
     echo "== import $b + full auto-analysis (slow: minutes) =="

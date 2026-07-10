@@ -1,0 +1,19 @@
+# Game-file manifest (#376) — the ~90 MB of inputs the RE pipeline needs.
+# Everything else in $FA_PROJECT is regenerated from these by bootstrap.sh.
+#
+# One filename per line; text after '#' is a comment. Files are resolved
+# case-insensitively under $FA_INSTALL (see _env.sh fa_find), so FA_INSTALL may
+# point straight at an FA install or mount — the game/ copy is optional.
+#
+# filename       what it is
+FA.EXE           # main executable (epic #209)
+FA.SMS           # debug symbol table applied on import (formats/SMS.md)
+FA_1.LIB         # archive: FNT bitmap-font overlays
+FA_2.LIB         # archive: BI/CAM/HUD/LAY/MC/MUS overlays
+IP.EXE           # companion: EA system-info/tech-support tool (epic #247)
+WAIL32.DLL       # companion: Miles Sound System audio middleware (#247)
+CDRVDL32.DLL     # companion: Cdrv modem/serial middleware (#247)
+CDRVHF32.DLL     # companion: Cdrv modem/serial middleware (#247)
+CDRVXF32.DLL     # companion: Cdrv modem/serial middleware (#247)
+COMMSC32.DLL     # companion: Cdrv comms middleware (#247)
+msapi.dll        # companion: matchmaking / internet-play client (epic #272, staged)
