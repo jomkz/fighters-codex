@@ -158,6 +158,7 @@ nav:
           - BIN: fa/formats/BIN.md
           - CFG: fa/formats/CFG.md
           - DAT: fa/formats/DAT.md
+          - EFFECT: fa/formats/EFFECT.md
           - P: fa/formats/P.md
           - SMS: fa/formats/SMS.md
       - Installer:

@@ -407,6 +407,34 @@ unsigned    dat_baud_rate(uint32_t baud_index);
 } // namespace fx
 ```
 
+## effect.h — GRAPHIC effect-spawn data
+
+```cpp
+namespace fx {
+constexpr size_t EFFECT_RECORD_SIZE = 0x30;  // per-type parameter record
+constexpr size_t EFFECT_SPAWN_SIZE  = 0x11;  // MSG 0x8003 network record
+
+enum class EffectClass : uint8_t { None, Crater, Debris, Smoke, Chaff,
+                                   Flare, Fire, Explosion, DustPuff, Unknown };
+struct EffectParams { /* type, klass, intensity, frame_count, subtype,
+                         ground_burst, debris_count/spread, sound_variants,
+                         sound_ptrs[8], sound_pitch — see effect.h */ };
+struct EffectSpawn  { /* type, x/y/z (F24.8), owner, flag0/flag1 */ };
+
+// Classification (no game data needed)
+EffectClass effect_class_for_type(int type);
+const char* effect_class_name(EffectClass klass);
+const char* effect_shape_for_type(int type);   // "exp.SH", ...
+
+// Read-only interpreters over a raw buffer
+bool effect_parse_record(const uint8_t* data, size_t size, int type, EffectParams& out);
+std::vector<EffectParams> effect_parse_table(const uint8_t* data, size_t size, int count);
+bool effect_parse_spawn(const uint8_t* data, size_t size, EffectSpawn& out);
+} // namespace fx
+```
+
+See [fa/formats/EFFECT.md](fa/formats/EFFECT.md) and [fa/objects.md](fa/objects.md) § GRAPHIC effect spawning.
+
 ## mnu.h — Menu DLL reader
 
 ```cpp

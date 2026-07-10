@@ -26,6 +26,7 @@
     cmd_txt.cpp
     cmd_cfg.cpp
     cmd_dat.cpp
+    cmd_effect.cpp
     cmd_mnu.cpp
     cmd_mt.cpp
     cmd_pts.cpp
