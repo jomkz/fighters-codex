@@ -32,8 +32,8 @@ analyze_overlay() {
         echo "  [$fmt] Project dir not found: $proj_dir -- run --import first"
         return 0
     fi
-    # Clear output file so each run starts fresh (DumpOverlayDLL appends per-DLL)
-    rm -f "$FA_PROJECT/output/Overlay_$fmt.txt"
+    # DumpOverlayDLL truncates its own output on first write, then appends per
+    # DLL — no launcher-side rm -f needed.
     echo "  [$fmt] Running DumpOverlayDLL.java (with analysis)..."
     "$ANALYZE_HEADLESS" "$proj_dir" "fa-$fmt/${fmt}_pe" \
         -process "*.$fmt" \
