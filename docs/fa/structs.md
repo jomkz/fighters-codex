@@ -12,6 +12,33 @@ generic `FUN_*` accessors exist and the field name comes from access context, or
 
 All sizes are in bytes. Multi-byte integer types are little-endian. Fixed-point values use FA's standard F24.8 format (24-bit integer part, 8-bit fraction) unless noted. The `entity` struct scan covered offsets `0x00`–`0x11E`; the raw scan logged 286 distinct offsets. The tables below present the most useful subset; unlisted offsets within a range are unaccessed or aliased to adjacent fields.
 
+### Confidence and the low-confidence pass
+
+Every `inferred` (Low-confidence) field was reviewed against its accessor set (#130). A field is
+promoted to `confirmed` only when a **dedicated named accessor** whose name identifies this
+specific offset exists (the bar stated above). Where a field remains `inferred`, the reason is one
+of three — this is the "why it can't be promoted from static analysis alone":
+
+1. **Generic `FUN_*` accessors only.** The functions that touch the offset are still unnamed in the
+   applied FA.SMS symbol set, so the field's role cannot be established statically. These are the
+   bulk of the remaining Low tags and are deferred to the dynamic / Ghidra re-tracing pass under
+   [#54](https://github.com/jomkz/fighters-codex/issues/54) — reading what each `FUN_*` does with
+   the offset is what earns the promotion, and that cannot be done from the committed docs/DB.
+2. **Named but generic accessors.** The offset is touched only by broad multi-field routines
+   (`_explode`, `_MoveObj@0`, `_HUDInit@0`, `_DAMAGEInit@0`, `_ServicePlayer@0`, the `MP*` sync
+   functions, high-fan-out helpers like `FUN_00406a5e`/`FUN_0042d050`, …). The accessor name does
+   not isolate *this* offset's meaning, so the field name stays a context-derived guess. (Contrast
+   `0x32 speed`/`0x34 heading`, `confirmed` because `HUDDrawSpeed`/`HUDDrawHeading` map to exactly
+   that field, with `0x36 unk_36`/`0x3A unk_3A`, `inferred` although the same routine reads them.)
+3. **Probable cross-struct contamination.** A few offsets are reached by methods of an unrelated
+   class and are almost certainly not fields of the struct they were scanned under — see the
+   flagged `GV_TYPE` rows `0x5C`/`0x78`/`0x7C` (`CDirDrawSurface::*`). The scan cannot separate two
+   structs that share a pointer-argument convention (see [Methodology](#notes-on-methodology)).
+
+Promotions made in this pass: `entity 0xE8` and `GV_TYPE 0x3F` (both gained a dedicated named
+accessor); the three contamination rows above are annotated in place. All other Low tags fall under
+categories 1–2 and carry the standing rationale here rather than a repeated per-row note.
+
 ---
 
 ## 1. `entity` — Game Object Base
@@ -129,7 +156,7 @@ The struct begins at the object's base address. Extension structs (`PROJ_TYPE`, 
 | `0xE3` | 4 | `nearest_obj` | `_NearestObj@16`, `FUN_00424de0`, `FUN_0043a5c0` | Read by `_NearestObj@16`. **confirmed** |
 | `0xE4` | 4 | `waypoint_ptr` | `FUN_0040d810`, `_MSGSendChatter@24`, `MAPUpdateWPPtrs@8` | Read by `@MAPUpdateWPPtrs@8`. **confirmed** |
 | `0xE6` | 2 | `service_player` | `_ServicePlayer@0`, `FUN_00417530`, `_SelectRepairPlane@16` | Read by `_ServicePlayer@0`. **confirmed** |
-| `0xE8` | 4 | `msg_chatter2` | `FUN_0040e470`, `_MSGSendChatter@24`, `FUN_004226cb` | **inferred** |
+| `0xE8` | 4 | `msg_chatter2` | `FUN_0040e470`, `_MSGSendChatter@24`, `FUN_004226cb` | Read by `_MSGSendChatter@24`, the same dedicated accessor that confirms `0xCC msg_chatter_ptr`. **confirmed** |
 | `0xE9` | 1 | `ap_takeoff_type` | `@FlightKey@4`, `@APTakeoffType@8` | Written by `@APTakeoffType@8`. **confirmed** |
 | `0xEA` | 2 | `ap_landing_type` | `InitCobra`, `MainLoop`, `@APLandingType@8` | Written by `@APLandingType@8`. **confirmed** |
 | `0xEB` | 1 | `ap_type2` | `@ArmPlane@4`, `WRFogLayerUpdate`, `@APTakeoffType@8` | **confirmed** |
@@ -307,7 +334,7 @@ Extension struct overlaid on entity allocations for ground vehicle objects. Scan
 | `0x34` | 4 | `gv_unk_34` | `FUN_00470560`, `MPGraphicAddSmoke`, `MPGraphicAddDebris` | 60× accesses. **inferred** |
 | `0x38` | 4 | `gv_unk_38` | `FUN_00470560`, `MPGraphicAddSmoke`, `MPPlayerChoseSide` | 52× accesses. **inferred** |
 | `0x3C` | 4 | `gv_unk_3C` | `FUN_004701ac`, `FUN_00470560`, `MPGraphicAddFire` | 47× accesses. **inferred** |
-| `0x3F` | 1 | `gv_fort_btn2` | `MPFortButtonText2`, `FUN_0047759b`, `@COSig@20` | **inferred** |
+| `0x3F` | 1 | `gv_fort_btn2` | `MPFortButtonText2`, `FUN_0047759b`, `@COSig@20` | Accessed by the dedicated `MPFortButtonText2` (fort-menu button-text 2), consistent with the other `MP*`-named GV fields. **confirmed** |
 | `0x40` | 4 | `gv_unk_40` | `FUN_004701ac`, `MPGraphicAddFire`, `MPSendAntiCheat` | 70× accesses. **inferred** |
 | `0x44` | 4 | `gv_unk_44` | `FUN_004701ac`, `FUN_00470560`, `MPGraphicAddFire` | 36× accesses. **inferred** |
 | `0x48` | 4 | `gv_unk_48` | `FUN_004701ac`, `FUN_00470560`, `MPGraphicAddSmokeAdder` | 24× accesses. **inferred** |
@@ -317,11 +344,11 @@ Extension struct overlaid on entity allocations for ground vehicle objects. Scan
 | `0x50` | 4 | `gv_unk_50` | `MPGraphicAddSmokeAdder`, `FUN_00472130`, `_FMFlight@0` | 16× accesses. **inferred** |
 | `0x52` | 1 | `gv_cn_print` | `CN_Print@@YAXPAE@Z` | Read by `?CN_Print@@YAXPAE@Z`. **confirmed** |
 | `0x54` | 4 | `gv_unk_54` | `MPGraphicAddSmokeAdder`, `FUN_004715bc`, `FUN_0047267c` | **inferred** |
-| `0x5C` | 4 | `gv_clear_surface` | `CDirDrawSurface::Clear`, `_LibStartUp` | DirectDraw surface clear data. **inferred** |
+| `0x5C` | 4 | `gv_clear_surface` | `CDirDrawSurface::Clear`, `_LibStartUp` | Reached only by `CDirDrawSurface::Clear` — a method of the DirectDraw surface wrapper class (`0x41Dxxx`), not the GV struct; probable cross-struct contamination (see [Confidence](#confidence-and-the-low-confidence-pass), category 3). Not a genuine `GV_TYPE` field. **inferred** |
 | `0x60` | 4 | `gv_cn_factory` | `CN_SetFactoryDefaults` | Network config factory defaults. **confirmed** |
 | `0x64` | 4 | `gv_flight_menu` | `MPKey@@YIGG@Z`, `_FlightMenu` | Read by `_FlightMenu`. **confirmed** |
-| `0x78` | 4 | `gv_ddraw_surface` | `FUN_004735d0`, `CDirDrawSurface::Create`, `CDirDrawSurface::SetEntries` | DirectDraw surface handle. **inferred** |
-| `0x7C` | 4 | `gv_ddraw_surface2` | `MPHUDMessage`, `CDirDrawSurface::Create`, `CDirDrawSurface::SetEntries` | **inferred** |
+| `0x78` | 4 | `gv_ddraw_surface` | `FUN_004735d0`, `CDirDrawSurface::Create`, `CDirDrawSurface::SetEntries` | Accessed by `CDirDrawSurface::Create`/`SetEntries` (DirectDraw wrapper methods), not GV logic; probable cross-struct contamination (category 3). Not a genuine `GV_TYPE` field. **inferred** |
+| `0x7C` | 4 | `gv_ddraw_surface2` | `MPHUDMessage`, `CDirDrawSurface::Create`, `CDirDrawSurface::SetEntries` | Same `CDirDrawSurface::*` contamination as `0x78` (category 3). Not a genuine `GV_TYPE` field. **inferred** |
 | `0x7F` | 1 | `gv_disconnect` | `MPMsgSend`, `FUN_0047267c`, `MPCheckDisconnect` | Read by `?MPCheckDisconnect@@YGDXZ`. **confirmed** |
 | `0x80` | 4 | `gv_mp_key` | `FUN_0047025c`, `FUN_00471bdf`, `MPKey@@YIGG@Z` | Read by `?MPKey@@YIGG@Z`. **confirmed** |
 
