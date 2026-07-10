@@ -19,6 +19,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [DAT](DAT.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx dat` | `tests/test_dat.cpp` | syn | `fuzz/fuzz_dat.cpp` | — |
 | [DLG](DLG.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx dlg` | `tests/test_dlg.cpp` | syn/real | `fuzz/fuzz_dlg.cpp` | — |
 | [ECM](ECM.md) | typedef | complete | — | round-trip (byte-identical) | `fx ecm` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |
+| [EFFECT](EFFECT.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx effect` | `tests/test_effect.cpp` | syn | `fuzz/fuzz_effect.cpp` | — |
 | [FBC](FBC.md) | video | complete | — | round-trip (byte-identical) | `fx fbc` | `tests/test_fbc.cpp` | syn/real | `fuzz/fuzz_fbc.cpp` | `gui/src/editors/vdo_editor.cpp` |
 | [FNT](FNT.md) | ui-overlay | complete | — | round-trip (byte-identical) | `fx fnt` | `tests/test_pe.cpp`<br>`tests/test_fnt.cpp` | syn/real | `fuzz/fuzz_pe.cpp`<br>`fuzz/fuzz_fnt.cpp` | `gui/src/editors/fnt_editor.cpp` |
 | [GAS](GAS.md) | typedef | complete | — | round-trip (byte-identical) | `fx gas` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |

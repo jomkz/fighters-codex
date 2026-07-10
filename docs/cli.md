@@ -704,6 +704,32 @@ round-trip (checksum and unmapped regions pass through verbatim).
 
 *See also: [fa/formats/DAT.md](fa/formats/DAT.md)*
 
+## effect — GRAPHIC effect-spawn data
+
+```
+fx effect types                    # effect type -> class / .SH shape
+fx effect dump  <table.bin> [-n N]  # decode N 0x30-byte parameter records
+fx effect spawn <record.bin>        # decode a 17-byte MSG 0x8003 spawn record
+```
+
+#### `fx effect types`
+
+Print the effect type → class / `.SH` shape classification (types `0x00`–`0x2A`)
+recovered from `_GRAPHICInit@0`. Needs no game data.
+
+#### `fx effect dump <table.bin> [-n N]`
+
+Decode `N` consecutive `0x30`-byte effect-parameter records from a raw buffer
+(the table sliced from the executable, or a fixture) — intensity, frame count,
+sub-type / ground-burst flag, debris count/spread, sound-variant count, pitch.
+
+#### `fx effect spawn <record.bin>`
+
+Decode a 17-byte `MSG 0x8003` network spawn record — type, F24.8 position,
+owner, flags.
+
+*See also: [fa/formats/EFFECT.md](fa/formats/EFFECT.md)*
+
 ## mnu — Menu DLLs
 
 ```

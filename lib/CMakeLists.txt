@@ -28,6 +28,7 @@
     src/txt.cpp
     src/cfg.cpp
     src/dat.cpp
+    src/effect.cpp
     src/mnu.cpp
     src/mt.cpp
     src/pts.cpp
