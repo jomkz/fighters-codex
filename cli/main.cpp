@@ -30,6 +30,7 @@ int cmd_cam(int argc, char** argv);
 int cmd_txt(int argc, char** argv);
 int cmd_cfg(int argc, char** argv);
 int cmd_dat(int argc, char** argv);
+int cmd_effect(int argc, char** argv);
 int cmd_mnu(int argc, char** argv);
 int cmd_mt(int argc, char** argv);
 int cmd_pts(int argc, char** argv);
@@ -148,6 +149,11 @@ static void print_usage() {
     puts("  fx cfg info <EA.CFG>");
     puts("  fx dat info <NET.DAT|MODEM.DAT|SERIAL.DAT>");
     puts("");
+    puts("GRAPHIC effect commands:");
+    puts("  fx effect types                # effect type -> class/shape map");
+    puts("  fx effect dump  <table.bin>    # decode 0x30-byte param records");
+    puts("  fx effect spawn <record.bin>   # decode a MSG 0x8003 spawn record");
+    puts("");
     puts("Menu DLL commands:");
     puts("  fx mnu info    <file.MNU>");
     puts("  fx mnu strings <file.MNU> [-n MIN]");
@@ -238,6 +244,8 @@ int main(int argc, char** argv) {
         return cmd_cfg(argc - 1, argv + 1);
     if (strcmp(cmd, "dat") == 0)
         return cmd_dat(argc - 1, argv + 1);
+    if (strcmp(cmd, "effect") == 0)
+        return cmd_effect(argc - 1, argv + 1);
     if (strcmp(cmd, "mnu") == 0)
         return cmd_mnu(argc - 1, argv + 1);
     if (strcmp(cmd, "mt") == 0)
