@@ -12,7 +12,7 @@
 //   OT_TYPE  -- ordnance type (0x00-0x60)
 //   NT_TYPE  -- nav target type (0x00-0x60)
 //
-// Invoke: run_ghidra.bat RecoverStructs.java
+// Invoke: run_ghidra.sh RecoverStructs.java
 // Output: $FA_PROJECT/output/RecoverStructs.txt
 
 import ghidra.app.script.GhidraScript;

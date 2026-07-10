@@ -4,7 +4,7 @@
 // for the mission-state block (null-terminated strings, aircraft IDs, weapon tables).
 // Also traces FUN_00428340 (post-init finalizer) to determine its role.
 //
-// Invoke via run_overlays.bat --analyze CAM
+// Invoke via run_overlays.sh --analyze CAM
 // Output: $FA_PROJECT/output/AnalyzeCAMDLL.txt
 
 import ghidra.program.model.listing.*;
