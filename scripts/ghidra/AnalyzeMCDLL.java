@@ -5,7 +5,7 @@
 // trigger mission success or failure, and what time thresholds are used.
 // Also traces FUN_00495e80 to clarify its role in the dispatch chain.
 //
-// Invoke via run_overlays.bat --analyze MC
+// Invoke via run_overlays.sh --analyze MC
 // Output: $FA_PROJECT/output/AnalyzeMCDLL.txt
 
 import ghidra.program.model.listing.*;

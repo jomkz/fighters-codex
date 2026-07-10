@@ -34,8 +34,9 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
   tests/integration/fa-extract.sha256 (hashes are facts; the assets stay outside git).
   Never commit game assets (`*.LIB`, `*.PIC`, `*.PAL`, …).
 - Ghidra work runs on Fedora (workbench migrated per #120): Ghidra 12.1 + a JDK under
-  `~/tools/`, project + corpus under `~/src/fa/`, headless launchers in `scripts/ghidra/`
-  (`.sh` on Linux; `.bat` kept for the Windows bench).
+  `~/tools/`, project + corpus under `~/src/fa/`, headless `.sh` launchers in `scripts/ghidra/`
+  (the frozen Windows `.bat` mirror suite was retired in #374 — recover from git history if
+  a Windows bench is ever needed).
 
 ## Conventions
 

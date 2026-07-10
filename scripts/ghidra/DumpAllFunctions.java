@@ -1,6 +1,6 @@
 // Dumps decompiled C for every function in FA.EXE, grouped by SMS symbol namespace.
 // This covers all VA ranges not targeted by the subsystem-specific Analyze*.java scripts.
-// Invoke: run_ghidra.bat DumpAllFunctions.java
+// Invoke: run_ghidra.sh DumpAllFunctions.java
 // Output: $FA_PROJECT/output/DumpAllFunctions.txt
 //
 // Decompilation fans out across every available core via ParallelDecompiler

@@ -42,8 +42,9 @@ exports only that binary — **VAs are unique only within a binary** (IP.EXE bas
 window.
 
 **Canonical-project rule:** the inventory export is always taken from the
-canonical Fedora `fa-re` project (issue #120). The `.bat` launchers exist for the
-Windows bench, but a bench project copy is never the source of truth.
+canonical Fedora `fa-re` project (issue #120); a bench project copy is never the
+source of truth. (The Windows `.bat` launcher mirrors were retired in #374 — the
+`.sh` launchers are the one supported path.)
 
 ## `subsystems.csv` — program manifest
 

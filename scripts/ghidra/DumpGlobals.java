@@ -8,7 +8,7 @@
 //                            IMPORTED (FA.SMS import) — Ghidra's auto-analysis
 //                            labels (switchD_/caseD_/s_/DAT_) are excluded.
 //                            This is the listing docs/fa/globals.md cites.
-// Invoke: run_ghidra.sh DumpGlobals.java   (run_ghidra.bat on the Windows bench)
+// Invoke: run_ghidra.sh DumpGlobals.java
 // Output: $FA_PROJECT/output/DumpGlobals.csv, $FA_PROJECT/output/DumpGlobals_named.csv
 
 import ghidra.app.script.GhidraScript;

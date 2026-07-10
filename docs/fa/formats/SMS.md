@@ -154,17 +154,17 @@ during the main Ghidra disassembly pass:
 ### Usage with Ghidra
 
 A ready-to-run Java script is provided at
-[`scripts/ghidra/ImportFASms.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/ImportFASms.java).
+[`scripts/ghidra/ImportFASmsHeadless.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/ImportFASmsHeadless.java).
 See [`scripts/ghidra/README.md`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/README.md)
 for full setup and overlay-DLL rebasing instructions.
 
 Quick start:
 
 1. Open the game executable in Ghidra and let auto-analysis finish.
-2. Tools → Script Manager → run `ImportFASms`.
-3. Point the file dialog at `FA.SMS` in the FA install directory.
-4. All 3,829 functions and globals are labelled in one pass; progress bar
-   shows in the status bar.
+2. Run it headless: `scripts/ghidra/run_ghidra.sh ImportFASmsHeadless.java`
+   (it resolves `FA.SMS` from `-scriptArg`, then `$FA_PROJECT/FA.SMS`), or run it
+   from the Script Manager.
+3. All 3,829 functions and globals are labelled in one pass.
 
 ## Related
 

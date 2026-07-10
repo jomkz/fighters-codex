@@ -1,8 +1,8 @@
 // Headless-compatible FA.SMS symbol importer.
 // Reads the FA.SMS path from the first script argument (-scriptArg).
-// Falls back to $FA_PROJECT/FA.SMS, then %USERPROFILE%\src\fa\FA.SMS.
+// Falls back to $FA_PROJECT/FA.SMS (default project root ~/src/fa).
 //
-// Run from: run_ghidra.bat ImportFASmsHeadless.java
+// Run from: run_ghidra.sh ImportFASmsHeadless.java
 //
 // The current program should be FA.EXE or an overlay DLL rebased to FA.EXE's
 // preferred base (0x00400000). See scripts/ghidra/README.md for overlay setup.
@@ -84,14 +84,13 @@ public class ImportFASmsHeadless extends GhidraScript {
         if (args != null && args.length > 0 && !args[0].isEmpty())
             return new File(args[0]);
 
-        // 2. $FA_PROJECT/FA.SMS
+        // 2. $FA_PROJECT/FA.SMS — canonical on the Fedora workbench; falls back
+        //    to ~/src/fa (the _env.sh default project root). The caller reports
+        //    if the file does not exist.
         String proj = System.getenv("FA_PROJECT");
-        if (proj != null && !proj.isEmpty()) {
-            File f = new File(proj, "FA.SMS");
-            if (f.exists()) return f;
-        }
-
-        // 3. Default FA install path
-        return new File("C:\\JANES\\Fighters Anthology\\FA.SMS");
+        if (proj == null || proj.isEmpty())
+            proj = System.getProperty("user.home") + File.separator + "src"
+                    + File.separator + "fa";
+        return new File(proj, "FA.SMS");
     }
 }

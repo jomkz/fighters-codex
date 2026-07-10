@@ -4,9 +4,11 @@ Scripts for decompiling and analysing Jane's Fighters Anthology using Ghidra —
 (epic #209) and the companion binaries it ships alongside (IP.EXE, WAIL32.DLL, comms DLLs;
 epic #247).
 
-The workbench is cross-platform: the analysis scripts (`*.java`) resolve every path
-through the `FA_PROJECT` environment variable, the `.sh` launchers drive them on Linux
-(the primary RE environment), and the `.bat` launchers remain for the Windows bench.
+The workbench runs on **Linux** (the primary RE environment since #120): the analysis
+scripts (`*.java`) resolve every path through the `FA_PROJECT` environment variable, and the
+`.sh` launchers drive them. The frozen Windows `.bat` mirror suite was retired in #374 — if a
+Windows bench is ever needed again, recover the mirrors from git history (the `.java` scripts
+themselves are already OS-agnostic).
 
 **Per-binary reconstruction:** the symbol-DB launchers (`apply_symbols`, `apply_types`,
 `export_inventory`, `rebuild_audit`) take an optional `BINARY` argument — the Ghidra program
@@ -55,10 +57,6 @@ is `run_all.sh` invoking each analysis script in its own cold Ghidra process;
 parallelizing those is gated on read-only project sharing and is left as a
 follow-up rather than risk write-lock contention on the shared project.
 
-On Windows, edit the variables at the top of `run_ghidra.bat` instead
-(`JAVA_HOME`, `GHIDRA_HOME`, `FA_PROJECT`; defaults `C:\java\jdk-26.0.1`,
-`C:\tools\ghidra_12.1_PUBLIC`, `%USERPROFILE%\src\fa`).
-
 ---
 
 ## Quick start (automated)
@@ -69,9 +67,6 @@ scripts/ghidra/run_all.sh           # run all FA.EXE analysis scripts
 scripts/ghidra/run_overlays.sh      # extract + import PE overlay DLLs
 ```
 
-Windows bench: the same three steps exist as `setup_project.bat`, `run_all.bat`,
-`run_overlays.bat`.
-
 All output lands under `$FA_PROJECT/output/` and `$FA_PROJECT/overlay_projects/`.
 
 ---
@@ -79,7 +74,7 @@ All output lands under `$FA_PROJECT/output/` and `$FA_PROJECT/overlay_projects/`
 ## Migrating an existing project between machines
 
 The analyzed Ghidra project is portable: copy `fa-re.gpr` and `fa-re.rep/` (and, if
-wanted, `overlay_projects/` and `secondary_projects/`) into `$FA_PROJECT`. Two gotchas:
+wanted, `overlay_projects/`) into `$FA_PROJECT`. Two gotchas:
 
 - **Owner check.** Ghidra records the OS user as project owner and refuses to open a
   project owned by anyone else — including a case difference (`John` on Windows vs
@@ -117,18 +112,12 @@ scripts/ghidra/run_ghidra.sh ImportFASmsHeadless.java
 ```
 `ImportFASmsHeadless.java` resolves the SMS path automatically:
 1. `-scriptArg` value if supplied
-2. `$FA_PROJECT/FA.SMS`
-3. `C:\JANES\Fighters Anthology\FA.SMS` (Windows fallback)
+2. `$FA_PROJECT/FA.SMS` (falling back to `~/src/fa/FA.SMS`)
 
 `setup_project.sh` passes `$FA_INSTALL/FA.SMS` explicitly, so the fallback chain only
-matters when running the script by hand.
-
-**GUI (interactive):**
-1. In the Ghidra CodeBrowser, open `FA.EXE`
-2. **Window → Script Manager**, locate `ImportFASms.java` and run it
-3. When prompted, select `FA.SMS` from your FA install directory
-
-> `ImportFASms.java` requires the Ghidra GUI. For automation use `ImportFASmsHeadless.java`.
+matters when running the script by hand. (The GUI-only `ImportFASms.java` was retired in
+#374 — the headless variant covers every use; run it interactively from the Script Manager
+if you must.)
 
 ### 3. Verify the project location
 
@@ -139,8 +128,7 @@ $FA_PROJECT/fa-re.gpr
 $FA_PROJECT/fa-re.rep/
 ```
 
-If you placed it elsewhere, export `FA_PROJECT` (Linux) or update `FA_PROJECT` in
-`run_ghidra.bat` (Windows).
+If you placed it elsewhere, export `FA_PROJECT` before calling a launcher.
 
 ---
 
@@ -191,11 +179,12 @@ scripts/ghidra/run_overlays.sh --extract    # extraction only
 scripts/ghidra/run_overlays.sh --import     # import only (extract first)
 scripts/ghidra/run_overlays.sh --import BI  # import single format
 scripts/ghidra/run_overlays.sh --analyze    # DumpOverlayDLL over all overlay projects
-scripts/ghidra/run_overlays.sh --secondary  # import secondary binaries
-scripts/ghidra/run_overlays.sh --analyze-secondary  # DumpOverlayDLL over secondary projects
 ```
 
-Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied to `$FA_PROJECT/overlays/secondary` and imported into `overlay_projects/secondary`; `--secondary` additionally imports each into its own isolated project under `$FA_PROJECT/secondary_projects/`.
+This pipeline handles the **LIB-embedded format overlays** (`.BI`/`.CAM`/`.MC`/… DLLs). The
+standalone companion game binaries (IP.EXE, WAIL32.DLL, msapi.dll, the comms DLLs) are not
+part of it — their canonical home is the `fa-re` project via `import_targets.sh` (#252/#266).
+The old `--secondary` / `secondary_projects/` pipeline was retired in #374.
 
 **Format groups and counts:**
 
@@ -254,28 +243,26 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | Script | Purpose | Headless? |
 |---|---|---|
 | `FAScript.java` | Base class — shared helpers | n/a |
-| `ImportFASms.java` | Import FA.SMS symbols (interactive file picker) | No |
 | `ImportFASmsHeadless.java` | Import FA.SMS symbols (path from arg/env/default) | Yes |
-| `DumpOverlayDLL.java` | Per-DLL dump for overlay/secondary projects | Yes |
+| `DumpOverlayDLL.java` | Per-DLL dump for the format-overlay projects | Yes |
 | `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` / `AnalyzeBIFRAME.java` | Deep dives on overlay projects | Yes |
 
-### Launchers (Linux `.sh` / Windows `.bat`)
+### Launchers (Linux `.sh`)
 
-| Linux | Windows | Purpose |
-|---|---|---|
-| `_env.sh` | — | Shared env resolution, sourced by every `.sh` launcher |
-| `run_ghidra.sh` | `run_ghidra.bat` | Run a single analysis script against FA.EXE |
-| `run_all.sh` | `run_all.bat` | Run all analysis scripts; `--setup` flag rebuilds the project first |
-| `setup_project.sh` | `setup_project.bat` | One-shot: create project, import FA.EXE, load FA.SMS symbols |
-| `extract_overlays.sh` | `extract_overlays.bat` | Unpack FA_1/FA_2.LIB and sort overlays by extension |
-| `import_overlays.sh` | `import_overlays.bat` + `_import_one.bat` | Patch PL→PE signature and import overlay DLLs into Ghidra |
-| `import_secondary.sh` | `import_secondary.bat` | Import secondary binaries into isolated projects |
-| `run_overlays.sh` | `run_overlays.bat` + `_analyze_overlay*.bat`, `_analyze_secondary.bat` | Orchestrate extract / import / analyze; see flags above |
-| `import_targets.sh` | `import_targets.bat` | Import the #247 companion binaries (IP.EXE, WAIL32.DLL, comms DLLs) into `fa-re` as their own programs |
-| `apply_symbols.sh [BIN]` | `apply_symbols.bat [BIN]` | Apply `db/symbols/` names to the project (per binary) |
-| `apply_types.sh [BIN]` | `apply_types.bat [BIN]` | Apply `db/types/` + the `type` column (per binary) |
-| `export_inventory.sh [BIN]` | `export_inventory.bat [BIN]` | Export `db/inventory/<BIN>/` ground truth |
-| `rebuild_audit.sh [BIN]` | — (Fedora only) | Rebuild a binary from scratch and diff vs the committed inventory |
+| Launcher | Purpose |
+|---|---|
+| `_env.sh` | Shared env resolution, sourced by every `.sh` launcher |
+| `run_ghidra.sh` | Run a single analysis script against FA.EXE |
+| `run_all.sh` | Run all analysis scripts; `--setup` flag rebuilds the project first |
+| `setup_project.sh` | One-shot: create project, import FA.EXE, load FA.SMS symbols |
+| `extract_overlays.sh` | Unpack FA_1/FA_2.LIB and sort overlays by extension |
+| `import_overlays.sh` | Patch PL→PE signature and import format-overlay DLLs into Ghidra |
+| `run_overlays.sh` | Orchestrate overlay extract / import / analyze; see flags above |
+| `import_targets.sh` | Import the #247 companion binaries (IP.EXE, WAIL32.DLL, comms DLLs, msapi.dll) into `fa-re` as their own programs |
+| `apply_symbols.sh [BIN]` | Apply `db/symbols/` names to the project (per binary) |
+| `apply_types.sh [BIN]` | Apply `db/types/` + the `type` column (per binary) |
+| `export_inventory.sh [BIN]` | Export `db/inventory/<BIN>/` ground truth |
+| `rebuild_audit.sh [BIN]` | Rebuild a binary from scratch and diff vs the local `db/inventory/` baseline |
 
 ---
 
@@ -302,4 +289,13 @@ public class AnalyzeMyThing extends FAScript {
 
 Keep scripts headless-compatible: no `askFile`, `askYesNo`, or `popup` calls.
 
-Then add it to `run_all.sh` (and `run_all.bat`) and to `AnalyzeFA.java` if you want it in the consolidated report.
+Then add it to `run_all.sh` and to `AnalyzeFA.java` if you want it in the consolidated report.
+
+## Superseded data directories
+
+Three generations of companion-binary handling once coexisted; only the last is canonical
+(the `fa-re` project via `import_targets.sh`, #252/#266). If your `$FA_PROJECT` predates #374
+it may still hold superseded, regenerable data — safe to delete (~380 MB): `secondary_projects/`
+and `overlay_projects/secondary` (the retired era-1/2 secondary pipelines), root-level
+`fa_symbols.csv` and `analyze_secondary.log`, and `baseline-win/`. The `openfa/` checkout, if
+present, is optional cross-reference reading — **not** a pipeline input.
