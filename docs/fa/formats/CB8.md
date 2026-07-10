@@ -7,9 +7,9 @@ endianness: little
 spec:
   status: partial
   gaps:
-    - kind: re-static
-      issue: 54
-      note: "MRFA payload dwords, DRBC +0x10 field, EDB palette-half global"
+    - kind: re-gameplay
+      issue: 56
+      note: "EDB palette-half selector (GlobalData+0xc1b0 bit 0) is a runtime playback/double-buffer detail, not a file field — confirm on the bench"
 codec:
   direction: round-trip
   byte_identical: false
@@ -88,7 +88,7 @@ Chunk structure:
 | `0x08` | 2  | u16 | Audio timing divisor `P` (observed: 150) |
 | `0x0A` | 2  | u16 | Audio rate term `Q` (observed: 22050); samples per MRFA chunk = `Q × 50 / P` = 7350 (confirmed: `InitCobra` primes two chunks of exactly this size) |
 | `0x0C` | 4  | u32 | Format version — the engine requires `< 0x67` (observed: 0x65) |
-| `0x10` | 2  | ?   | **Unknown** (observed: 0x0000 or 0x0080) |
+| `0x10` | 2  | u16 | Reserved — read into the 64-byte header buffer but never referenced by `InitCobra` (observed: 0x0000 or 0x0080) |
 | `0x12` | 46 | u8[46] | 0xFF padding |
 
 The engine reads the file **sequentially** — header, two priming MRFA chunks
@@ -106,11 +106,17 @@ samples at 11025 Hz (matching the `.11K` convention). Silence is 0x80.
 |--------|------|------|-------------|
 | `+0x00` | 4 | char[4] | Magic `MRFA` |
 | `+0x04` | 4 | u32 | Chunk size (observed: 7374) |
-| `+0x08` | 4 | u32 | **Unknown** (observed: 128 — not a pixel dimension) |
-| `+0x0C` | 4 | u32 | **Unknown** (observed: 0) |
-| `+0x10` | 4 | u32 | **Unknown** (observed: 8) |
-| `+0x14` | 4 | u32 | **Unknown** (observed: 1) |
+| `+0x08` | 4 | u32 | Audio-format descriptor — not consumed by the player (observed: 128) |
+| `+0x0C` | 4 | u32 | Audio-format descriptor — not consumed (observed: 0) |
+| `+0x10` | 4 | u32 | Audio-format descriptor, consistent with bits-per-sample (observed: 8) — not consumed |
+| `+0x14` | 4 | u32 | Audio-format descriptor, consistent with channel count (observed: 1 = mono) — not consumed |
 | `+0x18` | 7350 | u8[] | Raw 8-bit unsigned PCM samples at 11025 Hz |
+
+The four dwords at `+0x08`–`+0x17` are read past by `InitCobra` but never
+consumed: the playback audio format is fixed (8-bit / 11025 Hz / mono) and the
+per-chunk sample count comes from the DRBC `P`/`Q` timing pair, not this header —
+consistent with the doc's note that the chunk metadata "exist[s] for the file
+format, not the player."
 
 7350 samples ÷ 11025 Hz = 666.7 ms = exactly 10 video frames at 15 fps.
 
@@ -276,15 +282,21 @@ neighbour distances against it.
 
 *Status: resolved — re-static (#95)*
 
-### 2. Unknown header fields
+### 2. Unknown header fields — resolved (#54)
 
-The four MRFA payload dwords at `+0x08..+0x17` (observed 128, 0, 8, 1), the
-DRBC field at `+0x10` (0x0000 or 0x0080), and the global palette-half selector
-`EDB` consults (`GlobalData+0xc1b0` bit 0) remain semantically unmapped. The
-DRBC audio-timing pair and version gate are now confirmed (see the header
-table); the MRFI payload header is fully mapped.
+The static header unknowns are closed against the `InitCobra` (`0x46ae10`)
+decompile: the loader reads the 64-byte DRBC header but references only the
+magic, flags, audio-timing pair (`P`/`Q`), and version gate — the `+0x10` field
+is read into the buffer and never used (reserved). The four MRFA payload dwords
+at `+0x08..+0x17` are likewise read past but not consumed; the audio format is
+fixed and per-chunk size is DRBC-driven, so they are file-format descriptors,
+not decode inputs (see the DRBC / MRFA header tables above).
 
-*Status: open — re-static (#54)*
+The one remaining item is not a file field: the palette-half selector `EDB`
+consults (`GlobalData+0xc1b0` bit 0) is a **runtime** playback / double-buffer
+detail, best confirmed on the bench.
+
+*Status: resolved static; palette-half re-tagged re-gameplay (#56)*
 
 ## Related
 

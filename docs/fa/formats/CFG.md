@@ -6,11 +6,7 @@ variants: ["EA.CFG", "IP.CFG"]
 category: system
 endianness: little
 spec:
-  status: partial
-  gaps:
-    - kind: re-static
-      issue: 54
-      note: "CONFIG fields +0x004/+0x008/+0x0E2 semantics"
+  status: complete
 codec:
   direction: round-trip
   byte_identical: true
@@ -41,11 +37,9 @@ multiplayer session launcher) on startup.
 fx cfg info <EA.CFG>       # dump the CONFIG struct + round-trip check
 ```
 
-`cfg_read`/`cfg_write` map every documented field and pass the three
-untraced fields (+0x004/+0x008/+0x0E2, gap #54) through verbatim —
-byte-identical round-trip, verified against the install's live EA.CFG by an
-`FX_FA_ROOT`-gated test. IP.CFG is two lines of plain text and needs no
-codec.
+`cfg_read`/`cfg_write` map every field byte-identically, verified against the
+install's live EA.CFG by an `FX_FA_ROOT`-gated test. IP.CFG is two lines of
+plain text and needs no codec.
 
 ## File Layout
 
@@ -68,15 +62,15 @@ handled by the `UCONFIG_*` functions.
 | Offset | Size | Field | Notes |
 |--------|------|-------|-------|
 | `0x000` | 4 | magic | Always `0x24` (36) — version/format tag |
-| `0x004` | 4 | `DAT_00520ac8` | **Unknown** — possibly display mode or renderer flag |
-| `0x008` | 4 | `DAT_00520a08` | **Unknown** |
+| `0x004` | 4 | `menu_video_mode` (`DAT_00520ac8`) | Shell/menu graphics mode — the value passed to `_InitGraphicsMode` for the 2D UI; validated against `GG_VideoModesAvailable` (fallback 2) |
+| `0x008` | 4 | `flight_video_mode` (`DAT_00520a08`) | In-flight 3D graphics mode — the options-menu radio selection (1/2/4/8). The engine re-inits graphics only when it differs from `menu_video_mode`, crossing between shell and flight |
 | `0x00C` | 4 | `_stickDevice` | Joystick device index (0 = none/keyboard) |
 | `0x010` | 4 | `_rudderDevice` | Rudder pedal device index |
 | `0x014` | 4 | `_throttleDevice` | Throttle controller device index |
 | `0x018` | 4 | `_throttle100__3JA` | Throttle axis 100% calibration value |
 | `0x01C` | 192 | `_mainV[0..47]` | 48 × dword joystick axis mapping table (button/axis assignments) |
 | `0x0DC` | 6 | `_windowTypes[6]` | Display window mode per view (6 bytes) |
-| `0x0E2` | 1 | `DAT_004eb5f0` | **Unknown** |
+| `0x0E2` | 1 | `music_on` (`_musicOn`) | Music enable flag — the counterpart to `sound_on` at `0x0E3`; read by every `Music*`/`Score*`/MIDI routine |
 | `0x0E3` | 1 | `_soundOn` | Sound enabled flag |
 | `0x0E4` | 1 | `_stereoSwap` | Stereo channel swap |
 | `0x0E5` | 2 | `_overallVol__3GA` | Overall volume |
@@ -140,16 +134,6 @@ IP.EXE notes:
   game browser on joining clients.
 - `FA.EXE` launches `IP.EXE` as a child process when the player selects a
   multiplayer connection type from the main menu.
-
-## Open Questions
-
-### 1. Unmapped CONFIG fields
-
-Three EA.CFG fields have no traced consumer semantics: the dwords at `+0x004`
-(`DAT_00520ac8` — possibly display mode or renderer flag) and `+0x008`
-(`DAT_00520a08`), and the byte at `+0x0E2` (`DAT_004eb5f0`).
-
-*Status: open — re-static (#54)*
 
 ## Related
 
