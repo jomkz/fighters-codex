@@ -23,6 +23,7 @@
 #include "audio_player.h"
 #include <algorithm>
 #include <atomic>
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
 #include <vector>
@@ -36,9 +37,11 @@ struct AudioPlayer::Impl {
     bool       devInit = false;
 
     std::vector<uint8_t> buf;             // slice [fromSample, end)
-    std::atomic<uint32_t> cursor{0};      // bytes consumed (u8 mono: bytes == samples)
-    std::atomic<bool>     finished{false};
-    int startSample = 0;
+    std::atomic<uint32_t> cursor{0};      // bytes streamed to the device (audible fill)
+    int    startSample = 0;
+    int    rate        = 0;               // sample rate of the active clip
+    double elapsed     = 0.0;             // playhead offset from startSample, in samples
+    std::chrono::steady_clock::time_point lastTick{}; // for the real-clock Update()
 
     ~Impl() {
         CloseDevice();
@@ -58,7 +61,7 @@ struct AudioPlayer::Impl {
         return ctxInit;
     }
 
-    // Realtime thread. Touches only buf/cursor/finished.
+    // Realtime thread. Touches only buf/cursor.
     static void DataCallback(ma_device* dev, void* out, const void*,
                              ma_uint32 frames) {
         Impl* impl   = static_cast<Impl*>(dev->pUserData);
@@ -73,9 +76,18 @@ struct AudioPlayer::Impl {
         // u8 silence is 0x80 — zero-filling would pop at clip end.
         if (n < frames) std::memset(dst + n, 0x80, frames - n);
 
+        // Stream position only; end-of-clip is decided by the control-plane
+        // clock in Update(), never from this realtime thread.
         impl->cursor.store(cur + n, std::memory_order_relaxed);
-        if (cur + n >= size)
-            impl->finished.store(true, std::memory_order_release);
+    }
+
+    // GUI thread. Advance the playhead clock by dt; return true once the
+    // clip has played out. Decoupled from the realtime cursor so end-of-clip
+    // is deterministic under an injected delta.
+    bool Advance(double dtSeconds) {
+        if (rate <= 0) return false;
+        elapsed += dtSeconds * (double)rate;
+        return elapsed >= (double)buf.size();
     }
 
     // GUI thread only — never called from the data callback.
@@ -86,7 +98,8 @@ struct AudioPlayer::Impl {
         }
         buf.clear();
         cursor.store(0, std::memory_order_relaxed);
-        finished.store(false, std::memory_order_relaxed);
+        elapsed = 0.0;
+        rate    = 0;
     }
 };
 
@@ -94,13 +107,23 @@ AudioPlayer::AudioPlayer() : m_impl(new Impl) {}
 AudioPlayer::~AudioPlayer() { delete m_impl; }
 
 bool AudioPlayer::IsPlaying() const {
-    return m_state == PlayState::Playing && m_impl->devInit &&
-           !m_impl->finished.load(std::memory_order_acquire);
+    return m_state == PlayState::Playing;
 }
 
 void AudioPlayer::Update() {
-    if (m_state == PlayState::Playing && m_impl->devInit &&
-        m_impl->finished.load(std::memory_order_acquire)) {
+    auto now = std::chrono::steady_clock::now();
+    double dt = std::chrono::duration<double>(now - m_impl->lastTick).count();
+    m_impl->lastTick = now;
+    if (m_state == PlayState::Playing && m_impl->Advance(dt)) {
+        m_impl->CloseDevice();
+        m_state    = PlayState::Stopped;
+        resumeFrom = 0;
+    }
+}
+
+void AudioPlayer::Update(double dtSeconds) {
+    m_impl->lastTick = std::chrono::steady_clock::now();
+    if (m_state == PlayState::Playing && m_impl->Advance(dtSeconds)) {
         m_impl->CloseDevice();
         m_state    = PlayState::Stopped;
         resumeFrom = 0;
@@ -108,11 +131,13 @@ void AudioPlayer::Update() {
 }
 
 int AudioPlayer::Position() const {
-    if (m_state == PlayState::Playing && m_impl->devInit) {
-        // Submission cursor, not a device query: leads the audible output
-        // by up to one device period — invisible on the waveform playhead.
-        return m_impl->startSample +
-               (int)m_impl->cursor.load(std::memory_order_relaxed);
+    if (m_state == PlayState::Playing) {
+        // Playhead from the elapsed-time clock, capped at clip end — leads the
+        // audible output by up to one frame, invisible on the waveform.
+        double head = m_impl->elapsed;
+        double len  = (double)m_impl->buf.size();
+        if (head > len) head = len;
+        return m_impl->startSample + (int)head;
     }
     return resumeFrom;
 }
@@ -129,6 +154,9 @@ bool AudioPlayer::Play(const uint8_t* pcm, int samples, int rate,
 
     m_impl->buf.assign(pcm + fromSample, pcm + samples);
     m_impl->startSample = fromSample;
+    m_impl->rate        = rate;
+    m_impl->elapsed     = 0.0;
+    m_impl->lastTick    = std::chrono::steady_clock::now();
 
     ma_device_config cfg  = ma_device_config_init(ma_device_type_playback);
     cfg.playback.format   = ma_format_u8;

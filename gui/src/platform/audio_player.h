@@ -14,6 +14,15 @@ namespace platform {
 // and catches natural end-of-clip (never torn down from the audio thread);
 // Position() reports the playhead sample while playing and resumeFrom
 // otherwise.
+//
+// Timing model: the playhead and natural end-of-clip are driven by an
+// elapsed-time clock advanced in Update(), not by the realtime audio
+// callback — so the state machine is deterministic and independent of
+// backend scheduling. The no-arg Update() reads a real steady_clock delta
+// (production); the Update(double) overload injects an explicit delta so
+// tests can advance past clip end without sleeping on wall-clock (#401).
+// The miniaudio device still renders the audible output; its callback only
+// streams samples and never mutates control-plane state.
 class AudioPlayer {
 public:
     AudioPlayer();
@@ -24,7 +33,8 @@ public:
     bool IsPlaying() const;
     bool IsPaused() const { return m_state == PlayState::Paused; }
 
-    void Update();          // once per frame: finish natural end-of-clip
+    void Update();               // once per frame: advance by real elapsed time
+    void Update(double dtSeconds); // advance by an explicit delta (deterministic)
     int  Position() const;  // current sample for the playhead display
 
     bool Play(const uint8_t* pcm, int samples, int rate, int fromSample);
