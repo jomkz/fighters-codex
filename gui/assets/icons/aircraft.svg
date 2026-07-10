@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="Aircraft category icon">
+  <style>
+    :root { color-scheme: light dark; }
+    .ico { fill: #22303c; }
+    @media (prefers-color-scheme: dark) { .ico { fill: #dce4ea; } }
+    :root[data-theme="dark"] .ico { fill: #dce4ea; }
+    :root[data-theme="light"] .ico { fill: #22303c; }
+  </style>
+  <path class="ico" d="M24 3 27 16 27 22 46 31 46 34 27 28 27 37 32 43 32 45 24 42 16 45 16 43 21 37 21 28 2 34 2 31 21 22 21 16Z"/>
+</svg>

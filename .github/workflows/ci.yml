@@ -83,6 +83,13 @@ jobs:
       - name: Check docs and status matrix
         run: python3 tools/check_status.py --check
 
+      # fxs icon set (#363): committed SVG sources + baked C++ data must match
+      # the generator. Stdlib-only, same as the checks above.
+      - name: Check fxs icon set currency
+        run: |
+          python3 tools/gen_icons.py --self-test
+          python3 tools/gen_icons.py --check
+
   macos:
     name: macos (informational)
     runs-on: macos-latest

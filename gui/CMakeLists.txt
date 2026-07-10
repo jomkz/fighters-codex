@@ -59,6 +59,8 @@ add_executable(fxs WIN32
     src/platform/texture.cpp
     src/platform/theme.cpp
     src/platform/window.cpp
+    src/assets/icons_baked.cpp
+    src/ui/icons.cpp
     src/panels/lib_browser.cpp
     src/panels/editor_host.cpp
     src/panels/preview.cpp
