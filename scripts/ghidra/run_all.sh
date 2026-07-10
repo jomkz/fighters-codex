@@ -21,45 +21,21 @@ fi
 echo "Running all FA.EXE analysis scripts..."
 echo
 
-SCRIPTS=(
-    # --- Original subsystem scripts ---
-    AnalyzeLAY.java
-    AnalyzeHUD.java
-    AnalyzeDLG.java
-    AnalyzePROJ.java
-    AnalyzeSEE.java
-    AnalyzeMM.java
-    AnalyzeBI.java
-    AnalyzeECM.java
-    AnalyzeHGR.java
-    AnalyzeMUS.java
-    AnalyzeOTNT.java
-    AnalyzeT2.java
-    AnalyzeGAS.java
-    AnalyzePT.java
-    AnalyzePLT.java
-    AnalyzeCAM.java
-    AnalyzeMC.java
-    AnalyzeT2DLL.java
-    AnalyzeCB8.java
-    # --- Dark-zone targeted scripts (new subsystems) ---
-    AnalyzeGameLoop.java
-    AnalyzeRenderer.java
-    AnalyzePhysics.java
-    AnalyzeNetwork.java
-    AnalyzeInput.java
-    # --- SH shape interpreter (evidence for #124/#52/#125) ---
-    AnalyzeSHHeader.java
-    AnalyzeSHDispatch.java
-    AnalyzeSHX86.java
-    # --- Struct and global recovery ---
-    DumpGlobals.java
-    RecoverStructs.java
-    # --- Full function dump (highest ROI -- covers all remaining dark zones) ---
-    DumpAllFunctions.java
-    # Consolidated single-file report (all subsystems in one pass)
-    AnalyzeFA.java
-)
+# The roster is single-sourced from the Analyze*.java files themselves: every
+# one runs against FA.EXE except the overlay-DLL scripts below, which target
+# their own projects via run_overlays.sh. A new Analyze*.java therefore joins
+# run_all automatically — roster drift (the #373 gap) cannot recur. Keep this
+# exclusion list in sync with any new overlay-only analyzers.
+OVERLAY_ONLY="AnalyzeCAMDLL.java AnalyzeMCDLL.java"
+
+SCRIPTS=()
+for path in "$HERE"/Analyze*.java; do
+    s="$(basename "$path")"
+    [[ " $OVERLAY_ONLY " == *" $s "* ]] && continue
+    SCRIPTS+=("$s")
+done
+# Fixed tail: struct/global recovery + the whole-image decompile (not Analyze*).
+SCRIPTS+=(DumpGlobals.java RecoverStructs.java DumpAllFunctions.java)
 
 for s in "${SCRIPTS[@]}"; do
     "$HERE/run_ghidra.sh" "$s"

@@ -18,13 +18,21 @@ import java.util.*;
 
 public class DumpOverlayDLL extends FAScript {
 
+    // Each output name is truncated the first time it is opened in a headless
+    // session, then appended to for the remaining programs the -process match
+    // feeds through this postScript — so the launcher no longer needs an
+    // rm -f. The set persists across per-program invocations within one JVM.
+    private static final Set<String> truncated = new HashSet<>();
+
     @Override
     public void run() throws Exception {
         String[] args = getScriptArgs();
         String dllName = (args != null && args.length > 0 && !args[0].isEmpty())
                 ? args[0] : currentProgram.getName();
 
-        openOutputAppend("Overlay_" + dllName);
+        String outName = "Overlay_" + dllName;
+        if (truncated.add(outName)) openOutput(outName);      // first write: truncate
+        else                        openOutputAppend(outName); // later DLLs: append
 
         FunctionManager fm = currentProgram.getFunctionManager();
         SymbolTable st = currentProgram.getSymbolTable();

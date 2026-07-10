@@ -11,7 +11,30 @@ public class AnalyzeBIFRAME extends FAScript {
     @Override
     public void run() throws Exception {
         openOutput("AnalyzeBIFRAME");
-        analyzeBIFRAME();
+        header("BIFRAME -- FRAME writer site: dispatch area 0x4ace00-0x4ad800");
+        dumpRange(0x004ace00L, 0x004ad800L);
+        header("BIFRAME -- CT state save FUN_004668f0");
+        dumpAt(0x004668f0L);
+        header("BIFRAME -- CT state restore FUN_00466920");
+        dumpAt(0x00466920L);
+        header("BIFRAME -- findFunctionsReadingOffsets +0x7c (FRAME s16 in CT state block)");
+        for (long va : findFunctionsReadingOffsets(0x00400000L, 0x00540000L, 0x7c, 0x80)) dumpAt(va);
+        header("BIFRAME -- _INFO2Draw candidate");
+        dumpSymbolsMatching("INFO2Draw", "info2draw", "Info2Draw");
+        header("BIFRAME -- _FMFlight@0 (0x47b020) candidate consumer");
+        dumpAtForced(0x0047b020L);
+        header("BIFRAME -- _MANAdd@24 (0x47ceb0) candidate consumer");
+        dumpAtForced(0x0047ceb0L);
+        header("BIFRAME -- _GVDoCurrentWaypoint / MPStatusSet (symbol search)");
+        dumpSymbolsMatching("GVDoCurrentWaypoint", "gvdocurrentwaypoint",
+                "MPStatusSet", "mpstatusset");
+        header("BIFRAME -- FUN_0048e740 candidate consumer");
+        dumpAtForced(0x0048e740L);
+        header("BIFRAME -- direct-address callers of DAT_00546c44 / DAT_00546c46");
+        dumpCallers(0x00546c44L);
+        dumpCallers(0x00546c46L);
+        header("BIFRAME -- callers of DAT_0050cf90 (CT block saved-copy pointer)");
+        dumpCallers(0x0050cf90L);
         closeOutput();
     }
 }

@@ -204,9 +204,13 @@ The old `--secondary` / `secondary_projects/` pipeline was retired in #374.
 
 ### FA.EXE analysis scripts
 
+Each is self-contained (`extends FAScript` for the shared helpers, its analysis
+in `run()`). `run_all.sh` globs `Analyze*.java` and runs every one except the
+overlay-only scripts (below), so this inventory *is* the roster — a new
+`Analyze*.java` joins `run_all` automatically.
+
 | Script | Subsystem | Output |
 |---|---|---|
-| `AnalyzeFA.java` | Master — runs all subsystems | `AnalyzeFA.txt` |
 | `AnalyzeLAY.java` | Sky / atmosphere / horizon | `AnalyzeLAY.txt` |
 | `AnalyzeHUD.java` | HUD draw, warning bits, bit 14 SP writer | `AnalyzeHUD.txt` |
 | `AnalyzeDLG.java` | Dialog / UI system | `AnalyzeDLG.txt` |
@@ -214,6 +218,7 @@ The old `--secondary` / `secondary_projects/` pipeline was retired in #374.
 | `AnalyzeSEE.java` | Seeker / missile guidance | `AnalyzeSEE.txt` |
 | `AnalyzeMM.java` | Mission map / campaign | `AnalyzeMM.txt` |
 | `AnalyzeBI.java` | BI bytecode interpreter / AI, FRAME opcode | `AnalyzeBI.txt` |
+| `AnalyzeBIFRAME.java` | BI FRAME opcode 0x28 consumer (CT state +0x7c/+0x7e) | `AnalyzeBIFRAME.txt` |
 | `AnalyzeECM.java` | ECM / jammer | `AnalyzeECM.txt` |
 | `AnalyzeHGR.java` | Hangar / airbase rendering | `AnalyzeHGR.txt` |
 | `AnalyzeMUS.java` | Music / SEQ | `AnalyzeMUS.txt` |
@@ -245,7 +250,7 @@ The old `--secondary` / `secondary_projects/` pipeline was retired in #374.
 | `FAScript.java` | Base class — shared helpers | n/a |
 | `ImportFASmsHeadless.java` | Import FA.SMS symbols (path from arg/env/default) | Yes |
 | `DumpOverlayDLL.java` | Per-DLL dump for the format-overlay projects | Yes |
-| `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` / `AnalyzeBIFRAME.java` | Deep dives on overlay projects | Yes |
+| `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` | Deep dives on the CAM/MC overlay projects (run via `run_overlays.sh --analyze-cam`/`--analyze-mc`) | Yes |
 
 ### Launchers (Linux `.sh`)
 
@@ -289,7 +294,11 @@ public class AnalyzeMyThing extends FAScript {
 
 Keep scripts headless-compatible: no `askFile`, `askYesNo`, or `popup` calls.
 
-Then add it to `run_all.sh` and to `AnalyzeFA.java` if you want it in the consolidated report.
+That is the whole checklist: `run_all.sh` globs `Analyze*.java`, so a new FA.EXE
+analyzer runs automatically — nothing to register. Add it to the `OVERLAY_ONLY`
+exclusion in `run_all.sh` **only** if it targets an overlay project instead of
+FA.EXE (like `AnalyzeCAMDLL`/`AnalyzeMCDLL`), and add a row to the inventory
+table above.
 
 ## Superseded data directories
 
