@@ -1,11 +1,11 @@
 // Campaign DLL binary layout analysis.
-// Runs against %FA_PROJECT%\overlay_projects\cam\
+// Runs against $FA_PROJECT/overlay_projects/cam\
 // For each CAM DLL: dumps all exported functions, then scans the .data section
 // for the mission-state block (null-terminated strings, aircraft IDs, weapon tables).
 // Also traces FUN_00428340 (post-init finalizer) to determine its role.
 //
 // Invoke via run_overlays.bat --analyze CAM
-// Output: %FA_PROJECT%\output\AnalyzeCAMDLL.txt
+// Output: $FA_PROJECT/output/AnalyzeCAMDLL.txt
 
 import ghidra.program.model.listing.*;
 import ghidra.program.model.mem.*;

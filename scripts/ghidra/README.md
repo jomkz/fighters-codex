@@ -236,12 +236,16 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `AnalyzeCAM.java` | Campaign DLL binary layout | `AnalyzeCAM.txt` |
 | `AnalyzeMC.java` | Mission condition DLL flow | `AnalyzeMC.txt` |
 | `AnalyzeT2DLL.java` | T2 terrain overlay DLL, surface-class mapping | `AnalyzeT2DLL.txt` |
+| `AnalyzeCB8.java` | CB8 / video image decoder | `AnalyzeCB8.txt` |
 | `AnalyzeGameLoop.java` | Main loop / frame dispatch | `AnalyzeGameLoop.txt` |
 | `AnalyzeRenderer.java` | Software renderer internals | `AnalyzeRenderer.txt` |
 | `AnalyzePhysics.java` | Flight model / physics core | `AnalyzePhysics.txt` |
 | `AnalyzeNetwork.java` | Multiplayer / netcode | `AnalyzeNetwork.txt` |
 | `AnalyzeInput.java` | Input / joystick handling | `AnalyzeInput.txt` |
-| `DumpGlobals.java` | Global variable inventory | `DumpGlobals.csv` |
+| `AnalyzeSHHeader.java` | SH shape header fields — radius/radius_world (#124) | `AnalyzeSHHeader.txt` |
+| `AnalyzeSHDispatch.java` | SH interpreter vector_table; materializes handlers (#52) | `AnalyzeSHDispatch.txt` |
+| `AnalyzeSHX86.java` | SH X86Unknown entry contract — do_start_asm/interp (#125) | `AnalyzeSHX86.txt` |
+| `DumpGlobals.java` | Global variable inventory (+ named subset) | `DumpGlobals.csv`, `DumpGlobals_named.csv` |
 | `RecoverStructs.java` | Struct field recovery | `RecoverStructs.txt` |
 | `DumpAllFunctions.java` | Full function dump | `DumpAllFunctions.txt` |
 
@@ -254,9 +258,6 @@ Secondary game binaries (IP.EXE, WAIL32.DLL, msapi.dll, CD-ROM DLLs) are copied 
 | `ImportFASmsHeadless.java` | Import FA.SMS symbols (path from arg/env/default) | Yes |
 | `DumpOverlayDLL.java` | Per-DLL dump for overlay/secondary projects | Yes |
 | `AnalyzeCAMDLL.java` / `AnalyzeMCDLL.java` / `AnalyzeBIFRAME.java` | Deep dives on overlay projects | Yes |
-| `AnalyzeSHHeader.java` | SH header field consumption — radius/radius_world evidence (#124) | Yes |
-| `AnalyzeSHDispatch.java` | SH interpreter vector_table map; materializes handler functions (#52) | Yes |
-| `AnalyzeSHX86.java` | SH X86Unknown entry contract — do_start_asm/do_start_interp (#125) | Yes |
 
 ### Launchers (Linux `.sh` / Windows `.bat`)
 

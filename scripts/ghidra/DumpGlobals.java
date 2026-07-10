@@ -1,8 +1,15 @@
 // Global variable inventory for FA.EXE.
-// Enumerates all defined data symbols (non-function), writes a CSV with:
+// Enumerates all defined data symbols (non-function), writing two CSVs with:
 //   address, name, size_bytes, data_type, xref_count, first_writer
-// Invoke: run_ghidra.bat DumpGlobals.java
-// Output: %FA_PROJECT%\output\DumpGlobals.csv
+//   - DumpGlobals.csv        every data symbol (incl. Ghidra switch/case and
+//                            unnamed data) — the raw full export.
+//   - DumpGlobals_named.csv  only globals carrying a real assigned name, i.e.
+//                            SourceType USER_DEFINED (db/ApplySymbols) or
+//                            IMPORTED (FA.SMS import) — Ghidra's auto-analysis
+//                            labels (switchD_/caseD_/s_/DAT_) are excluded.
+//                            This is the listing docs/fa/globals.md cites.
+// Invoke: run_ghidra.sh DumpGlobals.java   (run_ghidra.bat on the Windows bench)
+// Output: $FA_PROJECT/output/DumpGlobals.csv, $FA_PROJECT/output/DumpGlobals_named.csv
 
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.*;
@@ -22,9 +29,14 @@ public class DumpGlobals extends GhidraScript {
         File outDir = new File(projectDir, "output");
         outDir.mkdirs();
         File outFile = new File(outDir, "DumpGlobals.csv");
+        File namedFile = new File(outDir, "DumpGlobals_named.csv");
 
+        String header = "address,name,size_bytes,data_type,xref_count,first_writer";
         PrintWriter out = new PrintWriter(new FileWriter(outFile));
-        out.println("address,name,size_bytes,data_type,xref_count,first_writer");
+        PrintWriter named = new PrintWriter(new FileWriter(namedFile));
+        out.println(header);
+        named.println(header);
+        int namedCount = 0;
 
         FunctionManager fm = currentProgram.getFunctionManager();
         ReferenceManager rm = currentProgram.getReferenceManager();
@@ -79,12 +91,20 @@ public class DumpGlobals extends GhidraScript {
             }
 
             String name = sym.getName().replace(",", ";");
-            out.println("0x" + Long.toHexString(va).toUpperCase()
+            String row = "0x" + Long.toHexString(va).toUpperCase()
                     + "," + name
                     + "," + size
                     + "," + typeName
                     + "," + xrefCount
-                    + "," + firstWriter);
+                    + "," + firstWriter;
+            out.println(row);
+            // Named listing: only globals we (or FA.SMS) assigned a name to,
+            // not Ghidra's auto-analysis labels (switchD_/caseD_/s_/DAT_).
+            SourceType src = sym.getSource();
+            if (src == SourceType.USER_DEFINED || src == SourceType.IMPORTED) {
+                named.println(row);
+                namedCount++;
+            }
             seen.add(va);
         }
 
@@ -122,6 +142,8 @@ public class DumpGlobals extends GhidraScript {
         }
 
         out.close();
+        named.close();
         println("DumpGlobals complete: " + seen.size() + " entries -> " + outFile.getAbsolutePath());
+        println("DumpGlobals_named complete: " + namedCount + " named globals -> " + namedFile.getAbsolutePath());
     }
 }

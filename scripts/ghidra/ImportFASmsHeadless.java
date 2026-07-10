@@ -1,6 +1,6 @@
 // Headless-compatible FA.SMS symbol importer.
 // Reads the FA.SMS path from the first script argument (-scriptArg).
-// Falls back to %FA_PROJECT%\FA.SMS, then %USERPROFILE%\src\fa\FA.SMS.
+// Falls back to $FA_PROJECT/FA.SMS, then %USERPROFILE%\src\fa\FA.SMS.
 //
 // Run from: run_ghidra.bat ImportFASmsHeadless.java
 //
@@ -84,7 +84,7 @@ public class ImportFASmsHeadless extends GhidraScript {
         if (args != null && args.length > 0 && !args[0].isEmpty())
             return new File(args[0]);
 
-        // 2. %FA_PROJECT%\FA.SMS
+        // 2. $FA_PROJECT/FA.SMS
         String proj = System.getenv("FA_PROJECT");
         if (proj != null && !proj.isEmpty()) {
             File f = new File(proj, "FA.SMS");

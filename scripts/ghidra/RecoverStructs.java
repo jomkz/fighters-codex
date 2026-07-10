@@ -13,7 +13,7 @@
 //   NT_TYPE  -- nav target type (0x00-0x60)
 //
 // Invoke: run_ghidra.bat RecoverStructs.java
-// Output: %FA_PROJECT%\output\RecoverStructs.txt
+// Output: $FA_PROJECT/output/RecoverStructs.txt
 
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.*;

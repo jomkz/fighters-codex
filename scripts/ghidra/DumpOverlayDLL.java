@@ -5,11 +5,11 @@
 // Accepts the DLL short name as a script argument for the output filename.
 //
 // Usage (headless):
-//   analyzeHeadless.bat %FA_PROJECT%\overlay_projects\<format> <ProjectName>
+//   analyzeHeadless.bat $FA_PROJECT/overlay_projects/<format> <ProjectName>
 //       -process <DLL> -scriptPath scripts\ghidra -postScript DumpOverlayDLL.java <DllName>
 //
 // Invoke via run_overlays.bat --analyze <DllName>
-// Output: %FA_PROJECT%\output\Overlay_<DllName>.txt
+// Output: $FA_PROJECT/output/Overlay_<DllName>.txt
 
 import ghidra.program.model.listing.*;
 import ghidra.program.model.mem.*;

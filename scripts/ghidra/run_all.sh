@@ -41,12 +41,17 @@ SCRIPTS=(
     AnalyzeCAM.java
     AnalyzeMC.java
     AnalyzeT2DLL.java
+    AnalyzeCB8.java
     # --- Dark-zone targeted scripts (new subsystems) ---
     AnalyzeGameLoop.java
     AnalyzeRenderer.java
     AnalyzePhysics.java
     AnalyzeNetwork.java
     AnalyzeInput.java
+    # --- SH shape interpreter (evidence for #124/#52/#125) ---
+    AnalyzeSHHeader.java
+    AnalyzeSHDispatch.java
+    AnalyzeSHX86.java
     # --- Struct and global recovery ---
     DumpGlobals.java
     RecoverStructs.java

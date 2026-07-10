@@ -1,12 +1,12 @@
 // Mission condition DLL logic analysis.
-// Runs against %FA_PROJECT%\overlay_projects\mc\
+// Runs against $FA_PROJECT/overlay_projects/mc\
 // For each MC DLL: dumps the exported entry point, traces all condition-check
 // paths, and identifies: which object aliases are tested, which conditions
 // trigger mission success or failure, and what time thresholds are used.
 // Also traces FUN_00495e80 to clarify its role in the dispatch chain.
 //
 // Invoke via run_overlays.bat --analyze MC
-// Output: %FA_PROJECT%\output\AnalyzeMCDLL.txt
+// Output: $FA_PROJECT/output/AnalyzeMCDLL.txt
 
 import ghidra.program.model.listing.*;
 import ghidra.program.model.symbol.*;
