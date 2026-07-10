@@ -40,6 +40,7 @@ call "%~dp0run_ghidra.bat" AnalyzePLT.java
 call "%~dp0run_ghidra.bat" AnalyzeCAM.java
 call "%~dp0run_ghidra.bat" AnalyzeMC.java
 call "%~dp0run_ghidra.bat" AnalyzeT2DLL.java
+call "%~dp0run_ghidra.bat" AnalyzeCB8.java
 
 :: --- Dark-zone targeted scripts (new subsystems) ---
 call "%~dp0run_ghidra.bat" AnalyzeGameLoop.java
@@ -47,6 +48,11 @@ call "%~dp0run_ghidra.bat" AnalyzeRenderer.java
 call "%~dp0run_ghidra.bat" AnalyzePhysics.java
 call "%~dp0run_ghidra.bat" AnalyzeNetwork.java
 call "%~dp0run_ghidra.bat" AnalyzeInput.java
+
+:: --- SH shape interpreter (evidence for #124/#52/#125) ---
+call "%~dp0run_ghidra.bat" AnalyzeSHHeader.java
+call "%~dp0run_ghidra.bat" AnalyzeSHDispatch.java
+call "%~dp0run_ghidra.bat" AnalyzeSHX86.java
 
 :: --- Struct and global recovery ---
 call "%~dp0run_ghidra.bat" DumpGlobals.java

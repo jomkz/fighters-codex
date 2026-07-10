@@ -107,6 +107,20 @@ matrix remains the published record (its counts are facts), re-derived locally w
 `db/` changes. A *partially* exported directory (e.g. `functions.csv` without
 `globals.csv`) is still a hard error: that's a broken export, not a missing one.
 
+**Verification without a committed baseline (post-#342).** Because Ghidra output is never
+committed, a fresh machine has *no prior inventory to diff against* — there is no committed
+"canonical" export anywhere in the repo. `export_inventory.sh ALL` **creates** the local
+ground truth from the canonical `fa-re` project, and correctness is then asserted two ways
+that need no baseline: `check_status.py --check` verifies `db/` coverage and the
+referenced-globals rule against that fresh export, and the committed reconstruction-matrix
+counts in `docs/fa/reconstruction.md` are the published facts `--write-matrix` regenerates.
+Reproducibility — that `db/` *alone* rebuilds the same named project, with no hidden state
+in the working project — is proven separately by `rebuild_audit.sh` (+ `rebuild_diff.py`):
+it applies `db/` to a throwaway `fa-re-audit` project and diffs that fresh export against
+the working project's local `db/inventory/` export. Both sides are local; it is never a diff
+against a committed inventory. The run's result is the committed
+[`db/reproducibility-audit.md`](reproducibility-audit.md).
+
 | File (per `<binary>/`) | Contents |
 |------|----------|
 | `functions.csv` | `va,name,size` for every function in the program |

@@ -431,9 +431,13 @@ extern int32_t    _clipLeft, _clipRight, _clipTop, _clipBottom; // clip rect
 
 ## Full Named Global Listing
 
-The complete list of 1,944 named globals (filtered from FA.SMS) is available in
-`%FA_PROJECT%/output/DumpGlobals_named.csv` with columns:
+The complete list of the 1,955 named globals — those carrying an assigned name
+(`USER_DEFINED`, applied from `db/`, or `IMPORTED`, from FA.SMS), with Ghidra's
+auto-analysis labels (`switchD_`/`caseD_`/`s_`/`DAT_`) excluded — is regenerated
+into `$FA_PROJECT/output/DumpGlobals_named.csv` by `DumpGlobals.java`, with columns:
 `address, name, size_bytes, data_type, xref_count, first_writer`
 
-The raw full export (all 58,742 symbols including switch tables and unnamed data)
-is in `%FA_PROJECT%/output/DumpGlobals.csv`.
+The raw full export (all 58,517 data symbols, including switch tables and unnamed
+data) is the sibling `$FA_PROJECT/output/DumpGlobals.csv`. Both are local-only
+Ghidra output (never committed, [#342](https://github.com/jomkz/fighters-codex/issues/342));
+the counts track the current canonical `fa-re` project.
