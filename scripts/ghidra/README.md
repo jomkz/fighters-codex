@@ -24,7 +24,7 @@ Each targets one image via `-process <BINARY>`, and inventory exports to
 |---|---|---|
 | [Ghidra](https://ghidra-sre.org/) | 12.1 | `~/tools/ghidra_12.1_PUBLIC` |
 | JDK (with `javac`) | 21+ (Temurin 25 tested) | `~/tools/jdk-*` |
-| FA game files | any FA install | `~/src/fa/game/` (`FA.EXE`, `FA.SMS`, `*.LIB`, overlay DLLs) |
+| FA game files | any FA install | `~/src/fa/game/` — the [`game_files.txt`](game_files.txt) manifest (~90 MB) |
 | fx | this repo build | `build/{release,gcc,clang}/cli/fx` |
 
 No root needed: unpack the Ghidra release zip and a JDK tarball under `~/tools/` and
@@ -61,6 +61,18 @@ follow-up rather than risk write-lock contention on the shared project.
 
 ## Quick start (automated)
 
+From an empty `$FA_PROJECT` and a full FA install, **one command** builds the
+canonical `fa-re` project (FA.EXE + the six #247 companion binaries), applies the
+`db/` names and types, exports the local `db/inventory/` ground truth, and
+verifies with `check_status.py --check`:
+
+```sh
+scripts/ghidra/bootstrap.sh             # from-scratch workbench + green checks
+scripts/ghidra/bootstrap.sh --evidence  # also regenerate run_all + overlay outputs
+```
+
+Or drive the steps individually:
+
 ```sh
 scripts/ghidra/setup_project.sh     # create project + import FA.EXE + load FA.SMS symbols
 scripts/ghidra/run_all.sh           # run all FA.EXE analysis scripts
@@ -68,6 +80,16 @@ scripts/ghidra/run_overlays.sh      # extract + import PE overlay DLLs
 ```
 
 All output lands under `$FA_PROJECT/output/` and `$FA_PROJECT/overlay_projects/`.
+
+### Game-file manifest
+
+`bootstrap.sh` needs ~90 MB of inputs, listed in
+[`game_files.txt`](game_files.txt): `FA.EXE`, `FA.SMS`, `FA_1.LIB`, `FA_2.LIB`,
+and the seven companion binaries (`IP.EXE`, `WAIL32.DLL`, the `CDRV*32.DLL` /
+`COMMSC32.DLL` comms DLLs, `msapi.dll`). Everything else in `$FA_PROJECT` is
+regenerated from these. Filenames resolve **case-insensitively** under
+`$FA_INSTALL` (fresh install copies vary case on Linux), so `FA_INSTALL` may
+point straight at an install or mount — the `game/` copy is optional.
 
 ---
 
@@ -256,7 +278,8 @@ overlay-only scripts (below), so this inventory *is* the roster — a new
 
 | Launcher | Purpose |
 |---|---|
-| `_env.sh` | Shared env resolution, sourced by every `.sh` launcher |
+| `_env.sh` | Shared env resolution + `fa_find` (case-insensitive game-file lookup), sourced by every `.sh` launcher |
+| `bootstrap.sh [--evidence]` | One command: empty `$FA_PROJECT` → built `fa-re`, db applied, inventory exported, `check_status --check` green |
 | `run_ghidra.sh` | Run a single analysis script against FA.EXE |
 | `run_all.sh` | Run all analysis scripts; `--setup` flag rebuilds the project first |
 | `setup_project.sh` | One-shot: create project, import FA.EXE, load FA.SMS symbols |

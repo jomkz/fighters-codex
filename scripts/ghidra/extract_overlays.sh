@@ -17,8 +17,8 @@ if [[ -z "${FX_EXE:-}" ]]; then
 fi
 FX_EXE="${FX_EXE:-fx}"
 
-LIB1="$FA_INSTALL/FA_1.LIB"
-LIB2="$FA_INSTALL/FA_2.LIB"
+LIB1="$(fa_find FA_1.LIB)" || { echo "ERROR: FA_1.LIB not found under $FA_INSTALL" >&2; exit 1; }
+LIB2="$(fa_find FA_2.LIB)" || { echo "ERROR: FA_2.LIB not found under $FA_INSTALL" >&2; exit 1; }
 OVERLAY_ROOT="$FA_PROJECT/overlays"
 
 echo "============================================================"
@@ -29,47 +29,31 @@ echo " Output   : $OVERLAY_ROOT"
 echo "============================================================"
 echo
 
-for lib in "$LIB1" "$LIB2"; do
-    if [[ ! -f "$lib" ]]; then
-        echo "ERROR: $lib not found." >&2
-        exit 1
-    fi
-done
-
-# Unpack both archives into a shared staging directory
+# Unpack both archives into a temp staging dir, then keep only the ~130 overlay
+# DLLs — the LIBs hold 7,406 entries, so the staging dir is removed after sorting
+# rather than left to bloat $FA_PROJECT.
 STAGING="$OVERLAY_ROOT/_all"
+rm -rf "$STAGING"
 mkdir -p "$STAGING"
-echo "[1/3] Unpacking FA_1.LIB to staging dir..."
+trap 'rm -rf "$STAGING"' EXIT
+echo "[1/2] Unpacking FA_1.LIB + FA_2.LIB to a temp staging dir..."
 "$FX_EXE" lib unpack "$LIB1" "$STAGING"
-echo "[1b/3] Unpacking FA_2.LIB to staging dir..."
 "$FX_EXE" lib unpack "$LIB2" "$STAGING"
 
 # Copy each format into its own subdirectory
 echo
-echo "[2/3] Sorting overlay files by extension..."
+echo "[2/2] Sorting overlay files by extension..."
 for fmt in BI CAM MC HUD LAY FNT MUS; do
     mkdir -p "$OVERLAY_ROOT/$fmt"
     find "$STAGING" -maxdepth 1 -iname "*.$fmt" -exec cp -f {} "$OVERLAY_ROOT/$fmt/" \;
     echo "  $fmt: copied to $OVERLAY_ROOT/$fmt"
 done
-
-# Also copy secondary game binaries for their own projects
-echo
-echo "[3/3] Copying secondary game binaries..."
-SECONDARY="$OVERLAY_ROOT/secondary"
-mkdir -p "$SECONDARY"
-for f in IP.EXE WAIL32.DLL msapi.dll CDRVDL32.DLL CDRVHF32.DLL CDRVXF32.DLL COMMSC32.DLL; do
-    if [[ -f "$FA_INSTALL/$f" ]]; then
-        cp -f "$FA_INSTALL/$f" "$SECONDARY/"
-        echo "  Copied $f"
-    fi
-done
+rm -rf "$STAGING"; trap - EXIT   # drop the 7,406-entry staging dir
 
 echo
 echo "============================================================"
 echo " Extraction complete."
 echo " Sources:      FA_1.LIB (FNT x15) + FA_2.LIB (BI/CAM/HUD/LAY/MC/MUS x115)"
 echo " Overlay dirs: $OVERLAY_ROOT/{BI,CAM,MC,HUD,LAY,FNT,MUS}"
-echo " Secondary:    $OVERLAY_ROOT/secondary"
 echo " Next:         scripts/ghidra/import_overlays.sh"
 echo "============================================================"

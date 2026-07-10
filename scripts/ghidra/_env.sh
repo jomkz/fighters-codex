@@ -51,3 +51,17 @@ fa_binaries() {
     local repo="${1:?repo root required}"
     tail -n +2 "$repo/db/subsystems.csv" | cut -d, -f3 | sort -u
 }
+
+# Case-insensitively resolve a game file under $FA_INSTALL and echo its real
+# path (empty string + non-zero return if absent). Fresh install copies vary in
+# case on Linux (e.g. `fa_4c.lib` beside `FA_4D.LIB`), so every game-file lookup
+# in the launchers goes through this instead of a hardcoded exact-case path.
+fa_find() {
+    local name="$1" hit
+    if [[ -f "$FA_INSTALL/$name" ]]; then
+        echo "$FA_INSTALL/$name"; return 0
+    fi
+    hit="$(find "$FA_INSTALL" -maxdepth 1 -type f -iname "$name" -print -quit 2>/dev/null)"
+    [[ -n "$hit" ]] && { echo "$hit"; return 0; }
+    return 1
+}
