@@ -35,7 +35,7 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 40/40 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
 | View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19/19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
 
-**FA.EXE totals:** 20/20 subsystems complete; 1728/1728 in-scope functions named; 2505/4652 referenced globals resolved.
+**FA.EXE totals:** 20/20 subsystems complete; 1728/1728 in-scope functions named; 2505/4630 referenced globals resolved.
 
 ## WAIL32.DLL
 
@@ -85,5 +85,5 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **COMMSC32.DLL totals:** 1/1 subsystems complete; 60/60 in-scope functions named; 109/153 referenced globals resolved.
 
-**Program totals (all binaries):** 26/26 subsystems complete; 4475/4475 in-scope functions named; 4944/7945 referenced globals resolved.
+**Program totals (all binaries):** 26/26 subsystems complete; 4475/4475 in-scope functions named; 4944/7923 referenced globals resolved.
 

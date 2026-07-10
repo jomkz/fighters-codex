@@ -68,22 +68,30 @@ fi
 echo "  inputs : all present under $FA_INSTALL"
 
 # --- Build -----------------------------------------------------------------
-run() { echo; echo ">>> $*"; "$@"; }
+# Run a labelled stage and report its wall time (the whole run is minutes).
+run() {
+    local label="$1"; shift
+    local t0=$SECONDS
+    echo; echo ">>> $label"
+    "$@"
+    printf '<<< %s — %dm%02ds\n' "$label" $(((SECONDS - t0) / 60)) $(((SECONDS - t0) % 60))
+}
 
-run "$HERE/setup_project.sh"          # import FA.EXE + FA.SMS
-run "$HERE/import_targets.sh"         # the six #247 companion binaries
-run "$HERE/apply_symbols.sh" ALL      # db/symbols/ names
-run "$HERE/apply_types.sh" ALL        # db/types/ + the type column
-run "$HERE/export_inventory.sh" ALL   # local db/inventory/ ground truth
+BOOT_T0=$SECONDS
+run "setup_project (import FA.EXE + FA.SMS)"  "$HERE/setup_project.sh"
+run "import_targets (6 companion binaries)"   "$HERE/import_targets.sh"
+run "apply_symbols ALL"                       "$HERE/apply_symbols.sh" ALL
+run "apply_types ALL"                         "$HERE/apply_types.sh" ALL
+run "export_inventory ALL"                    "$HERE/export_inventory.sh" ALL
 
 if (( EVIDENCE )); then
-    run "$HERE/run_all.sh"            # per-subsystem evidence dumps
-    run "$HERE/run_overlays.sh"      # format-overlay DLL projects
+    run "run_all (subsystem evidence)"        "$HERE/run_all.sh"
+    run "run_overlays (format-overlay DLLs)"  "$HERE/run_overlays.sh"
 fi
 
-echo
-echo ">>> check_status.py --check"
-python3 "$REPO_ROOT/tools/check_status.py" --check
+run "check_status.py --check"  python3 "$REPO_ROOT/tools/check_status.py" --check
+
+printf '\nTotal: %dm%02ds\n' $(((SECONDS - BOOT_T0) / 60)) $(((SECONDS - BOOT_T0) % 60))
 
 echo
 echo "============================================================"
