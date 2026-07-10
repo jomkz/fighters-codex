@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="Vehicles category icon">
+  <style>
+    :root { color-scheme: light dark; }
+    .ico { fill: #22303c; }
+    @media (prefers-color-scheme: dark) { .ico { fill: #dce4ea; } }
+    :root[data-theme="dark"] .ico { fill: #dce4ea; }
+    :root[data-theme="light"] .ico { fill: #22303c; }
+  </style>
+  <path class="ico" d="M41 33 41.59 33.06 42.15 33.23 42.67 33.51 43.12 33.88 43.49 34.33 43.77 34.85 43.94 35.41 44 36 44 38 43.94 38.59 43.77 39.15 43.49 39.67 43.12 40.12 42.67 40.49 42.15 40.77 41.59 40.94 41 41 7 41 6.41 40.94 5.85 40.77 5.33 40.49 4.88 40.12 4.51 39.67 4.23 39.15 4.06 38.59 4 38 4 36 4.06 35.41 4.23 34.85 4.51 34.33 4.88 33.88 5.33 33.51 5.85 33.23 6.41 33.06 7 33ZM9 26 39 26 39 34 9 34ZM17 20 30 20 30 27 17 27ZM29 22 44 22 44 25 29 25Z"/>
+</svg>

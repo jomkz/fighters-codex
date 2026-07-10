@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="Archives (raw LIB) category icon">
+  <style>
+    :root { color-scheme: light dark; }
+    .ico { fill: #22303c; }
+    @media (prefers-color-scheme: dark) { .ico { fill: #dce4ea; } }
+    :root[data-theme="dark"] .ico { fill: #dce4ea; }
+    :root[data-theme="light"] .ico { fill: #22303c; }
+  </style>
+  <path class="ico" d="M6 12 42 12 42 20 6 20ZM9 20 39 20 39 40 9 40ZM20 28 28 28 28 25 20 25Z"/>
+</svg>

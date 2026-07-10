@@ -108,3 +108,6 @@ timeout-*
 !scripts/**/*.sh
 !seed-*.bin
 !tests/fixtures/**/*.bin
+
+# Python bytecode cache (tools/*.py)
+__pycache__/

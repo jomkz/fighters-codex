@@ -303,6 +303,31 @@ directory (`~/.local/share/jomkz/fxs/` on Linux,
 - **Recent files** — last 5 opened files; accessible from File → Recent Files; cleared from the same submenu
 - **Window size and position** — restored on next launch; falls back to centered if the saved position is off-screen (position persistence is unavailable on Wayland)
 
+## Object-Category Icons
+
+The object-centric navigation groups every asset under nine categories —
+**Aircraft, Vehicles, Weapons, Missions, Campaigns, Terrain, Audio, Art/UI,**
+and **Archives** (the raw per-LIB view). Their icons are **generated, committed
+line-art** — no vendored icon font, in keeping with the zero-external-dependency
+rule.
+
+`tools/gen_icons.py` is the single source of truth. From one vector description
+per icon it emits both:
+
+- **theme-aware SVG sources** (`gui/assets/icons/*.svg`) using the same
+  light/dark CSS recipe as the docs diagrams, for design review; and
+- a **baked, zero-runtime-dependency form** fxs consumes
+  (`gui/src/assets/icons_baked.{h,cpp}`): 8-bit coverage at two sizes (24 px and
+  48 px for hidpi), anti-aliased by a stdlib rasteriser. The glyphs are
+  monochrome, so only coverage is stored; fxs expands it to RGBA and **tints it
+  with the active theme foreground** at draw time, so one baked artifact serves
+  both light and dark.
+
+Regenerate with `python3 tools/gen_icons.py`. A currency check
+(`gen_icons.py --check`) runs on the CI docs job and as the `gen_icons_currency`
+ctest (label `docs`), failing if a committed SVG or baked byte drifts from the
+generator — the same guard the status matrix uses.
+
 ## Building
 
 See [development.md](development.md).

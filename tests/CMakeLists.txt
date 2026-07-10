@@ -72,10 +72,12 @@ if(FX_BUILD_GUI)
         gui/test_dialog_queue.cpp
         gui/test_math3d.cpp
         gui/test_audio_player.cpp
+        gui/test_icons.cpp
         gui/test_overlay_preview.cpp
         gui/test_terrain_preview.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/dialog_queue.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/audio_player.cpp
+        ${PROJECT_SOURCE_DIR}/gui/src/assets/icons_baked.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/editors/overlay_preview.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/editors/terrain_preview.cpp
     )
@@ -140,6 +142,18 @@ if(Python3_FOUND)
         COMMAND Python3::Interpreter
             "${PROJECT_SOURCE_DIR}/tools/check_status.py" --check)
     set_tests_properties(check_status_selftest check_status_docs
+        PROPERTIES LABELS "docs")
+
+    # fxs icon set currency (#363): the committed SVG sources and baked C++
+    # data must match what tools/gen_icons.py emits — a drifted glyph fails
+    # here as well as on the CI docs job.
+    add_test(NAME gen_icons_selftest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/gen_icons.py" --self-test)
+    add_test(NAME gen_icons_currency
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/gen_icons.py" --check)
+    set_tests_properties(gen_icons_selftest gen_icons_currency
         PROPERTIES LABELS "docs")
 endif()
 
