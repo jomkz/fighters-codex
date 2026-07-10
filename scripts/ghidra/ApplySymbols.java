@@ -21,6 +21,7 @@ import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ApplySymbols extends GhidraScript {
@@ -50,6 +51,8 @@ public class ApplySymbols extends GhidraScript {
 
         SymbolTable st = currentProgram.getSymbolTable();
         int applied = 0, unchanged = 0, created = 0, conflicts = 0, waived = 0;
+        // Func rows collected for the re-assertion pass below.
+        List<Object[]> funcRows = new ArrayList<>();
 
         for (File f : files) {
             String slug = f.getName().replaceAll("\\.csv$", "");
@@ -77,6 +80,7 @@ public class ApplySymbols extends GhidraScript {
                             }
                             created++;
                         }
+                        funcRows.add(new Object[]{addr, name}); // for the re-assert pass
                         if (fn.getName().equals(name)) { unchanged++; continue; }
                         // The target name may already exist at this address as a
                         // non-primary label (e.g. from FA.SMS). Remove it so the
@@ -114,10 +118,37 @@ public class ApplySymbols extends GhidraScript {
                 }
             }
         }
+
+        // Re-assertion pass. A thunk inherits its target's name, so a thunk whose
+        // DB name is its target's OLD default (e.g. thunk_FUN_004d416b) matches by
+        // inheritance in pass 1 and re-inherits when the target is renamed — the
+        // 0x4D415D rebuild drift (#377). Now that every target is final, re-set any
+        // func whose name drifted; the corrected name no longer equals the thunk
+        // default, so it sticks. Deterministic regardless of row/analysis order.
+        int reasserted = 0;
+        for (Object[] fr : funcRows) {
+            Address a = (Address) fr[0];
+            String nm = (String) fr[1];
+            Function fn = getFunctionAt(a);
+            if (fn == null || fn.getName().equals(nm)) continue;
+            try {
+                dropConflictingLabel(st, a, nm, fn.getSymbol());
+                println(String.format("RE-ASSERT 0x%08X: %s -> %s",
+                        a.getOffset(), fn.getName(), nm));
+                fn.setName(nm, SourceType.USER_DEFINED);
+                reasserted++;
+            } catch (Exception ex) {
+                println(String.format("CONFLICT 0x%08X (%s): %s",
+                        a.getOffset(), nm, ex.getMessage()));
+                conflicts++;
+            }
+        }
+        applied += reasserted;
+
         println(String.format(
-                "ApplySymbols: %d applied (%d functions created), %d unchanged, "
-                + "%d waived, %d conflicts",
-                applied, created, unchanged, waived, conflicts));
+                "ApplySymbols: %d applied (%d functions created, %d re-asserted), "
+                + "%d unchanged, %d waived, %d conflicts",
+                applied, created, reasserted, unchanged, waived, conflicts));
     }
 
     /** Symbol at addr with the given name, or null. */

@@ -91,6 +91,40 @@ regenerated from these. Filenames resolve **case-insensitively** under
 `$FA_INSTALL` (fresh install copies vary case on Linux), so `FA_INSTALL` may
 point straight at an install or mount — the `game/` copy is optional.
 
+### New-machine onboarding runbook
+
+The literal new-team-member path, verified end-to-end by the #377 dress rehearsal
+(empty `$FA_PROJECT` → green `check_status --check`) on a 24-core / 62 GB Fedora
+box with Ghidra 12.1:
+
+1. Unpack Ghidra 12.1 and a JDK 21+ under `~/tools/` (Prerequisites above); build
+   `fx` (`cmake --build --preset gcc`).
+2. Put the [manifest](game_files.txt) game files under `$FA_INSTALL` (default
+   `$FA_PROJECT/game`, or export `FA_INSTALL` to point at your install/mount).
+3. `scripts/ghidra/bootstrap.sh` — that's it.
+
+Stage wall times from that run:
+
+| Stage | Time |
+|---|---|
+| `setup_project` (import FA.EXE + FA.SMS) | ~1m08s |
+| `import_targets` (6 companion binaries) | ~1m16s |
+| `apply_symbols ALL` | ~20s |
+| `apply_types ALL` | ~18s |
+| `export_inventory ALL` | ~23s |
+| `check_status.py --check` | instant |
+| **Total** | **~3m25s** |
+
+- The result is **reproducible**: a from-scratch project reproduces exactly what
+  `db/` describes, and the committed [reconstruction matrix](../../docs/fa/reconstruction.md)
+  reflects that from-scratch build (not accumulated project state). `ApplySymbols`
+  re-asserts thunk names in a second pass so they don't drift with analysis order.
+- Auto-analysis dominates and is largely **single-threaded per binary**, so more
+  cores/RAM don't shrink the wall time; the 8 GB default heap is ample (the JVM
+  stays under 1 GB here).
+- Add `--evidence` to also regenerate the `run_all` + overlay outputs (a few
+  minutes more).
+
 ---
 
 ## Migrating an existing project between machines
