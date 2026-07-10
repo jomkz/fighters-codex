@@ -124,6 +124,124 @@ Local destruction takes the same visual path from the flight model:
 `PLANEBreakUp` sets the `0x300000` destroyed/awaiting-swap flags and writes the
 damage-set selector — see [shape-selection.md](shape-selection.md).
 
+## GRAPHIC effect spawning
+
+Transient visual effects — explosions, smoke, fire, debris, craters, chaff/flare, dust
+puffs — are *not* full game objects. They live in a fixed **GRAPHIC pool**: a 100-entry
+array `_graphics` of **`0x66` (102)-byte** entries, initialised by `_GRAPHICInit@0`
+(`0x442c00`), stepped every frame by `_GRAPHICUpdate@0` (`0x442de0`), and drawn by
+`_GRAPHICAddYourObjs@4` (`0x4431b0`) when the object system's `0x200` "add graphics" flag
+is set. A free entry is marked by `0xffff` in the owner field (`+0x04`); the allocator
+`FUN_00443b70` linear-scans for a free slot, or when full evicts the effect with the
+lowest priority-weighted age (older + lower-class effects go first).
+
+### Spawn API
+
+Every spawner takes a **spawning-computer id** as its first argument (network origin —
+the local machine only mirrors the spawn to peers when it equals `_thisComputer`, via the
+`MP*` twin) and an **`F24_POINT3*` world position**. The family:
+
+| VA | Function | Parameters after `(computerId, pos)` |
+|----|----------|----------------------------------------|
+| `0x4432d0` | `_GRAPHICAddExp@28` | `ownerObjIdx`, `useOwnerVelocity`, `spawnSecondaryDebris`, `collisionScatter` — the canonical explosion; applies random type-variation (see below) and chains debris / cluster-release / smoke children |
+| `0x443e80` | `_GRAPHICAddSmoke@28` | `type`, `lifetime`, `riseHeight`, `intensity2`, `ownerObjIdx` — a smoke puff that drifts with `_windH`/`_windSpeed` |
+| `0x444020` | `_GRAPHICAddFire@32` | `type`, `ownerObjIdx`, `WORD_POINT3* mountOri`, `groundZ`, `intensity`, `intensity2` — attaches a looping fire + sound |
+| `0x4441d0` | `_GRAPHICAddDebris@24` | `count`, `WORD_POINT3* baseVel`, `spread`, `upwardBias` — scatters `count` tumbling fragments |
+| `0x443d00` / `0x443dc0` | `@GRAPHICAddCrater@12` / `@GRAPHICAddHulk@12` | `id` — ground scar / burnt-out hulk marker |
+| `0x443f90` / `0x4443d0` / `0x444560` | `_GRAPHICAddSmokeAdder@40` / `_GRAPHICAddClusterRelease@24` / `_GRAPHICAddSpecialDebris@16` | secondary-spawn helpers used by `AddExp` |
+| `0x4447a0` | `@GRAPHICAddDevice@12` | `type`, `WORD_POINT3* ejectDir` — countermeasure dispense (`type 0xC` = CHAFF, `0xD` = FLARE) |
+| `0x444150` | `_GRAPHICMakeAdder@24` | `entry*`, `adderType`, `interval`, `p1`, `p2`, `p3` — converts an existing entry into a **continuous emitter** (below) |
+
+The MP twins carry the fully-typed signatures that pin the parameter kinds, e.g.
+`?MPGraphicAddExp@@YGXJPAUF24_POINT3@@GDDD@Z` (id `J`, `F24_POINT3*`, owner `G`, three
+flag bytes `D`) and `?MPGraphicAddFire@@…GPAUWORD_POINT3@@JJJ@Z` (a `WORD_POINT3*`
+orientation plus three longs).
+
+### GRAPHIC entry layout (`0x66` bytes)
+
+| Offset | Size | Field | Meaning |
+|--------|------|-------|---------|
+| `0x00` | u8 | `type` | effect type → shape and parameter tables (below) |
+| `0x01` | u8 | `frame` | shape frame / colour variant |
+| `0x02` | u16 | `flags` | bit0 attached-to-owner · bit1 terrain-follow · bit5/6 fuse-timing mode · bit7 expired · bit8 emitter (has adder) |
+| `0x04` | u16 | `owner` | owner object index into `_objPtrs`; **`0xffff` = free slot** |
+| `0x06`,`0x0A`,`0x0E` | F24×3 | `pos` | world position (F24.8) |
+| `0x12`,`0x14`,`0x16` | s16×3 | `orient` | orientation, spun each frame by the rates at `0x3A` |
+| `0x18` | F24 | `ground_z` | terrain floor from `_T_Info` — the Z the effect settles onto |
+| `0x1C`,`0x1E`,`0x20` | s16×3 | `mount` | attach offset applied via `_RotatedOffset` when `flags` bit0 is set |
+| `0x22`,`0x26`,`0x2A` | F24×3 | `vel` | velocity, integrated by `_frameTicks` each update |
+| `0x2E`,`0x30`,`0x32` | s16×3 | `accel` | drift/acceleration (smoke seeds this from wind) |
+| `0x34`,`0x36`,`0x38` | s16×3 | `damp` | velocity damping targets (`_MatchF24`) |
+| `0x3A`,`0x3C`,`0x3E` | s16×3 | `spin` | per-axis angular rate |
+| `0x40` | i32 | `spawn_tick` | `_currentTicks` at spawn |
+| `0x44` | i32 | `expiry_tick` | death tick (`lifetime*0x100 + spawn`; `0x7FFFFFFF` = permanent, e.g. craters) |
+| `0x48` | u8 | `intensity` | brightness / scale |
+| `0x49` | u8 | `intensity2` | secondary brightness / alpha |
+| `0x4A` | u8 | `adder_type` | continuous-emitter type (0 = none; 7–11 = smoke trail) |
+| `0x4B` | u16 | `adder_interval` | ticks between child spawns |
+| `0x4D`–`0x4F` | u8×3 | `adder_p1..3` | child-spawn parameters |
+| `0x50` | i32 | `adder_next` | next emit tick |
+| `0x54` | char[] | `loop_sound` | looping sound-effect name (fire) |
+| `0x61` | u16 | `sound_param` | loop-sound parameter |
+| `0x65` | u8 | `spawn_computer` | network origin computer id |
+
+### Effect types and shapes
+
+`_GRAPHICInit@0` resolves one `.SH` handle per effect type into a table at `_DAT_0053da38`
+(indexed `type*4`). The type ranges:
+
+| Type(s) | Shape | Effect |
+|---------|-------|--------|
+| `0` | — | none / mixed |
+| `1`–`3` | `crater.SH` | ground craters |
+| `4`–`6` | `debris.SH` | tumbling debris |
+| `7`–`11` | `smoke.SH` | smoke puffs / trails |
+| `12` | `chaff.SH` | chaff bundle |
+| `13` | `flare.SH` | flare |
+| `14` | `fire.SH` | fire |
+| `15`–`0x26` | `exp.SH` | explosion variants (airbursts, ground bursts, water, etc.) |
+| `0x28`–`0x2A` | `spd/mpd/lpd.SH` | small / medium / large dust puffs |
+
+For a **local** `AddExp`, the requested type is randomly varied into a nearby variant
+(`_Percent_4`/`_Rand_4`) so repeated explosions differ — e.g. type `0x12` promotes to one
+of `0x13/0x14/0x1C/0x1D` a fraction of the time. The random remap runs **only** on the
+originating machine; the chosen concrete type is what ships in the network mirror, so all
+peers show the same variant.
+
+### Effect-parameter table
+
+The static per-type tuning lives in a **`0x30` (48)-byte record** indexed by effect type at
+`0x4f46c4` (`AddExp` reads it as `base + type*0x30`). Recovered fields:
+
+| Offset | Size | Meaning |
+|--------|------|---------|
+| `0x04` | s16 | intensity base (scaled by `Rand(0x42)+0x42` → entry `0x48`/`0x49`) |
+| `0x06` | s16 | shape frame count / start frame |
+| `0x08` | u16 | sub-type / shape selector (low byte also carries a ground-burst flag, bit 2) |
+| `0x0A` | s16 | secondary-debris count |
+| `0x0C` | s16 | secondary-debris spread |
+| `0x0E`.. | u32[≤8] | sound-effect name pointers — one picked at random per spawn (list ends at first null) |
+| `0x2E` | s16 | sound pitch/parameter |
+
+This record is the **effect-data block** that the fx_lib effect interpreter
+([#315](https://github.com/jomkz/fighters-codex/issues/315)) turns into semantic form; the
+remaining bytes of the `0x30` record are not yet individually resolved.
+
+### Adders (continuous emitters) and lifecycle
+
+`_GRAPHICMakeAdder@24` sets `flags` bit8 and fills `0x4A`–`0x50`, turning an entry into a
+periodic emitter. Each `_GRAPHICUpdate@0` tick, `FUN_00442e10` computes the entry's life
+fraction `(now − spawn_tick)·100 / (expiry_tick − spawn_tick)`; when it crosses the
+fuse threshold (100% for bit6, 50% for bit5) it spawns its follow-on (e.g. a burning wreck
+grows a fire + smoke adder), and while alive an adder of type 7–11 emits a `smoke` child
+every `adder_interval` ticks. Non-attached entries integrate velocity and spin; attached
+entries (bit0) track their owner via `_RotatedOffset` from the `mount` offset. When
+`now ≥ expiry_tick` the entry is freed (`owner = 0xffff`).
+
+Effect spawns propagate to other machines as **`MSG 0x8003` records** (17 bytes:
+`type` u8, `pos` F24×3, `owner` u16, two flag bytes), drained remotely by
+`ProcessEffectMsgs` (above).
+
 ## Globals
 
 Recovered object-system state (full list, with per-symbol confidence, in the
@@ -172,6 +290,10 @@ Recovered object-system state (full list, with per-symbol confidence, in the
 | `0x00462D40` | `ProcessEffectMsgs` | drain remote effect spawns |
 | `0x00436B30` | `MoveObj` | advance an object toward its move goals |
 | `0x004A6EB0` | `SetupOT` | type-load: generate damage-model variants (see shape-selection) |
+| `0x00442C00` | `GRAPHICInit` | init the 100-entry effect pool + per-type `.SH` handles |
+| `0x00442DE0` | `GRAPHICUpdate` | step every live effect (motion, fuse, adders) |
+| `0x004431B0` | `GRAPHICAddYourObjs` | draw live effects when the object `0x200` flag is set |
+| `0x004432D0` | `GRAPHICAddExp` | spawn an explosion (+ chained debris / smoke) |
 
 ## Open questions
 

@@ -975,13 +975,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 80 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 83 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00436B30` | `MoveObj` | sms |  |
 | `0x004382D0` | `MoveGoalValue` | re | resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj |
+| `0x00442C00` | `GRAPHICInit` | sms | init the 100-entry _graphics effect pool + per-type .SH handle table (crater/smoke/fire/exp/debris/chaff/flare/spd/mpd/lpd); see objects.md GRAPHIC effect spawning |
+| `0x00442DE0` | `GRAPHICUpdate` | sms | step every live GRAPHIC entry via FUN_00442e10 (motion/fuse/adder emission), then _UpdateLoopSounds |
 | `0x004431B0` | `GRAPHICAddYourObjs` | sms |  |
+| `0x004432D0` | `GRAPHICAddExp` | sms | spawn an explosion: random type-variation, chained debris/cluster-release/smoke children, MP mirror |
 | `0x00462600` | `InitChain` | sms |  |
 | `0x00462620` | `RemoveFromChains` | sms |  |
 | `0x00462640` | `ChainRemoveCurObj` | re | unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1) |
