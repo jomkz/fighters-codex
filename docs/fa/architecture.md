@@ -183,7 +183,7 @@ Exported API includes: `_AddCampaignPlane`, `_InitCampaignPilot`, `_SeqStart`, p
 
 `.MC` DLLs poll game state each tick via engine imports: `@OBJAlias@8`, `_Dist@8`, `_OnTheGround@0`, `_PopCurObj@0`, `_PushCurObj@4`, `_playerId`. They are only present for missions with non-trivial trigger logic.
 
-**MM runtime loader** — `LibFileExists` is the MM text keyword parser. It processes one keyword line at a time; for lines beginning with a filename token ending in `.LAY` it detects the extension via `_strstr` and dispatches to `FUN_0047a510`. `FUN_0047a510` is the generic keyword dispatch handler for all MM line types: it extracts the next whitespace-delimited token (using `Sprintf` with `"%s\\%s"` to form a full path) and hands it off to the asset loader. Any trailing integer on a `layer` line (the slot index `0`, `1`, or `4` seen in shipped files) is left unconsumed and has no runtime effect.
+**MM runtime loader** — MM load calls `LibFileExists` (`0x47a130`) to test whether each referenced asset exists. That function is the resource manager's general **asset-existence predicate**, not an MM-specific parser: it checks LIB membership first, then probes loose files on disk by extension via `FUN_0047a510` (which forms a `"%s\\%s"` subdirectory path with `Sprintf` and tests it) — see [memory-resource.md § LIB name resolution](memory-resource.md#lib-name-resolution--the-hint-index). Any trailing integer on a `layer` line (the slot index `0`, `1`, or `4` seen in shipped files) is left unconsumed and has no runtime effect.
 
 ### Pilot Save Files (.PLT)
 

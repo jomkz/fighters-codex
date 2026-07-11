@@ -1,6 +1,7 @@
 #pragma once
 #include "imgui.h"
 #include "fx/ealib.h"
+#include "workspace.h"
 #include "platform/texture.h"
 #include "platform/theme.h"
 #include <string>
@@ -79,12 +80,17 @@ public:
     void CloseSession(int idx);
     void CloseAllSessions();
 
+    // Mount the configured install dir as one workspace namespace (#361).
+    void MountWorkspace();
+
     enum class StatusKind { Info, Warning, Error };
 
     // ---------- public state ----------
     std::vector<LibSession> sessions;
     EditorState             editor;
-    std::string             installDir;      // FA game directory
+    std::string             installDir;      // FA game directory (mount source + install target)
+    fxg::Workspace          workspace;       // installDir mounted as one namespace (#361)
+    bool                    workspaceOnStart = false; // re-mount installDir at launch
     std::string             statusMsg;
     StatusKind              statusKind      = StatusKind::Info;
     int                     selectedSession = -1;

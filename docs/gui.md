@@ -303,6 +303,37 @@ directory (`~/.local/share/jomkz/fxs/` on Linux,
 - **Recent files** — last 5 opened files; accessible from File → Recent Files; cleared from the same submenu
 - **Window size and position** — restored on next launch; falls back to centered if the saved position is off-screen (position persistence is unavailable on Wayland)
 
+## Workspace
+
+**File → Mount FA Workspace** points fxs at an FA install and mounts the whole
+directory as **one name-keyed namespace**, mirroring the engine's own startup
+scan (`LibStartUp` builds a single sorted index over every LIB entry plus every
+loose file — [memory-resource.md § LIB name resolution](fa/memory-resource.md#lib-name-resolution--the-hint-index)).
+The root is the install directory set in **Preferences** (the same one Tools →
+Install uses); mounting persists it, and fxs re-mounts it automatically on the
+next launch. The status line reports what mounted, e.g.
+`Mounted 10 LIBs + 44 loose files: 8531 names, 2 collisions`.
+
+What is mounted:
+
+- Every `*.LIB` in the root (case-insensitive — real installs mix `FA_2.LIB`
+  and `fa_4c.lib`) is opened and its directory indexed.
+- Every other file in the root is indexed as a loose entry.
+
+**Name-collision precedence** follows the engine: a **LIB entry always resolves
+before a loose file** of the same name, and within one kind the **later-mounted
+source wins**. The engine's registration order is the operating system's
+directory-enumeration order; fxs mounts LIBs in case-insensitive filename order
+so the outcome is deterministic. Every collision is recorded and surfaced (the
+status line count, and the workspace's collision list) rather than hidden — on a
+full retail install only a couple of names clash, because each archive owns
+distinct content ([LIB.md inventory](fa/formats/LIB.md#file-inventory)).
+
+The workspace is the **data layer** for the object-category browsers; the raw
+per-LIB **Archives** view (the LIB browser above) is unchanged and remains the
+byte-level access path for validation work. (This "workspace" — a mounted install
+root — is distinct from a "session," a single LIB opened for editing.)
+
 ## Object-Category Icons
 
 The object-centric navigation groups every asset under nine categories —

@@ -51,6 +51,7 @@ set_target_properties(fx_render_gl PROPERTIES POSITION_INDEPENDENT_CODE ON)
 add_executable(fxs WIN32
     src/main.cpp
     src/app.cpp
+    src/workspace.cpp
     src/palettes.cpp
     src/platform/audio_player.cpp
     src/platform/dialog_queue.cpp
