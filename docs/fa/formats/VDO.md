@@ -9,13 +9,17 @@ spec:
   gaps:
     - kind: re-static
       issue: 55
-      note: "codec fully reversed (#137-#139); byte-exact fx_lib decoder + fx vdo export pending (#140)"
+      note: "tag-2 image-keyframe (DecompressVideoImage) path absent from the stock corpus, so decoded as a passthrough stub — unvalidated"
 codec:
-  direction: none
-  issue: 55
+  direction: read
+  rationale: "the engine ships no .VDO encoder (RATVID is authored offline); fx_lib decodes the container + per-frame copy-mask codec to palette-indexed / RGBA frames, validated by rendering the stock corpus"
+  lib: [lib/src/vdo.cpp]
+  commands: [vdo]
+  tests: [tests/test_vdo.cpp]
+  fuzz: [fuzz/fuzz_vdo.cpp]
   gui: [gui/src/editors/vdo_editor.cpp]
   fixtures:
-    synthetic: false
+    synthetic: true
     real_manifest: true
 related: [FBC, 11K, CB8]
 ---
@@ -30,6 +34,20 @@ group (the 4th character `A`–`J` is the angle/variant). 104 of the 105 groups
 carry a `.11K`; one group (`IQC`) is silent — so a `.VDO` is not guaranteed a
 same-stem audio track. All are 320×200, magic `RATV`. Pairing verified across
 the full corpus (#137).
+
+## Tools
+
+### fx
+
+```
+fx vdo info   F16C.VDO  [F16C.FBC]      # header (+ frame count with the FBC)
+fx vdo export AACA.VDO   AACA.FBC -o out/  # decode every frame to PNG
+```
+
+`fx_lib` decodes read-only (the engine has no encoder). `vdo_open` needs the
+paired `.FBC` — it supplies the frame boundaries the `.VDO` itself omits.
+Decoding is sequential (frames are inter-coded); the decoder replays from frame
+0 when asked for an earlier frame.
 
 ## File Layout
 
@@ -200,16 +218,17 @@ above. These live in the `0x4AExxx`/`0x4C8xxx` range — distinct from the
 
 ## Open Questions
 
-### 1. Byte-exact reference decoder
+### 1. tag-2 image-keyframe path
 
-The whole `.VDO` codec is now reversed (#137–#139): container, header, palette,
-frame framing, RLE, the copy-mask dispatch, and the generated handlers (see
-§ The index byte is an 8-bit copy mask). The remaining work is not RE but
-implementation — a byte-exact `fx_lib` decoder plus `fx vdo export`, validated
-against the corpus, which will also pin down the mask-setbits ↔ source-pixel
-accounting on real frames. Tracked under epic #55 as #140.
+The `fx_lib` decoder (#140) decodes every frame of all 355 stock `.VDO` files —
+the mask/RLE/copy-mask path is validated end to end (frame 0 of `AACA.VDO`
+renders the briefing image pixel-for-pixel; the mask set-bit count matches the
+source-pixel count exactly). The one unexercised branch is **tag 2**
+(`DecompressVideoImage`, the row-replicated image keyframe): no shipped file
+uses it, so the decoder treats it as a prior-frame passthrough. Confirming that
+path needs a `.VDO` that carries it (none in the corpus) or the running engine.
 
-*Status: open — re-static (#55; codec reversed, reference decoder is #140)*
+*Status: open — re-static (#55; only the corpus-absent tag-2 path remains)*
 
 ## Related
 
