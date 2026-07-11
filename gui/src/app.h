@@ -76,6 +76,13 @@ public:
     // session for its source LIB/loose file is open, then routes to the editor.
     void OpenWorkspaceEntry(int node);
 
+    // Select an object (#365): scope the editor area to its file cluster
+    // (asset_cluster over the index graph) and open its primary record. The
+    // scope persists while cluster files are opened; a raw Archives open or a
+    // re-mount clears it (ClearObjectScope).
+    void SelectObject(int node);
+    void ClearObjectScope();
+
     // Open a LIB from a path (recent-files menu and the --smoke sweep).
     void OpenLib(const std::string& path);
 
@@ -110,6 +117,11 @@ public:
     // mounting a workspace switches to the category browsers.
     fxs::icons::Id          leftView   = fxs::icons::Id::Archives;
     int                     selectedNode = -1;
+
+    // Object scope (#365): the selected object's node and its cached file
+    // cluster; the editor host draws the cluster as a file strip while set.
+    int                     clusterRoot  = -1;
+    std::vector<int>        cluster;
     std::string             statusMsg;
     StatusKind              statusKind      = StatusKind::Info;
     int                     selectedSession = -1;

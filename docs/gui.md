@@ -37,8 +37,10 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   like `A10.SH` or numeric index), settles the preview, and writes a PNG of
   the whole window through the same render path the interactive app uses.
   If the first argument is a **directory**, it is mounted as a workspace instead
-  and `<ENTRY>` names the icon-bar view to capture (e.g. `aircraft`, `archives`;
-  default Aircraft) — the headless way to review the category browsers.
+  and `<ENTRY>` names either the icon-bar view to capture (e.g. `aircraft`,
+  `archives`; default Aircraft) — the headless way to review the category
+  browsers — or a workspace entry like `A10.PT`, which selects that object so
+  the capture shows its scoped [file cluster](#object-scoped-workspace).
   `--software` renders the SH preview through the FA-faithful software
   rasteriser (`fx_render::fa`, #290) instead of OpenGL — the headless way to
   produce software/GL side-by-side captures. Like
@@ -258,7 +260,9 @@ Gouraud banding are documented behaviour.
   are see-through to the geometry behind, not filled — otherwise those panels
   render as solid black shapes. Both the OpenGL and FA-software backends honour
   this. Texture-swap damage (e.g. buildings) becomes visible here with
-  **Destroyed** on
+  **Destroyed** on. In the editor panel, each listed texture that resolves in
+  the mounted workspace is a **link** to its PIC — open `_A10.PIC` straight
+  from `A10.SH` ([object scope](#object-scoped-workspace))
 - **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
   selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
   and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
@@ -411,13 +415,36 @@ primary type is that category (Aircraft lists the `.PT` aircraft, Weapons the
 `.JT/.SEE/.ECM/.GAS`, and so on). An object's cluster art (its shapes and skin
 PICs) is reached by opening the object, not by crowding the list, so it appears
 under **Art/UI** and via the object's references rather than in every browser.
-Selecting an entry opens it in the editor exactly like the Archives picker;
-the current selection is remembered across category switches.
+Selecting an entry opens its record in the editor and scopes the editor area to
+the object's file cluster (below); the current selection is remembered across
+category switches.
 
 The **Archives** icon keeps today's raw per-LIB browser **unchanged** — the
 byte-level tree of open LIB sessions, load-bearing for validation work. Category
 browsers need a mounted workspace; until one is (or while it indexes) they show a
 short prompt, and Archives is always available.
+
+### Object-scoped workspace
+
+Selecting an object in a category browser scopes the editor area to the
+object's **file cluster**: everything its references reach in the asset graph,
+expanded onward only through Art/UI assets — the same crossing rule as
+category propagation — so an aircraft's cluster holds its entity record,
+shape, wreck siblings, skin PICs and sounds, while a weapon it references
+appears as a single unexpanded leaf instead of dragging its own cluster in.
+
+The cluster renders as a compact **file strip** above the editor (e.g.
+`A10.PT cluster — 24 files`): one chip per file, the object's record first and
+the rest grouped by type, with the currently open file highlighted. Clicking a
+chip opens that file in its usual editor without dropping the scope, so the
+whole cluster is reachable from the object — pick the A10 in Aircraft, edit
+the `.PT`, preview `A10.SH`, open `_A10.PIC` from it. Cross-references inside
+editors navigate the same way: a texture listed in the [SH editor](#3d-model-viewer-sh)
+that resolves in the mounted workspace is a link to its PIC.
+
+The scope follows the workspace pipeline only: opening a record from the raw
+**Archives** browser leaves it, and editors for uncategorized formats behave
+exactly as before. Headless review: `fxs --render <install-dir> A10.PT --out x.png`.
 
 ## Object-Category Icons
 

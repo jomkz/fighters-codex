@@ -221,4 +221,34 @@ AssetIndex asset_index_build(const Workspace& ws, const IndexProgressFn& progres
     return idx;
 }
 
+std::vector<int> asset_cluster(const AssetIndex& idx, const Workspace& ws, int root) {
+    std::vector<int> out;
+    const int n = (int)idx.nodes.size();
+    if (root < 0 || root >= n || n != (int)ws.names.size()) return out;
+
+    // BFS from the root; a reached node joins the cluster, but only the root
+    // and Art/UI-base nodes expand further (see the header for the rationale).
+    std::vector<char> seen(n, 0);
+    std::deque<int> q{root};
+    seen[root] = 1;
+    while (!q.empty()) {
+        int k = q.front(); q.pop_front();
+        out.push_back(k);
+        if (k != root && category_of(ws.names[k].name) != Category::ArtUI) continue;
+        for (int j : idx.nodes[k].refs)
+            if (!seen[j]) { seen[j] = 1; q.push_back(j); }
+    }
+
+    std::sort(out.begin() + 1, out.end(), [&](int a, int b) {
+        const std::string& na = ws.names[a].name;
+        const std::string& nb = ws.names[b].name;
+        Category ca = category_of(na), cb = category_of(nb);
+        if (ca != cb) return (int)ca < (int)cb;
+        std::string ea = ext_of(na), eb = ext_of(nb);
+        if (ea != eb) return ea < eb;
+        return na < nb;
+    });
+    return out;
+}
+
 } // namespace fxg

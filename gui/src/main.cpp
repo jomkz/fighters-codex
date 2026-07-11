@@ -180,7 +180,9 @@ static void RunBrowserSweep(App& app, const std::string& root) {
         RenderFrame();
         if (v < (int)fxg::Category::Unassigned) {           // a category view
             const auto& bucket = app.assetIndex.byCategory[v];
-            if (!bucket.empty()) { app.OpenWorkspaceEntry(bucket.front()); RenderFrame(); }
+            // Select (not just open): also exercises the object-scoped
+            // cluster strip over every category (#365).
+            if (!bucket.empty()) { app.SelectObject(bucket.front()); RenderFrame(); }
         }
         RenderFrame();
     }
@@ -224,9 +226,11 @@ static bool CaptureFrame(const std::string& outPath) {
 }
 
 // When the first --render argument is a directory, treat it as an FA workspace
-// root: mount it, build the index, select an icon-bar view by name (the second
-// argument, e.g. "aircraft" or "archives"; default Aircraft) and capture the
-// left panel — the headless way to review the category browsers (#364).
+// root: mount it, build the index, and either select an icon-bar view by name
+// (the second argument, e.g. "aircraft" or "archives"; default Aircraft) to
+// review the category browsers (#364), or — when the argument is a workspace
+// entry name like "A10.PT" instead — select that object so the capture shows
+// its scoped file cluster in the editor area (#365).
 static int RunRenderWorkspace(App& app, const std::string& root,
                               const std::string& view, const std::string& out) {
     app.installDir = root;
@@ -237,17 +241,30 @@ static int RunRenderWorkspace(App& app, const std::string& root,
     }
     app.assetIndex = fxg::asset_index_build(app.workspace);
     app.leftView = fxs::icons::Id::Aircraft;
-    if (!view.empty())
-        for (int i = 0; i < fxs::icons::Count; ++i)
-            if (SDL_strcasecmp(fxs::icons::Name((fxs::icons::Id)i), view.c_str()) == 0)
-                app.leftView = (fxs::icons::Id)i;
+    bool isView = view.empty();
+    for (int i = 0; i < fxs::icons::Count && !view.empty(); ++i)
+        if (SDL_strcasecmp(fxs::icons::Name((fxs::icons::Id)i), view.c_str()) == 0) {
+            app.leftView = (fxs::icons::Id)i;
+            isView = true;
+        }
+    if (!isView) {
+        const fxg::WorkspaceEntry* we = app.workspace.find(view);
+        if (!we) {
+            std::fprintf(stderr,
+                         "render: '%s' is neither a view nor a workspace entry\n",
+                         view.c_str());
+            return 1;
+        }
+        app.SelectObject((int)(we - app.workspace.names.data()));
+    }
     for (int i = 0; i < 4; ++i) RenderFrame();
     if (!CaptureFrame(out)) {
         std::fprintf(stderr, "render: failed to write %s\n", out.c_str());
         return 1;
     }
     std::printf("render: workspace %s [%s] -> %s\n", root.c_str(),
-                fxs::icons::Name(app.leftView), out.c_str());
+                isView ? fxs::icons::Name(app.leftView) : view.c_str(),
+                out.c_str());
     return 0;
 }
 

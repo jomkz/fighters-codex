@@ -505,6 +505,23 @@ void App::OpenWorkspaceEntry(int node) {
     OpenEntry(si, ei);
 }
 
+void App::SelectObject(int node) {
+    if (node < 0 || node >= (int)workspace.names.size()) return;
+    // The cluster needs the graph; browsers only offer objects once the index
+    // is built, but guard anyway so a plain open still works without it.
+    if (assetIndex.built && (int)assetIndex.nodes.size() == (int)workspace.names.size()) {
+        clusterRoot = node;
+        cluster     = fxg::asset_cluster(assetIndex, workspace, node);
+    }
+    OpenWorkspaceEntry(node);
+}
+
+void App::ClearObjectScope() {
+    clusterRoot = -1;
+    cluster.clear();
+    selectedNode = -1;
+}
+
 void App::OpenEntry(int libIdx, int entryIdx) {
     if (libIdx < 0 || libIdx >= (int)sessions.size()) return;
     const auto& s = sessions[libIdx];
@@ -622,6 +639,7 @@ void App::MountWorkspace() {
     }
     // Join any in-flight index build before replacing the workspace it reads.
     StopIndexing();
+    ClearObjectScope(); // node indices are about to change
     workspace = fxg::workspace_scan(installDir);
     if (!workspace.mounted()) {
         statusMsg  = "Not a directory: " + installDir;

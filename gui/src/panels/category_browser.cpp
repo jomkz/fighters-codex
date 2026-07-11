@@ -109,7 +109,7 @@ static void DrawCategoryBrowser(App& app, fxg::Category cat) {
             ImGui::PushID(node);
             if (ImGui::Selectable(name.c_str(), app.selectedNode == node,
                                   ImGuiSelectableFlags_AllowDoubleClick))
-                app.OpenWorkspaceEntry(node);
+                app.SelectObject(node); // scope the editors to its cluster (#365)
             ImGui::PopID();
         }
     ImGui::EndChild();
