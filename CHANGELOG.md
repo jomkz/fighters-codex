@@ -7,6 +7,46 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-11
+
+**fxs becomes object-centric — milestone #11 complete.** Mount an FA install
+as one workspace and browse it the way the game thinks about it: object
+categories behind generated icons, an asset graph linking every entity record
+to its shapes, skins and sounds, selection that scopes the editors to the
+object's file cluster, and SH thumbnail grids rendered through the
+FA-faithful software rasteriser. The SH preview also gains moving-part
+state selection (gear, flaps, hook, …) recovered clean-room from each
+shape's own selector bytecode.
+
+### Added
+- **fxs** mount an FA install root as one name-keyed workspace namespace,
+  mirroring the engine's LIB-before-loose resolution order (#361) (#435)
+- **fxs** asset-graph index over the workspace — eight object categories plus
+  an explicit Unassigned bucket, and the documented cross-reference graph
+  (entity → shape → textures/wreck siblings; campaign → missions → terrain),
+  built on a background thread (#362) (#436)
+- **fxs** icon navigation bar + category browsers; the raw Archives per-LIB
+  picker stays unchanged (#364) (#437)
+- **fxs** SH articulation-state selection — `fx::sh_articulations()` exposes
+  each shape's moving-part inputs and compare cases, `ShState::articulation`
+  renders one chosen state, with per-input combos in the SH preview and
+  `FX_ARTIC` for headless review (#440)
+- **fxs** object workspace — selecting an object scopes the editors to its
+  file cluster, drawn as a file strip above the editor; SH-editor textures
+  link to their PICs; `--render <install-dir> <OBJECT>` captures it (#365) (#441)
+- **fxs** SH thumbnails in the category browsers — object categories browse as
+  a progressive grid rendered off-thread through the FA-faithful software
+  backend, cached on disk by record digest (#366) (#442)
+
+### Fixed
+- **fxs** SH previews render FA-faithfully: solid fills only, at native
+  resolution (#438)
+- **fxs** SH faces use FA's pre-shaded palette-ramp colours directly (no
+  double-shading to black) and transparent texels fall back to the face's
+  flat colour (#439)
+- **fxs** colour-0 textured faces render as see-through decal overlays instead
+  of solid black shapes (the A10 gear-pod / F16 case) (#440)
+
 ## [0.7.1] - 2026-07-11
 
 **VDO/Cobra briefing video — reversed, decoded, and playable.** The schedule's
@@ -572,7 +612,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
 [0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
 [0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
 [0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
