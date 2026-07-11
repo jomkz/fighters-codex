@@ -72,7 +72,9 @@ TEST_CASE("vdo_open requires the FBC to tile the frame region") {
     auto fbc_good = make_fbc({ (uint32_t)f0.size() });
     auto fbc_bad = make_fbc({ (uint32_t)f0.size() + 1 });
 
-    REQUIRE(vdo_open(v.data(), v.size(), fbc_good.data(), fbc_good.size()) != nullptr);
+    VdoDecoder* d = vdo_open(v.data(), v.size(), fbc_good.data(), fbc_good.size());
+    REQUIRE(d != nullptr);
+    vdo_close(d);
     REQUIRE(vdo_open(v.data(), v.size(), fbc_bad.data(), fbc_bad.size()) == nullptr);
 }
 
