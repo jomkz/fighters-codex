@@ -7,9 +7,9 @@ endianness: little
 spec:
   status: partial
   gaps:
-    - kind: re-static
-      issue: 54
-      note: "struct byte +0x238 has no xrefs; state-flag bit 14 SP writer untraced"
+    - kind: re-gameplay
+      issue: 56
+      note: "struct byte +0x238 has zero static xrefs; HUD-flag bit 14 is written wholesale (not via a constant OR) so its exact single-player trigger is a runtime-state observation — both need the bench"
 codec:
   direction: round-trip
   byte_identical: true
@@ -188,7 +188,7 @@ functions read them to gate icon and display variants.
 | 11 | `0x00800` | `HARDSetFlags` (weapon-state scan, each tick) | Active weapon lock — at least one weapon has ammo and an acquired lock |
 | 12 | `0x01000` | `FUN_00407a00`; toggled by `SetAutopilot` via input 0x61 | Flight-lock / autopilot active — replaces throttle/G readout with lock sprite (`DAT_004ebf94`) |
 | 13 | `0x02000` | `FlightKey` case 0x61 (autopilot key handler) | Autopilot ILS/ACLS sub-mode — set alongside bit 12 when flight mode is 6 and aircraft has ACLS capability (PT+0xe9 ≠ 0); gates carrier-approach glide-slope computation |
-| 14 | `0x04000` | `?MPReceive@@YGDXZ` (0x46C980, decompile failed — writes at 0x46db2b) in multiplayer; unanalyzed code at 0x4bc177/0x4bc190 may also write it in single-player. Read in `ServicePlayer` during ejection states 0x11/0x12 in conjunction with `DAT_0050d0b1` (nearest entity pointer) and entity+0xFB range comparison; also gates aerodynamic integrator reset (`stickX`/`ec`, `rudder`). | **Unknown** — likely a network-synced or proximity-alert advisory state (see Open Questions) |
+| 14 | `0x04000` | `?MPReceive@@YGDXZ` (0x46C980 → the 8.6 KB packet handler `FUN_0046c98f`, writes at 0x46db2b) in multiplayer. In single-player the flags word is written **wholesale** by the state-transition wrappers `FUN_004bc177`/`FUN_004bc190` (`DAT_0050cfef = EAX; @EnterState@4`) — the value is computed by the caller, which is why no `OR [mem], 0x4000` constant exists. Read in `ServicePlayer` during ejection states 0x11/0x12 in conjunction with `DAT_0050d0b1` (nearest entity pointer) and entity+0xFB range comparison; also gates aerodynamic integrator reset (`stickX`/`ec`, `rudder`). | **Runtime-set** — a network-synced or proximity-alert advisory state whose exact single-player trigger is re-gameplay (see Open Questions) |
 | 15 | `0x08000` | `PLANECheckFuel` via `FMUpdatePlaneFields` (fuel monitor, runs every 5 ticks) | **Bingo fuel** threshold reached — `@SAYLowFuelMessage@8` checks `(0x8000 set) && (0x80000 clear)` → plays "Bingo fuel" voice line, then sets bits 19–20 as inhibit |
 | 16 | `0x10000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Joker fuel** threshold reached — plays "Joker fuel" voice line, sets bit 20 inhibit |
 | 17 | `0x20000` | `PLANECheckFuel` via `FMUpdatePlaneFields` | **Running on fumes** threshold reached — plays "Running on fumes" voice line, sets bits 19–21 inhibit |
@@ -230,13 +230,22 @@ over all 46 install HUDs (`tests/test_hud.cpp`, `FX_FA_ROOT` census).
 
 ### 1. Struct byte +0x238 and state-flag bit 14
 
-The struct byte at `+0x238` (`DAT_00521598`) has no cross-references anywhere
-in the game executable. Separately, HUD state flag bit 14 (`0x04000`) has a confirmed
-multiplayer writer (`?MPReceive@@YGDXZ`, whose decompile failed) but the
-single-player writer path is untraced — no direct `OR [mem], 0x4000` constant
-exists; candidate unanalyzed code sits at 0x4bc177/0x4bc190.
+Static analysis is exhausted on both; the residuals are runtime observations.
 
-*Status: open — re-static (#54)*
+- **`+0x238` (`DAT_00521598`)** — a fresh cross-reference scan confirms **zero
+  static references** anywhere in the game executable. No instruction reads or
+  writes the absolute address, so its role (if any) can only be confirmed by
+  watching the byte in the running game.
+- **HUD flag bit 14 (`0x04000`)** — the write mechanism is now identified: the
+  multiplayer writer is the 8.6 KB packet handler `FUN_0046c98f` (entry
+  `?MPReceive@@YGDXZ` `0x46C980`, store at `0x46db2b`); in single-player the
+  flags word `DAT_0050cfef` is rebuilt **wholesale** by the state-transition
+  wrappers `FUN_004bc177`/`FUN_004bc190` (`DAT_0050cfef = EAX; @EnterState@4`),
+  so the bit is carried in a caller-computed value rather than set by a constant
+  `OR` — which is why the constant search found nothing. The precise
+  single-player state that raises bit 14 is a runtime-state question.
+
+*Status: static exhausted — re-tagged re-gameplay (#56) for the Phase 6 bench.*
 
 ## Related
 
