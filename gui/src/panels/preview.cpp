@@ -95,10 +95,12 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
     std::vector<fx_render::Vertex> tverts;
     verts.reserve(mesh.faces.size() * 6);
 
-    // Fixed directional light — upper-left-front in render space (X=right, Y=up, Z=fwd)
-    const float Lx = 0.577f, Ly = 0.577f, Lz = -0.577f;
-    const float ambient = 0.15f, diffuse = 0.85f;
-
+    // FA shape faces carry a *pre-shaded* palette-ramp colour index: the model
+    // tool bakes the sun/orientation shading into `ShFace::color` (e.g. the F16
+    // walks the grey ramp 145..160 face by face). FA renders those colours
+    // directly — painter's order, no runtime per-face relighting — so the
+    // preview must not re-light them (a dynamic lambert here double-shaded the
+    // already-dark ramp entries to near-black). See docs/fa/render-core.md.
     for (const auto& face : mesh.faces) {
         if (face.indices.size() < 3) continue;
         const bool textured = has_tex && face.texcoords.size() == face.indices.size();
@@ -123,22 +125,16 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
             platform::sh_to_render(p1, r1);
             platform::sh_to_render(p2, r2);
 
-            // Face normal in render space (from the remapped positions).
-            float ax = r1[0]-r0[0], ay = r1[1]-r0[1], az = r1[2]-r0[2];
-            float bx = r2[0]-r0[0], by = r2[1]-r0[1], bz = r2[2]-r0[2];
-            float nx = ay * bz - az * by;
-            float ny = az * bx - ax * bz;
-            float nz = ax * by - ay * bx;
-            float len = sqrtf(nx*nx + ny*ny + nz*nz);
-            float shade;
-            if (len > 0.0f) {
-                nx /= len; ny /= len; nz /= len;
-                float diff = nx * Lx + ny * Ly + nz * Lz;
-                shade = ambient + diffuse * std::max(0.0f, diff);
-            } else {
-                shade = ambient + diffuse * 0.3f;
-            }
-
+            // Every face carries a flat base colour (ShFace::color, pre-shaded
+            // above). FA skins are texture atlases where palette index 0xFF is
+            // transparent (PIC.md); the engine shows the face's flat colour
+            // through those texels. So carry the base colour on the vertices
+            // even for textured faces — the renderer falls back to it where the
+            // texel is transparent, instead of drawing the atlas's black
+            // background.
+            float cr = s_sh.palette.r[face.color] / 255.0f;
+            float cg = s_sh.palette.g[face.color] / 255.0f;
+            float cb = s_sh.palette.b[face.color] / 255.0f;
             if (textured) {
                 // Fan corners 0, i, i+1 map to the parallel texcoord entries.
                 // SH texel t is bottom-left origin, so flip V for the top-left
@@ -147,17 +143,11 @@ static void BuildMeshVB(const fx::ShMesh& mesh) {
                 const auto& t1 = face.texcoords[i];
                 const auto& t2 = face.texcoords[i + 1];
                 auto V = [&](float t){ return 1.0f - t * inv_th; };
-                tverts.push_back({r0[0], r0[1], r0[2], shade, shade, shade, t0.s * inv_tw, V(t0.t)});
-                tverts.push_back({r1[0], r1[1], r1[2], shade, shade, shade, t1.s * inv_tw, V(t1.t)});
-                tverts.push_back({r2[0], r2[1], r2[2], shade, shade, shade, t2.s * inv_tw, V(t2.t)});
+                tverts.push_back({r0[0], r0[1], r0[2], cr, cg, cb, t0.s * inv_tw, V(t0.t)});
+                tverts.push_back({r1[0], r1[1], r1[2], cr, cg, cb, t1.s * inv_tw, V(t1.t)});
+                tverts.push_back({r2[0], r2[1], r2[2], cr, cg, cb, t2.s * inv_tw, V(t2.t)});
             } else {
-                // Untextured faces carry a palette colour index (ShFace::color);
-                // shade the model colour rather than rendering flat grey, so
-                // flat-coloured surfaces (e.g. an aircraft's wings) match the
-                // textured body instead of appearing white.
-                float cr = s_sh.palette.r[face.color] / 255.0f * shade;
-                float cg = s_sh.palette.g[face.color] / 255.0f * shade;
-                float cb = s_sh.palette.b[face.color] / 255.0f * shade;
+                // Untextured faces render the shaded base colour directly.
                 verts.push_back({r0[0], r0[1], r0[2], cr, cg, cb, 0.0f, 0.0f});
                 verts.push_back({r1[0], r1[1], r1[2], cr, cg, cb, 0.0f, 0.0f});
                 verts.push_back({r2[0], r2[1], r2[2], cr, cg, cb, 0.0f, 0.0f});

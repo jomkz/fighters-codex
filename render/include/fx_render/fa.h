@@ -109,6 +109,10 @@ struct YlrList {
     int height() const { return static_cast<int>(left.size()); }
 };
 
+// Palette index 0xFF is the transparent key in FA skins (PIC.md); the textured
+// span filler shows the polygon's flat shade colour through such texels.
+inline constexpr std::uint8_t kTransparentTexel = 0xFF;
+
 // An indexed texture — PIC pixels are palette indices (renderer.md §9).
 // `u, v` sample in 16.16 texel coordinates, truncating and clamping to the
 // edges (inferred).
