@@ -28,12 +28,17 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   driver when no display server exists) and exits 0; CI runs it as the
   `gui_smoke` ctest. Given LIB paths, it opens each archive and cycles every
   entry through its editor and the preview — one rendered frame per record —
-  exercising extraction, every parser, and the GPU upload paths against real
-  game data.
+  then mounts the LIBs' directory as a [workspace](#workspace) and cycles every
+  icon-bar view (each category browser and Archives), opening the first object
+  of each category — exercising extraction, every parser, the GPU upload paths,
+  and the category browsers against real game data.
 - **`--render <LIB> <ENTRY> [--out file.png] [--size WxH] [--software]`** —
   headless PNG snapshot: opens the archive, selects the entry (by 8.3 name
   like `A10.SH` or numeric index), settles the preview, and writes a PNG of
   the whole window through the same render path the interactive app uses.
+  If the first argument is a **directory**, it is mounted as a workspace instead
+  and `<ENTRY>` names the icon-bar view to capture (e.g. `aircraft`, `archives`;
+  default Aircraft) — the headless way to review the category browsers.
   `--software` renders the SH preview through the FA-faithful software
   rasteriser (`fx_render::fa`, #290) instead of OpenGL — the headless way to
   produce software/GL side-by-side captures. Like
@@ -65,7 +70,7 @@ Three-panel window:
 
 | Panel | Contents |
 |---|---|
-| Left — LIB Browser | Tree of open LIB files; filterable list of records by name or type |
+| Left — Navigator | An [icon bar](#icon-navigation--category-browsers) selecting a category browser (named objects from the mounted [workspace](#workspace)) or the raw **Archives** LIB browser |
 | Center — Editor | Form/text/timeline editor for the selected record |
 | Right — Preview | Live preview: images (PIC with palette switcher, RAW screenshots), the SH 3D orbit view, and the T2 terrain viewer |
 
@@ -73,7 +78,7 @@ Menu bar: **File** · **View** · **Tools** · **Help**
 
 | Menu | Items |
 |---|---|
-| File | Open LIB… (`Ctrl+L`), Open File… (`Ctrl+F`), Recent Files, Close / Close All, Preferences…, Exit |
+| File | Open LIB… (`Ctrl+L`), Open File… (`Ctrl+F`), Recent Files, Mount FA Workspace, Close / Close All, Preferences…, Exit |
 | View | Expand All, Collapse All (LIB browser sessions) |
 | Tools | Install `<session>` as FA_0.LIB |
 
@@ -370,7 +375,24 @@ all also carry **Aircraft** and group with the `.PT` (e.g. `A10.PT` → `A10.SH`
 object type never bleeds into another (a `.PT` that lists a `.JT` weapon does not
 make the weapon Aircraft). Categories are non-exclusive: a shape shared by an
 aircraft and a vehicle carries both. These categories and the graph are what the
-object-category browsers (below) and the object-scoped workspace view render.
+category browsers (below) and the object-scoped workspace view render.
+
+### Icon navigation & category browsers
+
+The left panel is topped by an **icon bar** ([generated icons](#object-category-icons))
+with one button per category plus **Archives**. Selecting a category shows a
+filterable browser of that category's **named objects** — the entries whose
+primary type is that category (Aircraft lists the `.PT` aircraft, Weapons the
+`.JT/.SEE/.ECM/.GAS`, and so on). An object's cluster art (its shapes and skin
+PICs) is reached by opening the object, not by crowding the list, so it appears
+under **Art/UI** and via the object's references rather than in every browser.
+Selecting an entry opens it in the editor exactly like the Archives picker;
+the current selection is remembered across category switches.
+
+The **Archives** icon keeps today's raw per-LIB browser **unchanged** — the
+byte-level tree of open LIB sessions, load-bearing for validation work. Category
+browsers need a mounted workspace; until one is (or while it indexes) they show a
+short prompt, and Archives is always available.
 
 ## Object-Category Icons
 

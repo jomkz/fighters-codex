@@ -64,6 +64,7 @@ add_executable(fxs WIN32
     src/assets/icons_baked.cpp
     src/ui/icons.cpp
     src/panels/lib_browser.cpp
+    src/panels/category_browser.cpp
     src/panels/editor_host.cpp
     src/panels/preview.cpp
     src/editors/brf_editor.cpp
