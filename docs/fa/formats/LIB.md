@@ -211,6 +211,10 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 `CACHE/LIBPTR.*` index files to record which `.LIB` a given asset lives in. Note that
 `FA_10B.LIB` maps to ID `"AB"` and `FA_11.LIB` to `"41"` — these do not match the
 filename suffix, so the IDs appear to be opaque tokens rather than derived from the name.
+The **retail game does not read these `CACHE/LIBPTR.*` files at runtime**: it rebuilds its
+own in-memory name index each launch by scanning the install directory
+(`LibStartUp` — [memory-resource.md § LIB name resolution](../memory-resource.md#lib-name-resolution--the-hint-index)),
+which also fixes the mount order and duplicate-name precedence.
 
 ### FA_2.LIB Extension Inventory
 

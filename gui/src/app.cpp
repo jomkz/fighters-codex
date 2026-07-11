@@ -49,6 +49,8 @@ App::App() {
                 if (v >= 0 && v <= 2)
                     app->themePref = static_cast<ThemePreference>(v);
             }
+        } else if (readVal(line, "WorkspaceOnStart=", val)) {
+            app->workspaceOnStart = (val == "1");
         }
     };
     h.WriteAllFn = [](ImGuiContext*, ImGuiSettingsHandler* handler, ImGuiTextBuffer* buf) {
@@ -56,6 +58,7 @@ App::App() {
         buf->appendf("[%s][Data]\n", handler->TypeName);
         buf->appendf("InstallDir=%s\n", app->installDir.c_str());
         buf->appendf("Theme=%d\n", (int)app->themePref);
+        buf->appendf("WorkspaceOnStart=%d\n", app->workspaceOnStart ? 1 : 0);
         for (const auto& p : app->m_recentFiles)
             buf->appendf("RecentFile=%s\n", p.c_str());
         buf->append("\n");
@@ -191,6 +194,9 @@ void App::DrawMenuBar() {
                 }
                 ImGui::EndMenu();
             }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Mount FA Workspace", nullptr, false, !installDir.empty()))
+                MountWorkspace();
             ImGui::Separator();
             {
                 bool hasSelected = selectedSession >= 0 &&
@@ -567,6 +573,29 @@ void App::CloseAllSessions() {
     palLib          = -1;
     palEntry        = -1;
     palGen++;
+}
+
+void App::MountWorkspace() {
+    if (installDir.empty()) {
+        statusMsg  = "Set FA install dir first (Preferences).";
+        statusKind = StatusKind::Warning;
+        return;
+    }
+    workspace = fxg::workspace_scan(installDir);
+    if (!workspace.mounted()) {
+        statusMsg  = "Not a directory: " + installDir;
+        statusKind = StatusKind::Error;
+        return;
+    }
+    // Mounting opts into re-mounting the same root on the next launch.
+    workspaceOnStart = true;
+    ImGui::MarkIniSettingsDirty();
+    statusMsg = "Mounted " + std::to_string(workspace.libCount) + " LIBs + " +
+                std::to_string(workspace.looseCount) + " loose files: " +
+                std::to_string(workspace.names.size()) + " names";
+    if (!workspace.collisions.empty())
+        statusMsg += ", " + std::to_string(workspace.collisions.size()) + " collisions";
+    statusKind = StatusKind::Info;
 }
 
 void App::InstallToGame(int libIdx) {

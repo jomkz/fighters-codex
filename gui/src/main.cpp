@@ -315,6 +315,11 @@ int main(int argc, char** argv) {
     // Re-apply theme now that App::themePref has been populated from the ini.
     platform::ApplyTheme(app.themePref);
 
+    // Re-mount the persisted FA workspace root at launch (#361). Skipped when
+    // headless (--smoke/--render disable the ini, so workspaceOnStart is false).
+    if (!headless && app.workspaceOnStart && !app.installDir.empty())
+        app.MountWorkspace();
+
     if (!headless) {
         if (!ApplySavedPlacement())
             SDL_SetWindowPosition(platform::Window(),
