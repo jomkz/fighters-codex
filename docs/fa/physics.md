@@ -367,30 +367,33 @@ from the T2 tile, which is then passed to `FUN_0042de60` for the landing/damage 
 ## 7. PT_TYPE (Aircraft Performance Type) — Field Mapping
 
 `_FMAircraftSetup@0` (`0x47A690`) copies PT type data into the working globals at
-`0x50D3xx` and `0x50D38x`. The offset scan covers `0x00–0xC0` in the PT type block.
-The following offsets are confirmed read by named FM or CO functions:
+`0x50D3xx` and `0x50D38x`. This copy is the `_cgt` type-record mirror: it is
+**byte-for-byte** at base `0x50D268`, so a global `DAT_[0x50D268 + X]` reads
+exactly PT offset `X`. The source offsets below are therefore `DAT − 0x50D268`;
+the 65-word aero block (`0xCA–0x14B`) is fully mapped in
+[PT.md § The 65-word aerodynamic block](formats/PT.md#the-65-word-aerodynamic-block-0xca0x14b).
 
-| Global (after setup) | Source offset in PT | Confirmed by | Role |
-|----------------------|---------------------|-------------|------|
-| `DAT_0050d3b5` | (PT +?) | `FUN_00451e8b` | Afterburner spool-up time |
-| `DAT_0050d3b7` | (PT +?) | `@COThrust@4` | Mil-power thrust (lbs, scaled) |
-| `DAT_0050d3bb` | (PT +?) | `@COThrust@4`, `@FMBurnNPCFuel@4` | AB thrust (0 = no AB) |
-| `DAT_0050d3bf` | (PT +?) | `FUN_00451e8b` | Throttle ramp-down rate |
-| `DAT_0050d3c1` | (PT +?) | `FUN_00451e8b` | Throttle ramp-up rate |
-| `DAT_0050d3c3` | (PT +?) | `_FMInitPlane@8` | Min nozzle angle |
-| `DAT_0050d3c5` | (PT +?) | `_FMInitPlane@8`, `_ThrustSupport@0` | Max nozzle angle (0 = no TVC) |
-| `DAT_0050d3c7` | (PT +?) | `_FMUpdateThrustVector@0` | Nozzle slew rate |
-| `DAT_0050d3c9` | (PT +?) | `@FMFuelConsumption@4` | Mil-power fuel flow |
-| `DAT_0050d3cb` | (PT +?) | `@FMFuelConsumption@4` | AB fuel flow |
-| `DAT_0050d3cd` | (PT +?) | `_FMInitPlane@8` | Initial/full fuel load |
-| `DAT_0050d3d3` | (PT +?) | `_COGPullDrag@0` | G-induced drag base coefficient |
-| `DAT_0050d3db` | (PT +?) | `_FMInitPlane@8` | Gear-up spawn flag (1 = start airborne gear-up) |
-| `DAT_0050d3e3` | (PT +?) | `_COGPullDrag@0` | G-drag scaling factor |
-| `DAT_0050d3e5` | (PT +?) | `_FMUpdatePlaneFields@0` | Damage drag penalty scaling |
-| `DAT_0050d32a` | (PT +?) | `_FMUpdatePlaneFields@0` | Min flight-envelope altitude band index |
-| `DAT_0050d32c` | (PT +?) | `_FMUpdatePlaneFields@0` | Max flight-envelope altitude band index |
-| `DAT_0050d322` | (PT +?) | `_FMInitPlane@8`, `_FMUpdatePlaneFields@0` | PT capability flags (bit 3 = carrier, bit 0x1C = TVC mode, bit 0x400 = snap stall) |
-| `DAT_0050d3a8` | (PT +?) | `_FMUpdateGearPitch@0` | Gear-pitch authority factor (× 0xB6) |
+| Global (after setup) | PT offset | Confirmed by | Role |
+|----------------------|-----------|-------------|------|
+| `DAT_0050d3b5` | `0x14D` | `FUN_00451e8b` | Afterburner spool-up time |
+| `DAT_0050d3b7` | `0x14F` | `@COThrust@4` | Mil-power thrust (= `military_thrust`) |
+| `DAT_0050d3bb` | `0x153` | `@COThrust@4`, `@FMBurnNPCFuel@4` | AB thrust (= `afterburner_thrust`; 0 = no AB) |
+| `DAT_0050d3bf` | `0x157` | `FUN_00451e8b` | Throttle ramp-down (= `throttle_accel`) |
+| `DAT_0050d3c1` | `0x159` | `FUN_00451e8b` | Throttle ramp-up (= `throttle_decel`) |
+| `DAT_0050d3c3` | `0x15B` | `_FMInitPlane@8` | Min nozzle angle (= `tv_min_angle`) |
+| `DAT_0050d3c5` | `0x15D` | `_FMInitPlane@8`, `_ThrustSupport@0` | Max nozzle angle (= `tv_max_angle`; 0 = no TVC) |
+| `DAT_0050d3c7` | `0x15F` | `_FMUpdateThrustVector@0` | Nozzle slew rate (= `tv_speed`) |
+| `DAT_0050d3c9` | `0x161` | `@FMFuelConsumption@4` | Mil-power fuel flow (= `fuel_consumption_mil`) |
+| `DAT_0050d3cb` | `0x163` | `@FMFuelConsumption@4` | AB fuel flow (= `fuel_consumption_ab`) |
+| `DAT_0050d3cd` | `0x165` | `_FMInitPlane@8` | Initial/full fuel load (= `fuel_capacity`) |
+| `DAT_0050d3d3` | `0x16B` | `_COGPullDrag@0` | G-induced drag base coefficient (= `g_drag`) |
+| `DAT_0050d3db` | `0x173` | `_FMInitPlane@8` | Gear-up spawn flag (PT.md: `gear_drag`) |
+| `DAT_0050d3e3` | `0x17B` | `_COGPullDrag@0` | G-drag scaling factor (= `g_drag_loaded`) |
+| `DAT_0050d3e5` | `0x17D` | `_FMUpdatePlaneFields@0` | Damage drag penalty (PT.md: `gear_pitch`) |
+| `DAT_0050d32a` | `0xC2` | `_FMUpdatePlaneFields@0` | Neg-G envelope count (= `neg_g_count`; low altitude band) |
+| `DAT_0050d32c` | `0xC4` | `_FMUpdatePlaneFields@0` | Pos-G envelope count (= `pos_g_count`; high altitude band) |
+| `DAT_0050d322` | `0xBA` | `_FMInitPlane@8`, `_FMUpdatePlaneFields@0` | PT capability flags (= `carrier_flags`; bit 3 = carrier, bit 0x1C = TVC, bit 0x400 = snap stall) |
+| `DAT_0050d3a8` | `0x140` | `_FMUpdateGearPitch@0` | Gear-down pitch-trim authority (aero word 59, × 0xB6) |
 
 The flight-envelope data (`_GetFlightEnvelope_4`, `_EnvelopeSpeedLimits_16`,
 `_StallSpeed@4`) is indexed by altitude band (integer 0–`DAT_0050d32c`). Each

@@ -216,6 +216,9 @@ roll_speed_min      word    deg/sec (negative)
 roll_speed_max      word    deg/sec
 pull_rate           word    pitch pull rate
 neg_g_limit         word
+; --- 59 more aero words follow here (0xD6–0x14B): control-authority limit
+;     vectors, roll/pitch/yaw axis limits, and the stall/spin block below,
+;     all code-traced — see PT.md § The 65-word aerodynamic block ---
 num_engines         byte
 military_thrust     dword   lbf
 afterburner_thrust  dword   lbf
@@ -250,7 +253,10 @@ misc_per_flight     word    maintenance man-hours per flight
 repair_multiplier   word    repair cost multiplier
 ```
 
-**Stall / spin fields:**
+**Stall / spin fields:** these sit inside the aero block at PT offsets
+`0x128–0x13E` (words 47–58), immediately before the gear/landing gate — see
+[PT.md § The 65-word aerodynamic block](PT.md#the-65-word-aerodynamic-block-0xca0x14b)
+for the exact offset map and the engine readers that confirm each name.
 
 ```
 stall_warn_delay    word    clocks (1 clock = 1/256 sec)

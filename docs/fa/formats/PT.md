@@ -10,9 +10,6 @@ spec:
   gaps:
     - kind: re-static
       issue: 54
-      note: "59 of 65 aero-parameter words (0xCA-0x14B) unnamed"
-    - kind: re-static
-      issue: 54
       note: "debris-pos candidates at 0x1F/0x2D unconfirmed"
 codec:
   direction: round-trip
@@ -150,7 +147,7 @@ PLANE_TYPE main 258 B (0xBA–0x1BB) + 9 hardpoints × 24 B (0x1BC–0x293) =
 | `0xC4` | 2    | pos_g_count         | word     | F16C = 9 |
 | `0xC6` | 2    | max_speed_sl        | word     | F16C = 1342 mph (sea level) |
 | `0xC8` | 2    | max_speed_36k       | word     | F16C = 1934 mph (36,000 ft) |
-| `0xCA` | 130  | (aero params)       | 65×word  | aerodynamic control-surface and flight-model parameters; first named fields per BRF.md: accel_runway (0xCA), decel_runway (0xCC), roll_speed_min (0xCE), roll_speed_max (0xD0), pull_rate (0xD2), neg_g_limit (0xD4); remaining 59 names unknown — see Open Questions |
+| `0xCA` | 130  | aero block          | 65×word  | control-authority, stall/spin and landing-gate parameters — **every word now code-traced** via the `_cgt` type-record mirror (`0x50D268 + off`); see [§ The 65-word aerodynamic block](#the-65-word-aerodynamic-block-0xca0x14b) for the full per-word map |
 | `0x14C` | 1   | num_engines         | byte     | F16C = 1 |
 | `0x14D` | 2   | **Unknown**         | word     | F16C = 0; unlisted in BRF.md |
 | `0x14F` | 4   | military_thrust     | dword    | F16C = 17,687 lbf (≈ F100-PW-229 dry) |
@@ -234,21 +231,105 @@ from `shadow_shape`, writes them into the struct, and resolves them.
 | `0x4A6B10` | `FUN_004a6b10` | MM handle → raw data ptr (`*(int*)(param+0xf)`, with MM lock if bit 1 of `+0xe`) |
 | `0x4A6B30` | `FUN_004a6b30` | BRF record lookup + string→binary conversion via `_RMType_4` / `_RMFind_4` |
 
+### The 65-word aerodynamic block (0xCA–0x14B)
+
+The 65 words at `0xCA–0x14B` are the flight-model tuning table. They are named
+here by **code trace**, not by value-guessing: at startup `GetCurObj` copies the
+active aircraft's PLANE_TYPE record into the `_cgt` type-record mirror at base
+`0x50D268` byte-for-byte, so PT offset `X` is read by the engine as
+`DAT_[0x50D268 + X]` (anchored by exact hits — `fuel_consumption_mil` at PT
+`0x161` = `DAT_0050d3c9`, `military_thrust` at `0x14F` = `DAT_0050d3b7`,
+`g_drag` at `0x16B` = `DAT_0050d3d3`). Enumerating every reference into
+`0x50D332–0x50D3B3` (aero block) gives the consumer of each word. **Every word
+has a consumer — none are engine-unused.** Words `0xCA–0xF8` are consumed as two
+block-copied limit vectors (see below), which is why the middle words of those
+blocks carry no direct xref of their own.
+
+The 12 stall/spin words (`0x128–0x13E`) confirm and now **position** the fields
+BRF.md already named but could not place; the remaining words are newly named.
+F16C values shown; "per-a/c" = varies by aircraft, "const" = identical across
+the eight sampled `.PT` files (F16C/F14/A10/B52/AH64/AV8/C130/F117).
+
+**Control-authority limit vectors (`0xCA–0xF8`, words 0–23).** `_COBv@0`
+(`0x477EA0`) block-copies words 0–11 into the live control buffer `0x547338`;
+`_COBrv@0` (`0x477ED0`) block-copies words 12–23 into `0x547350` and scales them
+down by battle-damage (`DAT_0050ce8e`) and control-surface loss (`DAT_00522547`)
+— i.e. these are the max control-response limits, degraded as the airframe takes
+hits.
+
+| word | off | field | F16C | reader / evidence |
+|------|-----|-------|------|-------------------|
+| 0 | `0xCA` | accel_runway (BRF) | −73 | `_COBv` block[0] |
+| 1 | `0xCC` | decel_runway (BRF) | 0 | `_COBv` block |
+| 2 | `0xCE` | roll_speed_min (BRF) | 73 | `_COBv` block |
+| 3 | `0xD0` | roll_speed_max (BRF) | 73 | `_COBv` block |
+| 4 | `0xD2` | pull_rate (BRF) | −146 | `_COBv` block |
+| 5 | `0xD4` | neg_g_limit (BRF) | 146 | `_COBv` block |
+| 6–11 | `0xD6`–`0xE0` | ground/low-speed handling limits (cont.) | 7,7,−146,146,73,73 · const | `_COBv` block words 6–11; ±-paired rate limits, roles inferential |
+| 12–15 | `0xE2`–`0xE8` | rotational-authority axis A {neg,pos,rate,accel} | −270,270,362,724 · per-a/c | `_COBrv` block; fighters ±270, bombers ±30 |
+| 16–19 | `0xEA`–`0xF0` | rotational-authority axis B {neg,pos,rate,accel} | 0,0,9,9 · per-a/c | `_COBrv` block |
+| 20–23 | `0xF2`–`0xF8` | rotational-authority axis C {neg,pos,rate,accel} | −45,45,90,90 · per-a/c | `_COBrv` block |
+
+**Stick-to-motion gains and turn coordination (`0xFA–0x116`, words 24–46).**
+The three primary control axes are proven by their `_StickInput_28` calls in
+`_FMFlight@0` (`0x47B020`): each is driven by a specific pilot input, so the
+axis identity is definitive.
+
+| word | off | field | F16C | reader / evidence |
+|------|-----|-------|------|-------------------|
+| 24 | `0xFA` | pitch-input → pitch-rate gain (`×/9`) | 20 · const | `_FMFlight` `DAT_0050d362 * pitchIn / 9` |
+| 25 | `0xFC` | forward-motion scale (`×256`) | 70 · const | `_MovePlane@0` (`0x476AE0`) |
+| 26 | `0xFE` | vertical/reverse-motion scale (`×−256`) | 15 · const | `_MovePlane@0` |
+| 27 | `0x100` | AI visual-detection / contrail interval factor | 115 · per-a/c | `FUN_0047759b` (time-of-day-scaled spotting timer) |
+| 28–31 | `0x102`–`0x108` | rudder turn-coordination axis {neg,pos,rate,accel} | −4,4,4,9 | `_FMFlight` `_StickInput(&DAT_0050d007, …, _rudder)`, speed/G-scaled |
+| 32 | `0x10A` | adverse-yaw (roll→yaw) coupling | 10 · const | `_FMFlight` `DAT_0050d02b = DAT_0050d372 * rollRate` |
+| 33 | `0x10C` | sideslip / yaw drag coefficient | 128 · const | `FUN_0047a970` (× sideslip); also `PROJGuideLoft` |
+| 34 | `0x10E` | yaw/heading response rate | 5 · per-a/c | `_FMFlight` `DAT_0050d00f += d376·resp`; `PROJGuideLoft` |
+| 35–38 | `0x110`–`0x116` | **roll** axis {neg,pos,rate,accel} | −90,90,362,724 | `_FMFlight` `_StickInput(&DAT_0050d033, …, _stickX)` |
+| 39–42 | `0x118`–`0x11E` | **pitch** axis {neg,pos,rate,accel} | −90,90,362,724 | `_FMFlight` `_StickInput(&DAT_0050d037, …, _stickY)` |
+| 43–46 | `0x120`–`0x126` | **yaw** axis {neg,pos,rate,accel} | −90,90,362,724 | `_FMFlight` `_StickInput(&DAT_0050d03b, …, _rudder)` |
+
+**Stall / spin model (`0x128–0x13E`, words 47–58).** These are the BRF.md
+stall/spin fields, now pinned to their binary offsets. Names are BRF.md's;
+offsets and readers are the new evidence.
+
+| word | off | field (BRF name) | F16C | reader / evidence |
+|------|-----|------------------|------|-------------------|
+| 47 | `0x128` | stall_warn_delay | 512 · per-a/c | `?CheckForEvents2` fires the stall-warning event; `_FMFlight` |
+| 48 | `0x12A` | stall_duration | 512 · per-a/c | `?CheckForEvents2`; `_FMFlight` `d08d < DAT_0050d392` |
+| 49 | `0x12C` | stall_severity | 256 | `_FMFlight` (`DAT_0050d394`) |
+| 50 | `0x12E` | stall_pitch_down (deg/sec) | 30 · const | `_FMFlight` `_MatchF24(&pitch, −0x5A00, …)` drives nose to −90°; `?PROJEventProc` |
+| 51 | `0x130` | spin_entry_ease (0 = harder) | 0 · per-class | `FUN_0047ccb0` sets spin state `d08c=3`; fighters 0, bombers 1, helo 2 |
+| 52 | `0x132` | spin_exit_ease (neg = harder) | −2 · per-class | `FUN_0047cdb0` recovery selector (−2 / −1); `_FMFlight` |
+| 53–54 | `0x134`–`0x136` | spin_yaw_low / _high (deg/sec) | 120,180 · const | `_FMFlight` `FUN_0047ce70(lo, hi, spinPhase)` |
+| 55–56 | `0x138`–`0x13A` | spin_aoa_low / _high (deg) | 30,70 · const | `_FMFlight` `FUN_0047ce70` |
+| 57–58 | `0x13C`–`0x13E` | spin_bank_low / _high (deg) | 15,5 · const | `_FMFlight` `FUN_0047ce70` |
+
+**Gear pitch and landing gate (`0x140–0x14A`, words 59–64).** Word 59 is the
+gear-down nose-up trim; words 60–64 are the universal landing-quality gate
+(identical in every `.PT`) that `_CheckLandingParms@0` (`0x477140`) scores —
+each threshold overshoot returns 5 (warning) or 6 (bad landing).
+
+| word | off | field | F16C | reader / evidence |
+|------|-----|-------|------|-------------------|
+| 59 | `0x140` | gear-down pitch-trim authority (`× 0xB6`) | 0 · per-a/c | `_FMUpdateGearPitch@0` (`0x4514C0`); AV8 = 3 |
+| 60 | `0x142` | landing gate: reference speed (fail if exceeded by `>0x32`) | 330 · const | `_CheckLandingParms`; `?HUDDrawSpeed` reads it as the HUD approach ref |
+| 61 | `0x144` | landing gate: max sink rate (fail if `>10` over) | 51 · const | `_CheckLandingParms` |
+| 62 | `0x146` | landing gate: pitch/AoA limit | 95 · const | `_CheckLandingParms`; `?HUDDrawAlt` |
+| 63 | `0x148` | landing gate: attitude limit 1 (fail if `>0x14` over) | 25 · const | `_CheckLandingParms` |
+| 64 | `0x14A` | landing gate: attitude limit 2 (fail if `>0x14` over) | 10 · const | `_CheckLandingParms` |
+
+Confidence: the three primary axes (roll/pitch/yaw, words 35–46) and the
+stall/spin/landing blocks (words 47–64) are reader-proven. The two block-copied
+limit vectors (words 0–23) have a proven consumer (`_COBv`/`_COBrv`) and proven
+damage-scaling role, but the per-word breakdown inside words 6–23 is inferred
+from the ±-paired numeric structure and is annotated as such. Method is
+reproducible with `scripts/ghidra/run_ghidra.sh` over the `0x50D332–0x50D3B3`
+range.
+
 ## Open Questions
 
-### 1. The 65-word aerodynamic block (0xCA–0x14B)
-
-BRF.md names the first six fields (accel_runway through neg_g_limit) but the
-remaining 59 cover roll/pitch/yaw surface limits, G-load model parameters,
-stall/spin tuning, and landing-gear dynamics. Direct `.PT` byte-counting
-against `F16C.PT` is the effective approach — no Ghidra script needed. To name
-the remaining 59 words, compare F16C.PT values side-by-side with a
-known-different aircraft (e.g. F14A.PT or A10.PT) and correlate numeric deltas
-with the BRF.md stall/spin field list.
-
-*Status: open — re-static (#54)*
-
-### 2. Debris-position candidates
+### 1. Debris-position candidates
 
 The three 2-byte unknowns at 0x1F/0x21/0x23 and three at 0x2D/0x2F/0x31 are
 plausible candidates for `dst_debris_pos[3]` and `dmg_debris_pos[3]` (i16[3]
