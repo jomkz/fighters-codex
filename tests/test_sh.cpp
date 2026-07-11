@@ -1,7 +1,11 @@
 ﻿#include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
 #include <fx/sh.h>
+#include <fx/ealib.h>
+#include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <vector>
 
 using namespace fx;
@@ -424,4 +428,95 @@ TEST_CASE("has_damage reports an inline JumpToDamage branch") {
     // and a shape without 0xAC reports no inline damage
     auto plain = make_two_level_sh(0xC8);
     REQUIRE_FALSE(sh_parse_mesh(plain.data(), plain.size()).has_damage);
+}
+
+// ---- articulation-state selection (#295/#297) --------------------------
+
+TEST_CASE("sh_articulations is empty for a non-articulated shape") {
+    auto sh = make_minimal_sh();
+    CHECK(sh_articulations(sh.data(), sh.size()).empty());
+    // Setting an articulation input a shape doesn't have is a harmless no-op.
+    ShState st; st.articulation["_PLgearDown"] = 1;
+    ShMesh base = sh_parse_mesh(sh.data(), sh.size());
+    ShMesh sel  = sh_parse_mesh(sh.data(), sh.size(), st);
+    CHECK(sel.vertices.size() == base.vertices.size());
+    CHECK(sel.faces.size()    == base.faces.size());
+}
+
+// Real-install validation (FX_FA_ROOT): the x86 articulation selectors are only
+// present in the game's own shapes, so exercise them against the licensed data.
+static std::vector<uint8_t> load_lib_entry(const std::filesystem::path& lib,
+                                           const char* name) {
+    std::ifstream f(lib, std::ios::binary | std::ios::ate);
+    if (!f) return {};
+    std::streamoff sz = f.tellg();
+    std::vector<uint8_t> buf((size_t)sz);
+    f.seekg(0); f.read((char*)buf.data(), sz);
+    auto entries = ealib_read_dir(buf.data(), buf.size());
+    const Entry* e = ealib_find(entries, name);
+    if (!e) return {};
+    return ealib_extract(buf.data(), buf.size(), *e, true);
+}
+
+TEST_CASE("sh articulation selection on the real A10 shape", "[fa-root]") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root) SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    std::filesystem::path lib = std::filesystem::path(root) / "FA_2.LIB";
+    if (!std::filesystem::is_regular_file(lib)) SKIP("FA_2.LIB not present");
+
+    auto a10 = load_lib_entry(lib, "A10.SH");
+    REQUIRE(!a10.empty());
+
+    auto arts = sh_articulations(a10.data(), a10.size());
+    auto has = [&](const char* n) {
+        for (auto& a : arts) if (a.input == n) return true;
+        return false;
+    };
+    CHECK(has("_PLgearDown"));
+    CHECK(has("_PLleftFlap"));
+    CHECK(has("_PLrightFlap"));
+
+    // Selecting a specific flap state emits only that sub-stream, so the mesh
+    // differs from another state of the same input (one state, not all merged).
+    ShState up;   up.articulation["_PLleftFlap"]   = 0;
+    ShState down; down.articulation["_PLleftFlap"] = -1;
+    ShMesh mUp   = sh_parse_mesh(a10.data(), a10.size(), up);
+    ShMesh mDown = sh_parse_mesh(a10.data(), a10.size(), down);
+    CHECK(!mUp.faces.empty());
+    CHECK(!mDown.faces.empty());
+    CHECK(mUp.faces.size() != mDown.faces.size());
+}
+
+TEST_CASE("sh articulation parse is crash-free across the whole FA_2 corpus", "[fa-root]") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root) SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    std::filesystem::path lib = std::filesystem::path(root) / "FA_2.LIB";
+    if (!std::filesystem::is_regular_file(lib)) SKIP("FA_2.LIB not present");
+
+    std::ifstream f(lib, std::ios::binary | std::ios::ate);
+    std::streamoff sz = f.tellg();
+    std::vector<uint8_t> buf((size_t)sz);
+    f.seekg(0); f.read((char*)buf.data(), sz);
+    auto entries = ealib_read_dir(buf.data(), buf.size());
+
+    int shapes = 0, articulated = 0;
+    for (const auto& e : entries) {
+        std::string n = e.name;
+        if (n.size() < 3 || n.substr(n.size() - 3) != ".SH") continue;
+        auto d = ealib_extract(buf.data(), buf.size(), e, true);
+        if (d.empty()) continue;
+        ++shapes;
+        auto arts = sh_articulations(d.data(), d.size());
+        if (!arts.empty()) {
+            ++articulated;
+            // exercise selection of the first case of each input (no crash)
+            for (const auto& a : arts) {
+                ShState st;
+                st.articulation[a.input] = a.values.empty() ? 0 : a.values.front();
+                (void)sh_parse_mesh(d.data(), d.size(), st);
+            }
+        }
+    }
+    CHECK(shapes > 1000);
+    CHECK(articulated > 100);  // ~127 FA_2 shapes carry _PL* selectors
 }

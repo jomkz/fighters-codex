@@ -35,6 +35,25 @@ inline bool ci_contains(const char* hay, const char* needle) {
     return false;
 }
 
+// Friendly label for a `_PL*` articulation input (SH x86 selectors, #295):
+// "_PLgearDown" -> "Gear", "_PLleftFlap" -> "L Flap", … Falls back to the name
+// with the "_PL" prefix stripped.
+inline const char* ArticulationLabel(const std::string& input) {
+    if (input == "_PLgearDown" || input == "_PLgearPos")   return "Gear";
+    if (input == "_PLleftFlap")                            return "L Flap";
+    if (input == "_PLrightFlap")                           return "R Flap";
+    if (input == "_PLafterBurner")                         return "Afterburner";
+    if (input == "_PLbrake")                               return "Airbrake";
+    if (input == "_PLrudder")                              return "Rudder";
+    if (input == "_PLhook")                                return "Hook";
+    if (input == "_PLswingWing")                           return "Swing Wing";
+    if (input == "_PLcanardPos")                           return "Canard";
+    if (input == "_PLbayOpen" || input == "_PLbayDoorPos") return "Bay";
+    if (input == "_PLvtOn" || input == "_PLvtAngle")       return "Thrust Vec";
+    if (input == "_PLslats")                               return "Slats";
+    return input.rfind("_PL", 0) == 0 ? input.c_str() + 3 : input.c_str();
+}
+
 // Bounded copy into a fixed char buffer: truncates to cap-1 and always
 // NUL-terminates (cap must be >= 1).
 inline void copy_str(char* dst, size_t cap, const std::string& src) {

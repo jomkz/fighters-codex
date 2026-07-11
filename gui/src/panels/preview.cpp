@@ -1,6 +1,7 @@
 #include "preview.h"
 #include "../app.h"
 #include "../palettes.h"
+#include "../util.h"
 #include "../platform/math3d.h"
 #include "../platform/texture.h"
 #include "imgui.h"
@@ -18,6 +19,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -69,6 +71,12 @@ struct ShPreview {
     int  frame_count      = 0;       // exposed by the last parse; 0 = static
     int  lod_count        = 1;       // exposed by the last parse; 1 = no LODs
     bool has_detail       = false;   // exposed by the last parse
+    // Articulation (#295/#297): the moving-part inputs the shape exposes, and the
+    // value chosen per input (an input absent from `articulation` renders every
+    // state merged; a chosen value emits just that sub-stream).
+    std::vector<fx::ShArticulation> arts;
+    std::map<std::string, int>      articulation;
+    std::map<std::string, int>      cached_articulation;
     int  cached_palgen    = -1;      // reload the texture when the palette changes
     float azimuth    = 170.0f;
     float elevation  = 20.0f;
@@ -257,6 +265,13 @@ static fx_render::fa::Palette ToFaPalette(const fx::Palette& pal) {
 }
 
 void PreviewForceSoftwareBackend(bool on) { s_sh.software = on; }
+
+// Headless articulation override (--render debugging): force one moving-part
+// input to a value before the render settles.
+void PreviewSetArticulation(const std::string& input, int value) {
+    s_sh.articulation[input] = value;
+    s_sh.cached_articulation.clear();  // force a rebuild on the next frame
+}
 
 static void RenderSh(int w, int h) {
     if (w <= 0 || h <= 0) return;
@@ -556,25 +571,31 @@ void DrawPreview(App& app) {
     if (ed.kind == EditorKind::Sh) {
         // Rebuild on selection change or when a state toggle (destroyed / frame) flips.
         bool sel_changed = (ed.libIdx != s_sh.cached_lib || ed.entryIdx != s_sh.cached_entry);
-        if (sel_changed) { s_sh.frame = 0; s_sh.lod = 0; s_sh.low_detail = false; }
+        if (sel_changed) {
+            s_sh.frame = 0; s_sh.lod = 0; s_sh.low_detail = false;
+            s_sh.articulation.clear();
+        }
         bool pal_changed = app.palGen != s_sh.cached_palgen;
         bool dam_changed = s_sh.destroyed != s_sh.cached_destroyed;
         if (sel_changed || pal_changed || s_sh.destroyed != s_sh.cached_destroyed
                         || s_sh.frame != s_sh.cached_frame
                         || s_sh.lod != s_sh.cached_lod
-                        || s_sh.low_detail != s_sh.cached_lowdetail) {
+                        || s_sh.low_detail != s_sh.cached_lowdetail
+                        || s_sh.articulation != s_sh.cached_articulation) {
             s_sh.cached_lib       = ed.libIdx;
             s_sh.cached_entry     = ed.entryIdx;
             s_sh.cached_destroyed = s_sh.destroyed;
             s_sh.cached_frame     = s_sh.frame;
             s_sh.cached_lod       = s_sh.lod;
             s_sh.cached_lowdetail = s_sh.low_detail;
+            s_sh.cached_articulation = s_sh.articulation;
             s_sh.cached_palgen    = app.palGen;
 
             fx::ShInfo  info = fx::sh_parse_info(ed.data.data(), ed.data.size());
             fx::ShState st;  st.destroyed = s_sh.destroyed;  st.frame = s_sh.frame;
             st.lod    = s_sh.lod;
             st.detail = s_sh.low_detail ? 0 : 0xFFFF;
+            st.articulation = s_sh.articulation;
             fx::ShMesh  mesh = fx::sh_parse_mesh(ed.data.data(), ed.data.size(), st);
 
             // Whole-model damage swap: aircraft wrecks are separate _A.SH
@@ -609,6 +630,7 @@ void DrawPreview(App& app) {
             s_sh.frame_count = mesh.frame_count;
             s_sh.lod_count   = mesh.lod_count;
             s_sh.has_detail  = mesh.has_detail;
+            s_sh.arts        = mesh.articulations;
 
             if (sel_changed) {
                 // Reset camera to fit the model (only on selection change). SH
@@ -674,6 +696,31 @@ void DrawPreview(App& app) {
         if (ImGui::IsItemHovered())
             ImGui::SetTooltip("Grey topology overlay (validation aid).\n"
                               "FA renders solid filled polygons only.");
+
+        // Articulation selectors (#295/#297): one combo per moving-part input.
+        // "All" merges every state (the default); a value emits just that state.
+        for (const auto& a : s_sh.arts) {
+            ImGui::SameLine();
+            auto it = s_sh.articulation.find(a.input);
+            std::string cur = (it == s_sh.articulation.end())
+                ? "All" : ("=" + std::to_string(it->second));
+            ImGui::SetNextItemWidth(96.0f);
+            std::string id = std::string(fxg::ArticulationLabel(a.input)) + "##" + a.input;
+            if (ImGui::BeginCombo(id.c_str(), cur.c_str())) {
+                if (ImGui::Selectable("All", it == s_sh.articulation.end()))
+                    s_sh.articulation.erase(a.input);
+                for (int v : a.values) {
+                    std::string vl = "=" + std::to_string(v);
+                    bool on = (it != s_sh.articulation.end() && it->second == v);
+                    if (ImGui::Selectable(vl.c_str(), on)) s_sh.articulation[a.input] = v;
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::IsItemHovered())
+                ImGui::SetTooltip("%s (%s): pick one moving-part state, or All to\n"
+                                  "merge every state (the codec default).",
+                                  fxg::ArticulationLabel(a.input), a.input.c_str());
+        }
 
         float  txt_h   = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;
         ImVec2 canvas  = ImGui::GetContentRegionAvail();

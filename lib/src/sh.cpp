@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <climits>
 #include <cstring>
+#include <map>
 #include <sstream>
 #include <utility>
 
@@ -54,6 +55,7 @@ struct PeInfo {
     uint32_t image_base = 0;
     uint32_t code_rva = 0;               // rva of the code section
     uint32_t reloc_rva = 0, reloc_size = 0;
+    uint32_t import_rva = 0, import_size = 0;
     std::vector<PeSec> secs;
 };
 
@@ -69,6 +71,10 @@ static PeInfo parse_pe(const uint8_t* data, size_t size) {
     const uint8_t* opt = h + 24;
     if (opt + 32 > data + size) return pe;
     pe.image_base = u32le(opt + 28);                  // PE32 ImageBase
+    if (opt_sz >= 96 + 2 * 8 && opt + 96 + 2 * 8 <= data + size) {
+        pe.import_rva  = u32le(opt + 96 + 1 * 8);       // DataDirectory[1] = imports
+        pe.import_size = u32le(opt + 96 + 1 * 8 + 4);
+    }
     if (opt_sz >= 96 + 6 * 8 && opt + 96 + 6 * 8 <= data + size) {
         pe.reloc_rva  = u32le(opt + 96 + 5 * 8);       // DataDirectory[5] = .reloc
         pe.reloc_size = u32le(opt + 96 + 5 * 8 + 4);
@@ -129,6 +135,131 @@ collect_reloc_targets(const uint8_t* data, size_t size, const PeInfo& pe, size_t
             out.push_back({ fixup_rva - pe.code_rva, target_rva - pe.code_rva });
         }
         p += blk;
+    }
+    return out;
+}
+
+// ---- x86 articulation selectors (#295/#297) -----------------------------
+//
+// FA moving parts (gear/flaps/hook/…) are chosen by embedded x86 `0xF0`
+// selector blocks that read a `_PL*` articulation global and re-enter the
+// interpreter on the sub-stream whose case matches its value (SH.md
+// §"X86Unknown Region"). We recover, clean-room from the shape's own bytes,
+// which `_PL*` input each block reads and which sub-stream a given value
+// selects: PE import names give the `_PL*` symbols, `FF 25` trampolines bind a
+// code address to an import, and the base relocations pin the operands (a raw
+// byte scan would false-positive on x86 — the relocations do not). Only the
+// shape's own compare immediates are read; per-shape case *semantics* are
+// OpenFA's and are not transcribed.
+
+// One guarded sub-stream: its geometry renders only when `input == value`.
+struct ShSelector {
+    uint32_t    substream;  // code-relative offset of the guarded geometry
+    std::string input;      // the `_PL*` global the guard compares
+    int         value;      // the compare immediate that selects this sub-stream
+};
+
+// Import Address Table slot (RVA) -> imported symbol name.
+static std::map<uint32_t, std::string>
+parse_import_names(const uint8_t* data, size_t size, const PeInfo& pe) {
+    std::map<uint32_t, std::string> out;
+    if (!pe.import_rva) return out;
+    size_t base;
+    if (!rva_to_file(pe, pe.import_rva, size, base)) return out;
+    for (size_t desc = base; desc + 20 <= size; desc += 20) {
+        uint32_t olt = u32le(data + desc);         // INT (names)
+        uint32_t ft  = u32le(data + desc + 16);    // IAT
+        if (olt == 0 && ft == 0) break;
+        uint32_t thunks_rva = olt ? olt : ft;
+        size_t thunks;
+        if (!rva_to_file(pe, thunks_rva, size, thunks)) continue;
+        for (uint32_t i = 0; thunks + (size_t)i * 4 + 4 <= size; ++i) {
+            uint32_t ent = u32le(data + thunks + (size_t)i * 4);
+            if (ent == 0) break;
+            if (ent & 0x80000000u) continue;       // import-by-ordinal
+            size_t nfo;
+            if (!rva_to_file(pe, ent + 2, size, nfo)) continue;  // skip Hint
+            std::string name;
+            for (size_t k = nfo; k < size && data[k]; ++k) name.push_back((char)data[k]);
+            out[ft + i * 4] = std::move(name);      // IAT slot RVA -> name
+        }
+    }
+    return out;
+}
+
+// Map a code-relative offset that holds an `FF 25 <iat>` trampoline to the
+// imported name the trampoline reaches.
+static std::map<uint32_t, std::string>
+build_trampoline_map(const CodeSection& code, const PeInfo& pe,
+                     const std::map<uint32_t, std::string>& iat_names) {
+    std::map<uint32_t, std::string> out;
+    for (uint32_t o = 0; o + 6 <= code.size; ++o) {
+        if (code.data[o] != 0xFF || code.data[o + 1] != 0x25) continue;
+        uint32_t iat_rva = u32le(code.data + o + 2) - pe.image_base;
+        auto it = iat_names.find(iat_rva);
+        if (it != iat_names.end()) out[o] = it->second;
+    }
+    return out;
+}
+
+// Code-relative offsets of every `F0 00` X86Code opcode.
+static std::vector<uint32_t> find_x86_blocks(const CodeSection& code) {
+    std::vector<uint32_t> out;
+    for (uint32_t o = 0; o + 1 < code.size; ++o)
+        if (code.data[o] == 0xF0 && code.data[o + 1] == 0x00) out.push_back(o);
+    return out;
+}
+
+// Recover the discrete articulation selectors: for each `0xF0` block, the
+// `_PL*` input it compares (via a relocation-pinned `cmp [tramp], imm`) and the
+// geometry sub-stream(s) that compare value selects (relocation-pinned code
+// pointers that are neither trampolines nor the head of another block).
+static std::vector<ShSelector>
+collect_selectors(const uint8_t* data, size_t size, const PeInfo& pe,
+                  const CodeSection& code) {
+    std::vector<ShSelector> out;
+    if (!pe.ok) return out;
+    auto iat_names = parse_import_names(data, size, pe);
+    if (iat_names.empty()) return out;
+    auto tramp = build_trampoline_map(code, pe, iat_names);
+    if (tramp.empty()) return out;
+    auto blocks = find_x86_blocks(code);
+    if (blocks.empty()) return out;
+    std::vector<char> is_block(code.size, 0);
+    for (uint32_t b : blocks) if (b < code.size) is_block[b] = 1;
+
+    // Relocations grouped by which block's byte range they fall in.
+    auto relocs = collect_reloc_targets(data, size, pe, code.size);
+
+    for (size_t bi = 0; bi < blocks.size(); ++bi) {
+        uint32_t start = blocks[bi] + 2;                 // past F0 00
+        uint32_t end   = (bi + 1 < blocks.size()) ? blocks[bi + 1] : code.size;
+        if (end > start + 96) end = start + 96;          // selector blocks are small
+
+        std::string input;
+        int value = 0;
+        std::vector<uint32_t> subs;
+        for (const auto& rt : relocs) {
+            uint32_t site = rt.first, tgt = rt.second;
+            if (site < start || site >= end) continue;
+            auto ti = tramp.find(tgt);
+            if (ti != tramp.end()) {
+                // A `cmp word [tramp], imm8`: 66 83 3D <tramp32> <imm8>. The
+                // reloc pins the <tramp32> operand, so the opcode is at site-3.
+                if (input.empty() && ti->second.rfind("_PL", 0) == 0 && site >= 3 &&
+                    code.data[site - 3] == 0x66 && code.data[site - 2] == 0x83 &&
+                    code.data[site - 1] == 0x3D && site + 4 < code.size) {
+                    input = ti->second;
+                    value = (int)(int8_t)code.data[site + 4]; // cmp r/m16,imm8 sign-extends
+                }
+                continue;                                // trampoline, not geometry
+            }
+            // A relocation-pinned code pointer that is not a trampoline and not
+            // the head of another selector block is a guarded sub-stream entry.
+            if (tgt < code.size && !is_block[tgt]) subs.push_back(tgt);
+        }
+        if (input.empty()) continue;
+        for (uint32_t s : subs) out.push_back({ s, input, value });
     }
     return out;
 }
@@ -781,6 +912,26 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
 
     mesh.scale = read_scale(cs.data, cs.size);
 
+    // Articulation selectors (#295/#297): which `_PL*` inputs the shape's x86
+    // blocks read and which sub-stream each compare case selects. Exposed on the
+    // mesh; and, when `state.articulation` sets an input, used below to emit only
+    // that input's matching sub-stream instead of merging every state.
+    PeInfo pe = parse_pe(data, size);
+    auto selectors = collect_selectors(data, size, pe, cs);
+    std::map<uint32_t, ShSelector> guarded;           // sub-stream -> its selector
+    for (const auto& s : selectors) guarded[s.substream] = s;
+    {
+        std::map<std::string, std::vector<int>> by_input;
+        for (const auto& s : selectors) {
+            auto& v = by_input[s.input];
+            if (std::find(v.begin(), v.end(), s.value) == v.end()) v.push_back(s.value);
+        }
+        for (auto& kv : by_input) {
+            std::sort(kv.second.begin(), kv.second.end());
+            mesh.articulations.push_back({ kv.first, std::move(kv.second) });
+        }
+    }
+
     // Pass 1 — the finest-path walk (lod_size = max: every JumpToLOD falls
     // through). Because a shape stacks its LOD/detail guards ahead of the
     // geometry they select, this path visits every 0xC8 site, so it doubles
@@ -800,7 +951,6 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
     // shared with the base walk's Unmask calls, so fragments the base state
     // already rendered are not collected twice.)
     if (state.lod <= 0 && !scan.left_finest) {
-        PeInfo pe = parse_pe(data, size);
         auto targets = collect_reloc_targets(data, size, pe, cs.size);
         const size_t base_count = mesh.vertices.size();
         // Fresh visited map: the base walk's 0x6C chains mark code they
@@ -812,6 +962,15 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
             uint32_t to = t.second;
             // skip trampolines (FF 25 -> external import) — those aren't geometry
             if (to + 1 < cs.size && cs.data[to] == 0xFF && cs.data[to + 1] == 0x25) continue;
+            // If this sub-stream is guarded by an articulation selector and the
+            // caller chose a specific value for that input, emit only the state
+            // that matches — otherwise every state merges (the default).
+            auto gi = guarded.find(to);
+            if (gi != guarded.end()) {
+                auto ai = state.articulation.find(gi->second.input);
+                if (ai != state.articulation.end() && ai->second != gi->second.value)
+                    continue;
+            }
             harvest_target(cs.data, cs.size, to, mesh.scale, mesh.vertices, mesh.faces,
                            mesh.textures.empty() ? std::string() : mesh.textures.back(),
                            base_count, rvisited, 0, sel, scan, false);
@@ -838,6 +997,7 @@ ShMesh sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state) {
         coarse.lod_count   = mesh.lod_count;
         coarse.has_detail  = mesh.has_detail;
         coarse.has_damage  = mesh.has_damage;
+        coarse.articulations = mesh.articulations;
         WalkScan cscan;
         std::vector<char> cvisited(cs.size, 0);
         walk_code(cs.data, cs.size, coarse.scale,
@@ -890,6 +1050,7 @@ ShInfo sh_parse_info(const uint8_t* data, size_t size) {
     info.has_detail  = mesh.has_detail;
     info.has_damage  = mesh.has_damage;
     info.textures    = mesh.textures;
+    info.articulations = mesh.articulations;
 
     // Refine bbox from actual vertices if available
     if (!mesh.vertices.empty()) {
@@ -908,6 +1069,24 @@ ShInfo sh_parse_info(const uint8_t* data, size_t size) {
         }
     }
     return info;
+}
+
+std::vector<ShArticulation> sh_articulations(const uint8_t* data, size_t size) {
+    auto cs = find_code_section(data, size);
+    if (!cs.data) return {};
+    PeInfo pe = parse_pe(data, size);
+    auto selectors = collect_selectors(data, size, pe, cs);
+    std::map<std::string, std::vector<int>> by_input;
+    for (const auto& s : selectors) {
+        auto& v = by_input[s.input];
+        if (std::find(v.begin(), v.end(), s.value) == v.end()) v.push_back(s.value);
+    }
+    std::vector<ShArticulation> out;
+    for (auto& kv : by_input) {
+        std::sort(kv.second.begin(), kv.second.end());
+        out.push_back({ kv.first, std::move(kv.second) });
+    }
+    return out;
 }
 
 std::string sh_to_obj(const ShMesh& mesh) {

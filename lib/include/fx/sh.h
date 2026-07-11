@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,16 @@ struct ShFace {
     std::vector<ShTexCoord> texcoords;
 };
 
+// An articulation input a shape's embedded x86 selectors read to choose a
+// moving-part state (gear/flaps/hook/…). `input` is the `_PL*` engine global;
+// `values` are the distinct compare cases the shape's OWN selectors test,
+// ascending — recovered clean-room from the shape's bytes (docs/fa/formats/SH.md
+// § X86Unknown Region). The meaning of each value is documented externally.
+struct ShArticulation {
+    std::string      input;   // e.g. "_PLgearDown", "_PLleftFlap"
+    std::vector<int> values;  // distinct selector cases, ascending
+};
+
 struct ShInfo {
     int   scale_raw;  // raw scale field from header (8 = 1 foot/unit)
     float scale;      // multiplier: raw_coord * scale = feet
@@ -32,6 +43,7 @@ struct ShInfo {
     bool  has_damage;   // any JumpToDamage (0xAC) inline damage branch present
     float bbox[6];    // min_x min_y min_z max_x max_y max_z (in feet)
     std::vector<std::string> textures;
+    std::vector<ShArticulation> articulations; // x86 moving-part selectors (#295)
 };
 
 struct ShMesh {
@@ -43,6 +55,7 @@ struct ShMesh {
     std::vector<ShVertex>    vertices;
     std::vector<ShFace>      faces;
     std::vector<std::string> textures;
+    std::vector<ShArticulation> articulations; // x86 moving-part selectors (#295)
 };
 
 // Selects which conditional-geometry state the interpreter emits, for the
@@ -60,6 +73,10 @@ struct ShState {
     // branches to its lower-detail block when detail < its threshold. Default
     // max keeps every full-detail block.
     int  detail    = 0xFFFF;
+    // Chosen value per articulation input (ShArticulation::input -> value). An
+    // input left unset renders every state of that selector merged (the codec's
+    // whole-airframe default); setting it emits only the matching sub-stream.
+    std::map<std::string, int> articulation;
 };
 
 // Derive an engine-generated sibling shape name for a base shape name:
@@ -75,5 +92,9 @@ ShInfo      sh_parse_info(const uint8_t* data, size_t size);
 ShMesh      sh_parse_mesh(const uint8_t* data, size_t size);
 ShMesh      sh_parse_mesh(const uint8_t* data, size_t size, const ShState& state);
 std::string sh_to_obj(const ShMesh& mesh);
+
+// The articulation inputs a shape's x86 selectors read, with the distinct
+// selector cases each tests (#295). Empty for non-articulated shapes.
+std::vector<ShArticulation> sh_articulations(const uint8_t* data, size_t size);
 
 } // namespace fx
