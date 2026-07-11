@@ -7,6 +7,38 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-10
+
+**Phase 5 — Deep Static RE — first tranche.** A large static reverse-engineering
+sweep closes the long-tail unknowns across the format specs, and the first
+read-only `fx_lib` interpreter of the phase lands. Every one of the 59 unknown
+words in the `.PT` aerodynamic block is now code-traced to its flight-model
+reader, and the residual single-field unknowns across the minor specs are
+resolved — so BRF, LAY, and PIC join the fully-documented set.
+
+### Added
+- **fx-lib** read-only GRAPHIC effect-data interpreter — a new `effect` module
+  and `fx effect {types,dump,spawn}` CLI over the 0x30-byte effect-parameter
+  record, the effect-type → class/`.SH` map, and the network spawn record
+  (#315).
+- **re** `bootstrap.sh` — one command builds the Ghidra workbench from scratch
+  and verifies the game-file manifest (#376).
+- **fxs** a generated SVG category-icon set and its bake pipeline (#363).
+
+### Changed
+- **re** the `.PT` aerodynamic block (`0xCA–0x14B`) is fully named: all 59
+  unknown words traced to their flight-model consumers via the `_cgt`
+  type-record mirror — roll/pitch/yaw control axes, the stall/spin model, and
+  the landing gate (#131).
+- **re** the long-tail static unknowns across the minor specs are resolved;
+  BRF, LAY, and PIC reach `complete` status (#136).
+- **re** static-analysis passes close the remaining field-level unknowns in
+  CFG/CB8 (#133), T2 (#132), DAT (#135), HUD (#134), the GRAPHIC effect-spawn
+  block (#128), `structs.md` confidence (#130), residual architecture gaps
+  (#129), and the sky/horizon renderer pipeline (#126).
+- **re** the Ghidra `run_all` sweep now parallelises across cores on a unified
+  `-readOnly` path (#414).
+
 ## [0.6.0] - 2026-07-07
 
 **Phase 4 — Codec & Test Completeness — complete.** All four Phase 4 epics
@@ -516,7 +548,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
 [0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
 [0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
 [0.5.10]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.10
