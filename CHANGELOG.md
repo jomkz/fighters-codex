@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-10
+
 **Phase 5 — Deep Static RE — first tranche.** A large static reverse-engineering
 sweep closes the long-tail unknowns across the format specs, and the first
 read-only `fx_lib` interpreter of the phase lands. Every one of the 59 unknown
@@ -546,7 +548,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
 [0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
 [0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
 [0.5.10]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.10
