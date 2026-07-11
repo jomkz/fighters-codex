@@ -85,5 +85,13 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **COMMSC32.DLL totals:** 1/1 subsystems complete; 60/60 in-scope functions named; 109/153 referenced globals resolved.
 
-**Program totals (all binaries):** 26/26 subsystems complete; 4482/4482 in-scope functions named; 4944/7923 referenced globals resolved.
+## MSAPI.DLL
+
+| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+|---|---|---|---|---|---|---|---|
+| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002B00` | — | — | — | · | [#272](https://github.com/jomkz/fighters-codex/issues/272) | planned |
+
+**MSAPI.DLL totals:** 0/1 subsystems complete; 20/25 in-scope functions named; 0/0 referenced globals resolved.
+
+**Program totals (all binaries):** 26/27 subsystems complete; 4502/4507 in-scope functions named; 4944/7923 referenced globals resolved.
 
