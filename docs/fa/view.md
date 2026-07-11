@@ -25,10 +25,17 @@ from the object radius, and the slew path (`VIEWSlew` + `VIEWSlewIntegrate`, fra
 `_systemFrameTicks`) applies free-look. `VIEWCanSeeTarget` (`0x40F5D0`) is the padlock visibility
 test (`_WRCanSee`), gated on a `_gamePrefs` bit.
 
-The **replay recorder** is a record/playback pair over a saved-view buffer: `VIEWReplayRecordGate`
-(`0x40E960`) sets `_replayActive` while `_timerTicks` is inside the capture window
-(`_replayWindowStart`/`End`), and `VIEWReplayPlayback` (`0x40EBA0`) copies the 0x30-dword
-`_replaySaveBuf` back into `_mainV` on playback.
+The **replay recorder** is an in-memory record/playback pair over a single saved-view buffer —
+it does **not** serialize to disk ([#284](https://github.com/jomkz/fighters-codex/issues/284)).
+`VIEWReplayRecordGate` (`0x40E960`) captures the live view into the 0x30-dword `_replaySaveBuf`
+and interpolates the camera toward saved reference values (windowed `_GRSinCos`/`_InterpAngle`
+blends) while `_timerTicks` is inside the capture window (`_replayWindowStart`/`End`), setting
+`_replayActive`; `VIEWReplayPlayback` (`0x40EBA0`) copies `_replaySaveBuf` back into `_mainV`
+on playback. The buffer (`0x522400`) is exactly one 0x30-dword (192-byte) view-state block —
+it abuts `_replayActive` at `0x5224C0` — written and read only by this pair, both called only
+from `FlyingLoop`; there is no growing/ring buffer, no file I/O on the path, and the executable
+contains no replay/demo file strings. So the "replay" is a momentary in-RAM camera snapshot and
+blend-back, not a mission recording, and there is no on-disk replay format to specify.
 
 ## Functions
 
