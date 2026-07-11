@@ -1,7 +1,12 @@
 #include "vdo_editor.h"
 #include "../app.h"
+#include "../platform/audio_player.h"
+#include "../platform/texture.h"
 #include "imgui.h"
+#include <fx/ealib.h>
 #include <fx/fbc.h>
+#include <fx/vdo.h>
+#include <cstdarg>
 #include <cstdint>
 #include <cstdio>
 #include <cctype>
@@ -17,7 +22,6 @@ static inline uint16_t u16le(const uint8_t* p) {
 static inline uint32_t u32le(const uint8_t* p) {
     return (uint32_t)(p[0] | (p[1]<<8) | (p[2]<<16) | (p[3]<<24));
 }
-// Convert 6-bit VGA DAC value (0–63) to 8-bit (0–255).
 static inline float vga6(uint8_t v) { return (v * 255.f) / 63.f; }
 
 // ---- FBC viewer -----------------------------------------------------------
@@ -34,21 +38,17 @@ static void DrawFbc(const std::vector<uint8_t>& data) {
     ImGui::TextDisabled("FBC Frame Index  |  %zu frame(s)  |  %zu bytes",
                         sizes.size(), data.size());
     ImGui::Separator();
-
     if (sizes.empty()) { ImGui::TextDisabled("(empty)"); return; }
 
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(4,2));
     if (ImGui::BeginTable("##fbc", 3,
-            ImGuiTableFlags_ScrollY       |
-            ImGuiTableFlags_RowBg         |
-            ImGuiTableFlags_BordersInnerV,
+            ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV,
             ImGui::GetContentRegionAvail())) {
         ImGui::TableSetupScrollFreeze(0, 1);
         ImGui::TableSetupColumn("Frame",       ImGuiTableColumnFlags_WidthFixed,   60);
         ImGui::TableSetupColumn("Frame bytes", ImGuiTableColumnFlags_WidthFixed,  100);
         ImGui::TableSetupColumn("VDO offset",  ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
-
         uint64_t off = fx::fbc_frame_offset(sizes, 0);
         for (size_t i = 0; i < sizes.size(); i++) {
             ImGui::TableNextRow();
@@ -63,57 +63,12 @@ static void DrawFbc(const std::vector<uint8_t>& data) {
     ImGui::PopStyleVar();
 }
 
-// ---- VDO viewer -----------------------------------------------------------
+// ---- header / palette panels (info only) ----------------------------------
 
-static void DrawVdo(const std::vector<uint8_t>& data) {
-    const size_t HEADER_SIZE = 816;   // 48 bytes fields + 768 bytes palette
-
-    // ---- magic / size check -----------------------------------------------
-    if (data.size() < HEADER_SIZE) {
-        ImGui::TextColored({1.f,0.4f,0.4f,1.f},
-            "File is only %zu bytes — too small for the 816-byte VDO header.",
-            data.size());
-        // Still show whatever bytes we have
-    }
-
-    bool hasRatvid = data.size() >= 6 &&
-                     memcmp(data.data(), "RATVID", 6) == 0;
-    if (!hasRatvid) {
-        ImGui::TextColored({1.f,0.7f,0.2f,1.f},
-            "RATVID magic not found at offset 0.");
-        ImGui::Separator();
-    }
-
-    if (data.size() < HEADER_SIZE) return;
-
-    // ---- parse header fields ----------------------------------------------
-    const uint8_t* h = data.data();
-
-    uint8_t  ver_maj    = h[6];
-    uint8_t  ver_min    = h[7];
-    uint32_t fps        = u32le(h +  8);
-    uint32_t unk_12     = u32le(h + 12);
-    uint16_t frame_cnt  = u16le(h + 16);
-    uint16_t width      = u16le(h + 18);
-    uint16_t height     = u16le(h + 20);
-    uint16_t pal_count  = u16le(h + 22);   // observed 256
-    uint16_t channels   = u16le(h + 24);   // observed 1 (mono)
-    uint16_t audio_hz   = u16le(h + 26);
-    uint32_t unk_28     = u32le(h + 28);
-    // h[32..47] = 16 bytes, observed all-zero (padding)
-    // h[48..815] = VGA palette (256 × RGB, 6-bit each)
-
-    float    duration   = (fps > 0) ? (float)frame_cnt / (float)fps : 0.f;
-    size_t   frame_data = (data.size() > HEADER_SIZE) ? data.size() - HEADER_SIZE : 0;
-
-    // ---- summary line -----------------------------------------------------
-    ImGui::TextDisabled(
-        "RATVID v%u.%u  |  %u \xc3\x97 %u  |  %u fps  |  %u frames  |  %.1f s  |  %zu bytes",
-        ver_maj, ver_min, width, height, fps, frame_cnt, duration, data.size());
-    ImGui::Separator();
-
-    // ---- properties table -------------------------------------------------
-    if (ImGui::CollapsingHeader("Header Fields", ImGuiTreeNodeFlags_DefaultOpen)) {
+static void DrawVdoInfo(const uint8_t* h, size_t size, uint32_t frameCnt) {
+    uint32_t fps = u32le(h + 8);
+    uint16_t width = u16le(h + 18), height = u16le(h + 20);
+    if (ImGui::CollapsingHeader("Header Fields")) {
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(6,3));
         if (ImGui::BeginTable("##vdohdr", 3,
                 ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV)) {
@@ -121,116 +76,221 @@ static void DrawVdo(const std::vector<uint8_t>& data) {
             ImGui::TableSetupColumn("Field",  ImGuiTableColumnFlags_WidthFixed, 180);
             ImGui::TableSetupColumn("Value",  ImGuiTableColumnFlags_WidthStretch);
             ImGui::TableHeadersRow();
-
             auto Row = [](const char* off, const char* field, const char* fmt, ...) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::TextDisabled("%s", off);
                 ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(field);
                 ImGui::TableSetColumnIndex(2);
-                char buf[128];
-                va_list ap; va_start(ap, fmt); vsnprintf(buf, sizeof(buf), fmt, ap); va_end(ap);
+                char buf[128]; va_list ap; va_start(ap, fmt);
+                vsnprintf(buf, sizeof(buf), fmt, ap); va_end(ap);
                 ImGui::TextUnformatted(buf);
             };
-
-            Row("+0",  "Magic",             "\"RATVID\" %s", hasRatvid ? "\xe2\x9c\x93" : "(MISSING)");
-            Row("+6",  "Version",           "%u.%u", ver_maj, ver_min);
+            Row("+6",  "Version",           "%u.%u", h[6], h[7]);
             Row("+8",  "Frame rate",        "%u fps", fps);
-            Row("+12", "Unknown (unk_12)",  "0x%08X%s", unk_12, unk_12==0?" (always 0)":"");
-            Row("+16", "Frame count",       "%u", frame_cnt);
+            Row("+16", "Frame count",       "%u", frameCnt);
             Row("+18", "Width",             "%u px", width);
             Row("+20", "Height",            "%u px", height);
-            Row("+22", "Palette entries",   "%u%s", pal_count, pal_count==256?" (full VGA palette)":"");
-            Row("+24", "Audio channels",    "%u%s", channels, channels==1?" (mono)":channels==2?" (stereo)":"");
-            Row("+26", "Audio sample rate", "%u Hz", audio_hz);
-            Row("+28", "Unknown (unk_28)",  "0x%08X", unk_28);
-            Row("+32", "Padding (16 B)",    "(reserved, zero)");
-            Row("+48", "VGA palette",       "768 bytes (256 \xc3\x97 RGB, 6-bit/ch)");
-            Row("+816","Frame data",        "%zu bytes across %u frames", frame_data, frame_cnt);
-            if (fps > 0 && frame_cnt > 0)
-                Row("",  "Duration",        "%.2f s (at %u fps)", duration, fps);
-
+            Row("+22", "Palette entries",   "%u", u16le(h + 22));
+            Row("+24", "Audio channels",    "%u%s", u16le(h + 24), u16le(h+24)==1?" (mono)":"");
+            Row("+26", "Audio sample rate", "%u Hz", u16le(h + 26));
+            Row("+816","Frame data",        "%zu bytes", size > 816 ? size - 816 : 0);
             ImGui::EndTable();
         }
         ImGui::PopStyleVar();
     }
-
-    // ---- embedded palette -------------------------------------------------
-    if (ImGui::CollapsingHeader("Embedded VGA Palette (256 colours)",
-                                ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::TextDisabled("Each colour is rendered from the 6-bit VGA DAC values at header +48.");
-        ImGui::Spacing();
-
+    if (ImGui::CollapsingHeader("Embedded VGA Palette (256 colours)")) {
         const uint8_t* pal = h + 48;
         ImVec2 sz(14, 14);
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 2));
         for (int i = 0; i < 256; i++) {
             if (i % 16 != 0) ImGui::SameLine();
-            float r = vga6(pal[i*3+0]);
-            float g = vga6(pal[i*3+1]);
-            float b = vga6(pal[i*3+2]);
-            ImVec4 col(r/255.f, g/255.f, b/255.f, 1.f);
+            ImVec4 col(vga6(pal[i*3+0])/255.f, vga6(pal[i*3+1])/255.f, vga6(pal[i*3+2])/255.f, 1.f);
             char lbl[8]; snprintf(lbl, sizeof(lbl), "##p%d", i);
             ImGui::ColorButton(lbl, col,
-                ImGuiColorEditFlags_NoTooltip |
-                ImGuiColorEditFlags_NoBorder, sz);
-            if (ImGui::IsItemHovered()) {
-                ImGui::BeginTooltip();
-                ImGui::Text("Index %d (0x%02X)", i, i);
-                ImGui::Text("VGA: R=%u G=%u B=%u (6-bit)",
-                            pal[i*3+0], pal[i*3+1], pal[i*3+2]);
-                ImGui::Text("8-bit: R=%u G=%u B=%u",
-                            (unsigned)(r+.5f), (unsigned)(g+.5f), (unsigned)(b+.5f));
-                ImGui::ColorButton("##prev", col,
-                    ImGuiColorEditFlags_NoTooltip, ImVec2(40,40));
-                ImGui::EndTooltip();
-            }
-        }
-        ImGui::PopStyleVar();
-        ImGui::Spacing();
-    }
-
-    // ---- unknown bytes raw dump (fields we haven't decoded) ---------------
-    if (ImGui::CollapsingHeader("Raw Header (hex)")) {
-        ImGui::TextDisabled("First 48 bytes (fields) — palette omitted for brevity.");
-        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(3,2));
-        if (ImGui::BeginTable("##vdoraw", 3,
-                ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV)) {
-            ImGui::TableSetupColumn("Addr",  ImGuiTableColumnFlags_WidthFixed,  56);
-            ImGui::TableSetupColumn("Hex",   ImGuiTableColumnFlags_WidthStretch);
-            ImGui::TableSetupColumn("ASCII", ImGuiTableColumnFlags_WidthFixed, 130);
-            ImGui::TableHeadersRow();
-
-            char hexBuf[16*3+1], asciiBuf[17];
-            for (size_t row = 0; row < 48; row += 16) {
-                size_t rowLen = (row + 16 <= 48) ? 16 : 48 - row;
-                size_t hp = 0;
-                for (size_t i = 0; i < rowLen; i++) {
-                    if (i > 0) hexBuf[hp++] = ' ';
-                    snprintf(hexBuf + hp, 4, "%02X", h[row+i]);
-                    hp += 2;
-                }
-                hexBuf[hp] = '\0';
-                for (size_t i = 0; i < rowLen; i++)
-                    asciiBuf[i] = isprint(h[row+i]) ? (char)h[row+i] : '.';
-                asciiBuf[rowLen] = '\0';
-
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0); ImGui::TextDisabled("+%04zu", row);
-                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(hexBuf);
-                ImGui::TableSetColumnIndex(2); ImGui::TextUnformatted(asciiBuf);
-            }
-            ImGui::EndTable();
+                ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoBorder, sz);
         }
         ImGui::PopStyleVar();
     }
+}
+
+// ---- playback state -------------------------------------------------------
+
+static fx::VdoDecoder*        s_dec        = nullptr;
+static GpuTexture             s_tex;
+static std::vector<uint8_t>   s_vdo, s_fbc, s_pcm;  // kept alive for s_dec
+static uint32_t               s_cur        = 0;
+static uint32_t               s_frameCount = 0;
+static int                    s_w = 0, s_h = 0;
+static uint32_t               s_fps = 15;
+static uint32_t               s_audioHz = 8000;
+static bool                   s_playing = false;
+static bool                   s_hasAudio = false;
+static double                 s_clock = 0.0;         // seconds, video-only pacing
+static int                    s_lastLib = -2, s_lastEntry = -2;
+static platform::AudioPlayer  s_player;
+
+static std::vector<uint8_t> extract_sibling(App& app, int libIdx, const std::string& name) {
+    if (libIdx < 0 || libIdx >= (int)app.sessions.size()) return {};
+    auto& s = app.sessions[libIdx];
+    const fx::Entry* e = fx::ealib_find(s.entries, name);
+    if (!e) return {};
+    return fx::ealib_extract(s.data.data(), s.data.size(), *e, true);
+}
+
+static void DecodeCurrentToTexture() {
+    s_tex.Release();
+    if (!s_dec) return;
+    auto rgba = fx::vdo_decode_frame_rgba(s_dec, s_cur);
+    if (!rgba.empty()) s_tex = platform::UploadTexture(rgba.data(), s_w, s_h);
+}
+
+static void LoadVdo(App& app) {
+    s_tex.Release();
+    if (s_dec) { fx::vdo_close(s_dec); s_dec = nullptr; }
+    s_player.Stop();
+    s_playing = false; s_cur = 0; s_clock = 0.0; s_hasAudio = false;
+    s_frameCount = 0;
+
+    auto& ed = app.editor;
+    s_vdo = ed.data;   // own a copy — vdo_open keeps pointers into it
+
+    // Locate the paired .FBC (same 4-char stem) in the same LIB session.
+    std::string name;
+    if (ed.libIdx >= 0 && ed.libIdx < (int)app.sessions.size() &&
+        ed.entryIdx >= 0 && ed.entryIdx < (int)app.sessions[ed.libIdx].entries.size()) {
+        name = app.sessions[ed.libIdx].entries[ed.entryIdx].name;
+    }
+    auto dot = name.find_last_of('.');
+    std::string stem = (dot == std::string::npos) ? name : name.substr(0, dot);
+    if (!stem.empty())
+        s_fbc = extract_sibling(app, ed.libIdx, stem + ".FBC");
+    else
+        s_fbc.clear();
+
+    if (s_fbc.empty()) return;  // no index → header-only view
+
+    s_dec = fx::vdo_open(s_vdo.data(), s_vdo.size(), s_fbc.data(), s_fbc.size());
+    if (!s_dec) return;
+
+    s_frameCount = fx::vdo_frame_count(s_dec);
+    s_w = (int)fx::vdo_width(s_dec);
+    s_h = (int)fx::vdo_height(s_dec);
+    const uint8_t* h = s_vdo.data();
+    s_fps = u32le(h + 8); if (s_fps == 0 || s_fps > 60) s_fps = 15;
+    s_audioHz = u16le(h + 26); if (s_audioHz == 0) s_audioHz = 11025;
+
+    // Audio is shared per 3-character briefing-group prefix (AAC.11K -> AACA…).
+    if (stem.size() >= 3)
+        s_pcm = extract_sibling(app, ed.libIdx, stem.substr(0, 3) + ".11K");
+    else
+        s_pcm.clear();
+    s_hasAudio = !s_pcm.empty();
+
+    DecodeCurrentToTexture();
+}
+
+static void StartAudioFromFrame() {
+    if (!s_hasAudio) return;
+    int fromSample = (int)((double)s_cur / s_fps * s_audioHz);
+    s_player.Play(s_pcm.data(), (int)s_pcm.size(), (int)s_audioHz, fromSample);
+}
+
+// ---- main editor ----------------------------------------------------------
+
+static void DrawVdoPlayer(App& app) {
+    if (!s_dec) {
+        auto& ed = app.editor;
+        if (ed.data.size() >= 6 && memcmp(ed.data.data(), "RATVID", 6) == 0 &&
+            ed.data.size() >= 816) {
+            ImGui::TextColored({1.f,0.7f,0.2f,1.f},
+                "Paired .FBC frame index not found — showing header only. "
+                "Open the movie from its LIB so the index is available.");
+            ImGui::Separator();
+            DrawVdoInfo(ed.data.data(), ed.data.size(), u16le(ed.data.data() + 16));
+        } else {
+            ImGui::TextColored({1.f,0.4f,0.4f,1.f}, "Not a RATVID .VDO.");
+        }
+        return;
+    }
+
+    float dur = s_fps ? (float)s_frameCount / s_fps : 0.f;
+    ImGui::TextDisabled("%d x %d  |  %u frames  |  %u fps  |  %.1f s  |  %s",
+                        s_w, s_h, s_frameCount, s_fps, dur,
+                        s_hasAudio ? "audio: paired .11K" : "audio: none (silent group)");
+    ImGui::Separator();
+
+    // ---- advance the playhead ---------------------------------------------
+    if (s_playing && s_frameCount > 0) {
+        double t;
+        if (s_hasAudio && s_player.IsPlaying()) {
+            s_player.Update();
+            t = (double)s_player.Position() / s_audioHz;   // sync video to audio
+        } else {
+            s_clock += ImGui::GetIO().DeltaTime;
+            t = s_clock;
+        }
+        uint32_t target = (uint32_t)(t * s_fps);
+        if (target >= s_frameCount) {          // reached the end
+            target = s_frameCount - 1;
+            s_playing = false;
+            s_player.Stop();
+        }
+        if (target != s_cur) { s_cur = target; DecodeCurrentToTexture(); }
+    }
+
+    // ---- transport --------------------------------------------------------
+    if (ImGui::Button(s_playing ? "Pause" : "Play", ImVec2(72, 0))) {
+        s_playing = !s_playing;
+        if (s_playing) {
+            if (s_cur + 1 >= s_frameCount) { s_cur = 0; DecodeCurrentToTexture(); }
+            s_clock = (double)s_cur / s_fps;
+            StartAudioFromFrame();
+        } else {
+            s_player.Pause();
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Stop", ImVec2(56, 0))) {
+        s_playing = false; s_player.Stop();
+        s_cur = 0; s_clock = 0.0; DecodeCurrentToTexture();
+    }
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(-1);
+    int frame = (int)s_cur;
+    if (s_frameCount > 1 &&
+        ImGui::SliderInt("##frame", &frame, 0, (int)s_frameCount - 1, "Frame %d")) {
+        s_cur = (uint32_t)frame;
+        s_clock = (double)s_cur / s_fps;
+        DecodeCurrentToTexture();
+        if (s_playing) StartAudioFromFrame();   // re-seek the audio
+    }
+
+    ImGui::Separator();
+
+    // ---- frame display ----------------------------------------------------
+    if (s_tex.id && s_tex.width > 0) {
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+        float scale = avail.x / (float)s_tex.width;
+        if (scale > 3.0f) scale = 3.0f;
+        if (scale < 0.1f) scale = 0.1f;
+        ImGui::Image((ImTextureID)(intptr_t)s_tex.id,
+                     ImVec2(s_tex.width * scale, s_tex.height * scale));
+    }
+
+    ImGui::Spacing();
+    DrawVdoInfo(s_vdo.data(), s_vdo.size(), s_frameCount);
 }
 
 // ---- dispatch -------------------------------------------------------------
 
 void DrawVdoEditor(App& app) {
     auto& ed = app.editor;
-    if (ed.ext == "fbc")
-        DrawFbc(ed.data);
-    else
-        DrawVdo(ed.data);
+    if (ed.ext == "fbc") { DrawFbc(ed.data); return; }
+
+    if (ed.libIdx != s_lastLib || ed.entryIdx != s_lastEntry) {
+        s_lastLib = ed.libIdx;
+        s_lastEntry = ed.entryIdx;
+        LoadVdo(app);
+    }
+    DrawVdoPlayer(app);
 }
