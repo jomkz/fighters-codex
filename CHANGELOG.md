@@ -7,6 +7,30 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-07-11
+
+**VDO/Cobra briefing video — reversed, decoded, and playable.** The schedule's
+long pole turns out to be a compact codec, not the ~45-function cluster once
+feared: the shipped `.VDO` movies decode through a three-function path whose
+per-frame block decoder is a per-pixel **copy mask** (a set bit takes a new
+pixel from the change stream; a clear bit keeps the previous frame), with both
+the mask and the change stream run-length coded. `fx_lib` now decodes it and
+fxs plays it.
+
+### Added
+- **fx-lib** read-only `.VDO` decoder and `fx vdo info` / `fx vdo export` — the
+  container, the paired `.FBC` frame index, and the per-frame copy-mask codec.
+  Validated across the full stock corpus: all 355 movies decode every frame,
+  and frame 0 renders the briefing image pixel-for-pixel (#140).
+- **fxs** `.VDO` playback in the video editor — Play / Pause / Stop and a frame
+  seek, with the video synced to the paired `.11K` narration (shared per
+  3-character briefing group) so audio and picture stay together (#141).
+
+### Changed
+- **docs** reverse-engineered the `.VDO` codec end to end: the decode dispatch
+  and per-frame stream framing (#138), then the generated copy-mask block
+  decoder itself (#139) — completing the VDO/Cobra epic.
+
 ## [0.7.0] - 2026-07-10
 
 **Phase 5 — Deep Static RE — first tranche.** A large static reverse-engineering
@@ -548,7 +572,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
 [0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
 [0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
 [0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
