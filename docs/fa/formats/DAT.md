@@ -6,11 +6,7 @@ variants: ["NET.DAT", "MODEM.DAT", "SERIAL.DAT"]
 category: system
 endianness: little
 spec:
-  status: partial
-  gaps:
-    - kind: re-static
-      issue: 54
-      note: "~1,203-byte region [0x8f9]-[0xdab] unmapped"
+  status: complete
 codec:
   direction: round-trip
   byte_identical: true
@@ -114,7 +110,12 @@ File off.  CN_INFO  Size  Field
 0x08E8      [0x8e4]   8   IP address hex string — 8 ASCII hex chars, e.g. "c0a80101" for 192.168.1.1
                            (null-checkable; if [0x8e4]==0 then IP/MAC binary fields are zeroed)
 0x08F0      [0x8ec]  13   MAC/IPX node hex string — 12 ASCII hex chars + null, e.g. "001122334455"
-                   ~~~~  [0x8f9]–[0xdab]: ~1,203 bytes — unknown (possibly padding / modem init strings)
+                   ~~~~  [0x8f9]–[0xdab]: ~1,203 bytes reserved/unused padding — all-zero in every
+                             tested NET/MODEM.DAT capture; no traced accessor across the modem,
+                             serial, TCP, and IPX config screens, the modem-init path, or the
+                             config load/save (the bracketing hex-string and appIO/binary fields are
+                             written, this gap is not) — the same result as the [0x5c0] padding above.
+                             Carried verbatim by the byte-identical codec.
 0x0DB0      [0xdac]   4   appIO callback function pointer — set by SER/MOD/NET_Initialize from CN_INFO;
                            used for status dialogs during connection setup
 0x0DB4      [0xdb0]   ?   CN_INFO_TCP sub-block start (added in v2; initialized by NetSetFactoryTCP)
@@ -207,15 +208,6 @@ vtable):
 
 Source file (from error strings): `E:\atf95\multi\sap.cpp`,
 `E:\atf95\multi\ipx.cpp`
-
-## Open Questions
-
-### 1. Region [0x8f9]–[0xdab]
-
-~1,203 bytes between the MAC/IPX hex string and the appIO callback pointer are
-unmapped — possibly padding or modem init strings; no traced accessor.
-
-*Status: open — re-static (#54)*
 
 ## Related
 
