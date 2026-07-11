@@ -52,6 +52,7 @@ add_executable(fxs WIN32
     src/main.cpp
     src/app.cpp
     src/workspace.cpp
+    src/asset_index.cpp
     src/palettes.cpp
     src/platform/audio_player.cpp
     src/platform/dialog_queue.cpp
@@ -100,11 +101,13 @@ target_include_directories(fxs SYSTEM PRIVATE
     ${CMAKE_SOURCE_DIR}/lib/vendor
 )
 
+find_package(Threads REQUIRED)
 target_link_libraries(fxs PRIVATE
     fx_lib
     fx_render_gl
     fx_gui_vendor
     fx_warnings
+    Threads::Threads
 )
 
 # UTF-8 active code page (#165) — same manifest as fx: SDL3's file dialogs
