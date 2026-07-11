@@ -225,11 +225,16 @@ Gouraud banding are documented behaviour.
 
 ## 3D Model Viewer (SH)
 
-- Selecting a `.SH` record shows a shaded 3D orbit view (grey wireframe overlay)
-  in the Preview panel, plus scale, vertex/face counts, bounding box, and the
-  referenced texture names in the editor
+- Selecting a `.SH` record shows a shaded 3D orbit view in the Preview panel,
+  plus scale, vertex/face counts, bounding box, and the referenced texture names
+  in the editor. Faces are drawn as **solid filled polygons** — the way FA
+  renders shapes (span fills only, no edge pass; [fa/render-core.md](fa/render-core.md))
 - **Orbit** by dragging; **zoom** with the scroll wheel; the camera auto-frames
   the model on selection
+- The preview renders at the display's **physical** resolution, so it stays
+  crisp (and the optional wireframe stays hairline) on HiDPI screens
+- **Wireframe** toggle overlays a thin grey topology view — a validation aid,
+  **off by default** so the preview matches FA's solid-fill rendering
 - **Destroyed** toggle renders the damaged state: the inline damaged sub-model
   (`0xAC` JumpToDamage) when the shape carries one, else the whole-model wreck
   sibling (`<name>_A.SH`, resolved from the same LIB per
