@@ -3,6 +3,7 @@
 #include "fx/ealib.h"
 #include "workspace.h"
 #include "asset_index.h"
+#include "assets/icons_baked.h"
 #include "platform/texture.h"
 #include "platform/theme.h"
 #include <atomic>
@@ -71,6 +72,10 @@ public:
     // Called by panels/editors to open a record for editing.
     void OpenEntry(int libIdx, int entryIdx);
 
+    // Open a workspace namespace entry (category browsers, #364): ensures a
+    // session for its source LIB/loose file is open, then routes to the editor.
+    void OpenWorkspaceEntry(int node);
+
     // Open a LIB from a path (recent-files menu and the --smoke sweep).
     void OpenLib(const std::string& path);
 
@@ -97,6 +102,14 @@ public:
     fxg::Workspace          workspace;       // installDir mounted as one namespace (#361)
     fxg::AssetIndex         assetIndex;      // categories + reference graph over workspace (#362)
     bool                    workspaceOnStart = false; // re-mount installDir at launch
+
+    // Left-panel navigation (#364): the icon bar selects a category browser, or
+    // Archives for the raw per-LIB picker. selectedNode is the workspace name
+    // index of the last-opened object (survives category switches).
+    // Default to Archives so the classic open-a-LIB flow works out of the box;
+    // mounting a workspace switches to the category browsers.
+    fxs::icons::Id          leftView   = fxs::icons::Id::Archives;
+    int                     selectedNode = -1;
     std::string             statusMsg;
     StatusKind              statusKind      = StatusKind::Info;
     int                     selectedSession = -1;
@@ -117,6 +130,7 @@ private:
     void OpenStandaloneFile(const std::string& path);
     void ChooseInstallDir();
     void AddRecentFile(const std::string& path);
+    int  FindSessionByPath(const std::string& path) const; // -1 if not open
 
     // Background asset-index build (#362): the worker parses records off the UI
     // thread; Draw() polls progress and swaps the finished index in.

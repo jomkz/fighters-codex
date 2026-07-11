@@ -1,5 +1,6 @@
 ﻿#include "app.h"
 #include "fx/version.h"
+#include "panels/category_browser.h"
 #include "panels/lib_browser.h"
 #include "panels/editor_host.h"
 #include "panels/preview.h"
@@ -117,7 +118,7 @@ void App::Draw() {
     // Left panel
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
     ImGui::BeginChild("##Browser", ImVec2(effLeft, h), false);
-    DrawLibBrowser(*this);
+    DrawLeftPanel(*this);
     ImGui::EndChild();
     ImGui::PopStyleVar();
 
@@ -185,8 +186,10 @@ void App::DrawMenuBar() {
             if (ImGui::BeginMenu("Recent Files", !m_recentFiles.empty())) {
                 for (const auto& p : m_recentFiles) {
                     std::string label = fs::path(p).filename().string();
-                    if (ImGui::MenuItem(label.c_str()))
+                    if (ImGui::MenuItem(label.c_str())) {
                         OpenLib(p);
+                        leftView = fxs::icons::Id::Archives;
+                    }
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Clear")) {
@@ -348,6 +351,7 @@ void App::OpenLibDialog() {
         [this](std::vector<std::string> paths) {
             for (const auto& path : paths)
                 OpenLib(path);
+            if (!paths.empty()) leftView = fxs::icons::Id::Archives;
         });
 }
 
@@ -360,6 +364,7 @@ void App::OpenFileDialog() {
         [this](std::vector<std::string> paths) {
             for (const auto& path : paths)
                 OpenStandaloneFile(path);
+            if (!paths.empty()) leftView = fxs::icons::Id::Archives;
         });
 }
 
@@ -466,6 +471,39 @@ void App::ChooseInstallDir() {
 }
 
 // ---------- Entry open / commit ----------
+
+int App::FindSessionByPath(const std::string& path) const {
+    for (int i = 0; i < (int)sessions.size(); ++i) {
+        std::error_code ec;
+        if (fs::equivalent(fs::path(sessions[i].path), fs::path(path), ec))
+            return i;
+    }
+    return -1;
+}
+
+void App::OpenWorkspaceEntry(int node) {
+    if (node < 0 || node >= (int)workspace.names.size()) return;
+    const fxg::WorkspaceEntry& we = workspace.names[node];
+    const fxg::MountSource& src = workspace.sources[we.sourceIdx];
+
+    // Reuse the whole session/editor pipeline: ensure the source file is open
+    // as a session, then route through OpenEntry.
+    int si = FindSessionByPath(src.path);
+    if (si < 0) {
+        if (src.isLib) OpenLib(src.path);
+        else           OpenStandaloneFile(src.path);
+        si = FindSessionByPath(src.path);
+        if (si < 0) return; // open failed (status already set)
+    }
+
+    int ei = -1;
+    for (int i = 0; i < (int)sessions[si].entries.size(); ++i)
+        if (fxg::ci_equal(sessions[si].entries[i].name, we.name.c_str())) { ei = i; break; }
+    if (ei < 0) return;
+
+    selectedNode = node;
+    OpenEntry(si, ei);
+}
 
 void App::OpenEntry(int libIdx, int entryIdx) {
     if (libIdx < 0 || libIdx >= (int)sessions.size()) return;
@@ -590,8 +628,10 @@ void App::MountWorkspace() {
         statusKind = StatusKind::Error;
         return;
     }
-    // Mounting opts into re-mounting the same root on the next launch.
+    // Mounting opts into re-mounting the same root on the next launch, and
+    // reveals the object-category browsers (the object-centric default).
     workspaceOnStart = true;
+    if (leftView == fxs::icons::Id::Archives) leftView = fxs::icons::Id::Aircraft;
     ImGui::MarkIniSettingsDirty();
     statusMsg = "Mounted " + std::to_string(workspace.libCount) + " LIBs + " +
                 std::to_string(workspace.looseCount) + " loose files: " +

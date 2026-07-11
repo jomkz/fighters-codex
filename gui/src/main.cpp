@@ -15,6 +15,7 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -161,6 +162,32 @@ static int RunSmokeSweep(App& app, const std::vector<std::string>& libs) {
     return failures;
 }
 
+// Mount the LIBs' directory as a workspace, build the index synchronously, then
+// cycle every icon-bar view (each category browser + Archives), opening the
+// first object of each category — exercises DrawLeftPanel, the category
+// browsers, and the workspace->editor path against real data (#364).
+static void RunBrowserSweep(App& app, const std::string& root) {
+    app.installDir = root;
+    app.workspace  = fxg::workspace_scan(root);
+    if (!app.workspace.mounted()) {
+        std::printf("smoke: browser sweep skipped (%s not a directory)\n", root.c_str());
+        return;
+    }
+    app.assetIndex = fxg::asset_index_build(app.workspace);
+    for (int v = 0; v < fxs::icons::Count; ++v) {
+        app.leftView = (fxs::icons::Id)v;
+        RenderFrame();
+        if (v < (int)fxg::Category::Unassigned) {           // a category view
+            const auto& bucket = app.assetIndex.byCategory[v];
+            if (!bucket.empty()) { app.OpenWorkspaceEntry(bucket.front()); RenderFrame(); }
+        }
+        RenderFrame();
+    }
+    std::printf("smoke: browser sweep — %zu names across %d views\n",
+                app.workspace.names.size(), fxs::icons::Count);
+    app.CloseAllSessions();
+}
+
 // ---------- Headless PNG snapshot ----------
 
 // Build one frame and read the back buffer into a PNG (top-left origin), for
@@ -195,10 +222,41 @@ static bool CaptureFrame(const std::string& outPath) {
     return stbi_write_png(outPath.c_str(), w, h, 4, flip.data(), w * 4) != 0;
 }
 
+// When the first --render argument is a directory, treat it as an FA workspace
+// root: mount it, build the index, select an icon-bar view by name (the second
+// argument, e.g. "aircraft" or "archives"; default Aircraft) and capture the
+// left panel — the headless way to review the category browsers (#364).
+static int RunRenderWorkspace(App& app, const std::string& root,
+                              const std::string& view, const std::string& out) {
+    app.installDir = root;
+    app.workspace  = fxg::workspace_scan(root);
+    if (!app.workspace.mounted()) {
+        std::fprintf(stderr, "render: %s is not a directory\n", root.c_str());
+        return 1;
+    }
+    app.assetIndex = fxg::asset_index_build(app.workspace);
+    app.leftView = fxs::icons::Id::Aircraft;
+    if (!view.empty())
+        for (int i = 0; i < fxs::icons::Count; ++i)
+            if (SDL_strcasecmp(fxs::icons::Name((fxs::icons::Id)i), view.c_str()) == 0)
+                app.leftView = (fxs::icons::Id)i;
+    for (int i = 0; i < 4; ++i) RenderFrame();
+    if (!CaptureFrame(out)) {
+        std::fprintf(stderr, "render: failed to write %s\n", out.c_str());
+        return 1;
+    }
+    std::printf("render: workspace %s [%s] -> %s\n", root.c_str(),
+                fxs::icons::Name(app.leftView), out.c_str());
+    return 0;
+}
+
 // Open a LIB, select an entry (by 8.3 name or numeric index), let the preview
 // settle, and write a PNG. Returns 0 on success.
 static int RunRender(App& app, const std::string& lib, const std::string& entry,
                      const std::string& out) {
+    if (std::filesystem::is_directory(lib))
+        return RunRenderWorkspace(app, lib, entry, out);
+
     size_t before = app.sessions.size();
     app.OpenLib(lib);
     if (app.sessions.size() == before) {
@@ -353,6 +411,8 @@ int main(int argc, char** argv) {
         SDL_GL_SetSwapInterval(0); // don't vsync-throttle the sweep
         if (!positionals.empty()) {
             exitCode = RunSmokeSweep(app, positionals) ? 1 : 0;
+            // Sweep the object-category browsers over the LIBs' install root.
+            RunBrowserSweep(app, std::filesystem::path(positionals[0]).parent_path().string());
             done = true; // sweep replaces the interactive loop
         }
     }
