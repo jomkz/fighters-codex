@@ -184,8 +184,18 @@ private:
             for (int y = 0; y < img->height; ++y) {
                 const std::uint8_t* px = img->at(0, y);
                 for (int x = 0; x < img->width; ++x, px += 4) {
-                    slot.texels[static_cast<std::size_t>(y) * img->width + x] =
-                        pal_.Nearest(px[0], px[1], px[2]);
+                    // Preserve the transparent key so the span filler can fall
+                    // back to the polygon's flat colour (FA skins, PIC.md). An
+                    // opaque texel that quantizes to 0xFF is nudged off the
+                    // reserved index so it is not read as transparent.
+                    std::uint8_t idx;
+                    if (px[3] < 128) {
+                        idx = fa::kTransparentTexel;
+                    } else {
+                        idx = pal_.Nearest(px[0], px[1], px[2]);
+                        if (idx == fa::kTransparentTexel) idx = fa::kTransparentTexel - 1;
+                    }
+                    slot.texels[static_cast<std::size_t>(y) * img->width + x] = idx;
                 }
             }
         }
