@@ -627,6 +627,29 @@ the paired `.VDO`.
 
 *See also: [fa/formats/FBC.md](fa/formats/FBC.md), [fa/formats/VDO.md](fa/formats/VDO.md)*
 
+## vdo — Briefing video
+
+```
+fx vdo info   <file.VDO> [file.FBC]
+fx vdo export <file.VDO> <file.FBC> [-o dir]
+```
+
+Read-only decoder for RATVID `.VDO` mission-briefing movies (the codec is a
+per-pixel copy-mask delta scheme; see the format spec). Both subcommands need
+the paired `.FBC` frame-size index to locate frame boundaries.
+
+#### `fx vdo info <file.VDO> [file.FBC]`
+
+Resolution, frame rate, and paired-audio sample rate from the header. Supply the
+`.FBC` to also report the frame count.
+
+#### `fx vdo export <file.VDO> <file.FBC> [-o dir]`
+
+Decode every frame to `frame%04u.png` in the output directory (default `.`).
+Frames are inter-coded, so they are decoded in sequence.
+
+*See also: [fa/formats/VDO.md](fa/formats/VDO.md), [fa/formats/FBC.md](fa/formats/FBC.md)*
+
 ## bin — Lookup tables
 
 ```

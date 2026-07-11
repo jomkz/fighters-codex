@@ -23,6 +23,7 @@
     src/bi.cpp
     src/ai.cpp
     src/fbc.cpp
+    src/vdo.cpp
     src/bin.cpp
     src/cam.cpp
     src/txt.cpp

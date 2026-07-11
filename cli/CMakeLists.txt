@@ -21,6 +21,7 @@
     cmd_bi.cpp
     cmd_ai.cpp
     cmd_fbc.cpp
+    cmd_vdo.cpp
     cmd_bin.cpp
     cmd_cam.cpp
     cmd_txt.cpp

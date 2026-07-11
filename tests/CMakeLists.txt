@@ -24,6 +24,7 @@ add_executable(fx_tests
     test_ai.cpp
     test_bi.cpp
     test_fbc.cpp
+    test_vdo.cpp
     test_bin.cpp
     test_cam.cpp
     test_txt.cpp
