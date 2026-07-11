@@ -14,6 +14,7 @@
 #include "fx_render/render.h"
 #include "fx_render/gl.h"
 #include "fx_render/fa_backend.h"
+#include "../editors/sh_scene.h"
 #include "../editors/terrain_preview.h"
 
 #include <algorithm>
@@ -85,86 +86,12 @@ struct ShPreview {
     float target[3]  = {};   // orbit centre, render Y-up space
 } s_sh;
 
-// Triangulate + flat-light the SH mesh into render-space triangles for
-// fx_render (Vertex = interleaved position + colour, same layout).
+// Triangulate the SH mesh into render-space triangles via the shared,
+// display-free scene core (editors/sh_scene.h) — the same geometry path the
+// category-browser thumbnails render through (#366).
 static void BuildMeshVB(const fx::ShMesh& mesh) {
-    s_sh.mesh.vertices.clear();
-    s_sh.mesh_tex.vertices.clear();
-    if (mesh.vertices.empty() || mesh.faces.empty()) return;
-
-    // Faces split by whether they carry texture coordinates (and a texture is
-    // loaded): textured faces go into mesh_tex with normalized u,v; the rest
-    // stay flat-shaded in mesh. One texture per model (the common SH case).
-    const bool has_tex = s_sh.tex_w > 0 && s_sh.tex_h > 0;
-    const float inv_tw = has_tex ? 1.0f / s_sh.tex_w : 0.0f;
-    const float inv_th = has_tex ? 1.0f / s_sh.tex_h : 0.0f;
-
-    std::vector<fx_render::Vertex> verts;
-    std::vector<fx_render::Vertex> tverts;
-    verts.reserve(mesh.faces.size() * 6);
-
-    // FA shape faces carry a *pre-shaded* palette-ramp colour index: the model
-    // tool bakes the sun/orientation shading into `ShFace::color` (e.g. the F16
-    // walks the grey ramp 145..160 face by face). FA renders those colours
-    // directly — painter's order, no runtime per-face relighting — so the
-    // preview must not re-light them (a dynamic lambert here double-shaded the
-    // already-dark ramp entries to near-black). See docs/fa/render-core.md.
-    for (const auto& face : mesh.faces) {
-        if (face.indices.size() < 3) continue;
-        const bool textured = has_tex && face.texcoords.size() == face.indices.size();
-        for (size_t i = 1; i + 1 < face.indices.size(); i++) {
-            uint32_t i0 = face.indices[0];
-            uint32_t i1 = face.indices[i];
-            uint32_t i2 = face.indices[i + 1];
-            // Skip entire triangle rather than pushing partial vertices (which misaligns the buffer)
-            if (i0 >= mesh.vertices.size() || i1 >= mesh.vertices.size() || i2 >= mesh.vertices.size())
-                continue;
-            auto& v0 = mesh.vertices[i0];
-            auto& v1 = mesh.vertices[i1];
-            auto& v2 = mesh.vertices[i2];
-
-            // Remap SH (Z-up, right-handed) into render Y-up space with a
-            // proper rotation; a plain Y/Z swap here mirrored the model.
-            float r0[3], r1[3], r2[3];
-            const float p0[3] = {v0.x, v0.y, v0.z};
-            const float p1[3] = {v1.x, v1.y, v1.z};
-            const float p2[3] = {v2.x, v2.y, v2.z};
-            platform::sh_to_render(p0, r0);
-            platform::sh_to_render(p1, r1);
-            platform::sh_to_render(p2, r2);
-
-            // Every face carries a flat base colour (ShFace::color, pre-shaded
-            // above). FA skins are texture atlases where palette index 0xFF is
-            // transparent (PIC.md); the engine shows the face's flat colour
-            // through those texels. So carry the base colour on the vertices
-            // even for textured faces — the renderer falls back to it where the
-            // texel is transparent, instead of drawing the atlas's black
-            // background.
-            float cr = s_sh.palette.r[face.color] / 255.0f;
-            float cg = s_sh.palette.g[face.color] / 255.0f;
-            float cb = s_sh.palette.b[face.color] / 255.0f;
-            if (textured) {
-                // Fan corners 0, i, i+1 map to the parallel texcoord entries.
-                // SH texel t is bottom-left origin, so flip V for the top-left
-                // decoded PIC (verified against _a10.PIC — camo maps correctly).
-                const auto& t0 = face.texcoords[0];
-                const auto& t1 = face.texcoords[i];
-                const auto& t2 = face.texcoords[i + 1];
-                auto V = [&](float t){ return 1.0f - t * inv_th; };
-                tverts.push_back({r0[0], r0[1], r0[2], cr, cg, cb, t0.s * inv_tw, V(t0.t)});
-                tverts.push_back({r1[0], r1[1], r1[2], cr, cg, cb, t1.s * inv_tw, V(t1.t)});
-                tverts.push_back({r2[0], r2[1], r2[2], cr, cg, cb, t2.s * inv_tw, V(t2.t)});
-            } else {
-                // Untextured faces render the shaded base colour directly.
-                verts.push_back({r0[0], r0[1], r0[2], cr, cg, cb, 0.0f, 0.0f});
-                verts.push_back({r1[0], r1[1], r1[2], cr, cg, cb, 0.0f, 0.0f});
-                verts.push_back({r2[0], r2[1], r2[2], cr, cg, cb, 0.0f, 0.0f});
-            }
-        }
-    }
-
-    s_sh.mesh.vertices     = std::move(verts);
-    s_sh.mesh_tex.vertices = std::move(tverts);
+    fxg::BuildShMeshes(mesh, s_sh.palette, s_sh.tex_w, s_sh.tex_h,
+                       s_sh.mesh, s_sh.mesh_tex);
 }
 
 // Build a 6-wall room around the model.
@@ -251,18 +178,9 @@ static void BuildBoxGridVB(const fx::ShInfo& info, float max_span) {
     s_sh.grid.vertices = std::move(lines);
 }
 
-// The preview palette as the fa path's 192-entry 6-bit palette: fx::Palette
-// stores VGA components widened to 8-bit, so >>2 recovers them exactly.
-static fx_render::fa::Palette ToFaPalette(const fx::Palette& pal) {
-    fx_render::fa::Palette out;
-    for (int i = 0; i < fx_render::fa::Palette::kEntries; ++i) {
-        out.entries[static_cast<std::size_t>(i)] = {
-            static_cast<std::uint8_t>(pal.r[i] >> 2),
-            static_cast<std::uint8_t>(pal.g[i] >> 2),
-            static_cast<std::uint8_t>(pal.b[i] >> 2)};
-    }
-    return out;
-}
+// The fa path's 192-entry 6-bit palette conversion lives in the shared scene
+// core (editors/sh_scene.h).
+using fxg::ToFaPalette;
 
 void PreviewForceSoftwareBackend(bool on) { s_sh.software = on; }
 

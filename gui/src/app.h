@@ -3,6 +3,7 @@
 #include "fx/ealib.h"
 #include "workspace.h"
 #include "asset_index.h"
+#include "thumbnails.h"
 #include "assets/icons_baked.h"
 #include "platform/texture.h"
 #include "platform/theme.h"
@@ -11,6 +12,8 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 // Texture handle for image preview (GL texture behind an opaque id).
@@ -134,6 +137,16 @@ public:
     int                     palEntry = -1;
     int                     palGen   = 0;
 
+    // SH thumbnails for the category browsers (#366): the async service plus
+    // the UI-side texture cache it fills. Browsers Request() nodes as their
+    // cells become visible; Draw() drains finished renders into GL textures.
+    // thumbMissing remembers nodes with no renderable shape so the grid stops
+    // asking. thumbCacheDir is set at startup (the per-user pref path).
+    fxg::ThumbnailService               thumbs;
+    std::string                         thumbCacheDir;
+    std::unordered_map<int, GpuTexture> thumbTex;
+    std::unordered_set<int>             thumbMissing;
+
 private:
     void DrawMenuBar();
 
@@ -149,6 +162,8 @@ private:
     void StartIndexing();
     void StopIndexing();   // cooperative cancel + join; safe to call any time
     void PollIndexing();   // main thread: update status, adopt a finished index
+    void PollThumbnails(); // main thread: upload finished thumbnails (#366)
+    void ResetThumbnails(); // stop the service and release the GL textures
 
     std::string          m_dupLibPath;
     std::vector<std::string> m_recentFiles; // up to 5, most recent first

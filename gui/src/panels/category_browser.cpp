@@ -4,6 +4,7 @@
 #include "../util.h"
 #include "../ui/icons.h"
 #include "imgui.h"
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -64,6 +65,75 @@ static void DrawIconBar(App& app) {
     ImGui::PopStyleVar();
 }
 
+// The object categories browse as a thumbnail grid (#366): these are the
+// buckets whose entries name a shape through the asset graph.
+static bool GridCategory(fxg::Category cat) {
+    return cat == fxg::Category::Aircraft || cat == fxg::Category::Vehicles ||
+           cat == fxg::Category::Weapons;
+}
+
+// Thumbnail grid over the filtered nodes. Renders are requested only for
+// cells the clipper makes visible, so a full install populates progressively;
+// until (or unless) a shape resolves, the cell shows the category icon.
+static void DrawThumbnailGrid(App& app, fxg::Category cat,
+                              const std::vector<int>& shown) {
+    const float fh     = ImGui::GetFontSize();
+    const float cell   = fh * 7.0f;                    // thumbnail square edge
+    const float labelH = ImGui::GetTextLineHeight();
+    const ImVec2 cellSz(cell, cell + labelH + 4.0f);
+    const ImGuiStyle& st = ImGui::GetStyle();
+
+    int cols = std::max(1, (int)((ImGui::GetContentRegionAvail().x + st.ItemSpacing.x) /
+                                 (cell + st.ItemSpacing.x)));
+    int rows = ((int)shown.size() + cols - 1) / cols;
+
+    ImDrawList* dl = ImGui::GetWindowDrawList();
+    ImGuiListClipper clipper;
+    clipper.Begin(rows, cellSz.y + st.ItemSpacing.y);
+    while (clipper.Step())
+        for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; ++row)
+            for (int col = 0; col < cols; ++col) {
+                int i = row * cols + col;
+                if (i >= (int)shown.size()) break;
+                int node = shown[i];
+                const std::string& name = app.workspace.names[node].name;
+
+                if (col > 0) ImGui::SameLine();
+                ImGui::PushID(node);
+                ImVec2 pos = ImGui::GetCursorScreenPos();
+                if (ImGui::Selectable("##cell", app.selectedNode == node, 0, cellSz))
+                    app.SelectObject(node); // scope the editors to its cluster (#365)
+                if (ImGui::IsItemHovered()) ImGui::SetTooltip("%s", name.c_str());
+
+                auto it = app.thumbTex.find(node);
+                if (it != app.thumbTex.end() && it->second.id) {
+                    dl->AddImage((ImTextureID)(intptr_t)it->second.id, pos,
+                                 ImVec2(pos.x + cell, pos.y + cell));
+                } else {
+                    // Visible + unrendered: queue it (idempotent). Nodes the
+                    // service reported shapeless stay on the icon placeholder.
+                    if (app.thumbs.running() && !app.thumbMissing.count(node))
+                        app.thumbs.Request(node);
+                    if (s_iconTex[(int)cat].id) {
+                        float is = cell * 0.4f;
+                        ImVec2 ip(pos.x + (cell - is) * 0.5f,
+                                  pos.y + (cell - is) * 0.5f);
+                        dl->AddImage((ImTextureID)(intptr_t)s_iconTex[(int)cat].id,
+                                     ip, ImVec2(ip.x + is, ip.y + is),
+                                     ImVec2(0, 0), ImVec2(1, 1),
+                                     ImGui::GetColorU32(ImGuiCol_TextDisabled));
+                    }
+                }
+
+                // Name label under the image, clipped to the cell width.
+                ImVec2 tp(pos.x + 2.0f, pos.y + cell + 2.0f);
+                ImVec4 clip(pos.x, tp.y, pos.x + cell, tp.y + labelH);
+                dl->AddText(nullptr, 0.0f, tp, ImGui::GetColorU32(ImGuiCol_Text),
+                            name.c_str(), nullptr, 0.0f, &clip);
+                ImGui::PopID();
+            }
+}
+
 static void DrawCategoryBrowser(App& app, fxg::Category cat) {
     if (!app.assetIndex.built) {
         ImGui::Spacing();
@@ -100,18 +170,23 @@ static void DrawCategoryBrowser(App& app, fxg::Category cat) {
     ImGui::Separator();
 
     ImGui::BeginChild("##catlist");
-    ImGuiListClipper clipper;
-    clipper.Begin((int)shown.size());
-    while (clipper.Step())
-        for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
-            int node = shown[i];
-            const std::string& name = app.workspace.names[node].name;
-            ImGui::PushID(node);
-            if (ImGui::Selectable(name.c_str(), app.selectedNode == node,
-                                  ImGuiSelectableFlags_AllowDoubleClick))
-                app.SelectObject(node); // scope the editors to its cluster (#365)
-            ImGui::PopID();
-        }
+    if (GridCategory(cat))
+        DrawThumbnailGrid(app, cat, shown);
+    else {
+        // Non-object categories stay a compact name list.
+        ImGuiListClipper clipper;
+        clipper.Begin((int)shown.size());
+        while (clipper.Step())
+            for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
+                int node = shown[i];
+                const std::string& name = app.workspace.names[node].name;
+                ImGui::PushID(node);
+                if (ImGui::Selectable(name.c_str(), app.selectedNode == node,
+                                      ImGuiSelectableFlags_AllowDoubleClick))
+                    app.SelectObject(node); // scope the editors to its cluster (#365)
+                ImGui::PopID();
+            }
+    }
     ImGui::EndChild();
 }
 

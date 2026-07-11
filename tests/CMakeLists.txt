@@ -79,13 +79,16 @@ if(FX_BUILD_GUI)
         gui/test_terrain_preview.cpp
         gui/test_workspace.cpp
         gui/test_asset_index.cpp
+        gui/test_thumbnails.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/dialog_queue.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/platform/audio_player.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/assets/icons_baked.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/editors/overlay_preview.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/editors/terrain_preview.cpp
+        ${PROJECT_SOURCE_DIR}/gui/src/editors/sh_scene.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/workspace.cpp
         ${PROJECT_SOURCE_DIR}/gui/src/asset_index.cpp
+        ${PROJECT_SOURCE_DIR}/gui/src/thumbnails.cpp
     )
     target_include_directories(gui_tests PRIVATE ${PROJECT_SOURCE_DIR}/gui/src)
     target_include_directories(gui_tests SYSTEM PRIVATE

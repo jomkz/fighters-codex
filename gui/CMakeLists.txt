@@ -53,6 +53,7 @@ add_executable(fxs WIN32
     src/app.cpp
     src/workspace.cpp
     src/asset_index.cpp
+    src/thumbnails.cpp
     src/palettes.cpp
     src/platform/audio_player.cpp
     src/platform/dialog_queue.cpp
@@ -82,6 +83,7 @@ add_executable(fxs WIN32
     src/editors/hud_editor.cpp
     src/editors/overlay_preview.cpp
     src/editors/terrain_preview.cpp
+    src/editors/sh_scene.cpp
     src/editors/mus_editor.cpp
     src/editors/fnt_editor.cpp
     src/editors/cb8_editor.cpp

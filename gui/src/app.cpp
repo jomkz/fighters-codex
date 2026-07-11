@@ -86,6 +86,7 @@ void App::Draw() {
     ImGui::PopStyleVar(3);
 
     PollIndexing();
+    PollThumbnails();
     DrawMenuBar();
 
     // Three-panel layout with draggable splitters.
@@ -637,8 +638,10 @@ void App::MountWorkspace() {
         statusKind = StatusKind::Warning;
         return;
     }
-    // Join any in-flight index build before replacing the workspace it reads.
+    // Join any in-flight index build and the thumbnail worker before
+    // replacing the workspace/index they read.
     StopIndexing();
+    ResetThumbnails();
     ClearObjectScope(); // node indices are about to change
     workspace = fxg::workspace_scan(installDir);
     if (!workspace.mounted()) {
@@ -708,12 +711,40 @@ void App::PollIndexing() {
             statusMsg = "Indexed " + std::to_string(assetIndex.nodes.size()) +
                         " assets (" + std::to_string(unassigned) + " unassigned)";
             statusKind = StatusKind::Info;
+            // The graph is ready: start serving browser thumbnails over it
+            // (#366). Both references stay valid until the next re-mount,
+            // which stops the service first.
+            ResetThumbnails();
+            thumbs.Start(workspace, assetIndex, thumbCacheDir, 128);
         }
     } else if (m_indexRunning.load()) {
         statusMsg = "Indexing assets... " + std::to_string(m_indexDone.load()) +
                     "/" + std::to_string(m_indexTotal.load()) + " archives";
         statusKind = StatusKind::Info;
     }
+}
+
+void App::PollThumbnails() {
+    for (auto& r : thumbs.Drain()) {
+        if (r.image.width <= 0) {
+            thumbMissing.insert(r.node);   // no shape / no geometry: stop asking
+            continue;
+        }
+        GpuTexture tex = platform::UploadTexture(
+            r.image.pixels.data(), r.image.width, r.image.height);
+        if (tex.id) {
+            auto it = thumbTex.find(r.node);
+            if (it != thumbTex.end()) it->second.Release();
+            thumbTex[r.node] = tex;
+        }
+    }
+}
+
+void App::ResetThumbnails() {
+    thumbs.Stop();
+    for (auto& [node, tex] : thumbTex) tex.Release();
+    thumbTex.clear();
+    thumbMissing.clear();
 }
 
 void App::InstallToGame(int libIdx) {

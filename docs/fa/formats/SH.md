@@ -17,7 +17,7 @@ codec:
   commands: [sh]
   tests: [tests/test_sh.cpp]
   fuzz: [fuzz/fuzz_sh.cpp]
-  gui: [gui/src/editors/sh_editor.cpp]
+  gui: [gui/src/editors/sh_editor.cpp, gui/src/editors/sh_scene.cpp]
   fixtures:
     synthetic: true
     real_manifest: true

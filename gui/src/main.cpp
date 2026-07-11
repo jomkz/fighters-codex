@@ -175,6 +175,7 @@ static void RunBrowserSweep(App& app, const std::string& root) {
         return;
     }
     app.assetIndex = fxg::asset_index_build(app.workspace);
+    app.thumbs.Start(app.workspace, app.assetIndex, "", 128); // memory-only (#366)
     for (int v = 0; v < fxs::icons::Count; ++v) {
         app.leftView = (fxs::icons::Id)v;
         RenderFrame();
@@ -240,6 +241,7 @@ static int RunRenderWorkspace(App& app, const std::string& root,
         return 1;
     }
     app.assetIndex = fxg::asset_index_build(app.workspace);
+    app.thumbs.Start(app.workspace, app.assetIndex, "", 128); // memory-only (#366)
     app.leftView = fxs::icons::Id::Aircraft;
     bool isView = view.empty();
     for (int i = 0; i < fxs::icons::Count && !view.empty(); ++i)
@@ -258,6 +260,13 @@ static int RunRenderWorkspace(App& app, const std::string& root,
         app.SelectObject((int)(we - app.workspace.names.data()));
     }
     for (int i = 0; i < 4; ++i) RenderFrame();
+    // Let the queued thumbnails land so the capture shows a populated grid
+    // (the first frames issue the visible cells' requests).
+    for (int i = 0; i < 600 && app.thumbs.pending() > 0; ++i) {
+        SDL_Delay(10);
+        RenderFrame();
+    }
+    RenderFrame();
     if (!CaptureFrame(out)) {
         std::fprintf(stderr, "render: failed to write %s\n", out.c_str());
         return 1;
@@ -369,9 +378,11 @@ int main(int argc, char** argv) {
 
     // Settings live in the per-user preferences path, not the CWD.
     static std::string iniPath;
+    std::string thumbsDir;
     if (!headless) {
         if (char* pref = SDL_GetPrefPath("jomkz", "fxs")) {
-            iniPath = std::string(pref) + "fxs.ini";
+            iniPath   = std::string(pref) + "fxs.ini";
+            thumbsDir = std::string(pref) + "thumbs";
             SDL_free(pref);
         } else {
             iniPath = "fxs.ini";
@@ -379,6 +390,8 @@ int main(int argc, char** argv) {
         io.IniFilename = iniPath.c_str();
     } else {
         io.IniFilename = nullptr;
+        // Headless runs keep the thumbnail cache in memory only, so --smoke
+        // and --render stay hermetic.
     }
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
@@ -392,6 +405,7 @@ int main(int argc, char** argv) {
     // window placement must be applied before the window is shown.
     RegisterWindowSettingsHandler();
     App app; // registers the FightersToolkit handler (installDir, recent files)
+    app.thumbCacheDir = thumbsDir;
     g_app = &app;
     platform::DialogsInit(platform::Window());
 
