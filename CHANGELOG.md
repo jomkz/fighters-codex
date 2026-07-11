@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-07-11
+
 **VDO/Cobra briefing video — reversed, decoded, and playable.** The schedule's
 long pole turns out to be a compact codec, not the ~45-function cluster once
 feared: the shipped `.VDO` movies decode through a three-function path whose
@@ -570,7 +572,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
 [0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
 [0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
 [0.5.11]: https://github.com/jomkz/fighters-codex/releases/tag/v0.5.11
