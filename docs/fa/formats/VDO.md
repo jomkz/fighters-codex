@@ -9,7 +9,7 @@ spec:
   gaps:
     - kind: re-static
       issue: 55
-      note: "Cobra per-frame compression (~45 leaf decoders) not reversed"
+      note: "codec fully reversed (#137-#139); byte-exact fx_lib decoder + fx vdo export pending (#140)"
 codec:
   direction: none
   issue: 55
@@ -116,11 +116,48 @@ verbatim. Decoding stops when the output count is exhausted.
 Walks the index stream in **8-pixel groups** (`width × height / 8`): a `0` byte
 skips the group (leaves the prior frame's pixels — the inter-frame delta), and a
 nonzero byte indexes a **span-emitter jump table at `0x50E5CE`** whose handler
-writes that group's 8 output pixels from the codebook. `DecompressVideoImage`
-(`0x4C8CD8`) is the keyframe variant, adding a row-replication tail (each output
-row copied to the next — the `320×200 → 640×480` vertical doubling). The
-per-code handlers in the `0x50E5CE` table (built at init) are the remaining
-detail (#139); the framing and dispatch above are complete.
+writes that group's 8 pixels. `DecompressVideoImage` (`0x4C8CD8`) is the keyframe
+variant, adding a row-replication tail (each output row copied to the next — the
+`320×200 → 640×480` vertical doubling).
+
+### The index byte is an 8-bit copy mask (#139)
+
+The `0x50E5CE` handlers are **generated x86**, built once at startup by
+`BuildSelfModifyCode` (`0x4C8BEC`, via `VDOInit` `0x405490`) into a code buffer
+at `0x50E9CE`; the table statically holds only zeros. Each handler decodes one
+index byte, and that byte is a **per-pixel copy mask** over the group's 8
+pixels: **a set bit copies the next source pixel; a clear bit keeps the previous
+frame's pixel** (advances the output pointer without reading source). So the
+source stream carries only the pixels that changed, and the mask says where.
+
+`BuildSelfModifyCode` emits, per index value:
+
+- `0x00` → `add edi, 8; ret` — skip the whole group (the `0` fast-path in
+  `DecompressVideo`).
+- `0xFF` → `movsd; movsd; ret` — copy all 8 pixels (`A5 A5`).
+- everything else → two `DoNibble` (`0x4C8C60`) calls (high nibble → pixels
+  0–3, low nibble → pixels 4–7) + `ret`.
+
+`DoNibble` emits the x86 for one 4-bit nibble = 4 pixels, MSB first:
+
+| Nibble / 2-bit pair | Emitted | Effect |
+|---|---|---|
+| nibble `0xF` | `A5` (`movsd`) | copy 4 |
+| pair `11` | `66 A5` (`movsw`) | copy 2 |
+| pair `10` | `A4 47` (`movsb; inc edi`) | copy, keep |
+| pair `01` | `47 A4` (`inc edi; movsb`) | keep, copy |
+| pair `00` | `47 47` (`inc edi; inc edi`) | keep 2 |
+
+So the codec is a per-pixel delta: **mask bit set ⇒ take a new pixel from the
+source stream; clear ⇒ retain the prior frame's pixel** — plus the RLE that
+compresses the mask and source streams.
+
+Worked example — `AACA.VDO` frame 0 (`FBC[0]` = 35,546 B, `tag = 0x8BBE`): the
+mask sub-stream is a `0x0BBE`-byte RLE block that expands to exactly **8,000**
+mask bytes (`= 320×200/8`, one per group); the `0xFFFF` marker then introduces
+an RLE source stream declaring **32,534** pixels. Reconciling the mask's set-bit
+total against that source count byte-for-byte is the one detail the fx_lib
+reference decoder pins down (#140).
 
 ### Audio
 
@@ -152,6 +189,9 @@ Confirmed functions (FA.SMS names), in load → decode order:
 | `0x4C8AFC` | `UnRLE` | RLE decompress a sub-stream (see § UnRLE) |
 | `0x4C8AA4` | `DecompressVideo` | Blit the index stream via the `0x50E5CE` table |
 | `0x4C8CD8` | `DecompressVideoImage` | Keyframe/image blit + row replication |
+| `0x405490` | `VDOInit` | One-time init; calls `BuildSelfModifyCode` |
+| `0x4C8BEC` | `BuildSelfModifyCode` | Generate the 256 copy-mask handlers into `0x50E9CE` |
+| `0x4C8C60` | `DoNibble` | Emit the x86 for one nibble (4 pixels) of a handler |
 | `0x4AF6B0` | `VDO_320x200_to_640x480` | 2× upscale for the SVGA present path |
 
 All operate on the `VDO` struct, whose fields correspond to the header layout
@@ -160,18 +200,16 @@ above. These live in the `0x4AExxx`/`0x4C8xxx` range — distinct from the
 
 ## Open Questions
 
-### 1. Per-code span handlers (`0x50E5CE` table)
+### 1. Byte-exact reference decoder
 
-The container, header, palette, frame indexing, RLE, and the frame/blit dispatch
-are now fully mapped (#137, #138). The one remaining piece for a byte-exact
-decoder is the semantics of the per-code span-emitter handlers that
-`DecompressVideo` calls through the `0x50E5CE` jump table (indexed by the index
-byte) — i.e. how each code writes its 8 output pixels from the codebook. This is
-a small, bounded RE task (the whole `.VDO` codec is three functions, ~460
-bytes), not the ~45-function cluster once feared. Tracked under epic #55
-(the span-handler decode folds into #139/#140).
+The whole `.VDO` codec is now reversed (#137–#139): container, header, palette,
+frame framing, RLE, the copy-mask dispatch, and the generated handlers (see
+§ The index byte is an 8-bit copy mask). The remaining work is not RE but
+implementation — a byte-exact `fx_lib` decoder plus `fx vdo export`, validated
+against the corpus, which will also pin down the mask-setbits ↔ source-pixel
+accounting on real frames. Tracked under epic #55 as #140.
 
-*Status: open — re-static (#55)*
+*Status: open — re-static (#55; codec reversed, reference decoder is #140)*
 
 ## Related
 
