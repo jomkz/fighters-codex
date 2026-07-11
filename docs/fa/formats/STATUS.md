@@ -46,7 +46,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [RGN](RGN.md) | installer | complete | — | round-trip (byte-identical) | `fx rgn` | `tests/test_rgn.cpp` | syn | `fuzz/fuzz_rgn.cpp` | — |
 | [SEE](SEE.md) | typedef | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx see` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |
 | [SEQ](SEQ.md) | video | complete | — | round-trip (byte-identical) | `fx seq` | `tests/test_seq.cpp` | syn/real | `fuzz/fuzz_seq.cpp` | `gui/src/editors/seq_editor.cpp` |
-| [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | `fuzz/fuzz_sh.cpp` | `gui/src/editors/sh_editor.cpp` |
+| [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | `fuzz/fuzz_sh.cpp` | `gui/src/editors/sh_editor.cpp`<br>`gui/src/editors/sh_scene.cpp` |
 | [SMS](SMS.md) | system | complete | — | read-only (by design) | `fx sms` | `tests/test_sms.cpp` | real | `fuzz/fuzz_sms.cpp` | — |
 | [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf` | `tests/test_ssf.cpp` | syn | `fuzz/fuzz_ssf.cpp` | — |
 | [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | `fuzz/fuzz_t2.cpp` | `gui/src/editors/terrain_preview.cpp` |

@@ -419,6 +419,18 @@ Selecting an entry opens its record in the editor and scopes the editor area to
 the object's file cluster (below); the current selection is remembered across
 category switches.
 
+The **object categories** (Aircraft, Vehicles, Weapons) browse as an **SH
+thumbnail grid**: each cell renders the object's shape through the FA-faithful
+software backend (`fx_render::fa` — context-free, so thumbnails render on a
+worker thread and never block the UI), framed the way the
+[SH viewer](#3d-model-viewer-sh) first shows it. The grid populates
+progressively — only cells scrolled into view are queued — and an object whose
+shape does not resolve (or whose geometry is x86-only) keeps the category
+icon. Rendered thumbnails are cached on disk under the per-user preferences
+path (`thumbs/`), keyed by a digest of the shape record, the palette and the
+size, so the next launch fills the grid from disk without rendering a single
+shape. The other categories stay compact name lists.
+
 The **Archives** icon keeps today's raw per-LIB browser **unchanged** — the
 byte-level tree of open LIB sessions, load-bearing for validation work. Category
 browsers need a mounted workspace; until one is (or while it indexes) they show a
