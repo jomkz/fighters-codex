@@ -43,10 +43,17 @@ void main() {
         FragColor = vec4(0.7, 0.7, 0.7, 1.0);
     } else if (uTextured) {
         // FA skins are atlases with a transparent key (PIC index 0xFF ->
-        // alpha 0); show the face's flat base colour through those texels
-        // instead of the atlas's black background.
+        // alpha 0). A textured face with a real flat base colour shows that
+        // colour through the transparent texels; a face whose base colour is
+        // index 0 (black) is a pure decal overlay — its transparent texels
+        // must show the geometry behind, not a black fill, so discard them.
         vec4 t = texture(uTex, vUV);
-        FragColor = vec4(t.a < 0.5 ? vCol : t.rgb, 1.0);
+        if (t.a < 0.5) {
+            if (dot(vCol, vCol) < 0.0001) discard;   // colour-0 decal: see-through
+            FragColor = vec4(vCol, 1.0);
+        } else {
+            FragColor = vec4(t.rgb, 1.0);
+        }
     } else {
         FragColor = vec4(vCol, 1.0);
     }

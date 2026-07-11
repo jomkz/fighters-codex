@@ -46,7 +46,9 @@ an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
   display server). `--out` defaults to `render.png`; `--size` defaults to the
   standard window size and is clamped to the minimum (the compositor may scale
   the actual pixel dimensions on HiDPI). Intended for automated visual review
-  of rendering changes — SH 3D orbit, PIC/RAW/CB8 images, and the editors.
+  of rendering changes — SH 3D orbit, PIC/RAW/CB8 images, and the editors. The
+  environment variable `FX_ARTIC="input=value"` (e.g. `_PLgearDown=1`) forces one
+  SH articulation state before the capture, for reviewing a moving-part variant.
 
 On Windows, `fxs.exe` is a `WIN32`-subsystem (GUI) binary, so shells launch
 it detached: a bare `--smoke` invocation from PowerShell prints nothing,
@@ -251,8 +253,12 @@ Gouraud banding are documented behaviour.
   texture **atlases** whose palette index `0xFF` is transparent
   ([fa/formats/PIC.md](fa/formats/PIC.md)): those texels show the face's flat
   colour through, exactly as FA composites them, rather than the atlas's unused
-  black background. Both the OpenGL and FA-software backends honour this.
-  Texture-swap damage (e.g. buildings) becomes visible here with **Destroyed** on
+  black background. A face whose flat colour is index `0` (black) is a pure
+  **decal overlay** (gear-pod stripes, panel markings): its transparent texels
+  are see-through to the geometry behind, not filled — otherwise those panels
+  render as solid black shapes. Both the OpenGL and FA-software backends honour
+  this. Texture-swap damage (e.g. buildings) becomes visible here with
+  **Destroyed** on
 - **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
   selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
   and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
@@ -261,6 +267,15 @@ Gouraud banding are documented behaviour.
   drives `fx::ShState::lod`. The **Low detail** checkbox (shown when the model
   has a `0xA6` JumpToDetail switch) renders the low-detail preference blocks
   (`fx::ShState::detail = 0`)
+- **Articulation combos** (one per moving-part input the shape exposes — **Gear**,
+  **L Flap**, **R Flap**, **Airbrake**, **Rudder**, **Hook**, … from its x86
+  `_PL*` selectors, #295). **All** merges every state (the codec default, which
+  overlaps e.g. gear-up and gear-down geometry); picking a value emits just that
+  one sub-stream (`fx::ShState::articulation`). The listed values are the shape's
+  own compare cases (their per-shape meaning is documented in
+  [fa/formats/SH.md](fa/formats/SH.md#x86unknown-region)); the continuous
+  mid-travel animation is not reproduced — a chosen state renders at its authored
+  position
 - **Export OBJ…** writes a Wavefront OBJ (merges all state blocks; the selected
   frame/damage state is a preview-only choice, per the SH round-trip notes)
 - **Software (FA)** switches the preview from OpenGL onto the FA-faithful

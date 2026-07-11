@@ -14,6 +14,7 @@
 #include <SDL3/SDL_main.h>
 #include <cctype>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <string>
@@ -282,6 +283,16 @@ static int RunRender(App& app, const std::string& lib, const std::string& entry,
     }
 
     app.OpenEntry(0, idx);
+    // Optional articulation override for headless review: FX_ARTIC="input=value"
+    // (e.g. `_PLgearDown=1`) forces one moving-part state before the capture.
+    if (const char* spec = std::getenv("FX_ARTIC")) {
+        std::string s = spec;
+        auto eq = s.find('=');
+        if (eq != std::string::npos) {
+            RenderFrame(); // build once so the shape's inputs are known
+            PreviewSetArticulation(s.substr(0, eq), std::atoi(s.c_str() + eq + 1));
+        }
+    }
     // Settle: the SH mesh builds on the first frame after selection and the
     // docked layout needs a couple of frames to resolve panel sizes.
     for (int i = 0; i < 4; ++i) RenderFrame();

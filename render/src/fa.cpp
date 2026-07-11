@@ -281,13 +281,16 @@ void Raster::FillYlrTextured(const YlrList& ylr) {
         std::uint8_t* p = target_->row(y);
         for (int x = xl; x <= xr; ++x, u += dudx, v += dvdx, c += dcdx) {
             const std::uint8_t texel = texture_->at(u, v);
-            // Palette index 0xFF is the transparent key (PIC.md): show the
-            // polygon's flat shade colour through it, as FA does, rather than a
-            // texel from the atlas's unused background.
-            if (texel == kTransparentTexel)
-                p[x] = static_cast<std::uint8_t>(std::clamp(FxFloor(c), 0, 255));
-            else
+            // Palette index 0xFF is the transparent key (PIC.md). A transparent
+            // texel shows the polygon's flat shade colour through it — except a
+            // colour-0 (black) face is a pure decal overlay, whose transparent
+            // texels must show the geometry behind (skip the pixel), not fill.
+            if (texel == kTransparentTexel) {
+                int ci = std::clamp(FxFloor(c), 0, 255);
+                if (ci != 0) p[x] = static_cast<std::uint8_t>(ci);
+            } else {
                 p[x] = remap_identity_ ? texel : tmap_remap_[texel];
+            }
         }
     }
 }

@@ -365,13 +365,30 @@ not). The codec (`lib/src/sh.cpp`, `collect_reloc_targets` + `harvest_target`):
    collecting them drew coarse-LOD faces with finest-pool vertices (giant
    garbage polygons).
 
-This yields the base mesh **plus every reloc-reachable sub-stream** — i.e. all
-articulation states merged, not the single game-accurate state (default landing
-gear, flap position, …). Selecting one state per selector from live `_PL*` values
-is the remaining work ([#297](https://github.com/jomkz/fighters-codex/issues/297),
-with [#295](https://github.com/jomkz/fighters-codex/issues/295) exposing the
-state inputs); the case→sub-stream values are attributed to OpenFA, never
-transcribed.
+By default this yields the base mesh **plus every reloc-reachable sub-stream** —
+all articulation states merged. The codec now also recovers, **clean-room from
+each shape's own bytes**, which `_PL*` input every selector reads and which
+sub-stream a given compare value selects, so a caller can render **one discrete
+state** instead of the merge:
+
+- **Input identification** — the `_PL*` names are present in the shape's own
+  `.idata` import table; each `FF 25 <IAT>` trampoline binds a code address to an
+  import, and a base relocation pins the `cmp word [trampoline], imm8` operand, so
+  the input the block compares is read directly (relocations anchor the parse — a
+  raw byte scan would false-positive on x86, the fixups do not).
+- **Sub-stream identification** — the relocation-pinned code pointers in a block
+  that are neither trampolines nor the head of another block are its guarded
+  sub-stream entries; each is tagged with the block's `(input, compare value)`.
+- **Selection** — `fx::ShState::articulation[input] = value` emits only the
+  sub-streams whose case matches; an unset input keeps the merged default. Only
+  the shape's own compare immediates are read; the per-shape case→variant
+  *meaning* is documented by OpenFA and **not transcribed**.
+
+This is `#295` (expose the inputs — `fx::sh_articulations`, `ShInfo::articulations`)
+and the discrete half of
+[#297](https://github.com/jomkz/fighters-codex/issues/297). The *parametric*
+patch some blocks also apply (e.g. `_PLgearPos` interpolated into the gear
+geometry) is not reproduced — discrete states render at their authored position.
 
 #### Entry contract (`0xF0` → native)
 
