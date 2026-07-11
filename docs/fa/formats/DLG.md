@@ -9,7 +9,7 @@ spec:
   gaps:
     - kind: re-static
       issue: 54
-      note: "type-4 list / type-7 scrollbar: a few engine-managed interior bytes unmapped"
+      note: "read-only codec: full on-disk per-record decode pending (on-disk record layout differs from the mapped in-memory layout)"
 codec:
   direction: read
   rationale: "engine-code container (dialog DLL, PL family like CAM/MNU/MC): fx_lib validates the container and extracts the control label strings; the structural per-record decode is a larger RE task (the on-disk record layout differs from the documented in-memory layout) tracked under #54"
@@ -514,11 +514,15 @@ event switch, `_DrawListBox`, and the scrollbar helpers: types 1/5 are radio gro
 list container, type 7 the scrollbar (value/range/thumb/track + `on_scroll` callback), and type 8
 a two-state button (two hit zones + `state` `+0x1E`).
 
-**Residual:** a few engine-managed interior bytes of the two largest records (type-4 list,
-type-7 scrollbar) are not individually named — the same scratch-field level left unmapped in the
-already-documented types. Behaviourally complete.
+The few unnamed interior bytes of the two largest records (type-4 list, type-7 scrollbar) are
+**runtime scratch** — the `DialogUpdate` / `_DrawListBox` / scrollbar trace ([#258](https://github.com/jomkz/fighters-codex/issues/258))
+recovered every field the engine reads from the file; the remaining bytes are written only at
+runtime (selection/scroll work area) and carry no on-disk semantics, matching the scratch-field
+level of the already-documented types. The per-type static layout is therefore complete.
 
-*Status: open — re-static (#54; interactive layouts mapped, minor scratch fields remain)*
+**Residual (out of #136 scope):** the codec is still **read-only** — a byte-identical writer
+awaits the full on-disk per-record decode, whose layout differs from the in-memory layout mapped
+above. That larger structural pass is tracked under [#54](https://github.com/jomkz/fighters-codex/issues/54).
 
 ## Related
 

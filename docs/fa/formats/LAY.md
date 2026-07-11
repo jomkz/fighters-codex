@@ -5,11 +5,7 @@ extensions: [".LAY"]
 category: 3d
 endianness: little
 spec:
-  status: partial
-  gaps:
-    - kind: re-static
-      issue: 54
-      note: "DLL data header field +0x00 semantics"
+  status: complete
 codec:
   direction: round-trip
   byte_identical: true
@@ -122,7 +118,7 @@ within the loaded DLL image.
 
 | Header offset | the game executable global | Role |
 |--------------|---------------|------|
-| `+0x00` | hdr | Parameter field (count/flags — semantics **unknown**, see Open Questions) |
+| `+0x00` | hdr | **tint-table pointer [0]** — `_hdr` (`0x580DB0`) is the base of the per-tint tint-table pointer array that `@WRSetTint@4` (`0x4B3170`) indexes by tint level (`_currentTintTable = (&_hdr)[tint]`); this entry is tint level 0's table. +0x04/+0x08/+0x0C are levels 1–3 (copied to `_DAT_0055be28`/`2c`/`30` at init) |
 | `+0x04` | DAT_00580db4 | → `_DAT_0055be28` |
 | `+0x08` | DAT_00580db8 | → `_DAT_0055be2c` |
 | `+0x0C` | DAT_00580dbc | → `_DAT_0055be30` |
@@ -411,16 +407,6 @@ layers. The write path re-emits only what the parser models:
 
 An unedited parse→repack is therefore byte-identical; proven per-overlay
 over all 24 install LAYs (`tests/test_lay.cpp`, `FX_FA_ROOT` census).
-
-## Open Questions
-
-### 1. DLL data header field +0x00
-
-The first dword of the data header is copied to the `hdr` global like every
-other field, but no decompiled consumer reads it as anything more specific
-than a count/flags parameter; its semantics are unknown.
-
-*Status: open — re-static (#54)*
 
 ## Related
 

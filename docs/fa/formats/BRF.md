@@ -6,11 +6,7 @@ family: BRF
 category: typedef
 endianness: none
 spec:
-  status: partial
-  gaps:
-    - kind: re-static
-      issue: 54
-      note: "PT section name after the NT block unverified"
+  status: complete
 codec:
   direction: round-trip
   byte_identical: true
@@ -182,8 +178,11 @@ record, and the filename is the LIB lookup key, not a stored field.)
 ### PT Fields (Plane Type)
 
 PT extends OT with ~80 additional aerodynamic and avionics fields, beginning
-immediately after the NT section in the BRF file (section name unverified —
-see Open Questions).
+immediately after the NT section in the BRF file. In the source text the block
+is introduced by the comment divider `; ---- START OF PLANE_TYPE ----`
+(verified against a live `.PT`; the only bracketed name in the file is the
+top-of-file `[brent's_relocatable_format]` tag — sections are comment-delimited,
+`OBJ_TYPE` → `NPC_TYPE` → `PLANE_TYPE`).
 
 **Carrier / datalink / thrust-vectoring dword** — the first dword of the PT
 section is a flag word controlling several systems:
@@ -363,16 +362,6 @@ PLANE_TYPE binary layout.
 - Null pointers are written as `ptr NULL`.
 - Integer field sign interpretation must match the type assignments in the
   spec; wrong signedness produces visually wrong values in `info` output.
-
-## Open Questions
-
-### 1. PT section name
-
-The PT extension block begins immediately after the NT section, but the
-bracketed section name that introduces it has not been verified against a live
-`.PT` file.
-
-*Status: open — re-static (#54)*
 
 ## Related
 
