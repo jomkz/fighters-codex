@@ -334,6 +334,44 @@ per-LIB **Archives** view (the LIB browser above) is unchanged and remains the
 byte-level access path for validation work. (This "workspace" — a mounted install
 root — is distinct from a "session," a single LIB opened for editing.)
 
+### Asset-graph index
+
+Once a workspace mounts, fxs builds an **asset-graph index** on a background
+thread (the status line shows `Indexing assets... 6/10 archives` and never blocks
+the UI). The index does two things.
+
+**The cross-reference graph.** It parses each reference-bearing record and
+resolves its links against the namespace: entity records (`.PT/.OT/.NT/.JT/.SEE/
+.ECM/.GAS`, BRF text) name their shapes/sounds/HUD; a shape (`.SH`) names its
+texture PICs and — via the engine's `_A`..`_D` wreck / `_S` shadow naming
+(`sh_variant_name`) — its damage siblings; missions (`.M/.MM`) name their terrain
+and object types; campaigns (`.CAM`) name their missions. Only links that resolve
+to a real entry become edges, so display names and free text drop out.
+
+**Categories.** Every entry is placed in **at least one** of eight buckets from
+its type, with an explicit **Unassigned** bucket so nothing is hidden:
+
+| Category | Types |
+|----------|-------|
+| Aircraft | `PT` |
+| Vehicles | `NT`, `OT` |
+| Weapons | `JT`, `SEE`, `ECM`, `GAS` |
+| Missions | `M`, `MM`, `MT`, `MC` |
+| Campaigns | `CAM`, `P` |
+| Terrain | `T2`, `LAY` |
+| Audio | `11K`, `5K`, `8K`, `22K`, `XMI`, `MUS` |
+| Art/UI | `PIC`, `PAL`, `RAW`, `ICO`, `SH`, `HUD`, `FNT`, `DLG`, `MNU`, `PTS`, `HGR`, `SEQ`, `INF`, `AI`, `BI`, `CB8`, `VDO`, `FBC`, `TXT`, `WRI`, `HLP`, `CNT`, `INI`, `BIN`, `SMS`, `EXE` |
+| Unassigned | anything else (loose `.DLL`, `.CFG`, `.DAT`, extension-less files…) |
+
+On top of the type seed, an object's category **propagates along the graph** into
+the art it reaches — so an aircraft's shape, its skin PIC and its wreck siblings
+all also carry **Aircraft** and group with the `.PT` (e.g. `A10.PT` → `A10.SH` →
+`_A10.PIC` + `A10_A.SH`). Propagation only crosses into Art/UI assets, so one
+object type never bleeds into another (a `.PT` that lists a `.JT` weapon does not
+make the weapon Aircraft). Categories are non-exclusive: a shape shared by an
+aircraft and a vehicle carries both. These categories and the graph are what the
+object-category browsers (below) and the object-scoped workspace view render.
+
 ## Object-Category Icons
 
 The object-centric navigation groups every asset under nine categories —

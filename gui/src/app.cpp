@@ -66,7 +66,7 @@ App::App() {
     ImGui::AddSettingsHandler(&h);
 }
 
-App::~App() {}
+App::~App() { StopIndexing(); }
 
 void App::Draw() {
     // Host window â€” fills the OS window's client area exactly.
@@ -84,6 +84,7 @@ void App::Draw() {
     ImGui::Begin("##Host", nullptr, hostFlags);
     ImGui::PopStyleVar(3);
 
+    PollIndexing();
     DrawMenuBar();
 
     // Three-panel layout with draggable splitters.
@@ -581,6 +582,8 @@ void App::MountWorkspace() {
         statusKind = StatusKind::Warning;
         return;
     }
+    // Join any in-flight index build before replacing the workspace it reads.
+    StopIndexing();
     workspace = fxg::workspace_scan(installDir);
     if (!workspace.mounted()) {
         statusMsg  = "Not a directory: " + installDir;
@@ -596,6 +599,63 @@ void App::MountWorkspace() {
     if (!workspace.collisions.empty())
         statusMsg += ", " + std::to_string(workspace.collisions.size()) + " collisions";
     statusKind = StatusKind::Info;
+
+    StartIndexing(); // build the asset-graph index in the background (#362)
+}
+
+void App::StartIndexing() {
+    StopIndexing();                 // cancel + join any prior build
+    if (!workspace.mounted()) return;
+    m_indexCancel.stop.store(false);
+    m_indexReady.store(false);
+    m_indexDone.store(0);
+    m_indexTotal.store((int)workspace.sources.size());
+    m_indexRunning.store(true);
+    // workspace is not mutated while a build runs (MountWorkspace joins first),
+    // so the worker may hold a const reference to it.
+    const fxg::Workspace* ws = &workspace;
+    m_indexThread = std::thread([this, ws] {
+        fxg::AssetIndex result = fxg::asset_index_build(
+            *ws,
+            [this](int done, int total, const std::string&) {
+                m_indexDone.store(done);
+                m_indexTotal.store(total);
+            },
+            &m_indexCancel);
+        {
+            std::lock_guard<std::mutex> lk(m_indexMutex);
+            m_indexResult = std::move(result);
+        }
+        m_indexRunning.store(false);
+        m_indexReady.store(true);
+    });
+}
+
+void App::StopIndexing() {
+    if (m_indexThread.joinable()) {
+        m_indexCancel.stop.store(true);
+        m_indexThread.join();
+    }
+    m_indexRunning.store(false);
+    m_indexReady.store(false);
+}
+
+void App::PollIndexing() {
+    if (m_indexReady.exchange(false)) {
+        std::lock_guard<std::mutex> lk(m_indexMutex);
+        assetIndex = std::move(m_indexResult);
+        if (assetIndex.built) {
+            size_t unassigned =
+                assetIndex.byCategory[(int)fxg::Category::Unassigned].size();
+            statusMsg = "Indexed " + std::to_string(assetIndex.nodes.size()) +
+                        " assets (" + std::to_string(unassigned) + " unassigned)";
+            statusKind = StatusKind::Info;
+        }
+    } else if (m_indexRunning.load()) {
+        statusMsg = "Indexing assets... " + std::to_string(m_indexDone.load()) +
+                    "/" + std::to_string(m_indexTotal.load()) + " archives";
+        statusKind = StatusKind::Info;
+    }
 }
 
 void App::InstallToGame(int libIdx) {
