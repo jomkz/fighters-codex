@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-11
+
 **fxs becomes object-centric — milestone #11 complete.** Mount an FA install
 as one workspace and browse it the way the game thinks about it: object
 categories behind generated icons, an asset graph linking every entity record
@@ -610,7 +612,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
 [0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
 [0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
 [0.6.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.6.0
