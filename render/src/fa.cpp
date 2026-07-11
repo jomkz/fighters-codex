@@ -273,13 +273,21 @@ void Raster::FillYlrTextured(const YlrList& ylr) {
         };
         const Fx dudx = gradient(ylr.left_u[row], ylr.right_u[row]);
         const Fx dvdx = gradient(ylr.left_v[row], ylr.right_v[row]);
+        const Fx dcdx = gradient(ylr.left_c[row], ylr.right_c[row]);
         const Fx off = ToFx(xl) - x_l;
         Fx u = ylr.left_u[row] + static_cast<Fx>(static_cast<std::int64_t>(off) * dudx / kFxOne);
         Fx v = ylr.left_v[row] + static_cast<Fx>(static_cast<std::int64_t>(off) * dvdx / kFxOne);
+        Fx c = ylr.left_c[row] + static_cast<Fx>(static_cast<std::int64_t>(off) * dcdx / kFxOne);
         std::uint8_t* p = target_->row(y);
-        for (int x = xl; x <= xr; ++x, u += dudx, v += dvdx) {
+        for (int x = xl; x <= xr; ++x, u += dudx, v += dvdx, c += dcdx) {
             const std::uint8_t texel = texture_->at(u, v);
-            p[x] = remap_identity_ ? texel : tmap_remap_[texel];
+            // Palette index 0xFF is the transparent key (PIC.md): show the
+            // polygon's flat shade colour through it, as FA does, rather than a
+            // texel from the atlas's unused background.
+            if (texel == kTransparentTexel)
+                p[x] = static_cast<std::uint8_t>(std::clamp(FxFloor(c), 0, 255));
+            else
+                p[x] = remap_identity_ ? texel : tmap_remap_[texel];
         }
     }
 }

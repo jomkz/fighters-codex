@@ -39,9 +39,17 @@ uniform bool uTextured;
 uniform sampler2D uTex;
 out vec4 FragColor;
 void main() {
-    if (uWire)          FragColor = vec4(0.7, 0.7, 0.7, 1.0);
-    else if (uTextured) FragColor = vec4(texture(uTex, vUV).rgb, 1.0);
-    else                FragColor = vec4(vCol, 1.0);
+    if (uWire) {
+        FragColor = vec4(0.7, 0.7, 0.7, 1.0);
+    } else if (uTextured) {
+        // FA skins are atlases with a transparent key (PIC index 0xFF ->
+        // alpha 0); show the face's flat base colour through those texels
+        // instead of the atlas's black background.
+        vec4 t = texture(uTex, vUV);
+        FragColor = vec4(t.a < 0.5 ? vCol : t.rgb, 1.0);
+    } else {
+        FragColor = vec4(vCol, 1.0);
+    }
 }
 )glsl";
 

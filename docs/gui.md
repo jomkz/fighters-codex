@@ -236,13 +236,18 @@ Gouraud banding are documented behaviour.
   [fa/shape-selection.md](fa/shape-selection.md) — the render-time swap the
   engine performs for destroyed aircraft; a `(wreck: …)` hint shows which
   sibling is displayed)
+- Faces render with their **pre-shaded palette colour** (`ShFace::color`)
+  directly, the way FA does — the model tool bakes the sun/orientation shading
+  into the colour index (e.g. an aircraft walks a grey ramp face by face), so the
+  preview applies **no** runtime relighting on top (an earlier dynamic light
+  double-shaded those ramp entries to black)
 - **Texture** toggle (shown when the model references a PIC that resolves in the
-  same LIB) skins the textured faces with the decoded texture (via the current
-  palette); off falls back to shaded palette colour. Faces without texture
-  coordinates are shaded with their **palette colour** (`ShFace::color`), so
-  flat-coloured surfaces (e.g. an aircraft's wings) match the textured body
-  instead of appearing white. Texture-swap damage (e.g. buildings) becomes
-  visible here with **Destroyed** on
+  same LIB) overlays the decoded skin on the textured faces. FA skins are
+  texture **atlases** whose palette index `0xFF` is transparent
+  ([fa/formats/PIC.md](fa/formats/PIC.md)): those texels show the face's flat
+  colour through, exactly as FA composites them, rather than the atlas's unused
+  black background. Both the OpenGL and FA-software backends honour this.
+  Texture-swap damage (e.g. buildings) becomes visible here with **Destroyed** on
 - **Frame** slider (shown only for animated models, i.e. `frame_count > 1`)
   selects the animation frame (`0x40` JumpToFrame); it drives `fx::ShState::frame`
   and re-parses on change. See [fa/formats/SH.md](fa/formats/SH.md#state-selected-rendering-read-codec)
