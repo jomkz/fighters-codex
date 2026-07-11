@@ -150,6 +150,68 @@ TEST_CASE("asset_index_build links a PT to its shape and propagates Aircraft", "
 }
 
 // ---------------------------------------------------------------------------
+// asset_cluster (#365): the object's file cluster, expanded through Art/UI
+// nodes only — a referenced weapon stays a leaf, its own refs excluded.
+// ---------------------------------------------------------------------------
+
+TEST_CASE("asset_cluster collects an object's files without crossing into other objects", "[gui][asset-index]") {
+    const char* pt =
+        "[brent's_relocatable_format]\r\n"
+        ":refs\r\n"
+        "\tstring \"FOO.SH\"\r\n"
+        "\tstring \"JET1N.11K\"\r\n"
+        "\tstring \"GAU8.JT\"\r\n"
+        "\tend\r\n";
+    const char* jt =
+        "[brent's_relocatable_format]\r\n"
+        ":refs\r\n"
+        "\tstring \"OTHER.SH\"\r\n"
+        "\tend\r\n";
+    std::vector<std::pair<std::string, std::vector<uint8_t>>> files = {
+        { "TEST.PT",   std::vector<uint8_t>(pt, pt + std::strlen(pt)) },
+        { "FOO.SH",    { 0x00 } },  // wreck sibling edge comes from the name
+        { "FOO_A.SH",  { 0x00 } },
+        { "JET1N.11K", { 0x00 } },
+        { "GAU8.JT",   std::vector<uint8_t>(jt, jt + std::strlen(jt)) },
+        { "OTHER.SH",  { 0x00 } },  // the weapon's own art — not in the cluster
+    };
+    fs::path root = fs::temp_directory_path() / "fxs_cluster_test";
+    std::error_code ec;
+    fs::remove_all(root, ec);
+    fs::create_directories(root);
+    {
+        auto lib = fx::ealib_build(files);
+        std::ofstream f(root / "TEST.LIB", std::ios::binary);
+        f.write((const char*)lib.data(), (std::streamsize)lib.size());
+    }
+
+    Workspace ws = workspace_scan(root.string());
+    AssetIndex idx = asset_index_build(ws);
+    REQUIRE(idx.built);
+
+    std::vector<int> cluster = asset_cluster(idx, ws, node_of(ws, "TEST.PT"));
+
+    // Root first, then leaves grouped by (base category, extension, name):
+    // the weapon leaf, the sound, then the Art/UI shapes (wreck included via
+    // the SH's variant edge — expanded because SH is Art/UI-base).
+    std::vector<int> expect = {
+        node_of(ws, "TEST.PT"), node_of(ws, "GAU8.JT"), node_of(ws, "JET1N.11K"),
+        node_of(ws, "FOO.SH"),  node_of(ws, "FOO_A.SH"),
+    };
+    CHECK(cluster == expect);
+
+    // GAU8.JT is a leaf: its own reference did not drag OTHER.SH in.
+    CHECK(std::find(cluster.begin(), cluster.end(),
+                    node_of(ws, "OTHER.SH")) == cluster.end());
+
+    // Out-of-range roots yield an empty cluster.
+    CHECK(asset_cluster(idx, ws, -1).empty());
+    CHECK(asset_cluster(idx, ws, (int)ws.names.size()).empty());
+
+    fs::remove_all(root, ec);
+}
+
+// ---------------------------------------------------------------------------
 // Real-install spot check (FX_FA_ROOT): the A10 cluster
 // ---------------------------------------------------------------------------
 
@@ -183,4 +245,12 @@ TEST_CASE("asset_index_build clusters the A10 on a real install", "[gui][asset-i
     CHECK(idx.has(sh, Category::Aircraft));
     CHECK(idx.has(pic, Category::Aircraft));
     CHECK(idx.has(wreck, Category::Aircraft));
+
+    // The object-scope acceptance path (#365): selecting the A10 must make its
+    // shape, skin PIC and wreck sibling reachable through one file cluster.
+    std::vector<int> cluster = asset_cluster(idx, ws, pt);
+    REQUIRE_FALSE(cluster.empty());
+    CHECK(cluster.front() == pt);
+    for (int want : {sh, pic, wreck})
+        CHECK(std::find(cluster.begin(), cluster.end(), want) != cluster.end());
 }

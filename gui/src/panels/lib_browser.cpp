@@ -228,6 +228,8 @@ void DrawLibBrowser(App& app) {
                 if (ImGui::Selectable(e.name, selected,
                                       ImGuiSelectableFlags_SpanAllColumns |
                                       ImGuiSelectableFlags_AllowDoubleClick)) {
+                    // A raw Archives open leaves the object-scoped view (#365).
+                    app.ClearObjectScope();
                     app.OpenEntry(si, ei);
                 }
                 ImGui::PopID();

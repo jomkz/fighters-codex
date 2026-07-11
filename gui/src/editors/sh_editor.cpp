@@ -31,8 +31,23 @@ void DrawShEditor(App& app) {
 
     if (!s_shInfo.textures.empty()) {
         ImGui::SeparatorText("Textures");
-        for (auto& t : s_shInfo.textures)
-            ImGui::TextDisabled("  %s", t.c_str());
+        for (auto& t : s_shInfo.textures) {
+            // Cross-navigation (#365): a texture that resolves in the mounted
+            // workspace opens in the PIC editor; SH names may omit ".PIC".
+            const fxg::WorkspaceEntry* we = nullptr;
+            if (app.workspace.mounted()) {
+                we = app.workspace.find(t);
+                if (!we && t.find('.') == std::string::npos)
+                    we = app.workspace.find(t + ".PIC");
+            }
+            if (we) {
+                if (ImGui::SmallButton(("  " + t).c_str()))
+                    app.OpenWorkspaceEntry(
+                        (int)(we - app.workspace.names.data()));
+            } else {
+                ImGui::TextDisabled("  %s", t.c_str());
+            }
+        }
     }
 
     ImGui::Separator();

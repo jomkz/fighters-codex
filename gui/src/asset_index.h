@@ -63,4 +63,13 @@ AssetIndex asset_index_build(const Workspace& ws,
                              const IndexProgressFn& progress = {},
                              const IndexCancel* cancel = nullptr);
 
+// The file cluster of an object (#365): `root` plus everything its references
+// reach, expanding onward only through Art/UI-base nodes — the same crossing
+// rule as category propagation — so an aircraft's cluster holds its entity
+// record, shapes, wreck siblings, texture PICs and sounds, while a referenced
+// weapon or mission appears as an unexpanded leaf instead of dragging its own
+// cluster in. Returns `root` first, then the rest sorted by (base category,
+// extension, name) so same-type files group deterministically in the strip.
+std::vector<int> asset_cluster(const AssetIndex& idx, const Workspace& ws, int root);
+
 } // namespace fxg

@@ -23,7 +23,54 @@
 #include "../editors/pal_editor.h"
 #include "imgui.h"
 
+// Object scope (#365): while an object is selected in a category browser, its
+// file cluster renders as a compact strip of chips above the editor — the
+// entity record first, then shapes, textures, sounds. Clicking a chip opens
+// that file through the workspace pipeline without dropping the scope.
+static void DrawClusterStrip(App& app) {
+    if (app.clusterRoot < 0 || app.cluster.empty() || !app.workspace.mounted())
+        return;
+
+    const std::string& rootName = app.workspace.names[app.clusterRoot].name;
+    ImGui::TextDisabled("%s cluster — %zu files", rootName.c_str(),
+                        app.cluster.size());
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 2));
+    const float wrapX = ImGui::GetContentRegionMax().x;
+    bool first = true;
+    for (int node : app.cluster) {
+        if (node < 0 || node >= (int)app.workspace.names.size()) continue;
+        const std::string& name = app.workspace.names[node].name;
+
+        // Wrap chips into rows within the panel width.
+        const float w = ImGui::CalcTextSize(name.c_str()).x +
+                        ImGui::GetStyle().FramePadding.x * 2.0f;
+        if (!first) {
+            ImGui::SameLine();
+            if (ImGui::GetCursorPosX() + w > wrapX) ImGui::NewLine();
+        }
+        first = false;
+
+        const bool current = (node == app.selectedNode);
+        if (!current)
+            ImGui::PushStyleColor(ImGuiCol_Button,
+                                  ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+        ImGui::PushID(node);
+        if (ImGui::SmallButton(name.c_str()))
+            app.OpenWorkspaceEntry(node);
+        ImGui::PopID();
+        if (!current) ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", fxg::category_name(
+                fxg::category_of(name)));
+    }
+    ImGui::PopStyleVar();
+    ImGui::Separator();
+}
+
 void DrawEditorHost(App& app) {
+    DrawClusterStrip(app);
+
     if (app.editor.kind == EditorKind::None) {
         ImGui::TextDisabled("Select a record in the LIB Browser to edit.");
         return;
