@@ -55,6 +55,9 @@ struct ShPreview {
     int cached_lib   = -2;
     int cached_entry = -2;
     bool destroyed        = false;   // show the damaged sub-model (ShState)
+    bool wireframe        = false;   // topology overlay (validation aid; FA draws
+                                     // solid fills only — render-core.md, so off
+                                     // by default keeps the preview FA-faithful)
     int  lod              = 0;       // JumpToLOD level (ShState); 0 = finest
     bool low_detail       = false;   // JumpToDetail preference (ShState detail=0)
     std::string wreck_name;          // non-empty: Destroyed shows this _A sibling
@@ -325,15 +328,19 @@ static void RenderSh(int w, int h) {
     // Room grid first so the model's depth writes occlude it naturally.
     opts.primitive = fx_render::Primitive::Lines;
     if (!s_sh.grid.vertices.empty()) s_sh.renderer->Draw(s_sh.grid, cam, opts);
-    // Solid meshes (untextured + textured passes).
+    // Solid meshes (untextured + textured passes) — FA renders solid filled
+    // spans only (no edge/wireframe pass; docs/fa/render-core.md).
     opts.primitive = fx_render::Primitive::Triangles;
     if (!s_sh.mesh.vertices.empty())     s_sh.renderer->Draw(s_sh.mesh, cam, opts);
     if (!s_sh.mesh_tex.vertices.empty()) s_sh.renderer->Draw(s_sh.mesh_tex, cam, opts);
-    // Grey wireframe overlay — depth-biased, no depth write.
-    opts.wireframe = true;
-    opts.depth_write = false;
-    if (!s_sh.mesh.vertices.empty())     s_sh.renderer->Draw(s_sh.mesh, cam, opts);
-    if (!s_sh.mesh_tex.vertices.empty()) s_sh.renderer->Draw(s_sh.mesh_tex, cam, opts);
+    // Optional grey topology overlay — a validation aid, off by default. Depth-
+    // biased, no depth write.
+    if (s_sh.wireframe) {
+        opts.wireframe = true;
+        opts.depth_write = false;
+        if (!s_sh.mesh.vertices.empty())     s_sh.renderer->Draw(s_sh.mesh, cam, opts);
+        if (!s_sh.mesh_tex.vertices.empty()) s_sh.renderer->Draw(s_sh.mesh_tex, cam, opts);
+    }
 
     s_sh.renderer->End();
 }
@@ -672,13 +679,25 @@ void DrawPreview(App& app) {
             ImGui::SameLine();
             ImGui::Checkbox("Low detail", &s_sh.low_detail);
         }
+        ImGui::SameLine();
+        ImGui::Checkbox("Wireframe", &s_sh.wireframe);
+        if (ImGui::IsItemHovered())
+            ImGui::SetTooltip("Grey topology overlay (validation aid).\n"
+                              "FA renders solid filled polygons only.");
 
         float  txt_h   = ImGui::GetTextLineHeightWithSpacing() * 2.0f + 4.0f;
         ImVec2 canvas  = ImGui::GetContentRegionAvail();
         if (canvas.x < 4) canvas.x = 4;
         canvas.y = std::max(4.0f, canvas.y - txt_h);
 
-        int iw = (int)canvas.x, ih = (int)canvas.y;
+        // Render the target at physical pixels — ImGui keeps sizes in logical
+        // points with a HiDPI framebuffer scale, so a logical-size target would
+        // be upscaled with a blur (thick wireframe, soft texture). Rendering at
+        // canvas*scale and displaying at the logical size samples it 1:1.
+        float fbScale = ImGui::GetIO().DisplayFramebufferScale.y;
+        if (fbScale <= 0.0f) fbScale = 1.0f;
+        int iw = std::max(1, (int)(canvas.x * fbScale));
+        int ih = std::max(1, (int)(canvas.y * fbScale));
         RenderSh(iw, ih);
 
         if (s_sh.rt && !s_sh.mesh.vertices.empty()) {
@@ -753,7 +772,11 @@ void DrawPreview(App& app) {
         ImVec2 canvas = ImGui::GetContentRegionAvail();
         if (canvas.x < 4) canvas.x = 4;
         canvas.y = std::max(4.0f, canvas.y - txt_h);
-        int iw = (int)canvas.x, ih = (int)canvas.y;
+        // Render at physical pixels (see the SH preview note above).
+        float fbScale = ImGui::GetIO().DisplayFramebufferScale.y;
+        if (fbScale <= 0.0f) fbScale = 1.0f;
+        int iw = std::max(1, (int)(canvas.x * fbScale));
+        int ih = std::max(1, (int)(canvas.y * fbScale));
         RenderT2(iw, ih);
 
         if (s_t2.rt && s_t2.have) {
