@@ -24,7 +24,9 @@ related: [VDO, 11K]
 
 Companion index file for a `.VDO` video. Provides the byte size of each frame
 so that a decoder can seek directly to any frame without scanning the video
-data. Found in `FA_7.LIB`, paired with every `.VDO` and `.11K` of the same stem.
+data. Found in `FA_7.LIB`: **exactly one `.FBC` per `.VDO`**, sharing the same
+4-character stem (355 pairs). Audio pairs differently — by 3-character prefix,
+not by full stem (see § Relationship to .VDO).
 
 ## Tools
 
@@ -57,10 +59,26 @@ frame_data_offset(n) = 816 + sum(FBC[0 .. n-1])
 invariant: sum(FBC[0 .. N-1]) == VDO_file_size - 816
 ```
 
+`N` also equals the frame-count `u16` at VDO header offset `0x10` (confirmed).
+
+**Verified against the full corpus (#137).** All **355** `.FBC`/`.VDO` pairs in
+`FA_7.LIB` satisfy the invariant with zero mismatches; frame counts range 12 →
+1685 (41,163 frames total). Every `.VDO` has exactly one same-stem `.FBC`.
+
+**Audio pairing is by 3-character prefix, not full stem.** The `.11K` narration
+files use a 3-character stem (e.g. `AAC.11K`) shared across all 4-character
+`.VDO` variants of that briefing group (`AACA`, `AACB`, … — the 4th character
+`A`–`J` is the variant/angle). Of the 105 briefing-group prefixes, **104 carry
+audio**; one group (`IQC`) is silent. So a `.VDO` is not guaranteed a
+same-stem `.11K` — it shares its group's track (if any).
+
 ### Observed Values
+
+Representative pairs (the invariant is verified across all 355 — see above):
 
 | File | Entries (N) | FBC size | VDO size | VDO size − 816 |
 |------|-------------|----------|----------|----------------|
+| ABCA.FBC | 68 | 272 | 113,353 | 112,537 |
 | AACA.FBC | 123 | 492 | 156,301 | 155,485 |
 | AACB.FBC | 260 | 1040 | 362,853 | 362,045 |
 | IPCA.FBC | 1685 | 6740 | 13,141,769 | 13,140,953 |
@@ -68,7 +86,7 @@ invariant: sum(FBC[0 .. N-1]) == VDO_file_size - 816
 ## Related
 
 **Formats:** [VDO](VDO.md) — the video stream this file indexes; [11K](11K.md)
-— the audio track sharing the same stem.
+— the audio track, shared per 3-character briefing-group prefix.
 
 **Engine:** the fxs VDO editor renders this index (frame table); the
 fx_lib codec is tracked in #107.

@@ -22,9 +22,14 @@ related: [FBC, 11K, CB8]
 
 # VDO — RATVID Streaming Video (.VDO)
 
-Video frames for mission briefing sequences. Each `.VDO` file is paired with a
-`.FBC` index file and a `.11K` audio file of the same stem name. Found in
-FA_7.LIB (Disc 1) — 355 files.
+Video frames for mission briefing sequences. Found in FA_7.LIB (Disc 1) —
+**355 files**, each a 4-character stem (e.g. `AACA`). Every `.VDO` has exactly
+one same-stem `.FBC` frame-size index. Audio is shared per **3-character
+briefing-group prefix**: `AAC.11K` narrates the whole `AACA`…`AACE` variant
+group (the 4th character `A`–`J` is the angle/variant). 104 of the 105 groups
+carry a `.11K`; one group (`IQC`) is silent — so a `.VDO` is not guaranteed a
+same-stem audio track. All are 320×200, magic `RATV`. Pairing verified across
+the full corpus (#137).
 
 ## File Layout
 
