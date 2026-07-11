@@ -74,34 +74,53 @@ Frame data begins at offset 816. Frames are packed back-to-back with no
 delimiters. Frame N starts at offset `816 + sum(FBC[0..N-1])`.
 
 Frame data is palettized (8-bit palette indices into the header palette at
-+48). Each frame is Cobra-compressed. Partial RE of `DecodeFrame` (VA
-`0x442370` in the game executable) reveals the following structure:
++48). Each frame is decoded by `GetVDOFrame` (VA `0x4AF510`) into the VDO
+struct's decode buffers.
 
-### Cobra codec — known structure
+> **The `.VDO` codec is *not* the Cobra `DecodeFrame` cluster.** The shipped
+> 320×200 8bpp movies decode through a small, self-contained path —
+> `GetVDOFrame` → `UnRLE` → `DecompressVideo` (three functions at
+> `0x4C8AA4–0x4C8DBB`, ~460 bytes) — and never touch the `DecodeFrame`
+> dispatcher (`0x442370`) or the ~45 Cobra/CB8 leaves at `0x456300–0x45D090`.
+> Those are the [CB8](CB8.md) player. "Cobra" is the shared FMV umbrella; the
+> two codecs are distinct. (Reconciles the earlier note in
+> [video-decode.md](../video-decode.md) that submode-6 served `.VDO`.)
 
-`DecodeFrame(MovieContext*, arg1, arg2)` dispatches on two fields of the
-**per-frame `FrameHeader`** (not the `MovieContext`): the frame kind at `+8`
-and, for inter frames, a sub-mode at `+9`. (Corrected against the video-decode
-reconstruction — see [video-decode.md](../video-decode.md); [#259](https://github.com/jomkz/fighters-codex/issues/259).)
+### Per-frame stream structure
 
-| `FrameHeader[+8]` | Meaning |
-|---|---|
-| `0` | Key / intra frame (I-frame) — the full frame is encoded |
-| `1` | Inter / delta frame (P-frame) — only changed regions are encoded |
+`GetVDOFrame` reads the whole frame (`FBC[n]` bytes) and parses it as a leading
+`u16` **tag** followed by one or two RLE-or-raw sub-streams:
 
-For inter/delta frames (`FrameHeader[+8] == 1`), the sub-mode field
-`FrameHeader[+9]` selects a decoder via an 8-entry jump table (VA `0x44260C`).
-Sub-modes 5 and 6 are the only values observed in practice. Each sub-mode calls
-a dedicated leaf decoder in the range `0x456300–0x45D090` (~45 functions); those
-leaf functions have not yet been reversed.
+| Tag (`u16`) | Meaning |
+|-------------|---------|
+| `0` | Reuse the current codebook; decode the index stream only (delta frame) |
+| `1` | Color-table refresh (RLE) — no pixel blit this frame |
+| `2` | Image keyframe → `DecompressVideoImage`; a second `u16` gives the sub-stream length |
+| other | Codebook sub-stream: **bit `0x8000` set ⇒ RLE-compressed**, low 15 bits = its byte length (`UnRLE` expands it); raw otherwise |
 
-`InitMovieContext` (VA `0x442360`) initialises the context; it only sets
-`context[0x14] = 0`. The output/canvas pointer at offset `0xC14E` lives in the
-**`GlobalData`** struct (which `DecodeFrame` also receives), not in the
-`MovieContext`.
+After the codebook sub-stream a `u16` **marker** separates the index sub-stream:
+`0` = end, `0xFFFF` = an RLE-compressed index stream follows (`UnRLE`). The
+frame is then rendered by `DecompressVideo(colortable, codebook, index, width,
+height)`. Verified against the corpus: frame 0 of `AACA.VDO` begins `BE 8B`
+(`tag = 0x8BBE`, bit `0x8000` set ⇒ a `0x0BBE`-byte RLE codebook block).
 
-`VDOSetMode` (VA `0x4AED50`) selects between 320×200 and 640×480 render paths
-and stores the result in `VDO.field_0x38`.
+### UnRLE (`0x4C8AFC`)
+
+Byte-oriented RLE, prefixed by a `u16` output-pixel count. Each control byte:
+bit `0x80` set ⇒ **run** — length `(b & 0x7f) + 1` (or, if `0x7f`, a following
+`u16 + 1`) of the next byte repeated; clear ⇒ **literal** — copy `b` bytes
+verbatim. Decoding stops when the output count is exhausted.
+
+### DecompressVideo (`0x4C8AA4`) — the blit dispatch
+
+Walks the index stream in **8-pixel groups** (`width × height / 8`): a `0` byte
+skips the group (leaves the prior frame's pixels — the inter-frame delta), and a
+nonzero byte indexes a **span-emitter jump table at `0x50E5CE`** whose handler
+writes that group's 8 output pixels from the codebook. `DecompressVideoImage`
+(`0x4C8CD8`) is the keyframe variant, adding a row-replication tail (each output
+row copied to the next — the `320×200 → 640×480` vertical doubling). The
+per-code handlers in the `0x50E5CE` table (built at init) are the remaining
+detail (#139); the framing and dispatch above are complete.
 
 ### Audio
 
@@ -118,28 +137,39 @@ Audio is stored separately in the paired `.11K` file (raw PCM, 8000 Hz mono
 
 ## Engine Notes
 
-Confirmed loader functions (FA.SMS):
+Confirmed functions (FA.SMS names), in load → decode order:
 
-| Symbol | Demangled | Role |
-|--------|-----------|------|
-| `?ReadVDOHeader@@YADPAUVDO@@PAE@Z` | `char ReadVDOHeader(VDO *, unsigned char *)` | Parse the 816-byte file header into a `VDO` struct |
-| `?ReadFrameSizesFile@@...` | `ReadFrameSizesFile(...)` | Read the paired `.FBC` frame-size index file |
-| `?AllocVDO@@YADPAUVDO@@@Z` | `char AllocVDO(VDO *)` | Allocate frame decode buffers for a loaded VDO |
-| `?OpenVDOFile@@...` | `OpenVDOFile(...)` | Open the `.VDO` file and begin streaming |
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x4AF1E0` | `OpenVDOFile` | Open the `.VDO` file, begin streaming |
+| `0x4AF200` | `ReadVDOHeader` | Parse the 816-byte file header into a `VDOHEADER` |
+| `0x4AF230` | `ReadFrameSizesFile` | Read the paired `.FBC` frame-size index |
+| `0x4AF2D0` | `ReadVDOPalette` | Load the 768-byte VGA palette into `T_RGB[]` |
+| `0x4AF320` | `VDOfromVDOHEADER` | Build the runtime `VDO` struct from the header |
+| `0x4AF3A0` | `AllocVDO` | Allocate the frame decode buffers (codebook / index / color) |
+| `0x4AF070` | `StartVDOAudio` | Start the paired `.11K` narration track |
+| `0x4AF510` | `GetVDOFrame` | Read + parse one frame, dispatch to the decoder |
+| `0x4C8AFC` | `UnRLE` | RLE decompress a sub-stream (see § UnRLE) |
+| `0x4C8AA4` | `DecompressVideo` | Blit the index stream via the `0x50E5CE` table |
+| `0x4C8CD8` | `DecompressVideoImage` | Keyframe/image blit + row replication |
+| `0x4AF6B0` | `VDO_320x200_to_640x480` | 2× upscale for the SVGA present path |
 
-These four symbols are confirmed present in FA.SMS. All are member-like free
-functions operating on a `VDO` struct; the struct fields correspond directly
-to the header layout documented above.
+All operate on the `VDO` struct, whose fields correspond to the header layout
+above. These live in the `0x4AExxx`/`0x4C8xxx` range — distinct from the
+`0x456300` Cobra/CB8 cluster.
 
 ## Open Questions
 
-### 1. Cobra per-frame compression
+### 1. Per-code span handlers (`0x50E5CE` table)
 
-The container, header, palette, and frame indexing are fully mapped, but the
-actual pixel-decompression loops live in ~45 unreversed leaf functions
-(`0x456300–0x45D090`) selected by the `context[9]` jump table. Implementing a
-decoder requires completing that RE — this is the roadmap's long pole, tracked
-as its own epic.
+The container, header, palette, frame indexing, RLE, and the frame/blit dispatch
+are now fully mapped (#137, #138). The one remaining piece for a byte-exact
+decoder is the semantics of the per-code span-emitter handlers that
+`DecompressVideo` calls through the `0x50E5CE` jump table (indexed by the index
+byte) — i.e. how each code writes its 8 output pixels from the codebook. This is
+a small, bounded RE task (the whole `.VDO` codec is three functions, ~460
+bytes), not the ~45-function cluster once feared. Tracked under epic #55
+(the span-handler decode folds into #139/#140).
 
 *Status: open — re-static (#55)*
 

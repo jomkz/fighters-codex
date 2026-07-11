@@ -9,8 +9,12 @@ player** — `InitCobra` (`0x46ae10`) validates the `DRBC` container (rejecting 
 `ARBC`/`BRBC`/`CRBC` generations), streams it through the engine's own LIB layer, and the
 8-bit paletted path (`DecodeFrame` submode 5 → `DecodeSVGA8Frame`/`DecodeDSVGA8Frame`,
 `ExpandDB`/`EDB`, `CopySB8`/`CopyDB8`) is exactly the CB8 keyframe codec, with a 768-byte
-palette embedded per frame. The 15/16/24-bit submode-6 paths serve the `.VDO` hi-color
-movies. The compiled-in engine structs, the LIB-layer I/O, and the private generation
+palette embedded per frame. The 15/16/24-bit submode-6 paths are the hi-color
+generalization. Note the **shipped `.VDO` corpus does *not* run through this
+`DecodeFrame` dispatcher** — those 320×200 8bpp movies decode via a separate,
+much smaller cluster (`GetVDOFrame` → `UnRLE` → `DecompressVideo`, `0x4C8Axx`),
+documented in [VDO.md](formats/VDO.md) (#138). `DecodeFrame` here is the CB8
+player. The compiled-in engine structs, the LIB-layer I/O, and the private generation
 lineage mark the whole framework as homegrown (confirmed); the CB8 side is validated by
 `fx_lib`'s pixel-exact codec (tests/test_cb8.cpp) and the on-disk layout is specified in
 [CB8.md](formats/CB8.md).
