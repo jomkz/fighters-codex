@@ -485,6 +485,26 @@ TEST_CASE("sh articulation selection on the real A10 shape", "[fa-root]") {
     CHECK(!mUp.faces.empty());
     CHECK(!mDown.faces.empty());
     CHECK(mUp.faces.size() != mDown.faces.size());
+
+    // Gear regression (#443): the A10's gear geometry reaches the walk through a
+    // trailing no-cmp `F0` block in each selector run, attributed to the
+    // `_PLgearDown` compare only by the contiguous-run rule. A non-matching value
+    // must actually RETRACT the gear — strictly fewer faces than both the merged
+    // mesh and the deployed state — and must never *inflate* the mesh, which was
+    // the pre-fix symptom (the un-attributed gear was harvested unconditionally,
+    // and suppressing the tagged stub dropped its visited-marks so other roots
+    // redrew it, yielding more faces than merged).
+    int gearVal = 1;  // A10 has a single _PLgearDown case
+    for (auto& a : arts)
+        if (a.input == "_PLgearDown" && !a.values.empty()) gearVal = a.values.front();
+    ShState gearOn;  gearOn.articulation["_PLgearDown"]  = gearVal;
+    ShState gearOff; gearOff.articulation["_PLgearDown"] = gearVal + 1000;  // matches no case
+    ShMesh mMerged  = sh_parse_mesh(a10.data(), a10.size(), ShState{});
+    ShMesh mGearOn  = sh_parse_mesh(a10.data(), a10.size(), gearOn);
+    ShMesh mGearOff = sh_parse_mesh(a10.data(), a10.size(), gearOff);
+    CHECK(mGearOff.faces.size() < mMerged.faces.size());  // gear retracted
+    CHECK(mGearOff.faces.size() < mGearOn.faces.size());   // deploy keeps what retract drops
+    CHECK(mGearOn.faces.size() <= mMerged.faces.size());   // deploy never inflates the merge
 }
 
 TEST_CASE("sh articulation parse is crash-free across the whole FA_2 corpus", "[fa-root]") {

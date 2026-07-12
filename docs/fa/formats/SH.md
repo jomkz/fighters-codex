@@ -378,7 +378,18 @@ state** instead of the merge:
   raw byte scan would false-positive on x86, the fixups do not).
 - **Sub-stream identification** — the relocation-pinned code pointers in a block
   that are neither trampolines nor the head of another block are its guarded
-  sub-stream entries; each is tagged with the block's `(input, compare value)`.
+  sub-stream entries; each is tagged with the governing `(input, compare value)`.
+- **Contiguous-run attribution** — a moving part is one *run* of `F0` blocks that
+  abut (each block's byte range ends where the next begins), because the engine's
+  x86 falls straight through the chain. The `cmp [trampoline], imm` therefore
+  governs the sub-streams of the following blocks in the run too — **including
+  blocks that carry no compare of their own**: a case's geometry commonly lands in
+  a trailing no-`cmp` block (e.g. the A10 gear guards spread across a
+  `cmp`-block → `cmp`-block → geometry-block run). The last-seen `(input, value)`
+  is carried forward across the run and reset at a run break — a block whose head
+  does not abut the previous block's end, i.e. real geometry sits between them.
+  Attributing only the `cmp`-block's own pointers (a stub) left the geometry
+  un-guarded, so a non-matching selection failed to hide it ([#443](https://github.com/jomkz/fighters-codex/issues/443)).
 - **Selection** — `fx::ShState::articulation[input] = value` emits only the
   sub-streams whose case matches; an unset input keeps the merged default. Only
   the shape's own compare immediates are read; the per-shape case→variant

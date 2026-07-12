@@ -309,19 +309,21 @@ static int RunRender(App& app, const std::string& lib, const std::string& entry,
     }
 
     app.OpenEntry(0, idx);
+    // Settle: the SH mesh builds on the first frame after selection and the
+    // docked layout needs a couple of frames to resolve panel sizes. This must
+    // run FIRST so the selection-change handler (which resets articulation to
+    // "All") has fired before any FX_ARTIC override below.
+    for (int i = 0; i < 4; ++i) RenderFrame();
     // Optional articulation override for headless review: FX_ARTIC="input=value"
-    // (e.g. `_PLgearDown=1`) forces one moving-part state before the capture.
+    // (e.g. `_PLgearDown=1`) forces one moving-part state, then rebuilds.
     if (const char* spec = std::getenv("FX_ARTIC")) {
         std::string s = spec;
         auto eq = s.find('=');
         if (eq != std::string::npos) {
-            RenderFrame(); // build once so the shape's inputs are known
             PreviewSetArticulation(s.substr(0, eq), std::atoi(s.c_str() + eq + 1));
+            for (int i = 0; i < 2; ++i) RenderFrame();
         }
     }
-    // Settle: the SH mesh builds on the first frame after selection and the
-    // docked layout needs a couple of frames to resolve panel sizes.
-    for (int i = 0; i < 4; ++i) RenderFrame();
 
     if (!CaptureFrame(out)) {
         std::fprintf(stderr, "render: failed to write %s\n", out.c_str());
