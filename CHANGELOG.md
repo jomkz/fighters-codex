@@ -11,21 +11,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **fx-cli** `fx install --patch <fae102.exe>` — chains the RTPatch codec after a
   disc install to bring the **1.00F** tree up to **1.02F** in place. It runs after
   `--verify` (so verification still checks the fresh 1.00F install against the
-  disc), reconstructs the four modified game files from the just-installed
-  originals, and leaves an already-patched tree untouched (a source-checksum
-  mismatch skips the file). The multiplayer `msapi.dll` is delivered as a NEW
-  record the container walk does not yet reach (RTP.md #54). The disc harness gains
-  an install-then-`--patch` check (`FX_FA_PATCH` alongside the disc variables) that
-  proves the pipeline produces the 1.02F tree byte-for-byte.
+  disc), reconstructs the modified game files from the just-installed originals,
+  creates the added `msapi.dll` (online matchmaking), and leaves an already-patched
+  tree untouched (a source-checksum mismatch skips the file). System-directory
+  files (`EAEXEC.EXE` and its test tool) are left out of a game-directory install.
+  The disc harness gains an install-then-`--patch` check (`FX_FA_PATCH` alongside
+  the disc variables) that proves the pipeline produces the 1.02F tree — the four
+  game files and `msapi.dll` — byte-for-byte.
 - **fx-lib** RTPatch codec + `fx patch` — reconstructs the **1.02F** game files from
   the **1.00F** discs, closing the gap between what `fx install` writes and what the
   reconstruction database describes. Reverses the Pocket Soft .RTPatch payload carried
   by the FA updater (`fae102.exe`): the `0xB59C` adaptive-Huffman + LZSS codec, the
-  §9 opcode diff interpreter, and the §10 rolling source checksum. `fx patch inspect`
-  lists the records; `fx patch apply` reconstructs each file from the 1.00F original,
-  verifying the source checksum first. Documented in `docs/fa/formats/RTP.md`; the codec
-  facts are a clean-room port of the MIT-licensed rtptool (© Sandy Carter). Validated
-  byte-for-byte against the real patch by the `fa_patch_apply` integration test.
+  §9 opcode diff interpreter, and the §10 rolling source checksum. The container walk
+  covers all eight records — the six diffed files and the two added whole (`msapi.dll`,
+  `ealtest.exe`), each tagged for the app or a system directory. `fx patch inspect`
+  lists the records; `fx patch apply` reconstructs each file from the 1.00F original
+  (or, for an added file, from the patch alone), verifying the source checksum first.
+  Documented in `docs/fa/formats/RTP.md`; the codec facts are a clean-room port of the
+  MIT-licensed rtptool (© Sandy Carter). Validated byte-for-byte against the real patch
+  by the `fa_patch_apply` integration test.
 - **tests** real-media install harness (`fa_disc_install`, behind `FX_FA_DISC1` +
   `FX_FA_DISC2`): checks the install plan for both scripts, hashes every extracted
   `SETUP.ESA` entry against a committed manifest, repacks the 110 MB archive

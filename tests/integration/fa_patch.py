@@ -24,7 +24,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-FILES = ["FA.EXE", "FA.SMS", "FA_1.LIB", "FA_2.LIB"]
+# The four modified game files plus the added msapi.dll (delivered whole). Each
+# reconstructs to a 1.02F build that matches a licensed install byte-for-byte —
+# except the official FA.EXE (see the module docstring). README.TXT, ealtest.exe,
+# and the system-directory EAEXEC.EXE also reconstruct but have no independent
+# 1.02F oracle here, so they are not pinned.
+FILES = ["FA.EXE", "FA.SMS", "FA_1.LIB", "FA_2.LIB", "msapi.dll"]
+# The 1.00F originals the modify records patch against (msapi.dll is added whole,
+# so it has no source and is not extracted).
+SOURCE_FILES = ["FA.EXE", "FA.SMS", "FA_1.LIB", "FA_2.LIB"]
 
 
 def sha256(path: Path) -> str:
@@ -69,7 +77,7 @@ def main() -> int:
     shutil.rmtree(src, ignore_errors=True)
     src.mkdir()
     if args.source:
-        for name in FILES:
+        for name in SOURCE_FILES:
             p = find(Path(args.source), name)
             if not p:
                 sys.exit(f"source is missing {name}")
@@ -80,7 +88,7 @@ def main() -> int:
         esa = find(Path(args.disc1), "SETUP.ESA")
         if not esa:
             sys.exit(f"no SETUP.ESA on {args.disc1}")
-        run_fx(args.fx, "esa", "extract", str(esa), *FILES, "-o", str(src))
+        run_fx(args.fx, "esa", "extract", str(esa), *SOURCE_FILES, "-o", str(src))
 
     # Apply the patch. The ESA originals pass the §10 source checksum, so run the
     # checksummed path (no --no-checksum) — that also exercises source validation.

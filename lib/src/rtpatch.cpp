@@ -698,6 +698,9 @@ RtpPatch rtp_read(const uint8_t* data, size_t size) {
         int rtype = hdr >> 12;
         if (rtype == 1) break;                 // EOF
         if (rtype == 0 || rtype > 6) break;    // not a record boundary
+        // rec_hdr bit 7 gates a disk-set VLI, which flags a file bound for a
+        // prompted system directory rather than the app directory.
+        bool app_dir = !(hdr & 0x0080);
         if (hdr & 0x0002) r.u16();
         if (hdr & 0x0004) r.lpstr();
         if (hdr & 0x0080) r.vli();
@@ -710,6 +713,7 @@ RtpPatch rtp_read(const uint8_t* data, size_t size) {
         const int MAX_ENTRIES = 64;
 
         RtpRecord rec;
+        rec.app_dir = app_dir;
         if (rtype == 4) {                      // MODIFY
             r.u16();                           // file_mod_flags
             int src_count = (int)r.vli();
@@ -734,22 +738,27 @@ RtpPatch rtp_read(const uint8_t* data, size_t size) {
             rec.block_off = r.p;
             out.records.push_back(rec);
             r.p = rec.block_off + payload_len;
-        } else if (rtype == 3) {               // NEW
+        } else if (rtype == 2) {               // NEW — a full compressed file
+            // FA delivers added/replaced files (msapi.dll, ealtest.exe) whole
+            // rather than as a diff. The data block carries its own length, so
+            // the walk stays cheap and continues past it.
             int src_count = (int)r.vli();
             if (src_count < 1 || src_count > MAX_ENTRIES) break;
+            uint32_t usize = r.u32();          // decompressed size
+            uint32_t csize = r.u32();          // compressed block length
             std::vector<Entry> es(src_count > 0 ? src_count : 0);
             for (auto& e : es) read_entry(e);
             if (r.bad || es.empty()) break;
             rec.mode = RtpMode::New;
             rec.name = es[0].name;
             rec.src_count = src_count;
-            rec.dst_size = es[0].size;
+            rec.dst_size = usize;
+            rec.payload_len = csize;
             rec.block_off = r.p;
-            rec.payload_len = 0;               // runs to next record / EOF
             out.records.push_back(rec);
-            break;                             // NEW has no length field; stop the walk
+            r.p = rec.block_off + csize;
         } else {
-            break;                             // RENAME/DELETE — stop (FA has none mid-stream)
+            break;                             // RENAME/DELETE — FA has none mid-stream
         }
     }
     return out;

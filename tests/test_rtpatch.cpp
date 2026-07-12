@@ -185,6 +185,66 @@ TEST_CASE("rtp_read parses the header and a MODIFY record", "[rtpatch]") {
     CHECK(r.payload_len == 3u);
 }
 
+// An extra-mode entry: the 34-byte descriptor + checksum, then 8 timestamp bytes
+// and an alt-path lp_string carrying the full (non-8.3) name — the shape FA uses.
+static void entry_x(std::vector<uint8_t>& v, const std::string& name, uint32_t size) {
+    entry(v, name.substr(0, 8), size, 0, 0);
+    for (int i = 0; i < 8; ++i) v.push_back(0);          // timestamps
+    v.push_back((uint8_t)(name.size() + 1));             // alt-path lp_string
+    v.insert(v.end(), name.begin(), name.end());
+    v.push_back(0);
+}
+
+TEST_CASE("rtp_read walks NEW records and the app-dir flag", "[rtpatch]") {
+    std::vector<uint8_t> c;
+    c.push_back('K'); c.push_back('*');
+    put16(c, 0x0100);                    // version
+    put16(c, 0x8000);                    // flags: ext word present
+    put32(c, 0x10000);                   // ext_type_flags: extra mode
+    put16(c, 0x0000);                    // option_flags
+    put32(c, 0);                         // patch_total_size
+    put32(c, 0);                         // reserved_a
+    put16(c, 0); put16(c, 0);            // default_attrs, reserved_b
+    put16(c, 0);                         // cmd_flags
+    put32(c, 0);                         // reserved_c
+    put16(c, 0); put16(c, 0);            // n_special, n_dirs
+
+    // NEW record 1: app-directory (bit 7 clear), a 4-byte block.
+    put16(c, 0x2000);                    // rec_hdr: type 2, no optional fields
+    for (int i = 0; i < 10; ++i) c.push_back(0);
+    c.push_back(1);                      // src_count VLI
+    put32(c, 158208);                    // usize
+    put32(c, 4);                         // csize
+    entry_x(c, "MSAPI.DLL", 158208);
+    size_t block1 = c.size();
+    c.push_back(0xB5); c.push_back(0x9C); c.push_back(0x00); c.push_back(0x00);
+
+    // NEW record 2: system-directory (bit 7 set → a disk-set VLI precedes meta).
+    put16(c, 0x2080);                    // rec_hdr: type 2, disk-set flag
+    c.push_back(0);                      // disk-set VLI
+    for (int i = 0; i < 10; ++i) c.push_back(0);
+    c.push_back(1);                      // src_count
+    put32(c, 24576);                     // usize
+    put32(c, 2);                         // csize
+    entry_x(c, "EALTEST.EXE", 24576);
+    size_t block2 = c.size();
+    c.push_back(0xB5); c.push_back(0x9C);
+
+    put16(c, 0x1000);                    // EOF
+
+    RtpPatch p = rtp_read(c.data(), c.size());
+    REQUIRE(p.records.size() == 2);
+    CHECK(p.records[0].mode == RtpMode::New);
+    CHECK(p.records[0].name == "MSAPI.DLL");
+    CHECK(p.records[0].dst_size == 158208u);
+    CHECK(p.records[0].payload_len == 4u);
+    CHECK(p.records[0].block_off == block1);
+    CHECK(p.records[0].app_dir);                 // app directory
+    CHECK(p.records[1].name == "EALTEST.EXE");
+    CHECK(p.records[1].block_off == block2);
+    CHECK_FALSE(p.records[1].app_dir);           // system directory
+}
+
 TEST_CASE("rtp_read rejects non-RTPatch input", "[rtpatch]") {
     std::vector<uint8_t> junk = {'M', 'Z', 0, 0, 1, 2, 3, 4};
     CHECK(rtp_read(junk.data(), junk.size()).records.empty());
