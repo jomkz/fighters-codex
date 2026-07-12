@@ -1,4 +1,4 @@
-# libFuzzer harnesses — built only by the fuzz preset (FX_BUILD_FUZZERS=ON,
+﻿# libFuzzer harnesses — built only by the fuzz preset (FX_BUILD_FUZZERS=ON,
 # Clang). Each harness is one <name>.cpp implementing LLVMFuzzerTestOneInput.
 #
 # fx_add_fuzzer(<name>) wires up:
@@ -90,3 +90,6 @@ fx_add_fuzzer(fuzz_ai)
 fx_add_fuzzer(fuzz_mus)
 fx_add_fuzzer(fuzz_pal)
 fx_add_fuzzer(fuzz_effect)
+
+# The install engine: the pure planner behind `fx install` (SSF.md § Engine Notes)
+fx_add_fuzzer(fuzz_install)

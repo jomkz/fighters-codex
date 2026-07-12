@@ -34,6 +34,7 @@
     cmd_pts.cpp
     cmd_rgn.cpp
     cmd_ssf.cpp
+    cmd_install.cpp
     cmd_mc.cpp
     cmd_hgr.cpp
     cmd_dlg.cpp

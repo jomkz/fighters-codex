@@ -49,7 +49,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [SEQ](SEQ.md) | video | complete | — | round-trip (byte-identical) | `fx seq` | `tests/test_seq.cpp` | syn/real | `fuzz/fuzz_seq.cpp` | `gui/src/editors/seq_editor.cpp` |
 | [SH](SH.md) | 3d | partial | re-static [#52](https://github.com/jomkz/fighters-codex/issues/52) | read-only (by design) | `fx sh` | `tests/test_sh.cpp` | syn/real | `fuzz/fuzz_sh.cpp` | `gui/src/editors/sh_editor.cpp`<br>`gui/src/editors/sh_scene.cpp` |
 | [SMS](SMS.md) | system | complete | — | read-only (by design) | `fx sms` | `tests/test_sms.cpp` | real | `fuzz/fuzz_sms.cpp` | — |
-| [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf` | `tests/test_ssf.cpp` | syn | `fuzz/fuzz_ssf.cpp` | — |
+| [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf`<br>`fx install` | `tests/test_ssf.cpp`<br>`tests/test_install.cpp` | syn | `fuzz/fuzz_ssf.cpp`<br>`fuzz/fuzz_install.cpp` | — |
 | [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real | `fuzz/fuzz_t2.cpp` | `gui/src/editors/terrain_preview.cpp` |
 | [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | `fuzz/fuzz_txt.cpp` | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | read-only (by design) | `fx vdo` | `tests/test_vdo.cpp` | syn/real | `fuzz/fuzz_vdo.cpp` | `gui/src/editors/vdo_editor.cpp` |

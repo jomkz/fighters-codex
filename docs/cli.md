@@ -865,6 +865,74 @@ for a well-formed archive.
 
 *See also: [fa/formats/ESA.md](fa/formats/ESA.md)*
 
+## install — Install the game from its discs
+
+```
+fx install plan   <disc-dir> [disc-dir ...] [-d dir] [options]
+fx install run    <disc-dir> [disc-dir ...] -d <dir> [options]
+fx install verify <disc-dir> [disc-dir ...] -d <dir> [options]
+```
+
+Executes the `.SSF` installer scripts against `SETUP.ESA` — what `SETUP.EXE`
+does, portably — and copies the game to a directory of your choosing. It needs
+your own discs: nothing is shipped.
+
+A **disc is a directory**: point it at an ISO mount, an extract of one, or the
+drive itself, in any order. Which disc is which is decided by content, not by
+volume label. A full install copies everything, including the CD-resident LIBs
+the game would otherwise stream off the disc, so no disc is needed to play.
+
+| Option | |
+|--------|---|
+| `-d <dir>` | the install directory (required for `run`/`verify`) |
+| `--full` / `--minimal` | the full install, or the minimal one (no `FA_4B.LIB`, the digital-music archive). Default: full |
+| `--verify` | after `run`, byte-compare every file back against the disc |
+| `--overwrite` | replace files already in the destination. Files `SKIP_ON_REMOVE` marks as the game's own — pilots, missions, `EA.CFG`, screen captures — are preserved even so |
+| `--no-cd-resident` | skip the CD-resident LIBs (a ~110 MB install that still needs a disc) |
+| `--any-media` | proceed on media whose build cannot be fingerprinted |
+| `--json` | machine-readable plan (the shape fxe's first-run reads) |
+
+#### `fx install plan <disc-dir>…`
+
+**The dry run** — it writes nothing. Prints the media's build, which script was
+chosen, every file with its action (`copy` / `keep` / `skip`), the byte total,
+and every script directive that was *not* acted on, with the reason. Reading this
+before an install is the point of it.
+
+#### `fx install run <disc-dir>… -d <dir>`
+
+Performs the install. Payloads stream, so a 989 MiB install runs in a few MB of
+memory; each file is written to a `.part` and renamed once complete, so an
+interrupted run leaves nothing that looks finished.
+
+```
+$ fx install run /run/media/you/FA_1_00F /run/media/you/FA_1_00F1 -d ~/games/fa --verify
+disc 1: /run/media/you/FA_1_00F
+disc 2: /run/media/you/FA_1_00F1
+
+media:   1.00F  (the 1.02F patch is not applied; the symbol database describes 1.02F)
+script:  FINSTALL.SSF
+...
+installed 1036798285 bytes to ~/games/fa (build 1.00F)
+verifying against the disc...
+verified: every installed byte matches the disc
+```
+
+The discs carry the **1.00F** build, while the reconstruction database describes
+the patched **1.02F** one — `fx install` always prints which build it wrote. See
+[fa/formats/ESA.md § File Inventory](fa/formats/ESA.md#file-inventory).
+
+#### `fx install verify <disc-dir>… -d <dir>`
+
+Re-derives every file from the disc and byte-compares it against the install.
+Unlike `run`, it plans as though the destination were empty, so it checks
+everything a fresh install would write — including the files an install would
+otherwise preserve. Editing a mission will therefore be reported: that `.MT` no
+longer matches the disc, which is true.
+
+*See also: [fa/formats/SSF.md § Engine Notes](fa/formats/SSF.md#engine-notes),
+[fa/formats/ESA.md](fa/formats/ESA.md)*
+
 ## mc — Mission condition DLLs
 
 ```

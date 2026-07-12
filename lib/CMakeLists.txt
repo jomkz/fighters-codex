@@ -36,6 +36,7 @@
     src/pts.cpp
     src/rgn.cpp
     src/ssf.cpp
+    src/install.cpp
     src/mc.cpp
     src/hgr.cpp
     src/dlg.cpp
