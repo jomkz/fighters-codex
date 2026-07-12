@@ -24,28 +24,28 @@ va,kind,name,display,source,confidence,notes,type
 0x0042E5C0,func,@COLRemoveCurObj@0,COLRemoveCurObj,sms,confirmed,,undefined4 __fastcall COLRemoveCurObj(void)
 0x0050CEAF,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CEDC,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
-0x00536728,data,_colSelfObj,,re,confirmed,querying entity ptr (predicted-pos cache follows),
+0x00536728,data,_colSelfObj,,re,confirmed,querying entity ptr (predicted-pos cache follows),undefined4
 0x00536730,data,_colRayEndX,,re,confirmed,query ray end X,
 0x00536734,data,_colRayEndY,,re,confirmed,query ray end Y,
 0x00536738,data,_colRayEndZ,,re,confirmed,query ray end Z,
-0x0053673C,data,_colObjPart,,re,confirmed,hit child-box/part id,
-0x00536740,data,_colObjCount,,re,confirmed,registered collidable count this frame,
-0x00536748,data,_colBoundMaxX,,re,confirmed,swept AABB max X,
-0x0053674C,data,_colBoundMaxY,,re,confirmed,swept AABB max Y,
-0x00536750,data,_colBoundMaxZ,,re,confirmed,swept AABB max Z,
-0x00536758,data,_colBoundMinX,,re,confirmed,swept AABB min X,
-0x0053675C,data,_colBoundMinY,,re,confirmed,swept AABB min Y,
-0x00536760,data,_colBoundMinZ,,re,confirmed,swept AABB min Z,
-0x00536764,data,_colBlockType,,re,confirmed,blocking-hit terrain-leaf/structure type,
-0x00536768,data,_colStructCount,,re,confirmed,registered structure count,
-0x0053676C,data,_colBlockDist,,re,confirmed,nearest blocking-hit distance (sentinel 0x7FFFFFFF),
+0x0053673C,data,_colObjPart,,re,confirmed,hit child-box/part id,undefined2
+0x00536740,data,_colObjCount,,re,confirmed,registered collidable count this frame,undefined4
+0x00536748,data,_colBoundMaxX,,re,confirmed,swept AABB max X,undefined4
+0x0053674C,data,_colBoundMaxY,,re,confirmed,swept AABB max Y,undefined4
+0x00536750,data,_colBoundMaxZ,,re,confirmed,swept AABB max Z,undefined4
+0x00536758,data,_colBoundMinX,,re,confirmed,swept AABB min X,undefined4
+0x0053675C,data,_colBoundMinY,,re,confirmed,swept AABB min Y,undefined4
+0x00536760,data,_colBoundMinZ,,re,confirmed,swept AABB min Z,undefined4
+0x00536764,data,_colBlockType,,re,confirmed,blocking-hit terrain-leaf/structure type,undefined1
+0x00536768,data,_colStructCount,,re,confirmed,registered structure count,undefined4
+0x0053676C,data,_colBlockDist,,re,confirmed,nearest blocking-hit distance (sentinel 0x7FFFFFFF),undefined4
 0x00536770,data,_colStructList,,re,confirmed,structure id list (word[0x1c2]),
 0x00536772,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
 0x00536AF8,data,_colObjAngleH,,re,confirmed,object-hit angle H,
 0x00536AFC,data,_colObjAngleP,,re,confirmed,object-hit angle P,
-0x00536B00,data,_colClosureRadius,,re,confirmed,closure radius (query param),
-0x00536B04,data,_colGearHeight,,re,confirmed,gear/ground clearance (COLInfo+8 <<8),
-0x00536B0C,data,_colSelfSide,,re,inferred,IFF side bit of the querying object,
+0x00536B00,data,_colClosureRadius,,re,confirmed,closure radius (query param),undefined4
+0x00536B04,data,_colGearHeight,,re,confirmed,gear/ground clearance (COLInfo+8 <<8),undefined4
+0x00536B0C,data,_colSelfSide,,re,inferred,IFF side bit of the querying object,undefined1
 0x00536B10,data,_colObjList,,re,confirmed,collidable id list (word[900]),
 0x00536B12,data,,,waiver,confirmed,interior of / adjacent to _specials; named at its base or owned by that subsystem,
 0x00537218,data,_colBlockAngleH,,re,confirmed,blocking-hit angle H,
@@ -53,14 +53,14 @@ va,kind,name,display,source,confidence,notes,type
 0x00537220,data,_colRayStartX,,re,confirmed,query ray start X,
 0x00537224,data,_colRayStartY,,re,confirmed,query ray start Y,
 0x00537228,data,_colRayStartZ,,re,confirmed,query ray start Z,
-0x0053722C,data,_colObjId,,re,confirmed,nearest hit object id,
+0x0053722C,data,_colObjId,,re,confirmed,nearest hit object id,undefined2
 0x00537230,data,_colBlockPosX,,re,confirmed,blocking-hit pos X,
 0x00537234,data,_colBlockPosY,,re,confirmed,blocking-hit pos Y,
 0x00537238,data,_colBlockPosZ,,re,confirmed,blocking-hit pos Z,
-0x0053723C,data,_colSelfId,,re,confirmed,querying entity id,
+0x0053723C,data,_colSelfId,,re,confirmed,querying entity id,undefined2
 0x00537240,data,_colObjPosX,,re,confirmed,object-hit pos X,
 0x00537244,data,_colObjPosY,,re,confirmed,object-hit pos Y,
 0x00537248,data,_colObjPosZ,,re,confirmed,object-hit pos Z,
-0x0053724C,data,_colTargetId,,re,confirmed,single-target id (excluded from broad-phase),
-0x00537250,data,_colObjDist,,re,confirmed,nearest object-hit distance (sentinel 0x7FFFFFFF),
-0x00537254,data,_colObjBox,,re,confirmed,hit box pointer,
+0x0053724C,data,_colTargetId,,re,confirmed,single-target id (excluded from broad-phase),undefined2
+0x00537250,data,_colObjDist,,re,confirmed,nearest object-hit distance (sentinel 0x7FFFFFFF),undefined4
+0x00537254,data,_colObjBox,,re,confirmed,hit box pointer,undefined2

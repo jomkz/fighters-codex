@@ -53,7 +53,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004F3DC0,data,?mm_handles@@3PAUT_HANDLE@@A,mm_handles,sms,confirmed,base of T_HANDLE[count] pool (operator_new'd in MMInit),T_HANDLE *
 0x004F3DC4,data,?mm_used_list@@3PAUT_HANDLE@@A,mm_used_list,sms,confirmed,head of allocated-handle intrusive list (next@+0 prev@+4),T_HANDLE *
 0x004F3DC8,data,?mm_unused_list@@3PAUT_HANDLE@@A,mm_unused_list,sms,confirmed,head of free-handle intrusive list,T_HANDLE *
-0x004F3DCC,data,mmAllocIdSp,,re,confirmed,depth/index of the alloc-id save-stack (@0x538250) for MMPushAllocId/MMPopAllocId [was DAT_004f3dcc],
+0x004F3DCC,data,mmAllocIdSp,,re,confirmed,depth/index of the alloc-id save-stack (@0x538250) for MMPushAllocId/MMPopAllocId [was DAT_004f3dcc],undefined4
 0x00503E30,data,?resList@@3PAURES_LIST@@A,resList,sms,confirmed,RES_LIST[1400] resource registry spanning 0x503E30..0x50A618 (1400*0x13=0x67E8),RES_LIST *
 0x00503E34,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
 0x00503E3D,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
@@ -65,8 +65,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00503E50,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
 0x00503E51,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
 0x00503E52,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
-0x0050A618,data,rmInitialized,,re,confirmed,RM init flag; its ADDRESS doubles as the resList end-marker (scans stop at 0x50A617) [was DAT_0050a618],
-0x0050A61C,data,rmNotifyEnabled,,re,confirmed,guards RMNotify; cleared during RMFree/RMFreeAllId bulk operations to prevent reentrancy [was DAT_0050a61c],
+0x0050A618,data,rmInitialized,,re,confirmed,RM init flag; its ADDRESS doubles as the resList end-marker (scans stop at 0x50A617) [was DAT_0050a618],undefined1
+0x0050A61C,data,rmNotifyEnabled,,re,confirmed,guards RMNotify; cleared during RMFree/RMFreeAllId bulk operations to prevent reentrancy [was DAT_0050a61c],undefined1
 0x0050A624,data,,,waiver,confirmed,"RMFindAndLoad error format ""RMFindAndLoad: can't load %s""",
 0x0050A644,data,,,waiver,confirmed,"RM dispatch literal ""_Load"" (SMCallByName suffix)",
 0x0050A64C,data,,,waiver,confirmed,"RM dispatch literal ""_Free""",
@@ -74,7 +74,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00538248,data,?mm_page_size@@3KA,mm_page_size,sms,confirmed,GetSystemInfo dwPageSize; VirtualAlloc-vs-GlobalAlloc threshold (shared reader: sound),u32
 0x0053824C,data,?mmAllocId@@3EA,mmAllocId,sms,confirmed,current alloc-id tag stamped on new handles/RES_LIST rows; widely read (campaign/network/shell-ui) but MM-owned,u8
 0x00538250,data,,,waiver,confirmed,alloc-id save-stack (byte array indexed by mmAllocIdSp); accessed only as &base+index,
-0x00573208,data,_brsColorProcess,brsColorProcess,sms,confirmed,bitmap color-process mode set by SetupBitmapAccess,
+0x00573208,data,_brsColorProcess,brsColorProcess,sms,confirmed,bitmap color-process mode set by SetupBitmapAccess,undefined2
 0x00573238,data,,,waiver,confirmed,bitmap-access param written by SetupBitmapAccess (paired with 0x0057323C),
 0x0057323C,data,,,waiver,confirmed,bitmap-access param written by SetupBitmapAccess,
 0x00573248,data,resCache,,re,confirmed,20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248],

@@ -38,9 +38,9 @@ va,kind,name,display,source,confidence,notes,type
 0x1001712C,data,,,waiver,confirmed,"MFC / MSVC-CRT framework data (vtable / message-map / static-state interior) — third-party, boundary (waived)",
 0x100171BC,data,,,waiver,confirmed,"MFC / MSVC-CRT framework data (vtable / message-map / static-state interior) — third-party, boundary (waived)",
 0x1001D090,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
-0x1001D098,data,ms_running,ms_running,re,confirmed,"Running flag: set in initializeMS, cleared by closeMS / ms_disconnect.",
-0x1001D09C,data,ms_conn_state,ms_conn_state,re,inferred,Connection-state/idle flag toggled around operations; set when the link is torn down.,
-0x1001D0A0,data,ms_list_dirty,ms_list_dirty,re,confirmed,Game-list-dirty flag: resetMSfilter sets it; requestMSgame refetches when set and clears it when the list is exhausted.,
+0x1001D098,data,ms_running,ms_running,re,confirmed,"Running flag: set in initializeMS, cleared by closeMS / ms_disconnect.",undefined4
+0x1001D09C,data,ms_conn_state,ms_conn_state,re,inferred,Connection-state/idle flag toggled around operations; set when the link is torn down.,undefined4
+0x1001D0A0,data,ms_list_dirty,ms_list_dirty,re,confirmed,Game-list-dirty flag: resetMSfilter sets it; requestMSgame refetches when set and clears it when the list is exhausted.,undefined4
 0x1001D0A8,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
 0x1001D0B4,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
 0x1001D0C4,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
@@ -50,12 +50,12 @@ va,kind,name,display,source,confidence,notes,type
 0x1001D154,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
 0x1001D178,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
 0x1001D188,data,,,waiver,confirmed,"MSAPI protocol / registry string literal (documented in matchmaking.md) — rodata constant, boundary (waived)",
-0x10020BD0,data,ms_recv_thread,ms_recv_thread,re,confirmed,"MFC CWinThread* background receive pump (AfxBeginThread, CREATE_SUSPENDED); m_hThread at +0x28, Resume/Suspended by the login exports.",
-0x10020BD4,data,ms_game_list_tail,ms_game_list_tail,re,confirmed,Game-list append cursor (last node); advanced as 'P' records arrive.,
-0x10020BD8,data,ms_game_list_head,ms_game_list_head,re,confirmed,Game-list head sentinel node (0x24 bytes; allocated in initializeMS).,
-0x10020BDC,data,ms_game_selected,ms_game_selected,re,confirmed,"Current game-list selection/iteration node (walked by requestMSgame, reset by resetMSfilter).",
-0x10020BFC,data,ms_socket,ms_socket,re,confirmed,Connected TCP socket handle (AF_INET/SOCK_STREAM); first arg to every send/recv; 0 when not connected.,
-0x10020C08,data,ms_host_cookie,ms_host_cookie,re,confirmed,"Host-mode cookie/handle set by loginMShost, cleared by loginMSPlayer.",
-0x10020C10,data,ms_record_size,ms_record_size,re,confirmed,Negotiated record size in bytes for game/player records (send/recv payload length).,
-0x10020C14,data,ms_list_inited,ms_list_inited,re,confirmed,Game-list-initialised flag (set in initializeMS; guards teardown in closeMS).,
-0x10020C18,data,ms_game_count,ms_game_count,re,confirmed,"Number of games accumulated in the list (incremented per 'P' record, reset by resetMSfilter).",
+0x10020BD0,data,ms_recv_thread,ms_recv_thread,re,confirmed,"MFC CWinThread* background receive pump (AfxBeginThread, CREATE_SUSPENDED); m_hThread at +0x28, Resume/Suspended by the login exports.",undefined4
+0x10020BD4,data,ms_game_list_tail,ms_game_list_tail,re,confirmed,Game-list append cursor (last node); advanced as 'P' records arrive.,undefined4
+0x10020BD8,data,ms_game_list_head,ms_game_list_head,re,confirmed,Game-list head sentinel node (0x24 bytes; allocated in initializeMS).,undefined4
+0x10020BDC,data,ms_game_selected,ms_game_selected,re,confirmed,"Current game-list selection/iteration node (walked by requestMSgame, reset by resetMSfilter).",undefined4
+0x10020BFC,data,ms_socket,ms_socket,re,confirmed,Connected TCP socket handle (AF_INET/SOCK_STREAM); first arg to every send/recv; 0 when not connected.,undefined4
+0x10020C08,data,ms_host_cookie,ms_host_cookie,re,confirmed,"Host-mode cookie/handle set by loginMShost, cleared by loginMSPlayer.",undefined4
+0x10020C10,data,ms_record_size,ms_record_size,re,confirmed,Negotiated record size in bytes for game/player records (send/recv payload length).,undefined4
+0x10020C14,data,ms_list_inited,ms_list_inited,re,confirmed,Game-list-initialised flag (set in initializeMS; guards teardown in closeMS).,undefined4
+0x10020C18,data,ms_game_count,ms_game_count,re,confirmed,"Number of games accumulated in the list (incremented per 'P' record, reset by resetMSfilter).",undefined4

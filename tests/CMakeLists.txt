@@ -189,6 +189,18 @@ if(Python3_FOUND)
             "${PROJECT_SOURCE_DIR}/tools/recover_signatures.py" --check)
     set_tests_properties(recover_signatures_selftest recover_signatures_currency
         PROPERTIES LABELS "docs")
+
+    # db/ global typing (#455): a global's type must match the width the
+    # instructions actually touch. Currency needs the local Ghidra export and
+    # no-ops without it; the self-test runs everywhere.
+    add_test(NAME recover_globals_selftest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/recover_globals.py" --self-test)
+    add_test(NAME recover_globals_currency
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/recover_globals.py" --check)
+    set_tests_properties(recover_globals_selftest recover_globals_currency
+        PROPERTIES LABELS "docs")
 endif()
 
 # Real-asset integration mode: registered only when FX_FA_ROOT points at a
