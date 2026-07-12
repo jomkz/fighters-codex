@@ -8,6 +8,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- **fx-lib** RTPatch codec + `fx patch` — reconstructs the **1.02F** game files from
+  the **1.00F** discs, closing the gap between what `fx install` writes and what the
+  reconstruction database describes. Reverses the Pocket Soft .RTPatch payload carried
+  by the FA updater (`fae102.exe`): the `0xB59C` adaptive-Huffman + LZSS codec, the
+  §9 opcode diff interpreter, and the §10 rolling source checksum. `fx patch inspect`
+  lists the records; `fx patch apply` reconstructs each file from the 1.00F original,
+  verifying the source checksum first. Documented in `docs/fa/formats/RTP.md`; the codec
+  facts are a clean-room port of the MIT-licensed rtptool (© Sandy Carter). Validated
+  byte-for-byte against the real patch by the `fa_patch_apply` integration test.
 - **tests** real-media install harness (`fa_disc_install`, behind `FX_FA_DISC1` +
   `FX_FA_DISC2`): checks the install plan for both scripts, hashes every extracted
   `SETUP.ESA` entry against a committed manifest, repacks the 110 MB archive
