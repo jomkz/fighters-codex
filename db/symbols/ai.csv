@@ -1,7 +1,7 @@
 va,kind,name,display,source,confidence,notes,type
-0x00464C60,func,_CTInit@0,CTInit,sms,confirmed,,
-0x00464C80,func,_CTShutdown@0,CTShutdown,sms,confirmed,,
-0x00464C90,func,_CTRespondToCancelCmdBuf@0,CTRespondToCancelCmdBuf,sms,confirmed,,
+0x00464C60,func,_CTInit@0,CTInit,sms,confirmed,,undefined4 __stdcall CTInit(void)
+0x00464C80,func,_CTShutdown@0,CTShutdown,sms,confirmed,,undefined4 __stdcall CTShutdown(void)
+0x00464C90,func,_CTRespondToCancelCmdBuf@0,CTRespondToCancelCmdBuf,sms,confirmed,,undefined4 __stdcall CTRespondToCancelCmdBuf(void)
 0x00464CD0,func,CTLoadProgram,,re,confirmed,"load/switch the BI CODE resource by name (RMAccess 0x8000); set IP=base, CTResetPC",
 0x00464DB0,func,CTResetPC,,re,confirmed,reset IP=base and line=1; if arg!=0 also zero stack depth,
 0x00464DE0,func,_CTVarDiff,CTVarDiff,sms,confirmed,,
@@ -118,7 +118,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00466820,func,CTError,,re,confirmed,"map error code 1..0xc to a string and ErrorExit('Chuck Talk error: %s, line %u')",
 0x004668F0,func,CTRestoreState,,re,confirmed,restore _ctState from _ctStateCheckpoint (or zero it),
 0x00466920,func,CTSaveState,,re,confirmed,"copy _ctState to the heap checkpoint, then zero it",
-0x00466970,func,_CTExecProgram@4,CTExecProgram,sms,confirmed,,
+0x00466970,func,_CTExecProgram@4,CTExecProgram,sms,confirmed,,undefined4 __stdcall CTExecProgram(undefined4)
 0x00466A80,func,CTStep,,re,confirmed,fetch one opcode and dispatch via switch; CALL_BY_NAME(0x27) resolves via SMAddress then self-patches to CALL_DIRECT(0x26),
 0x004670E0,func,CTVarPtr,,re,confirmed,"return &_ctState[i] for script var index i in [0,4]; out-of-range raises CTError(3)",
 0x004F7004,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,

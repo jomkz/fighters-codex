@@ -14,8 +14,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 | Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 83/83 (100%) | 15 named · 113 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
-| Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 125/125 (100%) | 3 named · 149 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
+| Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 83/83 (100%) | 15 named · 145 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
+| Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 125/125 (100%) | 3 named · 167 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
 | Flight model / physics (FM/HARD) | `0x451480–0x454800` | 62/62 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
 | HUD / cockpit | `0x405E30–0x40AE50` | 49/49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
 | Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | 59/59 (100%) | 8 named · 47 waived | [doc](weapons.md) | ✓ | [#215](https://github.com/jomkz/fighters-codex/issues/215) | complete |
@@ -35,7 +35,7 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 40/40 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
 | View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19/19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
 
-**FA.EXE totals:** 20/20 subsystems complete; 1735/1735 in-scope functions named; 2505/4630 referenced globals resolved.
+**FA.EXE totals:** 20/20 subsystems complete; 1735/1735 in-scope functions named; 2555/4721 referenced globals resolved.
 
 ## WAIL32.DLL
 
@@ -93,5 +93,5 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **MSAPI.DLL totals:** 1/1 subsystems complete; 25/25 in-scope functions named; 35/36 referenced globals resolved.
 
-**Program totals (all binaries):** 27/27 subsystems complete; 4507/4507 in-scope functions named; 4979/7959 referenced globals resolved.
+**Program totals (all binaries):** 27/27 subsystems complete; 4507/4507 in-scope functions named; 5029/8050 referenced globals resolved.
 

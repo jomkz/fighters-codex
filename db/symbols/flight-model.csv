@@ -1,66 +1,66 @@
 va,kind,name,display,source,confidence,notes,type
-0x004514C0,func,_FMUpdateGearPitch@0,FMUpdateGearPitch,sms,confirmed,,
-0x00451580,func,_FMUpdateGear@0,FMUpdateGear,sms,confirmed,,
-0x004515E0,func,_FMUpdateWingSweep@0,FMUpdateWingSweep,sms,confirmed,,
-0x00451680,func,_FMUpdateThrustVector@0,FMUpdateThrustVector,sms,confirmed,,
-0x004516B0,func,_FMGetWeight@0,FMGetWeight,sms,confirmed,,
-0x00451820,func,@FMCopyAngles@4,FMCopyAngles,sms,confirmed,,
-0x004518A0,func,_FMInitPlane@8,FMInitPlane,sms,confirmed,,
-0x00451A60,func,_LimitThrottle@0,LimitThrottle,sms,confirmed,,
-0x00451B00,func,@SetThrottle@4,SetThrottle,sms,confirmed,,
-0x00451B60,func,@FMFlaps@8,FMFlaps,sms,confirmed,,
-0x00451C30,func,@FMHook@4,FMHook,sms,confirmed,,
-0x00451C90,func,@FMGear@4,FMGear,sms,confirmed,,
-0x00451D70,func,@FMBrakes@8,FMBrakes,sms,confirmed,,
-0x00451E00,func,@FMVector@8,FMVector,sms,confirmed,,
-0x00451E50,func,@FMFuelConsumption@4,FMFuelConsumption,sms,confirmed,,
-0x00451E80,func,_BurnFuel@0,BurnFuel,sms,confirmed,,
+0x004514C0,func,_FMUpdateGearPitch@0,FMUpdateGearPitch,sms,confirmed,,undefined4 __stdcall FMUpdateGearPitch(void)
+0x00451580,func,_FMUpdateGear@0,FMUpdateGear,sms,confirmed,,undefined4 __stdcall FMUpdateGear(void)
+0x004515E0,func,_FMUpdateWingSweep@0,FMUpdateWingSweep,sms,confirmed,,undefined4 __stdcall FMUpdateWingSweep(void)
+0x00451680,func,_FMUpdateThrustVector@0,FMUpdateThrustVector,sms,confirmed,,undefined4 __stdcall FMUpdateThrustVector(void)
+0x004516B0,func,_FMGetWeight@0,FMGetWeight,sms,confirmed,,undefined4 __stdcall FMGetWeight(void)
+0x00451820,func,@FMCopyAngles@4,FMCopyAngles,sms,confirmed,,undefined4 __fastcall FMCopyAngles(undefined4)
+0x004518A0,func,_FMInitPlane@8,FMInitPlane,sms,confirmed,,"undefined4 __stdcall FMInitPlane(undefined4, undefined4)"
+0x00451A60,func,_LimitThrottle@0,LimitThrottle,sms,confirmed,,undefined4 __stdcall LimitThrottle(void)
+0x00451B00,func,@SetThrottle@4,SetThrottle,sms,confirmed,,undefined4 __fastcall SetThrottle(undefined4)
+0x00451B60,func,@FMFlaps@8,FMFlaps,sms,confirmed,,"undefined4 __fastcall FMFlaps(undefined4, undefined4)"
+0x00451C30,func,@FMHook@4,FMHook,sms,confirmed,,undefined4 __fastcall FMHook(undefined4)
+0x00451C90,func,@FMGear@4,FMGear,sms,confirmed,,undefined4 __fastcall FMGear(undefined4)
+0x00451D70,func,@FMBrakes@8,FMBrakes,sms,confirmed,,"undefined4 __fastcall FMBrakes(undefined4, undefined4)"
+0x00451E00,func,@FMVector@8,FMVector,sms,confirmed,,"undefined4 __fastcall FMVector(undefined4, undefined4)"
+0x00451E50,func,@FMFuelConsumption@4,FMFuelConsumption,sms,confirmed,,undefined4 __fastcall FMFuelConsumption(undefined4)
+0x00451E80,func,_BurnFuel@0,BurnFuel,sms,confirmed,,undefined4 __stdcall BurnFuel(void)
 0x00451E8B,func,,,waiver,confirmed,Ghidra split tail of _BurnFuel@0 (0x451E80) — the fuel-burn/afterburner body,
-0x00452050,func,@FMBurnNPCFuel@4,FMBurnNPCFuel,sms,confirmed,,
-0x00452140,func,_FMUpdatePlaneFields@0,FMUpdatePlaneFields,sms,confirmed,,
-0x00452630,func,@FMBay@4,FMBay,sms,confirmed,,
-0x00452710,func,_FMUpdateBay@0,FMUpdateBay,sms,confirmed,,
-0x00452760,func,@FMBayIsOpen@0,FMBayIsOpen,sms,confirmed,,
-0x00452770,func,_HARDPtrs@12,HARDPtrs,sms,confirmed,,
-0x004527F0,func,@HARDUnload@8,HARDUnload,sms,confirmed,,
-0x00452940,func,@HARDStoreWeight@4,HARDStoreWeight,sms,confirmed,,
-0x00452980,func,_HARDCanLoad@8,HARDCanLoad,sms,confirmed,,
-0x00452C20,func,_HARDLoad@12,HARDLoad,sms,confirmed,,
-0x00452D10,func,_HARDLoadAll@0,HARDLoadAll,sms,confirmed,,
-0x00452D90,func,@HARDBestSeekers@12,HARDBestSeekers,sms,confirmed,,
-0x00452E60,func,@HARDBestSeeker@8,HARDBestSeeker,sms,confirmed,,
-0x00452EA0,func,@HARDFindJammer@4,HARDFindJammer,sms,confirmed,,
-0x00452F10,func,@HARDFindECMForObj@8,HARDFindECMForObj,sms,confirmed,,
-0x00452F80,func,_HARDFindStore@12,HARDFindStore,sms,confirmed,,
-0x00452FF0,func,_HARDFindProj@16,HARDFindProj,sms,confirmed,,
+0x00452050,func,@FMBurnNPCFuel@4,FMBurnNPCFuel,sms,confirmed,,undefined4 __fastcall FMBurnNPCFuel(undefined4)
+0x00452140,func,_FMUpdatePlaneFields@0,FMUpdatePlaneFields,sms,confirmed,,undefined4 __stdcall FMUpdatePlaneFields(void)
+0x00452630,func,@FMBay@4,FMBay,sms,confirmed,,undefined4 __fastcall FMBay(undefined4)
+0x00452710,func,_FMUpdateBay@0,FMUpdateBay,sms,confirmed,,undefined4 __stdcall FMUpdateBay(void)
+0x00452760,func,@FMBayIsOpen@0,FMBayIsOpen,sms,confirmed,,undefined4 __fastcall FMBayIsOpen(void)
+0x00452770,func,_HARDPtrs@12,HARDPtrs,sms,confirmed,,"undefined4 __stdcall HARDPtrs(undefined4, undefined4, undefined4)"
+0x004527F0,func,@HARDUnload@8,HARDUnload,sms,confirmed,,"undefined4 __fastcall HARDUnload(undefined4, undefined4)"
+0x00452940,func,@HARDStoreWeight@4,HARDStoreWeight,sms,confirmed,,undefined4 __fastcall HARDStoreWeight(undefined4)
+0x00452980,func,_HARDCanLoad@8,HARDCanLoad,sms,confirmed,,"undefined4 __stdcall HARDCanLoad(undefined4, undefined4)"
+0x00452C20,func,_HARDLoad@12,HARDLoad,sms,confirmed,,"undefined4 __stdcall HARDLoad(undefined4, undefined4, undefined4)"
+0x00452D10,func,_HARDLoadAll@0,HARDLoadAll,sms,confirmed,,undefined4 __stdcall HARDLoadAll(void)
+0x00452D90,func,@HARDBestSeekers@12,HARDBestSeekers,sms,confirmed,,"undefined4 __fastcall HARDBestSeekers(undefined4, undefined4, undefined4)"
+0x00452E60,func,@HARDBestSeeker@8,HARDBestSeeker,sms,confirmed,,"undefined4 __fastcall HARDBestSeeker(undefined4, undefined4)"
+0x00452EA0,func,@HARDFindJammer@4,HARDFindJammer,sms,confirmed,,undefined4 __fastcall HARDFindJammer(undefined4)
+0x00452F10,func,@HARDFindECMForObj@8,HARDFindECMForObj,sms,confirmed,,"undefined4 __fastcall HARDFindECMForObj(undefined4, undefined4)"
+0x00452F80,func,_HARDFindStore@12,HARDFindStore,sms,confirmed,,"undefined4 __stdcall HARDFindStore(undefined4, undefined4, undefined4)"
+0x00452FF0,func,_HARDFindProj@16,HARDFindProj,sms,confirmed,,"undefined4 __stdcall HARDFindProj(undefined4, undefined4, undefined4, undefined4)"
 0x00452FFB,func,,,waiver,confirmed,Ghidra split tail of _HARDFindProj@16 (0x452FF0) — the projectile-store search loop,
-0x004530A0,func,_HARDSetFlags@0,HARDSetFlags,sms,confirmed,,
-0x00453220,func,_HARDUnrotatedHardPos@12,HARDUnrotatedHardPos,sms,confirmed,,
-0x004532A0,func,_HARDPos@16,HARDPos,sms,confirmed,,
-0x004533D0,func,_HARDGunsOnly@0,HARDGunsOnly,sms,confirmed,,
-0x00453440,func,_HARDGunsOnlyAll@0,HARDGunsOnlyAll,sms,confirmed,,
-0x00453490,func,@HARDGunLoadPercent@4,HARDGunLoadPercent,sms,confirmed,,
-0x00453640,func,_HARDUnlimited@0,HARDUnlimited,sms,confirmed,,
-0x00453710,func,@HARDPodHack@4,HARDPodHack,sms,confirmed,,
-0x00453800,func,_HARDClearUnloadedHarpoints@0,HARDClearUnloadedHarpoints,sms,confirmed,,
-0x00453870,func,@HARDResourceName@4,HARDResourceName,sms,confirmed,,
+0x004530A0,func,_HARDSetFlags@0,HARDSetFlags,sms,confirmed,,undefined4 __stdcall HARDSetFlags(void)
+0x00453220,func,_HARDUnrotatedHardPos@12,HARDUnrotatedHardPos,sms,confirmed,,"undefined4 __stdcall HARDUnrotatedHardPos(undefined4, undefined4, undefined4)"
+0x004532A0,func,_HARDPos@16,HARDPos,sms,confirmed,,"undefined4 __stdcall HARDPos(undefined4, undefined4, undefined4, undefined4)"
+0x004533D0,func,_HARDGunsOnly@0,HARDGunsOnly,sms,confirmed,,undefined4 __stdcall HARDGunsOnly(void)
+0x00453440,func,_HARDGunsOnlyAll@0,HARDGunsOnlyAll,sms,confirmed,,undefined4 __stdcall HARDGunsOnlyAll(void)
+0x00453490,func,@HARDGunLoadPercent@4,HARDGunLoadPercent,sms,confirmed,,undefined4 __fastcall HARDGunLoadPercent(undefined4)
+0x00453640,func,_HARDUnlimited@0,HARDUnlimited,sms,confirmed,,undefined4 __stdcall HARDUnlimited(void)
+0x00453710,func,@HARDPodHack@4,HARDPodHack,sms,confirmed,,undefined4 __fastcall HARDPodHack(undefined4)
+0x00453800,func,_HARDClearUnloadedHarpoints@0,HARDClearUnloadedHarpoints,sms,confirmed,,undefined4 __stdcall HARDClearUnloadedHarpoints(void)
+0x00453870,func,@HARDResourceName@4,HARDResourceName,sms,confirmed,,undefined4 __fastcall HARDResourceName(undefined4)
 0x00453890,func,HARDStoreName,,re,inferred,"resolve a hardpoint store's resource-name string via _NextString (name at +5 for loaded stores, +1 otherwise)",
-0x004538C0,func,_HARDSaveHumanLoads@0,HARDSaveHumanLoads,sms,confirmed,,
+0x004538C0,func,_HARDSaveHumanLoads@0,HARDSaveHumanLoads,sms,confirmed,,undefined4 __stdcall HARDSaveHumanLoads(void)
 0x004538CB,func,,,waiver,confirmed,Ghidra split tail of _HARDSaveHumanLoads@0 (0x4538C0) — the human-loadout save loop,
-0x004539C0,func,_HARDRestoreHumanLoad@0,HARDRestoreHumanLoad,sms,confirmed,,
-0x00453A70,func,_HARDTotalFuel@0,HARDTotalFuel,sms,confirmed,,
-0x00453AF0,func,_HARDHasInternalBay@4,HARDHasInternalBay,sms,confirmed,,
-0x00453B90,func,_HARDRearmTest@0,HARDRearmTest,sms,confirmed,,
-0x00453C50,func,_HARDRearmHumanLoad@0,HARDRearmHumanLoad,sms,confirmed,,
-0x00453D10,func,_HARDUsedWeapons@12,HARDUsedWeapons,sms,confirmed,,
-0x00453D50,func,_HARDSaveFortLoads@0,HARDSaveFortLoads,sms,confirmed,,
+0x004539C0,func,_HARDRestoreHumanLoad@0,HARDRestoreHumanLoad,sms,confirmed,,undefined4 __stdcall HARDRestoreHumanLoad(void)
+0x00453A70,func,_HARDTotalFuel@0,HARDTotalFuel,sms,confirmed,,undefined4 __stdcall HARDTotalFuel(void)
+0x00453AF0,func,_HARDHasInternalBay@4,HARDHasInternalBay,sms,confirmed,,undefined4 __stdcall HARDHasInternalBay(undefined4)
+0x00453B90,func,_HARDRearmTest@0,HARDRearmTest,sms,confirmed,,undefined4 __stdcall HARDRearmTest(void)
+0x00453C50,func,_HARDRearmHumanLoad@0,HARDRearmHumanLoad,sms,confirmed,,undefined4 __stdcall HARDRearmHumanLoad(void)
+0x00453D10,func,_HARDUsedWeapons@12,HARDUsedWeapons,sms,confirmed,,"undefined4 __stdcall HARDUsedWeapons(undefined4, undefined4, undefined4)"
+0x00453D50,func,_HARDSaveFortLoads@0,HARDSaveFortLoads,sms,confirmed,,undefined4 __stdcall HARDSaveFortLoads(void)
 0x00453D5B,func,,,waiver,confirmed,Ghidra split tail of _HARDSaveFortLoads@0 (0x453D50) — the fort/base-loadout save loop,
-0x00453EC0,func,_HARDRestoreFortLoad@0,HARDRestoreFortLoad,sms,confirmed,,
-0x00453F90,func,_HARDRearmFortTest@0,HARDRearmFortTest,sms,confirmed,,
-0x00454060,func,_HARDRearmFortLoad@0,HARDRearmFortLoad,sms,confirmed,,
-0x00454140,func,_ChangePlaneType@12,ChangePlaneType,sms,confirmed,,
-0x004543A0,func,?RepairTime@@YIJJ@Z,RepairTime,sms,confirmed,,
-0x004543C0,func,_SelectRepairPlane@16,SelectRepairPlane,sms,confirmed,,
+0x00453EC0,func,_HARDRestoreFortLoad@0,HARDRestoreFortLoad,sms,confirmed,,undefined4 __stdcall HARDRestoreFortLoad(void)
+0x00453F90,func,_HARDRearmFortTest@0,HARDRearmFortTest,sms,confirmed,,undefined4 __stdcall HARDRearmFortTest(void)
+0x00454060,func,_HARDRearmFortLoad@0,HARDRearmFortLoad,sms,confirmed,,undefined4 __stdcall HARDRearmFortLoad(void)
+0x00454140,func,_ChangePlaneType@12,ChangePlaneType,sms,confirmed,,"undefined4 __stdcall ChangePlaneType(undefined4, undefined4, undefined4)"
+0x004543A0,func,?RepairTime@@YIJJ@Z,RepairTime,sms,confirmed,,long __fastcall RepairTime(long)
+0x004543C0,func,_SelectRepairPlane@16,SelectRepairPlane,sms,confirmed,,"undefined4 __stdcall SelectRepairPlane(undefined4, undefined4, undefined4, undefined4)"
 0x004EE470,data,,,waiver,confirmed,flight-model throttle scratch near throttle100,
 0x004F013C,data,,,waiver,confirmed,interior of fortNationGroundForces campaign array,
 0x004F036C,data,,,waiver,confirmed,interior of fortNationGroundForces campaign array,

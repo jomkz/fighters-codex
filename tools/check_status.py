@@ -1030,6 +1030,95 @@ def load_symbols(symbols_dir, manifest):
     return by_slug, errs
 
 
+# --- the `type` column must name types that actually exist -------------------------
+# db/types/README.md has always said a type "must name something ApplyTypes can resolve:
+# a builtin, a db/types/ typedef, or a struct declared there" -- but nothing enforced it.
+# That was cheap to live with while 32 rows carried a type. Now that the FA.SMS-encoded
+# signatures are materialized into db/ (#452), an unresolvable type is a silent hole in
+# everything the fxe generator emits downstream, so it is checked.
+
+C_BUILTIN_TYPES = {
+    "void", "char", "short", "int", "long", "float", "double", "bool",
+    "signed", "unsigned", "__int64", "wchar_t",
+}
+C_TYPE_NOISE = {"const", "volatile", "struct", "union", "enum",
+                "__cdecl", "__stdcall", "__fastcall", "__pascal", "__thiscall"}
+
+_TYPEDEF_TAIL_RE = re.compile(r"\b([A-Za-z_]\w*)\s*;")
+
+
+def declared_types(types_dir, binary):
+    """Every type name db/types/ declares for one binary.
+
+    The top-level headers are FA.EXE's; an overlay binary also gets db/types/<binary>/,
+    mirroring how apply_types.sh parses them.
+    """
+    names = set()
+    if not types_dir.is_dir():
+        return names
+    heads = sorted(types_dir.glob("*.h"))
+    sub = types_dir / (binary or "")
+    if binary and sub.is_dir():
+        heads += sorted(sub.glob("*.h"))
+    for h in heads:
+        text = h.read_text(encoding="utf-8", errors="replace")
+        text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)   # strip comments first
+        # Split into statements at brace depth 0, stepping over struct bodies. A field
+        # inside a struct is not a type declaration, and `typedef struct X { ... } X;`
+        # must read as the single statement it is.
+        stmt, depth = "", 0
+        for ch in text:
+            if ch == "{":
+                depth += 1
+                continue
+            if ch == "}":
+                depth -= 1
+                continue
+            if depth:
+                continue
+            if ch == ";":
+                s = stmt.strip()
+                # A typedef names its type last; so does a struct body's closing `} X`.
+                if "typedef" in s:
+                    m = _TYPEDEF_TAIL_RE.search(s + ";")
+                    if m:
+                        names.add(m.group(1))
+                stmt = ""
+            else:
+                stmt += ch
+    return names
+
+
+def check_types(db_dir, symbols, slug_to_binary):
+    """Every identifier used in a `type` column must resolve. Returns errors."""
+    errs = []
+    types_dir = db_dir / "types"
+    by_binary = {}
+    for slug, rows in sorted(symbols.items()):
+        binary = slug_to_binary.get(slug)
+        if binary not in by_binary:
+            by_binary[binary] = declared_types(types_dir, binary)
+        known = by_binary[binary] | C_BUILTIN_TYPES
+        for r in rows:
+            ctype = (r.get("type") or "").strip()
+            if not ctype:
+                continue
+            allowed = set(known)
+            # A prototype spells the function's own name before its parameter list. That
+            # is a declaration, not a type reference -- don't demand db/types/ declare it.
+            head = ctype.split("(", 1)[0]
+            idents = re.findall(r"[A-Za-z_]\w*", head)
+            if "(" in ctype and idents:
+                allowed.add(idents[-1])
+            for tok in re.findall(r"[A-Za-z_]\w*", ctype):
+                if tok in allowed or tok in C_TYPE_NOISE:
+                    continue
+                errs.append(
+                    "db/symbols/%s.csv: %s: type %r names %r, which db/types/ does not "
+                    "declare for %s" % (slug, r.get("name"), ctype, tok, binary))
+    return errs
+
+
 def load_inventory(inv_dir):
     """Parse one binary's db/inventory/<binary>/*.csv -> (dict, errors).
 
@@ -1418,7 +1507,8 @@ def check_reconstruction(db_dir=DB_DIR):
     symbols, serrs = load_symbols(db_dir / "symbols", manifest)
     binaries = _ordered_binaries(manifest)
     inventories, ierrs, absent = load_inventories(db_dir / "inventory", binaries)
-    errs = errs + serrs + ierrs
+    terrs = check_types(db_dir, symbols, {s["slug"]: s["binary"] for s in manifest})
+    errs = errs + serrs + ierrs + terrs
     # Surface cross-file duplicate-name notes as warnings, not hard errors.
     warns = [e[len("note-dup: "):] for e in errs if e.startswith("note-dup: ")]
     errs = [e for e in errs if not e.startswith("note-dup: ")]
@@ -1736,6 +1826,32 @@ def _recon_self_test(expect, tmpdir=None):
         expect(merrs == [], "recon: clean manifest")
         symbols, serrs = load_symbols(base / "symbols", manifest)
         expect(serrs == [], "recon: clean symbols")
+
+        # The `type` column must name types db/types/ actually declares (#452).
+        (base / "types").mkdir()
+        write("types/t.h", "typedef unsigned char u8;\n"
+                           "typedef struct entity entity;\n"
+                           "typedef struct CN_INFO { u8 a; u8 version; } CN_INFO;\n")
+        dt = declared_types(base / "types", "FA.EXE")
+        expect({"u8", "entity", "CN_INFO"} <= dt, "types: typedefs and struct bodies declared")
+        expect("version" not in dt, "types: struct fields are not type declarations")
+
+        s2b = {"obj": "FA.EXE"}
+        typed = {"obj": [{"kind": "data", "name": "_p", "display": "", "type": "entity *"},
+                         {"kind": "func", "name": "_f@4", "display": "f",
+                          "type": "u8 __stdcall f(entity *)"}]}
+        expect(check_types(base, typed, s2b) == [], "types: resolvable types accepted")
+        # A prototype names the function itself; that is a declaration, not a type ref.
+        expect(check_types(base, {"obj": [{"kind": "func", "name": "?g@@YAXXZ",
+                                           "display": "", "type": "void __cdecl g(void)"}]},
+                           s2b) == [], "types: a prototype's own name is not a type")
+        for bad, label in [
+                ("SEQGR *", "undeclared struct in a data type"),
+                ("void __cdecl f(NOPE *)", "undeclared struct in a signature"),
+        ]:
+            e = check_types(base, {"obj": [{"kind": "func", "name": "_f@4",
+                                            "display": "f", "type": bad}]}, s2b)
+            expect(e != [], "types: reject %s" % label)
 
         # Manifest failures
         for bad, label in [

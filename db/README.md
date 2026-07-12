@@ -27,6 +27,7 @@ printed note; everything else still runs.
 ```
 edit db/symbols/<slug>.csv            # record/propose names + types (the DB is canonical)
 edit db/types/<binary>/*.h            # recovered struct layouts (optional; FA.EXE at db/types/*.h)
+python3 tools/gen_signatures.py --write     # materialize the signatures FA.SMS names encode
 scripts/ghidra/apply_symbols.sh  [BINARY]   # apply names to the Ghidra project (default FA.EXE)
 scripts/ghidra/apply_types.sh    [BINARY]   # apply db/types/ + the type column
 scripts/ghidra/export_inventory.sh [BINARY] # re-export db/inventory/<binary>/ ground truth
@@ -78,7 +79,7 @@ One row per symbol the subsystem claims. Columns:
 | `source` | `sms` (from FA.SMS), `re` (recovered by this program), `waiver` (deliberately not named — `notes` must say why) |
 | `confidence` | `confirmed` or `inferred` ([spec-authoring.md](../docs/spec-authoring.md) vocabulary) |
 | `notes` | short role note; **required** for waivers; carries attribution when a name was corroborated externally |
-| `type` | optional C type (data: `u32`, `SEQGR *`, `char[16]`; func: a signature override, usually empty). Must resolve to a builtin or a [`db/types/`](types/README.md) declaration; **must be empty on waivers**. See [db/types/README.md](types/README.md) |
+| `type` | C type (data: `u32`, `SEQGR *`, `char[16]`; func: the full signature, e.g. `char __fastcall COLFlatGround(long, F24_POINT3 *, F24_POINT3 *, F24_POINT3 *)`). Must resolve to a builtin or a [`db/types/`](types/README.md) declaration — `check_status.py` enforces this; **must be empty on waivers**. Func signatures the FA.SMS name already encodes are materialized by `tools/gen_signatures.py` (see [db/types/README.md](types/README.md)) |
 
 Naming convention for `re` rows: follow the subsystem's FA.SMS prefix and casing
 (`OBJ…`, `T_…`, `Setup…`) so decompiled code reads uniformly — provenance lives in

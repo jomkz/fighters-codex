@@ -1,53 +1,53 @@
 va,kind,name,display,source,confidence,notes,type
-0x004A7310,func,_T_InitPlane@4,T_InitPlane,sms,confirmed,spawns player plane on terrain at mission start (FMInitPlane/FMUpdatePlaneFields/EnterState/PLANESetFeetWet); writes _cg mirror fields,
-0x004A73B0,func,_T_AddObj@12,T_AddObj,sms,confirmed,add a static object/building to the terrain object database (1642 B),
-0x004A7A40,func,_T_AddYourObjs@0,T_AddYourObjs,sms,confirmed,"terrain ""add your objects"" service pass",
-0x004A7D70,func,_T_ImmediateVisibility@4,T_ImmediateVisibility,sms,confirmed,,
-0x004A7DF0,func,_T_ObjList@8,T_ObjList,sms,confirmed,,
-0x004A7E50,func,_T_Render@4,T_Render,sms,confirmed,,
+0x004A7310,func,_T_InitPlane@4,T_InitPlane,sms,confirmed,spawns player plane on terrain at mission start (FMInitPlane/FMUpdatePlaneFields/EnterState/PLANESetFeetWet); writes _cg mirror fields,undefined4 __stdcall T_InitPlane(undefined4)
+0x004A73B0,func,_T_AddObj@12,T_AddObj,sms,confirmed,add a static object/building to the terrain object database (1642 B),"undefined4 __stdcall T_AddObj(undefined4, undefined4, undefined4)"
+0x004A7A40,func,_T_AddYourObjs@0,T_AddYourObjs,sms,confirmed,"terrain ""add your objects"" service pass",undefined4 __stdcall T_AddYourObjs(void)
+0x004A7D70,func,_T_ImmediateVisibility@4,T_ImmediateVisibility,sms,confirmed,,undefined4 __stdcall T_ImmediateVisibility(undefined4)
+0x004A7DF0,func,_T_ObjList@8,T_ObjList,sms,confirmed,,"undefined4 __stdcall T_ObjList(undefined4, undefined4)"
+0x004A7E50,func,_T_Render@4,T_Render,sms,confirmed,,undefined4 __stdcall T_Render(undefined4)
 0x004A7F20,func,_T_InitForestProc,T_InitForestProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes (0x20 B setup preceding T_ResolveDecorShapes),
 0x004A7F40,func,T_ResolveDecorShapes,,re,inferred,walk a decoration brush-list (stride 0x1a) resolving each entry's SH via _RMAccess into +2; called by T_InitWaterProc(&_waterList) / T_InitCloudProc(&_cloudList),
-0x004A7F70,func,?T_ForestProc@@YAXJ@Z,T_ForestProc,sms,confirmed,scatters forest decoration (desert vs _forestList) via T_ScatterGrid,
+0x004A7F70,func,?T_ForestProc@@YAXJ@Z,T_ForestProc,sms,confirmed,scatters forest decoration (desert vs _forestList) via T_ScatterGrid,void __cdecl T_ForestProc(long)
 0x004A8090,func,T_ScatterGrid,,re,inferred,2^n x 2^n tiling loop invoking T_ScatterDecorTile; called by every T_*Proc (evidence: T_ForestProc/T_MooseProc/T_WaterProc),
 0x004A8130,func,T_ScatterDecorTile,,re,inferred,"place one decoration cluster per tile: per-band distance LOD, T_GetLeaf gate, T_Info altitude, T_QueueDecor",
 0x004A83E0,func,_T_InitForest1Proc,T_InitForest1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8400,func,?T_Forest1Proc@@YAXJ@Z,T_Forest1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
+0x004A8400,func,?T_Forest1Proc@@YAXJ@Z,T_Forest1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_Forest1Proc(long)
 0x004A8520,func,_T_InitForest2Proc,T_InitForest2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8540,func,?T_Forest2Proc@@YAXJ@Z,T_Forest2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
+0x004A8540,func,?T_Forest2Proc@@YAXJ@Z,T_Forest2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_Forest2Proc(long)
 0x004A8660,func,_T_InitFarmProc,T_InitFarmProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8670,func,?T_FarmProc@@YAXJ@Z,T_FarmProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
+0x004A8670,func,?T_FarmProc@@YAXJ@Z,T_FarmProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_FarmProc(long)
 0x004A8730,func,_T_InitMooseProc,T_InitMooseProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8750,func,?T_MooseProc@@YAXJ@Z,T_MooseProc,sms,confirmed,"scatters ""moose"" decoration (desert vs _mooseList)",
-0x004A8870,func,?T_InitVietRicePaddy1Proc@@YAXXZ,T_InitVietRicePaddy1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8880,func,?T_VietRicePaddy1Proc@@YAXJ@Z,T_VietRicePaddy1Proc,sms,confirmed,Vietnam theater rice-paddy decoration proc,
-0x004A8950,func,?T_InitVietRicePaddy2Proc@@YAXXZ,T_InitVietRicePaddy2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8960,func,?T_VietRicePaddy2Proc@@YAXJ@Z,T_VietRicePaddy2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8970,func,?T_InitVietRicePaddy3Proc@@YAXXZ,T_InitVietRicePaddy3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8980,func,?T_VietRicePaddy3Proc@@YAXJ@Z,T_VietRicePaddy3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8990,func,?T_InitVietPalms1Proc@@YAXXZ,T_InitVietPalms1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A89A0,func,?T_VietPalms1Proc@@YAXJ@Z,T_VietPalms1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A89B0,func,?T_InitVietPalms2Proc@@YAXXZ,T_InitVietPalms2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A89C0,func,?T_VietPalms2Proc@@YAXJ@Z,T_VietPalms2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A89D0,func,?T_InitVietPalms3Proc@@YAXXZ,T_InitVietPalms3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A89E0,func,?T_VietPalms3Proc@@YAXJ@Z,T_VietPalms3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A89F0,func,?T_InitVietTrees1Proc@@YAXXZ,T_InitVietTrees1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A00,func,?T_VietTrees1Proc@@YAXJ@Z,T_VietTrees1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A10,func,?T_InitVietTrees2Proc@@YAXXZ,T_InitVietTrees2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A20,func,?T_VietTrees2Proc@@YAXJ@Z,T_VietTrees2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A30,func,?T_InitVietTrees3Proc@@YAXXZ,T_InitVietTrees3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A40,func,?T_VietTrees3Proc@@YAXJ@Z,T_VietTrees3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A50,func,?T_InitVietWaterBuffaloProc@@YAXXZ,T_InitVietWaterBuffaloProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
-0x004A8A60,func,?T_VietWaterBuffaloProc@@YAXJ@Z,T_VietWaterBuffaloProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,
+0x004A8750,func,?T_MooseProc@@YAXJ@Z,T_MooseProc,sms,confirmed,"scatters ""moose"" decoration (desert vs _mooseList)",void __cdecl T_MooseProc(long)
+0x004A8870,func,?T_InitVietRicePaddy1Proc@@YAXXZ,T_InitVietRicePaddy1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietRicePaddy1Proc(void)
+0x004A8880,func,?T_VietRicePaddy1Proc@@YAXJ@Z,T_VietRicePaddy1Proc,sms,confirmed,Vietnam theater rice-paddy decoration proc,void __cdecl T_VietRicePaddy1Proc(long)
+0x004A8950,func,?T_InitVietRicePaddy2Proc@@YAXXZ,T_InitVietRicePaddy2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietRicePaddy2Proc(void)
+0x004A8960,func,?T_VietRicePaddy2Proc@@YAXJ@Z,T_VietRicePaddy2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietRicePaddy2Proc(long)
+0x004A8970,func,?T_InitVietRicePaddy3Proc@@YAXXZ,T_InitVietRicePaddy3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietRicePaddy3Proc(void)
+0x004A8980,func,?T_VietRicePaddy3Proc@@YAXJ@Z,T_VietRicePaddy3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietRicePaddy3Proc(long)
+0x004A8990,func,?T_InitVietPalms1Proc@@YAXXZ,T_InitVietPalms1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietPalms1Proc(void)
+0x004A89A0,func,?T_VietPalms1Proc@@YAXJ@Z,T_VietPalms1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietPalms1Proc(long)
+0x004A89B0,func,?T_InitVietPalms2Proc@@YAXXZ,T_InitVietPalms2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietPalms2Proc(void)
+0x004A89C0,func,?T_VietPalms2Proc@@YAXJ@Z,T_VietPalms2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietPalms2Proc(long)
+0x004A89D0,func,?T_InitVietPalms3Proc@@YAXXZ,T_InitVietPalms3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietPalms3Proc(void)
+0x004A89E0,func,?T_VietPalms3Proc@@YAXJ@Z,T_VietPalms3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietPalms3Proc(long)
+0x004A89F0,func,?T_InitVietTrees1Proc@@YAXXZ,T_InitVietTrees1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietTrees1Proc(void)
+0x004A8A00,func,?T_VietTrees1Proc@@YAXJ@Z,T_VietTrees1Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietTrees1Proc(long)
+0x004A8A10,func,?T_InitVietTrees2Proc@@YAXXZ,T_InitVietTrees2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietTrees2Proc(void)
+0x004A8A20,func,?T_VietTrees2Proc@@YAXJ@Z,T_VietTrees2Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietTrees2Proc(long)
+0x004A8A30,func,?T_InitVietTrees3Proc@@YAXXZ,T_InitVietTrees3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietTrees3Proc(void)
+0x004A8A40,func,?T_VietTrees3Proc@@YAXJ@Z,T_VietTrees3Proc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietTrees3Proc(long)
+0x004A8A50,func,?T_InitVietWaterBuffaloProc@@YAXXZ,T_InitVietWaterBuffaloProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_InitVietWaterBuffaloProc(void)
+0x004A8A60,func,?T_VietWaterBuffaloProc@@YAXJ@Z,T_VietWaterBuffaloProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes,void __cdecl T_VietWaterBuffaloProc(long)
 0x004A8A70,func,_T_InitWaterProc,T_InitWaterProc,sms,confirmed,copies _waterCfg string then resolves _waterList via T_ResolveDecorShapes,
-0x004A8AB0,func,?T_WaterProc@@YAXJ@Z,T_WaterProc,sms,confirmed,scatters water-surface decoration; lazy-inits via T_InitWaterProc,
+0x004A8AB0,func,?T_WaterProc@@YAXJ@Z,T_WaterProc,sms,confirmed,scatters water-surface decoration; lazy-inits via T_InitWaterProc,void __cdecl T_WaterProc(long)
 0x004A8B90,func,_T_InitCloudProc,T_InitCloudProc,sms,confirmed,resolves _cloudList via T_ResolveDecorShapes(&_cloudList 0x50C298),
-0x004A8BA0,func,?T_CloudProc@@YAXJ@Z,T_CloudProc,sms,confirmed,label-only; the global ambient proc (set in T_Init2),
+0x004A8BA0,func,?T_CloudProc@@YAXJ@Z,T_CloudProc,sms,confirmed,label-only; the global ambient proc (set in T_Init2),void __cdecl T_CloudProc(long)
 0x004A8C30,func,T_QueueDecor,,re,inferred,append an entry (short id + 0x17-B record) to the per-frame decor/comment list at _decorListEnd (DAT_0057336c); dedupes by id,
 0x004A8CC0,func,T_ObjIsVisible,,re,inferred,per-object render-flag/type visibility test (DAT_00573396 flags vs type table at 0x50A6B8); used by T_AddVisibleObjs,
-0x004A8D30,func,_T_Normal@16,T_Normal,sms,confirmed,,
-0x004A8E50,func,?T_LeafOp@@YGXDPAULEAF_LIST@@PAUWORD_POINT3@@PAULONG_POINT@@J11@Z,T_LeafOp,sms,confirmed,emit one terrain leaf's geometry; 14-B entry + split body FUN_004a8e5e,
+0x004A8D30,func,_T_Normal@16,T_Normal,sms,confirmed,,"undefined4 __stdcall T_Normal(undefined4, undefined4, undefined4, undefined4)"
+0x004A8E50,func,?T_LeafOp@@YGXDPAULEAF_LIST@@PAUWORD_POINT3@@PAULONG_POINT@@J11@Z,T_LeafOp,sms,confirmed,emit one terrain leaf's geometry; 14-B entry + split body FUN_004a8e5e,"void __stdcall T_LeafOp(char, LEAF_LIST *, WORD_POINT3 *, LONG_POINT *, long, WORD_POINT3 *, WORD_POINT3 *)"
 0x004A8E5E,func,,,waiver,confirmed,Ghidra mid-function split: body of ?T_LeafOp@@YGXD...@Z (entry 0x4A8E50 +0xE); the 2042-B leaf-emit worker,
-0x004A9660,func,_T_Make@12,T_Make,sms,confirmed,build terrain scene: pick LOD tile size (_lodTileSize 0x20-0x100) + detail (_lodDetail 1/2/4/8) by view distance/DAT_00573394; quadtree tessellate into _cellArray; run ambient/object passes; emit leaf list,
+0x004A9660,func,_T_Make@12,T_Make,sms,confirmed,build terrain scene: pick LOD tile size (_lodTileSize 0x20-0x100) + detail (_lodDetail 1/2/4/8) by view distance/DAT_00573394; quadtree tessellate into _cellArray; run ambient/object passes; emit leaf list,"undefined4 __stdcall T_Make(undefined4, undefined4, undefined4)"
 0x004A9BB0,func,T_RunAmbientProcs,,re,confirmed,iterate _ambientProcs[0..0x10] (17 decoration procs) calling each with its index; gated by DAT_00573396&0x8000 and _ambientSuppress,
 0x004A9C20,func,T_AddVisibleObjs,,re,inferred,iterate _objPtrs[1.._nextObjId]; for visible in-bounds objects run ImmediateService and T_QueueDecor (via GetCurObj/PutCurObj),
 0x004A9D00,func,T_BuildQuadCell,,re,inferred,"build one quad cell in _cellArray (sample T_GetLeaf at 4 corners, T_QuadAltitude/SetFlags)",
@@ -62,29 +62,29 @@ va,kind,name,display,source,confidence,notes,type
 0x004AA430,func,,,waiver,confirmed,empty stub (single RET); reserved ambient/sort hook invoked by T_Make after T_SortCells,
 0x004AA440,func,T_CountCells,,re,inferred,tally cells into front/back counts (returns front count); drives T_Make's subdivide-again loop,
 0x004AA4A0,func,T_EmitCells,,re,inferred,"per live cell: T_CellTmapLookup + optional T_Normal, then T_LeafOp to emit geometry",
-0x004AA620,func,_T_InitDictionary@0,T_InitDictionary,sms,confirmed,init the tmap dictionary (_tdic),
-0x004AA680,func,@T_InitDictionaryEntry@8,T_InitDictionaryEntry,sms,confirmed,,
-0x004AA790,func,_T_NamedTmaps@0,T_NamedTmaps,sms,confirmed,build named-tmap list (_tlist) from dictionary,
-0x004AA7E0,func,?T_CompareTlist@@YAJPAX0@Z,T_CompareTlist,sms,confirmed,qsort comparator for _tlist (label-only; xref-only in globals.csv),
-0x004AA820,func,@T_SortTmapList@0,T_SortTmapList,sms,confirmed,sort _tlist for binary search,
+0x004AA620,func,_T_InitDictionary@0,T_InitDictionary,sms,confirmed,init the tmap dictionary (_tdic),undefined4 __stdcall T_InitDictionary(void)
+0x004AA680,func,@T_InitDictionaryEntry@8,T_InitDictionaryEntry,sms,confirmed,,"undefined4 __fastcall T_InitDictionaryEntry(undefined4, undefined4)"
+0x004AA790,func,_T_NamedTmaps@0,T_NamedTmaps,sms,confirmed,build named-tmap list (_tlist) from dictionary,undefined4 __stdcall T_NamedTmaps(void)
+0x004AA7E0,func,?T_CompareTlist@@YAJPAX0@Z,T_CompareTlist,sms,confirmed,qsort comparator for _tlist (label-only; xref-only in globals.csv),"long __cdecl T_CompareTlist(void *, void *)"
+0x004AA820,func,@T_SortTmapList@0,T_SortTmapList,sms,confirmed,sort _tlist for binary search,undefined4 __fastcall T_SortTmapList(void)
 0x004AA840,func,T_CellTmapLookup,,re,inferred,binary-search _tlist by packed cell coord ((y&~3)<<16|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2,
-0x004AACA0,func,_T_InitHorizonProc@0,T_InitHorizonProc,sms,confirmed,RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH,
+0x004AACA0,func,_T_InitHorizonProc@0,T_InitHorizonProc,sms,confirmed,RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH,undefined4 __stdcall T_InitHorizonProc(void)
 0x004AACE0,func,_T_HorizonProc,T_HorizonProc,sms,confirmed,1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label,
 0x004AACF0,data,_T_DefaultHorizon,T_DefaultHorizon,sms,confirmed,default horizon descriptor (14 B) embedded after T_HorizonProc; pushed into leaf list by T_Make,
 0x004AACFE,func,T_DrawHorizon,,re,inferred,"horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol",
-0x004AB860,func,@BrushFromIndex@4,BrushFromIndex,sms,confirmed,,
-0x004ABAB0,func,_T_Info@24,T_Info,sms,confirmed,,
-0x004C5D30,func,_T_InitDatabase@0,T_InitDatabase,sms,confirmed,set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB),
-0x004C5D50,func,_T_ShutdownDatabase@0,T_ShutdownDatabase,sms,confirmed,zero _dbDynamicLow/High,
-0x004C5D60,func,_T_Init@0,T_Init,sms,confirmed,,
-0x004C5D70,func,@T_Load@4,T_Load,sms,confirmed,load <theater>.T2 via RMAccess on map change (T_Shutdown first); relocate the tile-summary (+0x85) and leaf (+0x91) array offsets into pointers; derive <theater>land.PIC (fallback land.PIC),
+0x004AB860,func,@BrushFromIndex@4,BrushFromIndex,sms,confirmed,,undefined4 __fastcall BrushFromIndex(undefined4)
+0x004ABAB0,func,_T_Info@24,T_Info,sms,confirmed,,"undefined4 __stdcall T_Info(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004C5D30,func,_T_InitDatabase@0,T_InitDatabase,sms,confirmed,set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB),undefined4 __stdcall T_InitDatabase(void)
+0x004C5D50,func,_T_ShutdownDatabase@0,T_ShutdownDatabase,sms,confirmed,zero _dbDynamicLow/High,undefined4 __stdcall T_ShutdownDatabase(void)
+0x004C5D60,func,_T_Init@0,T_Init,sms,confirmed,,undefined4 __stdcall T_Init(void)
+0x004C5D70,func,@T_Load@4,T_Load,sms,confirmed,load <theater>.T2 via RMAccess on map change (T_Shutdown first); relocate the tile-summary (+0x85) and leaf (+0x91) array offsets into pointers; derive <theater>land.PIC (fallback land.PIC),undefined4 __fastcall T_Load(undefined4)
 0x004C5F40,func,T_StripTildes,,re,inferred,remove '~' chars from a filename in place; used twice by T_Load,
-0x004C5F60,func,_T_Init2@0,T_Init2,sms,confirmed,,
-0x004C5FA0,func,_T_Shutdown@0,T_Shutdown,sms,confirmed,mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change),
-0x004C6020,func,_T_StopAdding@0,T_StopAdding,sms,confirmed,OBJStopAdding (unless _curScreen==3) + OBJFindHumans,
-0x004C6040,func,@T_GetLeaf@12,T_GetLeaf,sms,confirmed,"return 3-byte leaf ptr: fine grid (th+0x91,stride th+0x89) if size<th+0x79 else coarse grid (th+0x85,stride th+0x7d); OOB -> _borderLeaf (0x50CE4C)",
-0x004C9624,func,_T_InterpAltNW@16,T_InterpAltNW,sms,confirmed,barycentric altitude interpolation in the NW triangle of a leaf quad (64-bit divide of corner heights),
-0x004C9770,func,_T_InterpAltSE@16,T_InterpAltSE,sms,confirmed,label-only in FA.SMS import; SE-triangle counterpart (folded into InterpAltNW tail today),
+0x004C5F60,func,_T_Init2@0,T_Init2,sms,confirmed,,undefined4 __stdcall T_Init2(void)
+0x004C5FA0,func,_T_Shutdown@0,T_Shutdown,sms,confirmed,mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change),undefined4 __stdcall T_Shutdown(void)
+0x004C6020,func,_T_StopAdding@0,T_StopAdding,sms,confirmed,OBJStopAdding (unless _curScreen==3) + OBJFindHumans,undefined4 __stdcall T_StopAdding(void)
+0x004C6040,func,@T_GetLeaf@12,T_GetLeaf,sms,confirmed,"return 3-byte leaf ptr: fine grid (th+0x91,stride th+0x89) if size<th+0x79 else coarse grid (th+0x85,stride th+0x7d); OOB -> _borderLeaf (0x50CE4C)","undefined4 __fastcall T_GetLeaf(undefined4, undefined4, undefined4)"
+0x004C9624,func,_T_InterpAltNW@16,T_InterpAltNW,sms,confirmed,barycentric altitude interpolation in the NW triangle of a leaf quad (64-bit divide of corner heights),"undefined4 __stdcall T_InterpAltNW(undefined4, undefined4, undefined4, undefined4)"
+0x004C9770,func,_T_InterpAltSE@16,T_InterpAltSE,sms,confirmed,label-only in FA.SMS import; SE-triangle counterpart (folded into InterpAltNW tail today),"undefined4 __stdcall T_InterpAltSE(undefined4, undefined4, undefined4, undefined4)"
 0x004EE6DC,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
 0x004EE6DD,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
 0x004EE6DE,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,

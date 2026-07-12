@@ -36,6 +36,12 @@ import java.util.List;
 
 public class ApplyTypes extends GhidraScript {
 
+    /** Calling conventions the FA.SMS decoration can prove. Longest first: "__fastcall"
+     *  must be tried before any prefix of it could match. */
+    private static final String[] CONVENTIONS = {
+        "__fastcall", "__thiscall", "__stdcall", "__pascal", "__cdecl",
+    };
+
     @Override
     public void run() throws Exception {
         String[] args = getScriptArgs();
@@ -89,6 +95,7 @@ public class ApplyTypes extends GhidraScript {
         DataTypeParser dtp = new DataTypeParser(dtm, dtm, null, AllowedDataTypes.ALL);
         FunctionSignatureParser sigp = new FunctionSignatureParser(dtm, null);
         int dataApplied = 0, funcApplied = 0, unchanged = 0, skipped = 0, failed = 0;
+        int convFailed = 0;
 
         for (File f : files) {
             String slug = f.getName().replaceAll("\\.csv$", "");
@@ -109,15 +116,48 @@ public class ApplyTypes extends GhidraScript {
                         DataUtilities.createData(currentProgram, addr, dt, dt.getLength(),
                                 false, ClearDataMode.CLEAR_ALL_CONFLICT_DATA);
                         dataApplied++;
-                    } else { // func: treat `type` as a full signature override
+                    } else { // func: `type` is a full prototype (tools/gen_signatures.py)
                         Function fn = getFunctionAt(addr);
                         if (fn == null) { skipped++; continue; }
-                        FunctionDefinitionDataType sig = sigp.parse(null, ctype);
+
+                        // The prototype carries its calling convention, because that is a
+                        // recovered fact -- the FA.SMS decoration proves it, and the fxe
+                        // codegen needs it (stdcall vs fastcall is an ABI difference).
+                        // Ghidra models it as a property of the function, not as part of
+                        // the signature text: FunctionSignatureParser reads everything
+                        // before the name as the return type and would choke on
+                        // "undefined4 __stdcall". So lift it out, parse, then set it.
+                        //
+                        // Only the convention BEFORE the first '(' is the function's own;
+                        // a function-pointer parameter carries its own, which must survive.
+                        String conv = null, proto = ctype;
+                        int lp = ctype.indexOf('(');
+                        String head = (lp < 0) ? ctype : ctype.substring(0, lp);
+                        String tail = (lp < 0) ? "" : ctype.substring(lp);
+                        for (String cc : CONVENTIONS) {
+                            if (head.contains(cc)) {
+                                conv = cc;
+                                head = head.replace(cc, " ");
+                                proto = (head + tail).replaceAll("\\s+", " ").trim();
+                                break;
+                            }
+                        }
+
+                        FunctionDefinitionDataType sig = sigp.parse(null, proto);
                         if (sig == null) { failed++; continue; }
                         ApplyFunctionSignatureCmd cmd = new ApplyFunctionSignatureCmd(
                                 addr, sig, ghidra.program.model.symbol.SourceType.USER_DEFINED);
-                        if (cmd.applyTo(currentProgram)) funcApplied++;
-                        else failed++;
+                        if (!cmd.applyTo(currentProgram)) { failed++; continue; }
+                        funcApplied++;
+                        if (conv != null) {
+                            try {
+                                fn.setCallingConvention(conv);
+                            } catch (Exception ce) {
+                                // e.g. __pascal, which this compiler spec does not model.
+                                // The signature still applied; only the convention is lost.
+                                convFailed++;
+                            }
+                        }
                     }
                 } catch (Exception ex) {
                     println(String.format("TYPE FAIL 0x%08X (%s): %s",
@@ -127,7 +167,8 @@ public class ApplyTypes extends GhidraScript {
             }
         }
         println(String.format(
-                "ApplyTypes: %d data typed, %d funcs signed, %d skipped, %d failed",
-                dataApplied, funcApplied, skipped, failed));
+                "ApplyTypes: %d data typed, %d funcs signed, %d skipped, %d failed, "
+                + "%d convention(s) unmodelled",
+                dataApplied, funcApplied, skipped, failed, convFailed));
     }
 }
