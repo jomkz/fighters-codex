@@ -162,6 +162,13 @@ everything, `*.DLL` is a suffix, anything else is an exact (case-insensitive)
 name. Three of the eleven directives use `*.*` — the label, not the glob, is
 doing the selecting.
 
+The destination argument is **confined**. It comes off the disc, so it is
+untrusted like any other parsed field: `"[INSTALL_PATH]\..\..\WINDOWS"` resolves
+to `WINDOWS/`, not to somewhere above the install directory, and a drive letter
+is dropped. The file half is neutralised by
+[`esa_safe_name`](ESA.md). The retail scripts only ever say
+`"[INSTALL_PATH]"`, so nothing real is given up.
+
 **Script choice is data-driven, not label-driven.** `SETUP.SSF` names its two
 sub-scripts with localised prose (`":0409:Full Install - Digital Music:0C:…"`),
 so nothing machine-readable says which is the full one. The engine resolves both
