@@ -89,9 +89,9 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 | Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002B00` | — | — | — | · | [#272](https://github.com/jomkz/fighters-codex/issues/272) | planned |
+| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002AB0` | 25/25 (100%) | 12 named · 23 waived | [doc](matchmaking.md) | ✓ | [#275](https://github.com/jomkz/fighters-codex/issues/275) | complete |
 
-**MSAPI.DLL totals:** 0/1 subsystems complete; 25/26 in-scope functions named; 12/36 referenced globals resolved.
+**MSAPI.DLL totals:** 1/1 subsystems complete; 25/25 in-scope functions named; 35/36 referenced globals resolved.
 
-**Program totals (all binaries):** 26/27 subsystems complete; 4507/4508 in-scope functions named; 4956/7959 referenced globals resolved.
+**Program totals (all binaries):** 27/27 subsystems complete; 4507/4507 in-scope functions named; 4979/7959 referenced globals resolved.
 

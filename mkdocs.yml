@@ -195,6 +195,7 @@ nav:
           - Video Decode: fa/video-decode.md
       - Comms & Multiplayer:
           - Network: fa/network.md
+          - Matchmaking (MSAPI): fa/matchmaking.md
           - Comms — Serial (CDRVDL32): fa/comms.md
           - Comms — Modem (CDRVHF32): fa/comms-modem.md
           - Comms — Transfer (CDRVXF32): fa/comms-transfer.md

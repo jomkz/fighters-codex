@@ -2098,6 +2098,40 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x10001A30` | `CdrvScrSetFocus` | re | Cdrv comms service (terminal screen) public export |
 | `0x10001A50` | `CdrvScrPaint` | re | Cdrv comms service (terminal screen) public export |
 
+**Binary: `MSAPI.DLL`**
+
+### Matchmaking / internet-play client (MSAPI)
+
+[`msapi.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/msapi.csv) · [page](matchmaking.md) — 25 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x100011E0` | `connectMS` | re | Export ord2: read Server IP/Server Port from the registry (SOFTWARE\...\Matchmaker via ms_reg_open/select/read) or a default source; socket(AF_INET,SOCK_STREAM)+connect() into ms_socket; then send 'WAKEUP' (6B) and expect 'OK'. Codes: 1=OK, 0x3E8=socket() failed, 0x3E9=handshake rejected, 0x3EA=connect error, 0x3EB=proto. |
+| `0x10001670` | `initializeMS` | re | Export ord7: registration handshake — send record size (u32) + 'u' + player record, call ms_upload_init_arrays ('i'), then register the volume serial (GetVolumeInformation, '%d'-formatted); expect 'OK'. Creates the receive worker (ms_recv_thread, CREATE_SUSPENDED). |
+| `0x10001A20` | `ms_upload_init_arrays` | re | Opcode 'i' (@0x1001D0FC): upload the init record as two groups of three u32 arrays, each u32-length-prefixed (ms_send_u32) and htonl-byteswapped. Part of the initializeMS handshake. |
+| `0x10001D20` | `loginMShost` | re | Export ord9: opcode 'h' — login as game host; stores host cookie (ms_host_cookie) and ResumeThread on ms_recv_thread. |
+| `0x10001D80` | `loginMSPlayer` | re | Export ord8: opcode 'p' — login as player; SuspendThread on ms_recv_thread and clear ms_host_cookie. |
+| `0x10001DE0` | `requestMSgame` | re | Export ord10: opcode 'r' — request game list; reads 'P'-prefixed records (ms_recv_u32 length, then payload) into the 0x24-byte linked-list nodes at ms_game_list_head (+0x10 len, +0x14 payload, +0x1C next, +0x20 head); returns 5-dword header + payload to caller. |
+| `0x10002030` | `selectMSgame` | re | Export ord12: opcode 's' — select game by id (rec+0x10, ms_send_u32); expect 'O'. |
+| `0x100020C0` | `deselectMSgame` | re | Export ord3: opcode 'd' — deselect game by id (rec+0x10). |
+| `0x10002120` | `resetMSfilter` | re | Export ord11: opcode 't' — reset game-list filter/cursor; clears ms_game_count/ms_game_selected, sets ms_list_dirty. |
+| `0x10002170` | `updateMSgame` | re | Export ord14: opcode 'u' — upload/update the player-or-game record (ms_record_size bytes). |
+| `0x100021D0` | `fetchMSgame` | re | Export ord4: opcode 'f' — fetch one game record by id; reads a 'P' payload of ms_record_size bytes. |
+| `0x10002280` | `sendMSresults` | re | Export ord13: opcode 'v' — send mission-results blob (ms_send_u32 length + data); expect 'O'. |
+| `0x10002330` | `getMSdatafilesize` | re | Export ord6: opcode 'z' — query server data-file size by name; reads a u32 size; 0xFFFFFFFF => not found (0x3F3); expect 'O'. |
+| `0x10002440` | `getMSdatafile` | re | Export ord5: opcode 'x' — download server data-file by name into a buffer; client acks 'O', expects 'K'. |
+| `0x10002570` | `closeMS` | re | Export ord1: opcode 'l' — quit/logout; closesocket(ms_socket); free the game list + DeleteCriticalSection; clear ms_running. |
+| `0x10002630` | `ms_recv_all` | re | recv() exactly N bytes in a loop ('Read Packet Error - Correcting...' on short read). |
+| `0x10002680` | `ms_send_all` | re | send() exactly N bytes in a loop ('Send Packet Error - Correcting...' on short write). |
+| `0x100026D0` | `ms_recv_u32` | re | recv 4 bytes then ntohl -> host u32 (network-order length prefix). |
+| `0x10002700` | `ms_send_u32` | re | htonl then send 4 bytes (network-order length prefix). |
+| `0x10002730` | `ms_disconnect` | re | Receive-worker teardown: send 'l' quit opcode, closesocket, free game list + critical section. |
+| `0x10002800` | `ms_reg_open` | re | Registry-cache ctor: RegCreateKeyExA the HKLM SOFTWARE\... base keys (this+0x308/0x30C/0x310) for the Server IP/Port + data-file cache. |
+| `0x10002950` | `ms_reg_close` | re | Registry-cache dtor: RegFlushKey + RegCloseKey the open keys. |
+| `0x100029A0` | `ms_reg_select_subkey` | re | Registry-cache: RegCreateKeyExA a named subkey (e.g. 'Matchmaker') into this+0x314. |
+| `0x10002A00` | `ms_reg_read_value` | re | Registry-cache: RegQueryValueExA a named value into a buffer; if missing and a default is given, RegSetValueExA writes it (get-or-create). Used for 'Server IP'/'Server Port'. |
+| `0x100034D0` | `ms_atoi` | re | Decimal-string-to-int (thin wrapper over FUN_10003430); parses the registry port string in connectMS. |
+
 <!-- END GENERATED: symbol-registry -->
 
 ## Format Loaders and Parsers
