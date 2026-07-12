@@ -48,6 +48,54 @@ typedef struct SEQLBL      SEQLBL;      /* .SEQ label node                      
 typedef struct SEQFNT      SEQFNT;      /* .SEQ font node                           */
 typedef struct SEQTXT      SEQTXT;      /* .SEQ text node                           */
 
+/* --- vocabulary harvested from the C++-mangled FA.SMS names (#452) ---------------
+ * The MSVC C++ decoration spells out its parameter types, so every struct and enum
+ * named in a mangled signature is a recovered fact -- the original developers' own type
+ * name. These are declared opaque for the same reason as the block above: pointers
+ * type-check today, and interiors get filled in per-subsystem as they are recovered.
+ */
+typedef struct F24_POINT3   F24_POINT3;   /* collision, sound: F24.8 3-vector        */
+typedef struct WORD_POINT3  WORD_POINT3;  /* terrain: 16-bit 3-vector                */
+typedef struct LONG_POINT   LONG_POINT;   /* terrain: 32-bit 2-vector                */
+typedef struct PLANE        PLANE;        /* sound: plane equation                   */
+typedef struct BOX          BOX;          /* shell-ui: rectangle                     */
+typedef struct FVERTEX      FVERTEX;      /* renderer: flat-shaded vertex            */
+typedef struct TVERTEX      TVERTEX;      /* renderer: textured vertex               */
+typedef struct T_BITMAP     T_BITMAP;     /* renderer: bitmap / texture surface      */
+typedef struct GlobalData   GlobalData;   /* renderer, video: codec global state     */
+typedef struct FrameHeader  FrameHeader;  /* video: FMV frame header                 */
+typedef struct HIT_OBJ_DATA HIT_OBJ_DATA; /* objects, weapons: hit record            */
+typedef struct LEAF_LIST    LEAF_LIST;    /* terrain: quadtree leaf list             */
+typedef struct MODSPEC      MODSPEC;      /* sound: module / track spec              */
+typedef struct ACTION       ACTION;       /* shell-ui: menu action                   */
+
+/* network -- the transport types the NET_/SERIAL_ signatures name */
+typedef struct NET_PKT               NET_PKT;
+typedef struct NET_ADDRESS_LIST      NET_ADDRESS_LIST;
+typedef struct NET_PLAYER_LIST       NET_PLAYER_LIST;
+typedef struct SERIAL_PACKET         SERIAL_PACKET;
+typedef struct SERIAL_PACKET_WRAPPER SERIAL_PACKET_WRAPPER;
+typedef struct SERIAL_QUEUE          SERIAL_QUEUE;
+typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address         */
+typedef struct socket_state          socket_state;
+
+/* MSVC CRT internals, named in the startup subsystem's exception-handling signatures */
+typedef struct EHExceptionRecord     EHExceptionRecord;
+typedef struct EHRegistrationNode    EHRegistrationNode;
+typedef struct _EXCEPTION_POINTERS   _EXCEPTION_POINTERS;
+typedef struct _s_FuncInfo           _s_FuncInfo;
+
+/* Enums (mangled `W4`): 4-byte, int-backed. The enumerators are not recovered, so the
+ * width is preserved without inventing constants. */
+typedef int JOYRESULT;           /* input:   GetJoystickType / ReadDevice result     */
+typedef int PLAYER_ACTION;       /* network: player-action callback code             */
+typedef int NET_CONNECTED_STATE; /* network: connection-state callback code          */
+
+/* `undefined4` -- 4 bytes, type not recovered: Ghidra's idiom, used by the signatures
+ * derived from an `@N` decoration, where the name proves the callee pops N bytes but
+ * says nothing about what those bytes are. An honest unknown, never a guessed type. */
+typedef unsigned int undefined4;
+
 /* --- CN_INFO — network configuration, EA.CFG / NET.DAT (docs/fa/structs.md §4) ---
  * CN_ReadConfig reads a 0xDDC-byte body after a 4-byte checksum. Only the confirmed,
  * 4-aligned dword fields and the adjacent ASCII address strings are named; the large

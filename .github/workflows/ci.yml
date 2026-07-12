@@ -90,6 +90,15 @@ jobs:
           python3 tools/gen_icons.py --self-test
           python3 tools/gen_icons.py --check
 
+      # db/ signatures (#452): the FA.SMS names encode calling conventions,
+      # arities, and (when C++-mangled) full parameter types. They must stay
+      # materialized in db/symbols/, and a hand-sharpened signature must never
+      # contradict what the decoration proves. Stdlib-only, no Ghidra needed.
+      - name: Check db/ signature currency
+        run: |
+          python3 tools/gen_signatures.py --self-test
+          python3 tools/gen_signatures.py --check
+
   macos:
     name: macos (informational)
     runs-on: macos-latest

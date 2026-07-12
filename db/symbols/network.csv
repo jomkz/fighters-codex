@@ -1,52 +1,52 @@
 va,kind,name,display,source,confidence,notes,type
-0x004016C0,func,?NET_SlaveInit@@YADPAUCN_INFO@@PAUNET_ADDRESS@@PADPAXP6AX3W4PLAYER_ACTION@@21J@Z3P6AX3W4NET_CONNECTED_STATE@@@ZH@Z,NET_SlaveInit,sms,confirmed,client: open connection to master at NET_ADDRESS; registers PLAYER_ACTION/NET_CONNECTED_STATE callbacks,
-0x00401780,func,?NET_SlaveShutdown@@YAXXZ,NET_SlaveShutdown,sms,confirmed,client leave/teardown,
-0x004017B0,func,?NET_RequestPlayerList@@YADPAUNET_ADDRESS@@PAXP6AX1W4PLAYER_ACTION@@PAD0J@Z1P6AX1W4NET_CONNECTED_STATE@@@Z@Z,NET_RequestPlayerList,sms,confirmed,query lobby for player list (async),
-0x00401850,func,?NET_CancelPlayerList@@YAXXZ,NET_CancelPlayerList,sms,confirmed,cancel pending player-list query,
-0x004019A0,func,?player_list_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,player_list_process_pkt,sms,confirmed,dispatch player-list-query reply packets,
+0x004016C0,func,?NET_SlaveInit@@YADPAUCN_INFO@@PAUNET_ADDRESS@@PADPAXP6AX3W4PLAYER_ACTION@@21J@Z3P6AX3W4NET_CONNECTED_STATE@@@ZH@Z,NET_SlaveInit,sms,confirmed,client: open connection to master at NET_ADDRESS; registers PLAYER_ACTION/NET_CONNECTED_STATE callbacks,"char __cdecl NET_SlaveInit(CN_INFO *, NET_ADDRESS *, char *, void *, void (__cdecl *)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long), void *, void (__cdecl *)(void *, NET_CONNECTED_STATE), int)"
+0x00401780,func,?NET_SlaveShutdown@@YAXXZ,NET_SlaveShutdown,sms,confirmed,client leave/teardown,void __cdecl NET_SlaveShutdown(void)
+0x004017B0,func,?NET_RequestPlayerList@@YADPAUNET_ADDRESS@@PAXP6AX1W4PLAYER_ACTION@@PAD0J@Z1P6AX1W4NET_CONNECTED_STATE@@@Z@Z,NET_RequestPlayerList,sms,confirmed,query lobby for player list (async),"char __cdecl NET_RequestPlayerList(NET_ADDRESS *, void *, void (__cdecl *)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long), void *, void (__cdecl *)(void *, NET_CONNECTED_STATE))"
+0x00401850,func,?NET_CancelPlayerList@@YAXXZ,NET_CancelPlayerList,sms,confirmed,cancel pending player-list query,void __cdecl NET_CancelPlayerList(void)
+0x004019A0,func,?player_list_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,player_list_process_pkt,sms,confirmed,dispatch player-list-query reply packets,"void __cdecl player_list_process_pkt(NET_PKT *, socket_state *)"
 0x00401A60,func,NETSlaveConnect,,re,inferred,"slave connect helper: proto_ptr->open (vtbl+0x56), register slave_events (0x401B20) via socket_add_state_func, seed socket_state addr fields; net_set_often_state(5). Body @0x401A60 cited",
-0x00401CD0,func,?handle_slave_connection_failed@@YAXPAUsocket_state@@@Z,handle_slave_connection_failed,sms,confirmed,"retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0)",
+0x00401CD0,func,?handle_slave_connection_failed@@YAXPAUsocket_state@@@Z,handle_slave_connection_failed,sms,confirmed,"retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0)",void __cdecl handle_slave_connection_failed(socket_state *)
 0x00401E30,func,NETSlaveLostConn,,re,inferred,"slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30",
-0x00401EB0,func,?slave_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,slave_process_pkt,sms,confirmed,"slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected",
+0x00401EB0,func,?slave_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,slave_process_pkt,sms,confirmed,"slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected","void __cdecl slave_process_pkt(NET_PKT *, socket_state *)"
 0x00402330,func,NETArmKeepalive,,re,inferred,arm socket send timer (state+8 = timerTicks+0x400; state+4 = 4 unless already ready). Body @0x402330,
 0x00402360,func,NETResetTimer,,re,inferred,reset socket send timer to now (state+8 = timerTicks; state+4 = 4). Body @0x402360,
 0x004024D0,func,NETProcessPlayerList,,re,inferred,"process NET_PLAYER_LIST: find self via NETIsAddrLocal, net_add_self, connect to every other listed peer (mesh) via proto vtbl+0x56 + socket_add_state_func(...,0x401B20); if all ready -> pkt_send_ready. Called from slave_process_pkt case 4. Body @0x4024D0",
 0x00405360,func,NETWaitMasterScreen,,re,inferred,"slave: spin polling MPReceive/MPCheckDisconnect while _masterNextScreen==-1, then adopt it as _curScreen (thisComputer>0). Body @0x405360",
 0x004053A0,func,NETApplyMasterScreen,,re,inferred,slave: apply pending _masterNextScreen to _curScreen once (non-blocking). Body @0x4053A0,
-0x004054F0,func,?netDialogAppIO@@YAJJPAD@Z,netDialogAppIO,sms,confirmed,"net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse",
+0x004054F0,func,?netDialogAppIO@@YAJJPAD@Z,netDialogAppIO,sms,confirmed,"net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse","long __cdecl netDialogAppIO(long, char *)"
 0x00405CD0,func,NETFormatIP,,re,inferred,format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0,
-0x00405D10,func,?ip2long@@YADPADPAK@Z,ip2long,sms,confirmed,parse dotted-quad string -> packed u32 (strchr('.')+atoi x4),
-0x00405DF0,func,?RunNetConfigurationScreen@@YGXJ@Z,RunNetConfigurationScreen,sms,confirmed,net config screen entry; calls doConfigurationScreen(1|4),
-0x0045D090,func,?pkt_send_can_i_play@@YADHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play,sms,confirmed,client->host join request,
-0x0045D120,func,?pkt_send_can_i_play_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play_player,sms,confirmed,join request naming a player slot,
-0x0045D1B0,func,?pkt_send_sync@@YADH@Z,pkt_send_sync,sms,confirmed,send sync request,
-0x0045D1C0,func,?pkt_send_type@@YADHH@Z,pkt_send_type,sms,confirmed,send a bare typed packet to peer index,
-0x0045D200,func,?pkt_sock_send_type@@YADIH@Z,pkt_sock_send_type,sms,confirmed,send bare typed packet to a socket,
-0x0045D240,func,?pkt_sock_send_message@@YADIGPAD@Z,pkt_sock_send_message,sms,confirmed,send text message packet to a socket,
-0x0045D280,func,?pkt_build_message@@YAXPAUNET_PKT@@GPAD@Z,pkt_build_message,sms,confirmed,fill NET_PKT message body,
-0x0045D2D0,func,?pkt_send_you_can_play@@YADHPAD@Z,pkt_send_you_can_play,sms,confirmed,host->client accept,
-0x0045D320,func,?pkt_send_ready@@YADHH@Z,pkt_send_ready,sms,confirmed,ready handshake,
-0x0045D360,func,?pkt_send_error@@YADHJ@Z,pkt_send_error,sms,confirmed,send error code to peer,
-0x0045D3A0,func,?pkt_send_new_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_new_player,sms,confirmed,announce new player to peer,
-0x0045D440,func,?pkt_sock_send_new_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_new_player,sms,confirmed,announce new player over socket,
-0x0045D580,func,?pkt_sock_send_lost_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_lost_player,sms,confirmed,announce lost player over socket,
-0x0045D700,func,?pkt_sock_send_error@@YADJI@Z,pkt_sock_send_error,sms,confirmed,send error over socket,
-0x0045D760,func,?pkt_build_sync_reply@@YAXPAUNET_PKT@@@Z,pkt_build_sync_reply,sms,confirmed,fill sync-reply header,
-0x0045D780,func,?pkt_build_play_game@@YAXPAUNET_PKT@@@Z,pkt_build_play_game,sms,confirmed,fill play-game (start) header,
-0x0045D810,func,?pkt_send_player_info@@YADHGPAUNET_PLAYER_LIST@@@Z,pkt_send_player_info,sms,confirmed,send NET_PLAYER_LIST entry,
-0x0045D890,func,?pkt_build_player_info@@YAXPAUNET_PKT@@GPAUNET_PLAYER_LIST@@@Z,pkt_build_player_info,sms,confirmed,serialize NET_PLAYER_LIST into NET_PKT,
-0x0045D940,func,?pkt_sock_send@@YADPAUNET_PKT@@I@Z,pkt_sock_send,sms,confirmed,low-level: send NET_PKT to one socket,
-0x0045D970,func,?pkt_send@@YADPAUNET_PKT@@H@Z,pkt_send,sms,confirmed,low-level: send NET_PKT to peer index,
-0x0045DA10,func,?pkt_set_header@@YAXHPAUNET_PKT@@H@Z,pkt_set_header,sms,confirmed,fill NET_PKT header (type/len),
+0x00405D10,func,?ip2long@@YADPADPAK@Z,ip2long,sms,confirmed,parse dotted-quad string -> packed u32 (strchr('.')+atoi x4),"char __cdecl ip2long(char *, unsigned long *)"
+0x00405DF0,func,?RunNetConfigurationScreen@@YGXJ@Z,RunNetConfigurationScreen,sms,confirmed,net config screen entry; calls doConfigurationScreen(1|4),void __stdcall RunNetConfigurationScreen(long)
+0x0045D090,func,?pkt_send_can_i_play@@YADHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play,sms,confirmed,client->host join request,"char __cdecl pkt_send_can_i_play(int, char *, NET_ADDRESS *)"
+0x0045D120,func,?pkt_send_can_i_play_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play_player,sms,confirmed,join request naming a player slot,"char __cdecl pkt_send_can_i_play_player(int, int, char *, NET_ADDRESS *)"
+0x0045D1B0,func,?pkt_send_sync@@YADH@Z,pkt_send_sync,sms,confirmed,send sync request,char __cdecl pkt_send_sync(int)
+0x0045D1C0,func,?pkt_send_type@@YADHH@Z,pkt_send_type,sms,confirmed,send a bare typed packet to peer index,"char __cdecl pkt_send_type(int, int)"
+0x0045D200,func,?pkt_sock_send_type@@YADIH@Z,pkt_sock_send_type,sms,confirmed,send bare typed packet to a socket,"char __cdecl pkt_sock_send_type(unsigned int, int)"
+0x0045D240,func,?pkt_sock_send_message@@YADIGPAD@Z,pkt_sock_send_message,sms,confirmed,send text message packet to a socket,"char __cdecl pkt_sock_send_message(unsigned int, unsigned short, char *)"
+0x0045D280,func,?pkt_build_message@@YAXPAUNET_PKT@@GPAD@Z,pkt_build_message,sms,confirmed,fill NET_PKT message body,"void __cdecl pkt_build_message(NET_PKT *, unsigned short, char *)"
+0x0045D2D0,func,?pkt_send_you_can_play@@YADHPAD@Z,pkt_send_you_can_play,sms,confirmed,host->client accept,"char __cdecl pkt_send_you_can_play(int, char *)"
+0x0045D320,func,?pkt_send_ready@@YADHH@Z,pkt_send_ready,sms,confirmed,ready handshake,"char __cdecl pkt_send_ready(int, int)"
+0x0045D360,func,?pkt_send_error@@YADHJ@Z,pkt_send_error,sms,confirmed,send error code to peer,"char __cdecl pkt_send_error(int, long)"
+0x0045D3A0,func,?pkt_send_new_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_new_player,sms,confirmed,announce new player to peer,"char __cdecl pkt_send_new_player(int, int, char *, NET_ADDRESS *)"
+0x0045D440,func,?pkt_sock_send_new_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_new_player,sms,confirmed,announce new player over socket,"char __cdecl pkt_sock_send_new_player(unsigned int, int, char *, NET_ADDRESS *)"
+0x0045D580,func,?pkt_sock_send_lost_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_lost_player,sms,confirmed,announce lost player over socket,"char __cdecl pkt_sock_send_lost_player(unsigned int, int, char *, NET_ADDRESS *)"
+0x0045D700,func,?pkt_sock_send_error@@YADJI@Z,pkt_sock_send_error,sms,confirmed,send error over socket,"char __cdecl pkt_sock_send_error(long, unsigned int)"
+0x0045D760,func,?pkt_build_sync_reply@@YAXPAUNET_PKT@@@Z,pkt_build_sync_reply,sms,confirmed,fill sync-reply header,void __cdecl pkt_build_sync_reply(NET_PKT *)
+0x0045D780,func,?pkt_build_play_game@@YAXPAUNET_PKT@@@Z,pkt_build_play_game,sms,confirmed,fill play-game (start) header,void __cdecl pkt_build_play_game(NET_PKT *)
+0x0045D810,func,?pkt_send_player_info@@YADHGPAUNET_PLAYER_LIST@@@Z,pkt_send_player_info,sms,confirmed,send NET_PLAYER_LIST entry,"char __cdecl pkt_send_player_info(int, unsigned short, NET_PLAYER_LIST *)"
+0x0045D890,func,?pkt_build_player_info@@YAXPAUNET_PKT@@GPAUNET_PLAYER_LIST@@@Z,pkt_build_player_info,sms,confirmed,serialize NET_PLAYER_LIST into NET_PKT,"void __cdecl pkt_build_player_info(NET_PKT *, unsigned short, NET_PLAYER_LIST *)"
+0x0045D940,func,?pkt_sock_send@@YADPAUNET_PKT@@I@Z,pkt_sock_send,sms,confirmed,low-level: send NET_PKT to one socket,"char __cdecl pkt_sock_send(NET_PKT *, unsigned int)"
+0x0045D970,func,?pkt_send@@YADPAUNET_PKT@@H@Z,pkt_send,sms,confirmed,low-level: send NET_PKT to peer index,"char __cdecl pkt_send(NET_PKT *, int)"
+0x0045DA10,func,?pkt_set_header@@YAXHPAUNET_PKT@@H@Z,pkt_set_header,sms,confirmed,fill NET_PKT header (type/len),"void __cdecl pkt_set_header(int, NET_PKT *, int)"
 0x0045DA30,func,pkt_queue_write,,re,inferred,"append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30",
-0x0045DB00,func,?pkt_sock_read@@YADPAUNET_PKT@@I@Z,pkt_sock_read,sms,confirmed,read one NET_PKT from a socket,
+0x0045DB00,func,?pkt_sock_read@@YADPAUNET_PKT@@I@Z,pkt_sock_read,sms,confirmed,read one NET_PKT from a socket,"char __cdecl pkt_sock_read(NET_PKT *, unsigned int)"
 0x0046BD90,func,,,waiver,confirmed,FOREIGN Cobra input poll (see Part 1 exclusions) — NOT network,
 0x0046C0A0,func,MPEnqueue,,re,confirmed,"core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper')",
 0x0046C28C,func,,,waiver,confirmed,Ghidra split tail of ?MPMissionInit1@@YGXXZ (0x46C280),
 0x0046C680,func,MPInterpPosAxis,,re,inferred,interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680,
 0x0046C780,func,MPUpdateInterval,,re,inferred,"per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780",
 0x0046C860,func,MPInterpAngleAxis,,re,inferred,interpolate one angle axis (uses MPWrapAngle). Body @0x46C860,
-0x0046C980,func,?MPReceive@@YGDXZ,MPReceive,sms,confirmed,per-frame inbound dispatcher (entry; body=FUN_0046C98F). Keepalive/timeout scan + 0x10-0x51 dispatch + MP_Often tail,
+0x0046C980,func,?MPReceive@@YGDXZ,MPReceive,sms,confirmed,per-frame inbound dispatcher (entry; body=FUN_0046C98F). Keepalive/timeout scan + 0x10-0x51 dispatch + MP_Often tail,char __stdcall MPReceive(void)
 0x0046C98F,func,,,waiver,confirmed,Ghidra split tail of ?MPReceive@@YGDXZ (0x46C980) — the 0x10-0x51 dispatch body,
 0x0046EC40,func,MPRelToAbsTime,,re,inferred,resolve relative packet timestamp to absolute (+currentT; skips sentinels 0/0x7FFF). Body @0x46EC40,
 0x0046EC60,func,MPResolveAlias,,re,confirmed,map network alias <-> local object id via entity +0x74; walks _objPtrs[1.._nextObjId]. Body @0x46EC60 (the OBJ/net bridge),
@@ -77,47 +77,47 @@ va,kind,name,display,source,confidence,notes,type
 0x00472670,func,MPRevive,,re,inferred,apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670,
 0x0047267C,func,,,waiver,confirmed,Ghidra split tail of the 0x472670 (MPRevive) function; decompile failed,
 0x004735D0,func,MPChatStore,,re,inferred,"append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey",
-0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),
-0x00493780,func,?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunIPXOptionsDialog,sms,confirmed,IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild,
+0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),"unsigned int __cdecl sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
+0x00493780,func,?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunIPXOptionsDialog,sms,confirmed,IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild,"void __cdecl RunIPXOptionsDialog(CN_INFO *, char *)"
 0x00493CB0,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table,
 0x00493CB4,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table,
-0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST,
-0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO,
-0x00497010,func,?spxlisten@@YAIXZ,spxlisten,sms,confirmed,open+bind an IPX socket and start SPX listening (backlog 5),
+0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST,char __cdecl spxinit(NET_ADDRESS_LIST *)
+0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO,"char __cdecl spxinit2(NET_PROTOCOL *, CN_INFO *)"
+0x00497010,func,?spxlisten@@YAIXZ,spxlisten,sms,confirmed,open+bind an IPX socket and start SPX listening (backlog 5),unsigned int __cdecl spxlisten(void)
 0x004970C0,func,spxopensocket,,re,inferred,open an SPX socket - socket(6) then SPX ioctl 0x8004667e; sibling of sapopensocket,
-0x00497150,func,?spxconnect@@YAIPAUNET_ADDRESS@@@Z,spxconnect,sms,confirmed,SPX connect to a NET_ADDRESS,
-0x004971D0,func,?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z,convert_addr_ipx2usnf,sms,confirmed,convert an IPX sockaddr to the engine NET_ADDRESS,
-0x00497210,func,?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2ipx,sms,confirmed,convert an engine NET_ADDRESS to an IPX sockaddr,
-0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO,
-0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3),
-0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type,
-0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC(),
-0x0049A070,func,?assignPacketCRC@@YAXAAUSERIAL_PACKET@@@Z,assignPacketCRC,sms,confirmed,store computed CRC into byte1 (+byte10 for type0/3),
-0x0049A0A0,func,?SER_EnterCriticalCodeBackground@@YAXXZ,SER_EnterCriticalCodeBackground,sms,confirmed,spin-acquire Ctrl busy flag (DAT_00570bb4) under critical section w/ Sleep(0),
-0x0049A100,func,?SER_LeaveCriticalCodeBackground@@YAXXZ,SER_LeaveCriticalCodeBackground,sms,confirmed,clear Ctrl busy flag under critical section,
-0x0049A120,func,?SER_CheckDisconnect@@YADXZ,SER_CheckDisconnect,sms,confirmed,detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags,
-0x0049A1B0,func,?SER_GetOutholdingLimit@@YAXXZ,SER_GetOutholdingLimit,sms,confirmed,transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window),
-0x0049A3E0,func,?updateQueueHead@@YAXAAUSERIAL_QUEUE@@J@Z,updateQueueHead,sms,confirmed,head = seq % capacity; returns seq / capacity (wrap count),
-0x0049A400,func,?insertQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,insertQueue,sms,confirmed,copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count,
-0x0049A460,func,?overwriteQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,overwriteQueue,sms,confirmed,overwrite slot by wrapper seq without count bump (history record),
-0x0049A4A0,func,?retrieveFromQueue@@YAXAAUSERIAL_QUEUE@@JAAUSERIAL_PACKET_WRAPPER@@@Z,retrieveFromQueue,sms,confirmed,copy out slot at (idx%cap)*0x30,
-0x0049A4D0,func,?fetchFromQueueTail@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,fetchFromQueueTail,sms,confirmed,pop tail slot then zero it; advance tail; returns wrap count,
-0x0049A660,func,?SER_InitializeLowLevel@@YAXXZ,SER_InitializeLowLevel,sms,confirmed,init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers,
-0x0049A6B0,func,?SER_ShutdownLowLevel@@YAXXZ,SER_ShutdownLowLevel,sms,confirmed,mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag,
-0x0049A700,func,?strToCom@@YAJPAE@Z,strToCom,sms,confirmed,"map ""COM1""..""COM8"" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none",
-0x0049A7D0,func,?MOD_InitPortAndModem@@YAJPAUCN_INFO@@J@Z,MOD_InitPortAndModem,sms,confirmed,SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc,
-0x0049A9B0,func,?MOD_FindModemAndInitPCMCIA@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInitPCMCIA,sms,confirmed,enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem,
-0x0049AC00,func,?MOD_WaitForCall@@YAJXZ,MOD_WaitForCall,sms,confirmed,"answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO ""Ring...""",
-0x0049AD00,func,?MOD_Initialize1@@YAJPAUCN_INFO@@J@Z,MOD_Initialize1,sms,confirmed,dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail,
-0x0049AF30,func,?MOD_InitializeAndConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_InitializeAndConnect,sms,confirmed,MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure,
-0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce,
-0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3,
-0x004AC180,func,?SER_SendBytes@@YAXPAEJ@Z,SER_SendBytes,sms,confirmed,append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba,
-0x004AC1D0,func,?SER_SendHoldingBuffer@@YAXXZ,SER_SendHoldingBuffer,sms,confirmed,flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel,
-0x004AC210,func,?SER_OkToSendPacket@@YADXZ,SER_OkToSendPacket,sms,confirmed,budget check (>0x17=23 bytes free); set pending flag DAT_00570edc,
-0x004AC230,func,?SER_SendPacket@@YADAAUSERIAL_PACKET_WRAPPER@@D@Z,SER_SendPacket,sms,confirmed,per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters,
-0x004AC2E0,func,?SER_SendRequests@@YAXXZ,SER_SendRequests,sms,confirmed,scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket,
-0x004AC480,func,?SER_SendStatus@@YAXXZ,SER_SendStatus,sms,confirmed,send status/ACK packet (type0) carrying last-tx seq + per-player state,
+0x00497150,func,?spxconnect@@YAIPAUNET_ADDRESS@@@Z,spxconnect,sms,confirmed,SPX connect to a NET_ADDRESS,unsigned int __cdecl spxconnect(NET_ADDRESS *)
+0x004971D0,func,?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z,convert_addr_ipx2usnf,sms,confirmed,convert an IPX sockaddr to the engine NET_ADDRESS,"void __cdecl convert_addr_ipx2usnf(NET_ADDRESS *, sockaddr_ipx *)"
+0x00497210,func,?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2ipx,sms,confirmed,convert an engine NET_ADDRESS to an IPX sockaddr,"void __cdecl convert_addr_usnf2ipx(sockaddr_ipx *, NET_ADDRESS *)"
+0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO,"char __cdecl spxbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *)"
+0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3),"void __cdecl setPacketInfo(SERIAL_PACKET &, long, long)"
+0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type,unsigned long __cdecl packetCRC(SERIAL_PACKET &)
+0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC(),char __cdecl verifyPacketCRC(SERIAL_PACKET &)
+0x0049A070,func,?assignPacketCRC@@YAXAAUSERIAL_PACKET@@@Z,assignPacketCRC,sms,confirmed,store computed CRC into byte1 (+byte10 for type0/3),void __cdecl assignPacketCRC(SERIAL_PACKET &)
+0x0049A0A0,func,?SER_EnterCriticalCodeBackground@@YAXXZ,SER_EnterCriticalCodeBackground,sms,confirmed,spin-acquire Ctrl busy flag (DAT_00570bb4) under critical section w/ Sleep(0),void __cdecl SER_EnterCriticalCodeBackground(void)
+0x0049A100,func,?SER_LeaveCriticalCodeBackground@@YAXXZ,SER_LeaveCriticalCodeBackground,sms,confirmed,clear Ctrl busy flag under critical section,void __cdecl SER_LeaveCriticalCodeBackground(void)
+0x0049A120,func,?SER_CheckDisconnect@@YADXZ,SER_CheckDisconnect,sms,confirmed,detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags,char __cdecl SER_CheckDisconnect(void)
+0x0049A1B0,func,?SER_GetOutholdingLimit@@YAXXZ,SER_GetOutholdingLimit,sms,confirmed,transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window),void __cdecl SER_GetOutholdingLimit(void)
+0x0049A3E0,func,?updateQueueHead@@YAXAAUSERIAL_QUEUE@@J@Z,updateQueueHead,sms,confirmed,head = seq % capacity; returns seq / capacity (wrap count),"void __cdecl updateQueueHead(SERIAL_QUEUE &, long)"
+0x0049A400,func,?insertQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,insertQueue,sms,confirmed,copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count,"void __cdecl insertQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
+0x0049A460,func,?overwriteQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,overwriteQueue,sms,confirmed,overwrite slot by wrapper seq without count bump (history record),"void __cdecl overwriteQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
+0x0049A4A0,func,?retrieveFromQueue@@YAXAAUSERIAL_QUEUE@@JAAUSERIAL_PACKET_WRAPPER@@@Z,retrieveFromQueue,sms,confirmed,copy out slot at (idx%cap)*0x30,"void __cdecl retrieveFromQueue(SERIAL_QUEUE &, long, SERIAL_PACKET_WRAPPER &)"
+0x0049A4D0,func,?fetchFromQueueTail@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,fetchFromQueueTail,sms,confirmed,pop tail slot then zero it; advance tail; returns wrap count,"void __cdecl fetchFromQueueTail(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
+0x0049A660,func,?SER_InitializeLowLevel@@YAXXZ,SER_InitializeLowLevel,sms,confirmed,init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers,void __cdecl SER_InitializeLowLevel(void)
+0x0049A6B0,func,?SER_ShutdownLowLevel@@YAXXZ,SER_ShutdownLowLevel,sms,confirmed,mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag,void __cdecl SER_ShutdownLowLevel(void)
+0x0049A700,func,?strToCom@@YAJPAE@Z,strToCom,sms,confirmed,"map ""COM1""..""COM8"" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none",long __cdecl strToCom(unsigned char *)
+0x0049A7D0,func,?MOD_InitPortAndModem@@YAJPAUCN_INFO@@J@Z,MOD_InitPortAndModem,sms,confirmed,SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc,"long __cdecl MOD_InitPortAndModem(CN_INFO *, long)"
+0x0049A9B0,func,?MOD_FindModemAndInitPCMCIA@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInitPCMCIA,sms,confirmed,enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem,"long __cdecl MOD_FindModemAndInitPCMCIA(CN_INFO *, long)"
+0x0049AC00,func,?MOD_WaitForCall@@YAJXZ,MOD_WaitForCall,sms,confirmed,"answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO ""Ring...""",long __cdecl MOD_WaitForCall(void)
+0x0049AD00,func,?MOD_Initialize1@@YAJPAUCN_INFO@@J@Z,MOD_Initialize1,sms,confirmed,dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail,"long __cdecl MOD_Initialize1(CN_INFO *, long)"
+0x0049AF30,func,?MOD_InitializeAndConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_InitializeAndConnect,sms,confirmed,MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure,"long __cdecl MOD_InitializeAndConnect(CN_INFO *, long, long *)"
+0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce,"long __cdecl MOD_Initialize(CN_INFO *, long)"
+0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3,void __cdecl MOD_Shutdown(void)
+0x004AC180,func,?SER_SendBytes@@YAXPAEJ@Z,SER_SendBytes,sms,confirmed,append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba,"void __cdecl SER_SendBytes(unsigned char *, long)"
+0x004AC1D0,func,?SER_SendHoldingBuffer@@YAXXZ,SER_SendHoldingBuffer,sms,confirmed,flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel,void __cdecl SER_SendHoldingBuffer(void)
+0x004AC210,func,?SER_OkToSendPacket@@YADXZ,SER_OkToSendPacket,sms,confirmed,budget check (>0x17=23 bytes free); set pending flag DAT_00570edc,char __cdecl SER_OkToSendPacket(void)
+0x004AC230,func,?SER_SendPacket@@YADAAUSERIAL_PACKET_WRAPPER@@D@Z,SER_SendPacket,sms,confirmed,per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters,"char __cdecl SER_SendPacket(SERIAL_PACKET_WRAPPER &, char)"
+0x004AC2E0,func,?SER_SendRequests@@YAXXZ,SER_SendRequests,sms,confirmed,scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket,void __cdecl SER_SendRequests(void)
+0x004AC480,func,?SER_SendStatus@@YAXXZ,SER_SendStatus,sms,confirmed,send status/ACK packet (type0) carrying last-tx seq + per-player state,void __cdecl SER_SendStatus(void)
 0x004EB4D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB4F8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB50C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,

@@ -19,142 +19,142 @@ va,kind,name,display,source,confidence,notes,type
 0x20001620,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20001640,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20001650,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
-0x20001660,func,_DllMain@12,DllMain,re,confirmed,Miles/AIL public export,
+0x20001660,func,_DllMain@12,DllMain,re,confirmed,Miles/AIL public export,"undefined4 __stdcall DllMain(undefined4, undefined4, undefined4)"
 0x20001770,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20001870,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20001890,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20001970,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
-0x200019C0,func,_AIL_startup@0,AIL_startup,re,confirmed,Miles/AIL public export,
+0x200019C0,func,_AIL_startup@0,AIL_startup,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_startup(void)
 0x20001BC0,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
-0x20001CF0,func,_AIL_shutdown@0,AIL_shutdown,re,confirmed,Miles/AIL public export,
+0x20001CF0,func,_AIL_shutdown@0,AIL_shutdown,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_shutdown(void)
 0x20001DE0,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
-0x20001E00,func,_MEM_alloc_lock@4,MEM_alloc_lock,re,confirmed,Miles/AIL public export,
-0x20001F10,func,_MEM_free_lock@4,MEM_free_lock,re,confirmed,Miles/AIL public export,
-0x20001FA0,func,_AIL_set_preference@8,AIL_set_preference,re,confirmed,Miles/AIL public export,
-0x200020C0,func,_AIL_get_preference@4,AIL_get_preference,re,confirmed,Miles/AIL public export,
-0x200021D0,func,_AIL_last_error@0,AIL_last_error,re,confirmed,Miles/AIL public export,
-0x200022D0,func,_AIL_set_error@4,AIL_set_error,re,confirmed,Miles/AIL public export,
-0x20002360,func,_AIL_lock@0,AIL_lock,re,confirmed,Miles/AIL public export,
-0x20002380,func,_AIL_unlock@0,AIL_unlock,re,confirmed,Miles/AIL public export,
-0x200023A0,func,_AIL_delay@4,AIL_delay,re,confirmed,Miles/AIL public export,
-0x20002420,func,_AIL_background@0,AIL_background,re,confirmed,Miles/AIL public export,
-0x20002430,func,_AIL_register_timer@4,AIL_register_timer,re,confirmed,Miles/AIL public export,
-0x20002540,func,_AIL_set_timer_user@8,AIL_set_timer_user,re,confirmed,Miles/AIL public export,
-0x20002660,func,_AIL_set_timer_period@8,AIL_set_timer_period,re,confirmed,Miles/AIL public export,
-0x20002700,func,_AIL_set_timer_frequency@8,AIL_set_timer_frequency,re,confirmed,Miles/AIL public export,
-0x200027A0,func,_AIL_set_timer_divisor@8,AIL_set_timer_divisor,re,confirmed,Miles/AIL public export,
-0x20002840,func,_AIL_start_timer@4,AIL_start_timer,re,confirmed,Miles/AIL public export,
-0x200028D0,func,_AIL_start_all_timers@0,AIL_start_all_timers,re,confirmed,Miles/AIL public export,
-0x20002950,func,_AIL_stop_timer@4,AIL_stop_timer,re,confirmed,Miles/AIL public export,
-0x200029E0,func,_AIL_stop_all_timers@0,AIL_stop_all_timers,re,confirmed,Miles/AIL public export,
-0x20002A60,func,_AIL_release_timer_handle@4,AIL_release_timer_handle,re,confirmed,Miles/AIL public export,
-0x20002AF0,func,_AIL_release_all_timers@0,AIL_release_all_timers,re,confirmed,Miles/AIL public export,
-0x20002B70,func,_AIL_waveOutOpen@16,AIL_waveOutOpen,re,confirmed,Miles/AIL public export,
-0x20002CB0,func,_AIL_waveOutClose@4,AIL_waveOutClose,re,confirmed,Miles/AIL public export,
-0x20002D60,func,_AIL_allocate_sample_handle@4,AIL_allocate_sample_handle,re,confirmed,Miles/AIL public export,
-0x20002E80,func,_AIL_allocate_file_sample@12,AIL_allocate_file_sample,re,confirmed,Miles/AIL public export,
-0x20002FB0,func,_AIL_release_sample_handle@4,AIL_release_sample_handle,re,confirmed,Miles/AIL public export,
-0x20003060,func,_AIL_init_sample@4,AIL_init_sample,re,confirmed,Miles/AIL public export,
-0x20003110,func,_AIL_set_sample_file@12,AIL_set_sample_file,re,confirmed,Miles/AIL public export,
-0x20003240,func,_AIL_set_sample_address@12,AIL_set_sample_address,re,confirmed,Miles/AIL public export,
-0x200032F0,func,_AIL_set_sample_type@12,AIL_set_sample_type,re,confirmed,Miles/AIL public export,
-0x200033A0,func,_AIL_start_sample@4,AIL_start_sample,re,confirmed,Miles/AIL public export,
-0x20003450,func,_AIL_stop_sample@4,AIL_stop_sample,re,confirmed,Miles/AIL public export,
-0x20003500,func,_AIL_resume_sample@4,AIL_resume_sample,re,confirmed,Miles/AIL public export,
-0x200035B0,func,_AIL_end_sample@4,AIL_end_sample,re,confirmed,Miles/AIL public export,
-0x20003660,func,_AIL_set_sample_playback_rate@8,AIL_set_sample_playback_rate,re,confirmed,Miles/AIL public export,
-0x20003710,func,_AIL_set_sample_volume@8,AIL_set_sample_volume,re,confirmed,Miles/AIL public export,
-0x200037C0,func,_AIL_set_sample_pan@8,AIL_set_sample_pan,re,confirmed,Miles/AIL public export,
-0x20003870,func,_AIL_set_sample_loop_count@8,AIL_set_sample_loop_count,re,confirmed,Miles/AIL public export,
-0x20003920,func,_AIL_set_sample_loop_block@12,AIL_set_sample_loop_block,re,confirmed,Miles/AIL public export,
-0x200039D0,func,_AIL_sample_status@4,AIL_sample_status,re,confirmed,Miles/AIL public export,
-0x20003AF0,func,_AIL_sample_playback_rate@4,AIL_sample_playback_rate,re,confirmed,Miles/AIL public export,
-0x20003C10,func,_AIL_sample_volume@4,AIL_sample_volume,re,confirmed,Miles/AIL public export,
-0x20003D30,func,_AIL_sample_pan@4,AIL_sample_pan,re,confirmed,Miles/AIL public export,
-0x20003E50,func,_AIL_sample_loop_count@4,AIL_sample_loop_count,re,confirmed,Miles/AIL public export,
-0x20003F70,func,_AIL_set_digital_master_volume@8,AIL_set_digital_master_volume,re,confirmed,Miles/AIL public export,
-0x20004020,func,_AIL_digital_master_volume@4,AIL_digital_master_volume,re,confirmed,Miles/AIL public export,
-0x20004140,func,_AIL_minimum_sample_buffer_size@12,AIL_minimum_sample_buffer_size,re,confirmed,Miles/AIL public export,
-0x20004280,func,_AIL_sample_buffer_ready@4,AIL_sample_buffer_ready,re,confirmed,Miles/AIL public export,
-0x200043A0,func,_AIL_load_sample_buffer@16,AIL_load_sample_buffer,re,confirmed,Miles/AIL public export,
-0x20004460,func,_AIL_sample_buffer_info@20,AIL_sample_buffer_info,re,confirmed,Miles/AIL public export,
-0x200045B0,func,_AIL_set_sample_position@8,AIL_set_sample_position,re,confirmed,Miles/AIL public export,
-0x20004660,func,_AIL_sample_position@4,AIL_sample_position,re,confirmed,Miles/AIL public export,
-0x20004780,func,_AIL_register_SOB_callback@8,AIL_register_SOB_callback,re,confirmed,Miles/AIL public export,
-0x200048B0,func,_AIL_register_EOB_callback@8,AIL_register_EOB_callback,re,confirmed,Miles/AIL public export,
-0x200049E0,func,_AIL_register_EOS_callback@8,AIL_register_EOS_callback,re,confirmed,Miles/AIL public export,
-0x20004B10,func,_AIL_register_EOF_callback@8,AIL_register_EOF_callback,re,confirmed,Miles/AIL public export,
-0x20004C30,func,_AIL_set_sample_user_data@12,AIL_set_sample_user_data,re,confirmed,Miles/AIL public export,
-0x20004CE0,func,_AIL_sample_user_data@8,AIL_sample_user_data,re,confirmed,Miles/AIL public export,
-0x20004E10,func,_AIL_active_sample_count@4,AIL_active_sample_count,re,confirmed,Miles/AIL public export,
-0x20004F30,func,_AIL_digital_configuration@16,AIL_digital_configuration,re,confirmed,Miles/AIL public export,
-0x20004FF0,func,_AIL_set_direct_buffer_control@8,AIL_set_direct_buffer_control,re,confirmed,Miles/AIL public export,
-0x20005110,func,_AIL_get_DirectSound_info@12,AIL_get_DirectSound_info,re,confirmed,Miles/AIL public export,
-0x200051A0,func,_AIL_midiOutOpen@12,AIL_midiOutOpen,re,confirmed,Miles/AIL public export,
-0x200052D0,func,_AIL_midiOutClose@4,AIL_midiOutClose,re,confirmed,Miles/AIL public export,
-0x20005360,func,_AIL_allocate_sequence_handle@4,AIL_allocate_sequence_handle,re,confirmed,Miles/AIL public export,
-0x20005470,func,_AIL_release_sequence_handle@4,AIL_release_sequence_handle,re,confirmed,Miles/AIL public export,
-0x20005500,func,_AIL_init_sequence@12,AIL_init_sequence,re,confirmed,Miles/AIL public export,
-0x20005630,func,_AIL_start_sequence@4,AIL_start_sequence,re,confirmed,Miles/AIL public export,
-0x200056C0,func,_AIL_stop_sequence@4,AIL_stop_sequence,re,confirmed,Miles/AIL public export,
-0x20005750,func,_AIL_resume_sequence@4,AIL_resume_sequence,re,confirmed,Miles/AIL public export,
-0x200057E0,func,_AIL_end_sequence@4,AIL_end_sequence,re,confirmed,Miles/AIL public export,
-0x20005870,func,_AIL_set_sequence_tempo@12,AIL_set_sequence_tempo,re,confirmed,Miles/AIL public export,
-0x20005910,func,_AIL_set_sequence_volume@12,AIL_set_sequence_volume,re,confirmed,Miles/AIL public export,
-0x200059B0,func,_AIL_set_sequence_loop_count@8,AIL_set_sequence_loop_count,re,confirmed,Miles/AIL public export,
-0x20005A50,func,_AIL_sequence_status@4,AIL_sequence_status,re,confirmed,Miles/AIL public export,
-0x20005B60,func,_AIL_sequence_tempo@4,AIL_sequence_tempo,re,confirmed,Miles/AIL public export,
-0x20005C70,func,_AIL_sequence_volume@4,AIL_sequence_volume,re,confirmed,Miles/AIL public export,
-0x20005D80,func,_AIL_sequence_loop_count@4,AIL_sequence_loop_count,re,confirmed,Miles/AIL public export,
-0x20005E90,func,_AIL_set_XMIDI_master_volume@8,AIL_set_XMIDI_master_volume,re,confirmed,Miles/AIL public export,
-0x20005F30,func,_AIL_XMIDI_master_volume@4,AIL_XMIDI_master_volume,re,confirmed,Miles/AIL public export,
-0x20006040,func,_AIL_active_sequence_count@4,AIL_active_sequence_count,re,confirmed,Miles/AIL public export,
-0x20006150,func,_AIL_controller_value@12,AIL_controller_value,re,confirmed,Miles/AIL public export,
-0x20006280,func,_AIL_channel_notes@8,AIL_channel_notes,re,confirmed,Miles/AIL public export,
-0x200063A0,func,_AIL_sequence_position@12,AIL_sequence_position,re,confirmed,Miles/AIL public export,
-0x200064C0,func,_AIL_branch_index@8,AIL_branch_index,re,confirmed,Miles/AIL public export,
-0x20006560,func,_AIL_register_prefix_callback@8,AIL_register_prefix_callback,re,confirmed,Miles/AIL public export,
-0x20006680,func,_AIL_register_trigger_callback@8,AIL_register_trigger_callback,re,confirmed,Miles/AIL public export,
-0x200067A0,func,_AIL_register_sequence_callback@8,AIL_register_sequence_callback,re,confirmed,Miles/AIL public export,
-0x200068C0,func,_AIL_register_beat_callback@8,AIL_register_beat_callback,re,confirmed,Miles/AIL public export,
-0x200069E0,func,_AIL_register_event_callback@8,AIL_register_event_callback,re,confirmed,Miles/AIL public export,
-0x20006B00,func,_AIL_register_timbre_callback@8,AIL_register_timbre_callback,re,confirmed,Miles/AIL public export,
-0x20006C20,func,_AIL_set_sequence_user_data@12,AIL_set_sequence_user_data,re,confirmed,Miles/AIL public export,
-0x20006CC0,func,_AIL_sequence_user_data@8,AIL_sequence_user_data,re,confirmed,Miles/AIL public export,
-0x20006DE0,func,_AIL_register_ICA_array@8,AIL_register_ICA_array,re,confirmed,Miles/AIL public export,
-0x20006E80,func,_AIL_lock_channel@4,AIL_lock_channel,re,confirmed,Miles/AIL public export,
-0x20006F90,func,_AIL_release_channel@8,AIL_release_channel,re,confirmed,Miles/AIL public export,
-0x20007030,func,_AIL_map_sequence_channel@12,AIL_map_sequence_channel,re,confirmed,Miles/AIL public export,
-0x200070D0,func,_AIL_true_sequence_channel@8,AIL_true_sequence_channel,re,confirmed,Miles/AIL public export,
-0x200071F0,func,_AIL_send_channel_voice_message@20,AIL_send_channel_voice_message,re,confirmed,Miles/AIL public export,
-0x200072B0,func,_AIL_send_sysex_message@8,AIL_send_sysex_message,re,confirmed,Miles/AIL public export,
-0x20007350,func,_AIL_create_wave_synthesizer@16,AIL_create_wave_synthesizer,re,confirmed,Miles/AIL public export,
-0x20007480,func,_AIL_destroy_wave_synthesizer@4,AIL_destroy_wave_synthesizer,re,confirmed,Miles/AIL public export,
-0x20007510,func,_FILE_error@0,FILE_error,re,confirmed,Miles/AIL public export,
-0x20007610,func,_FILE_size@4,FILE_size,re,confirmed,Miles/AIL public export,
-0x20007720,func,_FILE_read@8,FILE_read,re,confirmed,Miles/AIL public export,
-0x20007840,func,_FILE_write@12,FILE_write,re,confirmed,Miles/AIL public export,
-0x20007970,func,_AIL_serve@0,AIL_serve,re,confirmed,Miles/AIL public export,
-0x200079F0,func,_AIL_redbook_open@4,AIL_redbook_open,re,confirmed,Miles/AIL public export,
-0x20007B00,func,_AIL_redbook_close@4,AIL_redbook_close,re,confirmed,Miles/AIL public export,
-0x20007B90,func,_AIL_redbook_eject@4,AIL_redbook_eject,re,confirmed,Miles/AIL public export,
-0x20007C20,func,_AIL_redbook_status@4,AIL_redbook_status,re,confirmed,Miles/AIL public export,
-0x20007D30,func,_AIL_redbook_tracks@4,AIL_redbook_tracks,re,confirmed,Miles/AIL public export,
-0x20007E40,func,_AIL_redbook_track_info@16,AIL_redbook_track_info,re,confirmed,Miles/AIL public export,
-0x20007EF0,func,_AIL_redbook_id@4,AIL_redbook_id,re,confirmed,Miles/AIL public export,
-0x20008000,func,_AIL_redbook_position@4,AIL_redbook_position,re,confirmed,Miles/AIL public export,
-0x20008110,func,_AIL_redbook_play@12,AIL_redbook_play,re,confirmed,Miles/AIL public export,
-0x20008240,func,_AIL_redbook_stop@4,AIL_redbook_stop,re,confirmed,Miles/AIL public export,
-0x20008350,func,_AIL_redbook_pause@4,AIL_redbook_pause,re,confirmed,Miles/AIL public export,
-0x20008460,func,_AIL_redbook_resume@4,AIL_redbook_resume,re,confirmed,Miles/AIL public export,
-0x20008570,func,_AIL_quick_startup@20,AIL_quick_startup,re,confirmed,Miles/AIL public export,
-0x200086B0,func,_AIL_quick_shutdown@0,AIL_quick_shutdown,re,confirmed,Miles/AIL public export,
-0x20008730,func,_AIL_quick_load@4,AIL_quick_load,re,confirmed,Miles/AIL public export,
-0x20008840,func,_AIL_quick_unload@4,AIL_quick_unload,re,confirmed,Miles/AIL public export,
-0x200088D0,func,_AIL_quick_play@8,AIL_quick_play,re,confirmed,Miles/AIL public export,
-0x200089F0,func,_AIL_quick_halt@4,AIL_quick_halt,re,confirmed,Miles/AIL public export,
-0x20008A80,func,_AIL_quick_status@4,AIL_quick_status,re,confirmed,Miles/AIL public export,
-0x20008B90,func,_AIL_quick_load_and_play@12,AIL_quick_load_and_play,re,confirmed,Miles/AIL public export,
+0x20001E00,func,_MEM_alloc_lock@4,MEM_alloc_lock,re,confirmed,Miles/AIL public export,undefined4 __stdcall MEM_alloc_lock(undefined4)
+0x20001F10,func,_MEM_free_lock@4,MEM_free_lock,re,confirmed,Miles/AIL public export,undefined4 __stdcall MEM_free_lock(undefined4)
+0x20001FA0,func,_AIL_set_preference@8,AIL_set_preference,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_preference(undefined4, undefined4)"
+0x200020C0,func,_AIL_get_preference@4,AIL_get_preference,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_get_preference(undefined4)
+0x200021D0,func,_AIL_last_error@0,AIL_last_error,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_last_error(void)
+0x200022D0,func,_AIL_set_error@4,AIL_set_error,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_set_error(undefined4)
+0x20002360,func,_AIL_lock@0,AIL_lock,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_lock(void)
+0x20002380,func,_AIL_unlock@0,AIL_unlock,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_unlock(void)
+0x200023A0,func,_AIL_delay@4,AIL_delay,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_delay(undefined4)
+0x20002420,func,_AIL_background@0,AIL_background,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_background(void)
+0x20002430,func,_AIL_register_timer@4,AIL_register_timer,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_register_timer(undefined4)
+0x20002540,func,_AIL_set_timer_user@8,AIL_set_timer_user,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_timer_user(undefined4, undefined4)"
+0x20002660,func,_AIL_set_timer_period@8,AIL_set_timer_period,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_timer_period(undefined4, undefined4)"
+0x20002700,func,_AIL_set_timer_frequency@8,AIL_set_timer_frequency,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_timer_frequency(undefined4, undefined4)"
+0x200027A0,func,_AIL_set_timer_divisor@8,AIL_set_timer_divisor,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_timer_divisor(undefined4, undefined4)"
+0x20002840,func,_AIL_start_timer@4,AIL_start_timer,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_start_timer(undefined4)
+0x200028D0,func,_AIL_start_all_timers@0,AIL_start_all_timers,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_start_all_timers(void)
+0x20002950,func,_AIL_stop_timer@4,AIL_stop_timer,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_stop_timer(undefined4)
+0x200029E0,func,_AIL_stop_all_timers@0,AIL_stop_all_timers,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_stop_all_timers(void)
+0x20002A60,func,_AIL_release_timer_handle@4,AIL_release_timer_handle,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_release_timer_handle(undefined4)
+0x20002AF0,func,_AIL_release_all_timers@0,AIL_release_all_timers,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_release_all_timers(void)
+0x20002B70,func,_AIL_waveOutOpen@16,AIL_waveOutOpen,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_waveOutOpen(undefined4, undefined4, undefined4, undefined4)"
+0x20002CB0,func,_AIL_waveOutClose@4,AIL_waveOutClose,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_waveOutClose(undefined4)
+0x20002D60,func,_AIL_allocate_sample_handle@4,AIL_allocate_sample_handle,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_allocate_sample_handle(undefined4)
+0x20002E80,func,_AIL_allocate_file_sample@12,AIL_allocate_file_sample,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_allocate_file_sample(undefined4, undefined4, undefined4)"
+0x20002FB0,func,_AIL_release_sample_handle@4,AIL_release_sample_handle,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_release_sample_handle(undefined4)
+0x20003060,func,_AIL_init_sample@4,AIL_init_sample,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_init_sample(undefined4)
+0x20003110,func,_AIL_set_sample_file@12,AIL_set_sample_file,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_file(undefined4, undefined4, undefined4)"
+0x20003240,func,_AIL_set_sample_address@12,AIL_set_sample_address,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_address(undefined4, undefined4, undefined4)"
+0x200032F0,func,_AIL_set_sample_type@12,AIL_set_sample_type,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_type(undefined4, undefined4, undefined4)"
+0x200033A0,func,_AIL_start_sample@4,AIL_start_sample,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_start_sample(undefined4)
+0x20003450,func,_AIL_stop_sample@4,AIL_stop_sample,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_stop_sample(undefined4)
+0x20003500,func,_AIL_resume_sample@4,AIL_resume_sample,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_resume_sample(undefined4)
+0x200035B0,func,_AIL_end_sample@4,AIL_end_sample,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_end_sample(undefined4)
+0x20003660,func,_AIL_set_sample_playback_rate@8,AIL_set_sample_playback_rate,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_playback_rate(undefined4, undefined4)"
+0x20003710,func,_AIL_set_sample_volume@8,AIL_set_sample_volume,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_volume(undefined4, undefined4)"
+0x200037C0,func,_AIL_set_sample_pan@8,AIL_set_sample_pan,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_pan(undefined4, undefined4)"
+0x20003870,func,_AIL_set_sample_loop_count@8,AIL_set_sample_loop_count,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_loop_count(undefined4, undefined4)"
+0x20003920,func,_AIL_set_sample_loop_block@12,AIL_set_sample_loop_block,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_loop_block(undefined4, undefined4, undefined4)"
+0x200039D0,func,_AIL_sample_status@4,AIL_sample_status,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_status(undefined4)
+0x20003AF0,func,_AIL_sample_playback_rate@4,AIL_sample_playback_rate,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_playback_rate(undefined4)
+0x20003C10,func,_AIL_sample_volume@4,AIL_sample_volume,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_volume(undefined4)
+0x20003D30,func,_AIL_sample_pan@4,AIL_sample_pan,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_pan(undefined4)
+0x20003E50,func,_AIL_sample_loop_count@4,AIL_sample_loop_count,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_loop_count(undefined4)
+0x20003F70,func,_AIL_set_digital_master_volume@8,AIL_set_digital_master_volume,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_digital_master_volume(undefined4, undefined4)"
+0x20004020,func,_AIL_digital_master_volume@4,AIL_digital_master_volume,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_digital_master_volume(undefined4)
+0x20004140,func,_AIL_minimum_sample_buffer_size@12,AIL_minimum_sample_buffer_size,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_minimum_sample_buffer_size(undefined4, undefined4, undefined4)"
+0x20004280,func,_AIL_sample_buffer_ready@4,AIL_sample_buffer_ready,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_buffer_ready(undefined4)
+0x200043A0,func,_AIL_load_sample_buffer@16,AIL_load_sample_buffer,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_load_sample_buffer(undefined4, undefined4, undefined4, undefined4)"
+0x20004460,func,_AIL_sample_buffer_info@20,AIL_sample_buffer_info,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_sample_buffer_info(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x200045B0,func,_AIL_set_sample_position@8,AIL_set_sample_position,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_position(undefined4, undefined4)"
+0x20004660,func,_AIL_sample_position@4,AIL_sample_position,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sample_position(undefined4)
+0x20004780,func,_AIL_register_SOB_callback@8,AIL_register_SOB_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_SOB_callback(undefined4, undefined4)"
+0x200048B0,func,_AIL_register_EOB_callback@8,AIL_register_EOB_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_EOB_callback(undefined4, undefined4)"
+0x200049E0,func,_AIL_register_EOS_callback@8,AIL_register_EOS_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_EOS_callback(undefined4, undefined4)"
+0x20004B10,func,_AIL_register_EOF_callback@8,AIL_register_EOF_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_EOF_callback(undefined4, undefined4)"
+0x20004C30,func,_AIL_set_sample_user_data@12,AIL_set_sample_user_data,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sample_user_data(undefined4, undefined4, undefined4)"
+0x20004CE0,func,_AIL_sample_user_data@8,AIL_sample_user_data,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_sample_user_data(undefined4, undefined4)"
+0x20004E10,func,_AIL_active_sample_count@4,AIL_active_sample_count,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_active_sample_count(undefined4)
+0x20004F30,func,_AIL_digital_configuration@16,AIL_digital_configuration,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_digital_configuration(undefined4, undefined4, undefined4, undefined4)"
+0x20004FF0,func,_AIL_set_direct_buffer_control@8,AIL_set_direct_buffer_control,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_direct_buffer_control(undefined4, undefined4)"
+0x20005110,func,_AIL_get_DirectSound_info@12,AIL_get_DirectSound_info,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_get_DirectSound_info(undefined4, undefined4, undefined4)"
+0x200051A0,func,_AIL_midiOutOpen@12,AIL_midiOutOpen,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_midiOutOpen(undefined4, undefined4, undefined4)"
+0x200052D0,func,_AIL_midiOutClose@4,AIL_midiOutClose,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_midiOutClose(undefined4)
+0x20005360,func,_AIL_allocate_sequence_handle@4,AIL_allocate_sequence_handle,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_allocate_sequence_handle(undefined4)
+0x20005470,func,_AIL_release_sequence_handle@4,AIL_release_sequence_handle,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_release_sequence_handle(undefined4)
+0x20005500,func,_AIL_init_sequence@12,AIL_init_sequence,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_init_sequence(undefined4, undefined4, undefined4)"
+0x20005630,func,_AIL_start_sequence@4,AIL_start_sequence,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_start_sequence(undefined4)
+0x200056C0,func,_AIL_stop_sequence@4,AIL_stop_sequence,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_stop_sequence(undefined4)
+0x20005750,func,_AIL_resume_sequence@4,AIL_resume_sequence,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_resume_sequence(undefined4)
+0x200057E0,func,_AIL_end_sequence@4,AIL_end_sequence,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_end_sequence(undefined4)
+0x20005870,func,_AIL_set_sequence_tempo@12,AIL_set_sequence_tempo,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sequence_tempo(undefined4, undefined4, undefined4)"
+0x20005910,func,_AIL_set_sequence_volume@12,AIL_set_sequence_volume,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sequence_volume(undefined4, undefined4, undefined4)"
+0x200059B0,func,_AIL_set_sequence_loop_count@8,AIL_set_sequence_loop_count,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sequence_loop_count(undefined4, undefined4)"
+0x20005A50,func,_AIL_sequence_status@4,AIL_sequence_status,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sequence_status(undefined4)
+0x20005B60,func,_AIL_sequence_tempo@4,AIL_sequence_tempo,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sequence_tempo(undefined4)
+0x20005C70,func,_AIL_sequence_volume@4,AIL_sequence_volume,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sequence_volume(undefined4)
+0x20005D80,func,_AIL_sequence_loop_count@4,AIL_sequence_loop_count,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_sequence_loop_count(undefined4)
+0x20005E90,func,_AIL_set_XMIDI_master_volume@8,AIL_set_XMIDI_master_volume,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_XMIDI_master_volume(undefined4, undefined4)"
+0x20005F30,func,_AIL_XMIDI_master_volume@4,AIL_XMIDI_master_volume,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_XMIDI_master_volume(undefined4)
+0x20006040,func,_AIL_active_sequence_count@4,AIL_active_sequence_count,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_active_sequence_count(undefined4)
+0x20006150,func,_AIL_controller_value@12,AIL_controller_value,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_controller_value(undefined4, undefined4, undefined4)"
+0x20006280,func,_AIL_channel_notes@8,AIL_channel_notes,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_channel_notes(undefined4, undefined4)"
+0x200063A0,func,_AIL_sequence_position@12,AIL_sequence_position,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_sequence_position(undefined4, undefined4, undefined4)"
+0x200064C0,func,_AIL_branch_index@8,AIL_branch_index,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_branch_index(undefined4, undefined4)"
+0x20006560,func,_AIL_register_prefix_callback@8,AIL_register_prefix_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_prefix_callback(undefined4, undefined4)"
+0x20006680,func,_AIL_register_trigger_callback@8,AIL_register_trigger_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_trigger_callback(undefined4, undefined4)"
+0x200067A0,func,_AIL_register_sequence_callback@8,AIL_register_sequence_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_sequence_callback(undefined4, undefined4)"
+0x200068C0,func,_AIL_register_beat_callback@8,AIL_register_beat_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_beat_callback(undefined4, undefined4)"
+0x200069E0,func,_AIL_register_event_callback@8,AIL_register_event_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_event_callback(undefined4, undefined4)"
+0x20006B00,func,_AIL_register_timbre_callback@8,AIL_register_timbre_callback,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_timbre_callback(undefined4, undefined4)"
+0x20006C20,func,_AIL_set_sequence_user_data@12,AIL_set_sequence_user_data,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_set_sequence_user_data(undefined4, undefined4, undefined4)"
+0x20006CC0,func,_AIL_sequence_user_data@8,AIL_sequence_user_data,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_sequence_user_data(undefined4, undefined4)"
+0x20006DE0,func,_AIL_register_ICA_array@8,AIL_register_ICA_array,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_register_ICA_array(undefined4, undefined4)"
+0x20006E80,func,_AIL_lock_channel@4,AIL_lock_channel,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_lock_channel(undefined4)
+0x20006F90,func,_AIL_release_channel@8,AIL_release_channel,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_release_channel(undefined4, undefined4)"
+0x20007030,func,_AIL_map_sequence_channel@12,AIL_map_sequence_channel,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_map_sequence_channel(undefined4, undefined4, undefined4)"
+0x200070D0,func,_AIL_true_sequence_channel@8,AIL_true_sequence_channel,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_true_sequence_channel(undefined4, undefined4)"
+0x200071F0,func,_AIL_send_channel_voice_message@20,AIL_send_channel_voice_message,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_send_channel_voice_message(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x200072B0,func,_AIL_send_sysex_message@8,AIL_send_sysex_message,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_send_sysex_message(undefined4, undefined4)"
+0x20007350,func,_AIL_create_wave_synthesizer@16,AIL_create_wave_synthesizer,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_create_wave_synthesizer(undefined4, undefined4, undefined4, undefined4)"
+0x20007480,func,_AIL_destroy_wave_synthesizer@4,AIL_destroy_wave_synthesizer,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_destroy_wave_synthesizer(undefined4)
+0x20007510,func,_FILE_error@0,FILE_error,re,confirmed,Miles/AIL public export,undefined4 __stdcall FILE_error(void)
+0x20007610,func,_FILE_size@4,FILE_size,re,confirmed,Miles/AIL public export,undefined4 __stdcall FILE_size(undefined4)
+0x20007720,func,_FILE_read@8,FILE_read,re,confirmed,Miles/AIL public export,"undefined4 __stdcall FILE_read(undefined4, undefined4)"
+0x20007840,func,_FILE_write@12,FILE_write,re,confirmed,Miles/AIL public export,"undefined4 __stdcall FILE_write(undefined4, undefined4, undefined4)"
+0x20007970,func,_AIL_serve@0,AIL_serve,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_serve(void)
+0x200079F0,func,_AIL_redbook_open@4,AIL_redbook_open,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_open(undefined4)
+0x20007B00,func,_AIL_redbook_close@4,AIL_redbook_close,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_close(undefined4)
+0x20007B90,func,_AIL_redbook_eject@4,AIL_redbook_eject,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_eject(undefined4)
+0x20007C20,func,_AIL_redbook_status@4,AIL_redbook_status,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_status(undefined4)
+0x20007D30,func,_AIL_redbook_tracks@4,AIL_redbook_tracks,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_tracks(undefined4)
+0x20007E40,func,_AIL_redbook_track_info@16,AIL_redbook_track_info,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_redbook_track_info(undefined4, undefined4, undefined4, undefined4)"
+0x20007EF0,func,_AIL_redbook_id@4,AIL_redbook_id,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_id(undefined4)
+0x20008000,func,_AIL_redbook_position@4,AIL_redbook_position,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_position(undefined4)
+0x20008110,func,_AIL_redbook_play@12,AIL_redbook_play,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_redbook_play(undefined4, undefined4, undefined4)"
+0x20008240,func,_AIL_redbook_stop@4,AIL_redbook_stop,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_stop(undefined4)
+0x20008350,func,_AIL_redbook_pause@4,AIL_redbook_pause,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_pause(undefined4)
+0x20008460,func,_AIL_redbook_resume@4,AIL_redbook_resume,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_redbook_resume(undefined4)
+0x20008570,func,_AIL_quick_startup@20,AIL_quick_startup,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_quick_startup(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x200086B0,func,_AIL_quick_shutdown@0,AIL_quick_shutdown,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_quick_shutdown(void)
+0x20008730,func,_AIL_quick_load@4,AIL_quick_load,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_quick_load(undefined4)
+0x20008840,func,_AIL_quick_unload@4,AIL_quick_unload,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_quick_unload(undefined4)
+0x200088D0,func,_AIL_quick_play@8,AIL_quick_play,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_quick_play(undefined4, undefined4)"
+0x200089F0,func,_AIL_quick_halt@4,AIL_quick_halt,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_quick_halt(undefined4)
+0x20008A80,func,_AIL_quick_status@4,AIL_quick_status,re,confirmed,Miles/AIL public export,undefined4 __stdcall AIL_quick_status(undefined4)
+0x20008B90,func,_AIL_quick_load_and_play@12,AIL_quick_load_and_play,re,confirmed,Miles/AIL public export,"undefined4 __stdcall AIL_quick_load_and_play(undefined4, undefined4, undefined4)"
 0x20008CC0,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20008CD0,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,
 0x20008CE0,func,,,waiver,confirmed,Miles Sound System (AIL) internal — third-party; boundary-documented via the AIL exports,

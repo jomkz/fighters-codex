@@ -1108,7 +1108,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00436EDA,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00436EE0,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00436EE6,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
-0x00436EF0,func,_WinMain@16,WinMain,re,confirmed,MFC AfxWinMain wrapper (Ghidra FID),
+0x00436EF0,func,_WinMain@16,WinMain,re,confirmed,MFC AfxWinMain wrapper (Ghidra FID),"undefined4 __stdcall WinMain(undefined4, undefined4, undefined4, undefined4)"
 0x00436F09,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00436F2B,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00436F52,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",

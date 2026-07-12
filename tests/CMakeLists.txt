@@ -164,6 +164,18 @@ if(Python3_FOUND)
             "${PROJECT_SOURCE_DIR}/tools/gen_icons.py" --check)
     set_tests_properties(gen_icons_selftest gen_icons_currency
         PROPERTIES LABELS "docs")
+
+    # db/ signature currency (#452): the signatures the FA.SMS names encode must
+    # be materialized in db/symbols/, and any hand-sharpened signature must still
+    # agree with the calling convention and arity the decoration proves.
+    add_test(NAME gen_signatures_selftest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/gen_signatures.py" --self-test)
+    add_test(NAME gen_signatures_currency
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/gen_signatures.py" --check)
+    set_tests_properties(gen_signatures_selftest gen_signatures_currency
+        PROPERTIES LABELS "docs")
 endif()
 
 # Real-asset integration mode: registered only when FX_FA_ROOT points at a

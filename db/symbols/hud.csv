@@ -1,54 +1,54 @@
 va,kind,name,display,source,confidence,notes,type
-0x00405E30,func,_HUDInitMessages@0,HUDInitMessages,sms,confirmed,,
-0x00405E50,func,?HUDDrawMessages@@YGXD@Z,HUDDrawMessages,sms,confirmed,,
-0x00405F50,func,_HUDMessage@4,HUDMessage,sms,confirmed,,
-0x00406010,func,_HUDReprintMessages@0,HUDReprintMessages,sms,confirmed,,
-0x00406040,func,_HUDInit@0,HUDInit,sms,confirmed,,
-0x00406920,func,_HUDRevive@0,HUDRevive,sms,confirmed,,
-0x00406950,func,_HUDShutdown@0,HUDShutdown,sms,confirmed,,
-0x00406A50,func,_HUDDraw@4,HUDDraw,sms,confirmed,,
+0x00405E30,func,_HUDInitMessages@0,HUDInitMessages,sms,confirmed,,undefined4 __stdcall HUDInitMessages(void)
+0x00405E50,func,?HUDDrawMessages@@YGXD@Z,HUDDrawMessages,sms,confirmed,,void __stdcall HUDDrawMessages(char)
+0x00405F50,func,_HUDMessage@4,HUDMessage,sms,confirmed,,undefined4 __stdcall HUDMessage(undefined4)
+0x00406010,func,_HUDReprintMessages@0,HUDReprintMessages,sms,confirmed,,undefined4 __stdcall HUDReprintMessages(void)
+0x00406040,func,_HUDInit@0,HUDInit,sms,confirmed,,undefined4 __stdcall HUDInit(void)
+0x00406920,func,_HUDRevive@0,HUDRevive,sms,confirmed,,undefined4 __stdcall HUDRevive(void)
+0x00406950,func,_HUDShutdown@0,HUDShutdown,sms,confirmed,,undefined4 __stdcall HUDShutdown(void)
+0x00406A50,func,_HUDDraw@4,HUDDraw,sms,confirmed,,undefined4 __stdcall HUDDraw(undefined4)
 0x00406A5E,func,,,waiver,confirmed,Ghidra mid-function split: body of _HUDDraw@4 (0x406A50) — the per-frame master HUD dispatcher,
 0x004075B4,data,,,waiver,confirmed,switch/jump table inside the _HUDDraw body,
 0x004075D0,func,HUDDrawTargetView,,re,inferred,"render a 3D shape into the HUD bitmap (_T_Make/_T_Render on _hudShape), flip and blit; target/padlock silhouette or combining-glass image",
 0x004075DE,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawTargetView (0x4075D0),
-0x004077B0,func,@HUDSetWarning@8,HUDSetWarning,sms,confirmed,,
+0x004077B0,func,@HUDSetWarning@8,HUDSetWarning,sms,confirmed,,"undefined4 __fastcall HUDSetWarning(undefined4, undefined4)"
 0x004078B0,func,HUDDrawWarning,,re,confirmed,draw the blinking warning string set by HUDSetWarning (STALL / LOW FUEL / ...) while unexpired,
 0x00407930,func,HUDDrawConfigFlags,,re,inferred,stacked gear/flaps/speedbrake/hook annunciators gated by entity config bits (DAT_0050cfef),
 0x00407A00,func,HUDDrawGLoadThrottle,,re,confirmed,"lower data block: G-load, throttle (THR AFT / THR %d%%) and thrust-vector line",
-0x00407B60,func,?HUDDrawHeading@@YIXXZ,HUDDrawHeading,sms,confirmed,,
-0x00407EC0,func,?HUDSpeedToY@@YIJJ@Z,HUDSpeedToY,sms,confirmed,,
-0x00407EE0,func,?HUDDrawSpeed@@YIXXZ,HUDDrawSpeed,sms,confirmed,,
-0x00408400,func,?HUDAltToY@@YIJJ@Z,HUDAltToY,sms,confirmed,,
-0x00408420,func,?HUDDrawAlt@@YIXXZ,HUDDrawAlt,sms,confirmed,,
-0x00408930,func,@InitScreenMove@4,InitScreenMove,sms,confirmed,,
+0x00407B60,func,?HUDDrawHeading@@YIXXZ,HUDDrawHeading,sms,confirmed,,void __fastcall HUDDrawHeading(void)
+0x00407EC0,func,?HUDSpeedToY@@YIJJ@Z,HUDSpeedToY,sms,confirmed,,long __fastcall HUDSpeedToY(long)
+0x00407EE0,func,?HUDDrawSpeed@@YIXXZ,HUDDrawSpeed,sms,confirmed,,void __fastcall HUDDrawSpeed(void)
+0x00408400,func,?HUDAltToY@@YIJJ@Z,HUDAltToY,sms,confirmed,,long __fastcall HUDAltToY(long)
+0x00408420,func,?HUDDrawAlt@@YIXXZ,HUDDrawAlt,sms,confirmed,,void __fastcall HUDDrawAlt(void)
+0x00408930,func,@InitScreenMove@4,InitScreenMove,sms,confirmed,,undefined4 __fastcall InitScreenMove(undefined4)
 0x004089A0,func,HUDDrawPitchLadder,,re,confirmed,"climb/dive pitch ladder: rotate the pitch-bar table by roll, position vs waterline, dashed below / solid above horizon",
 0x00408C80,func,HUDDrawLeadCaret,,re,inferred,lag/lead aim caret at the padlock target using a time-lagged sample; SymFont glyph bucketed by range,
 0x00408C8B,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawLeadCaret (0x408C80),
-0x00408E20,func,?HUDDrawHVel@@YIXXZ,HUDDrawHVel,sms,confirmed,,
-0x00409030,func,?HUDDrawWeaponInfo@@YIXXZ,HUDDrawWeaponInfo,sms,confirmed,,
+0x00408E20,func,?HUDDrawHVel@@YIXXZ,HUDDrawHVel,sms,confirmed,,void __fastcall HUDDrawHVel(void)
+0x00409030,func,?HUDDrawWeaponInfo@@YIXXZ,HUDDrawWeaponInfo,sms,confirmed,,void __fastcall HUDDrawWeaponInfo(void)
 0x0040903B,func,,,waiver,confirmed,Ghidra mid-function split: body of ?HUDDrawWeaponInfo@@YIXXZ (0x409030) — weapon name/rounds/hit-chance,
-0x004092D0,func,?HUDDrawRangeInfo@@YIXXZ,HUDDrawRangeInfo,sms,confirmed,,
+0x004092D0,func,?HUDDrawRangeInfo@@YIXXZ,HUDDrawRangeInfo,sms,confirmed,,void __fastcall HUDDrawRangeInfo(void)
 0x00409760,func,HUDDrawBombFall,,re,confirmed,CCIP bomb fall line/pipper from the ballistic solution (PROJMakeBombEq/PROJBombPos),
 0x00409910,func,HUDDrawGunReticle,,re,inferred,gun aiming circle + bearing tick + vertical range tape with weapon/lock/target markers,
 0x0040991B,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawGunReticle (0x409910),
 0x00409BF0,func,HUDDrawApproach,,re,confirmed,ILS/carrier glideslope box in landing submode (APApproachPath/CheckLandingParms),
 0x00409BFB,func,,,waiver,confirmed,Ghidra mid-function split: body of HUDDrawApproach (0x409BF0),
 0x00409F30,func,HUDDrawTargetBox,,re,confirmed,"target-designator box over the padlock target (PROJLock tone/lock, GRTo2d projection, IFF glyph)",
-0x0040A450,func,@HUDSquawk@0,HUDSquawk,sms,confirmed,,
-0x0040A530,func,@HUDFindNearest@8,HUDFindNearest,sms,confirmed,,
+0x0040A450,func,@HUDSquawk@0,HUDSquawk,sms,confirmed,,undefined4 __fastcall HUDSquawk(void)
+0x0040A530,func,@HUDFindNearest@8,HUDFindNearest,sms,confirmed,,"undefined4 __fastcall HUDFindNearest(undefined4, undefined4)"
 0x0040A6C0,func,HUDDrawTargetLabels,,re,confirmed,name tags over visible targets; player's current target in a distinct color,
 0x0040A7F0,func,HUDDrawContacts,,re,confirmed,"radar/IR sensor contacts (CPGetContact), SymFont glyph per contact, locked one highlighted",
-0x0040AAC0,func,@HUDBrightness@4,HUDBrightness,sms,confirmed,,
-0x0040AB10,func,_HUDSetFont@0,HUDSetFont,sms,confirmed,,
-0x0040AB30,func,_HUDSetSymFont@0,HUDSetSymFont,sms,confirmed,,
-0x0040AB50,func,_HUDSetWinFont@0,HUDSetWinFont,sms,confirmed,,
-0x0040AB70,func,@HUDSetDisrupt@4,HUDSetDisrupt,sms,confirmed,,
-0x0040ABB0,func,?HUDDrawDisrupt@@YIXXZ,HUDDrawDisrupt,sms,confirmed,,
-0x0040AC80,func,?HUDSetStability@@YIJXZ,HUDSetStability,sms,confirmed,,
-0x0040ACE0,func,?HUDDrawStability@@YIXXZ,HUDDrawStability,sms,confirmed,,
-0x0040AD40,func,@ComputeBombPosition@4,ComputeBombPosition,sms,confirmed,,
+0x0040AAC0,func,@HUDBrightness@4,HUDBrightness,sms,confirmed,,undefined4 __fastcall HUDBrightness(undefined4)
+0x0040AB10,func,_HUDSetFont@0,HUDSetFont,sms,confirmed,,undefined4 __stdcall HUDSetFont(void)
+0x0040AB30,func,_HUDSetSymFont@0,HUDSetSymFont,sms,confirmed,,undefined4 __stdcall HUDSetSymFont(void)
+0x0040AB50,func,_HUDSetWinFont@0,HUDSetWinFont,sms,confirmed,,undefined4 __stdcall HUDSetWinFont(void)
+0x0040AB70,func,@HUDSetDisrupt@4,HUDSetDisrupt,sms,confirmed,,undefined4 __fastcall HUDSetDisrupt(undefined4)
+0x0040ABB0,func,?HUDDrawDisrupt@@YIXXZ,HUDDrawDisrupt,sms,confirmed,,void __fastcall HUDDrawDisrupt(void)
+0x0040AC80,func,?HUDSetStability@@YIJXZ,HUDSetStability,sms,confirmed,,long __fastcall HUDSetStability(void)
+0x0040ACE0,func,?HUDDrawStability@@YIXXZ,HUDDrawStability,sms,confirmed,,void __fastcall HUDDrawStability(void)
+0x0040AD40,func,@ComputeBombPosition@4,ComputeBombPosition,sms,confirmed,,undefined4 __fastcall ComputeBombPosition(undefined4)
 0x0040AD4B,func,,,waiver,confirmed,Ghidra mid-function split: body of @ComputeBombPosition@4 (0x40AD40),
-0x0040AE40,func,?HUDHasFlaps@@YIDXZ,HUDHasFlaps,sms,confirmed,,
+0x0040AE40,func,?HUDHasFlaps@@YIDXZ,HUDHasFlaps,sms,confirmed,,char __fastcall HUDHasFlaps(void)
 0x004EB548,data,,,waiver,confirmed,DirectDraw clipper / shared view state (_mainV); renderer/camera pass,
 0x004EB632,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass,
 0x004EB634,data,,,waiver,confirmed,shared view/camera state (_mainV base); renderer/camera pass,

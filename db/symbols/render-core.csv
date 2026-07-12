@@ -2,9 +2,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004CD588,func,sincos,,re,confirmed,sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates,
 0x004CD5DF,func,isqrt16,,re,inferred,tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt),
 0x004CD5EE,func,isqrt16_body,,re,inferred,Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize,
-0x004CD7A0,func,@GRACos@4,GRACos,sms,confirmed,public arccos wrapper over acos,
+0x004CD7A0,func,@GRACos@4,GRACos,sms,confirmed,public arccos wrapper over acos,undefined4 __fastcall GRACos(undefined4)
 0x004CD7B4,func,acos,,re,confirmed,arccos via DAT_00515dcc table lookup+lerp,
-0x004CD834,func,@GRSetLightSource@4,GRSetLightSource,sms,confirmed,store world light dir into _worldLightSource/515ED2/515ED4,
+0x004CD834,func,@GRSetLightSource@4,GRSetLightSource,sms,confirmed,store world light dir into _worldLightSource/515ED2/515ED4,undefined4 __fastcall GRSetLightSource(undefined4)
 0x004CD854,func,SetShading,,re,confirmed,thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT,
 0x004CD8B0,func,_Sun,Sun,re,confirmed,lighting dot product of _worldLightSource against current matrix rows (518384/38A/390),
 0x004CD8F0,func,clip_edge_right,,re,inferred,Sutherland-Hodgman clip vs screen edge (outcode bit4); vbuf/vbuf2 ping-pong; calls ecode_pnt,
@@ -36,7 +36,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D0494,func,get_sort_dist,,re,confirmed,painter sort key = max|Δ|+quarters of others + per-obj bias (from _xv32/_yv32/_zv32),
 0x004D04DC,data,,,waiver,confirmed,interior of / adjacent to get_sort_dist; named at its base or owned by that subsystem,
 0x004D052C,data,,,waiver,confirmed,interior of / adjacent to get_sort_dist; named at its base or owned by that subsystem,
-0x004D057C,func,_GRAddBrentObj@40,GRAddBrentObj,sms,confirmed,,
+0x004D057C,func,_GRAddBrentObj@40,GRAddBrentObj,sms,confirmed,,"undefined4 __stdcall GRAddBrentObj(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004D0798,func,draw_brent_obj,,re,inferred,per-object shape-draw callback (PTR_FUN_0051839c target): restore saved matrix/viewer; ShapeSetup(brentObjId); object rotate (roll/pitch/yaw); lighting matrix; check_flat; SetShadingTable; interpret shape stream with _bdrawObj=1,
 0x004D0C2F,func,sh_op_BA,,re,inferred,SH opcode 0xBA handler,
 0x004D0C50,func,do_drawobj000,,sms,confirmed,,
@@ -146,18 +146,18 @@ va,kind,name,display,source,confidence,notes,type
 0x004D5644,func,do_new_rmap,,sms,confirmed,SH opcode 0xEA (remap; 872 bytes),
 0x004D59AC,func,do_new_pmap_or_tmap,,sms,confirmed,SH opcodes 0x36/0x3E (perspective/texture map),
 0x004D5A2C,func,angles_2_matrix,,re,confirmed,build view rotation matrix from _am_h/_am_p/_am_b (heading/pitch/bank) via sincos,
-0x004D5BA8,func,_GRInit3d@4,GRInit3d,sms,confirmed,init: store detail flag; install _overflow_ptr divide trap,
-0x004D5BCC,func,_GRRender@36,GRRender,sms,confirmed,top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix,
-0x004D5C98,func,_GRSinCos@12,GRSinCos,sms,confirmed,public sin/cos wrapper over sincos,
-0x004D5CC0,func,_GRTo2d@8,GRTo2d,sms,confirmed,,
-0x004D5E58,func,_MakeObjRotationMatrix@16,MakeObjRotationMatrix,sms,confirmed,build object rotation matrix (roll/pitch/yaw) into caller buffer,
-0x004D60D8,func,_MakeViewRotationMatrix@16,MakeViewRotationMatrix,sms,confirmed,build view rotation matrix (yaw/pitch/roll order) into caller buffer,
-0x004D631C,func,_MultPointByMatrix@8,MultPointByMatrix,sms,confirmed,transform a point by the current matrix (wraps mult_point_by_matrix_asm),
-0x004D6348,func,_GRSaveContext@0,GRSaveContext,sms,confirmed,save viewer/xv/scr/bias/wtop + scaled+unscaled matrices to shadow block 0x51D5E3+,
-0x004D63F0,func,_GRRestoreContext@0,GRRestoreContext,sms,confirmed,restore the GRSaveContext shadow block,
-0x004D6498,func,@GRExec@4,GRExec,sms,confirmed,execute one SH command stream: dispatch vector_table[*param]; preserve _xv/_yv/_zv (used by scene dispatch for sky/sun list),
-0x004D64D8,func,_MultF24PointByMatrix@8,MultF24PointByMatrix,sms,confirmed,transform a 24.8 fixed point by matrix with saturation,
-0x004D65C4,func,@Sqrt@4,Sqrt,sms,confirmed,,
+0x004D5BA8,func,_GRInit3d@4,GRInit3d,sms,confirmed,init: store detail flag; install _overflow_ptr divide trap,undefined4 __stdcall GRInit3d(undefined4)
+0x004D5BCC,func,_GRRender@36,GRRender,sms,confirmed,top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix,"undefined4 __stdcall GRRender(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004D5C98,func,_GRSinCos@12,GRSinCos,sms,confirmed,public sin/cos wrapper over sincos,"undefined4 __stdcall GRSinCos(undefined4, undefined4, undefined4)"
+0x004D5CC0,func,_GRTo2d@8,GRTo2d,sms,confirmed,,"undefined4 __stdcall GRTo2d(undefined4, undefined4)"
+0x004D5E58,func,_MakeObjRotationMatrix@16,MakeObjRotationMatrix,sms,confirmed,build object rotation matrix (roll/pitch/yaw) into caller buffer,"undefined4 __stdcall MakeObjRotationMatrix(undefined4, undefined4, undefined4, undefined4)"
+0x004D60D8,func,_MakeViewRotationMatrix@16,MakeViewRotationMatrix,sms,confirmed,build view rotation matrix (yaw/pitch/roll order) into caller buffer,"undefined4 __stdcall MakeViewRotationMatrix(undefined4, undefined4, undefined4, undefined4)"
+0x004D631C,func,_MultPointByMatrix@8,MultPointByMatrix,sms,confirmed,transform a point by the current matrix (wraps mult_point_by_matrix_asm),"undefined4 __stdcall MultPointByMatrix(undefined4, undefined4)"
+0x004D6348,func,_GRSaveContext@0,GRSaveContext,sms,confirmed,save viewer/xv/scr/bias/wtop + scaled+unscaled matrices to shadow block 0x51D5E3+,undefined4 __stdcall GRSaveContext(void)
+0x004D63F0,func,_GRRestoreContext@0,GRRestoreContext,sms,confirmed,restore the GRSaveContext shadow block,undefined4 __stdcall GRRestoreContext(void)
+0x004D6498,func,@GRExec@4,GRExec,sms,confirmed,execute one SH command stream: dispatch vector_table[*param]; preserve _xv/_yv/_zv (used by scene dispatch for sky/sun list),undefined4 __fastcall GRExec(undefined4)
+0x004D64D8,func,_MultF24PointByMatrix@8,MultF24PointByMatrix,sms,confirmed,transform a 24.8 fixed point by matrix with saturation,"undefined4 __stdcall MultF24PointByMatrix(undefined4, undefined4)"
+0x004D65C4,func,@Sqrt@4,Sqrt,sms,confirmed,,undefined4 __fastcall Sqrt(undefined4)
 0x004D6640,func,do_nt,,sms,confirmed,SH opcode 0xFE (terrain node/tile): read tile verts; compute bbox+sort key; insert into sort list; draw_quad or draw_tri_nw+se by diagonal,
 0x004D69EC,func,__compute_viewer_dot_product,,re,confirmed,backface cull: face-normal dot (vertex - viewer) for do_nt tiles,
 0x004D6A38,func,draw_quad,,re,confirmed,assemble 4-vertex tile working set -> draw_nt,

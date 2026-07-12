@@ -219,6 +219,18 @@ scripts/ghidra/run_ghidra.sh AnalyzeLAY.java
 scripts/ghidra/run_all.sh --setup
 ```
 
+**Why is this global referenced, and what is it inside?**
+
+```sh
+scripts/ghidra/run_ghidra.sh InspectGlobals.java /path/to/vas.txt   # one 0xVA per line
+```
+
+For each address: the data type, the nearest named symbol it sits behind (`base+0xNN`), and
+the functions that reference it. This is how a `data` row earns its disposition — a name, or
+a waiver whose note says what the address actually *is*. Typing a subsystem's functions tends
+to surface new referenced globals (the decompiler resolves references it previously could
+not), and this reports what they are instead of leaving them to be guessed from their stride.
+
 ---
 
 ## PE overlay DLL pipeline

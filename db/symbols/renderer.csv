@@ -1,129 +1,129 @@
 va,kind,name,display,source,confidence,notes,type
-0x0045CA70,func,?DrawAcrossBankInter@@YAGFFFFKPAUGlobalData@@GPAE@Z,DrawAcrossBankInter,sms,confirmed,,
-0x0045CDA0,func,?DrawAcrossBank@@YAGFFFFKPAUGlobalData@@G@Z,DrawAcrossBank,sms,confirmed,,
-0x0045DBD0,func,@GG_InitMode@0,GG_InitMode,sms,confirmed,,
-0x0045DCB0,func,@GG_ShutdownMode@0,GG_ShutdownMode,sms,confirmed,,
-0x0045DCE0,func,@GG_GetMode@0,GG_GetMode,sms,confirmed,,
-0x0045DE70,func,_GG_SetPalette@16,GG_SetPalette,sms,confirmed,,
-0x0045DEC0,func,@GG_Shake@0,GG_Shake,sms,confirmed,,
+0x0045CA70,func,?DrawAcrossBankInter@@YAGFFFFKPAUGlobalData@@GPAE@Z,DrawAcrossBankInter,sms,confirmed,,"unsigned short __cdecl DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *)"
+0x0045CDA0,func,?DrawAcrossBank@@YAGFFFFKPAUGlobalData@@G@Z,DrawAcrossBank,sms,confirmed,,"unsigned short __cdecl DrawAcrossBank(short, short, short, short, unsigned long, GlobalData *, unsigned short)"
+0x0045DBD0,func,@GG_InitMode@0,GG_InitMode,sms,confirmed,,undefined4 __fastcall GG_InitMode(void)
+0x0045DCB0,func,@GG_ShutdownMode@0,GG_ShutdownMode,sms,confirmed,,undefined4 __fastcall GG_ShutdownMode(void)
+0x0045DCE0,func,@GG_GetMode@0,GG_GetMode,sms,confirmed,,undefined4 __fastcall GG_GetMode(void)
+0x0045DE70,func,_GG_SetPalette@16,GG_SetPalette,sms,confirmed,,"undefined4 __stdcall GG_SetPalette(undefined4, undefined4, undefined4, undefined4)"
+0x0045DEC0,func,@GG_Shake@0,GG_Shake,sms,confirmed,,undefined4 __fastcall GG_Shake(void)
 0x0045DEDF,func,GG_FlushShaken,,re,inferred,present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path),
 0x0045E0EF,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushShaken — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk,
-0x0045E120,func,@GG_Flush@4,GG_Flush,sms,confirmed,,
+0x0045E120,func,@GG_Flush@4,GG_Flush,sms,confirmed,,undefined4 __fastcall GG_Flush(undefined4)
 0x0045E13F,func,GG_FlushDirtyLines,,re,inferred,"the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable",
 0x0045E360,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushDirtyLines — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk,
-0x0045E370,func,@flushLineStats@0,flushLineStats,sms,confirmed,,
-0x0045E3A0,func,@GG_RestoreSurfaces@0,GG_RestoreSurfaces,sms,confirmed,,
-0x0045E410,func,@GG_WaitRetrace@0,GG_WaitRetrace,sms,confirmed,,
-0x0045E440,func,_GG_VideoModesAvailable@0,GG_VideoModesAvailable,sms,confirmed,,
-0x00497330,func,@G_FlipY@4,G_FlipY,sms,confirmed,,
-0x00497340,func,@G_Init@0,G_Init,sms,confirmed,,
-0x004973F0,func,@G_Shutdown@0,G_Shutdown,sms,confirmed,,
-0x00497490,func,_G_InitLineStats@0,G_InitLineStats,sms,confirmed,,
-0x004974C0,func,_G_SetPalette@16,G_SetPalette,sms,confirmed,,
-0x004974E0,func,@G_SetBitmap@4,G_SetBitmap,sms,confirmed,,
-0x004974F0,func,@G_SetClipBox@16,G_SetClipBox,sms,confirmed,,
-0x004975F0,func,@G_SetFullClipBox@0,G_SetFullClipBox,sms,confirmed,,
-0x00497610,func,@G_PushClipBox@0,G_PushClipBox,sms,confirmed,,
-0x00497650,func,@G_PopClipBox@0,G_PopClipBox,sms,confirmed,,
-0x00497680,func,@G_SetColor@4,G_SetColor,sms,confirmed,,
-0x004976D0,func,@G_Point@8,G_Point,sms,confirmed,,
-0x00497700,func,@G_UPoint@8,G_UPoint,sms,confirmed,,
-0x00497770,func,_G_UHline@12,G_UHline,sms,confirmed,,
-0x00497A10,func,_G_Hline@12,G_Hline,sms,confirmed,,
-0x00497A60,func,_G_UVline@12,G_UVline,sms,confirmed,,
-0x00497B00,func,_G_Vline@12,G_Vline,sms,confirmed,,
-0x00497B60,func,_G_URect@16,G_URect,sms,confirmed,,
-0x00497BF0,func,_G_Rect@16,G_Rect,sms,confirmed,,
-0x00497D10,func,_G_URect2@16,G_URect2,sms,confirmed,,
-0x00497D40,func,_G_UBox@16,G_UBox,sms,confirmed,,
-0x00497D90,func,_G_Box@16,G_Box,sms,confirmed,,
+0x0045E370,func,@flushLineStats@0,flushLineStats,sms,confirmed,,undefined4 __fastcall flushLineStats(void)
+0x0045E3A0,func,@GG_RestoreSurfaces@0,GG_RestoreSurfaces,sms,confirmed,,undefined4 __fastcall GG_RestoreSurfaces(void)
+0x0045E410,func,@GG_WaitRetrace@0,GG_WaitRetrace,sms,confirmed,,undefined4 __fastcall GG_WaitRetrace(void)
+0x0045E440,func,_GG_VideoModesAvailable@0,GG_VideoModesAvailable,sms,confirmed,,undefined4 __stdcall GG_VideoModesAvailable(void)
+0x00497330,func,@G_FlipY@4,G_FlipY,sms,confirmed,,undefined4 __fastcall G_FlipY(undefined4)
+0x00497340,func,@G_Init@0,G_Init,sms,confirmed,,undefined4 __fastcall G_Init(void)
+0x004973F0,func,@G_Shutdown@0,G_Shutdown,sms,confirmed,,undefined4 __fastcall G_Shutdown(void)
+0x00497490,func,_G_InitLineStats@0,G_InitLineStats,sms,confirmed,,undefined4 __stdcall G_InitLineStats(void)
+0x004974C0,func,_G_SetPalette@16,G_SetPalette,sms,confirmed,,"undefined4 __stdcall G_SetPalette(undefined4, undefined4, undefined4, undefined4)"
+0x004974E0,func,@G_SetBitmap@4,G_SetBitmap,sms,confirmed,,undefined4 __fastcall G_SetBitmap(undefined4)
+0x004974F0,func,@G_SetClipBox@16,G_SetClipBox,sms,confirmed,,"undefined4 __fastcall G_SetClipBox(undefined4, undefined4, undefined4, undefined4)"
+0x004975F0,func,@G_SetFullClipBox@0,G_SetFullClipBox,sms,confirmed,,undefined4 __fastcall G_SetFullClipBox(void)
+0x00497610,func,@G_PushClipBox@0,G_PushClipBox,sms,confirmed,,undefined4 __fastcall G_PushClipBox(void)
+0x00497650,func,@G_PopClipBox@0,G_PopClipBox,sms,confirmed,,undefined4 __fastcall G_PopClipBox(void)
+0x00497680,func,@G_SetColor@4,G_SetColor,sms,confirmed,,undefined4 __fastcall G_SetColor(undefined4)
+0x004976D0,func,@G_Point@8,G_Point,sms,confirmed,,"undefined4 __fastcall G_Point(undefined4, undefined4)"
+0x00497700,func,@G_UPoint@8,G_UPoint,sms,confirmed,,"undefined4 __fastcall G_UPoint(undefined4, undefined4)"
+0x00497770,func,_G_UHline@12,G_UHline,sms,confirmed,,"undefined4 __stdcall G_UHline(undefined4, undefined4, undefined4)"
+0x00497A10,func,_G_Hline@12,G_Hline,sms,confirmed,,"undefined4 __stdcall G_Hline(undefined4, undefined4, undefined4)"
+0x00497A60,func,_G_UVline@12,G_UVline,sms,confirmed,,"undefined4 __stdcall G_UVline(undefined4, undefined4, undefined4)"
+0x00497B00,func,_G_Vline@12,G_Vline,sms,confirmed,,"undefined4 __stdcall G_Vline(undefined4, undefined4, undefined4)"
+0x00497B60,func,_G_URect@16,G_URect,sms,confirmed,,"undefined4 __stdcall G_URect(undefined4, undefined4, undefined4, undefined4)"
+0x00497BF0,func,_G_Rect@16,G_Rect,sms,confirmed,,"undefined4 __stdcall G_Rect(undefined4, undefined4, undefined4, undefined4)"
+0x00497D10,func,_G_URect2@16,G_URect2,sms,confirmed,,"undefined4 __stdcall G_URect2(undefined4, undefined4, undefined4, undefined4)"
+0x00497D40,func,_G_UBox@16,G_UBox,sms,confirmed,,"undefined4 __stdcall G_UBox(undefined4, undefined4, undefined4, undefined4)"
+0x00497D90,func,_G_Box@16,G_Box,sms,confirmed,,"undefined4 __stdcall G_Box(undefined4, undefined4, undefined4, undefined4)"
 0x00497DE0,func,_G_ClipLine,G_ClipLine,sms,confirmed,,
-0x00498160,func,_G_Line@16,G_Line,sms,confirmed,,
-0x004981A0,func,_G_ULine@16,G_ULine,sms,confirmed,,
-0x00498380,func,_G_PatLine@20,G_PatLine,sms,confirmed,,
-0x004983E0,func,@G_DrawYLR@4,G_DrawYLR,sms,confirmed,,
-0x00498410,func,@G_SetScaleMax@8,G_SetScaleMax,sms,confirmed,,
-0x00498420,func,@G_Flush@4,G_Flush,sms,confirmed,,
-0x00498430,func,@G_ReverseVertices@8,G_ReverseVertices,sms,confirmed,,
-0x00498480,func,@G_Flip@8,G_Flip,sms,confirmed,,
-0x004984F0,func,@G_UPolygonFlip@8,G_UPolygonFlip,sms,confirmed,,
-0x00498570,func,@G_PointFlip@8,G_PointFlip,sms,confirmed,,
-0x004985E0,func,_G_ULineFlip@16,G_ULineFlip,sms,confirmed,,
-0x00498610,func,_G_LineFlip@16,G_LineFlip,sms,confirmed,,
-0x00498640,func,_G_CircleFlip@16,G_CircleFlip,sms,confirmed,,
-0x00498670,func,_G_URectFlip@16,G_URectFlip,sms,confirmed,,
-0x004986A0,func,@G_SetFont@4,G_SetFont,sms,confirmed,,
-0x004986B0,func,@G_Print@16,G_Print,sms,confirmed,,
-0x004988F0,func,_G_PrintOutline@24,G_PrintOutline,sms,confirmed,,
+0x00498160,func,_G_Line@16,G_Line,sms,confirmed,,"undefined4 __stdcall G_Line(undefined4, undefined4, undefined4, undefined4)"
+0x004981A0,func,_G_ULine@16,G_ULine,sms,confirmed,,"undefined4 __stdcall G_ULine(undefined4, undefined4, undefined4, undefined4)"
+0x00498380,func,_G_PatLine@20,G_PatLine,sms,confirmed,,"undefined4 __stdcall G_PatLine(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004983E0,func,@G_DrawYLR@4,G_DrawYLR,sms,confirmed,,undefined4 __fastcall G_DrawYLR(undefined4)
+0x00498410,func,@G_SetScaleMax@8,G_SetScaleMax,sms,confirmed,,"undefined4 __fastcall G_SetScaleMax(undefined4, undefined4)"
+0x00498420,func,@G_Flush@4,G_Flush,sms,confirmed,,undefined4 __fastcall G_Flush(undefined4)
+0x00498430,func,@G_ReverseVertices@8,G_ReverseVertices,sms,confirmed,,"undefined4 __fastcall G_ReverseVertices(undefined4, undefined4)"
+0x00498480,func,@G_Flip@8,G_Flip,sms,confirmed,,"undefined4 __fastcall G_Flip(undefined4, undefined4)"
+0x004984F0,func,@G_UPolygonFlip@8,G_UPolygonFlip,sms,confirmed,,"undefined4 __fastcall G_UPolygonFlip(undefined4, undefined4)"
+0x00498570,func,@G_PointFlip@8,G_PointFlip,sms,confirmed,,"undefined4 __fastcall G_PointFlip(undefined4, undefined4)"
+0x004985E0,func,_G_ULineFlip@16,G_ULineFlip,sms,confirmed,,"undefined4 __stdcall G_ULineFlip(undefined4, undefined4, undefined4, undefined4)"
+0x00498610,func,_G_LineFlip@16,G_LineFlip,sms,confirmed,,"undefined4 __stdcall G_LineFlip(undefined4, undefined4, undefined4, undefined4)"
+0x00498640,func,_G_CircleFlip@16,G_CircleFlip,sms,confirmed,,"undefined4 __stdcall G_CircleFlip(undefined4, undefined4, undefined4, undefined4)"
+0x00498670,func,_G_URectFlip@16,G_URectFlip,sms,confirmed,,"undefined4 __stdcall G_URectFlip(undefined4, undefined4, undefined4, undefined4)"
+0x004986A0,func,@G_SetFont@4,G_SetFont,sms,confirmed,,undefined4 __fastcall G_SetFont(undefined4)
+0x004986B0,func,@G_Print@16,G_Print,sms,confirmed,,"undefined4 __fastcall G_Print(undefined4, undefined4, undefined4, undefined4)"
+0x004988F0,func,_G_PrintOutline@24,G_PrintOutline,sms,confirmed,,"undefined4 __stdcall G_PrintOutline(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00498980,func,_G_Printf,G_Printf,sms,confirmed,,
-0x004989F0,func,@G_StringWidth@4,G_StringWidth,sms,confirmed,,
-0x00498A20,func,@G_StringHeight@0,G_StringHeight,sms,confirmed,,
-0x00498AF0,func,?code@@YAJJJ@Z,code,sms,confirmed,,
-0x00498B90,func,?clipT@@YAJJPAUTVERTEX@@@Z,clipT,sms,confirmed,,
+0x004989F0,func,@G_StringWidth@4,G_StringWidth,sms,confirmed,,undefined4 __fastcall G_StringWidth(undefined4)
+0x00498A20,func,@G_StringHeight@0,G_StringHeight,sms,confirmed,,undefined4 __fastcall G_StringHeight(void)
+0x00498AF0,func,?code@@YAJJJ@Z,code,sms,confirmed,,"long __cdecl code(long, long)"
+0x00498B90,func,?clipT@@YAJJPAUTVERTEX@@@Z,clipT,sms,confirmed,,"long __cdecl clipT(long, TVERTEX *)"
 0x00498B9A,func,,,waiver,confirmed,Ghidra mid-function split of clipT (edge-clip helper at 0x498B90),
-0x00498CE0,func,?clipB@@YAJJPAUTVERTEX@@@Z,clipB,sms,confirmed,,
+0x00498CE0,func,?clipB@@YAJJPAUTVERTEX@@@Z,clipB,sms,confirmed,,"long __cdecl clipB(long, TVERTEX *)"
 0x00498CEA,func,,,waiver,confirmed,Ghidra mid-function split of clipB (edge-clip helper at 0x498CE0),
-0x00498E30,func,?clipL@@YAJJPAUTVERTEX@@@Z,clipL,sms,confirmed,,
+0x00498E30,func,?clipL@@YAJJPAUTVERTEX@@@Z,clipL,sms,confirmed,,"long __cdecl clipL(long, TVERTEX *)"
 0x00498E3A,func,,,waiver,confirmed,Ghidra mid-function split of clipL (edge-clip helper at 0x498E30),
-0x00498F90,func,?clipR@@YAJJPAUTVERTEX@@@Z,clipR,sms,confirmed,,
+0x00498F90,func,?clipR@@YAJJPAUTVERTEX@@@Z,clipR,sms,confirmed,,"long __cdecl clipR(long, TVERTEX *)"
 0x00498F9A,func,,,waiver,confirmed,Ghidra mid-function split of clipR (edge-clip helper at 0x498F90),
 0x004990F0,func,_G_ClipDestPoly,G_ClipDestPoly,sms,confirmed,,
-0x00499200,func,@G_SetHShake@8,G_SetHShake,sms,confirmed,,
-0x00499240,func,@G_SetVShake@8,G_SetVShake,sms,confirmed,,
-0x00499280,func,_G_Hline2@12,G_Hline2,sms,confirmed,,
-0x004992B0,func,_G_UHline2@12,G_UHline2,sms,confirmed,,
-0x004992E0,func,_G_Box2@16,G_Box2,sms,confirmed,,
-0x00499330,func,_G_UBox2@16,G_UBox2,sms,confirmed,,
+0x00499200,func,@G_SetHShake@8,G_SetHShake,sms,confirmed,,"undefined4 __fastcall G_SetHShake(undefined4, undefined4)"
+0x00499240,func,@G_SetVShake@8,G_SetVShake,sms,confirmed,,"undefined4 __fastcall G_SetVShake(undefined4, undefined4)"
+0x00499280,func,_G_Hline2@12,G_Hline2,sms,confirmed,,"undefined4 __stdcall G_Hline2(undefined4, undefined4, undefined4)"
+0x004992B0,func,_G_UHline2@12,G_UHline2,sms,confirmed,,"undefined4 __stdcall G_UHline2(undefined4, undefined4, undefined4)"
+0x004992E0,func,_G_Box2@16,G_Box2,sms,confirmed,,"undefined4 __stdcall G_Box2(undefined4, undefined4, undefined4, undefined4)"
+0x00499330,func,_G_UBox2@16,G_UBox2,sms,confirmed,,"undefined4 __stdcall G_UBox2(undefined4, undefined4, undefined4, undefined4)"
 0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag,
-0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,
-0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,
-0x004B7A80,func,_G_AllocSurfaceBitmap@8,G_AllocSurfaceBitmap,sms,confirmed,,
-0x004B7BF0,func,@G_FreeSurfaceBitmap@4,G_FreeSurfaceBitmap,sms,confirmed,,
-0x004B7C30,func,?RemapAdd@@YAXPAUT_HANDLE@@H@Z,RemapAdd,sms,confirmed,,
-0x004B7C60,func,?RemapRelocate@@YAXPAUT_HANDLE@@F@Z,RemapRelocate,sms,confirmed,,
-0x004B7CD0,func,_G_LoadBitmap@20,G_LoadBitmap,sms,confirmed,,
+0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,"undefined4 __fastcall G_RelocBitmap(undefined4, undefined4)"
+0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocBitmap(undefined4, undefined4, undefined4)"
+0x004B7A80,func,_G_AllocSurfaceBitmap@8,G_AllocSurfaceBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocSurfaceBitmap(undefined4, undefined4)"
+0x004B7BF0,func,@G_FreeSurfaceBitmap@4,G_FreeSurfaceBitmap,sms,confirmed,,undefined4 __fastcall G_FreeSurfaceBitmap(undefined4)
+0x004B7C30,func,?RemapAdd@@YAXPAUT_HANDLE@@H@Z,RemapAdd,sms,confirmed,,"void __cdecl RemapAdd(T_HANDLE *, int)"
+0x004B7C60,func,?RemapRelocate@@YAXPAUT_HANDLE@@F@Z,RemapRelocate,sms,confirmed,,"void __cdecl RemapRelocate(T_HANDLE *, short)"
+0x004B7CD0,func,_G_LoadBitmap@20,G_LoadBitmap,sms,confirmed,,"undefined4 __stdcall G_LoadBitmap(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004B7E10,func,G_RemapBitmapToPalette,,re,confirmed,remap a bitmap's RGB triples to the nearest _curPalette index (sum-of-squared-channel-diff nearest-colour match),
-0x004B7F60,func,_G_BlitToBrush@16,G_BlitToBrush,sms,confirmed,,
-0x004B7FA0,func,_G_BlitToScreen@16,G_BlitToScreen,sms,confirmed,,
-0x004B7FE0,func,_G_Blit@36,G_Blit,sms,confirmed,,
-0x004B8460,func,@G_ColorPrint@20,G_ColorPrint,sms,confirmed,,
-0x004B85F0,func,@G_ColorStringWidth@8,G_ColorStringWidth,sms,confirmed,,
-0x004B8620,func,@G_ColorStringHeight@4,G_ColorStringHeight,sms,confirmed,,
-0x004B8630,func,@G_NextTab@4,G_NextTab,sms,confirmed,,
-0x004B8670,func,@G_Scale@20,G_Scale,sms,confirmed,,
-0x004B8710,func,@G_ScaleFlip@8,G_ScaleFlip,sms,confirmed,,
-0x004B87F0,func,@G_AcTexture@12,G_AcTexture,sms,confirmed,,
-0x004B8820,func,@G_TextureFlip@12,G_TextureFlip,sms,confirmed,,
-0x004B8890,func,@G_PerspectiveFlip@12,G_PerspectiveFlip,sms,confirmed,,
-0x004B8920,func,@G_HFlipBitmap@4,G_HFlipBitmap,sms,confirmed,,
-0x004B8960,func,@G_DoubleBitmapY@4,G_DoubleBitmapY,sms,confirmed,,
-0x004B8BF0,func,@G_DoubleBitmapX@4,G_DoubleBitmapX,sms,confirmed,,
-0x004B8D90,func,?carefulDiv@@YANPAMMM@Z,carefulDiv,sms,confirmed,,
-0x004B8E10,func,?NPM_clipTop@@YIJPAUFVERTEX@@0@Z,NPM_clipTop,sms,confirmed,,
-0x004B8F70,func,?NPM_clipTri@@YAJPAUFVERTEX@@@Z,NPM_clipTri,sms,confirmed,,
-0x004B90C0,func,?NPM_clipAndScan@@YIJPAUFVERTEX@@J@Z,NPM_clipAndScan,sms,confirmed,,
+0x004B7F60,func,_G_BlitToBrush@16,G_BlitToBrush,sms,confirmed,,"undefined4 __stdcall G_BlitToBrush(undefined4, undefined4, undefined4, undefined4)"
+0x004B7FA0,func,_G_BlitToScreen@16,G_BlitToScreen,sms,confirmed,,"undefined4 __stdcall G_BlitToScreen(undefined4, undefined4, undefined4, undefined4)"
+0x004B7FE0,func,_G_Blit@36,G_Blit,sms,confirmed,,"undefined4 __stdcall G_Blit(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004B8460,func,@G_ColorPrint@20,G_ColorPrint,sms,confirmed,,"undefined4 __fastcall G_ColorPrint(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004B85F0,func,@G_ColorStringWidth@8,G_ColorStringWidth,sms,confirmed,,"undefined4 __fastcall G_ColorStringWidth(undefined4, undefined4)"
+0x004B8620,func,@G_ColorStringHeight@4,G_ColorStringHeight,sms,confirmed,,undefined4 __fastcall G_ColorStringHeight(undefined4)
+0x004B8630,func,@G_NextTab@4,G_NextTab,sms,confirmed,,undefined4 __fastcall G_NextTab(undefined4)
+0x004B8670,func,@G_Scale@20,G_Scale,sms,confirmed,,"undefined4 __fastcall G_Scale(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004B8710,func,@G_ScaleFlip@8,G_ScaleFlip,sms,confirmed,,"undefined4 __fastcall G_ScaleFlip(undefined4, undefined4)"
+0x004B87F0,func,@G_AcTexture@12,G_AcTexture,sms,confirmed,,"undefined4 __fastcall G_AcTexture(undefined4, undefined4, undefined4)"
+0x004B8820,func,@G_TextureFlip@12,G_TextureFlip,sms,confirmed,,"undefined4 __fastcall G_TextureFlip(undefined4, undefined4, undefined4)"
+0x004B8890,func,@G_PerspectiveFlip@12,G_PerspectiveFlip,sms,confirmed,,"undefined4 __fastcall G_PerspectiveFlip(undefined4, undefined4, undefined4)"
+0x004B8920,func,@G_HFlipBitmap@4,G_HFlipBitmap,sms,confirmed,,undefined4 __fastcall G_HFlipBitmap(undefined4)
+0x004B8960,func,@G_DoubleBitmapY@4,G_DoubleBitmapY,sms,confirmed,,undefined4 __fastcall G_DoubleBitmapY(undefined4)
+0x004B8BF0,func,@G_DoubleBitmapX@4,G_DoubleBitmapX,sms,confirmed,,undefined4 __fastcall G_DoubleBitmapX(undefined4)
+0x004B8D90,func,?carefulDiv@@YANPAMMM@Z,carefulDiv,sms,confirmed,,"double __cdecl carefulDiv(float *, float, float)"
+0x004B8E10,func,?NPM_clipTop@@YIJPAUFVERTEX@@0@Z,NPM_clipTop,sms,confirmed,,"long __fastcall NPM_clipTop(FVERTEX *, FVERTEX *)"
+0x004B8F70,func,?NPM_clipTri@@YAJPAUFVERTEX@@@Z,NPM_clipTri,sms,confirmed,,long __cdecl NPM_clipTri(FVERTEX *)
+0x004B90C0,func,?NPM_clipAndScan@@YIJPAUFVERTEX@@J@Z,NPM_clipAndScan,sms,confirmed,,"long __fastcall NPM_clipAndScan(FVERTEX *, long)"
 0x004B90D6,func,,,waiver,confirmed,Ghidra mid-function split of NPM_clipAndScan (0x4B90C0),
-0x004B9430,func,?NPM_FlatTri@@YIXPAUFVERTEX@@J@Z,NPM_FlatTri,sms,confirmed,,
-0x004B9630,func,?NPM_TextureLinearTri@@YIXPAUT_BITMAP@@PAUFVERTEX@@J@Z,NPM_TextureLinearTri,sms,confirmed,,
-0x004B9B90,func,?NPM_TexturePerspectiveTri@@YIXPAUT_BITMAP@@PAUFVERTEX@@J@Z,NPM_TexturePerspectiveTri,sms,confirmed,,
-0x004BA400,func,@G_FloatFlatFlip@8,G_FloatFlatFlip,sms,confirmed,,
-0x004BA500,func,@G_FloatTextureFlip@12,G_FloatTextureFlip,sms,confirmed,,
-0x004BA660,func,@G_FloatPerspectiveFlip@12,G_FloatPerspectiveFlip,sms,confirmed,,
-0x004C619C,func,_G_UPatLine@20,G_UPatLine,sms,confirmed,,
-0x004C6334,func,_G_UBresenhamLine@16,G_UBresenhamLine,sms,confirmed,,
-0x004C6ECC,func,@G_UPolygon@8,G_UPolygon,sms,confirmed,,
-0x004C77D0,func,@G_SUPolygon@8,G_SUPolygon,sms,confirmed,,
-0x004C8A38,func,@G_Polygon@8,G_Polygon,sms,confirmed,,
-0x004C8A74,func,@G_SPolygon@8,G_SPolygon,sms,confirmed,,
-0x004C8FD4,func,Horizon2d,,re,inferred,"scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10)",
-0x004C9224,func,NoHorizon,,re,inferred,"off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output",
+0x004B9430,func,?NPM_FlatTri@@YIXPAUFVERTEX@@J@Z,NPM_FlatTri,sms,confirmed,,"void __fastcall NPM_FlatTri(FVERTEX *, long)"
+0x004B9630,func,?NPM_TextureLinearTri@@YIXPAUT_BITMAP@@PAUFVERTEX@@J@Z,NPM_TextureLinearTri,sms,confirmed,,"void __fastcall NPM_TextureLinearTri(T_BITMAP *, FVERTEX *, long)"
+0x004B9B90,func,?NPM_TexturePerspectiveTri@@YIXPAUT_BITMAP@@PAUFVERTEX@@J@Z,NPM_TexturePerspectiveTri,sms,confirmed,,"void __fastcall NPM_TexturePerspectiveTri(T_BITMAP *, FVERTEX *, long)"
+0x004BA400,func,@G_FloatFlatFlip@8,G_FloatFlatFlip,sms,confirmed,,"undefined4 __fastcall G_FloatFlatFlip(undefined4, undefined4)"
+0x004BA500,func,@G_FloatTextureFlip@12,G_FloatTextureFlip,sms,confirmed,,"undefined4 __fastcall G_FloatTextureFlip(undefined4, undefined4, undefined4)"
+0x004BA660,func,@G_FloatPerspectiveFlip@12,G_FloatPerspectiveFlip,sms,confirmed,,"undefined4 __fastcall G_FloatPerspectiveFlip(undefined4, undefined4, undefined4)"
+0x004C619C,func,_G_UPatLine@20,G_UPatLine,sms,confirmed,,"undefined4 __stdcall G_UPatLine(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004C6334,func,_G_UBresenhamLine@16,G_UBresenhamLine,sms,confirmed,,"undefined4 __stdcall G_UBresenhamLine(undefined4, undefined4, undefined4, undefined4)"
+0x004C6ECC,func,@G_UPolygon@8,G_UPolygon,sms,confirmed,,"undefined4 __fastcall G_UPolygon(undefined4, undefined4)"
+0x004C77D0,func,@G_SUPolygon@8,G_SUPolygon,sms,confirmed,,"undefined4 __fastcall G_SUPolygon(undefined4, undefined4)"
+0x004C8A38,func,@G_Polygon@8,G_Polygon,sms,confirmed,,"undefined4 __fastcall G_Polygon(undefined4, undefined4)"
+0x004C8A74,func,@G_SPolygon@8,G_SPolygon,sms,confirmed,,"undefined4 __fastcall G_SPolygon(undefined4, undefined4)"
+0x004C8FD4,func,Horizon2d,,re,inferred,scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10),
+0x004C9224,func,NoHorizon,,re,inferred,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output,
 0x004C924C,func,_SolidHorizon,SolidHorizon,re,inferred,"solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10)",
 0x004C942C,func,_GouraudHorizon,GouraudHorizon,re,inferred,"Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10)",
 0x004CA028,func,_G__AC_Texture,G__AC_Texture,sms,confirmed,,
 0x004CAE38,func,_G__Texture,G__Texture,sms,confirmed,,
 0x004CBD0B,func,_G__Perspective,G__Perspective,sms,confirmed,,
 0x004CBE7C,func,_G__ScaleBitmap,G__ScaleBitmap,sms,confirmed,,
-0x004CC8B0,func,@DrawYLRP@8,DrawYLRP,sms,confirmed,,
+0x004CC8B0,func,@DrawYLRP@8,DrawYLRP,sms,confirmed,,"undefined4 __fastcall DrawYLRP(undefined4, undefined4)"
 0x004EB6B4,data,,,waiver,confirmed,view/screen state named at the _mainV base; shared with hud/shell-ui,
 0x004EB6BE,data,,,waiver,confirmed,view/screen state named at the _mainV base; shared with hud/shell-ui,
 0x004EC320,data,,,waiver,confirmed,interior of the colour remap/darken tables (remapDarken320),
@@ -165,6 +165,23 @@ va,kind,name,display,source,confidence,notes,type
 0x0050E1D8,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family),
 0x0050E1EC,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family),
 0x0050E1F0,data,,,waiver,confirmed,interior of the polygon rasterizer scan/edge working state (G_Polygon/G_UPolygon family),
+0x0050FD68,data,,,waiver,confirmed,interior (+0x1) of the horizon render state at ltup; read by FUN_004c9066,
+0x0050FD6A,data,,,waiver,confirmed,interior (+0x3) of the horizon render state at ltup; read by FUN_004c91ad,
+0x0050FD6E,data,,,waiver,confirmed,interior (+0x7) of the horizon render state at ltup; read by FUN_004c91ad,
+0x0050FD8A,data,,,waiver,confirmed,interior (+0x2) of the horizon render state at _amtMoveHorizon; read by FUN_004c93f6,
+0x0050FD8C,data,,,waiver,confirmed,interior (+0x4) of the horizon render state at _amtMoveHorizon; read by FUN_004c93c3,
+0x0050FD8E,data,,,waiver,confirmed,interior (+0x6) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD90,data,,,waiver,confirmed,interior (+0x8) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD92,data,,,waiver,confirmed,interior (+0xA) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD94,data,,,waiver,confirmed,interior (+0xC) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD96,data,,,waiver,confirmed,interior (+0xE) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD98,data,,,waiver,confirmed,interior (+0x10) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD9A,data,,,waiver,confirmed,interior (+0x12) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FD9C,data,,,waiver,confirmed,interior (+0x14) of the horizon render state at _amtMoveHorizon; read by _SolidHorizon,
+0x0050FDA0,data,,,waiver,confirmed,interior (+0x18) of the horizon render state at _amtMoveHorizon; read by _GouraudHorizon,
+0x0050FDA2,data,,,waiver,confirmed,interior (+0x1A) of the horizon render state at _amtMoveHorizon; read by _GouraudHorizon,
+0x0050FDFE,data,,,waiver,confirmed,interior (+0x76) of the horizon render state at _amtMoveHorizon; read by _GouraudHorizon,
+0x0050FE36,data,,,waiver,confirmed,interior (+0xAE) of the horizon render state at _amtMoveHorizon; read by _GouraudHorizon,
 0x00510050,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops),
 0x00510064,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops),
 0x00510068,data,,,waiver,confirmed,interior of the texture-mapper span working set (G__Texture/G__Perspective inner loops),
@@ -216,6 +233,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0051728C,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer,
 0x00517290,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer,
 0x00517294,data,,,waiver,confirmed,interior of _resbuf rasterizer scratch buffer,
+0x005184E0,data,,,waiver,confirmed,interior of the SH opcode pointer table at PTR_sh_op_A0; read by _GouraudHorizon,
 0x00518678,data,,,waiver,confirmed,interior of normal_table lighting-normal table,
 0x005568AC,data,,,waiver,confirmed,interior of _visibleLineStats per-scanline span table,
 0x00556D64,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base,

@@ -1,38 +1,38 @@
 va,kind,name,display,source,confidence,notes,type
-0x004D715A,func,_DirectDrawCreate@12,,sms,confirmed,"IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7220,func,_ser_rs232_getpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7226,func,_ser_rs232_block@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D722C,func,_ser_rs232_flush@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7232,func,_ser_rs232_getbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7238,func,_ser_rs232_putbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D723E,func,_ser_rs232_getstatus@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7244,func,_ser_rs232_putpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D724A,func,_FlushTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7250,func,_FlushReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7256,func,_SetFlowControlThreshold@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D725C,func,_SetPaceTime@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7262,func,_SetTimeout@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7268,func,_UnInitializePort@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D726E,func,_SetPortCharacteristics@24,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7274,func,_InitializePort@36,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D727A,func,_IsPortAvailable@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7280,func,_BytesInReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7286,func,_BytesInTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D728C,func,_GetByte@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7292,func,_PeekChar@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7298,func,_CdrvCrc16@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D729E,func,_IsCarrierDetect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72A4,func,_ModemInit@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72AA,func,_ModemAttention@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72B0,func,_ModemWaitForCall@16,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72B6,func,_IsRing@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72BC,func,_GetString@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72C2,func,_ModemAnswerMode@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72C8,func,_ModemGetCarrierSpeed@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72CE,func,_ModemConnect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72D4,func,_Dial@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72DA,func,_ModemModifyValue@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D72E0,func,_ModemHangup@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004D715A,func,_DirectDrawCreate@12,,sms,confirmed,"IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall DirectDrawCreate(undefined4, undefined4, undefined4)"
+0x004D7220,func,_ser_rs232_getpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_getpacket(undefined4, undefined4, undefined4)"
+0x004D7226,func,_ser_rs232_block@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_block(undefined4, undefined4, undefined4)"
+0x004D722C,func,_ser_rs232_flush@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_flush(undefined4, undefined4)"
+0x004D7232,func,_ser_rs232_getbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_getbyte(undefined4, undefined4)"
+0x004D7238,func,_ser_rs232_putbyte@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_putbyte(undefined4, undefined4)"
+0x004D723E,func,_ser_rs232_getstatus@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_getstatus(undefined4, undefined4)"
+0x004D7244,func,_ser_rs232_putpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_putpacket(undefined4, undefined4, undefined4)"
+0x004D724A,func,_FlushTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall FlushTransmitBuffer(undefined4)
+0x004D7250,func,_FlushReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall FlushReceiveBuffer(undefined4)
+0x004D7256,func,_SetFlowControlThreshold@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall SetFlowControlThreshold(undefined4, undefined4, undefined4)"
+0x004D725C,func,_SetPaceTime@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall SetPaceTime(undefined4, undefined4)"
+0x004D7262,func,_SetTimeout@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall SetTimeout(undefined4, undefined4)"
+0x004D7268,func,_UnInitializePort@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall UnInitializePort(undefined4)
+0x004D726E,func,_SetPortCharacteristics@24,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall SetPortCharacteristics(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004D7274,func,_InitializePort@36,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall InitializePort(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004D727A,func,_IsPortAvailable@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall IsPortAvailable(undefined4)
+0x004D7280,func,_BytesInReceiveBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall BytesInReceiveBuffer(undefined4)
+0x004D7286,func,_BytesInTransmitBuffer@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall BytesInTransmitBuffer(undefined4)
+0x004D728C,func,_GetByte@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall GetByte(undefined4)
+0x004D7292,func,_PeekChar@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall PeekChar(undefined4)
+0x004D7298,func,_CdrvCrc16@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall CdrvCrc16(undefined4, undefined4)"
+0x004D729E,func,_IsCarrierDetect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall IsCarrierDetect(undefined4)
+0x004D72A4,func,_ModemInit@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemInit(undefined4)
+0x004D72AA,func,_ModemAttention@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemAttention(undefined4)
+0x004D72B0,func,_ModemWaitForCall@16,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ModemWaitForCall(undefined4, undefined4, undefined4, undefined4)"
+0x004D72B6,func,_IsRing@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall IsRing(undefined4)
+0x004D72BC,func,_GetString@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall GetString(undefined4, undefined4, undefined4)"
+0x004D72C2,func,_ModemAnswerMode@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ModemAnswerMode(undefined4, undefined4)"
+0x004D72C8,func,_ModemGetCarrierSpeed@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemGetCarrierSpeed(undefined4)
+0x004D72CE,func,_ModemConnect@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemConnect(undefined4)
+0x004D72D4,func,_Dial@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall Dial(undefined4, undefined4, undefined4)"
+0x004D72DA,func,_ModemModifyValue@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ModemModifyValue(undefined4, undefined4, undefined4)"
+0x004D72E0,func,_ModemHangup@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemHangup(undefined4)
 0x004D72FE,func,_closeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
 0x004D7304,func,_getMSdatafile,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
 0x004D730A,func,_getMSdatafilesize,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
@@ -68,14 +68,14 @@ va,kind,name,display,source,confidence,notes,type
 0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D81E0,func,?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8220,func,?_CallMemberFunction0@@YGXPAX0@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8230,func,?_CallMemberFunction1@@YGXPAX00@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8240,func,?_CallMemberFunction2@@YGXPAX00H@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8250,func,?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D81E0,func,?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _JumpToContinuation(void *, EHRegistrationNode *)"
+0x004D8220,func,?_CallMemberFunction0@@YGXPAX0@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _CallMemberFunction0(void *, void *)"
+0x004D8230,func,?_CallMemberFunction1@@YGXPAX00@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _CallMemberFunction1(void *, void *, void *)"
+0x004D8240,func,?_CallMemberFunction2@@YGXPAX00H@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _CallMemberFunction2(void *, void *, void *, int)"
+0x004D8250,func,?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _UnwindNestedFrames(EHRegistrationNode *, EHExceptionRecord *)"
 0x004D82B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___CxxFrameHandler,
-0x004D8310,func,?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D83B0,func,?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8310,func,?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void * __cdecl _CallCatchBlock2(EHRegistrationNode *, const _s_FuncInfo *, void *, int, unsigned long)"
+0x004D83B0,func,?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _CallSETranslator(EHExceptionRecord *, EHRegistrationNode *, void *, void *, const _s_FuncInfo *, int, EHRegistrationNode *)"
 0x004D8490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: TranslatorGuardHandler,
 0x004D8500,func,,,waiver,confirmed,CRT C++ EH exception-object free thunk (calls _free); unwind funclet helper,
 0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -90,7 +90,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D8670,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fpmath,
 0x004D86A0,func,__cfltcvt_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D86F8,data,__except_handler3,,sms,confirmed,MSVC CRT global (xrefs=7),
-0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __stdcall _seh_longjmp_unwind(undefined4)
 0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D8910,func,__alldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -164,7 +164,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004DCA20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: BuildCatchObject,
 0x004DCC20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: DestructExceptionObject,
 0x004DCCA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: AdjustPointer,
-0x004DCCD0,func,__CallSettingFrame@12,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCCD0,func,__CallSettingFrame@12,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _CallSettingFrame(undefined4, undefined4, undefined4)"
 0x004DCD20,func,__mtinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DCDB0,func,__initptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DCDD0,func,__getptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -262,14 +262,14 @@ va,kind,name,display,source,confidence,notes,type
 0x004E2A90,func,__unlock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E2AE0,func,__sopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E2EF8,data,,,waiver,confirmed,interior of / adjacent to __sopen; named at its base or owned by that subsystem,
-0x004E2F70,func,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E2FE0,func,?terminate@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E2F70,func,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,long __stdcall __CxxUnhandledExceptionFilter(_EXCEPTION_POINTERS *)
+0x004E2FE0,func,?terminate@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,void __cdecl terminate(void)
 0x004E3055,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _abort,
-0x004E3080,func,?_inconsistency@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3080,func,?_inconsistency@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,void __cdecl _inconsistency(void)
 0x004E30ED,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: terminate,
-0x004E3100,func,?_ValidateRead@@YAHPBXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3120,func,?_ValidateWrite@@YAHPAXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3140,func,?_ValidateExecute@@YAHP6GHXZ@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3100,func,?_ValidateRead@@YAHPBXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _ValidateRead(const void *, unsigned int)"
+0x004E3120,func,?_ValidateWrite@@YAHPAXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _ValidateWrite(void *, unsigned int)"
+0x004E3140,func,?_ValidateExecute@@YAHP6GHXZ@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,int __cdecl _ValidateExecute(int (__stdcall *)(void))
 0x004E3160,func,_calloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E3250,func,__callnewh,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E3290,func,__statusfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -349,7 +349,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E8720,func,_wcstombs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E8780,func,__wcstombs_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E89F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
-0x004E8A2E,func,_RtlUnwind@16,,sms,confirmed,"IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem",
+0x004E8A2E,func,_RtlUnwind@16,,sms,confirmed,"IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall RtlUnwind(undefined4, undefined4, undefined4, undefined4)"
 0x004E95C0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004E95C4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004E95C6,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,

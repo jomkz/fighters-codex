@@ -1,57 +1,57 @@
 va,kind,name,display,source,confidence,notes,type
-0x004328B0,func,?InitMusic@@YIXXZ,InitMusic,sms,confirmed,,
-0x00432920,func,?ShutDownMidi@@YIXXZ,ShutDownMidi,sms,confirmed,,
-0x004329A0,func,?DMusicOn@@YIXPADF@Z,DMusicOn,sms,confirmed,,
-0x004329E0,func,?MusicOn@@YIXPADF@Z,MusicOn,sms,confirmed,,
-0x00432A80,func,?DMusicVolume@@YIXG@Z,DMusicVolume,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
-0x00432A90,func,?SoundActive@@YAFFF@Z,SoundActive,sms,confirmed,,
-0x00432B40,func,?MusicVolume@@YIXG@Z,MusicVolume,sms,confirmed,,
-0x00432BD0,func,?DMusicOff@@YIXXZ,DMusicOff,sms,confirmed,,
-0x00432C00,func,?MusicOff@@YIXXZ,MusicOff,sms,confirmed,,
-0x00432C30,func,?ScoreOn@@YIXPAXD@Z,ScoreOn,sms,confirmed,,
-0x00432C70,func,?ScoreOff@@YIXXZ,ScoreOff,sms,confirmed,,
-0x00432CA0,func,?ScoreUpdate@@YIXXZ,ScoreUpdate,sms,confirmed,,
+0x004328B0,func,?InitMusic@@YIXXZ,InitMusic,sms,confirmed,,void __fastcall InitMusic(void)
+0x00432920,func,?ShutDownMidi@@YIXXZ,ShutDownMidi,sms,confirmed,,void __fastcall ShutDownMidi(void)
+0x004329A0,func,?DMusicOn@@YIXPADF@Z,DMusicOn,sms,confirmed,,"void __fastcall DMusicOn(char *, short)"
+0x004329E0,func,?MusicOn@@YIXPADF@Z,MusicOn,sms,confirmed,,"void __fastcall MusicOn(char *, short)"
+0x00432A80,func,?DMusicVolume@@YIXG@Z,DMusicVolume,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,void __fastcall DMusicVolume(unsigned short)
+0x00432A90,func,?SoundActive@@YAFFF@Z,SoundActive,sms,confirmed,,"short __cdecl SoundActive(short, short)"
+0x00432B40,func,?MusicVolume@@YIXG@Z,MusicVolume,sms,confirmed,,void __fastcall MusicVolume(unsigned short)
+0x00432BD0,func,?DMusicOff@@YIXXZ,DMusicOff,sms,confirmed,,void __fastcall DMusicOff(void)
+0x00432C00,func,?MusicOff@@YIXXZ,MusicOff,sms,confirmed,,void __fastcall MusicOff(void)
+0x00432C30,func,?ScoreOn@@YIXPAXD@Z,ScoreOn,sms,confirmed,,"void __fastcall ScoreOn(void *, char)"
+0x00432C70,func,?ScoreOff@@YIXXZ,ScoreOff,sms,confirmed,,void __fastcall ScoreOff(void)
+0x00432CA0,func,?ScoreUpdate@@YIXXZ,ScoreUpdate,sms,confirmed,,void __fastcall ScoreUpdate(void)
 0x00432CAB,func,,,waiver,confirmed,Ghidra overlapping-split interior of ScoreUpdate (0x432CA0),
-0x00432F70,func,?ScorePlaying@@YIDXZ,ScorePlaying,sms,confirmed,,
-0x00432F80,func,?ShellMusicUpdate@@YIXJ@Z,ShellMusicUpdate,sms,confirmed,,
+0x00432F70,func,?ScorePlaying@@YIDXZ,ScorePlaying,sms,confirmed,,char __fastcall ScorePlaying(void)
+0x00432F80,func,?ShellMusicUpdate@@YIXJ@Z,ShellMusicUpdate,sms,confirmed,,void __fastcall ShellMusicUpdate(long)
 0x00432F8B,func,,,waiver,confirmed,Ghidra overlapping-split interior of ShellMusicUpdate (0x432F80),
-0x00433170,func,?ShellMusic@@YAXD@Z,ShellMusic,sms,confirmed,,
-0x00433180,func,?InitSound@@YIXXZ,InitSound,sms,confirmed,,
-0x00433280,func,?ShutDownSndDriver@@YIXXZ,ShutDownSndDriver,sms,confirmed,,
-0x004332F0,func,?ShutDownMixer@@YIXXZ,ShutDownMixer,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
-0x00433300,func,?InitMixer@@YIFXZ,InitMixer,sms,confirmed,,
-0x00433480,func,?SoundPoints@@YIXXZ,SoundPoints,sms,confirmed,,
-0x004334D0,func,?SoundNoMixer@@YGFPADFF@Z,SoundNoMixer,sms,confirmed,,
-0x00433580,func,?SingleSound@@YGFPADFEF@Z,SingleSound,sms,confirmed,,
-0x004335C0,func,@BasicSound@8,BasicSound,sms,confirmed,,
-0x004335F0,func,@BasicLinkSound@8,BasicLinkSound,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
-0x00433640,func,?LoopSound@@YGFPADFEF@Z,LoopSound,sms,confirmed,,
-0x00433680,func,?SoundOn@@YGFPADFFDGFFDFFGGFEF@Z,SoundOn,sms,confirmed,,
+0x00433170,func,?ShellMusic@@YAXD@Z,ShellMusic,sms,confirmed,,void __cdecl ShellMusic(char)
+0x00433180,func,?InitSound@@YIXXZ,InitSound,sms,confirmed,,void __fastcall InitSound(void)
+0x00433280,func,?ShutDownSndDriver@@YIXXZ,ShutDownSndDriver,sms,confirmed,,void __fastcall ShutDownSndDriver(void)
+0x004332F0,func,?ShutDownMixer@@YIXXZ,ShutDownMixer,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,void __fastcall ShutDownMixer(void)
+0x00433300,func,?InitMixer@@YIFXZ,InitMixer,sms,confirmed,,short __fastcall InitMixer(void)
+0x00433480,func,?SoundPoints@@YIXXZ,SoundPoints,sms,confirmed,,void __fastcall SoundPoints(void)
+0x004334D0,func,?SoundNoMixer@@YGFPADFF@Z,SoundNoMixer,sms,confirmed,,"short __stdcall SoundNoMixer(char *, short, short)"
+0x00433580,func,?SingleSound@@YGFPADFEF@Z,SingleSound,sms,confirmed,,"short __stdcall SingleSound(char *, short, unsigned char, short)"
+0x004335C0,func,@BasicSound@8,BasicSound,sms,confirmed,,"undefined4 __fastcall BasicSound(undefined4, undefined4)"
+0x004335F0,func,@BasicLinkSound@8,BasicLinkSound,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,"undefined4 __fastcall BasicLinkSound(undefined4, undefined4)"
+0x00433640,func,?LoopSound@@YGFPADFEF@Z,LoopSound,sms,confirmed,,"short __stdcall LoopSound(char *, short, unsigned char, short)"
+0x00433680,func,?SoundOn@@YGFPADFFDGFFDFFGGFEF@Z,SoundOn,sms,confirmed,,"short __stdcall SoundOn(char *, short, short, char, unsigned short, short, short, char, short, short, unsigned short, unsigned short, short, unsigned char, short)"
 0x0043368B,func,,,waiver,confirmed,Ghidra overlapping-split interior of SoundOn (0x433680),
-0x00433CE0,func,?SoundOff@@YIXF@Z,SoundOff,sms,confirmed,,
-0x00433D40,func,?SoundAllOff@@YIXXZ,SoundAllOff,sms,confirmed,,
-0x00433D80,func,?SoundSetup@@YIXPAUMODSPEC@@0D@Z,SoundSetup,sms,confirmed,,
-0x004343B0,func,?ViewPan@@YIFPAUF24_POINT3@@@Z,ViewPan,sms,confirmed,,
-0x00434550,func,?Turbulence@@YIJGPAUPLANE@@@Z,Turbulence,sms,confirmed,,
-0x00434620,func,?SoundRelease@@YIXF@Z,SoundRelease,sms,confirmed,,
-0x004347A0,func,?CheckSndPurge@@YIXPAUT_HANDLE@@@Z,CheckSndPurge,sms,confirmed,,
-0x004347E0,func,?SetupLoopSounds@@YIXXZ,SetupLoopSounds,sms,confirmed,,
-0x00434800,func,?MaybeLoopSound@@YGXPADGFDFFFFFF@Z,MaybeLoopSound,sms,confirmed,,
-0x00434920,func,?UpdateLoopSounds@@YIXXZ,UpdateLoopSounds,sms,confirmed,,
-0x004349D0,func,?ServiceSounds@@YIXXZ,ServiceSounds,sms,confirmed,,
+0x00433CE0,func,?SoundOff@@YIXF@Z,SoundOff,sms,confirmed,,void __fastcall SoundOff(short)
+0x00433D40,func,?SoundAllOff@@YIXXZ,SoundAllOff,sms,confirmed,,void __fastcall SoundAllOff(void)
+0x00433D80,func,?SoundSetup@@YIXPAUMODSPEC@@0D@Z,SoundSetup,sms,confirmed,,"void __fastcall SoundSetup(MODSPEC *, MODSPEC *, char)"
+0x004343B0,func,?ViewPan@@YIFPAUF24_POINT3@@@Z,ViewPan,sms,confirmed,,short __fastcall ViewPan(F24_POINT3 *)
+0x00434550,func,?Turbulence@@YIJGPAUPLANE@@@Z,Turbulence,sms,confirmed,,"long __fastcall Turbulence(unsigned short, PLANE *)"
+0x00434620,func,?SoundRelease@@YIXF@Z,SoundRelease,sms,confirmed,,void __fastcall SoundRelease(short)
+0x004347A0,func,?CheckSndPurge@@YIXPAUT_HANDLE@@@Z,CheckSndPurge,sms,confirmed,,void __fastcall CheckSndPurge(T_HANDLE *)
+0x004347E0,func,?SetupLoopSounds@@YIXXZ,SetupLoopSounds,sms,confirmed,,void __fastcall SetupLoopSounds(void)
+0x00434800,func,?MaybeLoopSound@@YGXPADGFDFFFFFF@Z,MaybeLoopSound,sms,confirmed,,"void __stdcall MaybeLoopSound(char *, unsigned short, short, char, short, short, short, short, short, short)"
+0x00434920,func,?UpdateLoopSounds@@YIXXZ,UpdateLoopSounds,sms,confirmed,,void __fastcall UpdateLoopSounds(void)
+0x004349D0,func,?ServiceSounds@@YIXXZ,ServiceSounds,sms,confirmed,,void __fastcall ServiceSounds(void)
 0x004349DB,func,,,waiver,confirmed,Ghidra overlapping-split interior of ServiceSounds (0x4349D0),
-0x00435480,func,?StopGameSounds@@YIXXZ,StopGameSounds,sms,confirmed,,
-0x004354B0,func,?PollMod@@YGXK@Z,PollMod,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
-0x004357C0,func,?SoundPrioritize@@YIXXZ,SoundPrioritize,sms,confirmed,,
-0x00435900,func,?StartWaitingSounds@@YIXXZ,StartWaitingSounds,sms,confirmed,,
-0x00435980,func,?StartVoice@@YAXPAUMODSPEC@@G@Z,StartVoice,sms,confirmed,,
-0x00435A00,func,?SetVolPitchPan@@YIXPAUMODSPEC@@G@Z,SetVolPitchPan,sms,confirmed,,
-0x00435AE0,func,?CheckSndLink@@YAXPAUMODSPEC@@@Z,CheckSndLink,sms,confirmed,,
-0x00435B40,func,?GetMixerStatus@@YAFXZ,GetMixerStatus,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
-0x00435B80,func,?SoundStatus@@YAFXZ,SoundStatus,sms,confirmed,,
-0x00435BC0,func,?SndLostFocus@@YAXXZ,SndLostFocus,sms,confirmed,,
-0x00435C20,func,?SndGotFocus@@YAXXZ,SndGotFocus,sms,confirmed,,
-0x00435C30,func,?SoundName@@YIPADF@Z,SoundName,sms,confirmed,,
+0x00435480,func,?StopGameSounds@@YIXXZ,StopGameSounds,sms,confirmed,,void __fastcall StopGameSounds(void)
+0x004354B0,func,?PollMod@@YGXK@Z,PollMod,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,void __stdcall PollMod(unsigned long)
+0x004357C0,func,?SoundPrioritize@@YIXXZ,SoundPrioritize,sms,confirmed,,void __fastcall SoundPrioritize(void)
+0x00435900,func,?StartWaitingSounds@@YIXXZ,StartWaitingSounds,sms,confirmed,,void __fastcall StartWaitingSounds(void)
+0x00435980,func,?StartVoice@@YAXPAUMODSPEC@@G@Z,StartVoice,sms,confirmed,,"void __cdecl StartVoice(MODSPEC *, unsigned short)"
+0x00435A00,func,?SetVolPitchPan@@YIXPAUMODSPEC@@G@Z,SetVolPitchPan,sms,confirmed,,"void __fastcall SetVolPitchPan(MODSPEC *, unsigned short)"
+0x00435AE0,func,?CheckSndLink@@YAXPAUMODSPEC@@@Z,CheckSndLink,sms,confirmed,,void __cdecl CheckSndLink(MODSPEC *)
+0x00435B40,func,?GetMixerStatus@@YAFXZ,GetMixerStatus,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,short __cdecl GetMixerStatus(void)
+0x00435B80,func,?SoundStatus@@YAFXZ,SoundStatus,sms,confirmed,,short __cdecl SoundStatus(void)
+0x00435BC0,func,?SndLostFocus@@YAXXZ,SndLostFocus,sms,confirmed,,void __cdecl SndLostFocus(void)
+0x00435C20,func,?SndGotFocus@@YAXXZ,SndGotFocus,sms,confirmed,,void __cdecl SndGotFocus(void)
+0x00435C30,func,?SoundName@@YIPADF@Z,SoundName,sms,confirmed,,char * __fastcall SoundName(short)
 0x004EB5F0,data,_musicOn,,re,confirmed,music/MIDI subsystem-available master flag,
 0x004EE2BC,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,
 0x004EE2BD,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,
