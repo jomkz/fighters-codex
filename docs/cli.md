@@ -889,6 +889,7 @@ the game would otherwise stream off the disc, so no disc is needed to play.
 | `--verify` | after `run`, byte-compare every file back against the disc |
 | `--overwrite` | replace files already in the destination. Files `SKIP_ON_REMOVE` marks as the game's own — pilots, missions, `EA.CFG`, screen captures — are preserved even so |
 | `--no-cd-resident` | skip the CD-resident LIBs (a ~110 MB install that still needs a disc) |
+| `--patch <fae102.exe>` | after installing, apply the 1.02F updater in place — bring the 1.00F disc install up to the **1.02F** build the reconstruction database describes ([fa/formats/RTP.md](fa/formats/RTP.md)). Runs after `--verify`, so verification still checks the fresh 1.00F tree against the disc |
 | `--any-media` | proceed on media whose build cannot be fingerprinted |
 | `--json` | machine-readable plan (the shape fxe's first-run reads). Under `--json`, stdout carries the plan and nothing else; the scan banner, progress, and diagnostics all go to stderr |
 
@@ -919,8 +920,11 @@ verified: every installed byte matches the disc
 ```
 
 The discs carry the **1.00F** build, while the reconstruction database describes
-the patched **1.02F** one — `fx install` always prints which build it wrote. See
-[fa/formats/ESA.md § File Inventory](fa/formats/ESA.md#file-inventory).
+the patched **1.02F** one — `fx install` always prints which build it wrote, and
+`--patch <fae102.exe>` upgrades the fresh install to 1.02F in place (the four
+modified game files; the multiplayer `msapi.dll` is a follow-up, RTP.md #54). See
+[fa/formats/ESA.md § File Inventory](fa/formats/ESA.md#file-inventory) and
+[fa/formats/RTP.md](fa/formats/RTP.md).
 
 Everything above is exercised against the retail discs by the `fa_disc_install`
 integration test — see [development.md § Real-media install mode](development.md#real-media-install-mode-fx_fa_disc1fx_fa_disc2).

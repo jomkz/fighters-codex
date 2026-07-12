@@ -208,7 +208,7 @@ repacks the 110 MB archive byte-for-byte, and runs a real minimal install (73 Mi
 that it then verifies back against the disc. Regenerate the manifest exactly as
 for `fa_manifest.py`, with `fa_disc.py generate --out …`.
 
-Two options extend it:
+Three options extend it:
 
 - **`-DFX_FA_DISC_FULL=ON`** also *executes* the full 989 MiB install. The plan
   for it is checked either way — a plan is pure — so this only adds the copy.
@@ -217,12 +217,39 @@ Two options extend it:
   and must differ in exactly the set the patch rewrites (`FA.EXE`, `FA.SMS`,
   `FA_1.LIB`, `FA_2.LIB`) and no other. That check is the executable statement of
   the gap the RTPatch codec closes: the discs ship 1.00F, `db/` describes 1.02F.
-  When the patch codec lands, the expected-difference set goes empty.
+- **`-DFX_FA_PATCH=…` (the updater `fae102.exe`) set alongside** closes that gap:
+  the harness installs 1.00F, runs `fx install --patch`, and checks the four
+  rebuilt game files against the committed 1.02F manifest. Where the cross-build
+  oracle asserts *which* files differ, this proves the patch *produces* the 1.02F
+  tree. (`FX_FA_PATCH` also registers a standalone `fa_patch_apply` test — see
+  below.)
 
 The three self-oracles here need no committed hash at all: the four entries that
 sit *both* inside `SETUP.ESA` and loose on disc 1 (`README.TXT`, `IP.EXE`,
 `IP.CFG`, `EAHELP.HLP` — three of them PKWare-compressed) must extract to the
 same bytes as the loose copies. The disc checks itself.
+
+### Real-media RTPatch mode (FX_FA_PATCH)
+
+`FX_FA_PATCH` names the 1.02F updater `fae102.exe`. Given the 1.00F originals —
+from Disc 1's `SETUP.ESA` (`FX_FA_DISC1`) or an explicit `FX_FA_PATCH_SOURCE`
+directory — the `fa_patch_apply` test applies the patch with `fx patch apply` and
+checks each rebuilt file's SHA-256 against the committed
+[fa-patch.sha256](https://github.com/jomkz/fighters-codex/blob/main/tests/integration/fa-patch.sha256):
+
+```bash
+cmake --preset gcc -DFX_FA_PATCH=/path/to/fae102.exe -DFX_FA_DISC1=/run/media/you/FA_1_00F1
+ctest --preset gcc -R fa_patch_apply
+```
+
+`FA.SMS`, `FA_1.LIB`, `FA_2.LIB` and the **official** `FA.EXE` all reconstruct
+byte-for-byte to 1.02F. Regenerate the manifest with `fa_patch.py generate
+--out …` after an intended output change. Set `FX_FA_PATCH` alongside the disc
+variables (above) to also drive the full install-then-`--patch` pipeline.
+
+The committed `FA.EXE` hash is the **pristine official** 1.02F byte; a licensed
+install's copy may differ by one byte if it carries a no-CD crack (a `JNZ`→`JZ`
+flip in the CD check) — a property of that install, not of the patch.
 
 ## Fuzzing
 

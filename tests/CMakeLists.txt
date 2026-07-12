@@ -285,6 +285,14 @@ endif()
 if(NOT FX_FA_DISC2 AND DEFINED ENV{FX_FA_DISC2})
     set(FX_FA_DISC2 "$ENV{FX_FA_DISC2}")
 endif()
+# The 1.02F updater (fae102.exe): its RTPatch payload upgrades a 1.00F install to
+# 1.02F. Declared here so both the disc harness (install + patch) and the
+# standalone RTPatch test below can use it. Env-var fallback like the others.
+set(FX_FA_PATCH "" CACHE FILEPATH "FA 1.02F updater (fae102.exe) for the RTPatch tests")
+if(NOT FX_FA_PATCH AND DEFINED ENV{FX_FA_PATCH})
+    set(FX_FA_PATCH "$ENV{FX_FA_PATCH}")
+endif()
+
 if(FX_FA_DISC1 AND FX_FA_DISC2)
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     set(_fa_disc_args "")
@@ -293,6 +301,10 @@ if(FX_FA_DISC1 AND FX_FA_DISC2)
     endif()
     if(FX_FA_DISC_FULL)
         list(APPEND _fa_disc_args --full)
+    endif()
+    if(FX_FA_PATCH)
+        list(APPEND _fa_disc_args --patch "${FX_FA_PATCH}"
+             --patch-manifest "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa-patch.sha256")
     endif()
     add_test(NAME fa_disc_install
         COMMAND Python3::Interpreter
@@ -311,16 +323,12 @@ elseif(FX_FA_DISC1 OR FX_FA_DISC2)
                     "the real-media install test is not registered.")
 endif()
 
-# Real-media RTPatch mode: apply the 1.02F updater to the 1.00F originals and
-# verify the reconstructed game files. Registered when FX_FA_PATCH names the
-# updater (fae102.exe) and the 1.00F originals are available — from Disc 1's
-# SETUP.ESA (FX_FA_DISC1) or an explicit FX_FA_PATCH_SOURCE dir. Neither the
-# patcher nor the game bytes enter the repo; only the 1.02F hashes are committed.
-set(FX_FA_PATCH "" CACHE FILEPATH "FA 1.02F updater (fae102.exe) for the RTPatch test")
+# Standalone RTPatch mode: apply the 1.02F updater to the 1.00F originals and
+# verify the reconstructed game files, independent of a full install. Registered
+# when FX_FA_PATCH names the updater and the 1.00F originals are available — from
+# Disc 1's SETUP.ESA (FX_FA_DISC1) or an explicit FX_FA_PATCH_SOURCE dir. Neither
+# the patcher nor the game bytes enter the repo; only the 1.02F hashes are committed.
 set(FX_FA_PATCH_SOURCE "" CACHE PATH "Directory of 1.00F originals (alternative to FX_FA_DISC1)")
-if(NOT FX_FA_PATCH AND DEFINED ENV{FX_FA_PATCH})
-    set(FX_FA_PATCH "$ENV{FX_FA_PATCH}")
-endif()
 if(FX_FA_PATCH AND (FX_FA_DISC1 OR FX_FA_PATCH_SOURCE))
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     set(_fa_patch_src "")

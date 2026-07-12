@@ -8,6 +8,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- **fx-cli** `fx install --patch <fae102.exe>` — chains the RTPatch codec after a
+  disc install to bring the **1.00F** tree up to **1.02F** in place. It runs after
+  `--verify` (so verification still checks the fresh 1.00F install against the
+  disc), reconstructs the four modified game files from the just-installed
+  originals, and leaves an already-patched tree untouched (a source-checksum
+  mismatch skips the file). The multiplayer `msapi.dll` is delivered as a NEW
+  record the container walk does not yet reach (RTP.md #54). The disc harness gains
+  an install-then-`--patch` check (`FX_FA_PATCH` alongside the disc variables) that
+  proves the pipeline produces the 1.02F tree byte-for-byte.
 - **fx-lib** RTPatch codec + `fx patch` — reconstructs the **1.02F** game files from
   the **1.00F** discs, closing the gap between what `fx install` writes and what the
   reconstruction database describes. Reverses the Pocket Soft .RTPatch payload carried

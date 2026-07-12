@@ -1,17 +1,23 @@
 #include "fx/install.h"
+#include "fx/rtpatch.h"
 
+#include <cctype>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
 
 using namespace fx;
+namespace fs = std::filesystem;
 
 namespace {
 
 struct Args {
     std::vector<std::string> discs;
     std::string              dest;
+    std::string              patch;   // 1.02F updater (fae102.exe), if patching
     InstallOptions           opt;
     bool                     verify = false;
     bool                     json   = false;
@@ -23,6 +29,7 @@ Args parse(int argc, char** argv) {
     for (int i = 1; i < argc; i++) {
         const char* s = argv[i];
         if (strcmp(s, "-d") == 0 && i + 1 < argc)             a.dest = argv[++i];
+        else if (strcmp(s, "--patch") == 0 && i + 1 < argc)   a.patch = argv[++i];
         else if (strcmp(s, "--full") == 0)                    a.opt.full = true;
         else if (strcmp(s, "--minimal") == 0)                 a.opt.full = false;
         else if (strcmp(s, "--overwrite") == 0)               a.opt.overwrite = true;
@@ -165,6 +172,96 @@ void progress(const InstallItem& item, uint64_t done, uint64_t total, void*) {
     fflush(stdout);
 }
 
+std::vector<uint8_t> read_file(const std::string& path) {
+    std::ifstream f(path, std::ios::binary | std::ios::ate);
+    if (!f) return {};
+    auto sz = f.tellg();
+    f.seekg(0);
+    std::vector<uint8_t> buf((size_t)sz);
+    f.read((char*)buf.data(), sz);
+    return buf;
+}
+
+bool write_file(const std::string& path, const std::vector<uint8_t>& data) {
+    std::ofstream f(path, std::ios::binary);
+    if (!f) return false;
+    f.write((const char*)data.data(), (std::streamsize)data.size());
+    return f.good();
+}
+
+// Case-insensitive lookup of an installed file (the installer upper-cases names,
+// but a mounted source may not, so match either way).
+std::string find_installed(const std::string& dest, const std::string& name) {
+    std::error_code ec;
+    for (const auto& e : fs::directory_iterator(dest, ec)) {
+        if (!e.is_regular_file()) continue;
+        std::string fn = e.path().filename().string();
+        if (fn.size() == name.size() &&
+            std::equal(fn.begin(), fn.end(), name.begin(), [](char x, char y) {
+                return toupper((unsigned char)x) == toupper((unsigned char)y);
+            }))
+            return e.path().string();
+    }
+    return "";
+}
+
+// Apply the RTPatch payload in `patch_file` to the just-installed 1.00F tree,
+// in place → 1.02F. Each file is checked against the patch's source checksum
+// first, so a tree that is already 1.02F (or otherwise not the expected 1.00F)
+// is left untouched. Returns false on a hard error (a produced file that does
+// not match its declared size, or a failed write).
+bool apply_patch(const std::string& patch_file, const std::string& dest, FILE* out) {
+    auto exe = read_file(patch_file);
+    if (exe.empty()) {
+        fprintf(stderr, "error: cannot read patch %s\n", patch_file.c_str());
+        return false;
+    }
+    size_t off = exe.size();
+    for (size_t i = 0; i + 8 < exe.size(); ++i) {
+        if (exe[i] == 'K' && exe[i + 1] == '*') {
+            if (!rtp_read(exe.data() + i, exe.size() - i).records.empty()) { off = i; break; }
+        }
+    }
+    if (off >= exe.size()) {
+        fprintf(stderr, "error: no RTPatch container found in %s\n", patch_file.c_str());
+        return false;
+    }
+    const uint8_t* pd = exe.data() + off;
+    size_t ps = exe.size() - off;
+    RtpPatch p = rtp_read(pd, ps);
+
+    fprintf(out, "\napplying the 1.02F patch (%zu file(s))...\n", p.records.size());
+    int patched = 0, skipped = 0, failed = 0;
+    for (const auto& rec : p.records) {
+        std::string path = find_installed(dest, rec.name);
+        if (path.empty()) {
+            fprintf(out, "  skip  %-12s not in the install\n", rec.name.c_str());
+            skipped++;
+            continue;
+        }
+        auto src = read_file(path);
+        if (rtp_checksum(src.data(), src.size(), 31) != rec.src_w1 ||
+            rtp_checksum(src.data(), src.size(), 30) != rec.src_w2) {
+            fprintf(out, "  skip  %-12s not the 1.00F source (already patched?)\n", rec.name.c_str());
+            skipped++;
+            continue;
+        }
+        auto res = rtp_reconstruct(pd, ps, rec, src.data(), src.size(), false);
+        if (res.size() != rec.dst_size || !write_file(path, res)) {
+            fprintf(stderr, "  FAIL  %-12s could not reconstruct\n", rec.name.c_str());
+            failed++;
+            continue;
+        }
+        fprintf(out, "  ok    %-12s %u bytes\n", rec.name.c_str(), rec.dst_size);
+        patched++;
+    }
+    fprintf(out, "patched %d file(s) to 1.02F", patched);
+    if (skipped) fprintf(out, ", %d left as-is", skipped);
+    if (failed)  fprintf(out, ", %d failed", failed);
+    fprintf(out, "\n");
+    return failed == 0;
+}
+
 int run(int argc, char** argv, bool execute, bool verify_only) {
     Args a = parse(argc, argv);
     if (!a.ok) return 1;
@@ -203,6 +300,8 @@ int run(int argc, char** argv, bool execute, bool verify_only) {
                 (unsigned long long)plan.bytes, a.dest.c_str(),
                 install_build_name(plan.build));
     }
+    // Verify against the disc first — the freshly written tree is still 1.00F,
+    // which is what the disc holds — then patch it up to 1.02F.
     if (verify_only || (execute && a.verify)) {
         fprintf(out, "verifying against the disc...\n");
         if (!install_verify(discs, plan, a.dest, &errors)) {
@@ -211,6 +310,12 @@ int run(int argc, char** argv, bool execute, bool verify_only) {
         }
         fprintf(out, "verified: every installed byte matches the disc\n");
     }
+    // Chain the 1.02F updater: the discs write 1.00F, but the reconstruction
+    // database describes 1.02F, so --patch brings the install up to it. The
+    // multiplayer msapi.dll is delivered as a NEW record the container walk does
+    // not yet reach (RTP.md #54); the four modified game files — the executable,
+    // its symbols, and the two content archives — are patched in place.
+    if (execute && !a.patch.empty() && !apply_patch(a.patch, a.dest, out)) return 1;
     return 0;
 }
 
@@ -220,7 +325,7 @@ int cmd_install(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr,
                 "Usage: fx install <plan|run|verify> <disc-dir> [disc-dir ...] -d <dest>\n"
-                "         [--full|--minimal] [--verify] [--overwrite]\n"
+                "         [--full|--minimal] [--verify] [--overwrite] [--patch <fae102.exe>]\n"
                 "         [--no-cd-resident] [--any-media] [--json]\n");
         return 1;
     }
