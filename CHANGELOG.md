@@ -7,6 +7,21 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-07-12
+
+**Patch the game to 1.02F, entirely from your own discs.** The retail discs ship
+build **1.00F** while every recovered symbol and format describes the patched
+**1.02F** build. This release reverses the Pocket Soft `.RTPatch` payload the FA
+updater (`fae102.exe`) carries — its `0xB59C` adaptive-Huffman + LZSS codec, its
+opcode diff language, and its rolling source checksum — so `fx` reconstructs the
+1.02F files from the 1.00F originals, byte-for-byte. `fx patch` applies the updater
+directly; `fx install --patch` chains it onto a disc install to reach 1.02F end to
+end, delivering the four patched game files and the added multiplayer `msapi.dll`
+exactly as a licensed install has them. A real-media harness verifies the whole
+path — install, patch, and archive round-trip — against the retail discs, and the
+codec is fuzzed against adversarial input. Where v0.8.2 installed 1.00F from your
+discs, v0.8.3 finishes the journey to 1.02F.
+
 ### Added
 - **fx-cli** `fx install --patch <fae102.exe>` — chains the RTPatch codec after a
   disc install to bring the **1.00F** tree up to **1.02F** in place. It runs after
@@ -39,7 +54,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the archive and loose on Disc 1 must extract to the same bytes — and, when
   `FX_FA_ROOT` is set alongside, a **cross-build oracle** asserting a fresh 1.00F
   install differs from a 1.02F tree in exactly the four files the patch rewrites. That
-  oracle is the executable statement of the gap the RTPatch codec will close.
+  oracle is the executable statement of the gap the RTPatch codec closes (shipped
+  in this release).
   `-DFX_FA_DISC_FULL=ON` also executes the full 989 MiB install.
 
 ### Fixed
@@ -726,7 +742,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.2...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.3...HEAD
+[0.8.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.3
 [0.8.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.2
 [0.8.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.1
 [0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
