@@ -7,6 +7,29 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-07-11
+
+**Final Phase 5 static-RE tranche — the MSAPI matchmaking client, reverse-engineered
+end to end.** `MSAPI.DLL` — the EA *MServerDLL* the game executable links for internet
+play — is now a fully documented subsystem. It is classified EA-authored (full
+reconstruction, not a third-party boundary), its Winsock matchmaker protocol is traced
+(registry-sourced server endpoint, a `WAKEUP`/`OK` handshake, and a single-byte command
+protocol with network-order length-prefixed payloads over TCP), and the subsystem doc,
+the FA.EXE↔matchmaker boundary and a theme-aware flow diagram are published. Program
+totals reach **27/27 subsystems complete**.
+
+### Changed
+- **re** reconstruct the `MSAPI.dll` matchmaking / internet-play client end to end —
+  classify EA-vs-third-party, trace the Winsock protocol, and document the subsystem +
+  FA.EXE↔matchmaker boundary + SVG (epic #272: #273 (#445) · #274 (#447) · #275 (#448))
+- **re** record that the in-flight replay is in-memory only — a momentary camera snapshot,
+  not an on-disk replay format (#284) (#446)
+
+### Fixed
+- **fx-lib** attribute SH gear geometry across chained `F0` selector runs, so setting
+  `_PLgearDown` to a non-matching value retracts the gear instead of leaving it drawn (the
+  geometry lived in trailing no-`cmp` blocks that were harvested unconditionally) (#443) (#449)
+
 ## [0.8.0] - 2026-07-11
 
 **fxs becomes object-centric — milestone #11 complete.** Mount an FA install
@@ -612,7 +635,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.1
 [0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
 [0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
 [0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
