@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-07-12
+
 **Install the game from your own discs — and a symbol database deep enough to
 generate from.** Two tranches land together. `SETUP.ESA`, the archive on Disc 1 that
 holds every file the EA installer copies, is now a documented format with a
@@ -683,7 +685,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.2...HEAD
+[0.8.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.2
 [0.8.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.1
 [0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
 [0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
