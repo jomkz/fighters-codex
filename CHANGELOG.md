@@ -7,6 +7,56 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-07-12
+
+**Install the game from your own discs — and a symbol database deep enough to
+generate from.** Two tranches land together. `SETUP.ESA`, the archive on Disc 1 that
+holds every file the EA installer copies, is now a documented format with a
+byte-identical codec; on top of it, `fx install` *executes* the `.SSF` installer
+scripts — what `SETUP.EXE` does, portably — and writes the game to a directory of your
+choosing. It is verified against a licensed installation: of the 19 files a minimal
+install writes, 14 are byte-identical and the 4 that differ are exactly the four the
+official 1.02F patch rewrites. Separately, `db/` gained real signatures and types
+(recovered from the FA.SMS decorations, from call-site evidence, and from proven
+access widths), which is what made the fxe generator possible: the port's C++
+declarations are now generated from the database rather than hand-written.
+
+Note that the discs carry the **1.00F** build while the symbol database describes the
+patched **1.02F** one. `fx install` always prints which build it wrote; the RTPatch
+codec that closes the gap is still ahead.
+
+### Added
+- **fx-lib** disc install engine + `fx install` — executes the `.SSF` scripts against
+  `SETUP.ESA` and installs the game from the user's own discs. A disc is a directory
+  (ISO mount, extract, or drive), identified by content rather than volume label; the
+  planner is a pure function of scanned metadata, so the whole decision layer is
+  unit-tested and fuzzed with no media. Payloads stream — a 989 MiB install runs in a
+  few MB of memory — and `--verify` byte-compares every installed file back against
+  the disc. `SKIP_ON_REMOVE` is read as a clobber guard, so a re-install never
+  overwrites the files the *game* writes (pilots, missions, `EA.CFG`, screen captures),
+  even with `--overwrite` (#463)
+- **fx-lib** ESA installer-archive codec — a new documented format (`docs/fa/formats/ESA.md`)
+  with `fx esa ls|info|extract|unpack|repack|pack`. `PKWA` entries are *raw* PKWare DCL
+  (no EA size prefix, unlike a LIB entry), so they decode with the existing `blast`
+  decoder — zero new decompression code. `fx esa repack` reproduces the retail 110 MB
+  archive byte-for-byte (#462)
+- **fxe** generate the port's C++ declarations from `db/` — 970 functions and 149
+  globals, with the gaps emitted as TODOs; compiling them is the validation (#459) (#460)
+- **db** type the globals from their proven access width (#455) (#458)
+- **db** recover cdecl signatures from call-site evidence (#453) (#457)
+- **db** materialize the FA.SMS-encoded signatures into `db/` (#452) (#456)
+
+### Fixed
+- **fx-lib** confine the install destination to the install directory — the
+  `INSTALL_FILES` destination comes off the disc, so a script naming
+  `"[INSTALL_PATH]\..\..\WINDOWS"` could have written above the directory the user
+  chose. `.`/`..` components and drive letters are now dropped (#464)
+
+### Changed
+- **fa** correct the PKWare DCL RLE table bytes in `LIB.md` — the tables printed a
+  leading `0x12` where the code and Adler's `blast.c` use `0x02`; a decoder transcribed
+  from the doc bytes failed the repo's own known-answer test (#461)
+
 ## [0.8.1] - 2026-07-11
 
 **Final Phase 5 static-RE tranche — the MSAPI matchmaking client, reverse-engineered
@@ -635,7 +685,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.2...HEAD
+[0.8.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.2
 [0.8.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.1
 [0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
 [0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
