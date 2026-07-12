@@ -36,6 +36,7 @@ int cmd_mt(int argc, char** argv);
 int cmd_pts(int argc, char** argv);
 int cmd_rgn(int argc, char** argv);
 int cmd_ssf(int argc, char** argv);
+int cmd_install(int argc, char** argv);
 int cmd_esa(int argc, char** argv);
 int cmd_mc(int argc, char** argv);
 int cmd_hgr(int argc, char** argv);
@@ -174,6 +175,11 @@ static void print_usage() {
     puts("  fx ssf info <file.SSF>");
     puts("  fx ssf dump <file.SSF>");
     puts("");
+    puts("Disc install commands:");
+    puts("  fx install plan   <disc-dir> [disc-dir ...] [-d dir] [--minimal] [--json]");
+    puts("  fx install run    <disc-dir> [disc-dir ...] -d <dir> [--verify] [--overwrite]");
+    puts("  fx install verify <disc-dir> [disc-dir ...] -d <dir>");
+    puts("");
     puts("Installer archive commands:");
     puts("  fx esa ls <SETUP.ESA>");
     puts("  fx esa info <SETUP.ESA>");
@@ -269,6 +275,8 @@ int main(int argc, char** argv) {
         return cmd_rgn(argc - 1, argv + 1);
     if (strcmp(cmd, "ssf") == 0)
         return cmd_ssf(argc - 1, argv + 1);
+    if (strcmp(cmd, "install") == 0)
+        return cmd_install(argc - 1, argv + 1);
     if (strcmp(cmd, "esa") == 0)
         return cmd_esa(argc - 1, argv + 1);
     if (strcmp(cmd, "mc") == 0)

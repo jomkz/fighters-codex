@@ -534,6 +534,70 @@ std::vector<uint8_t> esa_build(const std::vector<EsaInput>& files); // stored-on
 } // namespace fx
 ```
 
+## install.h — Disc install engine
+
+Executes the `.SSF` scripts against the `.ESA` archive: what `SETUP.EXE` does,
+portably. A disc is a directory. The planner is a **pure** function of scanned
+metadata — no disc, no destination, no I/O — so it can be unit-tested and fuzzed
+on synthetic input, and only `install_scan`/`install_execute`/`install_verify`
+touch a filesystem. See [fa/formats/SSF.md § Engine Notes](fa/formats/SSF.md#engine-notes).
+
+```cpp
+namespace fx {
+struct DiscFile   { std::string name; uint64_t size; };
+struct DiscScript { std::string name; SsfDoc doc; };
+struct DiscSource {                    // one scanned disc root
+    std::string root;
+    int disc;                          // 1, 2, or 0 = unrecognised
+    std::vector<DiscFile> loose;
+    std::string esa_name;
+    std::vector<EsaEntry> esa;
+    std::vector<DiscScript> scripts;
+};
+
+int        install_probe_disc(const DiscSource&);      // pure: which disc, by content
+DiscSource install_scan(const std::string& root);      // I/O: the only stage-1 read
+bool       install_match(const std::string& pattern, const std::string& name);  // DOS glob
+
+enum class InstallOrigin { Archive, Loose };
+enum class InstallStatus { Copy, KeepExisting, SkipSysfile };
+enum class MediaBuild    { Unknown, V100F, V102F };    // fingerprinted from the ESA
+
+struct InstallItem      { std::string dest; InstallStatus status; InstallOrigin origin;
+                          size_t disc; std::string source, label; uint64_t bytes;
+                          std::string note; };
+struct InstallDirective { std::string script; size_t line; std::string keyword;
+                          std::vector<std::string> args; bool honored; std::string note; };
+struct InstallOptions   { bool full, cd_resident, overwrite, allow_unknown_media; };
+struct InstallPlan      { MediaBuild build; std::string company, app_name, default_path,
+                          script; std::vector<InstallItem> items;
+                          std::vector<InstallDirective> directives;
+                          std::vector<std::string> errors; uint64_t bytes; };
+
+// PURE. `existing` is the destination's file names (install_list_dir), which
+// drives the SKIP_ON_REMOVE clobber guard. A non-empty plan.errors means
+// install_execute will refuse.
+InstallPlan install_plan(const std::vector<DiscSource>& discs,
+                         const std::vector<std::string>& existing,
+                         const InstallOptions& opt);
+const char* install_build_name(MediaBuild);
+std::vector<std::string> install_list_dir(const std::string& dir);
+
+// A plain function pointer, not std::function: fa-bridge links fx_lib into a
+// shared plugin.
+typedef void (*InstallProgress)(const InstallItem&, uint64_t done, uint64_t total,
+                                void* user);
+
+// Streams: peak memory over a 989 MiB install is a few MB. Writes .part, renames.
+bool install_execute(const std::vector<DiscSource>&, const InstallPlan&,
+                     const std::string& dest, InstallProgress, void* user,
+                     std::vector<std::string>* errors);
+// Re-derives each item from the disc and byte-compares it.
+bool install_verify(const std::vector<DiscSource>&, const InstallPlan&,
+                    const std::string& dest, std::vector<std::string>* errors);
+} // namespace fx
+```
+
 ## mc.h / hgr.h — Mission condition & hangar DLL readers
 
 ```cpp

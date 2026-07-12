@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(fx_tests
     test_ealib.cpp
     test_esa.cpp
+    test_install.cpp
     test_blast.cpp
     test_pic.cpp
     test_pal.cpp
@@ -122,6 +123,14 @@ add_test(NAME cli_e2e_lib
         -DFX=$<TARGET_FILE:fx>
         -DWORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-e2e
         -P ${CMAKE_CURRENT_SOURCE_DIR}/cli/run_cli_test.cmake)
+
+# The install engine end to end: `fx esa pack` synthesises a disc, then
+# `fx install` plans, installs, verifies and re-installs over it. No game bytes.
+add_test(NAME cli_e2e_install
+    COMMAND ${CMAKE_COMMAND}
+        -DFX=$<TARGET_FILE:fx>
+        -DWORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-e2e-install
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cli/run_install_test.cmake)
 
 # The release workflow builds its GitHub Release body with
 # scripts/extract-changelog.py; exercising it here keeps it from rotting
