@@ -268,5 +268,5 @@ Stay within: 2-space indentation, at most two nesting levels, scalars
 scalars (`[a, b]`), and block lists of flat maps (the `gaps` shape). No
 anchors, flow maps, multiline scalars, tabs, or inline comments. Full-line
 `#` comments are fine. GitHub renders the block as a table at the top of the
-spec; the [docs site](https://jomkz.github.io/fighters-codex/) consumes it as
+spec; the [docs site](https://fighterscodex.com/) consumes it as
 page metadata.

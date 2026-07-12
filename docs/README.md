@@ -2,7 +2,7 @@
 
 The primary output of this project is the reverse-engineering documentation: format specifications, engine architecture notes, and modding guides for Jane's Fighters Anthology and related titles, built up from binary analysis of the game's assets and executable. The toolkit software exists to exercise and validate that documentation — a working codec is the proof of understanding.
 
-These pages are published as a searchable site at <https://jomkz.github.io/fighters-codex/>, built from this same `docs/` tree.
+These pages are published as a searchable site at <https://fighterscodex.com/>, built from this same `docs/` tree.
 
 This is a work in progress and will be updated as more is discovered. If something here is wrong or needs more detail, please submit an issue.
 

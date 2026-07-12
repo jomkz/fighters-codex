@@ -64,7 +64,7 @@ Pre-built binaries are on the [Releases](https://github.com/jomkz/fighters-codex
 ## Documentation
 
 All documentation is published as a browsable site with navigation and search:
-**<https://jomkz.github.io/fighters-codex/>**. The same content is readable
+**<https://fighterscodex.com/>**. The same content is readable
 in-repo:
 
 - [docs/roadmap.md](docs/roadmap.md) — phased roadmap to 1.0, with gates and epic index

@@ -6,7 +6,7 @@ site_description: >-
   Reverse-engineering documentation for Jane's Fighters Anthology (1998) —
   format specifications, engine architecture notes, and modding guides,
   validated by byte-identical codecs.
-site_url: https://jomkz.github.io/fighters-codex/
+site_url: https://fighterscodex.com/
 repo_url: https://github.com/jomkz/fighters-codex
 repo_name: jomkz/fighters-codex
 edit_uri: edit/main/docs/

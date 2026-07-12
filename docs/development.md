@@ -312,7 +312,7 @@ Every PR to `main` (and every push to it) runs the
 | `docs-status` | ubuntu-latest | [`tools/check_status.py`](https://github.com/jomkz/fighters-codex/blob/main/tools/check_status.py) `--self-test` + `--check`: format-spec front-matter and template conformance ([spec-authoring.md](spec-authoring.md)), encoding and link hygiene across all markdown — relative links resolve case-exactly, links in `docs/` stay inside the docs tree, repo `blob`/`tree` URLs point at real `main` paths — front-matter claims vs. `lib/`+`cli/`+`tests/`+`fuzz/` reality, and currency of the generated [status matrix](fa/formats/STATUS.md) — a stale matrix fails the PR |
 | `coverage` | ubuntu-latest | gcov line coverage over `lib/` + `cli/`, gcovr summary on the run's summary page + HTML artifact; enforces a floor that only ratchets **up** (raised by epic [#50](https://github.com/jomkz/fighters-codex/issues/50), never lowered) |
 | CodeQL | ubuntu-latest | Static analysis ([security-extended](https://github.com/jomkz/fighters-codex/blob/main/.github/codeql/codeql-config.yml)) over all first-party C++; also runs weekly against refreshed query packs |
-| Docs | ubuntu-latest | [`mkdocs build --strict`](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/docs.yml) over the whole docs tree — a broken link, broken anchor, or page missing from the site nav fails the PR; on push to `main` it also deploys the [published site](https://jomkz.github.io/fighters-codex/) (runs only when docs or site config change) |
+| Docs | ubuntu-latest | [`mkdocs build --strict`](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/docs.yml) over the whole docs tree — a broken link, broken anchor, or page missing from the site nav fails the PR; on push to `main` it also deploys the [published site](https://fighterscodex.com/) (runs only when docs or site config change) |
 
 Every `uses:` in the workflows is pinned to a commit SHA (with the version in a
 trailing comment); [Dependabot](https://github.com/jomkz/fighters-codex/blob/main/.github/dependabot.yml)
@@ -321,7 +321,7 @@ so a leg that discovers zero tests fails instead of passing vacuously.
 
 ## Documentation Site
 
-The `docs/` tree is published as <https://jomkz.github.io/fighters-codex/> —
+The `docs/` tree is published as <https://fighterscodex.com/> —
 an mkdocs-material site built from the same markdown sources GitHub renders.
 The [Docs workflow](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/docs.yml)
 builds the site with `mkdocs build --strict` on every PR that touches docs or
@@ -330,6 +330,15 @@ the `validation:` block in
 [mkdocs.yml](https://github.com/jomkz/fighters-codex/blob/main/mkdocs.yml)
 means a broken link, a broken `#anchor`, or a page missing from the nav fails
 the build — site health is CI-enforced, not aspirational.
+
+The site is served from the custom domain `fighterscodex.com`. Because Pages is
+deployed from a workflow artifact rather than a branch, GitHub does not inject
+the domain for us: `docs/CNAME` carries it, mkdocs copies that file verbatim
+into `site/`, and the artifact is what Pages serves. **Deleting `docs/CNAME`
+un-sets the custom domain on the next deploy**, so leave it in place. The apex
+resolves via A/AAAA records to GitHub's Pages IPs, `www` is a CNAME to
+`jomkz.github.io`, and `fighterscodex.org` is a registrar-level 301 redirect to
+the `.com`.
 
 To preview locally (the site toolchain is the repo's only pip dependency,
 pinned in
