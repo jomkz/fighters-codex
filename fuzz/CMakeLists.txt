@@ -44,6 +44,7 @@ endfunction()
 
 fx_add_fuzzer(fuzz_ealib)
 fx_add_fuzzer(fuzz_esa)
+fx_add_fuzzer(fuzz_rtpatch)
 fx_add_fuzzer(fuzz_blast)
 fx_add_fuzzer(fuzz_pe)
 

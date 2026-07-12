@@ -11,6 +11,7 @@ add_executable(fx_tests
     test_ealib.cpp
     test_esa.cpp
     test_install.cpp
+    test_rtpatch.cpp
     test_blast.cpp
     test_pic.cpp
     test_pal.cpp
@@ -308,4 +309,38 @@ if(FX_FA_DISC1 AND FX_FA_DISC2)
 elseif(FX_FA_DISC1 OR FX_FA_DISC2)
     message(WARNING "FX_FA_DISC1 and FX_FA_DISC2 must both be set; "
                     "the real-media install test is not registered.")
+endif()
+
+# Real-media RTPatch mode: apply the 1.02F updater to the 1.00F originals and
+# verify the reconstructed game files. Registered when FX_FA_PATCH names the
+# updater (fae102.exe) and the 1.00F originals are available — from Disc 1's
+# SETUP.ESA (FX_FA_DISC1) or an explicit FX_FA_PATCH_SOURCE dir. Neither the
+# patcher nor the game bytes enter the repo; only the 1.02F hashes are committed.
+set(FX_FA_PATCH "" CACHE FILEPATH "FA 1.02F updater (fae102.exe) for the RTPatch test")
+set(FX_FA_PATCH_SOURCE "" CACHE PATH "Directory of 1.00F originals (alternative to FX_FA_DISC1)")
+if(NOT FX_FA_PATCH AND DEFINED ENV{FX_FA_PATCH})
+    set(FX_FA_PATCH "$ENV{FX_FA_PATCH}")
+endif()
+if(FX_FA_PATCH AND (FX_FA_DISC1 OR FX_FA_PATCH_SOURCE))
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    set(_fa_patch_src "")
+    if(FX_FA_PATCH_SOURCE)
+        list(APPEND _fa_patch_src --source "${FX_FA_PATCH_SOURCE}")
+    else()
+        list(APPEND _fa_patch_src --disc1 "${FX_FA_DISC1}")
+    endif()
+    add_test(NAME fa_patch_apply
+        COMMAND Python3::Interpreter
+            "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa_patch.py" verify
+            --fx "$<TARGET_FILE:fx>"
+            --patch "${FX_FA_PATCH}"
+            --manifest "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa-patch.sha256"
+            --work-dir "${CMAKE_CURRENT_BINARY_DIR}/fa-patch-work"
+            ${_fa_patch_src})
+    set_tests_properties(fa_patch_apply PROPERTIES
+        LABELS "integration"
+        TIMEOUT 3600)
+elseif(FX_FA_PATCH)
+    message(WARNING "FX_FA_PATCH needs FX_FA_DISC1 or FX_FA_PATCH_SOURCE for the "
+                    "1.00F originals; the RTPatch test is not registered.")
 endif()

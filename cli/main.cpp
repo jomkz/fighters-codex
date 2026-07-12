@@ -38,6 +38,7 @@ int cmd_rgn(int argc, char** argv);
 int cmd_ssf(int argc, char** argv);
 int cmd_install(int argc, char** argv);
 int cmd_esa(int argc, char** argv);
+int cmd_patch(int argc, char** argv);
 int cmd_mc(int argc, char** argv);
 int cmd_hgr(int argc, char** argv);
 int cmd_dlg(int argc, char** argv);
@@ -279,6 +280,8 @@ int main(int argc, char** argv) {
         return cmd_install(argc - 1, argv + 1);
     if (strcmp(cmd, "esa") == 0)
         return cmd_esa(argc - 1, argv + 1);
+    if (strcmp(cmd, "patch") == 0)
+        return cmd_patch(argc - 1, argv + 1);
     if (strcmp(cmd, "mc") == 0)
         return cmd_mc(argc - 1, argv + 1);
     if (strcmp(cmd, "hgr") == 0)

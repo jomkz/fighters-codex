@@ -163,6 +163,7 @@ nav:
           - SMS: fa/formats/SMS.md
       - Installer:
           - ESA: fa/formats/ESA.md
+          - RTP: fa/formats/RTP.md
           - RGN: fa/formats/RGN.md
           - SSF: fa/formats/SSF.md
       - Text:

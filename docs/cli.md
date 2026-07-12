@@ -936,6 +936,42 @@ longer matches the disc, which is true.
 *See also: [fa/formats/SSF.md § Engine Notes](fa/formats/SSF.md#engine-notes),
 [fa/formats/ESA.md](fa/formats/ESA.md)*
 
+## patch — Apply the 1.02F updater
+
+```
+fx patch inspect <patch.exe>
+fx patch apply   <patch.exe> --source <dir> --out <dir> [--file NAME] [--no-checksum]
+```
+
+Applies the Pocket Soft .RTPatch payload carried by the FA updater (`fae102.exe`)
+to reconstruct the **1.02F** game files from the **1.00F** originals — the build
+the discs ship versus the build the reconstruction database describes. It needs
+your own 1.00F files as the source; nothing is shipped.
+
+#### `fx patch inspect <patch.exe>`
+
+Locate the RTPatch container overlay and list every record — filename, mode
+(`modify`/`new`), source and target sizes, and the source rolling checksum — plus
+any files the installer relocates to a system directory.
+
+#### `fx patch apply <patch.exe> --source <dir> --out <dir>`
+
+Reconstruct each patched file from the matching original in `--source` and write
+it to `--out`. Each source is verified against the record's checksum first, so a
+wrong 1.00F version is skipped rather than corrupted; `--no-checksum` forces the
+apply and `--file NAME` limits it to one target. The reconstruction is
+byte-identical to the shipped 1.02F build.
+
+```
+$ fx patch apply fae102.exe --source ~/games/fa --out ~/games/fa-1.02f
+  [ ok ]  FA.EXE          1319424 bytes
+  [ ok ]  FA.SMS          106706 bytes
+  ...
+4 patched, 0 skipped, 0 failed
+```
+
+*See also: [fa/formats/RTP.md](fa/formats/RTP.md)*
+
 ## mc — Mission condition DLLs
 
 ```
