@@ -140,7 +140,16 @@ public:
         return sym;
     }
 
+public:
+    // A corrupt bitstream can drive the rebuild rebalance loops far past what a
+    // valid model ever needs (the real FA decode peaks near 4k iterations); once
+    // a rebuild trips the guard the model is unusable, so decode stops. The cap
+    // is ~250x the observed valid maximum — unreachable on real data.
+    bool ok() const { return ok_; }
+
 private:
+    static const long REBUILD_GUARD = 100000;
+    bool ok_ = true;
     std::vector<uint8_t> m;
     uint32_t off_groupcnt, off_symtab, off_slot, off_weight, off_limit;
 
@@ -239,8 +248,10 @@ private:
             uint16_t mask = 0x8000;
             while ((maxw & mask) == 0) mask = (uint16_t)((mask >> 1) | 0x8000);
             int la = 0;
+            long guard = 0;
             if (n_slots != 0) {
                 while (la < n_slots) {
+                    if (++guard > REBUILD_GUARD) { ok_ = false; return; }
                     uint32_t pcur = r32(slot + la * 4);
                     if ((r16u(pcur) & mask) == 0) {
                         int u17 = la + 1;
@@ -276,8 +287,10 @@ private:
         int n_groups = r16u(0x0a);
         uint16_t ustk = (uint16_t)((n_groups - 1) & 0xFFFF);
         int moved = 0;
+        long guardc = 0;
         if (n_groups != 0) {
             for (;;) {
+                if (++guardc > REBUILD_GUARD) { ok_ = false; return; }
                 uint32_t pgc = gc + (uint32_t)la * 2;
                 uint32_t p2 = symt + (uint32_t)la * 4;
                 uint16_t g = r16u(pgc);
@@ -420,16 +433,16 @@ std::vector<uint8_t> rtp_decompress(const uint8_t* data, size_t size,
         if (bi.bad) break;
         if (flag == 0) {
             uint32_t sym = lit_tree ? lit_tree->decode(bi) : bi.bits(8);
-            if (bi.bad) break;
+            if (bi.bad || (lit_tree && !lit_tree->ok())) break;
             out.push_back((uint8_t)(sym & 0xFF));
         } else {
             uint32_t dist_lo = bi.bits(dist_bits);
             uint32_t dist_hi = dist_tree.decode(bi);
-            if (bi.bad) break;
+            if (bi.bad || !dist_tree.ok()) break;
             uint32_t dist = (dist_hi << dist_bits) | dist_lo;
             if (dist == 0) break;      // END sentinel
             uint32_t length = len_tree.decode(bi) & 0x7F;
-            if (bi.bad) break;
+            if (bi.bad || !len_tree.ok()) break;
             uint32_t back = dist + 1;
             for (uint32_t i = 0; i < length && out.size() < hint; ++i) {
                 size_t pos = out.size();
