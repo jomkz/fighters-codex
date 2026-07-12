@@ -217,6 +217,31 @@ def check_install(fx: str, discs: list[Path], minimal: dict, dest: Path) -> None
     check(True, "install verify (planned against an empty tree) passes on its own")
 
 
+def check_install_patch(fx: str, discs: list[Path], patch: Path, manifest: Path,
+                        dest: Path) -> None:
+    """The chained pipeline: install 1.00F from the discs, then `--patch` up to
+    1.02F, and check the four rebuilt game files against the committed 1.02F
+    hashes. This is the cross-build oracle made byte-exact — where check_cross_build
+    only asserts *which* files a 1.00F install differs from a 1.02F tree in, this
+    proves the patch actually produces that 1.02F tree."""
+    print("install + patch (1.00F -> 1.02F):")
+    expected = {}
+    with open(manifest) as f:
+        for line in f:
+            digest, name = line.rstrip("\n").split("  ", 1)
+            expected[name] = digest
+    shutil.rmtree(dest, ignore_errors=True)
+    dest.mkdir(parents=True)
+    run_fx(fx, "install", "run", *[str(d) for d in discs], "-d", str(dest),
+           "--minimal", "--no-cd-resident", "--patch", str(patch))
+    for name, digest in expected.items():
+        p = dest / name
+        if not check(p.is_file(), f"{name}: present after patch"):
+            continue
+        check(sha256_file(p) == digest, f"{name}: reconstructed to the 1.02F build")
+    shutil.rmtree(dest, ignore_errors=True)
+
+
 def check_clobber_guard(fx: str, discs: list[Path], dest: Path) -> None:
     """SKIP_ON_REMOVE is a clobber guard: EXAMPLE.MT is shipped by the script *and*
     never overwritten, not even by --overwrite. An unguarded file is.
@@ -274,6 +299,8 @@ def main() -> int:
     ap.add_argument("--disc1", required=True, help="FA disc 1 (mounted, or a copy of the root)")
     ap.add_argument("--disc2", required=True, help="FA disc 2")
     ap.add_argument("--fa-root", help="a 1.02F install; enables the cross-build oracle")
+    ap.add_argument("--patch", help="the 1.02F updater (fae102.exe); enables the install+patch check")
+    ap.add_argument("--patch-manifest", help="committed 1.02F hash manifest (fa-patch.sha256)")
     ap.add_argument("--manifest", help="ESA manifest to compare against (verify)")
     ap.add_argument("--out", help="ESA manifest to write (generate)")
     ap.add_argument("--full", action="store_true",
@@ -353,6 +380,14 @@ def main() -> int:
         if not fa_root.is_dir():
             sys.exit(f"--fa-root is not a directory: {fa_root}")
         check_cross_build(dest, fa_root)
+
+    if args.patch:
+        patch, pman = Path(args.patch), Path(args.patch_manifest)
+        if not patch.is_file():
+            sys.exit(f"--patch is not a file: {patch}")
+        if not pman.is_file():
+            sys.exit(f"--patch-manifest is not a file: {pman}")
+        check_install_patch(args.fx, discs, patch, pman, work / "install-patch")
 
     check_clobber_guard(args.fx, discs, dest)  # corrupts the tree; must come last
     shutil.rmtree(dest, ignore_errors=True)

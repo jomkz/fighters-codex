@@ -210,4 +210,4 @@ is a property of that install, not of the patch.)
 - [ESA](ESA.md) — the Disc 1 installer archive that supplies the 1.00F originals
   the patch is applied against.
 - [SSF](SSF.md) — the installer scripts `fx install` runs; `fx install --patch`
-  will chain this codec after a 1.00F install to reach 1.02F.
+  chains this codec after a 1.00F install to reach 1.02F.
