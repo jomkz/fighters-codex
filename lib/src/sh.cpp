@@ -231,10 +231,25 @@ collect_selectors(const uint8_t* data, size_t size, const PeInfo& pe,
     // Relocations grouped by which block's byte range they fall in.
     auto relocs = collect_reloc_targets(data, size, pe, code.size);
 
+    // A moving part is one *contiguous run* of `F0` blocks: the engine's x86
+    // falls straight through the chain, so a `cmp [tramp], imm` in one block
+    // guards the geometry sub-streams of the following blocks too — including
+    // blocks that carry no compare of their own (the geometry often lands in a
+    // trailing no-cmp block, e.g. A10 gear: cmp-block -> cmp-block -> geom-block).
+    // Carry the last-seen (input, value) forward across the run, and reset it at
+    // a run break — a block whose head does not abut the previous block's end
+    // (i.e. real geometry sits between them). `end` is `min(next block, +96)`, so
+    // `blocks[bi] == prev_end` holds exactly when consecutive selector blocks abut.
+    std::string run_input;
+    int run_value = 0;
+    uint32_t prev_end = 0;
     for (size_t bi = 0; bi < blocks.size(); ++bi) {
         uint32_t start = blocks[bi] + 2;                 // past F0 00
         uint32_t end   = (bi + 1 < blocks.size()) ? blocks[bi + 1] : code.size;
         if (end > start + 96) end = start + 96;          // selector blocks are small
+
+        if (blocks[bi] != prev_end) { run_input.clear(); run_value = 0; }  // run break
+        prev_end = end;
 
         std::string input;
         int value = 0;
@@ -258,8 +273,9 @@ collect_selectors(const uint8_t* data, size_t size, const PeInfo& pe,
             // the head of another selector block is a guarded sub-stream entry.
             if (tgt < code.size && !is_block[tgt]) subs.push_back(tgt);
         }
-        if (input.empty()) continue;
-        for (uint32_t s : subs) out.push_back({ s, input, value });
+        if (!input.empty()) { run_input = input; run_value = value; }  // block's own compare
+        if (run_input.empty()) continue;                 // no compare governs this run yet
+        for (uint32_t s : subs) out.push_back({ s, run_input, run_value });
     }
     return out;
 }
