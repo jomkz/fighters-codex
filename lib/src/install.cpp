@@ -192,6 +192,12 @@ std::vector<std::string> install_list_dir(const std::string& dir) {
 
 // "[INSTALL_PATH]\SUB" -> "SUB": the destination is always expressed relative to
 // the install directory the user chose, which is the directory we are writing.
+//
+// This argument comes off the disc, so it is untrusted in the same way every
+// other parsed field is: a script reading `"[INSTALL_PATH]\..\..\WINDOWS"` must
+// not walk out of the install directory. The result is confined — the "." and
+// ".." components and any drive letter are dropped, never honored. The retail
+// scripts pass "[INSTALL_PATH]" and nothing else, so nothing real is lost.
 static std::string dest_dir(const std::string& arg) {
     std::string s = arg;
     const std::string token = "[INSTALL_PATH]";
@@ -199,9 +205,19 @@ static std::string dest_dir(const std::string& arg) {
         s = s.substr(token.size());
     for (char& c : s)
         if (c == '\\') c = '/';
-    while (!s.empty() && s.front() == '/') s.erase(s.begin());
-    while (!s.empty() && s.back() == '/') s.pop_back();
-    return s;
+
+    std::string out;
+    size_t at = 0;
+    while (at < s.size()) {
+        size_t slash = s.find('/', at);
+        if (slash == std::string::npos) slash = s.size();
+        const std::string part = s.substr(at, slash - at);
+        at = slash + 1;
+        if (part.empty() || part == "." || part == "..") continue;
+        if (part.find(':') != std::string::npos) continue;  // a drive letter
+        out += out.empty() ? part : "/" + part;
+    }
+    return out;
 }
 
 static std::string join(const std::string& dir, const std::string& name) {

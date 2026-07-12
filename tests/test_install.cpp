@@ -293,6 +293,40 @@ TEST_CASE("install_plan: the clobber guard protects what the game writes", "[ins
     REQUIRE(plan.bytes == want);
 }
 
+TEST_CASE("install_plan: a hostile script cannot escape the install directory",
+          "[install]") {
+    // The destination argument comes off the disc. A script that tries to walk
+    // out of the install directory — or name an absolute one — must be confined,
+    // not obeyed. Both halves of the path are covered: the directory here, and
+    // the file name by esa_safe_name.
+    static const char EVIL_SSF[] =
+        "CREATE_FOLDERS \"[INSTALL_PATH]\"\n"
+        "INSTALL_FILES \"FA.EXE\",\"FA_EXECUTABLE_FILES\",\"[INSTALL_PATH]\\..\\..\\WINDOWS\"\n"
+        "INSTALL_FILES \"CHAT.TXT\",\"FA_MISC\",\"C:\\WINDOWS\\SYSTEM\"\n"
+        "INSTALL_FILES \"EXAMPLE.MT\",\"FA_MISC\",\"[INSTALL_PATH]\\DATA\"\n";
+
+    DiscSource d = disc1();
+    d.scripts = {script_of("SETUP.SSF",
+                           "INSTALL_SCRIPT \"FINSTALL.SSF\",\":0409:Full\"\n"),
+                 script_of("FINSTALL.SSF", EVIL_SSF)};
+
+    InstallOptions opt;
+    opt.cd_resident = false;
+    const InstallPlan plan = install_plan({d}, {}, opt);
+    REQUIRE(plan.errors.empty());
+
+    for (const auto& it : plan.items) {
+        REQUIRE(it.dest.find("..") == std::string::npos);
+        REQUIRE(it.dest.find(':') == std::string::npos);
+        REQUIRE(it.dest.front() != '/');
+    }
+    // The traversal components are dropped, not the file.
+    REQUIRE(item(plan, "WINDOWS/FA.EXE"));
+    REQUIRE(item(plan, "WINDOWS/SYSTEM/CHAT.TXT"));
+    // ...and a legitimate subdirectory still works.
+    REQUIRE(item(plan, "DATA/EXAMPLE.MT"));
+}
+
 TEST_CASE("install_plan: the media is fingerprinted, and unknown media is fatal",
           "[install]") {
     REQUIRE(install_plan({disc1()}, {}, InstallOptions{}).build == MediaBuild::V100F);
