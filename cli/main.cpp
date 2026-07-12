@@ -36,6 +36,7 @@ int cmd_mt(int argc, char** argv);
 int cmd_pts(int argc, char** argv);
 int cmd_rgn(int argc, char** argv);
 int cmd_ssf(int argc, char** argv);
+int cmd_esa(int argc, char** argv);
 int cmd_mc(int argc, char** argv);
 int cmd_hgr(int argc, char** argv);
 int cmd_dlg(int argc, char** argv);
@@ -173,6 +174,13 @@ static void print_usage() {
     puts("  fx ssf info <file.SSF>");
     puts("  fx ssf dump <file.SSF>");
     puts("");
+    puts("Installer archive commands:");
+    puts("  fx esa ls <SETUP.ESA>");
+    puts("  fx esa info <SETUP.ESA>");
+    puts("  fx esa extract <SETUP.ESA> <NAME> [-o dir]");
+    puts("  fx esa unpack <SETUP.ESA> [-o dir]");
+    puts("  fx esa repack <SETUP.ESA> <out.ESA>");
+    puts("");
     puts("Mission condition DLL commands:");
     puts("  fx mc  info    <file.MC>");
     puts("  fx mc  strings <file.MC> [-n MIN]");
@@ -261,6 +269,8 @@ int main(int argc, char** argv) {
         return cmd_rgn(argc - 1, argv + 1);
     if (strcmp(cmd, "ssf") == 0)
         return cmd_ssf(argc - 1, argv + 1);
+    if (strcmp(cmd, "esa") == 0)
+        return cmd_esa(argc - 1, argv + 1);
     if (strcmp(cmd, "mc") == 0)
         return cmd_mc(argc - 1, argv + 1);
     if (strcmp(cmd, "hgr") == 0)

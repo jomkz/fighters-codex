@@ -162,6 +162,7 @@ nav:
           - P: fa/formats/P.md
           - SMS: fa/formats/SMS.md
       - Installer:
+          - ESA: fa/formats/ESA.md
           - RGN: fa/formats/RGN.md
           - SSF: fa/formats/SSF.md
       - Text:

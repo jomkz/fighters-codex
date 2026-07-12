@@ -20,7 +20,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-related: [PIC, 11K]
+related: [PIC, 11K, ESA]
 credits:
   - "PKWare DCL decode based on blast.c by Mark Adler (zlib project)"
 ---
@@ -281,7 +281,10 @@ writing the decoders needs samples from the wider Fighters family (ATF/USNF).
 
 **Formats:** [PIC](PIC.md) and [11K](11K.md) document the filename-prefix
 conventions from the consumer side; every format spec in this directory
-describes content stored in these archives.
+describes content stored in these archives. [ESA](ESA.md) is the installer
+container that ships four of these `.LIB` archives (`FA_1/2/4B/4D`) stored,
+and whose `PKWA` streams are raw DCL — without the 6-byte EA wrapper the
+`flags=4` entries here use.
 
 **Engine:** [architecture.md](../architecture.md) — Asset System (EALIB
 Archives) covers how the game executable mounts and reads them at runtime.

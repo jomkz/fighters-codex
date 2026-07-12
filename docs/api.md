@@ -504,6 +504,36 @@ std::vector<uint8_t> ssf_write(const SsfDoc& doc);   // byte-identical inverse
 } // namespace fx
 ```
 
+## esa.h — EA installer archive
+
+```cpp
+namespace fx {
+struct EsaEntry {
+    std::string name, label;   // label = the token .SSF INSTALL_FILES selects on
+    uint32_t flags;            // 0x211 app-dir / 0x221 sysfile (inferred)
+    uint32_t usize, mtime;
+    std::string method;        // "PKWA" (raw PKWare DCL) | "NULL" (stored)
+    uint32_t csize, offset;
+};
+
+// Parse the directory; archive_size (0 = size) bounds-checks blob offsets.
+std::vector<EsaEntry> esa_read_dir(const uint8_t* data, size_t size,
+                                   uint64_t archive_size = 0);
+size_t esa_dir_size(const uint8_t* data, size_t size);
+const EsaEntry* esa_find(const std::vector<EsaEntry>&, const std::string& name);
+std::string esa_safe_name(const std::string& name);
+
+// PKWA is blast-decoded into a usize buffer (NO EA size prefix — the size is
+// the directory's); NULL is copied. Unknown method -> {} and *unsupported=true.
+std::vector<uint8_t> esa_extract(const uint8_t* data, size_t size,
+                                 const EsaEntry& entry, bool decompress = true,
+                                 bool* unsupported = nullptr);
+
+std::vector<uint8_t> esa_repack(const uint8_t* data, size_t size); // byte-identical
+std::vector<uint8_t> esa_build(const std::vector<EsaInput>& files); // stored-only
+} // namespace fx
+```
+
 ## mc.h / hgr.h — Mission condition & hangar DLL readers
 
 ```cpp

@@ -64,6 +64,7 @@ timeout-*
 *.DAT
 *.DLG
 *.ECM
+*.ESA
 *.FBC
 *.FNT
 *.GAS

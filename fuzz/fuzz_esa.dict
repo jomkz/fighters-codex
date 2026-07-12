@@ -1,0 +1,8 @@
+# ESA installer-archive tokens (see docs/fa/formats/ESA.md)
+magic="ELECTRONIC_ARTS_ARCHIVE_FILE"
+method_pkwa="PKWA"
+method_null="NULL"
+label_libs="FA_LIBS"
+label_exec="FA_EXECUTABLE_FILES"
+label_readme="FA_README"
+label_misc="FA_MISC"
