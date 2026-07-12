@@ -213,7 +213,7 @@ Payloads stream, so peak memory over a 989 MiB install is ~5 MB.
 
 ### Verified against a real installation
 
-The engine's output was compared, file by file, against a licensed 1.02F install
+The engine's output is compared, file by file, against a licensed 1.02F install
 of the game. Of the 19 files a minimal install writes, **14 are byte-identical**
 and **4 differ — exactly the four the 1.02F patch rewrites** (`FA.EXE`,
 `FA.SMS`, `FA_1.LIB`, `FA_2.LIB`). The 19th, `README.TXT`, that install does not
@@ -222,6 +222,16 @@ semantics are confirmed end to end, and the only divergence is the one the patch
 explains. The disc is the **1.00F** build; see
 [ESA § File Inventory](ESA.md#file-inventory) for what that means for the symbol
 database, which describes 1.02F.
+
+This is a **test, not a one-off measurement** — the `fa_disc_install` cross-build
+oracle ([development.md § Real-media install mode](../../development.md#real-media-install-mode-fx_fa_disc1fx_fa_disc2)),
+run on a bench that has both the discs and an install. It asserts the difference
+set is *exactly* those four files, so an unexpected divergence fails rather than
+going unnoticed; when the RTPatch codec lands, the set goes empty. The same test
+pins the engine rules above: the script choice, the `SKIP_ON_REMOVE` clobber
+guard (`EXAMPLE.MT` survives even `--overwrite`), the two recorded-not-written
+`INSTALL_SYSFILES`, the CD-resident *rule*, and the fact that a plan is identical
+whichever order the discs are named in.
 
 `fx install verify` re-derives each file from the disc and byte-compares it, so
 it also reports a *legitimate* divergence: edit a mission and it will tell you

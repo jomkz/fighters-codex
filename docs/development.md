@@ -152,8 +152,9 @@ Test data follows the **synthetic-first fixture policy**
 ([tests/fixtures/README.md](https://github.com/jomkz/fighters-codex/blob/main/tests/fixtures/README.md)):
 everything committed is synthetic — produced by our own encoders or
 hand-assembled from the format specs — and validation against real game data
-runs only behind `FX_FA_ROOT` (below), under the ctest label `integration`,
-on the local benches. CI never sees a byte of game content.
+runs only behind `FX_FA_ROOT` / `FX_FA_DISC1`+`FX_FA_DISC2` (below), under the
+ctest label `integration`, on the local benches. CI never sees a byte of game
+content.
 
 ### Real-asset integration mode (FX_FA_ROOT)
 
@@ -182,6 +183,46 @@ python3 tests/integration/fa_manifest.py generate \
 
 Hashes are facts about the game data; the assets themselves must never enter
 the repository (`*.LIB`, `*.PIC`, `*.PAL`, … are gitignored — keep it that way).
+
+### Real-media install mode (FX_FA_DISC1/FX_FA_DISC2)
+
+`FX_FA_ROOT` proves the pipeline that *reads* an installed tree. The retail discs
+prove the one that *writes* it — the `ESA` installer archive and the `fx install`
+engine. Point both variables at the two disc roots (an ISO mount, or a copy of
+each) to register the `fa_disc_install` test:
+
+```bash
+udisksctl loop-setup -r -f disc1.iso && udisksctl mount -b /dev/loop0   # etc.
+cmake --preset gcc \
+  -DFX_FA_DISC1=/run/media/you/FA_1_00F1 -DFX_FA_DISC2=/run/media/you/FA_1_00F
+ctest --preset gcc -R fa_disc_install
+```
+
+Both discs are needed: disc 1 carries the installer archive and no LIBs, disc 2
+the reverse. Which is which is decided by content — the volume labels are
+identical, and a Linux mount hands them out in either order, so the test asserts
+the plan comes out the same whichever way round they are named. It checks the
+plan for both scripts, extracts every `SETUP.ESA` entry against the committed
+manifest ([tests/integration/fa-esa.sha256](https://github.com/jomkz/fighters-codex/blob/main/tests/integration/fa-esa.sha256)),
+repacks the 110 MB archive byte-for-byte, and runs a real minimal install (73 MiB)
+that it then verifies back against the disc. Regenerate the manifest exactly as
+for `fa_manifest.py`, with `fa_disc.py generate --out …`.
+
+Two options extend it:
+
+- **`-DFX_FA_DISC_FULL=ON`** also *executes* the full 989 MiB install. The plan
+  for it is checked either way — a plan is pure — so this only adds the copy.
+- **`-DFX_FA_ROOT=…` set alongside** enables the **cross-build oracle**: a fresh
+  install off the 1.00F discs is compared file-by-file against that 1.02F tree,
+  and must differ in exactly the set the patch rewrites (`FA.EXE`, `FA.SMS`,
+  `FA_1.LIB`, `FA_2.LIB`) and no other. That check is the executable statement of
+  the gap the RTPatch codec closes: the discs ship 1.00F, `db/` describes 1.02F.
+  When the patch codec lands, the expected-difference set goes empty.
+
+The three self-oracles here need no committed hash at all: the four entries that
+sit *both* inside `SETUP.ESA` and loose on disc 1 (`README.TXT`, `IP.EXE`,
+`IP.CFG`, `EAHELP.HLP` — three of them PKWare-compressed) must extract to the
+same bytes as the loose copies. The disc checks itself.
 
 ## Fuzzing
 

@@ -166,6 +166,15 @@ accounted for. A non-contiguous or reordered source normalises instead.
 as [`ealib_build`](LIB.md) writing `flags=0`. It is used to synthesise fixtures,
 not to re-create a shipped `SETUP.ESA`.
 
+Both claims are checked against the retail archive by the `fa_disc_install`
+integration test ([development.md § Real-media install mode](../../development.md#real-media-install-mode-fx_fa_disc1fx_fa_disc2)):
+the 110 MB `SETUP.ESA` repacks byte-for-byte, and every extracted entry is hashed
+against a committed manifest. The decoder also has a **self-oracle on the disc
+itself** — `README.TXT`, `IP.EXE`, `IP.CFG` and `EAHELP.HLP` are shipped *both*
+inside the archive and loose on disc 1, and the extracted bytes must equal the
+loose ones. Three of the four are PKWA, so the DCL path is proven without
+reference to anything we recorded ourselves.
+
 ## Open Questions
 
 ### Entry flags bitfield
