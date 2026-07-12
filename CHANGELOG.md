@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-07-11
+
 **Final Phase 5 static-RE tranche — the MSAPI matchmaking client, reverse-engineered
 end to end.** `MSAPI.DLL` — the EA *MServerDLL* the game executable links for internet
 play — is now a fully documented subsystem. It is classified EA-authored (full
@@ -633,7 +635,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.1
 [0.8.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.0
 [0.7.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.1
 [0.7.0]: https://github.com/jomkz/fighters-codex/releases/tag/v0.7.0
