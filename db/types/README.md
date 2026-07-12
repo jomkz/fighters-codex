@@ -90,6 +90,67 @@ types declared alongside them in the same header block (`F24_POINT3`, `T_HANDLE`
 resolve fine. Do not "fix" them by weakening what `db/` records — a Ghidra parser limitation
 is not a reason to throw away a recovered fact.
 
+## Signatures the name does not encode: `tools/recover_signatures.py`
+
+The rows whose names encode nothing — the cdecl names with no arity (`_CTVarDiff`) and the names
+we coined ourselves (`CTLoadProgram`) — must get their signature from the **code**
+([#453](https://github.com/jomkz/fighters-codex/issues/453)).
+
+```
+python3 tools/recover_signatures.py --write   # needs the local Ghidra export
+python3 tools/recover_signatures.py --check   # no-ops where db/inventory/ is absent (CI)
+```
+
+**One rule, because only one survives.** A cdecl caller pops its own arguments right after the
+`CALL` (`ADD ESP, N`, or `POP ECX` for a single dword — `callsites.csv` in the inventory export
+records it). Two things make that byte count trustworthy:
+
+1. Seeing the *caller* clean up **proves** the convention is caller-cleans, i.e. cdecl — a
+   stdcall or fastcall callee cleans up after itself, and its callers never would.
+2. cdecl passes **no** arguments in registers, so the cleanup is the **full** arity. There is
+   nothing hidden that we could be undercounting.
+
+Validated against the functions whose true arity the C++ mangling gives us independently:
+**75 correct, 0 wrong.**
+
+### The negative result — don't re-litigate this without new evidence
+
+Every other route was built, measured against known-arity functions, and **rejected**. Each has
+to guess whether arguments arrived in `ECX`/`EDX`, and none can:
+
+| approach | error rate |
+|---|---|
+| caller-side `ECX`/`EDX`, unanimous across sites | **7.6%** — undercounts: the value was already in `ECX`, so no load is emitted |
+| caller-side `ECX`/`EDX`, max across sites | **15%** — overcounts: `EDX` is a scratch register (43 of `@MMFreePtr@4`'s 81 callers write it) |
+| callee-side "reads `ECX` before writing it" | **11.6%** — `_GRTo2d@8` is stdcall with no register arguments, yet its prologue reads both |
+| Ghidra's own decompiler parameter list | **~16%** — `MPBuildSpawnPayload` pops 20 bytes (5 arguments); Ghidra says 2 |
+
+A `ret N` in the callee *looks* like proof, and is not: it pins the N **stack** bytes, but a
+fastcall callee may take 1–2 further arguments in registers on top of them. It cannot settle an
+arity unless the convention is already known.
+
+Any of these would have corrupted `db/` at exactly the rate hardest to notice — and whatever the
+fxe generator emits downstream with it. **A wrong datatype is worse than none.** The remaining
+~900 rows are left to the per-subsystem, docs-corroborated pass #453 describes.
+
+### The corroboration gate
+
+Strictness scales with what is actually being inferred:
+
+- **The name proves cdecl** (`_name`): we are only reading the *arity* off the cleanup, so one
+  unanimous call site is enough.
+- **The name proves nothing** (a name we coined): the cleanup must establish the *convention*
+  too, and a lone `ADD ESP` after a `CALL` can be a stack-frame teardown or a discarded
+  temporary. So it needs **≥2 call sites, with cleanup visible at a majority of them**. Ungated,
+  this misread 8 known callee-cleans functions as cdecl — `@PutCurObj@0` shows cleanup at *1 of
+  its 108* call sites. The gate admits **0** false positives across all 673 known callee-cleans
+  functions.
+- **The name proves a callee-cleans convention** (`_name@N`, `@name@N`): the decoration is proof
+  and the call sites get no vote — there, the cleanup evidence is the weaker witness.
+
+`--check` re-proves the rule against the known-arity functions on every run: if a Ghidra upgrade
+ever perturbs the evidence, the rule's accuracy must be re-demonstrated, not assumed.
+
 ## Why this is conservative
 
 The struct field maps in [`docs/fa/structs.md`](../../docs/fa/structs.md) are

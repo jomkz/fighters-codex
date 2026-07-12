@@ -4,7 +4,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00464C90,func,_CTRespondToCancelCmdBuf@0,CTRespondToCancelCmdBuf,sms,confirmed,,undefined4 __stdcall CTRespondToCancelCmdBuf(void)
 0x00464CD0,func,CTLoadProgram,,re,confirmed,"load/switch the BI CODE resource by name (RMAccess 0x8000); set IP=base, CTResetPC",
 0x00464DB0,func,CTResetPC,,re,confirmed,reset IP=base and line=1; if arg!=0 also zero stack depth,
-0x00464DE0,func,_CTVarDiff,CTVarDiff,sms,confirmed,,
+0x00464DE0,func,_CTVarDiff,CTVarDiff,sms,confirmed,,undefined4 __cdecl CTVarDiff(undefined4)
 0x00464E20,func,_CTEval_time,CTEval_time,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
 0x00464E30,func,_CTEval_do_nothing,CTEval_do_nothing,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,
 0x00464E40,func,_CTEval_do_evade,CTEval_do_evade,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,

@@ -55,7 +55,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00464640,func,@SetScenarioEndTime@4,SetScenarioEndTime,sms,confirmed,,undefined4 __fastcall SetScenarioEndTime(undefined4)
 0x00473A40,func,_OBJEventProc,OBJEventProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,
 0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,void __cdecl OBJDamageProc(HIT_OBJ_DATA *)
-0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,
+0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,undefined4 __cdecl OBJProc(undefined4)
 0x00473C10,func,_Kill@0,Kill,sms,confirmed,,undefined4 __stdcall Kill(void)
 0x00491240,func,@OBJGet@4,OBJGet,sms,confirmed,,undefined4 __fastcall OBJGet(undefined4)
 0x00491250,func,_OBJInit@4,OBJInit,sms,confirmed,,undefined4 __stdcall OBJInit(undefined4)
@@ -76,10 +76,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00491810,func,_OBJSetControl@16,OBJSetControl,sms,confirmed,,"undefined4 __stdcall OBJSetControl(undefined4, undefined4, undefined4, undefined4)"
 0x004918D0,func,_OBJHumanName@0,OBJHumanName,sms,confirmed,,undefined4 __stdcall OBJHumanName(void)
 0x004A6B10,func,ResolveTypeRecord,,re,confirmed,resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step,
-0x004A6EB0,func,_SetupOT,SetupOT,sms,confirmed,,
+0x004A6EB0,func,_SetupOT,SetupOT,sms,confirmed,,undefined4 __cdecl SetupOT(undefined4)
 0x004A71C0,func,LoadShapeVariantPair,,re,confirmed,load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B),
 0x004A71E0,func,LoadShapeSlot,,re,confirmed,resolve one shape-slot filename to a loaded pointer via RMAccess (was proposed type_load_shape_slot),
-0x004A7200,func,_SetupNT,SetupNT,sms,confirmed,,
+0x004A7200,func,_SetupNT,SetupNT,sms,confirmed,,undefined4 __cdecl SetupNT(undefined4)
 0x004A7220,func,_SetupPT,SetupPT,sms,confirmed,,
 0x004A7230,func,_SetupJT,SetupJT,sms,confirmed,,
 0x004AB450,func,@ShapeSetup@4,ShapeSetup,sms,confirmed,,undefined4 __fastcall ShapeSetup(undefined4)

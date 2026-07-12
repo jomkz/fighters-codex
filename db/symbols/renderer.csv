@@ -37,7 +37,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00497D10,func,_G_URect2@16,G_URect2,sms,confirmed,,"undefined4 __stdcall G_URect2(undefined4, undefined4, undefined4, undefined4)"
 0x00497D40,func,_G_UBox@16,G_UBox,sms,confirmed,,"undefined4 __stdcall G_UBox(undefined4, undefined4, undefined4, undefined4)"
 0x00497D90,func,_G_Box@16,G_Box,sms,confirmed,,"undefined4 __stdcall G_Box(undefined4, undefined4, undefined4, undefined4)"
-0x00497DE0,func,_G_ClipLine,G_ClipLine,sms,confirmed,,
+0x00497DE0,func,_G_ClipLine,G_ClipLine,sms,confirmed,,"undefined4 __cdecl G_ClipLine(undefined4, undefined4, undefined4, undefined4)"
 0x00498160,func,_G_Line@16,G_Line,sms,confirmed,,"undefined4 __stdcall G_Line(undefined4, undefined4, undefined4, undefined4)"
 0x004981A0,func,_G_ULine@16,G_ULine,sms,confirmed,,"undefined4 __stdcall G_ULine(undefined4, undefined4, undefined4, undefined4)"
 0x00498380,func,_G_PatLine@20,G_PatLine,sms,confirmed,,"undefined4 __stdcall G_PatLine(undefined4, undefined4, undefined4, undefined4, undefined4)"
@@ -67,7 +67,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00498E3A,func,,,waiver,confirmed,Ghidra mid-function split of clipL (edge-clip helper at 0x498E30),
 0x00498F90,func,?clipR@@YAJJPAUTVERTEX@@@Z,clipR,sms,confirmed,,"long __cdecl clipR(long, TVERTEX *)"
 0x00498F9A,func,,,waiver,confirmed,Ghidra mid-function split of clipR (edge-clip helper at 0x498F90),
-0x004990F0,func,_G_ClipDestPoly,G_ClipDestPoly,sms,confirmed,,
+0x004990F0,func,_G_ClipDestPoly,G_ClipDestPoly,sms,confirmed,,"undefined4 __cdecl G_ClipDestPoly(undefined4, undefined4)"
 0x00499200,func,@G_SetHShake@8,G_SetHShake,sms,confirmed,,"undefined4 __fastcall G_SetHShake(undefined4, undefined4)"
 0x00499240,func,@G_SetVShake@8,G_SetVShake,sms,confirmed,,"undefined4 __fastcall G_SetVShake(undefined4, undefined4)"
 0x00499280,func,_G_Hline2@12,G_Hline2,sms,confirmed,,"undefined4 __stdcall G_Hline2(undefined4, undefined4, undefined4)"
@@ -118,7 +118,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004C8FD4,func,Horizon2d,,re,inferred,scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10),
 0x004C9224,func,NoHorizon,,re,inferred,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output,
 0x004C924C,func,_SolidHorizon,SolidHorizon,re,inferred,"solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10)",
-0x004C942C,func,_GouraudHorizon,GouraudHorizon,re,inferred,"Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10)",
+0x004C942C,func,_GouraudHorizon,GouraudHorizon,re,inferred,"Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10)","undefined4 __cdecl GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004CA028,func,_G__AC_Texture,G__AC_Texture,sms,confirmed,,
 0x004CAE38,func,_G__Texture,G__Texture,sms,confirmed,,
 0x004CBD0B,func,_G__Perspective,G__Perspective,sms,confirmed,,

@@ -34,39 +34,39 @@ va,kind,name,display,source,confidence,notes,type
 0x004D72DA,func,_ModemModifyValue@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ModemModifyValue(undefined4, undefined4, undefined4)"
 0x004D72E0,func,_ModemHangup@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemHangup(undefined4)
 0x004D72FE,func,_closeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7304,func,_getMSdatafile,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D730A,func,_getMSdatafilesize,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7310,func,_initializeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7316,func,_connectMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D731C,func,_sendMSresults,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
-0x004D7330,func,_strncpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7304,func,_getMSdatafile,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __cdecl getMSdatafile(undefined4, undefined4, undefined4)"
+0x004D730A,func,_getMSdatafilesize,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __cdecl getMSdatafilesize(undefined4, undefined4)"
+0x004D7310,func,_initializeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __cdecl initializeMS(undefined4, undefined4, undefined4, undefined4)"
+0x004D7316,func,_connectMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __cdecl connectMS(undefined4)
+0x004D731C,func,_sendMSresults,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __cdecl sendMSresults(undefined4, undefined4, undefined4)"
+0x004D7330,func,_strncpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncpy(undefined4, undefined4, undefined4)"
 0x004D7430,func,__cinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D7460,func,_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7480,func,__exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7480,func,__exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _exit(undefined4)
 0x004D74C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: doexit,
 0x004D7580,func,__lockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D7590,func,__unlockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D75A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __initterm,
-0x004D75C0,func,_strrchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D75F0,func,_atol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D76A0,func,_atoi,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D75C0,func,_strrchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strrchr(undefined4, undefined4)"
+0x004D75F0,func,_atol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atol(undefined4)
+0x004D76A0,func,_atoi,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atoi(undefined4)
 0x004D76B0,func,__atoi64,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D7790,func,_sprintf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7810,func,_strchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D78D0,func,_memmove,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7A30,func,_tolower,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7AA0,func,__tolower_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7B90,func,_fclose,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7BD0,func,__fclose_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7810,func,_strchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strchr(undefined4, undefined4)"
+0x004D78D0,func,_memmove,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl memmove(undefined4, undefined4, undefined4)"
+0x004D7A30,func,_tolower,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl tolower(undefined4)
+0x004D7AA0,func,__tolower_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _tolower_lk(undefined4)
+0x004D7B90,func,_fclose,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl fclose(undefined4)
+0x004D7BD0,func,__fclose_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _fclose_lk(undefined4)
 0x004D7C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fsopen,
-0x004D7C70,func,_fopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7C90,func,_strstr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7DB0,func,_isdigit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7E20,func,_isspace,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7E80,func,_isalnum,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7EC0,func,_isprint,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D7C70,func,_fopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl fopen(undefined4, undefined4)"
+0x004D7C90,func,_strstr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strstr(undefined4, undefined4)"
+0x004D7DB0,func,_isdigit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isdigit(undefined4)
+0x004D7E20,func,_isspace,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isspace(undefined4)
+0x004D7E80,func,_isalnum,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isalnum(undefined4)
+0x004D7EC0,func,_isprint,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isprint(undefined4)
+0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl toupper(undefined4)
+0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _toupper_lk(undefined4)
 0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D81E0,func,?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _JumpToContinuation(void *, EHRegistrationNode *)"
 0x004D8220,func,?_CallMemberFunction0@@YGXPAX0@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _CallMemberFunction0(void *, void *)"
@@ -78,62 +78,62 @@ va,kind,name,display,source,confidence,notes,type
 0x004D83B0,func,?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _CallSETranslator(EHExceptionRecord *, EHRegistrationNode *, void *, void *, const _s_FuncInfo *, int, EHRegistrationNode *)"
 0x004D8490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: TranslatorGuardHandler,
 0x004D8500,func,,,waiver,confirmed,CRT C++ EH exception-object free thunk (calls _free); unwind funclet helper,
-0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8552,func,__local_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _global_unwind2(undefined4)
+0x004D8552,func,__local_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _local_unwind2(undefined4, undefined4)"
 0x004D85AA,data,__NLG_Return2,,sms,confirmed,MSVC CRT global (xrefs=1),
 0x004D85BA,func,__abnormal_termination,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D85DD,func,__NLG_Notify1,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D85E6,func,__NLG_Notify,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D8600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: operator_new,
-0x004D8610,func,_strncmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8610,func,_strncmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncmp(undefined4, undefined4, undefined4)"
 0x004D8648,func,__ftol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D8670,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fpmath,
 0x004D86A0,func,__cfltcvt_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D86F8,data,__except_handler3,,sms,confirmed,MSVC CRT global (xrefs=7),
 0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __stdcall _seh_longjmp_unwind(undefined4)
-0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl labs(undefined4)
+0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncat(undefined4, undefined4, undefined4)"
 0x004D8910,func,__alldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D89C0,func,__allmul,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8A00,func,_qsort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8A00,func,_qsort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl qsort(undefined4, undefined4, undefined4, undefined4)"
 0x004D8B70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: shortsort,
 0x004D8BD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: swap,
-0x004D8C00,func,__chdir,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8C00,func,__chdir,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _chdir(undefined4)
 0x004D8CB0,func,__fullpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D8D90,func,__splitpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8EF0,func,__getcwd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D8F60,func,__getdcwd_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D90A0,func,__validdrive,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D90F0,func,_strupr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9250,func,_bsearch,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9300,func,_fread,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9340,func,__fread_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9490,func,_fwrite,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D94D0,func,__fwrite_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9660,func,_stricmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9730,func,_strlen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8EF0,func,__getcwd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _getcwd(undefined4, undefined4)"
+0x004D8F60,func,__getdcwd_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _getdcwd_lk(undefined4, undefined4, undefined4)"
+0x004D90A0,func,__validdrive,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _validdrive(undefined4)
+0x004D90F0,func,_strupr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl strupr(undefined4)
+0x004D9250,func,_bsearch,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl bsearch(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004D9300,func,_fread,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl fread(undefined4, undefined4, undefined4, undefined4)"
+0x004D9340,func,__fread_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _fread_lk(undefined4, undefined4, undefined4, undefined4)"
+0x004D9490,func,_fwrite,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl fwrite(undefined4, undefined4, undefined4, undefined4)"
+0x004D94D0,func,__fwrite_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _fwrite_lk(undefined4, undefined4, undefined4, undefined4)"
+0x004D9660,func,_stricmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl stricmp(undefined4, undefined4)"
+0x004D9730,func,_strlen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl strlen(undefined4)
 0x004D97B0,func,_strcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D97C0,func,_strcat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D97C0,func,_strcat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strcat(undefined4, undefined4)"
 0x004D98B0,func,_rand,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9A10,func,_sscanf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9A60,func,_getenv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9A90,func,__getenv_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D9B70,func,__fflush_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9A10,func,_sscanf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl sscanf(undefined4, undefined4, undefined4, undefined4)"
+0x004D9A60,func,_getenv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl getenv(undefined4)
+0x004D9A90,func,__getenv_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _getenv_lk(undefined4)
+0x004D9B70,func,__fflush_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _fflush_lk(undefined4)
 0x004D9BB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flush,
 0x004D9C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: flsall,
 0x004D9D00,func,_WinMainCRTStartup,WinMainCRTStartup,sms,confirmed,"PE entry point / MSVC CRT startup: GetVersion, __heap_init, __mtinit, __ioinit, ___initmbctable, __setargv/__setenvp/__cinit, then _WinMain@16 (0x476120, outside range), _exit. THE one true startup element in range",
-0x004D9EB0,func,__amsg_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D9EB0,func,__amsg_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _amsg_exit(undefined4)
 0x004D9EE0,func,__strlwr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA040,func,_strnicmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA040,func,_strnicmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strnicmp(undefined4, undefined4, undefined4)"
 0x004DA140,func,__mtinitlocks,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DA170,func,__mtdeletelocks,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA1E0,func,__lock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA250,func,__unlock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA270,func,__lock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA2B0,func,__lock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA2E0,func,__unlock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA320,func,__unlock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DA370,func,__isctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DA1E0,func,__lock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _lock(undefined4)
+0x004DA250,func,__unlock,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _unlock(undefined4)
+0x004DA270,func,__lock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _lock_file(undefined4)
+0x004DA2B0,func,__lock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _lock_file2(undefined4, undefined4)"
+0x004DA2E0,func,__unlock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _unlock_file(undefined4)
+0x004DA320,func,__unlock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _unlock_file2(undefined4, undefined4)"
+0x004DA370,func,__isctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _isctype(undefined4, undefined4)"
 0x004DA410,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flsbuf,
 0x004DA560,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __output,
 0x004DAE10,data,,,waiver,confirmed,interior of / adjacent to __isctype; named at its base or owned by that subsystem,
@@ -147,9 +147,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004DBB10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
 0x004DBB50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringA,
 0x004DBD80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _strncnt,
-0x004DBDB0,func,_free,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DBE20,func,__close,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DBE90,func,__close_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DBDB0,func,_free,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl free(undefined4)
+0x004DBE20,func,__close,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _close(undefined4)
+0x004DBE90,func,__close_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _close_lk(undefined4)
 0x004DBF20,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __freebuf,
 0x004DBF60,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __openfile,
 0x004DC170,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __getstream,
@@ -166,11 +166,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004DCCA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: AdjustPointer,
 0x004DCCD0,func,__CallSettingFrame@12,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _CallSettingFrame(undefined4, undefined4, undefined4)"
 0x004DCD20,func,__mtinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DCDB0,func,__initptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCDB0,func,__initptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _initptd(undefined4)
 0x004DCDD0,func,__getptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DCF10,func,_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DCF30,func,__nh_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DCF80,func,__heap_alloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DCF10,func,_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl malloc(undefined4)
+0x004DCF30,func,__nh_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _nh_malloc(undefined4, undefined4)"
+0x004DCF80,func,__heap_alloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _heap_alloc(undefined4)
 0x004DCFE0,func,__setdefaultprecision,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DD000,func,__ms_p5_test_fdiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DD050,func,__ms_p5_mp_test_fdiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -178,40 +178,40 @@ va,kind,name,display,source,confidence,notes,type
 0x004DD0F0,data,__cropzeros,,sms,confirmed,MSVC CRT global (xrefs=1),
 0x004DD150,data,__positive,,sms,confirmed,MSVC CRT global (xrefs=1),
 0x004DD170,data,__fassign,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x004DD1C0,func,__cftoe,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD1C0,func,__cftoe,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftoe(undefined4, undefined4, undefined4, undefined4)"
 0x004DD240,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftoe2,
-0x004DD330,func,__cftof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD330,func,__cftof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftof(undefined4, undefined4, undefined4)"
 0x004DD3A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftof2,
-0x004DD460,func,__cftog,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD460,func,__cftog,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftog(undefined4, undefined4, undefined4, undefined4)"
 0x004DD510,data,__cfltcvt,,sms,confirmed,MSVC CRT global (xrefs=1),
 0x004DD580,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __shift,
-0x004DD5B0,func,__dosmaperr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD5B0,func,__dosmaperr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _dosmaperr(undefined4)
 0x004DD630,func,__errno,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DD640,func,,,waiver,confirmed,CRT ___doserrno: returns &ptd->_tdoserrno (per-thread DOS error); sits beside __errno,
 0x004DD650,func,__mbctoupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DD6E0,func,__mbsnbcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DD790,func,__setmbcp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DD6E0,func,__mbsnbcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbsnbcpy(undefined4, undefined4, undefined4)"
+0x004DD790,func,__setmbcp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _setmbcp(undefined4)
 0x004DD9C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: getSystemCP,
 0x004DDA10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _CPtoLCID,
 0x004DDA70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: setSBCS,
 0x004DDAB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___initmbctable,
-0x004DDAC0,func,__filbuf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DDBC0,func,__read,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DDC40,func,__read_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DDE70,func,__write,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DDEF0,func,__write_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DE1D0,func,__input,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DDAC0,func,__filbuf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _filbuf(undefined4)
+0x004DDBC0,func,__read,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _read(undefined4, undefined4, undefined4)"
+0x004DDC40,func,__read_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _read_lk(undefined4, undefined4, undefined4)"
+0x004DDE70,func,__write,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _write(undefined4, undefined4, undefined4)"
+0x004DDEF0,func,__write_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _write_lk(undefined4, undefined4, undefined4)"
+0x004DE1D0,func,__input,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _input(undefined4, undefined4, undefined4)"
 0x004DEDED,data,,,waiver,confirmed,interior of / adjacent to __input; named at its base or owned by that subsystem,
 0x004DEE70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hextodec,
 0x004DEEB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __inc,
 0x004DEEE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __un_inc,
 0x004DEF00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __whiteout,
-0x004DEF30,func,__mbsnbicoll,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DEF30,func,__mbsnbicoll,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbsnbicoll(undefined4, undefined4, undefined4)"
 0x004DEF70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___wtomb_environ,
-0x004DF000,func,__commit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF000,func,__commit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _commit(undefined4)
 0x004DF1A0,func,__XcptFilter,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DF2F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: xcptlookup,
-0x004DF420,func,__ismbblead,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DF420,func,__ismbblead,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _ismbblead(undefined4)
 0x004DF490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x_ismbbtype,
 0x004DF4D0,func,__setenvp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DF5C0,func,__setargv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -221,15 +221,15 @@ va,kind,name,display,source,confidence,notes,type
 0x004DFDA0,func,__ioterm,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DFE00,func,__heap_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004DFE80,func,__FF_MSGBANNER,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004DFEC0,func,__NMSG_WRITE,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004DFEC0,func,__NMSG_WRITE,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _NMSG_WRITE(undefined4)
 0x004E00F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeW,
 0x004E02B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeA,
 0x004E03E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __lseek,
-0x004E0460,func,__lseek_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E0460,func,__lseek_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _lseek_lk(undefined4, undefined4, undefined4)"
 0x004E04F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __getbuf,
-0x004E0540,func,__isatty,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E0570,func,_wctomb,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E05D0,func,__wctomb_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E0540,func,__isatty,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _isatty(undefined4)
+0x004E0570,func,_wctomb,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl wctomb(undefined4, undefined4)"
+0x004E05D0,func,__wctomb_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _wctomb_lk(undefined4, undefined4)"
 0x004E0670,func,__aulldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E06E0,func,__aullrem,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E0810,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __get_lc_time,
@@ -255,12 +255,12 @@ va,kind,name,display,source,confidence,notes,type
 0x004E23D0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_resize_block,
 0x004E24A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_heap_check,
 0x004E2680,func,__alloc_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E27C0,func,__set_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E2870,func,__free_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E2910,func,__get_osfhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E2A20,func,__lock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E2A90,func,__unlock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E2AE0,func,__sopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E27C0,func,__set_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _set_osfhnd(undefined4, undefined4)"
+0x004E2870,func,__free_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _free_osfhnd(undefined4)
+0x004E2910,func,__get_osfhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _get_osfhandle(undefined4)
+0x004E2A20,func,__lock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _lock_fhandle(undefined4)
+0x004E2A90,func,__unlock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _unlock_fhandle(undefined4)
+0x004E2AE0,func,__sopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _sopen(undefined4, undefined4, undefined4, undefined4)"
 0x004E2EF8,data,,,waiver,confirmed,interior of / adjacent to __sopen; named at its base or owned by that subsystem,
 0x004E2F70,func,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,long __stdcall __CxxUnhandledExceptionFilter(_EXCEPTION_POINTERS *)
 0x004E2FE0,func,?terminate@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,void __cdecl terminate(void)
@@ -270,34 +270,34 @@ va,kind,name,display,source,confidence,notes,type
 0x004E3100,func,?_ValidateRead@@YAHPBXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _ValidateRead(const void *, unsigned int)"
 0x004E3120,func,?_ValidateWrite@@YAHPAXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _ValidateWrite(void *, unsigned int)"
 0x004E3140,func,?_ValidateExecute@@YAHP6GHXZ@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,int __cdecl _ValidateExecute(int (__stdcall *)(void))
-0x004E3160,func,_calloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3250,func,__callnewh,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3160,func,_calloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl calloc(undefined4, undefined4)"
+0x004E3250,func,__callnewh,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _callnewh(undefined4)
 0x004E3290,func,__statusfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E32B0,func,__clearfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E32D0,func,__control87,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3310,func,__controlfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E32D0,func,__control87,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _control87(undefined4, undefined4)"
+0x004E3310,func,__controlfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _controlfp(undefined4, undefined4)"
 0x004E3370,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __abstract_cw,
 0x004E3420,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hw_cw,
 0x004E34B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __abstract_sw,
 0x004E34F0,func,,,waiver,confirmed,CRT __amsg_exit(2) fatal-error stub (runtime error R6002-class),
-0x004E3500,func,__ZeroTail,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3500,func,__ZeroTail,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ZeroTail(undefined4, undefined4)"
 0x004E3570,func,__IncMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E35E0,func,__RoundMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E35E0,func,__RoundMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _RoundMan(undefined4, undefined4)"
 0x004E3690,func,__CopyMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E36B0,func,__FillZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E36C0,func,__IsZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E36E0,func,__ShrMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3790,func,__ld12cvt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3960,func,__ld12tod,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3980,func,__ld12tof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E36B0,func,__FillZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _FillZeroMan(undefined4)
+0x004E36C0,func,__IsZeroMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _IsZeroMan(undefined4)
+0x004E36E0,func,__ShrMan,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ShrMan(undefined4, undefined4)"
+0x004E3790,func,__ld12cvt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ld12cvt(undefined4, undefined4, undefined4)"
+0x004E3960,func,__ld12tod,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ld12tod(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004E3980,func,__ld12tof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ld12tof(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004E3A30,func,__atodbl,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E3AB0,func,__atoflt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E3AF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fptostr,
 0x004E3B80,func,__fltout2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E3C10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___dtold,
 0x004E3CD0,func,_mbtowc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3D30,func,__mbtowc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E3E70,func,__ungetc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3D30,func,__mbtowc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbtowc_lk(undefined4, undefined4, undefined4)"
+0x004E3E70,func,__ungetc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ungetc_lk(undefined4, undefined4)"
 0x004E3F00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringW,
 0x004E4140,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
 0x004E4180,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringA,
@@ -306,7 +306,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E46F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: findenv,
 0x004E4750,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: copy_environ,
 0x004E47C0,func,__fcloseall,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E4860,func,_wcslen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E4860,func,_wcslen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl wcslen(undefined4)
 0x004E4880,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtMessageBoxA,
 0x004E4920,func,__Getdays,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004E4A10,func,__Getmonths,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
@@ -319,11 +319,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004E5C80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x64toa,
 0x004E5D40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoW,
 0x004E5E70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoA,
-0x004E6270,func,__chsize_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E63B0,func,__onexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E6440,func,_atexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E6270,func,__chsize_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _chsize_lk(undefined4, undefined4)"
+0x004E63B0,func,__onexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _onexit(undefined4)
+0x004E6440,func,_atexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atexit(undefined4)
 0x004E64A0,func,_abort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E6730,func,_raise,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E6730,func,_raise,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl raise(undefined4)
 0x004E6910,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: siglookup,
 0x004E6970,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___addl,
 0x004E69A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___add_12,
@@ -335,19 +335,19 @@ va,kind,name,display,source,confidence,notes,type
 0x004E7219,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem,
 0x004E7269,data,,,waiver,confirmed,interior of / adjacent to _raise; named at its base or owned by that subsystem,
 0x004E7320,func,_$I10_OUTPUT,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E76C0,func,_realloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E7890,func,__mbschr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E7950,func,__strdup,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E76C0,func,_realloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl realloc(undefined4, undefined4)"
+0x004E7890,func,__mbschr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbschr(undefined4, undefined4)"
+0x004E7950,func,__strdup,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _strdup(undefined4)
 0x004E7980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___tzset,
 0x004E79E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __tzset_lk,
 0x004E8160,func,__towupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E8200,func,_iswctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E8310,func,__setmode_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E8380,func,__msize,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E8200,func,_iswctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl iswctype(undefined4, undefined4)"
+0x004E8310,func,__setmode_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _setmode_lk(undefined4, undefined4)"
+0x004E8380,func,__msize,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _msize(undefined4)
 0x004E83F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___ld12mul,
 0x004E86A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___multtenpow12,
-0x004E8720,func,_wcstombs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E8780,func,__wcstombs_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E8720,func,_wcstombs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl wcstombs(undefined4, undefined4, undefined4)"
+0x004E8780,func,__wcstombs_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _wcstombs_lk(undefined4, undefined4, undefined4)"
 0x004E89F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
 0x004E8A2E,func,_RtlUnwind@16,,sms,confirmed,"IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall RtlUnwind(undefined4, undefined4, undefined4, undefined4)"
 0x004E95C0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
