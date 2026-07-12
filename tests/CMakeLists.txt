@@ -262,3 +262,50 @@ if(FX_FA_ROOT)
         LABELS "integration"
         TIMEOUT 3600)
 endif()
+
+# Real-media install mode: registered only when FX_FA_DISC1 and FX_FA_DISC2 both
+# point at the retail discs (mounted, or a copy of each root). Where FX_FA_ROOT
+# proves the pipeline that reads an installed tree, this proves the one that
+# *writes* it — the ESA archive and the `fx install` engine, against the user's
+# own media. Both are needed: disc 2 carries no installer, disc 1 no LIBs but the
+# archive. Set FX_FA_DISC_FULL=ON to also execute the full 989 MiB install (the
+# plan for it is checked either way — a plan is pure).
+#
+# When FX_FA_ROOT is also set, the cross-build oracle runs: a fresh install off
+# the 1.00F discs must differ from that 1.02F tree in exactly the set the patch
+# rewrites. That check is the executable statement of the gap the RTPatch codec
+# closes; the discs are 1.00F while db/ describes 1.02F.
+set(FX_FA_DISC1 "" CACHE PATH "FA disc 1 (installer) for real-media install tests")
+set(FX_FA_DISC2 "" CACHE PATH "FA disc 2 (libraries) for real-media install tests")
+option(FX_FA_DISC_FULL "Execute the full 989 MiB install in the disc test" OFF)
+if(NOT FX_FA_DISC1 AND DEFINED ENV{FX_FA_DISC1})
+    set(FX_FA_DISC1 "$ENV{FX_FA_DISC1}")
+endif()
+if(NOT FX_FA_DISC2 AND DEFINED ENV{FX_FA_DISC2})
+    set(FX_FA_DISC2 "$ENV{FX_FA_DISC2}")
+endif()
+if(FX_FA_DISC1 AND FX_FA_DISC2)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    set(_fa_disc_args "")
+    if(FX_FA_ROOT)
+        list(APPEND _fa_disc_args --fa-root "${FX_FA_ROOT}")
+    endif()
+    if(FX_FA_DISC_FULL)
+        list(APPEND _fa_disc_args --full)
+    endif()
+    add_test(NAME fa_disc_install
+        COMMAND Python3::Interpreter
+            "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa_disc.py" verify
+            --fx "$<TARGET_FILE:fx>"
+            --disc1 "${FX_FA_DISC1}"
+            --disc2 "${FX_FA_DISC2}"
+            --manifest "${CMAKE_CURRENT_SOURCE_DIR}/integration/fa-esa.sha256"
+            --work-dir "${CMAKE_CURRENT_BINARY_DIR}/fa-disc-work"
+            ${_fa_disc_args})
+    set_tests_properties(fa_disc_install PROPERTIES
+        LABELS "integration"
+        TIMEOUT 3600)
+elseif(FX_FA_DISC1 OR FX_FA_DISC2)
+    message(WARNING "FX_FA_DISC1 and FX_FA_DISC2 must both be set; "
+                    "the real-media install test is not registered.")
+endif()

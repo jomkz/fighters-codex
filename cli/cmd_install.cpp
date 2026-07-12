@@ -53,13 +53,16 @@ const char* status_name(InstallStatus s) {
     return "?";
 }
 
+// Under --json, stdout carries the plan and nothing else — fxe's first-run parses
+// it — so the scan banner goes to stderr alongside the diagnostics.
 std::vector<DiscSource> scan_all(const Args& a) {
     std::vector<DiscSource> discs;
+    FILE* out = a.json ? stderr : stdout;
     for (const auto& root : a.discs) {
         DiscSource d = install_scan(root);
-        if (d.disc) printf("disc %d: %s\n", d.disc, root.c_str());
+        if (d.disc) fprintf(out, "disc %d: %s\n", d.disc, root.c_str());
         else {
-            printf("disc ?: %s\n", root.c_str());
+            fprintf(out, "disc ?: %s\n", root.c_str());
             fprintf(stderr, "  not an FA disc (no SETUP.ESA + SETUP.SSF, no LIBs)\n");
         }
         discs.push_back(std::move(d));
@@ -187,25 +190,26 @@ int run(int argc, char** argv, bool execute, bool verify_only) {
     if (!plan.errors.empty()) return 1;
     if (!execute && !verify_only) return 0;
 
+    FILE* out = a.json ? stderr : stdout;
     std::vector<std::string> errors;
     if (execute) {
-        printf("\ninstalling to %s\n", a.dest.c_str());
+        fprintf(out, "\ninstalling to %s\n", a.dest.c_str());
         if (!install_execute(discs, plan, a.dest, a.json ? nullptr : progress, nullptr,
                              &errors)) {
             for (const auto& e : errors) fprintf(stderr, "error: %s\n", e.c_str());
             return 1;
         }
-        printf("\ninstalled %llu bytes to %s (build %s)\n",
-               (unsigned long long)plan.bytes, a.dest.c_str(),
-               install_build_name(plan.build));
+        fprintf(out, "\ninstalled %llu bytes to %s (build %s)\n",
+                (unsigned long long)plan.bytes, a.dest.c_str(),
+                install_build_name(plan.build));
     }
     if (verify_only || (execute && a.verify)) {
-        printf("verifying against the disc...\n");
+        fprintf(out, "verifying against the disc...\n");
         if (!install_verify(discs, plan, a.dest, &errors)) {
             for (const auto& e : errors) fprintf(stderr, "error: %s\n", e.c_str());
             return 1;
         }
-        printf("verified: every installed byte matches the disc\n");
+        fprintf(out, "verified: every installed byte matches the disc\n");
     }
     return 0;
 }

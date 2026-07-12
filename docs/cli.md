@@ -890,7 +890,7 @@ the game would otherwise stream off the disc, so no disc is needed to play.
 | `--overwrite` | replace files already in the destination. Files `SKIP_ON_REMOVE` marks as the game's own — pilots, missions, `EA.CFG`, screen captures — are preserved even so |
 | `--no-cd-resident` | skip the CD-resident LIBs (a ~110 MB install that still needs a disc) |
 | `--any-media` | proceed on media whose build cannot be fingerprinted |
-| `--json` | machine-readable plan (the shape fxe's first-run reads) |
+| `--json` | machine-readable plan (the shape fxe's first-run reads). Under `--json`, stdout carries the plan and nothing else; the scan banner, progress, and diagnostics all go to stderr |
 
 #### `fx install plan <disc-dir>…`
 
@@ -921,6 +921,9 @@ verified: every installed byte matches the disc
 The discs carry the **1.00F** build, while the reconstruction database describes
 the patched **1.02F** one — `fx install` always prints which build it wrote. See
 [fa/formats/ESA.md § File Inventory](fa/formats/ESA.md#file-inventory).
+
+Everything above is exercised against the retail discs by the `fa_disc_install`
+integration test — see [development.md § Real-media install mode](development.md#real-media-install-mode-fx_fa_disc1fx_fa_disc2).
 
 #### `fx install verify <disc-dir>… -d <dir>`
 

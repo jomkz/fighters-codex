@@ -7,6 +7,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **tests** real-media install harness (`fa_disc_install`, behind `FX_FA_DISC1` +
+  `FX_FA_DISC2`): checks the install plan for both scripts, hashes every extracted
+  `SETUP.ESA` entry against a committed manifest, repacks the 110 MB archive
+  byte-for-byte, and performs a real minimal install that it verifies back against the
+  disc. The v0.8.2 disc verification was done by hand; now it is a test. Adds a
+  **self-oracle** that needs no committed hash — the four entries shipped both inside
+  the archive and loose on Disc 1 must extract to the same bytes — and, when
+  `FX_FA_ROOT` is set alongside, a **cross-build oracle** asserting a fresh 1.00F
+  install differs from a 1.02F tree in exactly the four files the patch rewrites. That
+  oracle is the executable statement of the gap the RTPatch codec will close.
+  `-DFX_FA_DISC_FULL=ON` also executes the full 989 MiB install.
+
+### Fixed
+- **fx-cli** `fx install --json` wrote the disc-scan banner, progress, and completion
+  notices to stdout ahead of the JSON, so the output did not parse — despite that JSON
+  being what fxe's first-run is meant to read. Under `--json`, stdout now carries the
+  plan and nothing else; all human-facing text goes to stderr.
+
 ## [0.8.2] - 2026-07-12
 
 **Install the game from your own discs — and a symbol database deep enough to

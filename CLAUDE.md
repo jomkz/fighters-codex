@@ -32,6 +32,10 @@ issues + native sub-issues = work breakdown. New work belongs under the epic it 
   configure with `-DFX_FA_ROOT=<FA install>` (or the env var) to register the
   `fa_extract_manifest` CTest, which checks every extracted byte against
   tests/integration/fa-extract.sha256 (hashes are facts; the assets stay outside git).
+  The **retail discs** get the same treatment via `-DFX_FA_DISC1=`/`-DFX_FA_DISC2=` (the
+  `fa_disc_install` CTest: ESA manifest + byte-identical repack + a real `fx install` run,
+  and — with `FX_FA_ROOT` set too — the 1.00F-vs-1.02F cross-build oracle). See
+  docs/development.md § Real-media install mode.
   Never commit game assets (`*.LIB`, `*.PIC`, `*.PAL`, …).
 - Ghidra work runs on Fedora (workbench migrated per #120): Ghidra 12.1 + a JDK under
   `~/tools/`, project + corpus under `~/src/fa/`, headless `.sh` launchers in `scripts/ghidra/`
