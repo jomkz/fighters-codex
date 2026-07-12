@@ -76,7 +76,7 @@ follow docs/spec-authoring.md § Subsystem docs. Specs follow docs/spec-authorin
 `tools/check_status.py --check` enforces the template, the front-matter claims, symbol-DB
 coverage, and matrix currency in CI (`docs-status` job) and in ctest (label `docs`); the
 rule covers the rest. The docs tree is also published as a site
-(https://jomkz.github.io/fighters-codex/ — mkdocs.yml, `Docs` CI job): the strict build
+(https://fighterscodex.com/ — mkdocs.yml, `Docs` CI job): the strict build
 fails on broken links/anchors or pages missing from the nav, and links from docs/ to
 files outside the docs tree must be repo blob/tree URLs (also checked). The truth-pass
 lesson: claims that aren't mechanically checked drift — don't add unchecked claims to
