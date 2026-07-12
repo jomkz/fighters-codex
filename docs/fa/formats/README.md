@@ -120,6 +120,7 @@ Files used by the EA disc-based setup program — the install script and splash 
 
 | Format | Spec | Description |
 |--------|------|-------------|
+| ESA | [ESA.md](ESA.md) | EA installer archive — the Disc 1 container holding FA.EXE, the LIBs, and the drivers |
 | SSF | [SSF.md](SSF.md) | EA installer script — plain-text keywords driving the setup UI |
 | RGN | [RGN.md](RGN.md) | Installer UI region maps — splash screen click zones and button sprite atlas |
 

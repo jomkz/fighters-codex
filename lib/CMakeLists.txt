@@ -2,6 +2,7 @@
     src/blast.cpp
     src/pal.cpp
     src/ealib.cpp
+    src/esa.cpp
     src/pic.cpp
     src/seq.cpp
     src/audio.cpp

@@ -1,6 +1,7 @@
 ﻿add_executable(fx
     main.cpp
     cmd_lib.cpp
+    cmd_esa.cpp
     cmd_pic.cpp
     cmd_seq.cpp
     cmd_audio.cpp

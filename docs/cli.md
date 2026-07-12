@@ -833,6 +833,38 @@ Every statement with its source line, keyword, and unquoted arguments.
 
 *See also: [fa/formats/SSF.md](fa/formats/SSF.md)*
 
+## esa — Installer archive
+
+```
+fx esa ls      <SETUP.ESA>
+fx esa info    <SETUP.ESA>
+fx esa extract <SETUP.ESA> <NAME> [NAME ...] [-o dir]
+fx esa unpack  <SETUP.ESA> [-o dir]
+fx esa repack  <SETUP.ESA> <out.ESA>
+```
+
+#### `fx esa ls <SETUP.ESA>`
+
+The directory: each entry's name, label, flags, method (`PKWA`/`NULL`), and
+uncompressed/stored sizes.
+
+#### `fx esa info <SETUP.ESA>`
+
+Entry and method counts, directory size, total uncompressed bytes, and the
+byte-identical repack check.
+
+#### `fx esa extract <SETUP.ESA> <NAME> [-o dir]`
+
+Extract named entries — `PKWA` entries are DCL-decoded, `NULL` entries copied.
+`fx esa unpack` does the same for every entry.
+
+#### `fx esa repack <SETUP.ESA> <out.ESA>`
+
+Rebuild the container from its own directory (payloads kept stored); byte-identical
+for a well-formed archive.
+
+*See also: [fa/formats/ESA.md](fa/formats/ESA.md)*
+
 ## mc — Mission condition DLLs
 
 ```
