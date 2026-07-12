@@ -331,14 +331,19 @@ the `validation:` block in
 means a broken link, a broken `#anchor`, or a page missing from the nav fails
 the build — site health is CI-enforced, not aspirational.
 
-The site is served from the custom domain `fighterscodex.com`. Because Pages is
-deployed from a workflow artifact rather than a branch, GitHub does not inject
-the domain for us: `docs/CNAME` carries it, mkdocs copies that file verbatim
-into `site/`, and the artifact is what Pages serves. **Deleting `docs/CNAME`
-un-sets the custom domain on the next deploy**, so leave it in place. The apex
-resolves via A/AAAA records to GitHub's Pages IPs, `www` is a CNAME to
-`jomkz.github.io`, and `fighterscodex.org` is a registrar-level 301 redirect to
-the `.com`.
+The site is served from the custom domain `fighterscodex.com`. The domain lives
+in the **repository's Pages configuration**, not in the deployed content: because
+Pages is deployed from a workflow artifact rather than a branch, GitHub does *not*
+read a `CNAME` file out of the artifact to set it (that behaviour is branch-deploy
+only). `docs/CNAME` is still committed — mkdocs copies it verbatim into `site/`,
+and it is the conventional backstop GitHub's own docs ask for — but it is not what
+makes the domain take effect, and editing it alone will not change the domain.
+
+DNS: the apex resolves via A/AAAA records to GitHub's Pages IPs, `www` is a CNAME
+to `jomkz.github.io` (registrar DNS forms want the bare hostname — a trailing dot
+is zone-file syntax and produces a malformed record), and `fighterscodex.org` is a
+registrar-level redirect to the `.com`. HTTPS is enforced, on a GitHub-provisioned
+Let's Encrypt certificate.
 
 To preview locally (the site toolchain is the repo's only pip dependency,
 pinned in
