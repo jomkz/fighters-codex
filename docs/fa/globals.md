@@ -385,6 +385,27 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 **Binary: `COMMSC32.DLL`**
 
+**Binary: `MSAPI.DLL`**
+
+### Matchmaking / internet-play client (MSAPI)
+
+[`msapi.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/msapi.csv) · [page](matchmaking.md) — 12 named referenced globals
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x1001D098` | `ms_running` | re | Running flag: set in initializeMS, cleared by closeMS / ms_disconnect. |
+| `0x1001D09C` | `ms_conn_state` | re | Connection-state/idle flag toggled around operations; set when the link is torn down. |
+| `0x1001D0A0` | `ms_list_dirty` | re | Game-list-dirty flag: resetMSfilter sets it; requestMSgame refetches when set and clears it when the list is exhausted. |
+| `0x10020BD0` | `ms_recv_thread` | re | MFC CWinThread* background receive pump (AfxBeginThread, CREATE_SUSPENDED); m_hThread at +0x28, Resume/Suspended by the login exports. |
+| `0x10020BD4` | `ms_game_list_tail` | re | Game-list append cursor (last node); advanced as 'P' records arrive. |
+| `0x10020BD8` | `ms_game_list_head` | re | Game-list head sentinel node (0x24 bytes; allocated in initializeMS). |
+| `0x10020BDC` | `ms_game_selected` | re | Current game-list selection/iteration node (walked by requestMSgame, reset by resetMSfilter). |
+| `0x10020BFC` | `ms_socket` | re | Connected TCP socket handle (AF_INET/SOCK_STREAM); first arg to every send/recv; 0 when not connected. |
+| `0x10020C08` | `ms_host_cookie` | re | Host-mode cookie/handle set by loginMShost, cleared by loginMSPlayer. |
+| `0x10020C10` | `ms_record_size` | re | Negotiated record size in bytes for game/player records (send/recv payload length). |
+| `0x10020C14` | `ms_list_inited` | re | Game-list-initialised flag (set in initializeMS; guards teardown in closeMS). |
+| `0x10020C18` | `ms_game_count` | re | Number of games accumulated in the list (incremented per 'P' record, reset by resetMSfilter). |
+
 <!-- END GENERATED: globals-registry -->
 
 ## Notable Globals for C Reimplementation

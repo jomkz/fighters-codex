@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="The matchmaker link: the game executable links six MSAPI exports; connectMS reads the Server IP/Port from the registry, opens a TCP socket and does the WAKEUP/OK handshake; every other export is a single-byte command with network-order length-prefixed payloads to the EA matchmaker server over Winsock.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .setup{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .run{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .dec{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .ext{fill:#f0eef6;stroke:#6f5b9a;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:11px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .setup{fill:#1e2c3e;stroke:#6f9bd6;} .run{fill:#1d2c22;stroke:#6fae7f;} .dec{fill:#322a1a;stroke:#d9b45f;} .ext{fill:#282436;stroke:#9a86c7;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .setup{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .run{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .dec{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .ext{fill:#282436;stroke:#9a86c7;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .setup{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .run{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .dec{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .ext{fill:#f0eef6;stroke:#6f5b9a;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="edge" stroke="none" fill="context-stroke"/></marker></defs>
+  <text x="430" y="22" text-anchor="middle" class="title">MSAPI.DLL — EA matchmaker client (Winsock)</text>
+
+  <rect class="run" x="300" y="38" width="260" height="46" rx="6"/>
+  <text x="430" y="58" text-anchor="middle" class="lbl">the game executable</text>
+  <text x="430" y="75" text-anchor="middle" class="sub mono">initializeMS · connectMS · sendMSresults · close</text>
+
+  <path class="edge" d="M430,84 L430,108" marker-end="url(#arrow)"/>
+  <text x="490" y="100" class="el">links 6 of 14 exports</text>
+
+  <rect class="setup" x="250" y="108" width="360" height="52" rx="6"/>
+  <text x="430" y="128" text-anchor="middle" class="lbl mono">MSAPI.DLL — MServerDLL</text>
+  <text x="430" y="146" text-anchor="middle" class="sub">14 *MS* exports · MFC CSocket · statically-linked (framework waived)</text>
+
+  <!-- registry endpoint -->
+  <rect class="dec" x="30" y="196" width="230" height="52" rx="6"/>
+  <text x="145" y="216" text-anchor="middle" class="lbl mono">HKLM\SOFTWARE\...\Matchmaker</text>
+  <text x="145" y="234" text-anchor="middle" class="sub">Server IP · Server Port (ms_reg_*)</text>
+  <path class="edge" d="M260,222 L300,222 L300,208" marker-end="url(#arrow)"/>
+
+  <path class="edge" d="M430,160 L430,196" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="300" y="196" width="330" height="52" rx="6"/>
+  <text x="465" y="216" text-anchor="middle" class="lbl mono">connectMS</text>
+  <text x="465" y="234" text-anchor="middle" class="sub">socket(AF_INET, SOCK_STREAM) · connect · send "WAKEUP" → "OK"</text>
+
+  <path class="edge" d="M430,248 L430,284" marker-end="url(#arrow)"/>
+  <text x="437" y="270" class="el mono">1-byte opcode + htonl u32-length payloads</text>
+
+  <rect class="box" x="286" y="284" width="358" height="52" rx="6"/>
+  <text x="465" y="304" text-anchor="middle" class="lbl mono">ms_send_all / ms_recv_all  ·  ms_send_u32 / ms_recv_u32</text>
+  <text x="465" y="322" text-anchor="middle" class="sub">u i h p r s d t f v z x l  ·  'O' / 'OK' / 'K' acks</text>
+
+  <path class="edge" d="M465,336 L465,364" marker-end="url(#arrow)"/>
+  <rect class="ext" x="300" y="364" width="330" height="30" rx="6"/>
+  <text x="465" y="384" text-anchor="middle" class="lbl mono">EA matchmaker server (TCP / Winsock)</text>
+</svg>
