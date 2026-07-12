@@ -15,9 +15,9 @@ va,kind,name,display,source,confidence,notes,type
 0x10002440,func,getMSdatafile,getMSdatafile,re,confirmed,"Export ord5: opcode 'x' — download server data-file by name into a buffer; client acks 'O', expects 'K'.",
 0x10002570,func,closeMS,closeMS,re,confirmed,Export ord1: opcode 'l' — quit/logout; closesocket(ms_socket); free the game list + DeleteCriticalSection; clear ms_running.,
 0x10002630,func,ms_recv_all,ms_recv_all,re,confirmed,recv() exactly N bytes in a loop ('Read Packet Error - Correcting...' on short read).,
-0x10002680,func,ms_send_all,ms_send_all,re,confirmed,send() exactly N bytes in a loop ('Send Packet Error - Correcting...' on short write).,
-0x100026D0,func,ms_recv_u32,ms_recv_u32,re,confirmed,recv 4 bytes then ntohl -> host u32 (network-order length prefix).,
-0x10002700,func,ms_send_u32,ms_send_u32,re,confirmed,htonl then send 4 bytes (network-order length prefix).,
+0x10002680,func,ms_send_all,ms_send_all,re,confirmed,send() exactly N bytes in a loop ('Send Packet Error - Correcting...' on short write).,"undefined4 __cdecl ms_send_all(undefined4, undefined4, undefined4)"
+0x100026D0,func,ms_recv_u32,ms_recv_u32,re,confirmed,recv 4 bytes then ntohl -> host u32 (network-order length prefix).,"undefined4 __cdecl ms_recv_u32(undefined4, undefined4)"
+0x10002700,func,ms_send_u32,ms_send_u32,re,confirmed,htonl then send 4 bytes (network-order length prefix).,"undefined4 __cdecl ms_send_u32(undefined4, undefined4)"
 0x10002730,func,ms_disconnect,ms_disconnect,re,confirmed,"Receive-worker teardown: send 'l' quit opcode, closesocket, free game list + critical section.",
 0x10002800,func,ms_reg_open,ms_reg_open,re,confirmed,Registry-cache ctor: RegCreateKeyExA the HKLM SOFTWARE\... base keys (this+0x308/0x30C/0x310) for the Server IP/Port + data-file cache.,
 0x10002950,func,ms_reg_close,ms_reg_close,re,confirmed,Registry-cache dtor: RegFlushKey + RegCloseKey the open keys.,

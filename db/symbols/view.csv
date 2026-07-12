@@ -4,7 +4,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0040D810,func,VIEWFromObject,VIEWFromObject,re,inferred,position the view from the tracked object (_objPtrs[view+0x1C]) and its state,
 0x0040E240,func,VIEWUpdateByType,VIEWUpdateByType,re,inferred,per-object-type view update (object class 7/0xC/0xF branches),
 0x0040E2C0,func,VIEWFitDistance,VIEWFitDistance,re,inferred,compute camera stand-off distance from the object radius (_ObjRadius),
-0x0040E330,func,VIEWAngleScale,VIEWAngleScale,re,inferred,angle-to-scale clamp helper for the view transform,
+0x0040E330,func,VIEWAngleScale,VIEWAngleScale,re,inferred,angle-to-scale clamp helper for the view transform,undefined4 __cdecl VIEWAngleScale(undefined4)
 0x0040E380,func,_VIEWImmediateVisibility@0,VIEWImmediateVisibility,sms,confirmed,force the view to immediate (no-transition) visibility,undefined4 __stdcall VIEWImmediateVisibility(void)
 0x0040E3A0,func,VIEWInit,VIEWInit,re,inferred,allocate/initialise a view slot (MMPushAllocId; zero +0x1C/+0x1E),
 0x0040E450,func,VIEWFree,VIEWFree,re,inferred,free the view's allocated buffer (_MMFreePtr on +0x60),

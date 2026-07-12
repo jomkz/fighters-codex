@@ -99,6 +99,14 @@ jobs:
           python3 tools/gen_signatures.py --self-test
           python3 tools/gen_signatures.py --check
 
+      # db/ call-site signature recovery (#453). --check needs the local Ghidra
+      # export and no-ops on CI (it is never committed, #342); the self-test —
+      # which is where the recovery rule's guard rails live — runs here.
+      - name: Check db/ call-site signature recovery
+        run: |
+          python3 tools/recover_signatures.py --self-test
+          python3 tools/recover_signatures.py --check
+
   macos:
     name: macos (informational)
     runs-on: macos-latest

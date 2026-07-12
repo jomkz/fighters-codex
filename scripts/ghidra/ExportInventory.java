@@ -5,12 +5,14 @@
 //   functions.csv  va,name,size                 -- every function in the image
 //   globals.csv    va,name,xref_count,subsystems -- data symbols with >=1 code xref
 //   ranges.csv     slug,range,bytes,bytes_in_functions,functions -- per manifest range
+//   callsites.csv  callee_va,site_va,cleanup_bytes -- caller-side stack cleanup (#453)
 //
 // Subsystem tags come from <repo>/db/subsystems.csv (ranges) and
 // <repo>/db/symbols/*.csv (explicit claims; a claim overrides range membership).
 //
 // Invoke: scripts/ghidra/export_inventory.sh  (passes the repo root as scriptArg)
-// The output is committed; see db/README.md for the canonical-project rule.
+// The output is LOCAL-ONLY and never committed (#342); see db/README.md for the
+// canonical-project rule.
 //
 // @category FightersAnthology
 // @author fighters-toolkit
@@ -22,7 +24,10 @@ import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.DataIterator;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionManager;
+import ghidra.program.model.listing.Instruction;
+import ghidra.program.model.scalar.Scalar;
 import ghidra.program.model.symbol.Reference;
+import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.program.model.symbol.Symbol;
 
@@ -186,6 +191,66 @@ public class ExportInventory extends GhidraScript {
             }
         }
         println("ranges.csv written");
+
+        // --- callsites.csv --------------------------------------------------
+        // Evidence for the cdecl signature recovery in tools/recover_signatures.py (#453).
+        //
+        // A cdecl callee cleans nothing (`ret 0`), so its own code proves no argument count.
+        // The proof is at the call site: a cdecl caller pops its own arguments right after
+        // the CALL, with `ADD ESP, N` -- or, for a single dword, MSVC's `POP ECX` idiom.
+        // Because cdecl passes NO arguments in registers, that byte count is the FULL arity,
+        // with nothing hidden. (Every register-based scheme we measured -- caller-side and
+        // callee-side alike -- misjudged fastcall arguments 8-16% of the time, which is why
+        // only this one is exported as evidence. See db/types/README.md.)
+        //
+        // The raw observation is exported and no conclusion drawn: the consensus rule lives
+        // in tools/, because "every call site agrees" is the entire basis for trusting it.
+        int siteCount = 0;
+        try (BufferedWriter w = open(new File(outDir, "callsites.csv"))) {
+            w.write("callee_va,site_va,cleanup_bytes\n");
+            for (Map.Entry<Long, Function> e : functions.entrySet()) {
+                Address entry = toAddr(e.getKey());
+                ReferenceIterator ri =
+                        currentProgram.getReferenceManager().getReferencesTo(entry);
+                while (ri.hasNext()) {
+                    Reference ref = ri.next();
+                    if (!ref.getReferenceType().isCall()) continue;
+                    Instruction call = getInstructionAt(ref.getFromAddress());
+                    if (call == null) continue;
+                    w.write(String.format("0x%08X,0x%08X,%d\n",
+                            e.getKey(), ref.getFromAddress().getOffset(),
+                            cleanupAfter(call)));
+                    siteCount++;
+                }
+            }
+        }
+        println("callsites.csv: " + siteCount + " call sites");
+    }
+
+    /** Bytes the caller pops immediately after this CALL, or -1 if it cannot be read off.
+     *
+     *  MSVC often merges the cleanup of several consecutive calls into one ADD ESP, or defers
+     *  it entirely. Such a site yields NO evidence (-1) rather than a wrong small number --
+     *  silence, not a guess. tools/ then refuses any callee whose sites do not all agree.
+     */
+    private int cleanupAfter(Instruction call) {
+        Instruction in = call.getNext();
+        if (in == null) return -1;
+        String mn = in.getMnemonicString().toUpperCase();
+
+        if (mn.equals("ADD") && "ESP".equalsIgnoreCase(in.getDefaultOperandRepresentation(0))) {
+            Object[] ops = in.getOpObjects(1);
+            if (ops.length > 0 && ops[0] instanceof Scalar) {
+                return (int) ((Scalar) ops[0]).getUnsignedValue();
+            }
+            return -1;
+        }
+        // `POP ECX` / `POP EDX` -- MSVC's idiom for discarding a single dword argument.
+        if (mn.equals("POP")) {
+            String r = in.getDefaultOperandRepresentation(0);
+            if ("ECX".equalsIgnoreCase(r) || "EDX".equalsIgnoreCase(r)) return 4;
+        }
+        return -1;
     }
 
     /** Subsystem slug a function VA belongs to, or null. Claims win over ranges. */

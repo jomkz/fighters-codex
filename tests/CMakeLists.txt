@@ -176,6 +176,19 @@ if(Python3_FOUND)
             "${PROJECT_SOURCE_DIR}/tools/gen_signatures.py" --check)
     set_tests_properties(gen_signatures_selftest gen_signatures_currency
         PROPERTIES LABELS "docs")
+
+    # db/ call-site signature recovery (#453). The currency leg needs the local
+    # Ghidra export (db/inventory/*/callsites.csv) and no-ops without it, exactly
+    # like the coverage checks — but the self-test, which is where the recovery
+    # rule's guard rails live, runs everywhere.
+    add_test(NAME recover_signatures_selftest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/recover_signatures.py" --self-test)
+    add_test(NAME recover_signatures_currency
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/recover_signatures.py" --check)
+    set_tests_properties(recover_signatures_selftest recover_signatures_currency
+        PROPERTIES LABELS "docs")
 endif()
 
 # Real-asset integration mode: registered only when FX_FA_ROOT points at a

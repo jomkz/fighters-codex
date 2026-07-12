@@ -28,6 +28,7 @@ printed note; everything else still runs.
 edit db/symbols/<slug>.csv            # record/propose names + types (the DB is canonical)
 edit db/types/<binary>/*.h            # recovered struct layouts (optional; FA.EXE at db/types/*.h)
 python3 tools/gen_signatures.py --write     # materialize the signatures FA.SMS names encode
+python3 tools/recover_signatures.py --write # recover cdecl signatures from call sites
 scripts/ghidra/apply_symbols.sh  [BINARY]   # apply names to the Ghidra project (default FA.EXE)
 scripts/ghidra/apply_types.sh    [BINARY]   # apply db/types/ + the type column
 scripts/ghidra/export_inventory.sh [BINARY] # re-export db/inventory/<binary>/ ground truth
@@ -79,7 +80,7 @@ One row per symbol the subsystem claims. Columns:
 | `source` | `sms` (from FA.SMS), `re` (recovered by this program), `waiver` (deliberately not named — `notes` must say why) |
 | `confidence` | `confirmed` or `inferred` ([spec-authoring.md](../docs/spec-authoring.md) vocabulary) |
 | `notes` | short role note; **required** for waivers; carries attribution when a name was corroborated externally |
-| `type` | C type (data: `u32`, `SEQGR *`, `char[16]`; func: the full signature, e.g. `char __fastcall COLFlatGround(long, F24_POINT3 *, F24_POINT3 *, F24_POINT3 *)`). Must resolve to a builtin or a [`db/types/`](types/README.md) declaration — `check_status.py` enforces this; **must be empty on waivers**. Func signatures the FA.SMS name already encodes are materialized by `tools/gen_signatures.py` (see [db/types/README.md](types/README.md)) |
+| `type` | C type (data: `u32`, `SEQGR *`, `char[16]`; func: the full signature, e.g. `char __fastcall COLFlatGround(long, F24_POINT3 *, F24_POINT3 *, F24_POINT3 *)`). Must resolve to a builtin or a [`db/types/`](types/README.md) declaration — `check_status.py` enforces this; **must be empty on waivers**. Func signatures the FA.SMS name already encodes are materialized by `tools/gen_signatures.py`; those the name does not encode are recovered from call-site evidence by `tools/recover_signatures.py` (see [db/types/README.md](types/README.md)) |
 
 Naming convention for `re` rows: follow the subsystem's FA.SMS prefix and casing
 (`OBJ…`, `T_…`, `Setup…`) so decompiled code reads uniformly — provenance lives in
@@ -128,6 +129,7 @@ against a committed inventory. The run's result is the committed
 | `functions.csv` | `va,name,size` for every function in the program |
 | `globals.csv` | `va,name,xref_count,subsystems` for every data symbol with ≥1 code xref; `subsystems` = slugs whose functions reference it |
 | `ranges.csv` | `slug,range,bytes,bytes_in_functions,functions` per manifest range — the code-coverage signal that exposes undiscovered code |
+| `callsites.csv` | `callee_va,site_va,cleanup_bytes` — the stack cleanup each caller performs after a `CALL`. The evidence `tools/recover_signatures.py` reads to recover cdecl signatures ([#453](https://github.com/jomkz/fighters-codex/issues/453)); `-1` means the site shows no readable cleanup, which is silence, not zero |
 
 ## Definition of done (per subsystem, enforced at `status=complete`)
 

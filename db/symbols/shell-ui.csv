@@ -56,10 +56,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00488490,func,@DialogUpdate@4,DialogUpdate,sms,confirmed,"event dispatcher (2617 B): per-record PointInBox hit-test, focus, slider/rocker/edit input, returns selected item",undefined4 __fastcall DialogUpdate(undefined4)
 0x00488F00,func,DialogWaitUntilTick,,re,confirmed,spin on TIMESystemTime until a target tick reached (returns bool),
 0x00488F30,func,DialogHelper488f30,,re,inferred,small dialog helper (31 B); role not confirmed,
-0x00488F50,func,DialogRadioGroupClear,,re,confirmed,"walk records; for type 1/5 matching group id at +0x17, clear the pressed flag (+0xb) — radio de-select",
+0x00488F50,func,DialogRadioGroupClear,,re,confirmed,"walk records; for type 1/5 matching group id at +0x17, clear the pressed flag (+0xb) — radio de-select",undefined4 __cdecl DialogRadioGroupClear(undefined4)
 0x00488FC0,func,_DialogWhatItem@0,DialogWhatItem,sms,confirmed,return _dialogItemPtr (last record that passed hit-test),undefined4 __stdcall DialogWhatItem(void)
 0x00488FD0,func,DialogScrollbarHit,,re,confirmed,type-7 scrollbar custom hit handler: PointInBox(+0x18) then callback +0x24 (DLG.md hit-zone table),
-0x00489070,func,DialogSliderRelease,,re,confirmed,active-slider mouse handler: on button-up call slider callback +0x2c and clear _activeSlider,
+0x00489070,func,DialogSliderRelease,,re,confirmed,active-slider mouse handler: on button-up call slider callback +0x2c and clear _activeSlider,undefined4 __cdecl DialogSliderRelease(undefined4)
 0x004891A0,func,DialogScrollThumbInit,,re,confirmed,initialise scrollbar thumb position from +0xb/+0xc/+0xe/+0x10 (DLG.md: called on show),
 0x00489220,func,DialogClampThumb,,re,confirmed,clamp scrollbar thumb (+0x12) within track bounds (+0x16/+0x1a/+0x1e),
 0x004892E0,func,@DialogGetPtr@4,DialogGetPtr,sms,confirmed,resolve a record pointer by item id,undefined4 __fastcall DialogGetPtr(undefined4)
@@ -93,7 +93,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0048ADE0,func,_DrawListBox,DrawListBox,sms,confirmed,generic scrollable list-box renderer,
 0x0048B320,func,_DrawCheck,DrawCheck,sms,confirmed,checkbox renderer (type 3),
 0x0048B450,func,DialogRockerRepeat,,re,confirmed,"rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16",
-0x0048B4E0,func,_DrawRocker,DrawRocker,sms,confirmed,type-6 rocker/toggle renderer (two hit halves),
+0x0048B4E0,func,_DrawRocker,DrawRocker,sms,confirmed,type-6 rocker/toggle renderer (two hit halves),undefined4 __cdecl DrawRocker(undefined4)
 0x0048B8B0,func,DialogHelper48b8b0,,re,inferred,rocker/slider draw helper (62 B),
 0x0048B8F0,func,DialogHelper48b8f0,,re,inferred,rocker/slider draw helper (62 B),
 0x0048B930,func,_DrawToggle,DrawToggle,sms,confirmed,two-state toggle renderer (type 8),

@@ -2,7 +2,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00412C10,func,?PlaySeq@@YGDPADJJ@Z,PlaySeq,sms,confirmed,public entry - SeqStart then GetKey/SeqContinue/flush loop then SeqEnd; scattered out-of-range,"char __stdcall PlaySeq(char *, long, long)"
 0x00444F70,func,_SeqInit,SeqInit,sms,confirmed,zero all seq lists/free-lists/arrays (seqList seqGrArray seqFontArray seqLabels seqText),
 0x00445060,func,_SeqStart,SeqStart,sms,confirmed,load .SEQ file - alloc a 0x38-byte SEQUENCE slot - build background bitmap - returns slot index,
-0x00445330,func,SeqLoadScript,,re,confirmed,LoadFile the .SEQ then loop skip/expand/include lines into compiled command buffer; recursive for includes,
+0x00445330,func,SeqLoadScript,,re,confirmed,LoadFile the .SEQ then loop skip/expand/include lines into compiled command buffer; recursive for includes,"undefined4 __cdecl SeqLoadScript(undefined4, undefined4)"
 0x00445440,func,SeqSkipComments,,re,confirmed,scan script text past blank lines - ; and // comments - whitespace; return next content or NULL,
 0x004454D0,func,?SeqSubstitute@@YAPADPAPADPAD0F@Z,SeqSubstitute,sms,confirmed,expand %N token into the N-th SeqStart argument string,"char * __cdecl SeqSubstitute(char **, char *, char **, short)"
 0x00445550,func,SeqExpandLine,,re,confirmed,tokenize one script line into seqLine - handle quotes and %-substitution; return next line,
@@ -10,12 +10,12 @@ va,kind,name,display,source,confidence,notes,type
 0x00445700,func,_SeqContinue,SeqContinue,sms,confirmed,main per-tick interpreter - fade + labels + fetch line + build SEQ+cmd name and SMAddress-dispatch the sub-op,
 0x00445B40,func,SeqFetchLine,,re,confirmed,read next raw line from compiled buffer into seqLine - parse leading timecode (/abs +rel frame) into next-command tick,
 0x00445CC0,func,SeqParseLabel,,re,confirmed,parse =label definition - copy name into a seqLabelList node and set seqLabelPtr,
-0x00445D30,func,_SeqStop,SeqStop,sms,confirmed,tear down one sequence slot - free handle - return label/graphic nodes to free lists,
+0x00445D30,func,_SeqStop,SeqStop,sms,confirmed,tear down one sequence slot - free handle - return label/graphic nodes to free lists,undefined4 __cdecl SeqStop(undefined4)
 0x00445E30,func,_SeqEnd,SeqEnd,sms,confirmed,stop all active sequences - SoundAllOff - MusicOff - RMFreeAllId(4),
 0x00445E70,func,?SeqRect@@YGXJJJJ@Z,SeqRect,sms,confirmed,script op - set current sequence clip rectangle (x y w h); absent-from-inventory,"void __stdcall SeqRect(long, long, long, long)"
 0x00445ED0,func,SeqRender,,re,confirmed,per-frame render - SetupBitmapAccess then expire nodes then walk seqGraphics ring drawing dirty SEQGR nodes under clip box,
 0x00446090,func,SeqExpireGraphics,,re,confirmed,age SEQGR ring nodes vs timerTicks - set expired/dirty flags; return redraw-needed,
-0x00446100,func,SeqNextOverlap,,re,confirmed,iterate SEQGR ring for next node whose rect overlaps a given rect,
+0x00446100,func,SeqNextOverlap,,re,confirmed,iterate SEQGR ring for next node whose rect overlaps a given rect,"undefined4 __cdecl SeqNextOverlap(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00446170,func,SeqGraphicOrder,,re,inferred,SEQGR list walk via prev-links (+0x28) to a target node - returns its left-x,
 0x004461A0,func,SeqDrawGraphic,,re,confirmed,draw one SEQGR node by type - 1 bitmap blit - 2 filled rect - 4 multiline color text; mark overlaps dirty,
 0x00446330,func,SeqAccessResource,,re,confirmed,RMAccessHandle wrapper that credits the load time back into seqIgnoreTicks,
@@ -23,7 +23,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00446500,func,SeqNewGraphic,,re,confirmed,allocate a SEQGR node from seqGrList free-list - link into seqGraphics ring - set rect/type/expiry/name,
 0x00446610,func,?SeqGRFind@@YAPAUSEQGR@@PAD@Z,SeqGRFind,sms,confirmed,find a SEQGR node by its name string; absent-from-inventory,SEQGR * __cdecl SeqGRFind(char *)
 0x00446660,func,_SEQbitmap,SEQbitmap,sms,confirmed,script op - load and display a bitmap as a SEQGR node; absent-from-inventory,
-0x00446710,func,SeqLinkLabel,,re,confirmed,link seqLabelPtr into the sequence label list and set the synch wait target when seqSynch,
+0x00446710,func,SeqLinkLabel,,re,confirmed,link seqLabelPtr into the sequence label list and set the synch wait target when seqSynch,undefined4 __cdecl SeqLinkLabel(undefined4)
 0x004467B0,func,?SEQblock@@YAPAUSEQGR@@JJJJJJ@Z,SEQblock,sms,confirmed,script op - draw a filled colored block as a SEQGR type-2 node,"SEQGR * __cdecl SEQblock(long, long, long, long, long, long)"
 0x00446850,func,_SEQcall,SEQcall,sms,inferred,script op - chain/call another sequence or label; absent-from-inventory,
 0x00446890,func,_SEQfadein,SEQfadein,sms,confirmed,script op - begin palette fade-in (save curPalette - set seqFading=1 fade start/len),
