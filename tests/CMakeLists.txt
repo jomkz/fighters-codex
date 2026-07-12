@@ -201,6 +201,19 @@ if(Python3_FOUND)
             "${PROJECT_SOURCE_DIR}/tools/recover_globals.py" --check)
     set_tests_properties(recover_globals_selftest recover_globals_currency
         PROPERTIES LABELS "docs")
+
+    # fxe codegen currency (#459): the committed C++ under fxe/generated/ must match
+    # what tools/gen_fxe.py emits from db/. A db/ change that does not regenerate the
+    # port's declarations fails here. (That the headers COMPILE is proven separately,
+    # by the fxe_generated target, on every build.)
+    add_test(NAME gen_fxe_selftest
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/gen_fxe.py" --self-test)
+    add_test(NAME gen_fxe_currency
+        COMMAND Python3::Interpreter
+            "${PROJECT_SOURCE_DIR}/tools/gen_fxe.py" --check)
+    set_tests_properties(gen_fxe_selftest gen_fxe_currency
+        PROPERTIES LABELS "docs")
 endif()
 
 # Real-asset integration mode: registered only when FX_FA_ROOT points at a

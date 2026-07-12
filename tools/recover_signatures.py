@@ -65,7 +65,7 @@ MAX_CLEANUP_BYTES = 64
 def load_manifest(db=DB):
     """slug -> owning binary, from db/subsystems.csv."""
     out = {}
-    with open(db / "subsystems.csv", newline="") as fh:
+    with open(db / "subsystems.csv", encoding="utf-8", newline="") as fh:
         for r in csv.DictReader(fh):
             out[r["slug"]] = r["binary"]
     return out
@@ -88,7 +88,7 @@ def load_callsites(db=DB):
     for path in sorted(inv.glob("*/callsites.csv")):
         binary = path.parent.name
         per = sites.setdefault(binary, {})
-        with open(path, newline="") as fh:
+        with open(path, encoding="utf-8", newline="") as fh:
             for r in csv.DictReader(fh):
                 per.setdefault(int(r["callee_va"], 16), []).append(int(r["cleanup_bytes"]))
     return sites or None
@@ -169,7 +169,7 @@ def process(write, sites):
     for path in sorted((DB / "symbols").glob("*.csv")):
         rel = path.relative_to(REPO)
         per_binary = sites.get(manifest.get(path.stem), {})
-        with open(path, newline="") as fh:
+        with open(path, encoding="utf-8", newline="") as fh:
             rows = list(csv.reader(fh))
         header, body = rows[0], rows[1:]
         if header != HEADER:
@@ -222,7 +222,7 @@ def process(write, sites):
             else:
                 stats["already"] += 1
         if write and dirty:
-            with open(path, "w", newline="") as fh:
+            with open(path, "w", encoding="utf-8", newline="") as fh:
                 w = csv.writer(fh, lineterminator="\n")
                 w.writerow(header)
                 w.writerows(body)
@@ -261,7 +261,7 @@ def revalidate(sites):
     manifest = load_manifest()
     for path in sorted((DB / "symbols").glob("*.csv")):
         per_binary = sites.get(manifest.get(path.stem), {})
-        with open(path, newline="") as fh:
+        with open(path, encoding="utf-8", newline="") as fh:
             for r in csv.DictReader(fh):
                 if r["kind"] != "func" or not r["name"].startswith("?"):
                     continue

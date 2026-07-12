@@ -115,6 +115,14 @@ jobs:
           python3 tools/recover_globals.py --self-test
           python3 tools/recover_globals.py --check
 
+      # fxe codegen currency (#459): the committed C++ declarations under
+      # fxe/generated/ must match what the generator emits from db/. Stdlib-only.
+      # That they COMPILE is proven by the fxe_generated target in the build jobs.
+      - name: Check fxe codegen currency
+        run: |
+          python3 tools/gen_fxe.py --self-test
+          python3 tools/gen_fxe.py --check
+
   macos:
     name: macos (informational)
     runs-on: macos-latest

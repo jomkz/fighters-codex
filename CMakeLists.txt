@@ -49,6 +49,11 @@ if(PROJECT_IS_TOP_LEVEL)
         add_subdirectory(gui)
     endif()
 
+    # fxe: the clean-room source port of the game executable (epic #280). Today this
+    # builds only the generated declarations — compiling them is the first proof that
+    # the reconstruction in db/ is coherent. See fxe/README.md.
+    add_subdirectory(fxe)
+
     add_subdirectory(tools)
     add_subdirectory(tests)
 
