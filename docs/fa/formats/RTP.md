@@ -9,7 +9,7 @@ spec:
   gaps:
     - kind: re-static
       issue: 54
-      note: "the NEW-record data block has no length field, so the walk stops after the four MODIFY game-file records; several reserved header and per-record metadata words are consumed but not interpreted"
+      note: "several reserved header and per-record metadata words, and the combine identifier, are consumed structurally but not interpreted"
 codec:
   direction: read
   rationale: "decode + apply only — reconstructs the 1.02F target from the 1.00F source plus the patch. fx_lib has no RTPatch encoder (authoring a patch needs Pocket Soft's proprietary differ), so a writer would prove nothing; the byte-exact proof is that the reconstructed output matches the 1.02F build."
@@ -34,14 +34,19 @@ Soft .RTPatch Professional 4.11** payload as an overlay. Reversing that payload 
 not the third-party patcher binary — lets `fx install` produce a 1.02F tree from
 the user's own discs.
 
-The patch rewrites four files in place (`FA.EXE`, `FA.SMS`, `FA_1.LIB`,
-`FA_2.LIB`), delivers one new file (`msapi.dll`, the online-matchmaking API), and
-touches `README.TXT` and the installer's own `EAEXEC.EXE`. Each file is carried
-by the same custom codec — an order-0 adaptive Huffman over an LZSS token stream,
-tagged `0xB59C`, MSB-first. A MODIFY record decompresses to a program of copy /
-poke / fill opcodes (§ Engine Notes) applied against the 1.00F original; a NEW
-record decompresses straight to the file. The reconstruction is byte-identical to
-the shipped 1.02F build.
+The patch carries eight file records. Six are **MODIFY** — a binary diff against
+the 1.00F original: `FA.EXE`, `FA.SMS`, `FA_1.LIB`, `FA_2.LIB`, `README.TXT`, and
+the installer's own `EAEXEC.EXE`. Two are **NEW** — a full file delivered whole:
+`msapi.dll` (the online-matchmaking API) and a small `ealtest.exe`. Each file is
+carried by the same custom codec — an order-0 adaptive Huffman over an LZSS token
+stream, tagged `0xB59C`, MSB-first. A MODIFY record decompresses to a program of
+copy / poke / fill opcodes (§ Engine Notes) applied against the 1.00F original; a
+NEW record decompresses straight to the file. The reconstruction is byte-identical
+to the shipped 1.02F build.
+
+`EAEXEC.EXE` and `ealtest.exe` are flagged for a prompted **system** directory
+(`\WINDOWS\SYSTEM`), not the game directory; `fx install --patch` applies only the
+app-directory records.
 
 ## Tools
 
@@ -110,13 +115,20 @@ downward gives the number of little-endian continuation bytes. `count == 0` hold
 a value `0..63` in the low 6 bits; otherwise the lead byte's remaining low bits
 are the most-significant part.
 
-**File record** — a `rec_hdr u16` whose top nibble is the record type (1 EOF,
-2 RENAME, 3 NEW, 4 MODIFY, 6 DELETE) and whose low bits gate optional fields
-(option override, inline name, disk-set, attributes, explicit paths), then a
-10-byte metadata block, then the type's data block. A MODIFY block is
-`file_mod_flags u16`, `src_count` and `dst_count` VLIs, a reserved `u32`, a
-`payload_len u32`, then the source and destination **entry descriptors**, then the
-compressed diff (`payload_len` bytes).
+**File record** — a `rec_hdr u16` whose top nibble is the record type and whose
+low bits gate optional fields (option override, inline name, disk-set, attributes,
+explicit paths), then a 10-byte metadata block, then the type's data block. FA
+uses two types: **type 4 (MODIFY)**, a binary diff, and **type 2 (NEW)**, a full
+compressed file. (Bit 7, the disk-set flag, marks a system-directory file —
+`EAEXEC.EXE`, `ealtest.exe` — versus an app-directory one.)
+
+- A **MODIFY** block is `file_mod_flags u16`, `src_count` and `dst_count` VLIs, a
+  reserved `u32`, a `payload_len u32`, then the source and destination **entry
+  descriptors**, then the compressed diff (`payload_len` bytes).
+- A **NEW** block is `src_count` VLI, `usize u32` (decompressed size), `csize u32`
+  (the compressed length), then the entry descriptor(s), then the compressed file
+  (`csize` bytes). Records are contiguous, so `block_off + csize` is the next
+  record — the walk covers all eight without decoding anything.
 
 **Entry descriptor** — a 24-byte descriptor (8.3 name; the file size is a `u32` at
 offset 16), a 10-byte checksum block (§10, below), and in extra mode 8 timestamp
@@ -189,19 +201,16 @@ is refused rather than silently corrupted.
 
 **Validated.** The `fa_patch_apply` integration test (behind `FX_FA_PATCH`) applies
 `fae102.exe` to the ESA-sourced 1.00F originals and checks each output's SHA-256
-against a committed manifest: `FA.SMS`, `FA_1.LIB`, `FA_2.LIB` and the **official**
-`FA.EXE` all reconstruct byte-for-byte. (A licensed install's `FA.EXE` may differ
-by a byte if it carries a no-CD crack — a `JNZ`→`JZ` flip in the CD check — which
-is a property of that install, not of the patch.)
+against a committed manifest: `FA.SMS`, `FA_1.LIB`, `FA_2.LIB`, the added
+`msapi.dll`, and the **official** `FA.EXE` all reconstruct byte-for-byte (the first
+four also match a licensed install). A licensed install's `FA.EXE` may differ by a
+byte if it carries a no-CD crack — a `JNZ`→`JZ` flip in the CD check — which is a
+property of that install, not of the patch.
 
 ## Open Questions
 
-- A NEW record's data block has no length field ("record ends here"), so the
-  container walk currently stops after the four MODIFY game-file records; the
-  trailing `msapi.dll` (NEW), `README.TXT`, and `EAEXEC.EXE` records are located
-  but not walked. Reconstructing `msapi.dll` works given its block offset. [#54]
 - Several reserved header words, the per-record 10-byte metadata block, and the
-  `combine_id` are consumed structurally but not interpreted.
+  `combine_id` are consumed structurally but not interpreted. [#54]
 - fx_lib decodes and applies patches; it has no encoder, so the format is
   documented `read`-only (authoring needs Pocket Soft's differ).
 

@@ -38,6 +38,9 @@ struct RtpRecord {
     size_t      block_off = 0;   // offset of the 0xB59C compressed block in the payload
     uint32_t    payload_len = 0; // compressed block length (0 = runs to next record)
     int         src_count = 1;   // number of source files the record references
+    bool        app_dir = true;  // targets the install (app) directory; false for a
+                                 // system-directory file the installer prompts for
+                                 // (EAEXEC.EXE → \WINDOWS\SYSTEM, and its test tool)
 };
 
 struct RtpPatch {

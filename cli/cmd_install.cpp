@@ -230,9 +230,31 @@ bool apply_patch(const std::string& patch_file, const std::string& dest, FILE* o
     size_t ps = exe.size() - off;
     RtpPatch p = rtp_read(pd, ps);
 
-    fprintf(out, "\napplying the 1.02F patch (%zu file(s))...\n", p.records.size());
+    fprintf(out, "\napplying the 1.02F patch...\n");
     int patched = 0, skipped = 0, failed = 0;
     for (const auto& rec : p.records) {
+        // System-directory files (EAEXEC.EXE → \WINDOWS\SYSTEM and its test tool)
+        // are not part of a game-directory install.
+        if (!rec.app_dir) continue;
+
+        if (rec.mode == RtpMode::New) {
+            // An added file (msapi.dll) — reconstruct from the patch alone and
+            // create it, unless it is already present and current.
+            std::string existing = find_installed(dest, rec.name);
+            auto res = rtp_reconstruct(pd, ps, rec, nullptr, 0, false);
+            std::string path = existing.empty()
+                                   ? (fs::path(dest) / rec.name).string() : existing;
+            if (res.size() != rec.dst_size || !write_file(path, res)) {
+                fprintf(stderr, "  FAIL  %-12s could not reconstruct\n", rec.name.c_str());
+                failed++;
+                continue;
+            }
+            fprintf(out, "  ok    %-12s %u bytes%s\n", rec.name.c_str(), rec.dst_size,
+                    existing.empty() ? " (added)" : "");
+            patched++;
+            continue;
+        }
+
         std::string path = find_installed(dest, rec.name);
         if (path.empty()) {
             fprintf(out, "  skip  %-12s not in the install\n", rec.name.c_str());
@@ -311,10 +333,10 @@ int run(int argc, char** argv, bool execute, bool verify_only) {
         fprintf(out, "verified: every installed byte matches the disc\n");
     }
     // Chain the 1.02F updater: the discs write 1.00F, but the reconstruction
-    // database describes 1.02F, so --patch brings the install up to it. The
-    // multiplayer msapi.dll is delivered as a NEW record the container walk does
-    // not yet reach (RTP.md #54); the four modified game files — the executable,
-    // its symbols, and the two content archives — are patched in place.
+    // database describes 1.02F, so --patch brings the install up to it — the four
+    // modified game files and README are diffed in place, and the added msapi.dll
+    // (online matchmaking) is created. System-directory files (EAEXEC.EXE and its
+    // test tool) are not part of a game-directory install and are left out.
     if (execute && !a.patch.empty() && !apply_patch(a.patch, a.dest, out)) return 1;
     return 0;
 }
