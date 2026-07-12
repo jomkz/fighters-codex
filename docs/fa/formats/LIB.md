@@ -153,13 +153,13 @@ Based on `blast.c` by Mark Adler (zlib project). See `lib/src/blast.cpp`.
 
 Length symbols (16 symbols):
 ```
-RLE table:  { 0x12, 0x23, 0x24, 0x35, 0x26, 0x17 }
+RLE table:  { 0x02, 0x23, 0x24, 0x35, 0x26, 0x17 }
 Code lengths: [2,3,3,3,4,4,4,5,5,5,5,6,6,6,7,7]
 ```
 
 Distance symbols (64 symbols):
 ```
-RLE table:  { 0x12, 0x14, 0x35, 0xE6, 0xF7, 0x97, 0xF8 }
+RLE table:  { 0x02, 0x14, 0x35, 0xE6, 0xF7, 0x97, 0xF8 }
 ```
 
 Each RLE byte: high nibble = `reps-1`, low nibble = `code_length`.
