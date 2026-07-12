@@ -108,14 +108,14 @@ def undecorate(name):
 
 def load():
     subs = []
-    with open(DB / "subsystems.csv", newline="") as fh:
+    with open(DB / "subsystems.csv", encoding="utf-8", newline="") as fh:
         subs = list(csv.DictReader(fh))
     syms = {}
     for s in subs:
         p = DB / "symbols" / ("%s.csv" % s["slug"])
         if not p.exists():
             continue
-        with open(p, newline="") as fh:
+        with open(p, encoding="utf-8", newline="") as fh:
             syms[s["slug"]] = [r for r in csv.DictReader(fh) if r["source"] != "waiver"]
     return subs, syms
 
@@ -222,7 +222,13 @@ def write(files):
     for rel, text in files.items():
         p = OUT / rel
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(text, encoding="utf-8")
+        # newline="\n" and an explicit encoding, so the emitted bytes are identical on
+        # every platform. Text mode would translate "\n" to CRLF on Windows, and the
+        # locale default would decode the em-dashes in db/'s notes as cp1252 -- either one
+        # makes the committed C++ "drift" the moment it is regenerated on another machine.
+        # (It did: the MSVC leg of CI caught exactly that.)
+        with open(p, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
     return len(files)
 
 

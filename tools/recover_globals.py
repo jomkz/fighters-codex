@@ -73,7 +73,7 @@ def sizeof(ctype):
 
 
 def load_manifest(db=DB):
-    with open(db / "subsystems.csv", newline="") as fh:
+    with open(db / "subsystems.csv", encoding="utf-8", newline="") as fh:
         return {r["slug"]: r["binary"] for r in csv.DictReader(fh)}
 
 
@@ -89,7 +89,7 @@ def load_globals(db=DB):
         return None
     out = {}
     for path in sorted(inv.glob("*/globals.csv")):
-        with open(path, newline="") as fh:
+        with open(path, encoding="utf-8", newline="") as fh:
             rdr = csv.DictReader(fh)
             if "widths" not in (rdr.fieldnames or []):
                 continue      # a pre-#455 export; re-run export_inventory.sh
@@ -117,7 +117,7 @@ def load_code_bodies(db=DB):
         return out
     for path in sorted(inv.glob("*/functions.csv")):
         spans = []
-        with open(path, newline="") as fh:
+        with open(path, encoding="utf-8", newline="") as fh:
             for r in csv.DictReader(fh):
                 lo = int(r["va"], 16)
                 spans.append((lo, lo + int(r["size"])))
@@ -156,7 +156,7 @@ def process(write, glob_ev):
         binary = manifest.get(path.stem)
         per = glob_ev.get(binary, {})
         spans = bodies.get(binary, [])
-        with open(path, newline="") as fh:
+        with open(path, encoding="utf-8", newline="") as fh:
             rows = list(csv.reader(fh))
         header, body = rows[0], rows[1:]
         if header != HEADER:
@@ -201,7 +201,7 @@ def process(write, glob_ev):
             else:
                 stats["already"] += 1
         if write and dirty:
-            with open(path, "w", newline="") as fh:
+            with open(path, "w", encoding="utf-8", newline="") as fh:
                 w = csv.writer(fh, lineterminator="\n")
                 w.writerow(header)
                 w.writerows(body)

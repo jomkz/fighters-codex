@@ -91,13 +91,13 @@ def derive(name):
 
 
 def iter_rows(path):
-    with open(path, newline="") as fh:
+    with open(path, encoding="utf-8", newline="") as fh:
         rows = list(csv.reader(fh))
     return rows[0], rows[1:]
 
 
 def write_rows(path, header, rows):
-    with open(path, "w", newline="") as fh:
+    with open(path, "w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(header)
         w.writerows(rows)
