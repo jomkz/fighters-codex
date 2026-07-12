@@ -132,9 +132,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004F6C60,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path),
 0x004F6C6C,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path),
 0x004F6C78,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path),
-0x004F6CA4,data,_blitDestX,,re,inferred,destination X of the present blit rect (GG_FlushShaken/FlushDirtyLines),
-0x004F6CA8,data,_blitDestY,,re,inferred,destination Y of the present blit rect; offset by screen shake,
-0x004F6CAC,data,_shakeParity,,re,inferred,current screen-shake parity toggle (GG_FlushShaken),
+0x004F6CA4,data,_blitDestX,,re,inferred,destination X of the present blit rect (GG_FlushShaken/FlushDirtyLines),undefined4
+0x004F6CA8,data,_blitDestY,,re,inferred,destination Y of the present blit rect; offset by screen shake,undefined4
+0x004F6CAC,data,_shakeParity,,re,inferred,current screen-shake parity toggle (GG_FlushShaken),undefined1
 0x004F6CB0,data,,,waiver,confirmed,CDirDraw surface/shake state adjacent to _blitDestX (present path),
 0x00501500,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox),
 0x00501528,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox),

@@ -91,10 +91,19 @@ typedef int JOYRESULT;           /* input:   GetJoystickType / ReadDevice result
 typedef int PLAYER_ACTION;       /* network: player-action callback code             */
 typedef int NET_CONNECTED_STATE; /* network: connection-state callback code          */
 
-/* `undefined4` -- 4 bytes, type not recovered: Ghidra's idiom, used by the signatures
- * derived from an `@N` decoration, where the name proves the callee pops N bytes but
- * says nothing about what those bytes are. An honest unknown, never a guessed type. */
-typedef unsigned int undefined4;
+/* `undefinedN` -- N bytes, type not recovered. Ghidra's idiom, and the one this database
+ * uses wherever the evidence proves a SIZE but not a SEMANTICS:
+ *
+ *   - function arguments an `@N` decoration counts but does not describe (#452/#453);
+ *   - globals whose access width the instructions prove (#455) -- `MOV EAX,[x]` shows four
+ *     bytes are read, but a dword global is equally consistent with a counter and a
+ *     pointer, and 12 of the first 32 typed globals turned out to be pointers.
+ *
+ * An honest unknown, never a guessed type. Sharpening one into its real type as it is
+ * recovered is expected; see db/types/README.md. */
+typedef unsigned char  undefined1;
+typedef unsigned short undefined2;
+typedef unsigned int   undefined4;
 
 /* --- CN_INFO — network configuration, EA.CFG / NET.DAT (docs/fa/structs.md §4) ---
  * CN_ReadConfig reads a 0xDDC-byte body after a 4-byte checksum. Only the confirmed,

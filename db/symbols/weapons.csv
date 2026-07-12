@@ -77,8 +77,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0050CFB2,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CFB6,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CFB8,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
-0x0050D0F8,data,_projGunSoundHandle,,re,inferred,active looping gun-sound handle,
-0x0050D0FA,data,_projGunSoundExpiry,,re,inferred,gun-sound expiry tick,
+0x0050D0F8,data,_projGunSoundHandle,,re,inferred,active looping gun-sound handle,undefined2
+0x0050D0FA,data,_projGunSoundExpiry,,re,inferred,gun-sound expiry tick,undefined4
 0x0050D316,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
 0x0050D317,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
 0x0050D318,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
@@ -97,10 +97,10 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D382,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
 0x0050D396,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
 0x005445AA,data,,,waiver,confirmed,interior of / adjacent to _ro; named at its base or owned by that subsystem,
-0x0058F0F8,data,_projBestTargetCost,,re,confirmed,seeker-search best-cost accumulator (init 0x7FFFFFFF),
+0x0058F0F8,data,_projBestTargetCost,,re,confirmed,seeker-search best-cost accumulator (init 0x7FFFFFFF),undefined4
 0x0058F108,data,,,waiver,confirmed,interior of / adjacent to _trackLockEndT; named at its base or owned by that subsystem,
-0x0058F10C,data,_projBestTargetId,,re,confirmed,seeker-search result id,
-0x0058F110,data,_projPkPenalty,,re,confirmed,running hit-chance (Pk) multiplier,
+0x0058F10C,data,_projBestTargetId,,re,confirmed,seeker-search result id,undefined2
+0x0058F110,data,_projPkPenalty,,re,confirmed,running hit-chance (Pk) multiplier,undefined4
 0x0058F118,data,_projNameBuf,,re,confirmed,weapon display-name buffer (PROJBuildName),
 0x0058F180,data,_projSeekerList,,re,confirmed,seeker-parameter array from HARDBestSeekers,
 0x0058F188,data,,,waiver,confirmed,interior of / adjacent to _trackLockEndT; named at its base or owned by that subsystem,
@@ -111,5 +111,5 @@ va,kind,name,display,source,confidence,notes,type
 0x0058F1A4,data,,,waiver,confirmed,interior of / adjacent to _trackLockEndT; named at its base or owned by that subsystem,
 0x0058F1C4,data,,,waiver,confirmed,interior of / adjacent to _searchLockEndT; named at its base or owned by that subsystem,
 0x0058F1C8,data,,,waiver,confirmed,interior of / adjacent to _searchLockEndT; named at its base or owned by that subsystem,
-0x0058F1D4,data,_projInboundWarnT,,re,inferred,inbound-missile warning throttle,
+0x0058F1D4,data,_projInboundWarnT,,re,inferred,inbound-missile warning throttle,undefined2
 0x0058F1E0,data,,,waiver,confirmed,interior of / adjacent to _projLocksOnPlayer; named at its base or owned by that subsystem,

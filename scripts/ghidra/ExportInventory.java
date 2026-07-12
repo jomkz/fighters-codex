@@ -3,7 +3,7 @@
 // image bounds come from the program, not a hardcoded window. Writes three
 // byte-stable CSVs into <repo>/db/inventory/<binary>/:
 //   functions.csv  va,name,size                 -- every function in the image
-//   globals.csv    va,name,xref_count,subsystems -- data symbols with >=1 code xref
+//   globals.csv    va,name,xref_count,subsystems,widths,indexed -- data syms with >=1 code xref
 //   ranges.csv     slug,range,bytes,bytes_in_functions,functions -- per manifest range
 //   callsites.csv  callee_va,site_va,cleanup_bytes -- caller-side stack cleanup (#453)
 //
@@ -24,7 +24,10 @@ import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.DataIterator;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionManager;
+import ghidra.program.model.lang.Register;
 import ghidra.program.model.listing.Instruction;
+import ghidra.program.model.pcode.PcodeOp;
+import ghidra.program.model.pcode.Varnode;
 import ghidra.program.model.scalar.Scalar;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
@@ -149,11 +152,20 @@ public class ExportInventory extends GhidraScript {
         }
         int globalsOut = 0;
         try (BufferedWriter w = open(new File(outDir, "globals.csv"))) {
-            w.write("va,name,xref_count,subsystems\n");
+            w.write("va,name,xref_count,subsystems,widths,indexed\n");
             for (Map.Entry<Long, String> e : dataNames.entrySet()) {
                 long va = e.getKey();
                 int xrefs = 0;
                 TreeSet<String> tags = new TreeSet<>();
+                // Evidence for the global typing pass (#455), straight off the instructions:
+                //   widths  -- the operand size of every access. `MOV AL,[x]` PROVES a byte is
+                //              read there; `MOV EAX,[x]` proves a dword. Disagreement is not
+                //              noise -- it means the address is not a plain scalar.
+                //   indexed -- whether any access reaches the address through a register, i.e.
+                //              `[base + reg]`. That makes it an ARRAY base, and typing an array
+                //              as a scalar would hand the port the wrong size.
+                TreeSet<Integer> widths = new TreeSet<>();
+                boolean indexed = false;
                 for (Reference ref : rm.getReferencesTo(toAddr(va))) {
                     Function from = fm.getFunctionContaining(ref.getFromAddress());
                     if (from == null) continue; // only code xrefs count
@@ -161,10 +173,22 @@ public class ExportInventory extends GhidraScript {
                     String tag = membership(from.getEntryPoint().getOffset(),
                                             subsystems, claims);
                     if (tag != null) tags.add(tag);
+
+                    Instruction in = getInstructionAt(ref.getFromAddress());
+                    if (in == null) continue;
+                    int wsz = accessWidth(in, va);
+                    if (wsz > 0) widths.add(wsz);
+                    if (isIndexed(in, ref)) indexed = true;
                 }
                 if (xrefs == 0) continue;
-                w.write(String.format("0x%08X,%s,%d,%s\n",
-                        va, csv(e.getValue()), xrefs, String.join(";", tags)));
+                StringBuilder ws = new StringBuilder();
+                for (int wv : widths) {
+                    if (ws.length() > 0) ws.append("|");
+                    ws.append(wv);
+                }
+                w.write(String.format("0x%08X,%s,%d,%s,%s,%b\n",
+                        va, csv(e.getValue()), xrefs, String.join(";", tags),
+                        ws.toString(), indexed));
                 globalsOut++;
             }
         }
@@ -225,6 +249,49 @@ public class ExportInventory extends GhidraScript {
             }
         }
         println("callsites.csv: " + siteCount + " call sites");
+    }
+
+    /** The operand size of this instruction's direct access to `va`, or 0 if unknown (#455).
+     *
+     *  A direct absolute access (`MOV AL,[0x50D08C]`) lowers to a p-code varnode living in the
+     *  RAM space at that address, whose SIZE is exactly the width the instruction touches --
+     *  1 for AL, 2 for AX, 4 for EAX. That is a fact carried by the encoded instruction, not
+     *  an inference about it.
+     *
+     *  An INDEXED access (`MOV EAX,[0x50D08C + ECX*4]`) is deliberately NOT measured here: the
+     *  base appears only as a CONSTANT feeding an address computation, so its varnode size is
+     *  the pointer width (4) and has nothing to do with the element width. Reporting that as
+     *  the access width would type every array as a dword. Unknown is the honest answer;
+     *  isIndexed() flags the address separately.
+     */
+    private int accessWidth(Instruction in, long va) {
+        for (PcodeOp op : in.getPcode()) {
+            for (Varnode v : op.getInputs()) {
+                if (isRamAt(v, va)) return v.getSize();
+            }
+            Varnode out = op.getOutput();
+            if (isRamAt(out, va)) return out.getSize();
+        }
+        return 0;
+    }
+
+    private boolean isRamAt(Varnode v, long va) {
+        return v != null && v.isAddress() && v.getAddress().getOffset() == va;
+    }
+
+    /** Does this instruction reach the address through a register -- i.e. `[base + reg]`?
+     *
+     *  A register in the memory operand means the address is being INDEXED, which makes it an
+     *  array base rather than a scalar. Typing an array as a scalar would give the port an
+     *  object of the wrong size, so #455 refuses these outright.
+     */
+    private boolean isIndexed(Instruction in, Reference ref) {
+        int opIdx = ref.getOperandIndex();
+        if (opIdx < 0 || opIdx >= in.getNumOperands()) return false;
+        for (Object o : in.getOpObjects(opIdx)) {
+            if (o instanceof Register) return true;
+        }
+        return false;
     }
 
     /** Bytes the caller pops immediately after this CALL, or -1 if it cannot be read off.

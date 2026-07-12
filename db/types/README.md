@@ -151,6 +151,44 @@ Strictness scales with what is actually being inferred:
 `--check` re-proves the rule against the known-arity functions on every run: if a Ghidra upgrade
 ever perturbs the evidence, the rule's accuracy must be re-demonstrated, not assumed.
 
+## Typing the globals: `tools/recover_globals.py`
+
+`db/symbols/*.csv` carries thousands of `data` rows, and 32 of them had a type. The fxe
+generator is meant to emit a **typed** globals registry; an untyped one is a list of addresses.
+[#455](https://github.com/jomkz/fighters-codex/issues/455).
+
+```
+python3 tools/recover_globals.py --write   # needs the local Ghidra export
+python3 tools/recover_globals.py --check   # no-ops where db/inventory/ is absent (CI)
+```
+
+**The evidence is the instruction itself.** An operand's size *proves* the access width:
+`MOV AL,[x]` touches one byte, `MOV AX,[x]` two, `MOV EAX,[x]` four. `ExportInventory` records
+it per address (`globals.csv` → `widths`, `indexed`). Validated against the 32 globals typed by
+hand: **24 comparable, 24 agree, 0 mismatches.**
+
+**But width proves the SIZE, not the SEMANTICS.** A 4-byte global is equally consistent with a
+`u32` counter and a `T_HANDLE *` — and **12 of those first 32 globals turned out to be
+pointers**. So a width of 4 becomes **`undefined4`**, the same honest idiom #452 uses for the
+arguments an `@N` decoration counts but does not describe. Guessing `u32` would flatten every
+pointer into an integer. Sharpening an `undefined4` into a real `entity *` as the type is
+recovered is expected and allowed.
+
+### What is refused, and why
+
+| refused | why |
+|---|---|
+| **indexed** accesses (`[base + reg]`) | the address is an **array base** — its width is the *element* width, so typing it as a scalar hands the port an object of the wrong size |
+| **conflicting widths** | an address touched as both a byte and a dword is not a plain scalar; that is a finding for #454, not something to average |
+| **no width evidence** | the address is only ever *taken*, never dereferenced directly |
+| **inside a function body** | a `data` row whose address lies within a function is a **code label**, not a global — MSVC's `__NLG_Return2` is a branch target in the middle of code. Ghidra refuses to lay data over instructions, and it is right to: typing it would put a fictional variable into the generator's registry |
+
+`--check` re-proves the rule on every run: a stored type whose size contradicts the observed
+access width is an error, not a preference.
+
+Struct *layouts* are #454's job. This column types an **address** — interiors of an aggregate
+are already separate rows under the referenced-globals rule (the "interior of X" waivers).
+
 ## Why this is conservative
 
 The struct field maps in [`docs/fa/structs.md`](../../docs/fa/structs.md) are

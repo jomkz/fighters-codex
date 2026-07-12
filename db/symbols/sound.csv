@@ -52,7 +52,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00435BC0,func,?SndLostFocus@@YAXXZ,SndLostFocus,sms,confirmed,,void __cdecl SndLostFocus(void)
 0x00435C20,func,?SndGotFocus@@YAXXZ,SndGotFocus,sms,confirmed,,void __cdecl SndGotFocus(void)
 0x00435C30,func,?SoundName@@YIPADF@Z,SoundName,sms,confirmed,,char * __fastcall SoundName(short)
-0x004EB5F0,data,_musicOn,,re,confirmed,music/MIDI subsystem-available master flag,
+0x004EB5F0,data,_musicOn,,re,confirmed,music/MIDI subsystem-available master flag,undefined1
 0x004EE2BC,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,
 0x004EE2BD,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,
 0x004EE2BE,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,

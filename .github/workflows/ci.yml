@@ -107,6 +107,14 @@ jobs:
           python3 tools/recover_signatures.py --self-test
           python3 tools/recover_signatures.py --check
 
+      # db/ global typing (#455): a global's type must agree with the access width
+      # the instructions prove. --check needs the local Ghidra export and no-ops on
+      # CI; the self-test runs here.
+      - name: Check db/ global typing
+        run: |
+          python3 tools/recover_globals.py --self-test
+          python3 tools/recover_globals.py --check
+
   macos:
     name: macos (informational)
     runs-on: macos-latest

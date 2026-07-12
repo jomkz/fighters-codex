@@ -126,15 +126,15 @@ va,kind,name,display,source,confidence,notes,type
 0x004F6D6C,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
 0x004F6D78,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
 0x004F6D80,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
-0x004F6FDC,data,_curObjStackTop,,re,inferred,PushCurObj/PopCurObj nesting stack for GetCurObj,
-0x004F6FE0,data,_cmdBufWritePtr,,re,confirmed,command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf),
+0x004F6FDC,data,_curObjStackTop,,re,inferred,PushCurObj/PopCurObj nesting stack for GetCurObj,undefined4
+0x004F6FE0,data,_cmdBufWritePtr,,re,confirmed,command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf),undefined4
 0x004F6FE8,data,,,waiver,confirmed,command-buffer bookkeeping next to _cmdBufWritePtr; accessed via computed base - revisit,
 0x004F6FF0,data,,,waiver,confirmed,command-buffer bookkeeping next to _cmdBufWritePtr; accessed via computed base - revisit,
 0x004F7BFC,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C08,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C14,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C24,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
-0x004FFE34,data,_objArena,,re,confirmed,entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding),
+0x004FFE34,data,_objArena,,re,confirmed,entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding),undefined4
 0x004FFE38,data,,,waiver,confirmed,entity-arena bookkeeping next to _objArena,
 0x0050CE84,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x04); named via structs.md, not a standalone global",
 0x0050CE89,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x09); named via structs.md, not a standalone global",
@@ -227,18 +227,18 @@ va,kind,name,display,source,confidence,notes,type
 0x0053DB60,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB62,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB64,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
-0x00546B94,data,_curObjSize,,re,confirmed,byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6,
-0x00546B9C,data,_curTypeSize,,re,confirmed,byte size of the current type-record mirror (from type +0x01),
-0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2",
-0x00546BA8,data,_requeueChain,,re,confirmed,objects serviced this frame; ChainMergeSorted folds it back into chainStart,
+0x00546B94,data,_curObjSize,,re,confirmed,byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6,undefined2
+0x00546B9C,data,_curTypeSize,,re,confirmed,byte size of the current type-record mirror (from type +0x01),undefined2
+0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2",undefined2
+0x00546BA8,data,_requeueChain,,re,confirmed,objects serviced this frame; ChainMergeSorted folds it back into chainStart,undefined2
 0x00546BB8,data,_lastCurZ,,re,inferred,previous frame Z of current object (CheckForEvents1),
 0x00553120,data,_objSizes,,re,confirmed,word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext,
 0x00553124,data,,,waiver,confirmed,interior of _objSizes word[900] table,
-0x00553828,data,_objArenaNext,,re,confirmed,bump cursor into the entity arena (OBJAdd memcpy target),
-0x0055382C,data,_tempAliasBase,,re,confirmed,lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999,
-0x00553830,data,_tempAliasMax,,re,confirmed,highest temp-alias id: (-0x14 - thisComputer)*1000; OBJTempAlias wraps to base past it,
-0x00553834,data,_multiAliasCursor,,re,inferred,OBJAliasForMulti/OBJNextAliasForMulti iteration cursor,
-0x0055383C,data,_tempAliasNext,,re,confirmed,next temp alias returned by OBJTempAlias (negative per-computer id band),
-0x00553840,data,_objArenaSize,,re,confirmed,"arena byte capacity (OBJInit parameter), bounds OBJAdd",
+0x00553828,data,_objArenaNext,,re,confirmed,bump cursor into the entity arena (OBJAdd memcpy target),undefined4
+0x0055382C,data,_tempAliasBase,,re,confirmed,lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999,undefined4
+0x00553830,data,_tempAliasMax,,re,confirmed,highest temp-alias id: (-0x14 - thisComputer)*1000; OBJTempAlias wraps to base past it,undefined4
+0x00553834,data,_multiAliasCursor,,re,inferred,OBJAliasForMulti/OBJNextAliasForMulti iteration cursor,undefined2
+0x0055383C,data,_tempAliasNext,,re,confirmed,next temp alias returned by OBJTempAlias (negative per-computer id band),undefined4
+0x00553840,data,_objArenaSize,,re,confirmed,"arena byte capacity (OBJInit parameter), bounds OBJAdd",undefined4
 0x0055384C,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 1),
 0x00553850,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 2),

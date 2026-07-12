@@ -29,6 +29,7 @@ edit db/symbols/<slug>.csv            # record/propose names + types (the DB is 
 edit db/types/<binary>/*.h            # recovered struct layouts (optional; FA.EXE at db/types/*.h)
 python3 tools/gen_signatures.py --write     # materialize the signatures FA.SMS names encode
 python3 tools/recover_signatures.py --write # recover cdecl signatures from call sites
+python3 tools/recover_globals.py --write    # type the globals from their access width
 scripts/ghidra/apply_symbols.sh  [BINARY]   # apply names to the Ghidra project (default FA.EXE)
 scripts/ghidra/apply_types.sh    [BINARY]   # apply db/types/ + the type column
 scripts/ghidra/export_inventory.sh [BINARY] # re-export db/inventory/<binary>/ ground truth
@@ -127,7 +128,7 @@ against a committed inventory. The run's result is the committed
 | File (per `<binary>/`) | Contents |
 |------|----------|
 | `functions.csv` | `va,name,size` for every function in the program |
-| `globals.csv` | `va,name,xref_count,subsystems` for every data symbol with ≥1 code xref; `subsystems` = slugs whose functions reference it |
+| `globals.csv` | `va,name,xref_count,subsystems,widths,indexed` for every data symbol with ≥1 code xref; `subsystems` = slugs whose functions reference it. `widths` = the operand size of every access (the evidence `tools/recover_globals.py` types from, [#455](https://github.com/jomkz/fighters-codex/issues/455)); `indexed` = reached via `[base + reg]`, i.e. an array base |
 | `ranges.csv` | `slug,range,bytes,bytes_in_functions,functions` per manifest range — the code-coverage signal that exposes undiscovered code |
 | `callsites.csv` | `callee_va,site_va,cleanup_bytes` — the stack cleanup each caller performs after a `CALL`. The evidence `tools/recover_signatures.py` reads to recover cdecl signatures ([#453](https://github.com/jomkz/fighters-codex/issues/453)); `-1` means the site shows no readable cleanup, which is silence, not zero |
 

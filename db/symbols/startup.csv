@@ -390,27 +390,27 @@ va,kind,name,display,source,confidence,notes,type
 0x004EA162,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EEAB8,data,,,waiver,confirmed,interior of / adjacent to _items; named at its base or owned by that subsystem,
 0x004F44D4,data,,,waiver,confirmed,interior of / adjacent to ?ifmShow@@3GA; named at its base or owned by that subsystem,
-0x0051E750,data,__umaskval,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E750,data,__umaskval,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x0051E754,data,,,waiver,confirmed,interior of / adjacent to __umaskval; named at its base or owned by that subsystem,
-0x0051E758,data,__winver,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051E75C,data,__winmajor,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051E760,data,__winminor,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051E758,data,__winver,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
+0x0051E75C,data,__winmajor,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
+0x0051E760,data,__winminor,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051E764,data,,,waiver,confirmed,interior of / adjacent to __winminor; named at its base or owned by that subsystem,
 0x0051E768,data,,,waiver,confirmed,interior of / adjacent to __winminor; named at its base or owned by that subsystem,
-0x0051E770,data,__environ,,sms,confirmed,MSVC CRT global (xrefs=15),
+0x0051E770,data,__environ,,sms,confirmed,MSVC CRT global (xrefs=15),undefined4
 0x0051E774,data,,,waiver,confirmed,interior of / adjacent to __environ; named at its base or owned by that subsystem,
-0x0051E778,data,__wenviron,,sms,confirmed,MSVC CRT global (xrefs=6),
-0x0051E788,data,__exitflag,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051E78C,data,__C_Termination_Done,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051E790,data,__C_Exit_Done,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051E778,data,__wenviron,,sms,confirmed,MSVC CRT global (xrefs=6),undefined4
+0x0051E788,data,__exitflag,,sms,confirmed,MSVC CRT global (xrefs=1),undefined1
+0x0051E78C,data,__C_Termination_Done,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
+0x0051E790,data,__C_Exit_Done,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051E7A0,data,__NLG_Destination,,sms,confirmed,MSVC CRT global (xrefs=2),
 0x0051E7A4,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
 0x0051E7A8,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
 0x0051E7AC,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
-0x0051E7BC,data,__adjust_fdiv,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051E7C0,data,__FPinit,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051E7D0,data,__aenvptr,,sms,confirmed,MSVC CRT global (xrefs=5),
-0x0051E7D8,data,__aexit_rtn,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051E7BC,data,__adjust_fdiv,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
+0x0051E7C0,data,__FPinit,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
+0x0051E7D0,data,__aenvptr,,sms,confirmed,MSVC CRT global (xrefs=5),undefined4
+0x0051E7D8,data,__aexit_rtn,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x0051E7DC,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem,
 0x0051E7E0,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem,
 0x0051E7F0,data,__locktable,,sms,confirmed,MSVC CRT global (xrefs=9),
@@ -418,8 +418,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0051E814,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
 0x0051E824,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
 0x0051E834,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
-0x0051E8B0,data,__pctype,,sms,confirmed,MSVC CRT global (xrefs=38),
-0x0051E8B4,data,__pwctype,,sms,confirmed,MSVC CRT global (xrefs=3),
+0x0051E8B0,data,__pctype,,sms,confirmed,MSVC CRT global (xrefs=38),undefined4
+0x0051E8B4,data,__pwctype,,sms,confirmed,MSVC CRT global (xrefs=3),undefined4
 0x0051EABC,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EAC0,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EAC8,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
@@ -430,7 +430,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0051EC5C,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EC60,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EC70,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
-0x0051EC78,data,__cfltcvt_tab,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051EC78,data,__cfltcvt_tab,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051EC7C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
 0x0051EC80,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
 0x0051EC84,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
@@ -454,18 +454,18 @@ va,kind,name,display,source,confidence,notes,type
 0x0051F010,data,__stdbuf,,sms,confirmed,MSVC CRT global (xrefs=1),
 0x0051F018,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem,
 0x0051F028,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem,
-0x0051F2A8,data,__cflush,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051F2A8,data,__cflush,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051F2B0,data,__XcptActTab,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x0051F328,data,__First_FPE_Indx,,sms,confirmed,MSVC CRT global (xrefs=4),
-0x0051F32C,data,__Num_FPE,,sms,confirmed,MSVC CRT global (xrefs=4),
-0x0051F334,data,__XcptActTabCount,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051F328,data,__First_FPE_Indx,,sms,confirmed,MSVC CRT global (xrefs=4),undefined4
+0x0051F32C,data,__Num_FPE,,sms,confirmed,MSVC CRT global (xrefs=4),undefined4
+0x0051F334,data,__XcptActTabCount,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051F33C,data,,,waiver,confirmed,interior of / adjacent to __XcptActTabCount; named at its base or owned by that subsystem,
 0x0051F344,data,,,waiver,confirmed,interior of / adjacent to __XcptActTabCount; named at its base or owned by that subsystem,
 0x0051F368,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
 0x0051F370,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
 0x0051F378,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
 0x0051F37C,data,,,waiver,confirmed,interior of / adjacent to __amblksiz; named at its base or owned by that subsystem,
-0x0051F3F8,data,__adbgmsg,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051F3F8,data,__adbgmsg,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051F3FC,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F400,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F414,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
@@ -499,9 +499,9 @@ va,kind,name,display,source,confidence,notes,type
 0x00520464,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x00520468,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0052046C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
-0x00520470,data,__commode,,sms,confirmed,MSVC CRT global (xrefs=2),
-0x00520474,data,?__pInconsistency@@3P6AXXZA,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x00520478,data,__newmode,,sms,confirmed,MSVC CRT global (xrefs=3),
+0x00520470,data,__commode,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
+0x00520474,data,?__pInconsistency@@3P6AXXZA,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
+0x00520478,data,__newmode,,sms,confirmed,MSVC CRT global (xrefs=3),undefined4
 0x005204B0,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
 0x005204B4,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
 0x005204B8,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
@@ -514,8 +514,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00520504,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
 0x00520530,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
 0x00520574,data,,,waiver,confirmed,interior of / adjacent to __newmode; named at its base or owned by that subsystem,
-0x00520578,data,__alternate_form,,sms,confirmed,MSVC CRT global (xrefs=17),
-0x0052057C,data,__no_lead_zeros,,sms,confirmed,MSVC CRT global (xrefs=20),
+0x00520578,data,__alternate_form,,sms,confirmed,MSVC CRT global (xrefs=17),undefined4
+0x0052057C,data,__no_lead_zeros,,sms,confirmed,MSVC CRT global (xrefs=20),undefined4
 0x00520588,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
 0x0052058C,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
 0x00520590,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
@@ -527,20 +527,20 @@ va,kind,name,display,source,confidence,notes,type
 0x005205CC,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
 0x005205D0,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
 0x005205D4,data,,,waiver,confirmed,interior of / adjacent to __no_lead_zeros; named at its base or owned by that subsystem,
-0x005205E0,data,__timezone,,sms,confirmed,MSVC CRT global (xrefs=7),
-0x005205E4,data,__daylight,,sms,confirmed,MSVC CRT global (xrefs=3),
-0x005205E8,data,__dstbias,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x005205E0,data,__timezone,,sms,confirmed,MSVC CRT global (xrefs=7),undefined4
+0x005205E4,data,__daylight,,sms,confirmed,MSVC CRT global (xrefs=3),undefined4
+0x005205E8,data,__dstbias,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x005205F3,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
 0x0052062F,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
 0x00520630,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
 0x00520633,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
 0x0052066F,data,,,waiver,confirmed,interior of / adjacent to __dstbias; named at its base or owned by that subsystem,
-0x00520670,data,__tzname,,sms,confirmed,MSVC CRT global (xrefs=4),
+0x00520670,data,__tzname,,sms,confirmed,MSVC CRT global (xrefs=4),undefined4
 0x00520674,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
 0x00520678,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
 0x0052069C,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
 0x00591A5C,data,,,waiver,confirmed,interior of / adjacent to ?dbaseLow@@3PAEA; named at its base or owned by that subsystem,
-0x00591A60,data,?_pnhHeap@@3P6AHI@ZA,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x00591A60,data,?_pnhHeap@@3P6AHI@ZA,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x00591A68,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
 0x00591A6A,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
 0x00591A78,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
@@ -548,13 +548,13 @@ va,kind,name,display,source,confidence,notes,type
 0x00591ACC,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
 0x00591B12,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
 0x00591B20,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,
-0x00591B24,data,__crtheap,,sms,confirmed,MSVC CRT global (xrefs=11),
+0x00591B24,data,__crtheap,,sms,confirmed,MSVC CRT global (xrefs=11),undefined4
 0x00591B30,data,,,waiver,confirmed,interior of / adjacent to __crtheap; named at its base or owned by that subsystem,
 0x00591B34,data,,,waiver,confirmed,interior of / adjacent to __crtheap; named at its base or owned by that subsystem,
-0x00591C30,data,__nhandle,,sms,confirmed,MSVC CRT global (xrefs=18),
+0x00591C30,data,__nhandle,,sms,confirmed,MSVC CRT global (xrefs=18),undefined4
 0x00591C34,data,,,waiver,confirmed,interior of / adjacent to __nhandle; named at its base or owned by that subsystem,
-0x00592C40,data,__nstream,,sms,confirmed,MSVC CRT global (xrefs=6),
+0x00592C40,data,__nstream,,sms,confirmed,MSVC CRT global (xrefs=6),undefined4
 0x00592C44,data,,,waiver,confirmed,interior of / adjacent to __nstream; named at its base or owned by that subsystem,
-0x00592C4C,data,__acmdln,,sms,confirmed,MSVC CRT global (xrefs=5),
+0x00592C4C,data,__acmdln,,sms,confirmed,MSVC CRT global (xrefs=5),undefined4
 0x00592C50,data,,,waiver,confirmed,interior of / adjacent to __acmdln; named at its base or owned by that subsystem,
 0x00592C54,data,,,waiver,confirmed,interior of / adjacent to __acmdln; named at its base or owned by that subsystem,

@@ -141,8 +141,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0050CF90,data,_ctStateCheckpoint,,re,confirmed,heap copy of _ctState for preemptible save/restore,
 0x0050D095,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv,
 0x0050D2DD,data,,,waiver,confirmed,interior of _cgt type-record mirror read by the interpreter; base named in objects.csv,
-0x0050D312,data,_ctProgramNamePtr,,re,inferred,pointer to the current AI script name; NULL gates the interpreter off,
-0x00546BC0,data,_ctCompareActor,,re,inferred,actor slot used by CTVarDiff to evaluate attributes under the other object,
+0x0050D312,data,_ctProgramNamePtr,,re,inferred,pointer to the current AI script name; NULL gates the interpreter off,undefined4
+0x00546BC0,data,_ctCompareActor,,re,inferred,actor slot used by CTVarDiff to evaluate attributes under the other object,undefined2
 0x00546BC8,data,_ctState,,re,confirmed,0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority),
 0x00546BCC,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
 0x00546BD8,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
@@ -153,9 +153,9 @@ va,kind,name,display,source,confidence,notes,type
 0x00546BEE,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
 0x00546BF0,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
 0x00546C42,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
-0x00546C48,data,_ctPrintBuf,,re,inferred,"HUD message text staged by CTDo_print/printnum, flushed on loop exit",
-0x00546C8C,data,_ctCheckPass,,re,inferred,"validate/dry-run flag: skips branches and side effects, enables the stack-imbalance check",
-0x00546C90,data,_ctActionTaken,,re,confirmed,set 1 when a CTDo action fires; returned by CTExecProgram,
-0x00546C94,data,_ctActorObj,,re,confirmed,pointer to the current actor entity record,
-0x00546C98,data,_ctHalt,,re,confirmed,halt flag; the CTExecProgram loop runs while *IP!='%' and !_ctHalt,
-0x00546CA4,data,_ctExecuting,,re,confirmed,re-entry guard set across CTExecProgram,
+0x00546C48,data,_ctPrintBuf,,re,inferred,"HUD message text staged by CTDo_print/printnum, flushed on loop exit",undefined1
+0x00546C8C,data,_ctCheckPass,,re,inferred,"validate/dry-run flag: skips branches and side effects, enables the stack-imbalance check",undefined1
+0x00546C90,data,_ctActionTaken,,re,confirmed,set 1 when a CTDo action fires; returned by CTExecProgram,undefined1
+0x00546C94,data,_ctActorObj,,re,confirmed,pointer to the current actor entity record,undefined4
+0x00546C98,data,_ctHalt,,re,confirmed,halt flag; the CTExecProgram loop runs while *IP!='%' and !_ctHalt,undefined1
+0x00546CA4,data,_ctExecuting,,re,confirmed,re-entry guard set across CTExecProgram,undefined1
