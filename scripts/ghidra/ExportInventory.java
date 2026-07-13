@@ -7,6 +7,7 @@
 //   ranges.csv     slug,range,bytes,bytes_in_functions,functions -- per manifest range
 //   callsites.csv  callee_va,site_va,cleanup_bytes,pushes_before -- caller-side evidence (#453)
 //   frames.csv     va,ebp_frame,ret_imm,max_stack_arg,max_stack_ref,reads_ecx,reads_edx (#453)
+//   unaccounted.csv va,bytes,padding,defined_data,labels -- executable bytes in NO function (#496)
 //
 // Subsystem tags come from <repo>/db/subsystems.csv (ranges) and
 // <repo>/db/symbols/*.csv (explicit claims; a claim overrides range membership).
@@ -217,6 +218,58 @@ public class ExportInventory extends GhidraScript {
             }
         }
         println("ranges.csv written");
+
+        // --- unaccounted.csv ------------------------------------------------
+        // Every byte of EXECUTABLE memory that lies in no function body (#496).
+        //
+        // functions.csv was the denominator of every coverage check -- and it only ever
+        // held what auto-analysis reached as a CALL target, plus what db/ materialised.
+        // Code reached solely through a function POINTER (window procs, thread entries,
+        // object proc-table entries, event callbacks) was given a LABEL by the FA.SMS
+        // import and never disassembled, so it was not a function, so no check could see
+        // it -- the same tautology as #482, one layer down: we measured coverage of the
+        // set we had already decided to look at.
+        //
+        // This file is that blind spot, measured, so the ratchet in check_status.py can
+        // drive it to zero. A run with a `labels` value is the cheap case: the binary
+        // already tells us the function's name, and a db/symbols row materialises it
+        // (ApplySymbols disassembles + creates the function).
+        //
+        //   padding      -- leading/trailing 0xCC / 0x90 / 0x00 alignment fill only. Fill
+        //                   INSIDE a run is not padding, it is code we have not read.
+        //   defined_data -- bytes Ghidra has typed as data (jump tables, EH tables).
+        //   labels       -- symbol names inside the run; ';'-joined, capped at 4.
+        //
+        // undefined code = bytes - padding - defined_data.
+        AddressSet bodies = new AddressSet();
+        for (Function fn : functions.values()) bodies.add(fn.getBody());
+
+        long unaccountedRuns = 0, undefinedBytes = 0, labelledRuns = 0;
+        try (BufferedWriter w = open(new File(outDir, "unaccounted.csv"))) {
+            w.write("va,bytes,padding,defined_data,labels\n");
+            for (ghidra.program.model.mem.MemoryBlock b :
+                    currentProgram.getMemory().getBlocks()) {
+                if (!b.isExecute() || !b.isInitialized()) continue;
+                long lo = b.getStart().getOffset(), hi = b.getEnd().getOffset() + 1;
+                long va = lo;
+                while (va < hi) {
+                    if (bodies.contains(toAddr(va))) { va++; continue; }
+                    long start = va;
+                    while (va < hi && !bodies.contains(toAddr(va))) va++;
+                    Run r = classify(start, va);
+                    if (r.bytes - r.padding - r.definedData <= 0 && r.labels.isEmpty())
+                        continue; // pure alignment fill / fully-typed table: not a hole
+                    w.write(String.format("0x%08X,%d,%d,%d,%s\n", start, r.bytes,
+                            r.padding, r.definedData, csv(String.join(";", r.labels))));
+                    unaccountedRuns++;
+                    undefinedBytes += Math.max(0, r.bytes - r.padding - r.definedData);
+                    if (!r.labels.isEmpty()) labelledRuns++;
+                }
+            }
+        }
+        println(String.format(
+                "unaccounted.csv: %d runs, %d bytes of undefined code, %d carry a symbol name",
+                unaccountedRuns, undefinedBytes, labelledRuns));
 
         // --- callsites.csv --------------------------------------------------
         // Evidence for the cdecl signature recovery in tools/recover_signatures.py (#453).
@@ -529,6 +582,47 @@ public class ExportInventory extends GhidraScript {
             if ("ECX".equalsIgnoreCase(r) || "EDX".equalsIgnoreCase(r)) return 4;
         }
         return -1;
+    }
+
+    /** One maximal run of executable bytes that lies in no function body (#496). */
+    private static final class Run {
+        long bytes, padding, definedData;
+        final List<String> labels = new ArrayList<>();
+    }
+
+    /** Classify [lo, hi) — alignment fill, typed data, and any symbol names inside. */
+    private Run classify(long lo, long hi) throws Exception {
+        Run r = new Run();
+        r.bytes = hi - lo;
+
+        byte[] buf = new byte[(int) r.bytes];
+        currentProgram.getMemory().getBytes(toAddr(lo), buf);
+
+        // Padding is EDGE fill only: MSVC aligns function starts with 0xCC / 0x90, and the
+        // last function in a block is followed by zero fill. Counting every 0xCC/0x00 byte
+        // anywhere in the run would silently discount real code -- immediates and zeroed
+        // operands are full of both -- and shrink the debt without reading a line of it.
+        int i = 0;
+        while (i < buf.length && isFill(buf[i])) i++;
+        int j = buf.length;
+        while (j > i && isFill(buf[j - 1])) j--;
+        r.padding = (buf.length - (j - i));
+
+        for (Data d : currentProgram.getListing().getDefinedData(
+                new AddressSet(toAddr(lo), toAddr(hi - 1)), true)) {
+            r.definedData += d.getLength();
+        }
+        for (Symbol s : currentProgram.getSymbolTable().getSymbolIterator(
+                toAddr(lo), true)) {
+            if (s.getAddress().getOffset() >= hi) break;
+            if (s.isDynamic()) continue;
+            if (r.labels.size() < 4) r.labels.add(s.getName());
+        }
+        return r;
+    }
+
+    private static boolean isFill(byte b) {
+        return b == (byte) 0xCC || b == (byte) 0x90 || b == 0;
     }
 
     /** Subsystem slug a function VA belongs to, or null. Claims win over ranges. */
