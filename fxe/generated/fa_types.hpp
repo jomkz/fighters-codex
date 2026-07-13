@@ -177,7 +177,10 @@ typedef struct entity {
     fixed24 pos_z;            /* 0x19                                              */
     u16     heading;          /* 0x1D  (some code reads 0x1D as a dword, i.e.      */
     u16     pitch;            /* 0x1F   heading+pitch together)          confirmed */
-    u16     goal_angle;       /* 0x21                                              */
+    u16     bank;             /* 0x21  heading/pitch/bank is the orientation triple;
+                               *       physics.md names this one from the flight
+                               *       model. An earlier revision guessed
+                               *       "goal_angle" from an access note.  confirmed */
     u16     goal_heading;     /* 0x23                                              */
     u16     goal_altitude;    /* 0x25                                              */
     u8      reserved_027[13]; /* 0x27                                              */
@@ -230,7 +233,76 @@ typedef struct OBJ_TYPE {
     u32     damage_set;       /* 0x33  == 2 selects the {_C,_D} set      confirmed */
     u8      reserved_037[70]; /* 0x37                                              */
     u32     class_proc;       /* 0x7D  the class's proc selector (GetObjProc)       */
-} OBJ_TYPE;                   /* 0x81  header only — see type_size                 */
+    u8      reserved_081[37]; /* 0x81                                              */
+} OBJ_TYPE;                   /* 0xA6 (166) -- the RETAIL DATA states this size    */
+
+/* === The class extensions (#476) =================================================
+ *
+ * An object record is `entity` (0xDE) + a per-class extension. The extension's LENGTH is
+ * declared per type at OBJ_TYPE::obj_ext_size -- and the retail type files state it
+ * outright. Read from all 534 records shipped in the game's LIB archives:
+ *
+ *   .OT  (static objects, _OBJProc/_STRIPProc)   ext =   0  -- ALL 170 records
+ *   .JT  (projectiles,    _PROJProc)             ext =  52  -- ALL 135 records
+ *   .NT  (ground/NPC,     _GVProc et al)         ext = 145..247
+ *   .PT  (aircraft,       _PLANEProc)            ext = 490..626
+ *
+ * (The type files are `[brent's_relocatable_format]` text, and they delimit the record
+ *  with the developers' own section names: OBJ_TYPE / NPC_TYPE / PLANE_TYPE / PROJ_TYPE.
+ *  So OBJ_TYPE is not our coinage after all -- it is the game's own name.)
+ *
+ * WHY THE LOW BAND CANNOT BE ATTRIBUTED BY ADDRESS. Every class's extension starts at the
+ * same offset, so the first 52 bytes are simultaneously a projectile's whole extension, an
+ * aircraft's first 52, and a ground vehicle's first 52. An access to `_cg + 0xDE` names no
+ * class at all.
+ *
+ * WHAT DOES ATTRIBUTE A FIELD:
+ *   1. SIZE. A ground vehicle's extension is at most 247 bytes, a projectile's is 52 -- so
+ *      any field at ext >= 247 can ONLY be an aircraft's. That is proven by the shipped data.
+ *   2. A CLASS GUARD IN THE CODE. `ShapeSetup` reads these fields only after testing
+ *      `entity.obj_class == 4` (aircraft), which proves the class of what it then reads.
+ *
+ * And what does NOT: call-graph reachability from the class procs. It looks sound and is
+ * not -- a handler routinely mirrors ANOTHER object into `_cg` (GetCurObj on a target id),
+ * so "reached from _PROJProc" does not mean "a projectile's field". Measured: it attributes
+ * fields at ext 0x99 and 0x9D to projectiles, whose extension is only 52 bytes long.
+ */
+
+/* The aircraft extension, at entity + 0xDE. Every aircraft type ships at least 490 bytes of
+ * it (the tail beyond that varies per type), so this struct models the guaranteed prefix. */
+typedef struct PLANE_EXT {
+    u8      reserved_000[5];  /* +0x000                                              */
+    u8      pl_state;         /* +0x005  staged into _PLstate for the shape selectors */
+    u8      reserved_006[139];/* +0x006  ALIASED with the projectile and GV extensions:
+                               *         no field here can be attributed by address    */
+    u32     state_flags;      /* +0x091  gear / flap / afterburner / brake bits, read
+                               *         by ShapeSetup under an obj_class == 4 guard:
+                               *         0x20 afterburner, 0x80 brake, 0x100 flaps,
+                               *         0x1000 gear. THIS is what the .SH embedded x86
+                               *         articulation ultimately selects on.  confirmed */
+    u8      reserved_095[40]; /* +0x095                                              */
+    fixed24 g_load;           /* +0x0BD  0x100 = 1 G (physics.md)          inferred */
+    u8      reserved_0C1[79]; /* +0x0C1                                              */
+    fixed24 throttle;         /* +0x110  current, smoothed                 confirmed */
+    u16     throttle_target;  /* +0x114  commanded %, 0..100               confirmed */
+    u8      reserved_116[2];  /* +0x116                                              */
+    fixed24 climb_rate;       /* +0x118  compared against -0x2D00 for the flap gate  */
+    u16     unk_11C;          /* +0x11C                                              */
+    fixed24 fuel;             /* +0x11E  internal quantity                 confirmed */
+    u8      reserved_122[12]; /* +0x122                                              */
+    u8      stall_state;      /* +0x12E  0 normal, 1 warning, 2 stall      confirmed */
+    u8      reserved_12F[103];/* +0x12F                                              */
+    u16     ab_expiry;        /* +0x196  afterburner timer (vs _currentT)  confirmed */
+    u16     brake_expiry;     /* +0x198  wheel-brake timer (vs _currentT)  confirmed */
+    u8      reserved_19A[80]; /* +0x19A                                              */
+} PLANE_EXT;                  /* 490 (0x1EA) -- the smallest aircraft extension shipped */
+
+/* The projectile extension, at entity + 0xDE. EXACTLY 52 bytes in all 135 shipped .JT
+ * records. The interior is deliberately unmapped: it aliases the aircraft and GV
+ * extensions byte for byte, and nothing in the census can tell them apart (see above). */
+typedef struct PROJ_EXT {
+    u8      reserved_000[52]; /* +0x000  interior not attributable by address        */
+} PROJ_EXT;                   /* 52 */
 
 /* --- CN_INFO — network configuration, EA.CFG / NET.DAT (docs/fa/structs.md §4) ---
  * CN_ReadConfig reads a 0xDDC-byte body after a 4-byte checksum. Only the confirmed,
@@ -303,8 +375,15 @@ static_assert(sizeof(undefined4) == 4, "undefined4 must be 4 byte(s)");
 //   CN_INFO  0xDDC -- the config body CN_ReadConfig reads.
 // The per-class extensions stay opaque on purpose: they all begin at the same
 // offset, so their fields alias, and a named one would be a guess (#454).
+//   PLANE_EXT 490  -- the aircraft class extension (entity + 0xDE). Every aircraft
+//                     type in the retail data ships at least this much; the tail
+//                     beyond it varies per type.
+//   PROJ_EXT   52  -- the projectile extension. EXACTLY 52 in all 135 shipped .JT
+//                     records, so this one is not a floor but the whole thing.
 static_assert(sizeof(entity) == 0xDE, "entity is the common region of an object record");
-static_assert(sizeof(OBJ_TYPE) == 0x81, "OBJ_TYPE is the common header of a type record");
+static_assert(sizeof(OBJ_TYPE) == 0xA6, "OBJ_TYPE is a 166-byte type record header (the retail data says so)");
+static_assert(sizeof(PLANE_EXT) == 0x1EA, "PLANE_EXT is the guaranteed prefix of an aircraft extension");
+static_assert(sizeof(PROJ_EXT) == 0x34, "PROJ_EXT is a projectile extension, exactly");
 static_assert(sizeof(CN_INFO) == 0xDDC, "CN_INFO is a 0xDDC-byte config body");
 
 }  // namespace fxe
