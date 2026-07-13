@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // 3D render core / SH interpreter (GR) -- FA.EXE
-// 38/163 functions have a recovered signature; 0/0 globals have a recovered type.
+// 39/42 functions have a recovered signature (+121 that are not C functions); 0/0 globals have a recovered type.
 
 namespace fxe::fa::render_core {
 
@@ -29,6 +29,7 @@ void rotate_vec_roll(void);  // 0x004CEB00  __cdecl
 void rotate_vec_pitch(void);  // 0x004CED44  __cdecl
 void rotate_vec_yaw(void);  // 0x004CEF8C  __cdecl
 undefined4 GRAddBrentObj(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D057C  __stdcall
+void SetFlatColor(void);  // 0x004D43CC  __cdecl
 void NeedClip(void);  // 0x004D4874  __cdecl
 void RestoreClip(void);  // 0x004D4888  __cdecl
 void shade_span_a(void);  // 0x004D4FFF  __cdecl
@@ -52,133 +53,136 @@ void draw_tri_nw(void);  // 0x004D6A90  __cdecl
 void draw_tri_se(void);  // 0x004D6B24  __cdecl
 void draw_nt(void);  // 0x004D6BB8  __cdecl
 
+// --- not C functions --------------------------------------------------
+// Recovered, and deliberately NOT declared. A C prototype cannot express
+// these, so one would misrepresent the mechanism rather than describe it.
+// asm:      0x004CD588  sincos  -- arguments arrive in registers no C convention can name
+// asm:      0x004CD5DF  isqrt16  -- arguments arrive in registers no C convention can name
+// asm:      0x004CD5EE  isqrt16_body  -- arguments arrive in registers no C convention can name
+// asm:      0x004CD7B4  acos  -- arguments arrive in registers no C convention can name
+// asm:      0x004CD854  SetShading  -- arguments arrive in registers no C convention can name
+// threaded: 0x004CDCA8  do_nop  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// asm:      0x004CE784  load_normal_table  -- arguments arrive in registers no C convention can name
+// asm:      0x004CE7F7  mxmul  -- arguments arrive in registers no C convention can name
+// asm:      0x004CEB70  rotate_matrix_roll  -- arguments arrive in registers no C convention can name
+// asm:      0x004CEDB8  rotate_matrix_pitch  -- arguments arrive in registers no C convention can name
+// asm:      0x004CF000  rotate_matrix_yaw  -- arguments arrive in registers no C convention can name
+// asm:      0x004CF270  code_pnt  -- arguments arrive in registers no C convention can name
+// asm:      0x004CF2A4  ecode_pnt  -- arguments arrive in registers no C convention can name
+// asm:      0x004CF2D0  matrix_from_angle3  -- arguments arrive in registers no C convention can name
+// asm:      0x004CF328  mult_point_by_matrix_asm  -- arguments arrive in registers no C convention can name
+// asm:      0x004CF410  matrix_row_asm  -- arguments arrive in registers no C convention can name
+// asm:      0x004D028C  cull_bbox_viewspace  -- arguments arrive in registers no C convention can name
+// asm:      0x004D0494  get_sort_dist  -- arguments arrive in registers no C convention can name
+// asm:      0x004D0798  draw_brent_obj  -- arguments arrive in registers no C convention can name
+// threaded: 0x004D0C2F  sh_op_BA  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D0C50  do_drawobj000  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D0C8A  sh_op_6A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D120B  sh_op_28  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1421  sh_op_D6_pre  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1424  sh_op_5A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1694  sh_op_20  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D17BC  do_shape_name  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D17E0  sh_op_stub  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// split:    0x004D17F0  sh_op_00  -- not an entry point: a mid-function split of an enclosing routine
+// split:    0x004D17F4  do_short_eof  -- not an entry point: a mid-function split of an enclosing routine
+// threaded: 0x004D17F8  sh_op_3A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D18F4  sh_op_08  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1974  sh_op_72  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1984  sh_op_96  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1E5C  do_vertexbuffer  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1ECC  sh_op_A2  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1EDC  sh_op_7A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1F24  sh_op_74  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1F2C  sh_op_76  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1F34  sh_op_22  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D1FC0  sh_op_80  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D225E  sh_op_1A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2278  do_unmask  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D22A8  do_sfcal_long  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D22D4  do_ifdestroyed  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D22FC  do_no_overlap  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2318  do_jumptodetail  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2344  do_use_terrain_detail  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// split:    0x004D2360  sh_op_B0  -- not an entry point: a mid-function split of an enclosing routine
+// threaded: 0x004D2380  do_if_not_effect  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D23AC  sh_op_6C  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2450  sh_op_06  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D24F8  sh_op_0C  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2580  sh_op_0E  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2608  sh_op_10  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2690  sh_op_18  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2740  sh_op_84  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// asm:      0x004D2798  load_dest  -- arguments arrive in registers no C convention can name
+// threaded: 0x004D2880  sh_op_1C  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2910  sh_op_26  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D29EC  sh_op_2A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2B20  sh_op_2C  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2BB0  sh_op_92  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2C70  sh_op_90  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2D30  sh_op_94  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2FC0  do_setcolor2  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2FC8  sh_op_BC  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2FD0  sh_op_2E  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D300A  sh_op_24_pre  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D300C  do_fullpntg16  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3064  sh_op_A0  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D30C8  sh_op_4E  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D30E4  do_short_ijmp  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D30E5  do_jump  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3100  do_ijmp_long  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3118  sh_op_32  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3134  do_anim_jmp  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D315C  sh_op_4A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3193  sh_op_4C_pre  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3194  do_xformunmask  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D33D8  do_icall_long  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3618  sh_op_52  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3644  sh_op_56  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3670  sh_op_5E  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D36CC  sh_op_60  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3728  sh_op_62  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D3784  sh_op_64  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D37BC  sh_op_66  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D37F4  sh_op_68  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D382C  sh_op_58  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// split:    0x004D3938  sh_op_78  -- not an entry point: a mid-function split of an enclosing routine
+// threaded: 0x004D416B  sh_op_A4_body  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D416C  do_jumpfar4  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4240  do_start_interp  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// split:    0x004D4254  do_start_asm  -- not an entry point: a mid-function split of an enclosing routine
+// threaded: 0x004D4258  do_collision_info  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// asm:      0x004D426C  set_overlap_flag  -- arguments arrive in registers no C convention can name
+// threaded: 0x004D4288  sh_op_CA  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D42C8  do_setlight  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D42EC  do_setcoarse  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4308  do_set_point_color  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4364  do_set_gouraud  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D43DC  do_new_poly  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D478C  do_force_no_pmap  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D47A4  do_streamer_def  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D47B8  do_streamer_draw  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4894  do_screen_coords  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4988  do_texture_index  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D49C0  do_texture_file  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4A19  do_brush_solid  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4A30  do_brush_trans  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4A47  do_brush_area  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4A6D  do_brush_area_full  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4ACA  sh_op_DC  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D4D2C  sh_op_DE  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D5475  do_new_smap  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D5644  do_new_rmap  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D59AC  do_new_pmap_or_tmap  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// asm:      0x004D5A2C  angles_2_matrix  -- arguments arrive in registers no C convention can name
+// threaded: 0x004D6640  do_nt  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// asm:      0x004D69EC  __compute_viewer_dot_product  -- arguments arrive in registers no C convention can name
+
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x004CD588  sincos -- signature not recovered
-// TODO(#453): 0x004CD5DF  isqrt16 -- signature not recovered
-// TODO(#453): 0x004CD5EE  isqrt16_body -- signature not recovered
-// TODO(#453): 0x004CD7B4  acos -- signature not recovered
-// TODO(#453): 0x004CD854  SetShading -- signature not recovered
-// TODO(#453): 0x004CDCA8  do_nop -- signature not recovered
 // TODO(#453): 0x004CE4A8  set_render_mode -- signature not recovered
-// TODO(#453): 0x004CE784  load_normal_table -- signature not recovered
 // TODO(#453): 0x004CE7BC  load_xlate_rotate_pnt -- signature not recovered
-// TODO(#453): 0x004CE7F7  mxmul -- signature not recovered
-// TODO(#453): 0x004CEB70  rotate_matrix_roll -- signature not recovered
-// TODO(#453): 0x004CEDB8  rotate_matrix_pitch -- signature not recovered
-// TODO(#453): 0x004CF000  rotate_matrix_yaw -- signature not recovered
-// TODO(#453): 0x004CF270  code_pnt -- signature not recovered
-// TODO(#453): 0x004CF2A4  ecode_pnt -- signature not recovered
-// TODO(#453): 0x004CF2D0  matrix_from_angle3 -- signature not recovered
-// TODO(#453): 0x004CF328  mult_point_by_matrix_asm -- signature not recovered
-// TODO(#453): 0x004CF410  matrix_row_asm -- signature not recovered
-// TODO(#453): 0x004D028C  cull_bbox_viewspace -- signature not recovered
-// TODO(#453): 0x004D0494  get_sort_dist -- signature not recovered
-// TODO(#453): 0x004D0798  draw_brent_obj -- signature not recovered
-// TODO(#453): 0x004D0C2F  sh_op_BA -- signature not recovered
-// TODO(#453): 0x004D0C50  do_drawobj000 -- signature not recovered
-// TODO(#453): 0x004D0C8A  sh_op_6A -- signature not recovered
-// TODO(#453): 0x004D120B  sh_op_28 -- signature not recovered
-// TODO(#453): 0x004D1421  sh_op_D6_pre -- signature not recovered
-// TODO(#453): 0x004D1424  sh_op_5A -- signature not recovered
-// TODO(#453): 0x004D1694  sh_op_20 -- signature not recovered
-// TODO(#453): 0x004D17BC  do_shape_name -- signature not recovered
-// TODO(#453): 0x004D17E0  sh_op_stub -- signature not recovered
-// TODO(#453): 0x004D17F0  sh_op_00 -- signature not recovered
-// TODO(#453): 0x004D17F4  do_short_eof -- signature not recovered
-// TODO(#453): 0x004D17F8  sh_op_3A -- signature not recovered
-// TODO(#453): 0x004D18F4  sh_op_08 -- signature not recovered
-// TODO(#453): 0x004D1974  sh_op_72 -- signature not recovered
-// TODO(#453): 0x004D1984  sh_op_96 -- signature not recovered
-// TODO(#453): 0x004D1E5C  do_vertexbuffer -- signature not recovered
-// TODO(#453): 0x004D1ECC  sh_op_A2 -- signature not recovered
-// TODO(#453): 0x004D1EDC  sh_op_7A -- signature not recovered
-// TODO(#453): 0x004D1F24  sh_op_74 -- signature not recovered
-// TODO(#453): 0x004D1F2C  sh_op_76 -- signature not recovered
-// TODO(#453): 0x004D1F34  sh_op_22 -- signature not recovered
-// TODO(#453): 0x004D1FC0  sh_op_80 -- signature not recovered
-// TODO(#453): 0x004D225E  sh_op_1A -- signature not recovered
-// TODO(#453): 0x004D2278  do_unmask -- signature not recovered
-// TODO(#453): 0x004D22A8  do_sfcal_long -- signature not recovered
-// TODO(#453): 0x004D22D4  do_ifdestroyed -- signature not recovered
-// TODO(#453): 0x004D22FC  do_no_overlap -- signature not recovered
-// TODO(#453): 0x004D2318  do_jumptodetail -- signature not recovered
-// TODO(#453): 0x004D2344  do_use_terrain_detail -- signature not recovered
-// TODO(#453): 0x004D2360  sh_op_B0 -- signature not recovered
-// TODO(#453): 0x004D2380  do_if_not_effect -- signature not recovered
-// TODO(#453): 0x004D23AC  sh_op_6C -- signature not recovered
-// TODO(#453): 0x004D2450  sh_op_06 -- signature not recovered
-// TODO(#453): 0x004D24F8  sh_op_0C -- signature not recovered
-// TODO(#453): 0x004D2580  sh_op_0E -- signature not recovered
-// TODO(#453): 0x004D2608  sh_op_10 -- signature not recovered
-// TODO(#453): 0x004D2690  sh_op_18 -- signature not recovered
-// TODO(#453): 0x004D2740  sh_op_84 -- signature not recovered
-// TODO(#453): 0x004D2798  load_dest -- signature not recovered
-// TODO(#453): 0x004D2880  sh_op_1C -- signature not recovered
-// TODO(#453): 0x004D2910  sh_op_26 -- signature not recovered
-// TODO(#453): 0x004D29EC  sh_op_2A -- signature not recovered
-// TODO(#453): 0x004D2B20  sh_op_2C -- signature not recovered
-// TODO(#453): 0x004D2BB0  sh_op_92 -- signature not recovered
-// TODO(#453): 0x004D2C70  sh_op_90 -- signature not recovered
-// TODO(#453): 0x004D2D30  sh_op_94 -- signature not recovered
-// TODO(#453): 0x004D2FC0  do_setcolor2 -- signature not recovered
-// TODO(#453): 0x004D2FC8  sh_op_BC -- signature not recovered
-// TODO(#453): 0x004D2FD0  sh_op_2E -- signature not recovered
-// TODO(#453): 0x004D300A  sh_op_24_pre -- signature not recovered
-// TODO(#453): 0x004D300C  do_fullpntg16 -- signature not recovered
-// TODO(#453): 0x004D3064  sh_op_A0 -- signature not recovered
-// TODO(#453): 0x004D30C8  sh_op_4E -- signature not recovered
-// TODO(#453): 0x004D30E4  do_short_ijmp -- signature not recovered
-// TODO(#453): 0x004D30E5  do_jump -- signature not recovered
-// TODO(#453): 0x004D3100  do_ijmp_long -- signature not recovered
-// TODO(#453): 0x004D3118  sh_op_32 -- signature not recovered
-// TODO(#453): 0x004D3134  do_anim_jmp -- signature not recovered
-// TODO(#453): 0x004D315C  sh_op_4A -- signature not recovered
-// TODO(#453): 0x004D3193  sh_op_4C_pre -- signature not recovered
-// TODO(#453): 0x004D3194  do_xformunmask -- signature not recovered
-// TODO(#453): 0x004D33D8  do_icall_long -- signature not recovered
-// TODO(#453): 0x004D3618  sh_op_52 -- signature not recovered
-// TODO(#453): 0x004D3644  sh_op_56 -- signature not recovered
-// TODO(#453): 0x004D3670  sh_op_5E -- signature not recovered
-// TODO(#453): 0x004D36CC  sh_op_60 -- signature not recovered
-// TODO(#453): 0x004D3728  sh_op_62 -- signature not recovered
-// TODO(#453): 0x004D3784  sh_op_64 -- signature not recovered
-// TODO(#453): 0x004D37BC  sh_op_66 -- signature not recovered
-// TODO(#453): 0x004D37F4  sh_op_68 -- signature not recovered
-// TODO(#453): 0x004D382C  sh_op_58 -- signature not recovered
-// TODO(#453): 0x004D3938  sh_op_78 -- signature not recovered
 // TODO(#453): 0x004D415D  thunk_FUN_004d416b -- signature not recovered
-// TODO(#453): 0x004D416B  sh_op_A4_body -- signature not recovered
-// TODO(#453): 0x004D416C  do_jumpfar4 -- signature not recovered
-// TODO(#453): 0x004D4240  do_start_interp -- signature not recovered
-// TODO(#453): 0x004D4254  do_start_asm -- signature not recovered
-// TODO(#453): 0x004D4258  do_collision_info -- signature not recovered
-// TODO(#453): 0x004D426C  set_overlap_flag -- signature not recovered
-// TODO(#453): 0x004D4288  sh_op_CA -- signature not recovered
-// TODO(#453): 0x004D42C8  do_setlight -- signature not recovered
-// TODO(#453): 0x004D42EC  do_setcoarse -- signature not recovered
-// TODO(#453): 0x004D4308  do_set_point_color -- signature not recovered
-// TODO(#453): 0x004D4364  do_set_gouraud -- signature not recovered
-// TODO(#453): 0x004D43CC  SetFlatColor -- signature not recovered
-// TODO(#453): 0x004D43DC  do_new_poly -- signature not recovered
-// TODO(#453): 0x004D478C  do_force_no_pmap -- signature not recovered
-// TODO(#453): 0x004D47A4  do_streamer_def -- signature not recovered
-// TODO(#453): 0x004D47B8  do_streamer_draw -- signature not recovered
-// TODO(#453): 0x004D4894  do_screen_coords -- signature not recovered
-// TODO(#453): 0x004D4988  do_texture_index -- signature not recovered
-// TODO(#453): 0x004D49C0  do_texture_file -- signature not recovered
-// TODO(#453): 0x004D4A19  do_brush_solid -- signature not recovered
-// TODO(#453): 0x004D4A30  do_brush_trans -- signature not recovered
-// TODO(#453): 0x004D4A47  do_brush_area -- signature not recovered
-// TODO(#453): 0x004D4A6D  do_brush_area_full -- signature not recovered
-// TODO(#453): 0x004D4ACA  sh_op_DC -- signature not recovered
-// TODO(#453): 0x004D4D2C  sh_op_DE -- signature not recovered
-// TODO(#453): 0x004D5475  do_new_smap -- signature not recovered
-// TODO(#453): 0x004D5644  do_new_rmap -- signature not recovered
-// TODO(#453): 0x004D59AC  do_new_pmap_or_tmap -- signature not recovered
-// TODO(#453): 0x004D5A2C  angles_2_matrix -- signature not recovered
-// TODO(#453): 0x004D6640  do_nt -- signature not recovered
-// TODO(#453): 0x004D69EC  __compute_viewer_dot_product -- signature not recovered
 
 }  // namespace fxe::fa::render_core

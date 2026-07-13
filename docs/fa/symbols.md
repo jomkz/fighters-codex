@@ -397,7 +397,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00421D40` | `ZONEActive` | re | zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x00421DE0` | `ZONEServiceRange` | re | per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent |
+| `0x00421DE0` | `ZONEServiceRange` | re | per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent; not a C function (#479): mid-function split of _ZONEUpdate@0 (0x00421DD0) |
 | `0x00422120` | `ZONEPickTarget` | re | resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6) |
 | `0x00422190` | `MAPWPListBounds` | re | walk a waypoint list: find head via flag bit0(&1), count entries to tail via bit1(&2); stride 0x44 |
 | `0x00422230` | `MAPAdjustObjAlt` | re | raise current object altitude (DAT_0050ce95) to terrain via _T_Info; helper of @MAPObjAlts@4; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -430,18 +430,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00424FA3` | `MAPWPOwnerIndex` | re | return the object index that owns a given waypoint pointer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425023` | `MAPSnapWPToStrip` | re | snap a waypoint onto the nearest airstrip (_APNearest); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425072` | `MAPWPNearStrip` | re | test whether a point is near an airstrip (_APNearest); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x00425096` | `MAPScreenSpan` | re | compute world-space span of the current map viewport (two MAPScreenToWorld corners) |
+| `0x00425096` | `MAPScreenSpan` | re | compute world-space span of the current map viewport (two MAPScreenToWorld corners); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004250CE` | `MAPPickObjIcon` | re | hit-test object icons at a screen point (12x10 px box), honoring MAPObjVisible; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425196` | `MAPObjVisible` | re | object map-visibility/side filter using view mask _DAT_00536628 and side flags; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425249` | `MAPPickWPIcon` | re | hit-test waypoint icons at a screen point; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042532A` | `MAPSwapPalette` | re | swap map palette DAT_00536590 <-> _curPalette (enter/leave map draw); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425358` | `MAPDraw` | re | full map render: 2D map (grid/BG/specials/icons/paths) or 3D leaf preview via _T_Make/_T_Render depending on mode DAT_005363f0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425948` | `MAPDrawRuler` | re | draw the map scale ruler bar; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x00425A8F` | `MAPIconRadius` | re | compute on-screen icon radius from current map scale |
+| `0x00425A8F` | `MAPIconRadius` | re | compute on-screen icon radius from current map scale; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x00425ACD` | `MAPDrawEra` | re | draw 'Historical Era' year range text (non-campaign multiplayer maps); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425B8B` | `MAPSyncSliders` | re | sync dialog X/Y sliders (items 4,3) to current _worldCenter/DAT_00536528; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00425C0A` | `MAPRedrawSelection` | re | redraw highlight when the selected object changes; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x00425C77` | `MAPDrawObjIcon` | re | draw one object's map icon: side color ring, type glyph (mcicons.PIC), padlock/target markers, label |
+| `0x00425C77` | `MAPDrawObjIcon` | re | draw one object's map icon: side color ring, type glyph (mcicons.PIC), padlock/target markers, label; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x00426277` | `MAPDrawTargetLink` | re | draw the dashed target link line from an object to its target; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004262DE` | `MAPDrawAllPaths` | re | iterate visible objects and draw each waypoint path; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00426325` | `MAPDrawObjPath` | re | draw one object's full waypoint polyline + target links; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -509,7 +509,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00468F00` | `PilotFormatRank` | re | format a pilot's rank string from the _pilotRanks table; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468F40` | `PilotDiskSpaceError` | re | 'You don't have enough free disk space' dialog before a pilot save; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468F80` | `PilotSetField` | re | small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219 |
+| `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0) |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
 | `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -816,9 +816,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DCE0` | `GG_GetMode` | sms |  |
 | `0x0045DE70` | `GG_SetPalette` | sms |  |
 | `0x0045DEC0` | `GG_Shake` | sms |  |
-| `0x0045DEDF` | `GG_FlushShaken` | re | present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path) |
+| `0x0045DEDF` | `GG_FlushShaken` | re | present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path); not a C function (#479): mid-function split of @GG_Shake@0 (0x0045DEC0) |
 | `0x0045E120` | `GG_Flush` | sms |  |
-| `0x0045E13F` | `GG_FlushDirtyLines` | re | the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable |
+| `0x0045E13F` | `GG_FlushDirtyLines` | re | the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable; not a C function (#479): mid-function split of @GG_Flush@4 (0x0045E120) |
 | `0x0045E370` | `flushLineStats` | sms |  |
 | `0x0045E3A0` | `GG_RestoreSurfaces` | sms |  |
 | `0x0045E410` | `GG_WaitRetrace` | sms |  |
@@ -920,12 +920,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004C8A74` | `G_SPolygon` | sms |  |
 | `0x004C8FD4` | `Horizon2d` | re | scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004C9224` | `NoHorizon` | re | off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004C924C` | `SolidHorizon` | re | solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10) |
+| `0x004C924C` | `SolidHorizon` | re | solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004C942C` | `GouraudHorizon` | re | Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10) |
-| `0x004CA028` | `G__AC_Texture` | sms |  |
-| `0x004CAE38` | `G__Texture` | sms |  |
-| `0x004CBD0B` | `G__Perspective` | sms |  |
-| `0x004CBE7C` | `G__ScaleBitmap` | sms |  |
+| `0x004CA028` | `G__AC_Texture` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
+| `0x004CAE38` | `G__Texture` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
+| `0x004CBD0B` | `G__Perspective` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
+| `0x004CBE7C` | `G__ScaleBitmap` | sms | not a C function (#479): source bitmap in ESI and destination rect in EDI |
 | `0x004CC8B0` | `DrawYLRP` | sms |  |
 
 ### Wingman / group AI (WNG/GRP)
@@ -1022,12 +1022,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00463EA0` | `MaskEvents` | sms |  |
 | `0x00463EC0` | `CallDamageProc` | sms |  |
 | `0x00463F30` | `GetObjProc` | re | resolve a proc selector: entity override (+0x6C) else class proc (type +0x7D) |
-| `0x00463F60` | `CallUtilProc` | sms |  |
+| `0x00463F60` | `CallUtilProc` | sms | not a C function (#479): call sites clean 4/8/12 bytes |
 | `0x00463FA0` | `Ignore` | sms |  |
 | `0x00464040` | `Reaction` | sms |  |
 | `0x00464300` | `EnterState` | sms |  |
 | `0x00464420` | `InSearchArea` | sms |  |
-| `0x0046442B` | `InSearchAreaBody` | re | Ghidra mid-function split: body of @InSearchArea@4 (entry +0xB); route-corridor DistToLine test |
+| `0x0046442B` | `InSearchAreaBody` | re | Ghidra mid-function split: body of @InSearchArea@4 (entry +0xB); route-corridor DistToLine test; not a C function (#479): mid-function split of @InSearchArea@4 (0x00464420) |
 | `0x004644F0` | `PreferredTargetId` | sms |  |
 | `0x00464520` | `PreferredProtectId` | sms |  |
 | `0x00464550` | `CloseToAnything` | sms |  |
@@ -1056,7 +1056,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004918D0` | `OBJHumanName` | sms |  |
 | `0x004A6B10` | `ResolveTypeRecord` | re | resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A6EB0` | `SetupOT` | sms |  |
-| `0x004A71C0` | `LoadShapeVariantPair` | re | load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B) |
+| `0x004A71C0` | `LoadShapeVariantPair` | re | load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B); not a C function (#479): mid-function split of _SetupOT (0x004A6EB0) |
 | `0x004A71E0` | `LoadShapeSlot` | re | resolve one shape-slot filename to a loaded pointer via RMAccess (was proposed type_load_shape_slot) |
 | `0x004A7200` | `SetupNT` | sms |  |
 | `0x004A7220` | `SetupPT` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1075,7 +1075,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00464CD0` | `CTLoadProgram` | re | load/switch the BI CODE resource by name (RMAccess 0x8000); set IP=base, CTResetPC; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00464DB0` | `CTResetPC` | re | reset IP=base and line=1; if arg!=0 also zero stack depth; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00464DE0` | `CTVarDiff` | sms |  |
-| `0x00464E20` | `CTEval_time` | sms | label-only in FA.SMS; ApplySymbols materializes the function |
+| `0x00464E20` | `CTEval_time` | sms | label-only in FA.SMS; ApplySymbols materializes the function; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x00464E30` | `CTEval_do_nothing` | sms | label-only in FA.SMS; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00464E40` | `CTEval_do_evade` | sms | label-only in FA.SMS; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00464E50` | `CTEval_do_attack` | sms | label-only in FA.SMS; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1282,23 +1282,23 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AA2B0` | `T_CompactCells` | re | compact _cellArray dropping dead (0xffff) cells; rewrites _cellCount and optional carried index; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004AA380` | `T_SortCells` | re | in-place quicksort of _cellArray (stride 0x16) via comparator (*_cellCompare 0x580B9C) and _Swapmem; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004AA440` | `T_CountCells` | re | tally cells into front/back counts (returns front count); drives T_Make's subdivide-again loop; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004AA4A0` | `T_EmitCells` | re | per live cell: T_CellTmapLookup + optional T_Normal, then T_LeafOp to emit geometry |
+| `0x004AA4A0` | `T_EmitCells` | re | per live cell: T_CellTmapLookup + optional T_Normal, then T_LeafOp to emit geometry; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004AA620` | `T_InitDictionary` | sms | init the tmap dictionary (_tdic) |
 | `0x004AA680` | `T_InitDictionaryEntry` | sms |  |
 | `0x004AA790` | `T_NamedTmaps` | sms | build named-tmap list (_tlist) from dictionary |
 | `0x004AA7E0` | `T_CompareTlist` | sms | qsort comparator for _tlist (label-only; xref-only in globals.csv) |
 | `0x004AA820` | `T_SortTmapList` | sms | sort _tlist for binary search |
-| `0x004AA840` | `T_CellTmapLookup` | re | binary-search _tlist by packed cell coord ((y&~3)<<16\|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2 |
+| `0x004AA840` | `T_CellTmapLookup` | re | binary-search _tlist by packed cell coord ((y&~3)<<16\|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004AACA0` | `T_InitHorizonProc` | sms | RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH |
-| `0x004AACE0` | `T_HorizonProc` | sms | 1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label |
-| `0x004AACFE` | `T_DrawHorizon` | re | horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol |
+| `0x004AACE0` | `T_HorizonProc` | sms | 1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
+| `0x004AACFE` | `T_DrawHorizon` | re | horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol; not a C function (#479): mid-function split of the routine at 0x004AACF0 |
 | `0x004AB860` | `BrushFromIndex` | sms |  |
 | `0x004ABAB0` | `T_Info` | sms |  |
 | `0x004C5D30` | `T_InitDatabase` | sms | set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB) |
 | `0x004C5D50` | `T_ShutdownDatabase` | sms | zero _dbDynamicLow/High |
 | `0x004C5D60` | `T_Init` | sms |  |
 | `0x004C5D70` | `T_Load` | sms | load <theater>.T2 via RMAccess on map change (T_Shutdown first); relocate the tile-summary (+0x85) and leaf (+0x91) array offsets into pointers; derive <theater>land.PIC (fallback land.PIC) |
-| `0x004C5F40` | `T_StripTildes` | re | remove '~' chars from a filename in place; used twice by T_Load |
+| `0x004C5F40` | `T_StripTildes` | re | remove '~' chars from a filename in place; used twice by T_Load; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004C5F60` | `T_Init2` | sms |  |
 | `0x004C5FA0` | `T_Shutdown` | sms | mirror of T_Init: free handle + clear dictionary/list (used by T_Load on map change) |
 | `0x004C6020` | `T_StopAdding` | sms | OBJStopAdding (unless _curScreen==3) + OBJFindHumans |
@@ -1374,151 +1374,151 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
-| `0x004CD588` | `sincos` | re | sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates |
-| `0x004CD5DF` | `isqrt16` | re | tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt) |
-| `0x004CD5EE` | `isqrt16_body` | re | Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize |
+| `0x004CD588` | `sincos` | re | sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates; not a C function (#479): angle in BX; sin in AX, cos in BX |
+| `0x004CD5DF` | `isqrt16` | re | tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt); not a C function (#479): 32-bit value in CX:BX, result in DI |
+| `0x004CD5EE` | `isqrt16_body` | re | Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize; not a C function (#479): 32-bit value in CX:BX, result in DI |
 | `0x004CD7A0` | `GRACos` | sms | public arccos wrapper over acos |
-| `0x004CD7B4` | `acos` | re | arccos via DAT_00515dcc table lookup+lerp |
+| `0x004CD7B4` | `acos` | re | arccos via DAT_00515dcc table lookup+lerp; not a C function (#479): cosine in BX, angle result in CX |
 | `0x004CD834` | `GRSetLightSource` | sms | store world light dir into _worldLightSource/515ED2/515ED4 |
-| `0x004CD854` | `SetShading` | re | thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT |
+| `0x004CD854` | `SetShading` | re | thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT; not a C function (#479): 3-component vector in EAX/EBX/ECX |
 | `0x004CD8B0` | `Sun` | re | lighting dot product of _worldLightSource against current matrix rows (518384/38A/390); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CD8F0` | `clip_edge_right` | re | Sutherland-Hodgman clip vs screen edge (outcode bit4); vbuf/vbuf2 ping-pong; calls ecode_pnt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CD9DA` | `clip_edge_left` | re | S-H clip vs screen edge (outcode bit8); vbuf ping-pong; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CDAC6` | `clip_edge_top` | re | S-H clip vs screen edge (outcode bit2); vbuf ping-pong; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CDBB3` | `clip_edge_bottom` | re | S-H clip vs screen edge (outcode bit1); vbuf ping-pong; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004CDCA8` | `do_nop` | sms | SH opcode 0x34 no-op handler |
+| `0x004CDCA8` | `do_nop` | sms | SH opcode 0x34 no-op handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004CDCB8` | `render_3d` | re | scene traversal: sets viewport from _cb clip box; inits sort list; T_AddYourObjs; dispatches dddEntry via vector_table; painter-sorts cur_sort_list then draws via PTR_FUN_0051839c; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CDEB4` | `setup_view_projection` | re | per-frame view/projection setup (aspect/head vectors/frustum) from zoom + screen dims; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CE4A8` | `set_render_mode` | re | tail into check_flat body; installs perspective-path rasterizer fn-ptr table (5184AC-518674/5185F0-51861C) |
 | `0x004CE4B4` | `check_flat` | re | pick flat vs perspective render path from matrix (m4=m2=m8=m6=0 && m5~0x7FFF); swaps the rasterizer fn-ptr dispatch tables; sets DAT_00518679/515F84; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004CE784` | `load_normal_table` | re | copy lighting normal_table (or DAT_00518620 variant) into working DAT_00518484 by in_AL selector |
+| `0x004CE784` | `load_normal_table` | re | copy lighting normal_table (or DAT_00518620 variant) into working DAT_00518484 by in_AL selector; not a C function (#479): table selector in AL, no return value |
 | `0x004CE7BC` | `load_xlate_rotate_pnt` | re | hand-asm vertex load+translate+rotate helper (axis-select on DAT_00515f84) |
-| `0x004CE7F7` | `mxmul` | re | hand-asm matrix*scalar accumulate helper (axis-select) |
+| `0x004CE7F7` | `mxmul` | re | hand-asm matrix*scalar accumulate helper (axis-select); not a C function (#479): vector in EBX/ECX/EBP; result in BX/CX/BP |
 | `0x004CE89C` | `compute_axis_check` | re | derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CE968` | `sort_objs_wrapper` | re | painter depth sort wrapper over _SortObjs_8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CEB00` | `rotate_vec_roll` | re | rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004CEB70` | `rotate_matrix_roll` | re | object-instancing: concat roll rotation into current matrix (m1..m9) via sincos |
+| `0x004CEB70` | `rotate_matrix_roll` | re | object-instancing: concat roll rotation into current matrix (m1..m9) via sincos; not a C function (#479): angle in BX, result in the carry flag |
 | `0x004CED44` | `rotate_vec_pitch` | re | rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004CEDB8` | `rotate_matrix_pitch` | re | object-instancing: concat pitch rotation into current matrix via sincos |
+| `0x004CEDB8` | `rotate_matrix_pitch` | re | object-instancing: concat pitch rotation into current matrix via sincos; not a C function (#479): angle in BX, result in the carry flag |
 | `0x004CEF8C` | `rotate_vec_yaw` | re | rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004CF000` | `rotate_matrix_yaw` | re | object-instancing: concat yaw rotation into current matrix via sincos |
-| `0x004CF270` | `code_pnt` | re | compute 5-bit frustum outcode of a projected point (BP/BX bounds) |
-| `0x004CF2A4` | `ecode_pnt` | re | extended outcode (near-plane aware) returned in AL; used by clippers |
-| `0x004CF2D0` | `matrix_from_angle3` | re | build 3x3 rotation matrix (3x FUN_004cf410) for MakeObj/ViewRotationMatrix |
-| `0x004CF328` | `mult_point_by_matrix_asm` | re | hand-asm point*matrix (register-only; empty decompile) — MultPointByMatrix core |
-| `0x004CF410` | `matrix_row_asm` | re | hand-asm matrix row build (register-only; empty decompile) |
-| `0x004D028C` | `cull_bbox_viewspace` | re | view-space bounding-box/near-plane visibility test; returns clip code; called by GRAddBrentObj & do_drawobj000 |
-| `0x004D0494` | `get_sort_dist` | re | painter sort key = max\|Δ\|+quarters of others + per-obj bias (from _xv32/_yv32/_zv32) |
+| `0x004CF000` | `rotate_matrix_yaw` | re | object-instancing: concat yaw rotation into current matrix via sincos; not a C function (#479): angle in BX, result in the carry flag |
+| `0x004CF270` | `code_pnt` | re | compute 5-bit frustum outcode of a projected point (BP/BX bounds); not a C function (#479): point in BX/CX/BP, outcode in AL |
+| `0x004CF2A4` | `ecode_pnt` | re | extended outcode (near-plane aware) returned in AL; used by clippers; not a C function (#479): point in EBX/ECX/EBP, outcode in AL |
+| `0x004CF2D0` | `matrix_from_angle3` | re | build 3x3 rotation matrix (3x FUN_004cf410) for MakeObj/ViewRotationMatrix; not a C function (#479): source vector in ESI and destination matrix in EBP |
+| `0x004CF328` | `mult_point_by_matrix_asm` | re | hand-asm point*matrix (register-only; empty decompile) — MultPointByMatrix core; not a C function (#479): point in ESI and matrix in EBP, result in BX/CX/DI |
+| `0x004CF410` | `matrix_row_asm` | re | hand-asm matrix row build (register-only; empty decompile); not a C function (#479): row in EBP and matrix in ESI, result in BX/CX/DI |
+| `0x004D028C` | `cull_bbox_viewspace` | re | view-space bounding-box/near-plane visibility test; returns clip code; called by GRAddBrentObj & do_drawobj000; not a C function (#479): shift in CL, box in SI/BX/BP/AX; result in the carry flag |
+| `0x004D0494` | `get_sort_dist` | re | painter sort key = max\|Δ\|+quarters of others + per-obj bias (from _xv32/_yv32/_zv32); not a C function (#479): object record in EDI; sort key returned in BP |
 | `0x004D057C` | `GRAddBrentObj` | sms |  |
-| `0x004D0798` | `draw_brent_obj` | re | per-object shape-draw callback (PTR_FUN_0051839c target): restore saved matrix/viewer; ShapeSetup(brentObjId); object rotate (roll/pitch/yaw); lighting matrix; check_flat; SetShadingTable; interpret shape stream with _bdrawObj=1 |
-| `0x004D0C2F` | `sh_op_BA` | re | SH opcode 0xBA handler |
-| `0x004D0C50` | `do_drawobj000` | sms |  |
-| `0x004D0C8A` | `sh_op_6A` | re | SH opcode 0x6A handler (render-state/geometry; 1409 bytes) |
-| `0x004D120B` | `sh_op_28` | re | SH opcode 0x28/0x30 handler |
-| `0x004D1421` | `sh_op_D6_pre` | re | 3-byte pre-adjust falling into sh_op_5A (op 0xD6) |
-| `0x004D1424` | `sh_op_5A` | re | SH opcode 0x5A handler (epic #52 placeholder name; 623 bytes) |
-| `0x004D1694` | `sh_op_20` | re | SH opcode 0x20 handler |
-| `0x004D17BC` | `do_shape_name` | sms | SH opcode 0x42 (SourceName): consume null-terminated shape name into _shapeName |
-| `0x004D17E0` | `sh_op_stub` | re | shared no-op stub for 10 unassigned SH opcodes |
-| `0x004D17F0` | `sh_op_00` | re | SH opcode 0x00 (EndObject) handler entry (1 byte; falls into do_short_eof) |
-| `0x004D17F4` | `do_short_eof` | sms | SH opcode 0x1E (ShortEOF): plain `ret` — returns from the current interpreter call frame (ends an Unmask/selector-called fragment; at top level ends the object). Trailing 0x1E runs are alignment after the return |
-| `0x004D17F8` | `sh_op_3A` | re | SH opcode 0x3A handler |
-| `0x004D18F4` | `sh_op_08` | re | SH opcode 0x08 handler |
-| `0x004D1974` | `sh_op_72` | re | SH opcode 0x72 handler (epic #52 placeholder name) |
-| `0x004D1984` | `sh_op_96` | re | SH opcode 0x96 handler (856 bytes) |
-| `0x004D1E5C` | `do_vertexbuffer` | re | SH opcode 0x82 (VertexBuffer) + 0x02/0x04/0x0A: push vertex batch into global pool at push_at/8 |
-| `0x004D1ECC` | `sh_op_A2` | re | SH opcode 0xA2/0xAE handler |
-| `0x004D1EDC` | `sh_op_7A` | re | SH opcode 0x7A handler (epic #52 placeholder name) |
-| `0x004D1F24` | `sh_op_74` | re | SH opcode 0x74/0x7C/0x8E/0x9C handler (6-byte) |
-| `0x004D1F2C` | `sh_op_76` | re | SH opcode 0x76 handler |
-| `0x004D1F34` | `sh_op_22` | re | SH opcode 0x22/0x7E handler |
-| `0x004D1FC0` | `sh_op_80` | re | SH opcode 0x80 handler (epic #52 placeholder name; 796 bytes) |
-| `0x004D225E` | `sh_op_1A` | re | SH opcode 0x1A handler |
-| `0x004D2278` | `do_unmask` | re | SH opcode 0x12 (Unmask): dispatches the target sub-stream via the vector_table call-form; the callee chain runs until its ShortEOF (0x1E) `ret`s; control resumes after the opcode |
-| `0x004D22A8` | `do_sfcal_long` | sms | SH opcode 0x6E (UnmaskLong) |
-| `0x004D22D4` | `do_ifdestroyed` | sms | SH opcode 0xAC (JumpToDamage): esi+=rel16 if _destroyed (0x50C39C) |
-| `0x004D22FC` | `do_no_overlap` | sms | SH opcode 0xB8: clears overlap/collision flag via FUN_004d426c |
-| `0x004D2318` | `do_jumptodetail` | re | SH opcode 0xA6 (JumpToDetail): skip rel16 when _detail(0x515EEE) < threshold |
-| `0x004D2344` | `do_use_terrain_detail` | sms | SH opcode 0xB2 |
-| `0x004D2360` | `sh_op_B0` | re | SH opcode 0xB0 handler |
-| `0x004D2380` | `do_if_not_effect` | sms | SH opcodes 0x14/0x16/0x3C/0xA8/0xAA/0xC0: conditional skip keyed on effects setting |
-| `0x004D23AC` | `sh_op_6C` | re | SH opcode 0x6C (draw-order selector): compares object-record field [w0] to w1; ALWAYS renders both sub-chains — calls one (returns at its ShortEOF) and tail-continues the other; the condition only swaps the order (painter's sorting). Targets: call=opd+w3+8 / continue=opd+6+w2; 13/14/16-byte sizes are the trailing embedded 38/48/50 jump |
-| `0x004D2450` | `sh_op_06` | re | SH opcode 0x06 (plane-test draw-order selector): sign of nx*(x+_xv)+ny*(y+_yv)+nz*(z+_zv) picks the order; both sub-chains always render (call one / continue other). Operand: 3×(coeff i16 + coord i16) + size u16 + call-rel16 + embedded jump; call=opd+16+rel / continue=next instruction (opd+14+size) |
-| `0x004D24F8` | `sh_op_0C` | re | SH opcode 0x0C: two-axis (y/z) variant of the 0x06 plane-test draw-order selector; operand 2×(coeff+coord) + size u16 + call-rel16 + embedded jump; call=opd+12+rel / continue=next instruction |
-| `0x004D2580` | `sh_op_0E` | re | SH opcode 0x0E: two-axis (x/z) variant of the 0x06 plane-test draw-order selector (same layout as 0x0C) |
-| `0x004D2608` | `sh_op_10` | re | SH opcode 0x10: two-axis (x/y) variant of the 0x06 plane-test draw-order selector (same layout as 0x0C) |
-| `0x004D2690` | `sh_op_18` | re | SH opcode 0x18 handler |
-| `0x004D2740` | `sh_op_84` | re | SH opcode 0x84 handler (epic #52 placeholder name) |
-| `0x004D2798` | `load_dest` | re | interpreter helper: load destination operand |
-| `0x004D2880` | `sh_op_1C` | re | SH opcode 0x1C/0x88 handler (perspective-path variant swapped by check_flat) |
-| `0x004D2910` | `sh_op_26` | re | SH opcode 0x26 handler |
-| `0x004D29EC` | `sh_op_2A` | re | SH opcode 0x2A/0x86 handler |
-| `0x004D2B20` | `sh_op_2C` | re | SH opcode 0x2C/0x8A handler |
-| `0x004D2BB0` | `sh_op_92` | re | SH opcode 0x92 handler |
-| `0x004D2C70` | `sh_op_90` | re | SH opcode 0x90 handler |
-| `0x004D2D30` | `sh_op_94` | re | SH opcode 0x94 handler |
-| `0x004D2FC0` | `do_setcolor2` | sms | SH opcode 0x5C |
-| `0x004D2FC8` | `sh_op_BC` | re | SH opcode 0xBC handler (UnkBC) |
-| `0x004D2FD0` | `sh_op_2E` | re | SH opcode 0x2E handler; contains do_setcolor_continue (0x4D2FD6) |
-| `0x004D300A` | `sh_op_24_pre` | re | 2-byte entry for op 0x24 (falls into do_fullpntg16) |
-| `0x004D300C` | `do_fullpntg16` | sms | SH opcode 0xFA |
-| `0x004D3064` | `sh_op_A0` | re | SH opcode 0xA0 handler |
-| `0x004D30C8` | `sh_op_4E` | re | SH opcode 0x4E handler |
-| `0x004D30E4` | `do_short_ijmp` | sms | SH opcode 0x38 (ShortJump): DEC ESI then shares 0x48 body |
-| `0x004D30E5` | `do_jump` | sms | SH opcode 0x48 (Jump): esi+=rel16 |
-| `0x004D3100` | `do_ijmp_long` | sms | SH opcode 0x50 (LongJump): esi+=rel32 |
-| `0x004D3118` | `sh_op_32` | re | SH opcode 0x32 handler |
-| `0x004D3134` | `do_anim_jmp` | sms | SH opcode 0x40 (JumpToFrame): idx=_frameCounter mod nframes; relative frame-table jump |
-| `0x004D315C` | `sh_op_4A` | re | SH opcode 0x4A handler |
-| `0x004D3193` | `sh_op_4C_pre` | re | 1-byte entry for op 0x4C/0x8C (falls into sh_op_C4) |
-| `0x004D3194` | `do_xformunmask` | re | SH opcode 0xC4 XformUnmask: render sub-stream at a relative transform |
-| `0x004D33D8` | `do_icall_long` | sms | SH opcode 0xC6 (XformUnmaskLong) |
-| `0x004D3618` | `sh_op_52` | re | SH opcode 0x52/0x54 handler |
-| `0x004D3644` | `sh_op_56` | re | SH opcode 0x56 handler |
-| `0x004D3670` | `sh_op_5E` | re | SH opcode 0x5E handler |
-| `0x004D36CC` | `sh_op_60` | re | SH opcode 0x60 handler |
-| `0x004D3728` | `sh_op_62` | re | SH opcode 0x62 handler |
-| `0x004D3784` | `sh_op_64` | re | SH opcode 0x64 handler |
-| `0x004D37BC` | `sh_op_66` | re | SH opcode 0x66 handler |
-| `0x004D37F4` | `sh_op_68` | re | SH opcode 0x68 handler |
-| `0x004D382C` | `sh_op_58` | re | SH opcode 0x58 handler |
-| `0x004D3938` | `sh_op_78` | re | SH opcode 0x78: oriented bounding-box visibility cull — transforms a center+-extent box by the view matrix and trivially-rejects the guarded geometry from its 8 corners (code_pnt Cohen-Sutherland outcodes); emits no geometry (largest handler; 2085 bytes) |
+| `0x004D0798` | `draw_brent_obj` | re | per-object shape-draw callback (PTR_FUN_0051839c target): restore saved matrix/viewer; ShapeSetup(brentObjId); object rotate (roll/pitch/yaw); lighting matrix; check_flat; SetShadingTable; interpret shape stream with _bdrawObj=1; not a C function (#479): object record in EDI |
+| `0x004D0C2F` | `sh_op_BA` | re | SH opcode 0xBA handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D0C50` | `do_drawobj000` | sms | not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D0C8A` | `sh_op_6A` | re | SH opcode 0x6A handler (render-state/geometry; 1409 bytes); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D120B` | `sh_op_28` | re | SH opcode 0x28/0x30 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1421` | `sh_op_D6_pre` | re | 3-byte pre-adjust falling into sh_op_5A (op 0xD6); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1424` | `sh_op_5A` | re | SH opcode 0x5A handler (epic #52 placeholder name; 623 bytes); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1694` | `sh_op_20` | re | SH opcode 0x20 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D17BC` | `do_shape_name` | sms | SH opcode 0x42 (SourceName): consume null-terminated shape name into _shapeName; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D17E0` | `sh_op_stub` | re | shared no-op stub for 10 unassigned SH opcodes; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D17F0` | `sh_op_00` | re | SH opcode 0x00 (EndObject) handler entry (1 byte; falls into do_short_eof); not a C function (#479): SH dispatch-table jmp target; the RET returns from the enclosing interpreter |
+| `0x004D17F4` | `do_short_eof` | sms | SH opcode 0x1E (ShortEOF): plain `ret` — returns from the current interpreter call frame (ends an Unmask/selector-called fragment; at top level ends the object). Trailing 0x1E runs are alignment after the return; not a C function (#479): SH dispatch-table jmp target; consumes ESI from the enclosing interpreter |
+| `0x004D17F8` | `sh_op_3A` | re | SH opcode 0x3A handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D18F4` | `sh_op_08` | re | SH opcode 0x08 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1974` | `sh_op_72` | re | SH opcode 0x72 handler (epic #52 placeholder name); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1984` | `sh_op_96` | re | SH opcode 0x96 handler (856 bytes); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1E5C` | `do_vertexbuffer` | re | SH opcode 0x82 (VertexBuffer) + 0x02/0x04/0x0A: push vertex batch into global pool at push_at/8; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1ECC` | `sh_op_A2` | re | SH opcode 0xA2/0xAE handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1EDC` | `sh_op_7A` | re | SH opcode 0x7A handler (epic #52 placeholder name); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1F24` | `sh_op_74` | re | SH opcode 0x74/0x7C/0x8E/0x9C handler (6-byte); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1F2C` | `sh_op_76` | re | SH opcode 0x76 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1F34` | `sh_op_22` | re | SH opcode 0x22/0x7E handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D1FC0` | `sh_op_80` | re | SH opcode 0x80 handler (epic #52 placeholder name; 796 bytes); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D225E` | `sh_op_1A` | re | SH opcode 0x1A handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2278` | `do_unmask` | re | SH opcode 0x12 (Unmask): dispatches the target sub-stream via the vector_table call-form; the callee chain runs until its ShortEOF (0x1E) `ret`s; control resumes after the opcode; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D22A8` | `do_sfcal_long` | sms | SH opcode 0x6E (UnmaskLong); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D22D4` | `do_ifdestroyed` | sms | SH opcode 0xAC (JumpToDamage): esi+=rel16 if _destroyed (0x50C39C); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D22FC` | `do_no_overlap` | sms | SH opcode 0xB8: clears overlap/collision flag via FUN_004d426c; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2318` | `do_jumptodetail` | re | SH opcode 0xA6 (JumpToDetail): skip rel16 when _detail(0x515EEE) < threshold; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2344` | `do_use_terrain_detail` | sms | SH opcode 0xB2; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2360` | `sh_op_B0` | re | SH opcode 0xB0 handler; not a C function (#479): SH dispatch-table jmp target; consumes ESI and tail-jumps back into the table |
+| `0x004D2380` | `do_if_not_effect` | sms | SH opcodes 0x14/0x16/0x3C/0xA8/0xAA/0xC0: conditional skip keyed on effects setting; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D23AC` | `sh_op_6C` | re | SH opcode 0x6C (draw-order selector): compares object-record field [w0] to w1; ALWAYS renders both sub-chains — calls one (returns at its ShortEOF) and tail-continues the other; the condition only swaps the order (painter's sorting). Targets: call=opd+w3+8 / continue=opd+6+w2; 13/14/16-byte sizes are the trailing embedded 38/48/50 jump; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2450` | `sh_op_06` | re | SH opcode 0x06 (plane-test draw-order selector): sign of nx*(x+_xv)+ny*(y+_yv)+nz*(z+_zv) picks the order; both sub-chains always render (call one / continue other). Operand: 3×(coeff i16 + coord i16) + size u16 + call-rel16 + embedded jump; call=opd+16+rel / continue=next instruction (opd+14+size); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D24F8` | `sh_op_0C` | re | SH opcode 0x0C: two-axis (y/z) variant of the 0x06 plane-test draw-order selector; operand 2×(coeff+coord) + size u16 + call-rel16 + embedded jump; call=opd+12+rel / continue=next instruction; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2580` | `sh_op_0E` | re | SH opcode 0x0E: two-axis (x/z) variant of the 0x06 plane-test draw-order selector (same layout as 0x0C); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2608` | `sh_op_10` | re | SH opcode 0x10: two-axis (x/y) variant of the 0x06 plane-test draw-order selector (same layout as 0x0C); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2690` | `sh_op_18` | re | SH opcode 0x18 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2740` | `sh_op_84` | re | SH opcode 0x84 handler (epic #52 placeholder name); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2798` | `load_dest` | re | interpreter helper: load destination operand; not a C function (#479): SH bytecode cursor in ESI (advanced in place); result in EAX |
+| `0x004D2880` | `sh_op_1C` | re | SH opcode 0x1C/0x88 handler (perspective-path variant swapped by check_flat); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2910` | `sh_op_26` | re | SH opcode 0x26 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D29EC` | `sh_op_2A` | re | SH opcode 0x2A/0x86 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2B20` | `sh_op_2C` | re | SH opcode 0x2C/0x8A handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2BB0` | `sh_op_92` | re | SH opcode 0x92 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2C70` | `sh_op_90` | re | SH opcode 0x90 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2D30` | `sh_op_94` | re | SH opcode 0x94 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2FC0` | `do_setcolor2` | sms | SH opcode 0x5C; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2FC8` | `sh_op_BC` | re | SH opcode 0xBC handler (UnkBC); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2FD0` | `sh_op_2E` | re | SH opcode 0x2E handler; contains do_setcolor_continue (0x4D2FD6); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D300A` | `sh_op_24_pre` | re | 2-byte entry for op 0x24 (falls into do_fullpntg16); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D300C` | `do_fullpntg16` | sms | SH opcode 0xFA; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3064` | `sh_op_A0` | re | SH opcode 0xA0 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D30C8` | `sh_op_4E` | re | SH opcode 0x4E handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D30E4` | `do_short_ijmp` | sms | SH opcode 0x38 (ShortJump): DEC ESI then shares 0x48 body; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D30E5` | `do_jump` | sms | SH opcode 0x48 (Jump): esi+=rel16; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3100` | `do_ijmp_long` | sms | SH opcode 0x50 (LongJump): esi+=rel32; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3118` | `sh_op_32` | re | SH opcode 0x32 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3134` | `do_anim_jmp` | sms | SH opcode 0x40 (JumpToFrame): idx=_frameCounter mod nframes; relative frame-table jump; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D315C` | `sh_op_4A` | re | SH opcode 0x4A handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3193` | `sh_op_4C_pre` | re | 1-byte entry for op 0x4C/0x8C (falls into sh_op_C4); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3194` | `do_xformunmask` | re | SH opcode 0xC4 XformUnmask: render sub-stream at a relative transform; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D33D8` | `do_icall_long` | sms | SH opcode 0xC6 (XformUnmaskLong); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3618` | `sh_op_52` | re | SH opcode 0x52/0x54 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3644` | `sh_op_56` | re | SH opcode 0x56 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3670` | `sh_op_5E` | re | SH opcode 0x5E handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D36CC` | `sh_op_60` | re | SH opcode 0x60 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3728` | `sh_op_62` | re | SH opcode 0x62 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3784` | `sh_op_64` | re | SH opcode 0x64 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D37BC` | `sh_op_66` | re | SH opcode 0x66 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D37F4` | `sh_op_68` | re | SH opcode 0x68 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D382C` | `sh_op_58` | re | SH opcode 0x58 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D3938` | `sh_op_78` | re | SH opcode 0x78: oriented bounding-box visibility cull — transforms a center+-extent box by the view matrix and trivially-rejects the guarded geometry from its 8 corners (code_pnt Cohen-Sutherland outcodes); emits no geometry (largest handler; 2085 bytes); not a C function (#479): SH dispatch-table jmp target; consumes ESI and CL from the enclosing interpreter |
 | `0x004D415D` | `thunk_FUN_004d416b` | sms | 2-byte thunk for ops 0xA4/0xBE -> FUN_004d416b |
-| `0x004D416B` | `sh_op_A4_body` | re | body reached via thunk (op 0xA4/0xBE) |
-| `0x004D416C` | `do_jumpfar4` | sms | SH opcode 0xC8 (JumpToLOD): distance/size LOD test; skips 6-byte operand when _effects&0x20000 |
-| `0x004D4240` | `do_start_interp` | sms | bytecode re-entry target for x86-embedded regions (all 208 x86 shapes jump here); esi=selected sub-stream |
-| `0x004D4254` | `do_start_asm` | sms | SH opcode 0xF0 (X86Code): push esi; ret -> execute embedded x86 payload |
-| `0x004D4258` | `do_collision_info` | sms | SH opcode 0xF2 (PtrToObjEnd): records obj_end_off |
-| `0x004D426C` | `set_overlap_flag` | re | helper: AND/OR update of collision/overlap flag word 0x515EF0 (used by do_no_overlap) |
-| `0x004D4288` | `sh_op_CA` | re | SH opcode 0xCA handler (UnkCA) |
-| `0x004D42C8` | `do_setlight` | sms | SH opcode 0xDA |
-| `0x004D42EC` | `do_setcoarse` | sms | SH opcode 0x44 (sets _coarse detail flag) |
-| `0x004D4308` | `do_set_point_color` | sms | SH opcode 0xF6 (VertexInfo): per-vertex color+normal |
-| `0x004D4364` | `do_set_gouraud` | sms | SH opcode 0xF4 |
-| `0x004D43CC` | `SetFlatColor` | re | helper: set flat-shade color for do_new_poly |
-| `0x004D43DC` | `do_new_poly` | sms | SH opcode 0xFC (Face): parse face flags/indices(<<3=*8 pool)/texcoords; effect-gate; synthesize+dispatch sub-program of setcolor/gouraud/texture/brush opcodes -> rasterizer |
-| `0x004D478C` | `do_force_no_pmap` | sms | SH opcode 0x46 (sets _force_no_pmap) |
-| `0x004D47A4` | `do_streamer_def` | sms | SH opcode 0xCE (streamer/contrail define) |
-| `0x004D47B8` | `do_streamer_draw` | sms | SH opcode 0xD0 (streamer/contrail draw) |
+| `0x004D416B` | `sh_op_A4_body` | re | body reached via thunk (op 0xA4/0xBE); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D416C` | `do_jumpfar4` | sms | SH opcode 0xC8 (JumpToLOD): distance/size LOD test; skips 6-byte operand when _effects&0x20000; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4240` | `do_start_interp` | sms | bytecode re-entry target for x86-embedded regions (all 208 x86 shapes jump here); esi=selected sub-stream; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4254` | `do_start_asm` | sms | SH opcode 0xF0 (X86Code): push esi; ret -> execute embedded x86 payload; not a C function (#479): SH opcode 0xF0: `push esi; ret` transfers control to the embedded x86 code |
+| `0x004D4258` | `do_collision_info` | sms | SH opcode 0xF2 (PtrToObjEnd): records obj_end_off; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D426C` | `set_overlap_flag` | re | helper: AND/OR update of collision/overlap flag word 0x515EF0 (used by do_no_overlap); not a C function (#479): value in EAX and mask in EBX (AND/OR update of [0x515EF0]) |
+| `0x004D4288` | `sh_op_CA` | re | SH opcode 0xCA handler (UnkCA); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D42C8` | `do_setlight` | sms | SH opcode 0xDA; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D42EC` | `do_setcoarse` | sms | SH opcode 0x44 (sets _coarse detail flag); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4308` | `do_set_point_color` | sms | SH opcode 0xF6 (VertexInfo): per-vertex color+normal; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4364` | `do_set_gouraud` | sms | SH opcode 0xF4; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D43CC` | `SetFlatColor` | re | helper: set flat-shade color for do_new_poly; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
+| `0x004D43DC` | `do_new_poly` | sms | SH opcode 0xFC (Face): parse face flags/indices(<<3=*8 pool)/texcoords; effect-gate; synthesize+dispatch sub-program of setcolor/gouraud/texture/brush opcodes -> rasterizer; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D478C` | `do_force_no_pmap` | sms | SH opcode 0x46 (sets _force_no_pmap); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D47A4` | `do_streamer_def` | sms | SH opcode 0xCE (streamer/contrail define); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D47B8` | `do_streamer_draw` | sms | SH opcode 0xD0 (streamer/contrail draw); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D4874` | `NeedClip` | re | helper: mark clip needed; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D4888` | `RestoreClip` | re | helper: restore prior clip state; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004D4894` | `do_screen_coords` | sms | SH opcode 0xD2 (project to screen coords) |
-| `0x004D4988` | `do_texture_index` | re | SH opcode 0xE0 (TextureIndex): select current texture by index |
-| `0x004D49C0` | `do_texture_file` | re | SH opcode 0xE2 (TextureFile): set current texture by 14-byte name |
-| `0x004D4A19` | `do_brush_solid` | sms | SH opcode 0xEC |
-| `0x004D4A30` | `do_brush_trans` | sms | SH opcode 0xEE |
-| `0x004D4A47` | `do_brush_area` | sms | SH opcode 0xE4 |
-| `0x004D4A6D` | `do_brush_area_full` | sms | SH opcode 0xE6 |
-| `0x004D4ACA` | `sh_op_DC` | re | SH opcode 0xDC handler (UnkDC; 610 bytes; textured-fill path) |
-| `0x004D4D2C` | `sh_op_DE` | re | SH opcode 0xDE handler (perspective textured-fill; 723 bytes) |
+| `0x004D4894` | `do_screen_coords` | sms | SH opcode 0xD2 (project to screen coords); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4988` | `do_texture_index` | re | SH opcode 0xE0 (TextureIndex): select current texture by index; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D49C0` | `do_texture_file` | re | SH opcode 0xE2 (TextureFile): set current texture by 14-byte name; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4A19` | `do_brush_solid` | sms | SH opcode 0xEC; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4A30` | `do_brush_trans` | sms | SH opcode 0xEE; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4A47` | `do_brush_area` | sms | SH opcode 0xE4; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4A6D` | `do_brush_area_full` | sms | SH opcode 0xE6; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4ACA` | `sh_op_DC` | re | SH opcode 0xDC handler (UnkDC; 610 bytes; textured-fill path); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D4D2C` | `sh_op_DE` | re | SH opcode 0xDE handler (perspective textured-fill; 723 bytes); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D4FFF` | `shade_span_a` | re | do_new_smap/rmap shade-span builder variant A; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D511B` | `shade_span_b` | re | do_new_smap/rmap shade-span builder variant B; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D523B` | `shade_span_c` | re | do_new_smap/rmap shade-span builder variant C; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D5356` | `shade_span_d` | re | do_new_smap/rmap shade-span builder variant D; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004D5475` | `do_new_smap` | sms | SH opcode 0xE8 (shade map) |
-| `0x004D5644` | `do_new_rmap` | sms | SH opcode 0xEA (remap; 872 bytes) |
-| `0x004D59AC` | `do_new_pmap_or_tmap` | sms | SH opcodes 0x36/0x3E (perspective/texture map) |
-| `0x004D5A2C` | `angles_2_matrix` | re | build view rotation matrix from _am_h/_am_p/_am_b (heading/pitch/bank) via sincos |
+| `0x004D5475` | `do_new_smap` | sms | SH opcode 0xE8 (shade map); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D5644` | `do_new_rmap` | sms | SH opcode 0xEA (remap; 872 bytes); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D59AC` | `do_new_pmap_or_tmap` | sms | SH opcodes 0x36/0x3E (perspective/texture map); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D5A2C` | `angles_2_matrix` | re | build view rotation matrix from _am_h/_am_p/_am_b (heading/pitch/bank) via sincos; not a C function (#479): destination matrix in EBP |
 | `0x004D5BA8` | `GRInit3d` | sms | init: store detail flag; install _overflow_ptr divide trap |
 | `0x004D5BCC` | `GRRender` | sms | top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix |
 | `0x004D5C98` | `GRSinCos` | sms | public sin/cos wrapper over sincos |
@@ -1531,8 +1531,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D6498` | `GRExec` | sms | execute one SH command stream: dispatch vector_table[*param]; preserve _xv/_yv/_zv (used by scene dispatch for sky/sun list) |
 | `0x004D64D8` | `MultF24PointByMatrix` | sms | transform a 24.8 fixed point by matrix with saturation |
 | `0x004D65C4` | `Sqrt` | sms |  |
-| `0x004D6640` | `do_nt` | sms | SH opcode 0xFE (terrain node/tile): read tile verts; compute bbox+sort key; insert into sort list; draw_quad or draw_tri_nw+se by diagonal |
-| `0x004D69EC` | `__compute_viewer_dot_product` | re | backface cull: face-normal dot (vertex - viewer) for do_nt tiles |
+| `0x004D6640` | `do_nt` | sms | SH opcode 0xFE (terrain node/tile): read tile verts; compute bbox+sort key; insert into sort list; draw_quad or draw_tri_nw+se by diagonal; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D69EC` | `__compute_viewer_dot_product` | re | backface cull: face-normal dot (vertex - viewer) for do_nt tiles; not a C function (#479): vertex in EDI and normal in EBX; result in the sign flag / EDX:EAX |
 | `0x004D6A38` | `draw_quad` | re | assemble 4-vertex tile working set -> draw_nt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D6A90` | `draw_tri_nw` | re | assemble NW-triangle working set -> draw_nt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D6B24` | `draw_tri_se` | re | assemble SE-triangle working set -> draw_nt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1593,8 +1593,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D75C0` | `_strrchr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D75F0` | `_atol` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D76A0` | `_atoi` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
-| `0x004D76B0` | `__atoi64` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
-| `0x004D7790` | `_sprintf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D76B0` | `__atoi64` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
+| `0x004D7790` | `_sprintf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): va_list built at [esp+0xC] (MSVC CRT sprintf: char *, const char *, ...) |
 | `0x004D7810` | `_strchr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D78D0` | `_memmove` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7A30` | `_tolower` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1609,7 +1609,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D7EC0` | `_isprint` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D8050` | `_toupper` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D80C0` | `__toupper_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
-| `0x004D81B0` | `__chkstk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D81B0` | `__chkstk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): frame size in EAX; adjusts ESP and the return address in place |
 | `0x004D81E0` | `?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D8220` | `?_CallMemberFunction0@@YGXPAX0@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D8230` | `?_CallMemberFunction1@@YGXPAX00@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1621,9 +1621,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D8552` | `__local_unwind2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D85BA` | `__abnormal_termination` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D85DD` | `__NLG_Notify1` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
-| `0x004D85E6` | `__NLG_Notify` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D85E6` | `__NLG_Notify` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): target in EAX and the CALLER's EBP frame, plus one stack dword |
 | `0x004D8610` | `_strncmp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
-| `0x004D8648` | `__ftol` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8648` | `__ftol` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): double argument in the x87 register ST(0); result in EDX:EAX |
 | `0x004D86A0` | `__cfltcvt_init` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D87B5` | `__seh_longjmp_unwind@4` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D87D0` | `_labs` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1742,7 +1742,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004E3980` | `__ld12tof` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3A30` | `__atodbl` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E3AB0` | `__atoflt` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
-| `0x004E3B80` | `__fltout2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3B80` | `__fltout2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004E3CD0` | `_mbtowc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E3D30` | `__mbtowc_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3E70` | `__ungetc_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |

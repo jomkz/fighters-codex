@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 111/118 functions have a recovered signature; 3/3 globals have a recovered type.
+// 112/112 functions have a recovered signature (+6 that are not C functions); 3/3 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -127,18 +127,18 @@ undefined4 G_Polygon(undefined4, undefined4);  // 0x004C8A38  __fastcall
 undefined4 G_SPolygon(undefined4, undefined4);  // 0x004C8A74  __fastcall
 void Horizon2d(void);  // 0x004C8FD4  __cdecl
 void NoHorizon(void);  // 0x004C9224  __cdecl
+void SolidHorizon(undefined4, undefined4);  // 0x004C924C  __cdecl
 undefined4 GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C942C  __cdecl
 undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x0045DEDF  GG_FlushShaken -- signature not recovered
-// TODO(#453): 0x0045E13F  GG_FlushDirtyLines -- signature not recovered
-// TODO(#453): 0x004C924C  SolidHorizon -- signature not recovered
-// TODO(#453): 0x004CA028  G__AC_Texture -- signature not recovered
-// TODO(#453): 0x004CAE38  G__Texture -- signature not recovered
-// TODO(#453): 0x004CBD0B  G__Perspective -- signature not recovered
-// TODO(#453): 0x004CBE7C  G__ScaleBitmap -- signature not recovered
+// --- not C functions --------------------------------------------------
+// Recovered, and deliberately NOT declared. A C prototype cannot express
+// these, so one would misrepresent the mechanism rather than describe it.
+// split:    0x0045DEDF  GG_FlushShaken  -- not an entry point: a mid-function split of an enclosing routine
+// split:    0x0045E13F  GG_FlushDirtyLines  -- not an entry point: a mid-function split of an enclosing routine
+// asm:      0x004CA028  G__AC_Texture  -- arguments arrive in registers no C convention can name
+// asm:      0x004CAE38  G__Texture  -- arguments arrive in registers no C convention can name
+// asm:      0x004CBD0B  G__Perspective  -- arguments arrive in registers no C convention can name
+// asm:      0x004CBE7C  G__ScaleBitmap  -- arguments arrive in registers no C convention can name
 
 }  // namespace fxe::fa::renderer

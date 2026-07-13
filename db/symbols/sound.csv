@@ -62,13 +62,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004F3BC8,data,,,waiver,confirmed,interior of / adjacent to ?ailActive@@3DA; named at its base or owned by that subsystem,
 0x004F3BF0,data,,,waiver,confirmed,interior of / adjacent to ?scorePrefix@@3PADA; named at its base or owned by that subsystem,
 0x004F3C08,data,,,waiver,confirmed,interior of / adjacent to ?pendingFlag@@3GA; named at its base or owned by that subsystem,
-0x004F3C10,data,_warnSndVol,,re,inferred,initial-volume table for _warnSnd,
+0x004F3C10,data,_warnSndVol,,re,confirmed,initial-volume table for _warnSnd; extent proven in the #455 close-out,u16[8]
 0x004F3C12,data,,,waiver,confirmed,interior of / adjacent to ?heartbeatVol@@3GA; named at its base or owned by that subsystem,
-0x004F3C20,data,_warnSndName,,re,inferred,"filename table for _warnSnd (IR1.11K, ...)",
+0x004F3C20,data,_warnSndName,,re,confirmed,"filename table for _warnSnd (IR1.11K, ...); extent proven in the #455 close-out",undefined4[8]
 0x004F3C24,data,,,waiver,confirmed,interior of / adjacent to ?heartbeatVol@@3GA; named at its base or owned by that subsystem,
 0x004F3C60,data,,,waiver,confirmed,interior of / adjacent to ?radarLockedOnMe@@3DA; named at its base or owned by that subsystem,
 0x004F3C62,data,,,waiver,confirmed,interior of / adjacent to ?radarLockedOnMe@@3DA; named at its base or owned by that subsystem,
-0x004F3CCC,data,_curShellMusic,,re,inferred,current shell-music category,
+0x004F3CCC,data,_curShellMusic,,re,confirmed,current shell-music category; extent proven in the #455 close-out,s32
 0x004F3CE4,data,,,waiver,confirmed,interior of / adjacent to _stereoSwap; named at its base or owned by that subsystem,
 0x004F3CF0,data,,,waiver,confirmed,interior of / adjacent to _stereoSwap; named at its base or owned by that subsystem,
 0x004F3CFC,data,,,waiver,confirmed,interior of / adjacent to _stereoSwap; named at its base or owned by that subsystem,
@@ -119,7 +119,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0053772A,data,,,waiver,confirmed,interior of / adjacent to ?pendMOD@@3PAUMODSPEC@@A; named at its base or owned by that subsystem,
 0x0053777E,data,,,waiver,confirmed,interior of / adjacent to ?pendMOD@@3PAUMODSPEC@@A; named at its base or owned by that subsystem,
 0x005380B4,data,,,waiver,confirmed,interior of / adjacent to ?musicVolume@@3GA; named at its base or owned by that subsystem,
-0x005380B8,data,_warnSnd,,re,confirmed,RWR/IR threat-warning tone channel table (8 entries),
+0x005380B8,data,_warnSnd,,re,confirmed,RWR/IR threat-warning tone channel table (8 entries); extent proven in the #455 close-out,u8[96]
 0x005380BA,data,,,waiver,confirmed,interior of / adjacent to ?musicVolume@@3GA; named at its base or owned by that subsystem,
 0x005380BE,data,,,waiver,confirmed,interior of / adjacent to ?musicVolume@@3GA; named at its base or owned by that subsystem,
 0x005380C0,data,,,waiver,confirmed,interior of / adjacent to ?musicVolume@@3GA; named at its base or owned by that subsystem,

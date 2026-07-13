@@ -8,22 +8,25 @@
 #include "../fa_types.hpp"
 
 // HUD / cockpit -- FA.EXE
-// 38/42 functions have a recovered signature; 12/16 globals have a recovered type.
+// 38/42 functions have a recovered signature; 15/16 globals have a recovered type.
 
 namespace fxe::fa::hud {
 
 // --- globals ---------------------------------------------------------
 extern undefined1 hudTargetViewEnable;  // 0x004EBD08  enable flag guarding HUDDrawTargetView
+extern s16 hudPitchBarTable[111];  // 0x004EBD30  pitch-ladder bar table, 37 records x 3 int16 {pitch,dY,dX}; extent proven in the #455 close-out
 extern undefined4 hudWarnExpireTick;  // 0x0052107C  warning-message expiry tick vs _currentTicks
 extern undefined4 hudLineHeight;  // 0x005213AD  text row pitch between HUD print lines
 extern undefined1 hudColor;  // 0x005213D2  current HUD draw colour (G_SetColor)
 extern undefined4 hudBitmap;  // 0x005213D4  HUD offscreen bitmap handle (G_SetBitmap target / G_Blit source)
+extern u8 hudShape[192];  // 0x005213D8  3D shape record rendered into the HUD by HUDDrawTargetView; extent proven in the #455 close-out
 extern undefined4 hudTargetViewCount;  // 0x00521498  element count for the HUDDrawTargetView blit loop
 extern undefined1 hudBlink1;  // 0x00521614  ~1Hz blink flag from _timerTicks
 extern undefined1 hudMasterMode;  // 0x00521694  HUD weapon/master submode; ==2 selects landing (HUDDrawApproach)
 extern undefined1 hudBlink2;  // 0x005216A0  second blink-phase flag
 extern undefined4 hudWarnText;  // 0x005216A4  warning-message string pointer set by HUDSetWarning
 extern undefined4 hudFpmXCached;  // 0x00521980  cached _hudFpmX restored when not in a view transition
+extern s16 hudFpmX;  // 0x00521D94  flight-path-marker screen X; anchor for nearly all HUD symbology; extent proven in the #455 close-out
 extern undefined2 hudFpmY;  // 0x00521D96  flight-path-marker screen Y
 
 // --- functions -------------------------------------------------------
@@ -73,9 +76,6 @@ char HUDHasFlaps(void);  // 0x0040AE40  __fastcall
 // TODO(#453): 0x00408C80  HUDDrawLeadCaret -- signature not recovered
 // TODO(#453): 0x00409910  HUDDrawGunReticle -- signature not recovered
 // TODO(#453): 0x00409BF0  HUDDrawApproach -- signature not recovered
-// TODO(#455): 0x004EBD30  _hudPitchBarTable -- type not recovered
-// TODO(#455): 0x005213D8  _hudShape -- type not recovered
 // TODO(#455): 0x00521620  _hudWarnText2 -- type not recovered
-// TODO(#455): 0x00521D94  _hudFpmX -- type not recovered
 
 }  // namespace fxe::fa::hud

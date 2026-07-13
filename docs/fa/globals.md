@@ -102,12 +102,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004EBD08` | `_hudTargetViewEnable` | re | enable flag guarding HUDDrawTargetView |
-| `0x004EBD30` | `_hudPitchBarTable` | re | pitch-ladder bar table, 37 records x 3 int16 {pitch,dY,dX} |
+| `0x004EBD30` | `_hudPitchBarTable` | re | pitch-ladder bar table, 37 records x 3 int16 {pitch,dY,dX}; extent proven in the #455 close-out |
 | `0x0052107C` | `_hudWarnExpireTick` | re | warning-message expiry tick vs _currentTicks |
 | `0x005213AD` | `_hudLineHeight` | re | text row pitch between HUD print lines |
 | `0x005213D2` | `_hudColor` | re | current HUD draw colour (G_SetColor) |
 | `0x005213D4` | `_hudBitmap` | re | HUD offscreen bitmap handle (G_SetBitmap target / G_Blit source) |
-| `0x005213D8` | `_hudShape` | re | 3D shape record rendered into the HUD by HUDDrawTargetView |
+| `0x005213D8` | `_hudShape` | re | 3D shape record rendered into the HUD by HUDDrawTargetView; extent proven in the #455 close-out |
 | `0x00521498` | `_hudTargetViewCount` | re | element count for the HUDDrawTargetView blit loop |
 | `0x00521614` | `_hudBlink1` | re | ~1Hz blink flag from _timerTicks |
 | `0x00521620` | `_hudWarnText2` | re | secondary warning line buffer |
@@ -115,7 +115,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x005216A0` | `_hudBlink2` | re | second blink-phase flag |
 | `0x005216A4` | `_hudWarnText` | re | warning-message string pointer set by HUDSetWarning |
 | `0x00521980` | `_hudFpmXCached` | re | cached _hudFpmX restored when not in a view transition |
-| `0x00521D94` | `_hudFpmX` | re | flight-path-marker screen X; anchor for nearly all HUD symbology |
+| `0x00521D94` | `_hudFpmX` | re | flight-path-marker screen X; anchor for nearly all HUD symbology; extent proven in the #455 close-out |
 | `0x00521D96` | `_hudFpmY` | re | flight-path-marker screen Y |
 
 ### View / camera & replay (VIEW)
@@ -124,7 +124,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
-| `0x004EC420` | `viewModeTable` | re | view-mode dispatch table scanned by VIEWModeLookup |
+| `0x004EC420` | `viewModeTable` | re | view-mode dispatch table scanned by VIEWModeLookup; extent proven in the #455 close-out |
 | `0x005223F0` | `replayWindowStart` | re | replay capture window start tick |
 | `0x005223F4` | `replayWindowEnd` | re | replay capture window end tick |
 | `0x00522400` | `replaySaveBuf` | re | saved-view replay buffer base (0x30 dwords copied in/out of the view); extent proven by the save/restore loops, which move 0x30 dwords |
@@ -132,14 +132,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Collision (COL)
 
-[`collision.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/collision.csv) · [page](collision.md) — 38 named referenced globals
+[`collision.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/collision.csv) · [page](collision.md) — 28 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00536728` | `_colSelfObj` | re | querying entity ptr (predicted-pos cache follows) |
-| `0x00536730` | `_colRayEndX` | re | query ray end X |
-| `0x00536734` | `_colRayEndY` | re | query ray end Y |
-| `0x00536738` | `_colRayEndZ` | re | query ray end Z |
+| `0x00536730` | `_colRayEndX` | re | query ray end X; extent proven in the #455 close-out |
 | `0x0053673C` | `_colObjPart` | re | hit child-box/part id |
 | `0x00536740` | `_colObjCount` | re | registered collidable count this frame |
 | `0x00536748` | `_colBoundMaxX` | re | swept AABB max X |
@@ -151,26 +149,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00536764` | `_colBlockType` | re | blocking-hit terrain-leaf/structure type |
 | `0x00536768` | `_colStructCount` | re | registered structure count |
 | `0x0053676C` | `_colBlockDist` | re | nearest blocking-hit distance (sentinel 0x7FFFFFFF) |
-| `0x00536770` | `_colStructList` | re | structure id list (word[0x1c2]) |
-| `0x00536AF8` | `_colObjAngleH` | re | object-hit angle H |
-| `0x00536AFC` | `_colObjAngleP` | re | object-hit angle P |
+| `0x00536770` | `_colStructList` | re | structure id list (word[0x1c2]); extent proven in the #455 close-out |
+| `0x00536AF8` | `_colObjAngleH` | re | object-hit angle H; extent proven in the #455 close-out |
 | `0x00536B00` | `_colClosureRadius` | re | closure radius (query param) |
 | `0x00536B04` | `_colGearHeight` | re | gear/ground clearance (COLInfo+8 <<8) |
 | `0x00536B0C` | `_colSelfSide` | re | IFF side bit of the querying object |
-| `0x00536B10` | `_colObjList` | re | collidable id list (word[900]) |
-| `0x00537218` | `_colBlockAngleH` | re | blocking-hit angle H |
-| `0x0053721C` | `_colBlockAngleP` | re | blocking-hit angle P |
-| `0x00537220` | `_colRayStartX` | re | query ray start X |
-| `0x00537224` | `_colRayStartY` | re | query ray start Y |
-| `0x00537228` | `_colRayStartZ` | re | query ray start Z |
+| `0x00536B10` | `_colObjList` | re | collidable id list (word[900]); extent proven in the #455 close-out |
+| `0x00537218` | `_colBlockAngleH` | re | blocking-hit angle H; extent proven in the #455 close-out |
+| `0x00537220` | `_colRayStartX` | re | query ray start X; extent proven in the #455 close-out |
 | `0x0053722C` | `_colObjId` | re | nearest hit object id |
-| `0x00537230` | `_colBlockPosX` | re | blocking-hit pos X |
-| `0x00537234` | `_colBlockPosY` | re | blocking-hit pos Y |
-| `0x00537238` | `_colBlockPosZ` | re | blocking-hit pos Z |
+| `0x00537230` | `_colBlockPosX` | re | blocking-hit pos X; extent proven in the #455 close-out |
 | `0x0053723C` | `_colSelfId` | re | querying entity id |
-| `0x00537240` | `_colObjPosX` | re | object-hit pos X |
-| `0x00537244` | `_colObjPosY` | re | object-hit pos Y |
-| `0x00537248` | `_colObjPosZ` | re | object-hit pos Z |
+| `0x00537240` | `_colObjPosX` | re | object-hit pos X; extent proven in the #455 close-out |
 | `0x0053724C` | `_colTargetId` | re | single-target id (excluded from broad-phase) |
 | `0x00537250` | `_colObjDist` | re | nearest object-hit distance (sentinel 0x7FFFFFFF) |
 | `0x00537254` | `_colObjBox` | re | hit box pointer |
@@ -182,10 +172,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004EB5F0` | `_musicOn` | re | music/MIDI subsystem-available master flag |
-| `0x004F3C10` | `_warnSndVol` | re | initial-volume table for _warnSnd |
-| `0x004F3C20` | `_warnSndName` | re | filename table for _warnSnd (IR1.11K, ...) |
-| `0x004F3CCC` | `_curShellMusic` | re | current shell-music category |
-| `0x005380B8` | `_warnSnd` | re | RWR/IR threat-warning tone channel table (8 entries) |
+| `0x004F3C10` | `_warnSndVol` | re | initial-volume table for _warnSnd; extent proven in the #455 close-out |
+| `0x004F3C20` | `_warnSndName` | re | filename table for _warnSnd (IR1.11K, ...); extent proven in the #455 close-out |
+| `0x004F3CCC` | `_curShellMusic` | re | current shell-music category; extent proven in the #455 close-out |
+| `0x005380B8` | `_warnSnd` | re | RWR/IR threat-warning tone channel table (8 entries); extent proven in the #455 close-out |
 
 ### Memory & resource managers (MM/RM)
 
@@ -269,7 +259,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00546B9C` | `_curTypeSize` | re | byte size of the current type-record mirror (from type +0x01) |
 | `0x00546BA4` | `_lastPadlockId` | re | previous padlock/tracked id, compared by CheckForEvents1/2 |
 | `0x00546BA8` | `_requeueChain` | re | objects serviced this frame; ChainMergeSorted folds it back into chainStart |
-| `0x00546BB8` | `_lastCurZ` | re | previous frame Z of current object (CheckForEvents1) |
+| `0x00546BB8` | `_lastCurZ` | re | previous frame Z of current object (CheckForEvents1); extent proven in the #455 close-out |
 | `0x00553120` | `_objSizes` | re | word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16 |
 | `0x00553828` | `_objArenaNext` | re | bump cursor into the entity arena (OBJAdd memcpy target) |
 | `0x0055382C` | `_tempAliasBase` | re | lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999 |
@@ -293,14 +283,6 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00546C98` | `_ctHalt` | re | halt flag; the CTExecProgram loop runs while *IP!='%' and !_ctHalt |
 | `0x00546CA4` | `_ctExecuting` | re | re-entry guard set across CTExecProgram |
 
-### Terrain (T_)
-
-[`terrain.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/terrain.csv) · [page](terrain.md) — 1 named referenced globals
-
-| VA | Symbol | Src | Role |
-|----|--------|-----|------|
-| `0x004AACF0` | `T_DefaultHorizon` | sms | default horizon descriptor (14 B) embedded after T_HorizonProc; pushed into leaf list by T_Make |
-
 ### Weapons — projectiles / seekers / ECM (PROJ)
 
 [`weapons.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/weapons.csv) · [page](weapons.md) — 6 named referenced globals
@@ -311,22 +293,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0058F10C` | `_projBestTargetId` | re | seeker-search result id |
 | `0x0058F110` | `_projPkPenalty` | re | running hit-chance (Pk) multiplier |
 | `0x0058F118` | `_projNameBuf` | re | weapon display-name buffer (PROJBuildName) |
-| `0x0058F180` | `_projSeekerList` | re | seeker-parameter array from HARDBestSeekers |
+| `0x0058F180` | `_projSeekerList` | re | seeker-parameter array from HARDBestSeekers; extent proven in the #455 close-out |
 | `0x0058F1D4` | `_projInboundWarnT` | re | inbound-missile warning throttle |
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 47 named referenced globals
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 40 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
-| `0x004D85AA` | `__NLG_Return2` | sms | MSVC CRT global (xrefs=1) |
-| `0x004D86F8` | `__except_handler3` | sms | MSVC CRT global (xrefs=7) |
-| `0x004DD080` | `__forcdecpt` | sms | MSVC CRT global (xrefs=1) |
-| `0x004DD0F0` | `__cropzeros` | sms | MSVC CRT global (xrefs=1) |
-| `0x004DD150` | `__positive` | sms | MSVC CRT global (xrefs=1) |
-| `0x004DD170` | `__fassign` | sms | MSVC CRT global (xrefs=1) |
-| `0x004DD510` | `__cfltcvt` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E750` | `__umaskval` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E758` | `__winver` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E75C` | `__winmajor` | sms | MSVC CRT global (xrefs=1) |
@@ -336,19 +311,19 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0051E788` | `__exitflag` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E78C` | `__C_Termination_Done` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E790` | `__C_Exit_Done` | sms | MSVC CRT global (xrefs=2) |
-| `0x0051E7A0` | `__NLG_Destination` | sms | MSVC CRT global (xrefs=2) |
+| `0x0051E7A0` | `__NLG_Destination` | sms | MSVC CRT global (xrefs=2); extent proven in the #455 close-out |
 | `0x0051E7BC` | `__adjust_fdiv` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E7C0` | `__FPinit` | sms | MSVC CRT global (xrefs=1) |
 | `0x0051E7D0` | `__aenvptr` | sms | MSVC CRT global (xrefs=5) |
 | `0x0051E7D8` | `__aexit_rtn` | sms | MSVC CRT global (xrefs=1) |
-| `0x0051E7F0` | `__locktable` | sms | MSVC CRT global (xrefs=9) |
+| `0x0051E7F0` | `__locktable` | sms | MSVC CRT global (xrefs=9); extent proven in the #455 close-out |
 | `0x0051E8B0` | `__pctype` | sms | MSVC CRT global (xrefs=38) |
 | `0x0051E8B4` | `__pwctype` | sms | MSVC CRT global (xrefs=3) |
 | `0x0051EC78` | `__cfltcvt_tab` | sms | MSVC CRT global (xrefs=2) |
-| `0x0051EDF8` | `__mbctype` | sms | MSVC CRT global (xrefs=7) |
-| `0x0051F010` | `__stdbuf` | sms | MSVC CRT global (xrefs=1) |
+| `0x0051EDF8` | `__mbctype` | sms | MSVC CRT global (xrefs=7); extent proven in the #455 close-out |
+| `0x0051F010` | `__stdbuf` | sms | MSVC CRT global (xrefs=1); extent proven in the #455 close-out |
 | `0x0051F2A8` | `__cflush` | sms | MSVC CRT global (xrefs=2) |
-| `0x0051F2B0` | `__XcptActTab` | sms | MSVC CRT global (xrefs=1) |
+| `0x0051F2B0` | `__XcptActTab` | sms | MSVC CRT global (xrefs=1); extent proven in the #455 close-out |
 | `0x0051F328` | `__First_FPE_Indx` | sms | MSVC CRT global (xrefs=4) |
 | `0x0051F32C` | `__Num_FPE` | sms | MSVC CRT global (xrefs=4) |
 | `0x0051F334` | `__XcptActTabCount` | sms | MSVC CRT global (xrefs=2) |

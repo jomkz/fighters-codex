@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Weapons — projectiles / seekers / ECM (PROJ) -- FA.EXE
-// 53/55 functions have a recovered signature; 4/6 globals have a recovered type.
+// 53/55 functions have a recovered signature; 5/6 globals have a recovered type.
 
 namespace fxe::fa::weapons {
 
@@ -16,6 +16,7 @@ namespace fxe::fa::weapons {
 extern undefined4 projBestTargetCost;  // 0x0058F0F8  seeker-search best-cost accumulator (init 0x7FFFFFFF)
 extern undefined2 projBestTargetId;  // 0x0058F10C  seeker-search result id
 extern undefined4 projPkPenalty;  // 0x0058F110  running hit-chance (Pk) multiplier
+extern u8 projSeekerList[60];  // 0x0058F180  seeker-parameter array from HARDBestSeekers; extent proven in the #455 close-out
 extern undefined2 projInboundWarnT;  // 0x0058F1D4  inbound-missile warning throttle
 
 // --- functions -------------------------------------------------------
@@ -79,6 +80,5 @@ s16 PROJMinScatterAngle(s16);  // 0x004C5D00  __fastcall
 // TODO(#453): 0x004C2B50  PROJTargetSignal -- signature not recovered
 // TODO(#453): 0x004C58A0  PROJAreaWeaponHit -- signature not recovered
 // TODO(#455): 0x0058F118  _projNameBuf -- type not recovered
-// TODO(#455): 0x0058F180  _projSeekerList -- type not recovered
 
 }  // namespace fxe::fa::weapons

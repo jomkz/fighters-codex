@@ -18,7 +18,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0040F2D0,func,VIEWSlewIntegrate,VIEWSlewIntegrate,re,confirmed,frame-rate-scaled slew integration (_LMultDiv256 by _systemFrameTicks); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWSlewIntegrate(s16 *)
 0x0040F590,func,_VIEWChangeObj@12,VIEWChangeObj,sms,confirmed,switch the view to a different tracked object,"undefined4 __stdcall VIEWChangeObj(undefined4, undefined4, undefined4)"
 0x0040F5D0,func,VIEWCanSeeTarget,VIEWCanSeeTarget,re,confirmed,visibility/padlock check (_WRCanSee) gated on a _gamePrefs bit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __fastcall VIEWCanSeeTarget(s16 *)
-0x004EC420,data,_viewModeTable,viewModeTable,re,inferred,view-mode dispatch table scanned by VIEWModeLookup,
+0x004EC420,data,_viewModeTable,viewModeTable,re,confirmed,view-mode dispatch table scanned by VIEWModeLookup; extent proven in the #455 close-out,undefined4[8]
 0x004EC424,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,
 0x004EC428,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,
 0x004EC43C,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,

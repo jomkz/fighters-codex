@@ -102,7 +102,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0058F10C,data,_projBestTargetId,,re,confirmed,seeker-search result id,undefined2
 0x0058F110,data,_projPkPenalty,,re,confirmed,running hit-chance (Pk) multiplier,undefined4
 0x0058F118,data,_projNameBuf,,re,confirmed,weapon display-name buffer (PROJBuildName),
-0x0058F180,data,_projSeekerList,,re,confirmed,seeker-parameter array from HARDBestSeekers,
+0x0058F180,data,_projSeekerList,,re,confirmed,seeker-parameter array from HARDBestSeekers; extent proven in the #455 close-out,u8[60]
 0x0058F188,data,,,waiver,confirmed,interior of / adjacent to _trackLockEndT; named at its base or owned by that subsystem,
 0x0058F18A,data,,,waiver,confirmed,interior of / adjacent to _trackLockEndT; named at its base or owned by that subsystem,
 0x0058F18C,data,,,waiver,confirmed,interior of / adjacent to _trackLockEndT; named at its base or owned by that subsystem,

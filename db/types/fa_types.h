@@ -29,6 +29,10 @@ typedef signed char    s8;
 typedef short          s16;
 typedef int            s32;
 typedef int            fixed24; /* F24.8 fixed-point (e.g. altitude_f24) */
+/* 64-bit, returned in EDX:EAX. The engine itself is 32-bit throughout; this exists because a
+ * few CRT routines genuinely return a 64-bit value that way (_atoi64 accumulates it with
+ * `add eax / adc edx`). Typing those as `int` would silently drop the high half. */
+typedef long long      longlong;
 
 /* --- type vocabulary: named in FA.SMS signatures, interiors recovered later --- */
 /* Declared opaque so pointers type-check now; do not assert unknown fields.      */

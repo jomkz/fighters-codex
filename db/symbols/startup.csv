@@ -50,8 +50,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004D75C0,func,_strrchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strrchr(undefined4, undefined4)"
 0x004D75F0,func,_atol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atol(undefined4)
 0x004D76A0,func,_atoi,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atoi(undefined4)
-0x004D76B0,func,__atoi64,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D7790,func,_sprintf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D76B0,func,__atoi64,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand,longlong __cdecl _atoi64(char *)
+0x004D7790,func,_sprintf,,sms,confirmed,"MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): va_list built at [esp+0xC] (MSVC CRT sprintf: char *, const char *, ...)",!variadic
 0x004D7810,func,_strchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strchr(undefined4, undefined4)"
 0x004D78D0,func,_memmove,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl memmove(undefined4, undefined4, undefined4)"
 0x004D7A30,func,_tolower,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl tolower(undefined4)
@@ -67,7 +67,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D7EC0,func,_isprint,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isprint(undefined4)
 0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl toupper(undefined4)
 0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _toupper_lk(undefined4)
-0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): frame size in EAX; adjusts ESP and the return address in place,!asm
 0x004D81E0,func,?_JumpToContinuation@@YGXPAXPAUEHRegistrationNode@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _JumpToContinuation(void *, EHRegistrationNode *)"
 0x004D8220,func,?_CallMemberFunction0@@YGXPAX0@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _CallMemberFunction0(void *, void *)"
 0x004D8230,func,?_CallMemberFunction1@@YGXPAX00@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _CallMemberFunction1(void *, void *, void *)"
@@ -80,16 +80,16 @@ va,kind,name,display,source,confidence,notes,type
 0x004D8500,func,,,waiver,confirmed,CRT C++ EH exception-object free thunk (calls _free); unwind funclet helper,
 0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _global_unwind2(undefined4)
 0x004D8552,func,__local_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _local_unwind2(undefined4, undefined4)"
-0x004D85AA,data,__NLG_Return2,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004D85AA,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
 0x004D85BA,func,__abnormal_termination,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _abnormal_termination(void)
 0x004D85DD,func,__NLG_Notify1,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D85E6,func,__NLG_Notify,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D85E6,func,__NLG_Notify,,sms,confirmed,"MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): target in EAX and the CALLER's EBP frame, plus one stack dword",!asm
 0x004D8600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: operator_new,
 0x004D8610,func,_strncmp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncmp(undefined4, undefined4, undefined4)"
-0x004D8648,func,__ftol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8648,func,__ftol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): double argument in the x87 register ST(0); result in EDX:EAX,!asm
 0x004D8670,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fpmath,
 0x004D86A0,func,__cfltcvt_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _cfltcvt_init(void)
-0x004D86F8,data,__except_handler3,,sms,confirmed,MSVC CRT global (xrefs=7),
+0x004D86F8,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=7)",
 0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __stdcall _seh_longjmp_unwind(undefined4)
 0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl labs(undefined4)
 0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncat(undefined4, undefined4, undefined4)"
@@ -174,16 +174,16 @@ va,kind,name,display,source,confidence,notes,type
 0x004DCFE0,func,__setdefaultprecision,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _setdefaultprecision(void)
 0x004DD000,func,__ms_p5_test_fdiv,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _ms_p5_test_fdiv(void)
 0x004DD050,func,__ms_p5_mp_test_fdiv,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _ms_p5_mp_test_fdiv(void)
-0x004DD080,data,__forcdecpt,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x004DD0F0,data,__cropzeros,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x004DD150,data,__positive,,sms,confirmed,MSVC CRT global (xrefs=1),
-0x004DD170,data,__fassign,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD080,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
+0x004DD0F0,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
+0x004DD150,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
+0x004DD170,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
 0x004DD1C0,func,__cftoe,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftoe(undefined4, undefined4, undefined4, undefined4)"
 0x004DD240,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftoe2,
 0x004DD330,func,__cftof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftof(undefined4, undefined4, undefined4)"
 0x004DD3A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftof2,
 0x004DD460,func,__cftog,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftog(undefined4, undefined4, undefined4, undefined4)"
-0x004DD510,data,__cfltcvt,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x004DD510,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
 0x004DD580,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __shift,
 0x004DD5B0,func,__dosmaperr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _dosmaperr(undefined4)
 0x004DD630,func,__errno,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int * __cdecl _errno(void)
@@ -293,7 +293,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E3A30,func,__atodbl,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl _atodbl(undefined4 *, char *)"
 0x004E3AB0,func,__atoflt,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl _atoflt(undefined4 *, char *)"
 0x004E3AF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fptostr,
-0x004E3B80,func,__fltout2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E3B80,func,__fltout2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand,"undefined4 __cdecl _fltout2(undefined4, undefined4, undefined4, undefined4)"
 0x004E3C10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___dtold,
 0x004E3CD0,func,_mbtowc,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl mbtowc(u16 *, char *, u32)"
 0x004E3D30,func,__mbtowc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbtowc_lk(undefined4, undefined4, undefined4)"
@@ -403,7 +403,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0051E788,data,__exitflag,,sms,confirmed,MSVC CRT global (xrefs=1),undefined1
 0x0051E78C,data,__C_Termination_Done,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x0051E790,data,__C_Exit_Done,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
-0x0051E7A0,data,__NLG_Destination,,sms,confirmed,MSVC CRT global (xrefs=2),
+0x0051E7A0,data,__NLG_Destination,,sms,inferred,MSVC CRT global (xrefs=2); extent proven in the #455 close-out,undefined4[4]
 0x0051E7A4,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
 0x0051E7A8,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
 0x0051E7AC,data,,,waiver,confirmed,interior of / adjacent to __NLG_Destination; named at its base or owned by that subsystem,
@@ -413,7 +413,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0051E7D8,data,__aexit_rtn,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x0051E7DC,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem,
 0x0051E7E0,data,,,waiver,confirmed,interior of / adjacent to __aexit_rtn; named at its base or owned by that subsystem,
-0x0051E7F0,data,__locktable,,sms,confirmed,MSVC CRT global (xrefs=9),
+0x0051E7F0,data,__locktable,,sms,confirmed,MSVC CRT global (xrefs=9); extent proven in the #455 close-out,undefined4[48]
 0x0051E7F4,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
 0x0051E814,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
 0x0051E824,data,,,waiver,confirmed,interior of / adjacent to __locktable; named at its base or owned by that subsystem,
@@ -439,7 +439,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0051EC90,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
 0x0051EC98,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
 0x0051EC9C,data,,,waiver,confirmed,interior of / adjacent to __cfltcvt_tab; named at its base or owned by that subsystem,
-0x0051EDF8,data,__mbctype,,sms,confirmed,MSVC CRT global (xrefs=7),
+0x0051EDF8,data,__mbctype,,sms,confirmed,MSVC CRT global (xrefs=7); extent proven in the #455 close-out,u8[257]
 0x0051EDFC,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
 0x0051EEFC,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
 0x0051EF00,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
@@ -451,11 +451,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0051EF19,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
 0x0051EF20,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
 0x0051EF50,data,,,waiver,confirmed,interior of / adjacent to __mbctype; named at its base or owned by that subsystem,
-0x0051F010,data,__stdbuf,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051F010,data,__stdbuf,,sms,confirmed,MSVC CRT global (xrefs=1); extent proven in the #455 close-out,undefined4[2]
 0x0051F018,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem,
 0x0051F028,data,,,waiver,confirmed,interior of / adjacent to __stdbuf; named at its base or owned by that subsystem,
 0x0051F2A8,data,__cflush,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
-0x0051F2B0,data,__XcptActTab,,sms,confirmed,MSVC CRT global (xrefs=1),
+0x0051F2B0,data,__XcptActTab,,sms,confirmed,MSVC CRT global (xrefs=1); extent proven in the #455 close-out,undefined4[30]
 0x0051F328,data,__First_FPE_Indx,,sms,confirmed,MSVC CRT global (xrefs=4),undefined4
 0x0051F32C,data,__Num_FPE,,sms,confirmed,MSVC CRT global (xrefs=4),undefined4
 0x0051F334,data,__XcptActTabCount,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4

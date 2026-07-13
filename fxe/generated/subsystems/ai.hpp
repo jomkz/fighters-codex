@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // AI interpreter (CT) -- FA.EXE
-// 115/122 functions have a recovered signature; 8/8 globals have a recovered type.
+// 116/122 functions have a recovered signature; 8/8 globals have a recovered type.
 
 namespace fxe::fa::ai {
 
@@ -29,6 +29,7 @@ undefined4 CTRespondToCancelCmdBuf(void);  // 0x00464C90  __stdcall
 u8 CTLoadProgram(char);  // 0x00464CD0  __fastcall
 void CTResetPC(char);  // 0x00464DB0  __fastcall
 undefined4 CTVarDiff(undefined4);  // 0x00464DE0  __cdecl
+undefined4 CTEval_time(void);  // 0x00464E20  __cdecl
 char CTEval_do_nothing(void);  // 0x00464E30  __cdecl
 char CTEval_do_evade(void);  // 0x00464E40  __cdecl
 char CTEval_do_attack(void);  // 0x00464E50  __cdecl
@@ -142,7 +143,6 @@ undefined4 * CTVarPtr(short);  // 0x004670E0  __fastcall
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x00464E20  CTEval_time -- signature not recovered
 // TODO(#453): 0x004653D0  CTEval_minspeed -- signature not recovered
 // TODO(#453): 0x004653F0  CTEval_cornerspeed -- signature not recovered
 // TODO(#453): 0x00465400  CTEval_corner -- signature not recovered

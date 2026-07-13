@@ -63,7 +63,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004EBD10,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata",
 0x004EBD14,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata",
 0x004EBD18,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata",
-0x004EBD30,data,_hudPitchBarTable,,re,confirmed,"pitch-ladder bar table, 37 records x 3 int16 {pitch,dY,dX}",
+0x004EBD30,data,_hudPitchBarTable,,re,confirmed,"pitch-ladder bar table, 37 records x 3 int16 {pitch,dY,dX}; extent proven in the #455 close-out",s16[111]
 0x004EBD32,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata",
 0x004EBD34,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata",
 0x004EBD38,data,,,waiver,confirmed,"HUD const symbology tables & strings (warning text, glyph bytes, numeric formats); .rdata",
@@ -155,7 +155,7 @@ va,kind,name,display,source,confidence,notes,type
 0x005213D0,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
 0x005213D2,data,_hudColor,,re,confirmed,current HUD draw colour (G_SetColor),undefined1
 0x005213D4,data,_hudBitmap,,re,confirmed,HUD offscreen bitmap handle (G_SetBitmap target / G_Blit source),undefined4
-0x005213D8,data,_hudShape,,re,inferred,3D shape record rendered into the HUD by HUDDrawTargetView,
+0x005213D8,data,_hudShape,,re,confirmed,3D shape record rendered into the HUD by HUDDrawTargetView; extent proven in the #455 close-out,u8[192]
 0x005213DC,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
 0x00521464,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
 0x00521498,data,_hudTargetViewCount,,re,inferred,element count for the HUDDrawTargetView blit loop,undefined4
@@ -242,7 +242,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00521D88,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
 0x00521D8C,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
 0x00521D90,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
-0x00521D94,data,_hudFpmX,,re,confirmed,flight-path-marker screen X; anchor for nearly all HUD symbology,
+0x00521D94,data,_hudFpmX,,re,confirmed,flight-path-marker screen X; anchor for nearly all HUD symbology; extent proven in the #455 close-out,s16
 0x00521D96,data,_hudFpmY,,re,confirmed,flight-path-marker screen Y,undefined2
 0x00521DA0,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",
 0x00521DA8,data,,,waiver,confirmed,"interior of the HUD layout/state block (per-element screen offsets, blit table, clip boxes); named at the _hud base",

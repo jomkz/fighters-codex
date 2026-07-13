@@ -261,6 +261,33 @@ Whole classes of "function" are **not C functions and must never be signed as su
 - **Variadic functions** (`sprintf`, `G_Printf`, `CallUtilProc` — whose call sites clean 4, 8 and 12
   bytes) have no fixed arity to record.
 
+## Entry points that are not C functions (`!asm`, `!threaded`, `!variadic`, `!split`) — #479
+
+Some entry points **cannot** have a signature, and saying "TODO: signature not recovered" about
+them is not honesty — it is an overstatement of what the reconstruction owes. `sincos` takes its
+angle in **EBX**. It is not *pending* a prototype; it will never have one.
+
+So the `type` column also carries a **classification**, `!`-prefixed. It is not a type, and
+`check_status` does not try to resolve it — it only checks the value is one of:
+
+| marker | meaning |
+|---|---|
+| `!asm` | arguments arrive in registers no C convention can name (`sincos` → EBX; `isqrt16` → a DX:BX pair; `__ftol` → **ST(0)**; `SetShading` → a 3-vector in EAX/EBX/ECX) |
+| `!threaded` | a threaded-code **jump target** (`vector_table` at `0x5183A0`), reached by `JMP` with ESI live as the bytecode cursor — not a callable function. Several fall through into one another; `do_start_asm` is literally `push esi; ret` |
+| `!variadic` | no fixed arity exists — `CallUtilProc`'s call sites clean **4, 8 *and* 12** bytes |
+| `!split` | not an entry point at all: a Ghidra mid-function split, whose "parameters" are locals of a misanalysed frame |
+
+The generator then states the fact instead of promising a prototype:
+
+```cpp
+// asm:      0x004CD588  sincos  -- arguments arrive in registers no C convention can name
+```
+
+**Why this matters for the coverage number.** Counting these as unsigned makes the metric
+unreachable — it can never hit 100%, so it stops meaning anything. Excluding them makes it mean
+what it should: *of the functions that **are** C functions, how many are signed?* That is
+**1687 / 1734 (97%)**.
+
 ## Typing the globals: `tools/recover_globals.py`
 
 `db/symbols/*.csv` carries thousands of `data` rows, and 32 of them had a type. The fxe

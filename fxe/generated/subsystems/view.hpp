@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // View / camera & replay (VIEW) -- FA.EXE
-// 19/19 functions have a recovered signature; 4/5 globals have a recovered type.
+// 19/19 functions have a recovered signature; 5/5 globals have a recovered type.
 
 namespace fxe::fa::view {
 
 // --- globals ---------------------------------------------------------
+extern undefined4 viewModeTable[8];  // 0x004EC420  view-mode dispatch table scanned by VIEWModeLookup; extent proven in the #455 close-out
 extern undefined4 replayWindowStart;  // 0x005223F0  replay capture window start tick
 extern undefined4 replayWindowEnd;  // 0x005223F4  replay capture window end tick
 extern undefined4 replaySaveBuf[48];  // 0x00522400  saved-view replay buffer base (0x30 dwords copied in/out of the view); extent proven by the save/restore loops, which move 0x30 dwords
@@ -38,10 +39,5 @@ void VIEWScaleClamp(s32);  // 0x0040F270  __fastcall
 void VIEWSlewIntegrate(s16 *);  // 0x0040F2D0  __fastcall
 undefined4 VIEWChangeObj(undefined4, undefined4, undefined4);  // 0x0040F590  __stdcall
 int VIEWCanSeeTarget(s16 *);  // 0x0040F5D0  __fastcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#455): 0x004EC420  viewModeTable -- type not recovered
 
 }  // namespace fxe::fa::view

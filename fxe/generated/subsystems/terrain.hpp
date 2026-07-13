@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Terrain (T_) -- FA.EXE
-// 70/82 functions have a recovered signature; 0/1 globals have a recovered type.
+// 74/81 functions have a recovered signature (+1 that are not C functions); 0/0 globals have a recovered type.
 
 namespace fxe::fa::terrain {
 
@@ -65,24 +65,33 @@ u8 T_CellScreenBounds(undefined1 *, short *);  // 0x004AA260  __fastcall
 void T_CompactCells(undefined4 *);  // 0x004AA2B0  __fastcall
 void T_SortCells(undefined1 *, undefined1 *);  // 0x004AA380  __fastcall
 undefined4 T_CountCells(undefined4 *, undefined4 *);  // 0x004AA440  __fastcall
+void T_EmitCells(void);  // 0x004AA4A0  __cdecl
 undefined4 T_InitDictionary(void);  // 0x004AA620  __stdcall
 undefined4 T_InitDictionaryEntry(undefined4, undefined4);  // 0x004AA680  __fastcall
 undefined4 T_NamedTmaps(void);  // 0x004AA790  __stdcall
 long T_CompareTlist(void *, void *);  // 0x004AA7E0  __cdecl
 undefined4 T_SortTmapList(void);  // 0x004AA820  __fastcall
+void T_CellTmapLookup(undefined4, undefined4, undefined4);  // 0x004AA840  __fastcall
 undefined4 T_InitHorizonProc(void);  // 0x004AACA0  __stdcall
+void T_HorizonProc(void);  // 0x004AACE0  __cdecl
 undefined4 BrushFromIndex(undefined4);  // 0x004AB860  __fastcall
 undefined4 T_Info(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004ABAB0  __stdcall
 undefined4 T_InitDatabase(void);  // 0x004C5D30  __stdcall
 undefined4 T_ShutdownDatabase(void);  // 0x004C5D50  __stdcall
 undefined4 T_Init(void);  // 0x004C5D60  __stdcall
 undefined4 T_Load(undefined4);  // 0x004C5D70  __fastcall
+undefined4 T_StripTildes(undefined4);  // 0x004C5F40  __fastcall
 undefined4 T_Init2(void);  // 0x004C5F60  __stdcall
 undefined4 T_Shutdown(void);  // 0x004C5FA0  __stdcall
 undefined4 T_StopAdding(void);  // 0x004C6020  __stdcall
 undefined4 T_GetLeaf(undefined4, undefined4, undefined4);  // 0x004C6040  __fastcall
 undefined4 T_InterpAltNW(undefined4, undefined4, undefined4, undefined4);  // 0x004C9624  __stdcall
 undefined4 T_InterpAltSE(undefined4, undefined4, undefined4, undefined4);  // 0x004C9770  __stdcall
+
+// --- not C functions --------------------------------------------------
+// Recovered, and deliberately NOT declared. A C prototype cannot express
+// these, so one would misrepresent the mechanism rather than describe it.
+// split:    0x004AACFE  T_DrawHorizon  -- not an entry point: a mid-function split of an enclosing routine
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
@@ -94,11 +103,5 @@ undefined4 T_InterpAltSE(undefined4, undefined4, undefined4, undefined4);  // 0x
 // TODO(#453): 0x004A8730  T_InitMooseProc -- signature not recovered
 // TODO(#453): 0x004A8B90  T_InitCloudProc -- signature not recovered
 // TODO(#453): 0x004A9D00  T_BuildQuadCell -- signature not recovered
-// TODO(#453): 0x004AA4A0  T_EmitCells -- signature not recovered
-// TODO(#453): 0x004AA840  T_CellTmapLookup -- signature not recovered
-// TODO(#453): 0x004AACE0  T_HorizonProc -- signature not recovered
-// TODO(#453): 0x004AACFE  T_DrawHorizon -- signature not recovered
-// TODO(#453): 0x004C5F40  T_StripTildes -- signature not recovered
-// TODO(#455): 0x004AACF0  T_DefaultHorizon -- type not recovered
 
 }  // namespace fxe::fa::terrain
