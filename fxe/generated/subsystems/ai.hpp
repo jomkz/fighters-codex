@@ -8,12 +8,11 @@
 #include "../fa_types.hpp"
 
 // AI interpreter (CT) -- FA.EXE
-// 5/122 functions have a recovered signature; 8/11 globals have a recovered type.
+// 5/122 functions have a recovered signature; 7/8 globals have a recovered type.
 
 namespace fxe::fa::ai {
 
 // --- globals ---------------------------------------------------------
-extern undefined4 ctProgramNamePtr;  // 0x0050D312  pointer to the current AI script name; NULL gates the interpreter off
 extern undefined2 ctCompareActor;  // 0x00546BC0  actor slot used by CTVarDiff to evaluate attributes under the other object
 extern undefined1 ctPrintBuf;  // 0x00546C48  HUD message text staged by CTDo_print/printnum, flushed on loop exit
 extern undefined1 ctCheckPass;  // 0x00546C8C  validate/dry-run flag: skips branches and side effects, enables the stack-imbalance check
@@ -149,8 +148,6 @@ undefined4 CTExecProgram(undefined4);  // 0x00466970  __stdcall
 // TODO(#453): 0x00466920  CTSaveState -- signature not recovered
 // TODO(#453): 0x00466A80  CTStep -- signature not recovered
 // TODO(#453): 0x004670E0  CTVarPtr -- signature not recovered
-// TODO(#455): 0x0050CF83  _ctOverrideName -- type not recovered
-// TODO(#455): 0x0050CF90  _ctStateCheckpoint -- type not recovered
 // TODO(#455): 0x00546BC8  _ctState -- type not recovered
 
 }  // namespace fxe::fa::ai

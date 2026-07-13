@@ -32,12 +32,16 @@ typedef int            fixed24; /* F24.8 fixed-point (e.g. altitude_f24) */
 
 /* --- type vocabulary: named in FA.SMS signatures, interiors recovered later --- */
 /* Declared opaque so pointers type-check now; do not assert unknown fields.      */
-typedef struct entity      entity;      /* game-object base (docs/fa/structs.md §1) */
-typedef struct PROJ_TYPE   PROJ_TYPE;   /* projectile/missile extension (§2)        */
-typedef struct PT_TYPE     PT_TYPE;     /* aircraft performance type, .JT (§3)      */
-typedef struct GV_TYPE     GV_TYPE;     /* ground-vehicle extension (§5)            */
-typedef struct OT_TYPE     OT_TYPE;     /* ordnance type, .OT (§6)                  */
-typedef struct NT_TYPE     NT_TYPE;     /* nav target, .NT (§7)                     */
+typedef struct entity      entity;      /* game-object record (defined below)       */
+typedef struct OBJ_TYPE    OBJ_TYPE;    /* object TYPE record (defined below)       */
+/* The *_TYPE structs below are the per-class EXTENSIONS of the OBJ_TYPE record --
+ * not overlays of an entity allocation (see the object model note below, #454).
+ * Their interiors alias one another in the extension region, so they stay opaque. */
+typedef struct PROJ_TYPE   PROJ_TYPE;   /* projectile/missile type extension        */
+typedef struct PT_TYPE     PT_TYPE;     /* aircraft performance type, .JT           */
+typedef struct GV_TYPE     GV_TYPE;     /* ground-vehicle type extension            */
+typedef struct OT_TYPE     OT_TYPE;     /* ordnance type, .OT                       */
+typedef struct NT_TYPE     NT_TYPE;     /* nav target, .NT                          */
 typedef struct NET_ADDRESS NET_ADDRESS; /* transport address (network.md)          */
 typedef struct NET_PROTOCOL NET_PROTOCOL;
 typedef struct RES_LIST    RES_LIST;    /* resource-manager list (memory-resource)  */
@@ -104,6 +108,113 @@ typedef int NET_CONNECTED_STATE; /* network: connection-state callback code     
 typedef unsigned char  undefined1;
 typedef unsigned short undefined2;
 typedef unsigned int   undefined4;
+
+/* === The object model: two families, both self-describing (#454) =================
+ *
+ * The engine has two record families, and they are NOT the same struct:
+ *
+ *   entity   — the per-instance OBJECT record. Bump-allocated by OBJAdd, addressed by
+ *              id through _objPtrs, mirrored into the fixed buffer _cg (0x50CE80) while
+ *              a handler services it.
+ *   OBJ_TYPE — the shared TYPE record the object's +0x05 points at (loaded from the
+ *              .OT / .NT / .PT / .JT files). Mirrored into _cgt (0x50D268). The
+ *              *_TYPE structs (PROJ_TYPE, PT_TYPE, GV_TYPE, OT_TYPE, NT_TYPE) are its
+ *              per-class extensions -- they are TYPE data, not entity overlays.
+ *
+ * Both records are VARIABLE-SIZE, and each declares its own size:
+ *
+ *   object bytes = 0xDE + type->obj_ext_size   (dword-rounded)
+ *   type   bytes = type->type_size
+ *
+ * confirmed twice, independently: OBJAdd's only call site (in _T_AddObj, 0x4A73B0) asks
+ * for `*(short *)(type + 3) + 0xde` bytes, and GetCurObj (0x4628B0) computes _curObjSize
+ * the same way before mirroring the record into _cg. So there is no sizeof(entity) for
+ * the whole record: sizeof(entity) below is the COMMON region every class shares, and the
+ * class extension begins immediately after it, at 0xDE.
+ *
+ * WHY THE CLASS EXTENSIONS ARE STILL OPAQUE: every class's extension starts at the same
+ * offset, so their fields ALIAS in the address space (an aircraft's flight-model state and
+ * a missile's guidance state both live at 0xDE+). They cannot be separated by offset --
+ * only by attributing each access to the class of object the accessing code services. That
+ * is real RE, and until it is done a named extension field would be a guess. A wrong
+ * datatype is worse than none.
+ *
+ * EVIDENCE for the fields named below: the mirrors make the census unusually strong. Code
+ * that reaches a field through the mirror uses an ABSOLUTE address (_cg+N), so the
+ * instruction's operand size PROVES the field's width (the #455 rule) and its subsystem is
+ * known. Note the asymmetry: presence in that census proves a field exists, but ABSENCE
+ * proves nothing (code reaching the same field through a register never shows up). So this
+ * layout names what the census and the prose docs corroborate, and reserves the rest.
+ */
+
+/* Common region of every object record. The per-class extension begins at 0xDE. */
+typedef struct entity {
+    u8      obj_class;        /* 0x00  class tag (& 0x1f); 4 = aircraft   confirmed */
+    u32     obj_flags;        /* 0x01  & 1 alive, & 0x100000 draw destroyed        */
+    u32     obj_type;         /* 0x05  -> OBJ_TYPE (the shared type record)        */
+    u8      unk_09;           /* 0x09  1-byte access, 7 subsystems                 */
+    u32     unk_0A;           /* 0x0A                                              */
+    u16     obj_health;       /* 0x0E  0 = destroyed                     confirmed */
+    u8      unk_10;           /* 0x10                                              */
+    fixed24 pos_x;            /* 0x11  world position, F24.8            confirmed */
+    fixed24 pos_y;            /* 0x15                                              */
+    fixed24 pos_z;            /* 0x19                                              */
+    u16     heading;          /* 0x1D  (some code reads 0x1D as a dword, i.e.      */
+    u16     pitch;            /* 0x1F   heading+pitch together)          confirmed */
+    u16     goal_angle;       /* 0x21                                              */
+    u16     goal_heading;     /* 0x23                                              */
+    u16     goal_altitude;    /* 0x25                                              */
+    u8      reserved_027[13]; /* 0x27                                              */
+    fixed24 speed;            /* 0x34  F24.8                                       */
+    u8      view_target;      /* 0x38  view-target mode + id                       */
+    u8      reserved_039[23]; /* 0x39                                              */
+    u8      unk_50;           /* 0x50                                              */
+    u8      unk_51;           /* 0x51                                              */
+    u16     unk_52;           /* 0x52                                              */
+    u16     unk_54;           /* 0x54                                              */
+    u8      reserved_056[2];  /* 0x56                                              */
+    u16     unk_58;           /* 0x58                                              */
+    u16     unk_5A;           /* 0x5A                                              */
+    u16     unk_5C;           /* 0x5C                                              */
+    u32     unk_5E;           /* 0x5E                                              */
+    u16     unk_62;           /* 0x62                                              */
+    u16     chain_next_id;    /* 0x64  next object in the service chain  confirmed */
+    u8      reserved_066[2];  /* 0x66                                              */
+    u16     service_key;      /* 0x68  sort key ordering the service chain         */
+    u16     unk_6A;           /* 0x6A                                              */
+    u32     event_override;   /* 0x6C  optional per-instance proc override         */
+    u8      reserved_070[4];  /* 0x70                                              */
+    u16     unk_74;           /* 0x74                                              */
+    u16     unk_76;           /* 0x76                                              */
+    u8      reserved_078[8];  /* 0x78                                              */
+    u8      net_state[0x5E];  /* 0x80  per-object network replication block: every  */
+                              /*       access in this range is from the network      */
+                              /*       subsystem. Interior not mapped.               */
+} entity;                     /* 0xDE  == FA_OBJ_COMMON_SIZE                        */
+
+/* The shared type record. Its TOTAL size is type_size (variable, per class); the struct
+ * below is the COMMON HEADER -- the fields generic object code reads on any class. */
+typedef struct OBJ_TYPE {
+    u8      unk_00;           /* 0x00                                              */
+    u16     type_size;        /* 0x01  total bytes of THIS type record   confirmed */
+    u16     obj_ext_size;     /* 0x03  bytes of class extension on the object      */
+                              /*       record: object = 0xDE + this      confirmed */
+    u32     unk_05;           /* 0x05                                              */
+    u32     type_flags;       /* 0x09  & 0x400 = auto-remove on death    confirmed */
+    u16     obj_class;        /* 0x0D  class bitfield; its high byte & 0xC0 gates   */
+                              /*       the _b shape slot                 confirmed */
+    u32     shape;            /* 0x0F  base shape                        confirmed */
+    u32     shape_name;       /* 0x13  filename used as the suffix template        */
+    u32     shape_a;          /* 0x17  destroyed set {A,B} — world pass  confirmed */
+    u32     shape_b;          /* 0x1B  destroyed set {A,B} — graphics    confirmed */
+    u8      reserved_01F[6];  /* 0x1F                                              */
+    u32     shape_c;          /* 0x25  destroyed set {C,D}, aircraft     confirmed */
+    u32     shape_d;          /* 0x29  destroyed set {C,D}, aircraft     confirmed */
+    u8      reserved_02D[6];  /* 0x2D                                              */
+    u32     damage_set;       /* 0x33  == 2 selects the {_C,_D} set      confirmed */
+    u8      reserved_037[70]; /* 0x37                                              */
+    u32     class_proc;       /* 0x7D  the class's proc selector (GetObjProc)       */
+} OBJ_TYPE;                   /* 0x81  header only — see type_size                 */
 
 /* --- CN_INFO — network configuration, EA.CFG / NET.DAT (docs/fa/structs.md §4) ---
  * CN_ReadConfig reads a 0xDDC-byte body after a 4-byte checksum. Only the confirmed,

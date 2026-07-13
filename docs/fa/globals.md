@@ -280,13 +280,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### AI interpreter (CT)
 
-[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 11 named referenced globals
+[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 8 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
-| `0x0050CF83` | `_ctOverrideName` | re | alternate/override AI script-name buffer; selected by _ctState+0x1d |
-| `0x0050CF90` | `_ctStateCheckpoint` | re | heap copy of _ctState for preemptible save/restore |
-| `0x0050D312` | `_ctProgramNamePtr` | re | pointer to the current AI script name; NULL gates the interpreter off |
 | `0x00546BC0` | `_ctCompareActor` | re | actor slot used by CTVarDiff to evaluate attributes under the other object |
 | `0x00546BC8` | `_ctState` | re | 0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority) |
 | `0x00546C48` | `_ctPrintBuf` | re | HUD message text staged by CTDo_print/printnum, flushed on loop exit |
@@ -306,12 +303,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Weapons — projectiles / seekers / ECM (PROJ)
 
-[`weapons.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/weapons.csv) · [page](weapons.md) — 8 named referenced globals
+[`weapons.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/weapons.csv) · [page](weapons.md) — 6 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
-| `0x0050D0F8` | `_projGunSoundHandle` | re | active looping gun-sound handle |
-| `0x0050D0FA` | `_projGunSoundExpiry` | re | gun-sound expiry tick |
 | `0x0058F0F8` | `_projBestTargetCost` | re | seeker-search best-cost accumulator (init 0x7FFFFFFF) |
 | `0x0058F10C` | `_projBestTargetId` | re | seeker-search result id |
 | `0x0058F110` | `_projPkPenalty` | re | running hit-chance (Pk) multiplier |

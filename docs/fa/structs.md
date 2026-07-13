@@ -1,18 +1,197 @@
 # FA Struct Reference
 
-Master struct reference for Jane's Fighters Anthology. All offsets were derived by
-`RecoverStructs.java` scanning the executable for field-access patterns against known
-struct pointer arguments.
+Master struct reference for Jane's Fighters Anthology.
 
-> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied; recovered by `RecoverStructs.java`. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied. The **recovered layouts** (§1, §2) are derived from the engine's own code and are asserted in [`db/types/fa_types.h`](https://github.com/jomkz/fighters-codex/blob/main/db/types/fa_types.h); the **field census** (§4 onward) is raw `RecoverStructs.java` output kept as leads. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
-In this document, **confirmed** means the accessor function name clearly indicates the
-field meaning (e.g., `MPSetFuel`, `HUDDrawAlt`, `DAMAGEDoHit`); **inferred** means only
-generic `FUN_*` accessors exist and the field name comes from access context, or is unknown.
+## The object model — two families, both self-describing
 
-All sizes are in bytes. Multi-byte integer types are little-endian. Fixed-point values use FA's standard F24.8 format (24-bit integer part, 8-bit fraction) unless noted. The `entity` struct scan covered offsets `0x00`–`0x11E`; the raw scan logged 286 distinct offsets. The tables below present the most useful subset; unlisted offsets within a range are unaccessed or aliased to adjacent fields.
+The engine has **two** record families, and most of the confusion in earlier revisions of
+this document came from treating them as one:
 
-### Confidence and the low-confidence pass
+| | what it is | where it lives | mirrored at |
+|---|---|---|---|
+| **`entity`** | the per-instance **object** record | bump arena, addressed by id via `_objPtrs` | `_cg` (`0x50CE80`) |
+| **`OBJ_TYPE`** | the shared **type** record the object's `+0x05` points at | loaded from the `.OT` / `.NT` / `.PT` / `.JT` files | `_cgt` (`0x50D268`) |
+
+The `*_TYPE` structs (`PROJ_TYPE`, `PT_TYPE`, `GV_TYPE`, `OT_TYPE`, `NT_TYPE`) are **per-class
+extensions of the type record** — they are type data, *not* overlays of an entity allocation.
+
+**Both records are variable-size, and each declares its own size:**
+
+```
+object bytes = 0xDE + type->obj_ext_size      (then rounded up to a dword)
+type   bytes = type->type_size
+```
+
+This is confirmed twice, independently. `OBJAdd` (`0x4913E0`) has exactly one call site — in
+`_T_AddObj` (`0x4A73B0`) — which asks for `type[+0x03] + 0xDE` bytes and `memmove`s them out of
+`_cg`; and `GetCurObj` (`0x4628B0`) computes `_curObjSize` the same way before mirroring a record
+back into `_cg`. `OBJAdd` records each record's byte length in `_objSizes[id]`.
+
+So **there is no `sizeof(entity)` for a whole object**: `0xDE` is the *common region* every class
+shares, and the class extension begins immediately after it.
+
+### Why the class extensions are not mapped
+
+Every class's extension starts at the same offset (`0xDE`), so their fields **alias**: an aircraft's
+flight-model state and a missile's guidance state occupy the same byte ranges. They cannot be
+separated by offset — only by attributing each access to the *class of object the accessing code
+services*. That is genuine RE, tracked as a follow-up; until it is done, a named extension field
+would be a guess, and a wrong datatype is worse than none.
+
+### How the recovered fields were proven
+
+The mirrors make the evidence unusually strong. Code that reaches a field through the current-object
+mirror addresses it **absolutely** (`_cg+N`), so the instruction's operand size *proves* the field's
+width, and the referencing function identifies its subsystem.
+
+Note the asymmetry, which is what keeps this honest: **presence in that census proves a field exists
+at that offset with that width; absence proves nothing** — code that reaches the same field through
+a register pointer never appears. Hence §1 and §2 name only what the census and the prose docs
+corroborate, and leave every other byte explicitly reserved.
+
+All sizes are in bytes. Multi-byte integers are little-endian. Fixed-point values use FA's standard
+F24.8 format (24-bit integer part, 8-bit fraction) unless noted.
+
+## 1. `entity` — the object record (common region)
+
+Every live game object (aircraft, missile, vehicle, static object, NPC…) begins with this
+`0xDE`-byte common region; its class extension follows at `0xDE`. Allocated by `OBJAdd`, serviced
+through the `_cg` mirror — see [objects.md](objects.md).
+
+This is the **recovered layout**, asserted in
+[`db/types/fa_types.h`](https://github.com/jomkz/fighters-codex/blob/main/db/types/fa_types.h)
+(`static_assert(sizeof(entity) == 0xDE)`, which the `fxe` build evaluates on every compile). Bytes
+not listed are reserved: not "empty", but *not proven*.
+
+| Offset | Size | Field | Meaning | Confidence |
+|--------|------|-------|---------|------------|
+| `0x00` | 1 | `obj_class` | class tag (`& 0x1f`); `4` = aircraft | confirmed |
+| `0x01` | 4 | `obj_flags` | `& 1` alive; `& 0x100000` draw destroyed model | confirmed |
+| `0x05` | 4 | `obj_type` | → the `OBJ_TYPE` record (§2) | confirmed |
+| `0x09` | 1 | `unk_09` | byte field; touched by 7 subsystems | inferred |
+| `0x0A` | 4 | `unk_0A` | | inferred |
+| `0x0E` | 2 | `obj_health` | `0` = destroyed | confirmed |
+| `0x10` | 1 | `unk_10` | | inferred |
+| `0x11` | 12 | `pos_x/y/z` | world position, F24.8 | confirmed |
+| `0x1D` | 2 | `heading` | some code reads `0x1D` as a dword (heading+pitch together) | confirmed |
+| `0x1F` | 2 | `pitch` | | confirmed |
+| `0x21` | 2 | `goal_angle` | | inferred |
+| `0x23` | 2 | `goal_heading` | | inferred |
+| `0x25` | 2 | `goal_altitude` | | inferred |
+| `0x34` | 4 | `speed` | F24.8 | confirmed |
+| `0x38` | 1 | `view_target` | view-target mode + id | inferred |
+| `0x64` | 2 | `chain_next_id` | next object in the service chain | confirmed |
+| `0x68` | 2 | `service_key` | sort key ordering the service chain | inferred |
+| `0x6C` | 4 | `event_override` | optional per-instance proc override | inferred |
+| `0x80` | 94 | `net_state` | per-object network replication block — every access in the range is from the network subsystem; interior unmapped | inferred |
+| `0xDE` | — | *(class extension)* | length = `type->obj_ext_size`; aliases across classes, so unmapped | confirmed |
+
+Smaller unnamed-but-proven fields (`0x50`–`0x76`) are carried in `fa_types.h` as `unk_*` with their
+proven widths.
+
+---
+
+## 2. `OBJ_TYPE` — the type record (common header)
+
+The shared per-class record loaded from the `.OT` / `.NT` / `.PT` / `.JT` files, pointed at by every
+object's `+0x05` and mirrored at `_cgt`. Its **total** size is self-declared at `+0x01`; the header
+below is the part generic object code reads on any class. (`OBJ_TYPE` is our name — the game's own
+name for the common header is not recovered; the class extensions keep their FA.SMS names.)
+
+| Offset | Size | Field | Meaning | Confidence |
+|--------|------|-------|---------|------------|
+| `0x01` | 2 | `type_size` | total bytes of this type record | confirmed |
+| `0x03` | 2 | `obj_ext_size` | bytes of class extension on the *object* record (`object = 0xDE + this`) | confirmed |
+| `0x09` | 4 | `type_flags` | `& 0x400` = auto-remove on death | confirmed |
+| `0x0D` | 2 | `obj_class` | class bitfield; high byte `& 0xC0` gates the `_b` shape slot | confirmed |
+| `0x0F` | 4 | `shape` | base shape | confirmed |
+| `0x13` | 4 | `shape_name` | filename used as the suffix template | confirmed |
+| `0x17` / `0x1B` | 4 | `shape_a` / `shape_b` | destroyed set `{A,B}` — world / graphics pass | confirmed |
+| `0x25` / `0x29` | 4 | `shape_c` / `shape_d` | destroyed set `{C,D}`, aircraft only | confirmed |
+| `0x33` | 4 | `damage_set` | `== 2` selects the `{_C,_D}` set | confirmed |
+| `0x7D` | 4 | `class_proc` | the class's proc selector (`GetObjProc`) | confirmed |
+
+The shape fields are documented in full in [shape-selection.md](shape-selection.md).
+
+---
+
+## 3. `CN_INFO` — network configuration
+
+Persisted to and loaded from `EA.CFG` / `NET.DAT` on disk. `CN_ReadConfig` reads `0xDDC` bytes after a 4-byte checksum header; `CN_WriteConfig` writes the same. The struct is version-stamped at `[0x00]` (version byte: `1`, `2`, or `3`). Version 3 is the current live format.
+
+**Disk source:** `EA.CFG` or `NET.DAT`  
+**Total size:** `0xDDC` bytes (body only; 4-byte checksum prepended on disk)
+
+| Offset | Size | Field name (inferred) | Accessor functions | Notes |
+|--------|------|-----------------------|--------------------|-------|
+| `0x00` | 4 | `cn_version` | `CN_ReadConfig`, `NET_SlaveShutdown` | Config version. `3` = current format. **confirmed** |
+| `0x01` | 1 | `cn_flags` | `NET_SlaveInit`, `NET_MasterStartGame` | General net flags byte. **confirmed** |
+| `0x04` | 4 | `cn_session_id` | `NET_CancelPlayerList`, `netDialogAppIO`, `ip2long` | Session or IP identifier. **confirmed** |
+| `0x06` | 2 | `cn_hud_msg_flags` | `_HUDMessage@4`, `HUDReprintMessages` | HUD message display flags. **confirmed** |
+| `0x07` | 1 | `cn_master_reject` | `NET_MasterRejectPlayer` | Set when master rejects a player. **confirmed** |
+| `0x08` | 4 | `cn_pkt_state` | `player_list_process_pkt`, `slave_process_pkt` | Packet processing state. **confirmed** |
+| `0x0A` | 1 | `cn_warning` | `HUDSetWarning@8` | HUD warning flags from net. **confirmed** |
+| `0x0B` | 1 | `cn_unk_0B` | `usnfmain`, `HUDSetWarning@8` | **inferred** |
+| `0x0C` | 4 | `cn_unk_0C` | `NET_SlaveInit`, `NET_RequestPlayerList` | **inferred** |
+| `0x10` | 4 | `cn_master_ptr` | `NET_MasterInit`, `NET_MasterShutdown` | Master session handle. **confirmed** |
+| `0x14` | 4 | `cn_player_list` | `NET_RequestPlayerList`, `NET_MasterRejectPlayer` | Player list pointer or state. **confirmed** |
+| `0x20` | 4 | `cn_hud_range` | `HUDDrawRangeInfo` | Range info for HUD display. **confirmed** |
+| `0x24` | 4 | `cn_hud_heading` | `HUDDrawHeading` | Heading value for HUD. **confirmed** |
+| `0x28` | 4 | `cn_hud_speed` | `HUDDrawSpeed` | Airspeed for HUD. **confirmed** |
+| `0x30` | 4 | `cn_master_shutdown` | `NET_MasterShutdown` | Shutdown state flag. **confirmed** |
+| `0x34` | 4 | `cn_hud_alt` | `HUDDrawAlt` | Altitude for HUD. **confirmed** |
+| `0x38` | 4 | `cn_hud_data` | `HUDDrawWeaponInfo` | Weapon info HUD data. **confirmed** |
+| `0x40` | 4 | `cn_hud_draw_data` | `_HUDDraw@4` | HUD draw buffer reference. **confirmed** |
+| `0x44` | 4 | `cn_hud_init_ext` | `_HUDInit@0`, `FUN_004089a0` | **inferred** |
+| `0x52` | 1 | `cn_slave_id` | `NET_SlaveInit` | Slave player index. **confirmed** |
+| `0x54` | 4 | `cn_hud_nearest` | `HUDFindNearest@8` | Nearest contact for HUD lock. **confirmed** |
+| `0x60` | 4 | `cn_hud_data2` | `HUDDrawRangeInfo`, `FUN_00409bfb` | **inferred** |
+| `0x64` | 4 | `cn_net_slave_state` | `NET_SlaveInit`, `slave_process_pkt` | Full slave network state. **confirmed** |
+| `0x68` | 4 | `cn_flight_key` | `FlightKey@4` | Flight key binding data. **confirmed** |
+| `0x7C` | 4 | `cn_flying_loop` | `FlyingLoop` | Game loop counter or tick. **confirmed** |
+| `0x80` | 4 | `cn_unk_80` | `usnfmain`, `FlyingLoop` | **inferred** |
+| `0xA0` | 4 | `cn_hud_disrupt` | `_HUDDraw@4` | HUD disruption state. **confirmed** |
+| `0xB4` | 1 | `cn_hud_extra` | `HUDSetStability` | HUD stability display. **confirmed** |
+| `0xB6` | 2 | `cn_stability` | `HUDSetStability` | Stability value sent over net. **confirmed** |
+| `0xC0` | 4 | `cn_ifm_time` | `IFMSetTime@@YAXD@Z` | IFM timer. **confirmed** |
+| `0xC8` | 4 | `cn_damage` | `_DAMAGEDoHit@12` | Damage data for net sync. **confirmed** |
+| `0xD8` | 4 | `cn_slave_fail` | `handle_slave_connection_failed` | Failure state for disconnection. **confirmed** |
+| `0xDB0` | — | `cn_tcp_block` | `_NetSetFactoryTCP` | TCP factory defaults block; set by `_NetSetFactoryTCP__YAXPAUCN_INFO_TCP___Z`. **confirmed** |
+| `0x8E4` | 1 | `cn_has_mac_str` | `CN_ReadConfig` | Non-zero if MAC address string present at this offset. **confirmed** |
+| `0x8E4` | 8 | `cn_mac_str[8]` | `CN_ReadConfig`, `_atohb` | ASCII MAC address string, converted to binary at `0xDD0`. **confirmed** |
+| `0x8EC` | 12 | `cn_ip_str[12]` | `CN_ReadConfig`, `_atohb` | ASCII IP address string, converted to binary at `0xDD4`. **confirmed** |
+| `0xDD0` | 8 | `cn_mac_bin[8]` | `CN_ReadConfig` | Binary MAC address bytes (decoded from `0x8E4`). **confirmed** |
+| `0xDD4` | 12 | `cn_ip_bin[12]` | `CN_ReadConfig` | Binary IP address bytes (decoded from `0x8EC`). **confirmed** |
+| `0xDDA` | 1 | `cn_addr_valid` | `CN_ReadConfig` | Set to `1` when both MAC and IP decoded successfully. **confirmed** |
+| `0xDDC` | — | *(end of struct)* | `CN_WriteConfig` | `fwrite(param_1, 0xDDC, 1, _File)` confirms total body size. |
+
+---
+
+## 4. The field census — leads, not layouts
+
+Everything below this point is raw `RecoverStructs.java` output: it records every `[reg + constant]`
+dereference where the register held a struct-pointer argument. It is a **census of accesses with
+guessed names**, and it is retained because it is a useful lead list — not because it is a layout.
+
+Three of its tables are **superseded**, and are kept only for provenance:
+
+- **`entity` (below)** — its names conflict with the code where the two overlap (it reads `+0x04` as
+  "the most-accessed dword" and puts `speed` at `0x32`, where `GetCurObj` provably reads the type
+  pointer at `+0x05` and the object's speed sits at `0x34`). §1 supersedes it.
+- **`OT_TYPE` and `NT_TYPE`** — these two tables list *identical* offsets with *identical*
+  accessors, because both "scans" ran over `0x400000`–`0x540000`, i.e. the whole executable. They
+  are the same generic-access noise attributed twice, not two recovered layouts. Neither is
+  promotable as it stands.
+- **`PROJ_TYPE`** — its offsets are into the **type record**, not "the upper region of an entity
+  allocation": `_PROJSpeed@8` is called as `_PROJSpeed(_cgt, …)`. The *offsets* are real; the family
+  they were filed under was wrong.
+
+### Confidence in the census tables
+
+These tags describe the census tables in this section only; the recovered layouts in §1–§3
+carry their own confidence markers, earned from the code.
 
 Every `inferred` (Low-confidence) field was reviewed against its accessor set (#130). A field is
 promoted to `confirmed` only when a **dedicated named accessor** whose name identifies this
@@ -38,14 +217,6 @@ of three — this is the "why it can't be promoted from static analysis alone":
 Promotions made in this pass: `entity 0xE8` and `GV_TYPE 0x3F` (both gained a dedicated named
 accessor); the three contamination rows above are annotated in place. All other Low tags fall under
 categories 1–2 and carry the standing rationale here rather than a repeated per-row note.
-
----
-
-## 1. `entity` — Game Object Base
-
-Every live game object (aircraft, missile, vehicle, static object, NPC, etc.) shares this common header. Allocated and managed by the object system (`_MoveObj@0`, `_explode`, `_T_AddObj@12`). At runtime a pointer to the current object is held in a global (`_currentT` or equivalent); subsystems such as HUD, damage, flight model, and AI all index off this pointer.
-
-The struct begins at the object's base address. Extension structs (`PROJ_TYPE`, `GV_TYPE`, etc.) overlay the upper region of the same allocation.
 
 **Scan range:** `0x400000`–`0x540000`, offsets `0x00`–`0x11E`
 
@@ -180,9 +351,9 @@ The struct begins at the object's base address. Extension structs (`PROJ_TYPE`, 
 
 ---
 
-## 2. `PROJ_TYPE` — Projectile / Missile Extension
+### `PROJ_TYPE` — projectile / missile **type** extension (census)
 
-Overlays the upper region of an entity allocation for missile and projectile objects. Scanned in the range `0x4c0000`–`0x4c3000` (the PROJ subsystem code block). Only offsets `0x50`–`0x7F` are documented; the lower range is shared with `entity`.
+Offsets into the **type record** for missile and projectile types — *not* into an entity allocation, as an earlier revision of this document claimed: `_PROJSpeed@8` is called as `_PROJSpeed(_cgt, …)`, and `_cgt` is the type-record mirror. Scanned in the range `0x4c0000`–`0x4c3000` (the PROJ subsystem code block); only offsets `0x50`–`0x7F` are listed, because the scan was bounded there — that bound, not a structural boundary, is where the "extension starts at `0x50`" idea came from.
 
 **Scan range:** `0x4c0000`–`0x4c3000`, offsets `0x50`–`0x7F`
 
@@ -209,7 +380,7 @@ Overlays the upper region of an entity allocation for missile and projectile obj
 
 ---
 
-## 3. `PT_TYPE` — Aircraft Performance Type
+### `PT_TYPE` — aircraft performance type, `.JT` (census)
 
 Performance type data loaded from `.JT` files on disk (see `architecture.md` BRF type byte `5`). At runtime the struct pointer is obtained from `@T_Load@4` / `@T_GetLeaf@12` and passed to the flight model. Key physics globals (`DAT_0050d3xx` range) in `AnalyzePhysics.txt` map to fields in this struct.
 
@@ -253,61 +424,9 @@ Offsets `0x00`–`0x4F` are shared with the `entity` header (same access pattern
 
 ---
 
-## 4. `CN_INFO` — Network Configuration
+### `GV_TYPE` — ground-vehicle **type** extension (census)
 
-Persisted to and loaded from `EA.CFG` / `NET.DAT` on disk. `CN_ReadConfig` reads `0xDDC` bytes after a 4-byte checksum header; `CN_WriteConfig` writes the same. The struct is version-stamped at `[0x00]` (version byte: `1`, `2`, or `3`). Version 3 is the current live format.
-
-**Disk source:** `EA.CFG` or `NET.DAT`  
-**Total size:** `0xDDC` bytes (body only; 4-byte checksum prepended on disk)
-
-| Offset | Size | Field name (inferred) | Accessor functions | Notes |
-|--------|------|-----------------------|--------------------|-------|
-| `0x00` | 4 | `cn_version` | `CN_ReadConfig`, `NET_SlaveShutdown` | Config version. `3` = current format. **confirmed** |
-| `0x01` | 1 | `cn_flags` | `NET_SlaveInit`, `NET_MasterStartGame` | General net flags byte. **confirmed** |
-| `0x04` | 4 | `cn_session_id` | `NET_CancelPlayerList`, `netDialogAppIO`, `ip2long` | Session or IP identifier. **confirmed** |
-| `0x06` | 2 | `cn_hud_msg_flags` | `_HUDMessage@4`, `HUDReprintMessages` | HUD message display flags. **confirmed** |
-| `0x07` | 1 | `cn_master_reject` | `NET_MasterRejectPlayer` | Set when master rejects a player. **confirmed** |
-| `0x08` | 4 | `cn_pkt_state` | `player_list_process_pkt`, `slave_process_pkt` | Packet processing state. **confirmed** |
-| `0x0A` | 1 | `cn_warning` | `HUDSetWarning@8` | HUD warning flags from net. **confirmed** |
-| `0x0B` | 1 | `cn_unk_0B` | `usnfmain`, `HUDSetWarning@8` | **inferred** |
-| `0x0C` | 4 | `cn_unk_0C` | `NET_SlaveInit`, `NET_RequestPlayerList` | **inferred** |
-| `0x10` | 4 | `cn_master_ptr` | `NET_MasterInit`, `NET_MasterShutdown` | Master session handle. **confirmed** |
-| `0x14` | 4 | `cn_player_list` | `NET_RequestPlayerList`, `NET_MasterRejectPlayer` | Player list pointer or state. **confirmed** |
-| `0x20` | 4 | `cn_hud_range` | `HUDDrawRangeInfo` | Range info for HUD display. **confirmed** |
-| `0x24` | 4 | `cn_hud_heading` | `HUDDrawHeading` | Heading value for HUD. **confirmed** |
-| `0x28` | 4 | `cn_hud_speed` | `HUDDrawSpeed` | Airspeed for HUD. **confirmed** |
-| `0x30` | 4 | `cn_master_shutdown` | `NET_MasterShutdown` | Shutdown state flag. **confirmed** |
-| `0x34` | 4 | `cn_hud_alt` | `HUDDrawAlt` | Altitude for HUD. **confirmed** |
-| `0x38` | 4 | `cn_hud_data` | `HUDDrawWeaponInfo` | Weapon info HUD data. **confirmed** |
-| `0x40` | 4 | `cn_hud_draw_data` | `_HUDDraw@4` | HUD draw buffer reference. **confirmed** |
-| `0x44` | 4 | `cn_hud_init_ext` | `_HUDInit@0`, `FUN_004089a0` | **inferred** |
-| `0x52` | 1 | `cn_slave_id` | `NET_SlaveInit` | Slave player index. **confirmed** |
-| `0x54` | 4 | `cn_hud_nearest` | `HUDFindNearest@8` | Nearest contact for HUD lock. **confirmed** |
-| `0x60` | 4 | `cn_hud_data2` | `HUDDrawRangeInfo`, `FUN_00409bfb` | **inferred** |
-| `0x64` | 4 | `cn_net_slave_state` | `NET_SlaveInit`, `slave_process_pkt` | Full slave network state. **confirmed** |
-| `0x68` | 4 | `cn_flight_key` | `FlightKey@4` | Flight key binding data. **confirmed** |
-| `0x7C` | 4 | `cn_flying_loop` | `FlyingLoop` | Game loop counter or tick. **confirmed** |
-| `0x80` | 4 | `cn_unk_80` | `usnfmain`, `FlyingLoop` | **inferred** |
-| `0xA0` | 4 | `cn_hud_disrupt` | `_HUDDraw@4` | HUD disruption state. **confirmed** |
-| `0xB4` | 1 | `cn_hud_extra` | `HUDSetStability` | HUD stability display. **confirmed** |
-| `0xB6` | 2 | `cn_stability` | `HUDSetStability` | Stability value sent over net. **confirmed** |
-| `0xC0` | 4 | `cn_ifm_time` | `IFMSetTime@@YAXD@Z` | IFM timer. **confirmed** |
-| `0xC8` | 4 | `cn_damage` | `_DAMAGEDoHit@12` | Damage data for net sync. **confirmed** |
-| `0xD8` | 4 | `cn_slave_fail` | `handle_slave_connection_failed` | Failure state for disconnection. **confirmed** |
-| `0xDB0` | — | `cn_tcp_block` | `_NetSetFactoryTCP` | TCP factory defaults block; set by `_NetSetFactoryTCP__YAXPAUCN_INFO_TCP___Z`. **confirmed** |
-| `0x8E4` | 1 | `cn_has_mac_str` | `CN_ReadConfig` | Non-zero if MAC address string present at this offset. **confirmed** |
-| `0x8E4` | 8 | `cn_mac_str[8]` | `CN_ReadConfig`, `_atohb` | ASCII MAC address string, converted to binary at `0xDD0`. **confirmed** |
-| `0x8EC` | 12 | `cn_ip_str[12]` | `CN_ReadConfig`, `_atohb` | ASCII IP address string, converted to binary at `0xDD4`. **confirmed** |
-| `0xDD0` | 8 | `cn_mac_bin[8]` | `CN_ReadConfig` | Binary MAC address bytes (decoded from `0x8E4`). **confirmed** |
-| `0xDD4` | 12 | `cn_ip_bin[12]` | `CN_ReadConfig` | Binary IP address bytes (decoded from `0x8EC`). **confirmed** |
-| `0xDDA` | 1 | `cn_addr_valid` | `CN_ReadConfig` | Set to `1` when both MAC and IP decoded successfully. **confirmed** |
-| `0xDDC` | — | *(end of struct)* | `CN_WriteConfig` | `fwrite(param_1, 0xDDC, 1, _File)` confirms total body size. |
-
----
-
-## 5. `GV_TYPE` — Ground Vehicle Extension
-
-Extension struct overlaid on entity allocations for ground vehicle objects. Scanned exclusively in the MP subsystem code block (`0x470000`–`0x480000`), which handles multiplayer synchronization of ground vehicles. The MP message functions (`MPMsgSend`, `MPGraphicAdd*`, `MPKey`) drive nearly all accesses.
+Offsets into the **type record** for ground-vehicle types (again: type data, not an entity overlay). Scanned exclusively in the MP subsystem code block (`0x470000`–`0x480000`), which handles multiplayer synchronization of ground vehicles. The MP message functions (`MPMsgSend`, `MPGraphicAdd*`, `MPKey`) drive nearly all accesses.
 
 **Scan range:** `0x470000`–`0x480000`, offsets `0x00`–`0x80`
 
@@ -344,7 +463,7 @@ Extension struct overlaid on entity allocations for ground vehicle objects. Scan
 | `0x50` | 4 | `gv_unk_50` | `MPGraphicAddSmokeAdder`, `FUN_00472130`, `_FMFlight@0` | 16× accesses. **inferred** |
 | `0x52` | 1 | `gv_cn_print` | `CN_Print@@YAXPAE@Z` | Read by `?CN_Print@@YAXPAE@Z`. **confirmed** |
 | `0x54` | 4 | `gv_unk_54` | `MPGraphicAddSmokeAdder`, `FUN_004715bc`, `FUN_0047267c` | **inferred** |
-| `0x5C` | 4 | `gv_clear_surface` | `CDirDrawSurface::Clear`, `_LibStartUp` | Reached only by `CDirDrawSurface::Clear` — a method of the DirectDraw surface wrapper class (`0x41Dxxx`), not the GV struct; probable cross-struct contamination (see [Confidence](#confidence-and-the-low-confidence-pass), category 3). Not a genuine `GV_TYPE` field. **inferred** |
+| `0x5C` | 4 | `gv_clear_surface` | `CDirDrawSurface::Clear`, `_LibStartUp` | Reached only by `CDirDrawSurface::Clear` — a method of the DirectDraw surface wrapper class (`0x41Dxxx`), not the GV struct; probable cross-struct contamination (see [Confidence](#confidence-in-the-census-tables), category 3). Not a genuine `GV_TYPE` field. **inferred** |
 | `0x60` | 4 | `gv_cn_factory` | `CN_SetFactoryDefaults` | Network config factory defaults. **confirmed** |
 | `0x64` | 4 | `gv_flight_menu` | `MPKey@@YIGG@Z`, `_FlightMenu` | Read by `_FlightMenu`. **confirmed** |
 | `0x78` | 4 | `gv_ddraw_surface` | `FUN_004735d0`, `CDirDrawSurface::Create`, `CDirDrawSurface::SetEntries` | Accessed by `CDirDrawSurface::Create`/`SetEntries` (DirectDraw wrapper methods), not GV logic; probable cross-struct contamination (category 3). Not a genuine `GV_TYPE` field. **inferred** |
@@ -354,7 +473,7 @@ Extension struct overlaid on entity allocations for ground vehicle objects. Scan
 
 ---
 
-## 6. `OT_TYPE` — Ordnance Type (Static Object)
+### `OT_TYPE` — ordnance type, `.OT` (census — **superseded**, see above)
 
 Type data loaded from `.OT` files (BRF struct_type `1`). The scan for this struct covers the same broad address range as `entity`; offsets below `0x60` are listed since the scan was bounded there. Offsets `0x00`–`0x4F` strongly overlap the `entity` header.
 
@@ -374,7 +493,7 @@ Type data loaded from `.OT` files (BRF struct_type `1`). The scan for this struc
 
 ---
 
-## 7. `NT_TYPE` — Nav Target
+### `NT_TYPE` — nav target, `.NT` (census — **superseded**, see above)
 
 Type data loaded from `.NT` files (BRF struct_type `3`). Like `OT_TYPE`, the scan covers `0x00`–`0x60`. The accessor pattern through the shared range is identical to `entity`; NT-specific behavior appears at `0x5D`–`0x60`.
 
@@ -398,9 +517,28 @@ Type data loaded from `.NT` files (BRF struct_type `3`). Like `OT_TYPE`, the sca
 
 The raw data was produced by `RecoverStructs.java`, a Ghidra headless script that enumerates all instructions in the given VA range and records every memory dereference of the form `[reg + constant]` where `reg` holds a known struct pointer argument. The access count column reflects how often each offset was touched across the entire executable scan — higher counts indicate more deeply integrated fields.
 
-**Known limitations:**
+**Known limitations — and what they cost:**
 
-- The scan cannot distinguish between two different struct types that happen to use the same pointer argument convention. The `entity`, `OT_TYPE`, `NT_TYPE`, and `PT_TYPE` scans share access patterns in the `0x00`–`0x4F` range because many engine functions are generic and accept any object pointer. The type record's shape-pointer fields (`+0x0F`/`+0x17`/`+0x1B`/`+0x25`/`+0x29`) and their runtime use are documented in [shape-selection.md](shape-selection.md).
-- `PROJ_TYPE` and `GV_TYPE` were isolated by restricting the scan to subsystem-specific code blocks, which removes the shared-header noise but may miss cross-subsystem accesses.
-- Fields accessed only once or twice are often incidental (e.g., CRT helper functions scanning memory). Treat single-access entries as tentative.
+- The scan **cannot tell two struct types apart** when they share a pointer-argument convention, and this is not a small caveat: it is what produced the two errors §4 retracts. Because generic engine functions accept any object pointer, a whole-executable scan attributes their accesses to whichever struct it was told it was scanning — which is why the `OT_TYPE` and `NT_TYPE` tables came out *identical*, and why `entity`'s census disagrees with the code about what lives at `+0x04`.
+- Restricting the scan to a subsystem's code block (as `PROJ_TYPE` and `GV_TYPE` did) removes the generic-access noise, but it does **not** establish *which family* the pointer belongs to — both were filed as entity overlays when they are in fact type-record extensions.
+- Fields accessed only once or twice are often incidental (e.g., CRT helpers scanning memory). Treat single-access entries as tentative.
 - Size column values are inferred from the next observed offset; actual padding may differ.
+
+### The mirror method (how §1 and §2 were recovered)
+
+The recovered layouts do not come from this census. They come from the **current-object mirrors**:
+`GetCurObj` copies the live record into the fixed buffer `_cg` (and its type record into `_cgt`), so
+the code that services an object reaches its fields at **absolute addresses** — `_cg+N` rather than
+`obj->field`.
+
+That turns a field access into a directly observable fact:
+
+- the instruction's **operand size proves the field's width** (`MOV AL,[_cg+N]` = 1 byte) — the same
+  rule the typed-globals pass rests on;
+- the **referencing function proves the subsystem**, which is what separates the common region
+  (touched by many subsystems) from the class extension (touched by one class's code);
+- and the **family is never in doubt**, because `_cg` and `_cgt` are different addresses.
+
+The one thing it cannot do is prove a *negative*: code that reaches a field through a register
+pointer leaves no absolute reference, so **absence from the census proves nothing**. Every byte the
+mirror does not account for therefore stays `reserved` in `fa_types.h` rather than being invented.

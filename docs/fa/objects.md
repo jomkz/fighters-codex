@@ -24,7 +24,13 @@ engine code reaches an object as `(&_objPtrs)[id]`. Id `0` is the null object. I
 are handed out by the allocator (below); a separate high band of **alias ids**
 (negative, per-computer) is reserved for multiplayer references.
 
-The first bytes of every record are shared across all classes — the fields the
+A record is **`0xDE` bytes of common region followed by a per-class extension**, and it is
+self-describing: the type record states how long the extension is (`type +0x03`) and how long
+it is itself (`type +0x01`). `OBJAdd` asks for `type[+0x03] + 0xDE` bytes; `GetCurObj` computes
+the same total independently when it mirrors a record. So there is no fixed `sizeof` for an
+object — see [structs.md](structs.md) for the recovered layouts.
+
+The first `0xDE` bytes of every record are shared across all classes — the fields the
 object system itself reads:
 
 | Offset | Size | Field | Meaning | Confidence |
@@ -106,7 +112,12 @@ arena (`_objArena`, capacity `_objArenaSize`) and seeds the id counter and the
 per-computer alias band (`_tempAliasBase`/`_tempAliasMax`). `OBJAdd` (`0x4913E0`)
 copies a prepared record to the arena bump cursor (`_objArenaNext`), records its byte
 size in `_objSizes`, and publishes the `id → base` entry in `_objPtrs`; `OBJSubtract`
-(`0x491490`) pops the most recent one. `OBJAlias` (`0x4914C0`) and its variants map a
+(`0x491490`) pops the most recent one.
+
+`OBJAdd` has exactly **one** call site — in `_T_AddObj` (`0x4A73B0`), which stages the new
+record in `_cg`, then asks for `0xDE + type[+0x03]` bytes (rounded up to a dword). Every object
+in the game is therefore born the same way: staged in the mirror, sized by its type, memmoved
+into the arena. `OBJAlias` (`0x4914C0`) and its variants map a
 transient reference (waypoint, multiplayer peer, preferred target) onto a real id so
 that AI and networking can name objects that may not be locally resident.
 

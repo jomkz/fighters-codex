@@ -139,11 +139,20 @@ def emit_types():
                  ("fixed24", 4), ("undefined1", 1), ("undefined2", 2), ("undefined4", 4)]:
         out.append("static_assert(sizeof(%s) == %d, \"%s must be %d byte(s)\");" % (t, n, t, n))
     out.append("")
-    out.append("// CN_INFO is the one struct whose interior db/types/ maps today; its size is")
-    out.append("// read from CN_ReadConfig's 0xDDC-byte body. The rest of the vocabulary is")
-    out.append("// declared opaque on purpose -- see #454, which is an RE investigation, not a")
-    out.append("// parsing job (objects are variable-size, and the field census overlaps).")
-    out.append("static_assert(sizeof(CN_INFO) == 0xDDC, \"CN_INFO is a 0xDDC-byte config body\");")
+    out.append("// The recovered LAYOUTS, asserted (#454). Each size is a claim the code proves:")
+    out.append("//   entity   0xDE  -- the common region of every object record. The record itself")
+    out.append("//                     is variable-size (0xDE + type->obj_ext_size), so this is the")
+    out.append("//                     shared part, not the whole object: OBJAdd and GetCurObj both")
+    out.append("//                     compute the total the same way, independently.")
+    out.append("//   OBJ_TYPE 0x81  -- the common HEADER of the type record; its total size is")
+    out.append("//                     self-declared at +0x01, and the class extension follows.")
+    out.append("//   CN_INFO  0xDDC -- the config body CN_ReadConfig reads.")
+    out.append("// The per-class extensions stay opaque on purpose: they all begin at the same")
+    out.append("// offset, so their fields alias, and a named one would be a guess (#454).")
+    for t, n, why in [("entity", 0xDE, "the common region of an object record"),
+                      ("OBJ_TYPE", 0x81, "the common header of a type record"),
+                      ("CN_INFO", 0xDDC, "a 0xDDC-byte config body")]:
+        out.append("static_assert(sizeof(%s) == 0x%X, \"%s is %s\");" % (t, n, t, why))
     out.append("")
     out.append("}  // namespace fxe")
     return "\n".join(out) + "\n"

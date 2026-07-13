@@ -77,8 +77,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0050CFB2,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CFB6,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CFB8,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
-0x0050D0F8,data,_projGunSoundHandle,,re,inferred,active looping gun-sound handle,undefined2
-0x0050D0FA,data,_projGunSoundExpiry,,re,inferred,gun-sound expiry tick,undefined4
+0x0050D0F8,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x278, in the class-extension region): active looping gun-sound handle. Not a standalone global — inside the record OBJAdd memmoves (#454)",
+0x0050D0FA,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x27A, in the class-extension region): gun-sound expiry tick. Not a standalone global — inside the record OBJAdd memmoves (#454)",
 0x0050D316,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
 0x0050D317,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
 0x0050D318,data,,,waiver,confirmed,interior of _cgt type-record mirror; base named in objects.csv,
