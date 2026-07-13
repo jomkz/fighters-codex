@@ -131,6 +131,23 @@ against a committed inventory. The run's result is the committed
 | `globals.csv` | `va,name,xref_count,subsystems,widths,indexed` for every data symbol with ≥1 code xref; `subsystems` = slugs whose functions reference it. `widths` = the operand size of every access (the evidence `tools/recover_globals.py` types from, [#455](https://github.com/jomkz/fighters-codex/issues/455)); `indexed` = reached via `[base + reg]`, i.e. an array base |
 | `ranges.csv` | `slug,range,bytes,bytes_in_functions,functions` per manifest range — the code-coverage signal that exposes undiscovered code |
 | `callsites.csv` | `callee_va,site_va,cleanup_bytes` — the stack cleanup each caller performs after a `CALL`. The evidence `tools/recover_signatures.py` reads to recover cdecl signatures ([#453](https://github.com/jomkz/fighters-codex/issues/453)); `-1` means the site shows no readable cleanup, which is silence, not zero |
+| `unaccounted.csv` | `va,bytes,padding,defined_data,labels` — every run of **executable** bytes that lies in **no function body** ([#496](https://github.com/jomkz/fighters-codex/issues/496)). `padding` is edge alignment fill (`0xCC`/`0x90`/`0x00`) only; fill *inside* a run is code we have not read. Undefined code = `bytes - padding - defined_data`, ratcheted by `coverage-baseline.csv` |
+
+### Why `functions.csv` is not, by itself, the denominator
+
+`ImportFASmsHeadless.java` creates **labels**, not functions. Ghidra's auto-analysis defines a
+function when it sees a `CALL` to the address — so code entered *only through a function pointer*
+(window procs, thread entries, object proc-table entries, event callbacks) got its FA.SMS name and
+was never disassembled. It is not a function, and a check that iterates functions cannot report a
+function that does not exist as missing: **490 FA.SMS-named functions — `?MainWndproc@@YGJPAXIIJ@Z`,
+`?StartGameThread@@YAKPAK@Z`, `_PLANEProc` among them — sat outside every count**, including the
+"unclaimed" figure that [#482](https://github.com/jomkz/fighters-codex/issues/482) added to expose
+exactly this class of blind spot.
+
+`unaccounted.csv` is that blind spot, measured. Retiring the debt needs no new Ghidra step: adding a
+`func` row to `db/symbols/` **is** the fix, because `ApplySymbols.java` disassembles the VA and
+creates the function before naming it. A run whose `labels` column is non-empty is therefore free to
+claim — the binary is already telling you the function's name.
 
 ## Definition of done (per subsystem, enforced at `status=complete`)
 

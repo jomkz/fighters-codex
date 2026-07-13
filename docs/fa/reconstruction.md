@@ -39,6 +39,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 > **Unclaimed: 1312 of 3047 functions (397,910 of 809,083 code bytes, 49%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
+> **Undefined: 121,074 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **525 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
+
 ## WAIL32.DLL
 
 | Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
@@ -46,6 +48,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | WAIL32.DLL — Miles Sound System (AIL) audio driver | `0x20001000–0x20019E00` | 130 named · 373 waived / 503 (100%) | 0 named · 577 waived | [doc](wail32.md) | ✓ | [#253](https://github.com/jomkz/fighters-codex/issues/253) | complete |
 
 **WAIL32.DLL totals:** 1/1 subsystems complete; 503/503 in-scope functions named; 577/756 referenced globals resolved.
+
+> **Undefined: 15,937 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **38 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
 ## IP.EXE
 
@@ -55,6 +59,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **IP.EXE totals:** 1/1 subsystems complete; 1805/1805 in-scope functions named; 1339/1737 referenced globals resolved.
 
+> **Undefined: 92,457 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **61 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
+
 ## CDRVDL32.DLL
 
 | Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
@@ -62,6 +68,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | CDRVDL32.DLL — Cdrv RS-232 serial comms driver | `0x10001000–0x10010000` | 26 named · 78 waived / 104 (100%) | 0 named · 129 waived | [doc](comms.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
 
 **CDRVDL32.DLL totals:** 1/1 subsystems complete; 104/104 in-scope functions named; 129/175 referenced globals resolved.
+
+> **Undefined: 566 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **5 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
 ## CDRVHF32.DLL
 
@@ -71,6 +79,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **CDRVHF32.DLL totals:** 1/1 subsystems complete; 154/154 in-scope functions named; 114/150 referenced globals resolved.
 
+> **Undefined: 5 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **3 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
+
 ## CDRVXF32.DLL
 
 | Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
@@ -79,6 +89,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **CDRVXF32.DLL totals:** 1/1 subsystems complete; 121/121 in-scope functions named; 171/322 referenced globals resolved.
 
+> **Undefined: 677 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **24 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
+
 ## COMMSC32.DLL
 
 | Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
@@ -86,6 +98,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | COMMSC32.DLL — Cdrv comms terminal-screen service | `0x10001000–0x10010000` | 8 named · 52 waived / 60 (100%) | 0 named · 109 waived | [doc](comms-screen.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
 
 **COMMSC32.DLL totals:** 1/1 subsystems complete; 60/60 in-scope functions named; 109/153 referenced globals resolved.
+
+> **Undefined: 15 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **6 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
 ## MSAPI.DLL
 
@@ -96,6 +110,8 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 **MSAPI.DLL totals:** 1/1 subsystems complete; 25/25 in-scope functions named; 35/36 referenced globals resolved.
 
 > **Unclaimed: 773 of 798 functions (68,877 of 75,025 code bytes, 91%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+
+> **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
 **Program totals (all binaries):** 27/27 subsystems complete; 4507/4507 in-scope functions named; 5029/8050 referenced globals resolved.
 

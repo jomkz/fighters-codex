@@ -1150,7 +1150,7 @@ def load_inventory(inv_dir):
     if not inv_dir.is_dir():
         return None, []
     errs = []
-    inv = {"functions": {}, "globals": [], "ranges": []}
+    inv = {"functions": {}, "globals": [], "ranges": [], "unaccounted": []}
     fpath = inv_dir / "functions.csv"
     if fpath.exists():
         _, rows = _read_csv(fpath)
@@ -1174,6 +1174,20 @@ def load_inventory(inv_dir):
         for r in rows:
             if len(r) >= 5:
                 inv["ranges"].append(r)
+    # unaccounted.csv — executable bytes in NO function body (#496). Runs that carry a
+    # symbol name are the cheap half: the binary already names the function, and a
+    # db/symbols row materialises it (ApplySymbols disassembles + creates it).
+    upath = inv_dir / "unaccounted.csv"
+    if upath.exists():
+        _, rows = _read_csv(upath)
+        for r in rows:
+            if len(r) >= 5 and VA8_RE.match(r[0]):
+                undef = int(r[1]) - int(r[2]) - int(r[3])
+                inv["unaccounted"].append({
+                    "va": int(r[0], 16), "undefined": max(0, undef),
+                    "labels": [x for x in r[4].split(";") if x]})
+    else:
+        errs.append("%s: missing (run export_inventory.sh)" % _rel(upath))
     return inv, errs
 
 
@@ -1413,7 +1427,8 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
     p_named = p_funcs = p_gn = p_gt = p_done = p_subs = 0
     for binary in _ordered_binaries(manifest):
         bsubs = [s for s in manifest if s["binary"] == binary]
-        inv = inventories.get(binary, {"functions": {}, "globals": [], "ranges": []})
+        inv = inventories.get(binary, {"functions": {}, "globals": [], "ranges": [],
+                                       "unaccounted": []})
         claims = claims_by_binary.get(binary, {})
         lines += [
             "## %s" % binary,
@@ -1450,6 +1465,22 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
                 "[#482](https://github.com/jomkz/fighters-codex/issues/482)."
                 % (len(unclaimed), len(inv["functions"]), "{:,}".format(ubytes),
                    "{:,}".format(tbytes), pct),
+                "",
+            ]
+        # A function that was never defined cannot be counted as unclaimed either (#496).
+        unacc = inv.get("unaccounted", [])
+        undef = sum(u["undefined"] for u in unacc)
+        named_undef = sum(len(u["labels"]) for u in unacc)
+        if undef:
+            lines += [
+                "> **Undefined: %s more executable bytes are in no function at all** — code "
+                "auto-analysis never reached (typically entered only through a function "
+                "pointer: window procs, thread entries, proc-table entries, callbacks), so "
+                "it was labelled but never disassembled. It is absent from the counts above, "
+                "because a function that does not exist cannot be reported missing. **%d "
+                "symbol names already sit inside these bytes** — those are free to claim. "
+                "See [#496](https://github.com/jomkz/fighters-codex/issues/496)."
+                % ("{:,}".format(undef), named_undef),
                 "",
             ]
         p_named += tot_named; p_funcs += tot_funcs; p_gn += tot_gn; p_gt += tot_gt
@@ -1563,6 +1594,15 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     inventory knows about must have a db/symbols row, or it is UNCLAIMED. Unclaimed code is
     not an error -- 1308 functions were unclaimed the day this landed -- but it must not
     GROW. The baseline below is a ratchet, and the only legal direction is down.
+
+    ANCHORING TO functions.csv IS NOT ENOUGH EITHER (#496). That inventory holds what
+    auto-analysis reached as a CALL target, plus what db/ materialised. Code reached only
+    through a function POINTER -- window procs, thread entries, object proc-table entries,
+    event callbacks -- was given a LABEL by the FA.SMS import (ImportFASmsHeadless creates
+    labels, never functions) and never disassembled. It is not a function, so a check that
+    iterates functions cannot report it missing: 490 FA.SMS-named functions, `_PLANEProc`
+    among them, sat outside every count. `undefined_bytes` closes that: executable bytes in
+    NO function body, from unaccounted.csv. Both columns ratchet, and both only go down.
     """
     errs = []
     base_path = db_dir / "coverage-baseline.csv"
@@ -1570,7 +1610,8 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     if base_path.exists():
         with open(base_path, newline="", encoding="utf-8") as fh:
             for r in csv.DictReader(fh):
-                baseline[r["binary"]] = int(r["unclaimed_functions"])
+                baseline[r["binary"]] = (int(r["unclaimed_functions"]),
+                                         int(r["undefined_bytes"]))
 
     slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
     def _va(v):
@@ -1586,15 +1627,22 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     for binary, inv in sorted(inventories.items()):
         known = in_db.get(binary, set())
         unclaimed = [va for va in inv["functions"] if _va(va) not in known]
-        actual[binary] = len(unclaimed)
+        undef = sum(u["undefined"] for u in inv.get("unaccounted", []))
+        actual[binary] = (len(unclaimed), undef)
         want = baseline.get(binary)
         if want is None:
-            errs.append("db/coverage-baseline.csv: no baseline for %s (%d functions unclaimed) "
-                        "-- add one" % (binary, len(unclaimed)))
-        elif len(unclaimed) > want:
+            errs.append("db/coverage-baseline.csv: no baseline for %s (%d functions unclaimed, "
+                        "%d undefined bytes) -- add one" % (binary, len(unclaimed), undef))
+            continue
+        if len(unclaimed) > want[0]:
             errs.append("%s: %d functions are in the binary but absent from db/symbols/ "
                         "(baseline allows %d). Unclaimed code may not grow -- add the rows, "
-                        "or waive them explicitly." % (binary, len(unclaimed), want))
+                        "or waive them explicitly." % (binary, len(unclaimed), want[0]))
+        if undef > want[1]:
+            errs.append("%s: %d executable bytes are in no function at all (baseline allows "
+                        "%d). Undefined code may not grow -- add db/symbols rows (ApplySymbols "
+                        "disassembles and creates the function) (#496)."
+                        % (binary, undef, want[1]))
     return errs, actual
 
 
@@ -1635,10 +1683,13 @@ def check_reconstruction(db_dir=DB_DIR):
     if inventories:
         cerrs, unclaimed = check_binary_coverage(manifest, symbols, inventories, db_dir)
         errs += cerrs
-        for b, n in sorted(unclaimed.items()):
+        for b, (n, undef) in sorted(unclaimed.items()):
             if n:
                 print("note: %s -- %d functions in the binary are not in db/symbols/ (#482)"
                       % (b, n))
+            if undef:
+                print("note: %s -- %s executable bytes are in no function at all (#496)"
+                      % (b, "{:,}".format(undef)))
 
     # The matrix totals come from the inventories, so it can only be
     # (re)generated when every binary's export is present.
@@ -2041,6 +2092,40 @@ def _recon_self_test(expect, tmpdir=None):
         invs, ierrs, iabsent = load_inventories(base / "inventory", ["FA.EXE"])
         expect(iabsent == [] and any("globals.csv" in x for x in ierrs),
                "recon: partial export is a hard error")
+
+        # --- Undefined-code ratchet (#496) --------------------------------------
+        # Executable bytes in NO function body. The unclaimed-function ratchet cannot
+        # see these: they are not functions, so iterating functions never reports them.
+        # padding and typed data don't count; the rest is code we have not read.
+        write("inventory/FA.EXE/globals.csv", "va,name,xref_count,subsystems,widths,indexed\n")
+        write("inventory/FA.EXE/ranges.csv", "slug,range,bytes,bytes_in_functions,functions\n")
+        write("inventory/FA.EXE/unaccounted.csv",
+              "va,bytes,padding,defined_data,labels\n"
+              "0x00476180,100,10,20,?MainWndproc@@YGJPAXIIJ@Z\n"   # 70 undefined
+              "0x00480000,16,16,0,\n")                             # pure padding: 0
+        inv_u, _ = load_inventory(base / "inventory" / "FA.EXE")
+        expect(sum(u["undefined"] for u in inv_u["unaccounted"]) == 70,
+               "recon: undefined = bytes - padding - defined_data")
+        expect(inv_u["unaccounted"][0]["labels"] == ["?MainWndproc@@YGJPAXIIJ@Z"],
+               "recon: a named undefined run names the function it hides")
+
+        m1 = [{"slug": "obj", "binary": "FA.EXE", "ranges": [(0x462600, 0x462700)]}]
+        write("coverage-baseline.csv",
+              "binary,unclaimed_functions,total_functions,undefined_bytes\n"
+              "FA.EXE,0,1,70\n")
+        e_ok, act = check_binary_coverage(m1, {"obj": [{"va": 0x462600}]},
+                                          {"FA.EXE": inv_u}, base)
+        expect(e_ok == [] and act["FA.EXE"] == (0, 70), "recon: undefined ratchet at baseline")
+        write("coverage-baseline.csv",
+              "binary,unclaimed_functions,total_functions,undefined_bytes\n"
+              "FA.EXE,0,1,69\n")
+        e_grow, _ = check_binary_coverage(m1, {"obj": [{"va": 0x462600}]},
+                                          {"FA.EXE": inv_u}, base)
+        expect(any("in no function at all" in x for x in e_grow),
+               "recon: undefined ratchet fails when the debt grows")
+        for f in ("globals.csv", "ranges.csv", "unaccounted.csv"):
+            (base / "inventory" / "FA.EXE" / f).unlink()
+        (base / "coverage-baseline.csv").unlink()
 
         # --- Multi-binary (#252): VAs are unique only within a binary -----------
         # FA.EXE and IP.EXE both name 0x00462600 (their own images) — a collision
