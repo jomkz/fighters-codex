@@ -268,6 +268,14 @@ def prototype(mangled):
     got = demangle_cpp(mangled)
     if got:
         name, conv, ret, params = got
+        if "(" in ret:
+            # A function-POINTER return type cannot be spelled in this template: the
+            # declarator has to wrap the function name (`int (__cdecl *f(void))(uint)`),
+            # not precede it. `?_query_new_handler@@YAP6AHI@ZXZ` is the case in the corpus.
+            # Emitting `ret conv name(args)` anyway produced a string that neither this
+            # module's own --check nor Ghidra's signature parser could read back. Per the
+            # STRICTNESS rule above: return nothing rather than something malformed.
+            return None
         args = ", ".join(_fmt_param(p) for p in params) if params else "void"
         return "%s %s %s(%s)" % (ret, conv, name, args)
 

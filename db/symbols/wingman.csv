@@ -7,6 +7,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0045E6E0,func,_WNGWingmen@8,WNGWingmen,sms,confirmed,,"undefined4 __stdcall WNGWingmen(undefined4, undefined4)"
 0x0045E710,func,_WNGPart@12,WNGPart,sms,confirmed,,"undefined4 __stdcall WNGPart(undefined4, undefined4, undefined4)"
 0x0045E790,func,WNGWingmenNearby,,re,confirmed,count wingmen within distance/alt (twin of GRPWingmenNearby); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __fastcall WNGWingmenNearby(u16)
+0x0045E850,func,_WNGSetWaypoints@8,WNGSetWaypoints,sms,confirmed,,"undefined4 __stdcall WNGSetWaypoints(undefined4, undefined4)"
 0x0045E8A0,func,WNGControl,,re,confirmed,"if wingman, optional FormationMove; return formControl (twin of GRPControl); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",u8 __fastcall WNGControl(char)
 0x0045E8F0,func,_WNGLeaderLanding@0,WNGLeaderLanding,sms,confirmed,,undefined4 __stdcall WNGLeaderLanding(void)
 0x0045E970,func,_WNGFormationMove@12,WNGFormationMove,sms,confirmed,,"undefined4 __stdcall WNGFormationMove(undefined4, undefined4, undefined4)"
@@ -27,18 +28,27 @@ va,kind,name,display,source,confidence,notes,type
 0x0045F1C0,func,_GRPAdd@8,GRPAdd,sms,confirmed,,"undefined4 __stdcall GRPAdd(undefined4, undefined4)"
 0x0045F250,func,@GRPRemove@0,GRPRemove,sms,confirmed,,undefined4 __fastcall GRPRemove(void)
 0x0045F360,func,@GRPLeader@4,GRPLeader,sms,confirmed,,undefined4 __fastcall GRPLeader(undefined4)
+0x0045F3C0,func,@GRPWingman@4,GRPWingman,sms,confirmed,,undefined4 __fastcall GRPWingman(undefined4)
 0x0045F410,func,_GRPWingmen@8,GRPWingmen,sms,confirmed,,"undefined4 __stdcall GRPWingmen(undefined4, undefined4)"
 0x0045F440,func,_GRPPart@12,GRPPart,sms,confirmed,,"undefined4 __stdcall GRPPart(undefined4, undefined4, undefined4)"
+0x0045F4C0,func,@GRPWingmenNearby@4,GRPWingmenNearby,sms,confirmed,,undefined4 __fastcall GRPWingmenNearby(undefined4)
+0x0045F580,func,_GRPSetWaypoints@8,GRPSetWaypoints,sms,confirmed,,"undefined4 __stdcall GRPSetWaypoints(undefined4, undefined4)"
 0x0045F5D0,func,@GRPControl@4,GRPControl,sms,confirmed,,undefined4 __fastcall GRPControl(undefined4)
+0x0045F620,func,_GRPLeaderLanding@0,GRPLeaderLanding,sms,confirmed,,undefined4 __stdcall GRPLeaderLanding(void)
 0x0045F6A0,func,_GRPFormationMove@12,GRPFormationMove,sms,confirmed,,"undefined4 __stdcall GRPFormationMove(undefined4, undefined4, undefined4)"
 0x0045F7F0,func,@GRPSetControl@8,GRPSetControl,sms,confirmed,,"undefined4 __fastcall GRPSetControl(undefined4, undefined4)"
 0x0045F860,func,@GRPSetType@4,GRPSetType,sms,confirmed,,undefined4 __fastcall GRPSetType(undefined4)
 0x0045F8A0,func,@GRPSetSpacingH@4,GRPSetSpacingH,sms,confirmed,,undefined4 __fastcall GRPSetSpacingH(undefined4)
 0x0045F8E0,func,@GRPSetSpacingV@4,GRPSetSpacingV,sms,confirmed,,undefined4 __fastcall GRPSetSpacingV(undefined4)
+0x0045F920,func,@GRPSetStateTarget@8,GRPSetStateTarget,sms,confirmed,,"undefined4 __fastcall GRPSetStateTarget(undefined4, undefined4)"
+0x0045FAC0,func,_GRPSendWM@8,GRPSendWM,sms,confirmed,,"undefined4 __stdcall GRPSendWM(undefined4, undefined4)"
 0x0045FACA,func,,,waiver,confirmed,Ghidra split of _GRPSendWM@8 (0x45FAC0) after the 10-byte stub,
 0x0045FC20,func,@GRPResponseSize@0,GRPResponseSize,sms,confirmed,,undefined4 __fastcall GRPResponseSize(void)
 0x0045FC50,func,@GRPAttackingObj@4,GRPAttackingObj,sms,confirmed,,undefined4 __fastcall GRPAttackingObj(undefined4)
 0x0045FCE0,func,@GRPHumansFirst@4,GRPHumansFirst,sms,confirmed,,undefined4 __fastcall GRPHumansFirst(undefined4)
+0x0045FD60,func,@GRPInHumanWing@4,GRPInHumanWing,sms,confirmed,,undefined4 __fastcall GRPInHumanWing(undefined4)
+0x0045FDC0,func,_GRPPlayerWM@0,GRPPlayerWM,sms,confirmed,,undefined4 __stdcall GRPPlayerWM(void)
+0x0045FE30,func,@GRPName@8,GRPName,sms,confirmed,,"undefined4 __fastcall GRPName(undefined4, undefined4)"
 0x0050CF9E,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CFA0,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x0050CFA2,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,

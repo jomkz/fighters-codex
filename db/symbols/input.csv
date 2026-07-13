@@ -1,4 +1,11 @@
 va,kind,name,display,source,confidence,notes,type
+0x004115C0,func,_KeyAvail,KeyAvail,sms,confirmed,,
+0x00417A10,func,?PotStick@@YAGFG@Z,PotStick,sms,confirmed,,"unsigned short __cdecl PotStick(short, unsigned short)"
+0x00417C20,func,?KeyThrottle@@YAGFG@Z,KeyThrottle,sms,confirmed,,"unsigned short __cdecl KeyThrottle(short, unsigned short)"
+0x00417D10,func,?KeyRudder@@YAGFG@Z,KeyRudder,sms,confirmed,,"unsigned short __cdecl KeyRudder(short, unsigned short)"
+0x00417D80,func,?PotThrottle@@YAGFG@Z,PotThrottle,sms,confirmed,,"unsigned short __cdecl PotThrottle(short, unsigned short)"
+0x00417ED0,func,?PotRudder@@YAGFG@Z,PotRudder,sms,confirmed,,"unsigned short __cdecl PotRudder(short, unsigned short)"
+0x00481280,func,_GetKeySlow,GetKeySlow,sms,confirmed,,
 0x00494270,func,@ReadSticksRaw@0,ReadSticksRaw,sms,confirmed,poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10),undefined4 __fastcall ReadSticksRaw(void)
 0x004942D0,func,_InitJoysticks@0,InitJoysticks,sms,confirmed,joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions,undefined4 __stdcall InitJoysticks(void)
 0x00494430,func,?GetJoystickType@@YA?AW4JOYRESULT@@K@Z,GetJoystickType,sms,confirmed,JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4,JOYRESULT __cdecl GetJoystickType(unsigned long)
@@ -9,6 +16,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00494A50,func,@GetPOV@0,GetPOV,sms,confirmed,read POV hat; map centidegrees/100 to keypad scancode 0x48/0x4D/0x50/0x4B (U/R/D/L); 0xFFFF=centered->0,undefined4 __fastcall GetPOV(void)
 0x00494AE0,func,@ASynchJoystick@0,ASynchJoystick,sms,confirmed,poll buttons via ReadJoystickButtons; edge-detect new presses into buttonPresses[] per JOYCAPS button count,undefined4 __fastcall ASynchJoystick(void)
 0x00494B50,func,@ReadJoystickButtons@0,ReadJoystickButtons,sms,confirmed,return button mask from joystickInfo+0x14 (legacy) or joystickInfoEx+0x28 (extended),undefined4 __fastcall ReadJoystickButtons(void)
+0x00494BA0,func,?MP_DoNothing@@YAXXZ,MP_DoNothing,sms,confirmed,,void __cdecl MP_DoNothing(void)
 0x00499CF0,func,_MOUSESetLimits@8,MOUSESetLimits,sms,confirmed,set cursor clamp limits (mouse-ring limit fields DAT_00560f38/f3a),"undefined4 __stdcall MOUSESetLimits(undefined4, undefined4)"
 0x00499D10,func,_MOUSESetPos@8,MOUSESetPos,sms,confirmed,center mousePos to screen/2 (DAT_0055c06a/c06c halved),"undefined4 __stdcall MOUSESetPos(undefined4, undefined4)"
 0x00499D40,func,_MOUSECenter,MOUSECenter,sms,confirmed,FA.SMS symbol at 0x499d40 not split by current Ghidra inventory; ~16-byte helper between MOUSESetPos and MOUSERead — candidate to define; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MOUSECenter(void)
@@ -18,8 +26,18 @@ va,kind,name,display,source,confidence,notes,type
 0x00499E50,func,?MOUSEEvent@@YIXIIJ@Z,MOUSEEvent,sms,confirmed,WndProc mouse handler WM_MOUSEMOVE/L/R DOWN+UP (0x200/201/202/204/205); edge-count mouseButtonPresses & DAT_00560ef1; push to ring; update mousePos,"void __fastcall MOUSEEvent(unsigned int, unsigned int, long)"
 0x00499E5B,func,,,waiver,confirmed,Ghidra split alt-entry into ?MOUSEEvent@@YIXIIJ@Z (0x499E50) — same switch body via register-entry,
 0x0049B1D0,func,?RunSerialConfigurationScreen@@YGXXZ,RunSerialConfigurationScreen,sms,confirmed,large device-config dialog for direct-serial link (baud/port/etc.); ~5.4KB UI — could alternatively be shell-ui,void __stdcall RunSerialConfigurationScreen(void)
+0x0049B9B0,func,?ParseStrForModemName@@YAJPAE0@Z,ParseStrForModemName,sms,confirmed,,"long __cdecl ParseStrForModemName(unsigned char *, unsigned char *)"
+0x0049BA60,func,?CompareDBEntry@@YAHPBX0@Z,CompareDBEntry,sms,confirmed,,"int __cdecl CompareDBEntry(const void *, const void *)"
+0x0049BA80,func,?SortModemDB@@YAXXZ,SortModemDB,sms,confirmed,,void __cdecl SortModemDB(void)
+0x0049BAA0,func,?IsComment@@YAJPAE@Z,IsComment,sms,confirmed,,long __cdecl IsComment(unsigned char *)
+0x0049BAE0,func,?ReadModemDB@@YAJXZ,ReadModemDB,sms,confirmed,,long __cdecl ReadModemDB(void)
+0x0049BD60,func,?WriteModemEntry@@YAXPAU_iobuf@@PAUModemStrings@@@Z,WriteModemEntry,sms,confirmed,,"void __cdecl WriteModemEntry(_iobuf *, ModemStrings *)"
+0x0049BDC0,func,?SelectModemFromDB@@YAXPAUCN_INFO@@@Z,SelectModemFromDB,sms,confirmed,,void __cdecl SelectModemFromDB(CN_INFO *)
+0x0049BF70,func,?WriteModemFile@@YAXPAUCN_INFO@@@Z,WriteModemFile,sms,confirmed,,void __cdecl WriteModemFile(CN_INFO *)
+0x0049C260,func,?RunModemAdvSetupDialog@@YGXPAUCN_INFO@@PAJ1@Z,RunModemAdvSetupDialog,sms,confirmed,,"void __stdcall RunModemAdvSetupDialog(CN_INFO *, long *, long *)"
 0x0049C780,func,?RunModemConfigurationScreen@@YGXXZ,RunModemConfigurationScreen,sms,confirmed,large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui,void __stdcall RunModemConfigurationScreen(void)
 0x004EBCE4,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
+0x004EE6F4,data,,,waiver,confirmed,"string literal — joystick-calibration prompt passed to _DialogInfoBox@12, which walks it as char* (?PotThrottle@@YAGFG@Z); constant text, not state",
 0x004F8448,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
 0x004FFE9C,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
 0x004FFF20,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
@@ -66,8 +84,13 @@ va,kind,name,display,source,confidence,notes,type
 0x00502158,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
 0x00502160,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
 0x00502168,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005225E7,data,,,waiver,confirmed,"interior of _keyarray (+0x4F) — scan-code 0x4F (End) key state, read as rudder-left by ?KeyRudder@@YAGFG@Z; named at its base",
+0x005225E9,data,,,waiver,confirmed,"interior of _keyarray (+0x51) — scan-code 0x51 (PgDn) key state, read as rudder-right by ?KeyRudder@@YAGFG@Z; named at its base",
+0x00522C18,data,_lastThrottle,lastThrottle,re,confirmed,"analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one",s32
 0x0054B824,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem,
 0x00554ABC,data,,,waiver,confirmed,interior of / adjacent to _buttonPresses; named at its base or owned by that subsystem,
+0x00554AC0,data,,,waiver,confirmed,"interior of _buttonPresses (+8) — element [2], the pending select-next-missile press count drained by ?PotStick@@YAGFG@Z; named at its base",
+0x00554AC4,data,,,waiver,confirmed,"interior of _buttonPresses (+0xC) — element [3], folded into _selectNextMissile and cleared by ?PotStick@@YAGFG@Z; named at its base",
 0x00554EBC,data,,,waiver,confirmed,interior of / adjacent to ?joystickXDevice@@3KA; named at its base or owned by that subsystem,
 0x00554EC4,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem,
 0x00554EC8,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem,

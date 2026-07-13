@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 23/23 functions have a recovered signature; 0/0 globals have a recovered type.
+// 27/30 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
@@ -36,5 +36,16 @@ undefined4 DecodeSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B
 undefined4 DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B9C0  __cdecl
 undefined4 DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045BE60  __cdecl
 undefined4 DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4);  // 0x0045C500  __cdecl
+short PlayVDOFile(char *, short, char);  // 0x004AE410  __cdecl
+short PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char);  // 0x004AE440  __cdecl
+void VDOSetMode(VDO *);  // 0x004AED50  __cdecl
+unsigned long VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long);  // 0x004AF760  __cdecl
+
+// --- not yet recovered -----------------------------------------------
+// Emitted as TODOs, not as guessed declarations: a wrong prototype would
+// compile and then lie about what the original function took.
+// TODO(#453): 0x004CCFFC  DecodeYUV15 -- signature not recovered
+// TODO(#453): 0x004CD1C0  DecodeYUV15Double1 -- signature not recovered
+// TODO(#453): 0x004CD394  DecodeYUV15Double2 -- signature not recovered
 
 }  // namespace fxe::fa::video

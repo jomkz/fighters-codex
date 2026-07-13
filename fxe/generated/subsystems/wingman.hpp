@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Wingman / group AI (WNG/GRP) -- FA.EXE
-// 37/38 functions have a recovered signature; 0/1 globals have a recovered type.
+// 47/48 functions have a recovered signature; 0/1 globals have a recovered type.
 
 namespace fxe::fa::wingman {
 
@@ -21,6 +21,7 @@ u16 WNGWingman(u16);  // 0x0045E690  __fastcall
 undefined4 WNGWingmen(undefined4, undefined4);  // 0x0045E6E0  __stdcall
 undefined4 WNGPart(undefined4, undefined4, undefined4);  // 0x0045E710  __stdcall
 int WNGWingmenNearby(u16);  // 0x0045E790  __fastcall
+undefined4 WNGSetWaypoints(undefined4, undefined4);  // 0x0045E850  __stdcall
 u8 WNGControl(char);  // 0x0045E8A0  __fastcall
 undefined4 WNGLeaderLanding(void);  // 0x0045E8F0  __stdcall
 undefined4 WNGFormationMove(undefined4, undefined4, undefined4);  // 0x0045E970  __stdcall
@@ -39,17 +40,26 @@ undefined4 GRPInit(void);  // 0x0045F190  __stdcall
 undefined4 GRPAdd(undefined4, undefined4);  // 0x0045F1C0  __stdcall
 undefined4 GRPRemove(void);  // 0x0045F250  __fastcall
 undefined4 GRPLeader(undefined4);  // 0x0045F360  __fastcall
+undefined4 GRPWingman(undefined4);  // 0x0045F3C0  __fastcall
 undefined4 GRPWingmen(undefined4, undefined4);  // 0x0045F410  __stdcall
 undefined4 GRPPart(undefined4, undefined4, undefined4);  // 0x0045F440  __stdcall
+undefined4 GRPWingmenNearby(undefined4);  // 0x0045F4C0  __fastcall
+undefined4 GRPSetWaypoints(undefined4, undefined4);  // 0x0045F580  __stdcall
 undefined4 GRPControl(undefined4);  // 0x0045F5D0  __fastcall
+undefined4 GRPLeaderLanding(void);  // 0x0045F620  __stdcall
 undefined4 GRPFormationMove(undefined4, undefined4, undefined4);  // 0x0045F6A0  __stdcall
 undefined4 GRPSetControl(undefined4, undefined4);  // 0x0045F7F0  __fastcall
 undefined4 GRPSetType(undefined4);  // 0x0045F860  __fastcall
 undefined4 GRPSetSpacingH(undefined4);  // 0x0045F8A0  __fastcall
 undefined4 GRPSetSpacingV(undefined4);  // 0x0045F8E0  __fastcall
+undefined4 GRPSetStateTarget(undefined4, undefined4);  // 0x0045F920  __fastcall
+undefined4 GRPSendWM(undefined4, undefined4);  // 0x0045FAC0  __stdcall
 undefined4 GRPResponseSize(void);  // 0x0045FC20  __fastcall
 undefined4 GRPAttackingObj(undefined4);  // 0x0045FC50  __fastcall
 undefined4 GRPHumansFirst(undefined4);  // 0x0045FCE0  __fastcall
+undefined4 GRPInHumanWing(undefined4);  // 0x0045FD60  __fastcall
+undefined4 GRPPlayerWM(void);  // 0x0045FDC0  __stdcall
+undefined4 GRPName(undefined4, undefined4);  // 0x0045FE30  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 80/80 functions have a recovered signature (+3 that are not C functions); 15/15 globals have a recovered type.
+// 89/99 functions have a recovered signature (+3 that are not C functions); 28/29 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -16,11 +16,23 @@ namespace fxe::fa::objects {
 extern undefined4 curObjStackTop;  // 0x004F6FDC  PushCurObj/PopCurObj nesting stack for GetCurObj
 extern undefined4 cmdBufWritePtr;  // 0x004F6FE0  command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf)
 extern undefined4 objArena;  // 0x004FFE34  entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding)
+extern u8 cmDispenser;  // 0x0050D0B7  countermeasure dispenser state — low 7 bits are the remaining count (decremented per launch), bit 0x80 selects chaff vs flare; read by _NPCWeaponsProc and _PLANEEventProc
+extern u8 sayLastComment;  // 0x0050D0E5  wingman chatter: id of the last line spoken, compared against the new candidate so a line never repeats back-to-back (_PLANECommentProc)
+extern u8 sayLastStress;  // 0x0050D0E6  wingman chatter: snapshot of the pilot g-stress byte, compared against the current value to gate the grunt lines (_PLANECommentProc)
+extern u8 sayHighGTicks;  // 0x0050D0E7  wingman chatter: high-g tick count this minute — 0x12 triggers "Ease up on the stick", 0x14 a grunt; reset on the minute rollover (_PLANECommentProc)
+extern u16 sayCommentMinute;  // 0x0050D0E8  wingman chatter: current minute bucket (_currentTime / 0x3C); a change resets _sayHighGTicks (_PLANECommentProc)
+extern u16 sayLastAngleOff;  // 0x0050D0EA  wingman chatter: last angle-off-nose snapshot — the angle must change before "Approaching target" is repeated (_PLANECommentProc)
+extern u16 sayCommentUntil;  // 0x0050D0EC  wingman chatter: per-line cooldown deadline in _currentTime ticks; chatter is suppressed while _currentTime < this (_PLANECommentProc)
+extern u16 damageQuietUntil;  // 0x0052253D  damage: cooldown deadline in _currentTime ticks — _DAMAGEInit@0 parks it at 0x7FFF (disabled) and _DAMAGEUpdate@0 gates on it; also read as the end-of-mission grace check by _PLANECommentProc
 extern undefined2 curObjSize;  // 0x00546B94  byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6
 extern undefined2 curTypeSize;  // 0x00546B9C  byte size of the current type-record mirror (from type +0x01)
 extern undefined2 lastPadlockId;  // 0x00546BA4  previous padlock/tracked id, compared by CheckForEvents1/2
 extern undefined2 requeueChain;  // 0x00546BA8  objects serviced this frame; ChainMergeSorted folds it back into chainStart
 extern fixed24 lastCurZ;  // 0x00546BB8  previous frame Z of current object (CheckForEvents1); extent proven in the #455 close-out
+extern u8 sayFailedSent;  // 0x00552FC8  wingman chatter: mission-failed line already spoken (set once, gates the failure callout); cleared by _SAYInit2@0
+extern u16 sayChatterUntil;  // 0x00552FDC  wingman chatter: global chatter cooldown deadline gating the top of _PLANECommentProc; re-armed by @SAYRearmMessage@8
+extern u8 saySucceededSent;  // 0x00552FE0  wingman chatter: mission-succeeded line already spoken; suppresses further home-approach callouts. Cleared by _SAYInit2@0
+extern u16 sayAlmostHomeUntil;  // 0x00552FE8  wingman chatter: "Almost home" cooldown deadline — re-armed to _currentTime + 4 each time it fires (_PLANECommentProc)
 extern u16 objSizes[900];  // 0x00553120  word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16
 extern undefined4 objArenaNext;  // 0x00553828  bump cursor into the entity arena (OBJAdd memcpy target)
 extern undefined4 tempAliasBase;  // 0x0055382C  lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999
@@ -28,10 +40,12 @@ extern undefined4 tempAliasMax;  // 0x00553830  highest temp-alias id: (-0x14 - 
 extern undefined2 multiAliasCursor;  // 0x00553834  OBJAliasForMulti/OBJNextAliasForMulti iteration cursor
 extern undefined4 tempAliasNext;  // 0x0055383C  next temp alias returned by OBJTempAlias (negative per-computer id band)
 extern undefined4 objArenaSize;  // 0x00553840  arena byte capacity (OBJInit parameter), bounds OBJAdd
+extern u8 wasOnGround;  // 0x00571420  previous-frame ground contact, fed to _PLANEUpdateJustLanded@8 and then refreshed from _OnTheGround@0 — the edge that makes a landing "just landed" exactly once
 
 // --- functions -------------------------------------------------------
 undefined4 MoveObj(void);  // 0x00436B30  __stdcall
 undefined4 MoveGoalValue(undefined4, undefined4);  // 0x004382D0  __fastcall
+undefined4 CATGUYDraw(undefined4);  // 0x00442AB0  __stdcall
 undefined4 GRAPHICInit(void);  // 0x00442C00  __stdcall
 undefined4 GRAPHICUpdate(void);  // 0x00442DE0  __stdcall
 undefined4 GRAPHICAddYourObjs(undefined4);  // 0x004431B0  __stdcall
@@ -44,6 +58,8 @@ void ChainInsertCurObj(u16 *);  // 0x004626D0  __fastcall
 undefined4 RemoveCurObj(void);  // 0x004627B0  __stdcall
 undefined4 GetCurObj(undefined4);  // 0x004628B0  __fastcall
 undefined4 PutCurObj(void);  // 0x00462980  __fastcall
+undefined4 GetCurObj2(undefined4);  // 0x004629C0  __stdcall
+undefined4 PutCurObj2(void);  // 0x004629D0  __stdcall
 undefined4 PushCurObj(undefined4);  // 0x004629E0  __stdcall
 undefined4 PopCurObj(void);  // 0x00462A20  __stdcall
 void ServiceObjects(void);  // 0x00462A50  __cdecl
@@ -103,6 +119,9 @@ undefined4 OBJNextAliasForMulti(void);  // 0x004917D0  __stdcall
 undefined4 OBJTempAlias(void);  // 0x004917F0  __stdcall
 undefined4 OBJSetControl(undefined4, undefined4, undefined4, undefined4);  // 0x00491810  __stdcall
 undefined4 OBJHumanName(void);  // 0x004918D0  __stdcall
+void PLANEBlow(void);  // 0x0049D860  __cdecl
+void PLANEMoveProc(char);  // 0x0049F840  __cdecl
+long PLANEAddProc(void);  // 0x0049FA50  __cdecl
 undefined4 ResolveTypeRecord(undefined4);  // 0x004A6B10  __fastcall
 undefined4 SetupOT(undefined4);  // 0x004A6EB0  __cdecl
 undefined4 LoadShapeSlot(undefined4);  // 0x004A71E0  __stdcall
@@ -110,6 +129,9 @@ undefined4 SetupNT(undefined4);  // 0x004A7200  __cdecl
 void SetupPT(undefined4);  // 0x004A7220  __cdecl
 void SetupJT(undefined4);  // 0x004A7230  __cdecl
 undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
+void RotatePattern(int);  // 0x004BD950  __fastcall
+long STRIPAddProc(void);  // 0x004BE2A0  __cdecl
+undefined4 WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D709A  __stdcall
 
 // --- not C functions --------------------------------------------------
 // Recovered, and deliberately NOT declared. A C prototype cannot express
@@ -117,5 +139,20 @@ undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 // variadic: 0x00463F60  CallUtilProc  -- no fixed arity exists (call sites clean differing byte counts)
 // split:    0x0046442B  InSearchAreaBody  -- not an entry point: a mid-function split of an enclosing routine
 // split:    0x004A71C0  LoadShapeVariantPair  -- not an entry point: a mid-function split of an enclosing routine
+
+// --- not yet recovered -----------------------------------------------
+// Emitted as TODOs, not as guessed declarations: a wrong prototype would
+// compile and then lie about what the original function took.
+// TODO(#453): 0x00442640  CATGUYEventProc -- signature not recovered
+// TODO(#453): 0x00442720  CATGUYProc -- signature not recovered
+// TODO(#453): 0x00442750  CATGUYMoveProc -- signature not recovered
+// TODO(#453): 0x004736F0  NPCWeaponsProc -- signature not recovered
+// TODO(#453): 0x0048D780  PLANESayProc -- signature not recovered
+// TODO(#453): 0x0048E8D0  OBJSayProc -- signature not recovered
+// TODO(#453): 0x0048EC40  PLANECommentProc -- signature not recovered
+// TODO(#453): 0x0049FB10  PLANEProc -- signature not recovered
+// TODO(#453): 0x004BD5B0  CARRIERProc -- signature not recovered
+// TODO(#453): 0x004BE640  STRIPProc -- signature not recovered
+// TODO(#455): 0x0050CCC8  takeoffPattern -- type not recovered
 
 }  // namespace fxe::fa::objects

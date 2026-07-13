@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 214/218 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
+// 390/461 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -55,7 +55,123 @@ extern undefined4 _nstream;  // 0x00592C40  MSVC CRT global (xrefs=6)
 extern undefined4 _acmdln;  // 0x00592C4C  MSVC CRT global (xrefs=5)
 
 // --- functions -------------------------------------------------------
+undefined4 timeGetTime(void);  // 0x004D6F5C  __stdcall
+undefined4 joyGetPos(undefined4, undefined4);  // 0x004D6F62  __stdcall
+undefined4 joyGetDevCapsA(undefined4, undefined4, undefined4);  // 0x004D6F68  __stdcall
+undefined4 joyGetNumDevs(void);  // 0x004D6F6E  __stdcall
+undefined4 joyGetPosEx(undefined4, undefined4);  // 0x004D6F74  __stdcall
+undefined4 Sleep(undefined4);  // 0x004D6F7A  __stdcall
+undefined4 SetCurrentDirectoryA(undefined4);  // 0x004D6F80  __stdcall
+undefined4 InitializeCriticalSection(undefined4);  // 0x004D6F86  __stdcall
+undefined4 DeleteCriticalSection(undefined4);  // 0x004D6F8C  __stdcall
+undefined4 LeaveCriticalSection(undefined4);  // 0x004D6F92  __stdcall
+undefined4 EnterCriticalSection(undefined4);  // 0x004D6F98  __stdcall
+undefined4 GetDriveTypeA(undefined4);  // 0x004D6F9E  __stdcall
+undefined4 GetLogicalDrives(void);  // 0x004D6FA4  __stdcall
+undefined4 SetThreadPriority(undefined4, undefined4);  // 0x004D6FAA  __stdcall
+undefined4 GetCurrentThread(void);  // 0x004D6FB0  __stdcall
+undefined4 GetThreadPriority(undefined4);  // 0x004D6FB6  __stdcall
+undefined4 GetSystemInfo(undefined4);  // 0x004D6FBC  __stdcall
+undefined4 MapViewOfFile(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D6FC2  __stdcall
+undefined4 CreateFileMappingA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D6FC8  __stdcall
+undefined4 GetFileSize(undefined4, undefined4);  // 0x004D6FCE  __stdcall
+undefined4 CreateFileA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D6FD4  __stdcall
+undefined4 IsBadStringPtrA(undefined4, undefined4);  // 0x004D6FDA  __stdcall
+undefined4 CloseHandle(undefined4);  // 0x004D6FE0  __stdcall
+undefined4 UnmapViewOfFile(undefined4);  // 0x004D6FE6  __stdcall
+undefined4 GlobalAlloc(undefined4, undefined4);  // 0x004D6FEC  __stdcall
+undefined4 VirtualAlloc(undefined4, undefined4, undefined4, undefined4);  // 0x004D6FF2  __stdcall
+undefined4 GlobalFree(undefined4);  // 0x004D6FF8  __stdcall
+undefined4 VirtualFree(undefined4, undefined4, undefined4);  // 0x004D6FFE  __stdcall
+undefined4 ExitThread(undefined4);  // 0x004D7004  __stdcall
+undefined4 ExitProcess(undefined4);  // 0x004D700A  __stdcall
+undefined4 SuspendThread(undefined4);  // 0x004D7010  __stdcall
+undefined4 GetCurrentThreadId(void);  // 0x004D7016  __stdcall
+undefined4 CreateThread(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D701C  __stdcall
+undefined4 GetExitCodeThread(undefined4, undefined4);  // 0x004D7022  __stdcall
+undefined4 QueryPerformanceCounter(undefined4);  // 0x004D7028  __stdcall
+undefined4 QueryPerformanceFrequency(undefined4);  // 0x004D702E  __stdcall
+undefined4 ResumeThread(undefined4);  // 0x004D7034  __stdcall
+undefined4 TerminateThread(undefined4, undefined4);  // 0x004D703A  __stdcall
+undefined4 FindClose(undefined4);  // 0x004D7040  __stdcall
+undefined4 FindFirstFileA(undefined4, undefined4);  // 0x004D7046  __stdcall
+undefined4 GetDiskFreeSpaceA(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D704C  __stdcall
+undefined4 FindNextFileA(undefined4, undefined4);  // 0x004D7052  __stdcall
+undefined4 FileTimeToDosDateTime(undefined4, undefined4, undefined4);  // 0x004D7058  __stdcall
+undefined4 FileTimeToLocalFileTime(undefined4, undefined4);  // 0x004D705E  __stdcall
+undefined4 GetFileTime(undefined4, undefined4, undefined4, undefined4);  // 0x004D7064  __stdcall
+undefined4 GetLocalTime(undefined4);  // 0x004D706A  __stdcall
+undefined4 GetSystemTime(undefined4);  // 0x004D7070  __stdcall
+undefined4 FreeLibrary(undefined4);  // 0x004D7076  __stdcall
+undefined4 GetProcAddress(undefined4, undefined4);  // 0x004D707C  __stdcall
+undefined4 LoadLibraryA(undefined4);  // 0x004D7082  __stdcall
+undefined4 SetErrorMode(undefined4);  // 0x004D7088  __stdcall
+undefined4 SetFilePointer(undefined4, undefined4, undefined4, undefined4);  // 0x004D708E  __stdcall
+undefined4 ReadFile(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D7094  __stdcall
+undefined4 DeleteFileA(undefined4);  // 0x004D70A0  __stdcall
+undefined4 MoveFileA(undefined4, undefined4);  // 0x004D70A6  __stdcall
+undefined4 lstrcpyA(undefined4, undefined4);  // 0x004D70AC  __stdcall
+undefined4 GetCurrentDirectoryA(undefined4, undefined4);  // 0x004D70B2  __stdcall
+undefined4 GetModuleFileNameA(undefined4, undefined4, undefined4);  // 0x004D70B8  __stdcall
+undefined4 GetTickCount(void);  // 0x004D70BE  __stdcall
+undefined4 PostMessageA(undefined4, undefined4, undefined4, undefined4);  // 0x004D70C4  __stdcall
+undefined4 SendMessageA(undefined4, undefined4, undefined4, undefined4);  // 0x004D70CA  __stdcall
+undefined4 GetCursorPos(undefined4);  // 0x004D70D0  __stdcall
+undefined4 ClipCursor(undefined4);  // 0x004D70D6  __stdcall
+undefined4 SetRect(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D70DC  __stdcall
+undefined4 MessageBoxA(undefined4, undefined4, undefined4, undefined4);  // 0x004D70E2  __stdcall
+undefined4 ShowWindow(undefined4, undefined4);  // 0x004D70E8  __stdcall
+undefined4 DispatchMessageA(undefined4);  // 0x004D70EE  __stdcall
+undefined4 GetMessageA(undefined4, undefined4, undefined4, undefined4);  // 0x004D70F4  __stdcall
+undefined4 DestroyWindow(undefined4);  // 0x004D70FA  __stdcall
+undefined4 SetCursor(undefined4);  // 0x004D7100  __stdcall
+undefined4 SetForegroundWindow(undefined4);  // 0x004D7106  __stdcall
+undefined4 GetForegroundWindow(void);  // 0x004D710C  __stdcall
+undefined4 DefWindowProcA(undefined4, undefined4, undefined4, undefined4);  // 0x004D7112  __stdcall
+undefined4 PostQuitMessage(undefined4);  // 0x004D7118  __stdcall
+undefined4 ShowCursor(undefined4);  // 0x004D711E  __stdcall
+undefined4 SetFocus(undefined4);  // 0x004D7124  __stdcall
+undefined4 CreateWindowExA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D712A  __stdcall
+undefined4 GetSystemMetrics(undefined4);  // 0x004D7130  __stdcall
+undefined4 RegisterClassA(undefined4);  // 0x004D7136  __stdcall
+undefined4 LoadIconA(undefined4, undefined4);  // 0x004D713C  __stdcall
+undefined4 FindWindowA(undefined4, undefined4);  // 0x004D7142  __stdcall
+undefined4 SystemParametersInfoA(undefined4, undefined4, undefined4, undefined4);  // 0x004D7148  __stdcall
+undefined4 SetDlgItemTextA(undefined4, undefined4, undefined4);  // 0x004D714E  __stdcall
+undefined4 CreateDialogParamA(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D7154  __stdcall
 undefined4 DirectDrawCreate(undefined4, undefined4, undefined4);  // 0x004D715A  __stdcall
+undefined4 AIL_midiOutOpen(undefined4, undefined4, undefined4);  // 0x004D7160  __stdcall
+undefined4 AIL_set_preference(undefined4, undefined4);  // 0x004D7166  __stdcall
+undefined4 AIL_startup(void);  // 0x004D716C  __stdcall
+undefined4 AIL_shutdown(void);  // 0x004D7172  __stdcall
+undefined4 AIL_stop_timer(undefined4);  // 0x004D7178  __stdcall
+undefined4 AIL_midiOutClose(undefined4);  // 0x004D717E  __stdcall
+undefined4 AIL_start_sequence(undefined4);  // 0x004D7184  __stdcall
+undefined4 AIL_release_sequence_handle(undefined4);  // 0x004D718A  __stdcall
+undefined4 AIL_init_sequence(undefined4, undefined4, undefined4);  // 0x004D7190  __stdcall
+undefined4 AIL_allocate_sequence_handle(undefined4);  // 0x004D7196  __stdcall
+undefined4 AIL_unlock(void);  // 0x004D719C  __stdcall
+undefined4 AIL_set_XMIDI_master_volume(undefined4, undefined4);  // 0x004D71A2  __stdcall
+undefined4 AIL_lock(void);  // 0x004D71A8  __stdcall
+undefined4 AIL_sequence_status(undefined4);  // 0x004D71AE  __stdcall
+undefined4 AIL_allocate_sample_handle(undefined4);  // 0x004D71B4  __stdcall
+undefined4 AIL_waveOutOpen(undefined4, undefined4, undefined4, undefined4);  // 0x004D71BA  __stdcall
+undefined4 AIL_start_timer(undefined4);  // 0x004D71C0  __stdcall
+undefined4 AIL_set_timer_frequency(undefined4, undefined4);  // 0x004D71C6  __stdcall
+undefined4 AIL_register_timer(undefined4);  // 0x004D71CC  __stdcall
+undefined4 AIL_waveOutClose(undefined4);  // 0x004D71D2  __stdcall
+undefined4 AIL_end_sample(undefined4);  // 0x004D71D8  __stdcall
+undefined4 AIL_sample_status(undefined4);  // 0x004D71DE  __stdcall
+undefined4 AIL_stop_sequence(undefined4);  // 0x004D71E4  __stdcall
+undefined4 AIL_resume_sequence(undefined4);  // 0x004D71EA  __stdcall
+undefined4 AIL_start_sample(undefined4);  // 0x004D71F0  __stdcall
+undefined4 AIL_set_sample_type(undefined4, undefined4, undefined4);  // 0x004D71F6  __stdcall
+undefined4 AIL_set_sample_address(undefined4, undefined4, undefined4);  // 0x004D71FC  __stdcall
+undefined4 AIL_set_sample_loop_count(undefined4, undefined4);  // 0x004D7202  __stdcall
+undefined4 AIL_init_sample(undefined4);  // 0x004D7208  __stdcall
+undefined4 AIL_set_sample_pan(undefined4, undefined4);  // 0x004D720E  __stdcall
+undefined4 AIL_set_sample_volume(undefined4, undefined4);  // 0x004D7214  __stdcall
+undefined4 AIL_set_sample_playback_rate(undefined4, undefined4);  // 0x004D721A  __stdcall
 undefined4 ser_rs232_getpacket(undefined4, undefined4, undefined4);  // 0x004D7220  __stdcall
 undefined4 ser_rs232_block(undefined4, undefined4, undefined4);  // 0x004D7226  __stdcall
 undefined4 ser_rs232_flush(undefined4, undefined4);  // 0x004D722C  __stdcall
@@ -89,6 +205,10 @@ undefined4 ModemConnect(undefined4);  // 0x004D72CE  __stdcall
 undefined4 Dial(undefined4, undefined4, undefined4);  // 0x004D72D4  __stdcall
 undefined4 ModemModifyValue(undefined4, undefined4, undefined4);  // 0x004D72DA  __stdcall
 undefined4 ModemHangup(undefined4);  // 0x004D72E0  __stdcall
+undefined4 RegCloseKey(undefined4);  // 0x004D72E6  __stdcall
+undefined4 RegQueryValueExA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D72EC  __stdcall
+undefined4 RegOpenKeyExA(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D72F2  __stdcall
+undefined4 RegEnumKeyExA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D72F8  __stdcall
 undefined4 getMSdatafile(undefined4, undefined4, undefined4);  // 0x004D7304  __cdecl
 undefined4 getMSdatafilesize(undefined4, undefined4);  // 0x004D730A  __cdecl
 undefined4 initializeMS(undefined4, undefined4, undefined4, undefined4);  // 0x004D7310  __cdecl
@@ -222,7 +342,9 @@ undefined4 _lock_fhandle(undefined4);  // 0x004E2A20  __cdecl
 undefined4 _unlock_fhandle(undefined4);  // 0x004E2A90  __cdecl
 undefined4 _sopen(undefined4, undefined4, undefined4, undefined4);  // 0x004E2AE0  __cdecl
 long __CxxUnhandledExceptionFilter(_EXCEPTION_POINTERS *);  // 0x004E2F70  __stdcall
+void __CxxRestoreUnhandledExceptionFilter(void);  // 0x004E2FD0  __cdecl
 void terminate(void);  // 0x004E2FE0  __cdecl
+void unexpected(void);  // 0x004E3060  __cdecl
 void _inconsistency(void);  // 0x004E3080  __cdecl
 int _ValidateRead(const void *, unsigned int);  // 0x004E3100  __cdecl
 int _ValidateWrite(void *, unsigned int);  // 0x004E3120  __cdecl
@@ -268,7 +390,61 @@ undefined4 _setmode_lk(undefined4, undefined4);  // 0x004E8310  __cdecl
 undefined4 _msize(undefined4);  // 0x004E8380  __cdecl
 undefined4 wcstombs(undefined4, undefined4, undefined4);  // 0x004E8720  __cdecl
 undefined4 _wcstombs_lk(undefined4, undefined4, undefined4);  // 0x004E8780  __cdecl
+undefined4 TerminateProcess(undefined4, undefined4);  // 0x004E8A22  __stdcall
+undefined4 GetCurrentProcess(void);  // 0x004E8A28  __stdcall
 undefined4 RtlUnwind(undefined4, undefined4, undefined4, undefined4);  // 0x004E8A2E  __stdcall
+undefined4 GetLastError(void);  // 0x004E8A34  __stdcall
+undefined4 SetEnvironmentVariableA(undefined4, undefined4);  // 0x004E8A3A  __stdcall
+undefined4 GetFullPathNameA(undefined4, undefined4, undefined4, undefined4);  // 0x004E8A40  __stdcall
+undefined4 GetModuleHandleA(undefined4);  // 0x004E8A46  __stdcall
+undefined4 GetStartupInfoA(undefined4);  // 0x004E8A4C  __stdcall
+undefined4 GetCommandLineA(void);  // 0x004E8A52  __stdcall
+undefined4 GetVersion(void);  // 0x004E8A58  __stdcall
+undefined4 FatalAppExitA(undefined4, undefined4);  // 0x004E8A5E  __stdcall
+undefined4 MultiByteToWideChar(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8A64  __stdcall
+undefined4 LCMapStringA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8A6A  __stdcall
+undefined4 WideCharToMultiByte(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8A70  __stdcall
+undefined4 LCMapStringW(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8A76  __stdcall
+undefined4 HeapFree(undefined4, undefined4, undefined4);  // 0x004E8A7C  __stdcall
+undefined4 TlsSetValue(undefined4, undefined4);  // 0x004E8A82  __stdcall
+undefined4 TlsAlloc(void);  // 0x004E8A88  __stdcall
+undefined4 TlsFree(undefined4);  // 0x004E8A8E  __stdcall
+undefined4 SetLastError(undefined4);  // 0x004E8A94  __stdcall
+undefined4 TlsGetValue(undefined4);  // 0x004E8A9A  __stdcall
+undefined4 HeapAlloc(undefined4, undefined4, undefined4);  // 0x004E8AA0  __stdcall
+undefined4 GetCPInfo(undefined4, undefined4);  // 0x004E8AA6  __stdcall
+undefined4 GetACP(void);  // 0x004E8AAC  __stdcall
+undefined4 GetOEMCP(void);  // 0x004E8AB2  __stdcall
+undefined4 FlushFileBuffers(undefined4);  // 0x004E8AB8  __stdcall
+undefined4 UnhandledExceptionFilter(undefined4);  // 0x004E8ABE  __stdcall
+undefined4 FreeEnvironmentStringsA(undefined4);  // 0x004E8AC4  __stdcall
+undefined4 GetEnvironmentStrings(void);  // 0x004E8ACA  __stdcall
+undefined4 FreeEnvironmentStringsW(undefined4);  // 0x004E8AD0  __stdcall
+undefined4 GetEnvironmentStringsW(void);  // 0x004E8AD6  __stdcall
+undefined4 SetHandleCount(undefined4);  // 0x004E8ADC  __stdcall
+undefined4 GetFileType(undefined4);  // 0x004E8AE2  __stdcall
+undefined4 GetStdHandle(undefined4);  // 0x004E8AE8  __stdcall
+undefined4 HeapDestroy(undefined4);  // 0x004E8AEE  __stdcall
+undefined4 HeapCreate(undefined4, undefined4, undefined4);  // 0x004E8AF4  __stdcall
+undefined4 GetStringTypeA(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8AFA  __stdcall
+undefined4 GetStringTypeW(undefined4, undefined4, undefined4, undefined4);  // 0x004E8B00  __stdcall
+undefined4 IsValidLocale(undefined4, undefined4);  // 0x004E8B06  __stdcall
+undefined4 IsValidCodePage(undefined4);  // 0x004E8B0C  __stdcall
+undefined4 GetUserDefaultLCID(void);  // 0x004E8B12  __stdcall
+undefined4 SetStdHandle(undefined4, undefined4);  // 0x004E8B18  __stdcall
+undefined4 SetUnhandledExceptionFilter(undefined4);  // 0x004E8B1E  __stdcall
+undefined4 IsBadReadPtr(undefined4, undefined4);  // 0x004E8B24  __stdcall
+undefined4 IsBadWritePtr(undefined4, undefined4);  // 0x004E8B2A  __stdcall
+undefined4 IsBadCodePtr(undefined4);  // 0x004E8B30  __stdcall
+undefined4 CompareStringA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8B36  __stdcall
+undefined4 CompareStringW(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E8B3C  __stdcall
+undefined4 GetLocaleInfoA(undefined4, undefined4, undefined4, undefined4);  // 0x004E8B42  __stdcall
+undefined4 GetLocaleInfoW(undefined4, undefined4, undefined4, undefined4);  // 0x004E8B48  __stdcall
+undefined4 SetEndOfFile(undefined4);  // 0x004E8B4E  __stdcall
+undefined4 SetConsoleCtrlHandler(undefined4, undefined4);  // 0x004E8B54  __stdcall
+undefined4 HeapReAlloc(undefined4, undefined4, undefined4, undefined4);  // 0x004E8B5A  __stdcall
+undefined4 GetTimeZoneInformation(undefined4);  // 0x004E8B60  __stdcall
+undefined4 HeapSize(undefined4, undefined4, undefined4);  // 0x004E8B66  __stdcall
 
 // --- not C functions --------------------------------------------------
 // Recovered, and deliberately NOT declared. A C prototype cannot express
@@ -282,8 +458,75 @@ undefined4 RtlUnwind(undefined4, undefined4, undefined4, undefined4);  // 0x004E
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004D72FE  _closeMS -- signature not recovered
+// TODO(#453): 0x004D74A0  _cexit -- signature not recovered
+// TODO(#453): 0x004D7A20  _tolower -- signature not recovered
+// TODO(#453): 0x004D7D10  isalpha -- signature not recovered
+// TODO(#453): 0x004D7D50  isupper -- signature not recovered
+// TODO(#453): 0x004D7D80  islower -- signature not recovered
+// TODO(#453): 0x004D7DE0  isxdigit -- signature not recovered
+// TODO(#453): 0x004D7E50  ispunct -- signature not recovered
+// TODO(#453): 0x004D7F00  isgraph -- signature not recovered
+// TODO(#453): 0x004D7F40  iscntrl -- signature not recovered
+// TODO(#453): 0x004D8040  _toupper -- signature not recovered
 // TODO(#453): 0x004D85DD  __NLG_Notify1 -- signature not recovered
+// TODO(#453): 0x004D86F8  _except_handler3 -- signature not recovered
+// TODO(#453): 0x004D8F20  _getdcwd -- signature not recovered
 // TODO(#453): 0x004D97B0  _strcpy -- signature not recovered
+// TODO(#453): 0x004D98A0  srand -- signature not recovered
+// TODO(#453): 0x004D98E0  fgets -- signature not recovered
+// TODO(#453): 0x004D9960  fprintf -- signature not recovered
+// TODO(#453): 0x004D99B0  _lsearch -- signature not recovered
+// TODO(#453): 0x004D9B30  fflush -- signature not recovered
 // TODO(#453): 0x004D9D00  WinMainCRTStartup -- signature not recovered
+// TODO(#453): 0x004DA350  _lockerr_exit -- signature not recovered
+// TODO(#453): 0x004DB020  setlocale -- signature not recovered
+// TODO(#453): 0x004DB560  _expandlocale -- signature not recovered
+// TODO(#453): 0x004DB740  _strcats -- signature not recovered
+// TODO(#453): 0x004DCD80  _mtterm -- signature not recovered
+// TODO(#453): 0x004DCE40  _freeptd -- signature not recovered
+// TODO(#453): 0x004DD080  _forcdecpt -- signature not recovered
+// TODO(#453): 0x004DD0F0  _cropzeros -- signature not recovered
+// TODO(#453): 0x004DD150  _positive -- signature not recovered
+// TODO(#453): 0x004DD170  _fassign -- signature not recovered
+// TODO(#453): 0x004DD510  _cfltcvt -- signature not recovered
+// TODO(#453): 0x004DDAA0  _getmbcp -- signature not recovered
+// TODO(#453): 0x004DE0F0  _stbuf -- signature not recovered
+// TODO(#453): 0x004DF320  _ismbbkalnum -- signature not recovered
+// TODO(#453): 0x004DF340  _ismbbkprint -- signature not recovered
+// TODO(#453): 0x004DF360  _ismbbkpunct -- signature not recovered
+// TODO(#453): 0x004DF380  _ismbbalnum -- signature not recovered
+// TODO(#453): 0x004DF3A0  _ismbbalpha -- signature not recovered
+// TODO(#453): 0x004DF3C0  _ismbbgraph -- signature not recovered
+// TODO(#453): 0x004DF3E0  _ismbbprint -- signature not recovered
+// TODO(#453): 0x004DF400  _ismbbpunct -- signature not recovered
+// TODO(#453): 0x004DF440  _ismbbtrail -- signature not recovered
+// TODO(#453): 0x004DF460  _ismbbkana -- signature not recovered
+// TODO(#453): 0x004DFE40  _heap_term -- signature not recovered
+// TODO(#453): 0x004E00C0  _GET_RTERRMSG -- signature not recovered
+// TODO(#453): 0x004E1C40  _get_sbh_threshold -- signature not recovered
+// TODO(#453): 0x004E1C50  _set_sbh_threshold -- signature not recovered
+// TODO(#453): 0x004E2960  _open_osfhandle -- signature not recovered
+// TODO(#453): 0x004E3210  _set_new_handler -- signature not recovered
+// TODO(#453): 0x004E3240  _query_new_handler -- signature not recovered
+// TODO(#453): 0x004E39A0  _ld12told -- signature not recovered
+// TODO(#453): 0x004E3A70  _atoldbl -- signature not recovered
+// TODO(#453): 0x004E3E40  ungetc -- signature not recovered
+// TODO(#453): 0x004E4B00  _Gettnames -- signature not recovered
+// TODO(#453): 0x004E4E60  strftime -- signature not recovered
+// TODO(#453): 0x004E4E80  _Strftime -- signature not recovered
+// TODO(#453): 0x004E5B40  localeconv -- signature not recovered
+// TODO(#453): 0x004E5BF0  _ltoa -- signature not recovered
+// TODO(#453): 0x004E5C20  _ultoa -- signature not recovered
+// TODO(#453): 0x004E5C40  _i64toa -- signature not recovered
+// TODO(#453): 0x004E5D20  _ui64toa -- signature not recovered
+// TODO(#453): 0x004E5FB0  wcstol -- signature not recovered
+// TODO(#453): 0x004E61E0  wcstoul -- signature not recovered
+// TODO(#453): 0x004E6200  _chsize -- signature not recovered
+// TODO(#453): 0x004E64C0  signal -- signature not recovered
+// TODO(#453): 0x004E79C0  _tzset -- signature not recovered
+// TODO(#453): 0x004E7CC0  _isindst -- signature not recovered
+// TODO(#453): 0x004E80E0  towupper -- signature not recovered
+// TODO(#453): 0x004E8280  is_wctype -- signature not recovered
+// TODO(#453): 0x004E82A0  _setmode -- signature not recovered
 
 }  // namespace fxe::fa::startup

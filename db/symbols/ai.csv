@@ -121,6 +121,12 @@ va,kind,name,display,source,confidence,notes,type
 0x00466970,func,_CTExecProgram@4,CTExecProgram,sms,confirmed,,undefined4 __stdcall CTExecProgram(undefined4)
 0x00466A80,func,CTStep,,re,confirmed,fetch one opcode and dispatch via switch; CALL_BY_NAME(0x27) resolves via SMAddress then self-patches to CALL_DIRECT(0x26); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl CTStep(void)
 0x004670E0,func,CTVarPtr,,re,confirmed,"return &_ctState[i] for script var index i in [0,4]; out-of-range raises CTError(3); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 * __fastcall CTVarPtr(short)
+0x004AC680,func,_MVRMoveToAlt@24,MVRMoveToAlt,sms,confirmed,,"undefined4 __stdcall MVRMoveToAlt(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004AC760,func,_MVRInvert,MVRInvert,sms,confirmed,,
+0x004AC780,func,_MVRYoyo@20,MVRYoyo,sms,confirmed,,"undefined4 __stdcall MVRYoyo(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004AC9E0,func,_MVRJink@40,MVRJink,sms,confirmed,,"undefined4 __stdcall MVRJink(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004ACB80,func,@MVRSplitS@12,MVRSplitS,sms,confirmed,,"undefined4 __fastcall MVRSplitS(undefined4, undefined4, undefined4)"
+0x004ACCB0,func,@MVRImmelman@12,MVRImmelman,sms,confirmed,,"undefined4 __fastcall MVRImmelman(undefined4, undefined4, undefined4)"
 0x004F7004,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,
 0x004F7024,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,
 0x004F7034,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,

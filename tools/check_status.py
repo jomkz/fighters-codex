@@ -1127,6 +1127,12 @@ def check_types(db_dir, symbols, slug_to_binary):
             allowed = set(known)
             # A prototype spells the function's own name before its parameter list. That
             # is a declaration, not a type reference -- don't demand db/types/ declare it.
+            # The name is the row's `display`, not "the identifier before the first ("
+            # -- a function-POINTER return type puts a '(' ahead of the declared name
+            # (`int (__cdecl *)(unsigned int) __cdecl _set_new_handler(...)`), and the
+            # positional guess then demands db/types/ declare `int`.
+            if r.get("display"):
+                allowed.add(r["display"])
             head = ctype.split("(", 1)[0]
             idents = re.findall(r"[A-Za-z_]\w*", head)
             if "(" in ctype and idents:

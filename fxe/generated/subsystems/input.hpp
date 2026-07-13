@@ -8,11 +8,19 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 18/18 functions have a recovered signature; 0/0 globals have a recovered type.
+// 33/35 functions have a recovered signature; 1/1 globals have a recovered type.
 
 namespace fxe::fa::input {
 
+// --- globals ---------------------------------------------------------
+extern s32 lastThrottle;  // 0x00522C18  analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one
+
 // --- functions -------------------------------------------------------
+unsigned short PotStick(short, unsigned short);  // 0x00417A10  __cdecl
+unsigned short KeyThrottle(short, unsigned short);  // 0x00417C20  __cdecl
+unsigned short KeyRudder(short, unsigned short);  // 0x00417D10  __cdecl
+unsigned short PotThrottle(short, unsigned short);  // 0x00417D80  __cdecl
+unsigned short PotRudder(short, unsigned short);  // 0x00417ED0  __cdecl
 undefined4 ReadSticksRaw(void);  // 0x00494270  __fastcall
 undefined4 InitJoysticks(void);  // 0x004942D0  __stdcall
 JOYRESULT GetJoystickType(unsigned long);  // 0x00494430  __cdecl
@@ -22,6 +30,7 @@ undefined4 NormalizeStick(undefined4, undefined4, undefined4, undefined4);  // 0
 undefined4 GetPOV(void);  // 0x00494A50  __fastcall
 undefined4 ASynchJoystick(void);  // 0x00494AE0  __fastcall
 undefined4 ReadJoystickButtons(void);  // 0x00494B50  __fastcall
+void MP_DoNothing(void);  // 0x00494BA0  __cdecl
 undefined4 MOUSESetLimits(undefined4, undefined4);  // 0x00499CF0  __stdcall
 undefined4 MOUSESetPos(undefined4, undefined4);  // 0x00499D10  __stdcall
 void MOUSECenter(void);  // 0x00499D40  __cdecl
@@ -30,6 +39,21 @@ undefined4 MOUSEInit(void);  // 0x00499DF0  __stdcall
 void MOUSEShutdown(void);  // 0x00499E30  __cdecl
 void MOUSEEvent(unsigned int, unsigned int, long);  // 0x00499E50  __fastcall
 void RunSerialConfigurationScreen(void);  // 0x0049B1D0  __stdcall
+long ParseStrForModemName(unsigned char *, unsigned char *);  // 0x0049B9B0  __cdecl
+int CompareDBEntry(const void *, const void *);  // 0x0049BA60  __cdecl
+void SortModemDB(void);  // 0x0049BA80  __cdecl
+long IsComment(unsigned char *);  // 0x0049BAA0  __cdecl
+long ReadModemDB(void);  // 0x0049BAE0  __cdecl
+void WriteModemEntry(_iobuf *, ModemStrings *);  // 0x0049BD60  __cdecl
+void SelectModemFromDB(CN_INFO *);  // 0x0049BDC0  __cdecl
+void WriteModemFile(CN_INFO *);  // 0x0049BF70  __cdecl
+void RunModemAdvSetupDialog(CN_INFO *, long *, long *);  // 0x0049C260  __stdcall
 void RunModemConfigurationScreen(void);  // 0x0049C780  __stdcall
+
+// --- not yet recovered -----------------------------------------------
+// Emitted as TODOs, not as guessed declarations: a wrong prototype would
+// compile and then lie about what the original function took.
+// TODO(#453): 0x004115C0  KeyAvail -- signature not recovered
+// TODO(#453): 0x00481280  GetKeySlow -- signature not recovered
 
 }  // namespace fxe::fa::input

@@ -1,9 +1,13 @@
 va,kind,name,display,source,confidence,notes,type
 0x004CD588,func,sincos,,re,confirmed,"sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates; not a C function (#479): angle in BX; sin in AX, cos in BX",!asm
+0x004CD5C6,func,fast_sincos,,sms,confirmed,,
 0x004CD5DF,func,isqrt16,,re,inferred,"tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt); not a C function (#479): 32-bit value in CX:BX, result in DI",!asm
 0x004CD5EE,func,isqrt16_body,,re,inferred,"Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize; not a C function (#479): 32-bit value in CX:BX, result in DI",!asm
+0x004CD73B,func,fast_asin,,sms,confirmed,,
+0x004CD75F,func,asin,,sms,confirmed,,
 0x004CD7A0,func,@GRACos@4,GRACos,sms,confirmed,public arccos wrapper over acos,undefined4 __fastcall GRACos(undefined4)
 0x004CD7B4,func,acos,,re,confirmed,"arccos via DAT_00515dcc table lookup+lerp; not a C function (#479): cosine in BX, angle result in CX",!asm
+0x004CD7FF,func,atan2,,sms,confirmed,,
 0x004CD834,func,@GRSetLightSource@4,GRSetLightSource,sms,confirmed,store world light dir into _worldLightSource/515ED2/515ED4,undefined4 __fastcall GRSetLightSource(undefined4)
 0x004CD854,func,SetShading,,re,confirmed,thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT; not a C function (#479): 3-component vector in EAX/EBX/ECX,!asm
 0x004CD8B0,func,_Sun,Sun,re,inferred,lighting dot product of _worldLightSource against current matrix rows (518384/38A/390); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl Sun(void)
@@ -21,12 +25,15 @@ va,kind,name,display,source,confidence,notes,type
 0x004CE7F7,func,mxmul,,re,confirmed,hand-asm matrix*scalar accumulate helper (axis-select); not a C function (#479): vector in EBX/ECX/EBP; result in BX/CX/BP,!asm
 0x004CE89C,func,compute_axis_check,,re,confirmed,derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl compute_axis_check(void)
 0x004CE968,func,sort_objs_wrapper,,re,confirmed,painter depth sort wrapper over _SortObjs_8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl sort_objs_wrapper(void)
+0x004CE980,func,dmxmul,,sms,confirmed,,
+0x004CEA40,func,dmxmul2,,sms,confirmed,,
 0x004CEB00,func,rotate_vec_roll,,re,inferred,rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl rotate_vec_roll(void)
 0x004CEB70,func,rotate_matrix_roll,,re,inferred,"object-instancing: concat roll rotation into current matrix (m1..m9) via sincos; not a C function (#479): angle in BX, result in the carry flag",!asm
 0x004CED44,func,rotate_vec_pitch,,re,inferred,rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl rotate_vec_pitch(void)
 0x004CEDB8,func,rotate_matrix_pitch,,re,inferred,"object-instancing: concat pitch rotation into current matrix via sincos; not a C function (#479): angle in BX, result in the carry flag",!asm
 0x004CEF8C,func,rotate_vec_yaw,,re,inferred,rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl rotate_vec_yaw(void)
 0x004CF000,func,rotate_matrix_yaw,,re,inferred,"object-instancing: concat yaw rotation into current matrix via sincos; not a C function (#479): angle in BX, result in the carry flag",!asm
+0x004CF258,func,_CodePnt@12,CodePnt,sms,confirmed,,"undefined4 __stdcall CodePnt(undefined4, undefined4, undefined4)"
 0x004CF270,func,code_pnt,,re,confirmed,"compute 5-bit frustum outcode of a projected point (BP/BX bounds); not a C function (#479): point in BX/CX/BP, outcode in AL",!asm
 0x004CF2A4,func,ecode_pnt,,re,confirmed,"extended outcode (near-plane aware) returned in AL; used by clippers; not a C function (#479): point in EBX/ECX/EBP, outcode in AL",!asm
 0x004CF2D0,func,matrix_from_angle3,,re,inferred,build 3x3 rotation matrix (3x FUN_004cf410) for MakeObj/ViewRotationMatrix; not a C function (#479): source vector in ESI and destination matrix in EBP,!asm
@@ -77,9 +84,12 @@ va,kind,name,display,source,confidence,notes,type
 0x004D2690,func,sh_op_18,,re,inferred,SH opcode 0x18 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
 0x004D2740,func,sh_op_84,,re,confirmed,SH opcode 0x84 handler (epic #52 placeholder name); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
 0x004D2798,func,load_dest,,re,confirmed,interpreter helper: load destination operand; not a C function (#479): SH bytecode cursor in ESI (advanced in place); result in EAX,!asm
+0x004D27C8,func,sh_op_1C_flat,sh_op_1C_flat,re,confirmed,"SH opcode 0x1C/0x88 handler, FLAT-path variant; not a C function (#479): threaded-code jump target. check_flat installs it into PTR_sh_op_1C_* where the perspective path installs sh_op_1C (0x4D2880) — it drops that sibling's m4/m6 matrix multiply",!threaded
 0x004D2880,func,sh_op_1C,,re,inferred,SH opcode 0x1C/0x88 handler (perspective-path variant swapped by check_flat); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
 0x004D2910,func,sh_op_26,,re,inferred,SH opcode 0x26 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
+0x004D2948,func,sh_op_2A_flat,sh_op_2A_flat,re,confirmed,"SH opcode 0x2A/0x86 handler, FLAT-path variant; not a C function (#479): threaded-code jump target. Installed by check_flat into PTR_sh_op_2A_* opposite sh_op_2A (0x4D29EC) — keeps the _scaled_matrix multiply, drops the m3 one",!threaded
 0x004D29EC,func,sh_op_2A,,re,inferred,SH opcode 0x2A/0x86 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
+0x004D2A7C,func,sh_op_2C_flat,sh_op_2C_flat,re,confirmed,"SH opcode 0x2C/0x8A handler, FLAT-path variant; not a C function (#479): threaded-code jump target. Installed by check_flat into PTR_sh_op_2C_* opposite sh_op_2C (0x4D2B20)",!threaded
 0x004D2B20,func,sh_op_2C,,re,inferred,SH opcode 0x2C/0x8A handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
 0x004D2BB0,func,sh_op_92,,re,inferred,SH opcode 0x92 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
 0x004D2C70,func,sh_op_90,,re,inferred,SH opcode 0x90 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own,!threaded
@@ -150,6 +160,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D5BCC,func,_GRRender@36,GRRender,sms,confirmed,top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix,"undefined4 __stdcall GRRender(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004D5C98,func,_GRSinCos@12,GRSinCos,sms,confirmed,public sin/cos wrapper over sincos,"undefined4 __stdcall GRSinCos(undefined4, undefined4, undefined4)"
 0x004D5CC0,func,_GRTo2d@8,GRTo2d,sms,confirmed,,"undefined4 __stdcall GRTo2d(undefined4, undefined4)"
+0x004D5E18,func,_TransposeMatrix,TransposeMatrix,sms,confirmed,,
 0x004D5E58,func,_MakeObjRotationMatrix@16,MakeObjRotationMatrix,sms,confirmed,build object rotation matrix (roll/pitch/yaw) into caller buffer,"undefined4 __stdcall MakeObjRotationMatrix(undefined4, undefined4, undefined4, undefined4)"
 0x004D60D8,func,_MakeViewRotationMatrix@16,MakeViewRotationMatrix,sms,confirmed,build view rotation matrix (yaw/pitch/roll order) into caller buffer,"undefined4 __stdcall MakeViewRotationMatrix(undefined4, undefined4, undefined4, undefined4)"
 0x004D631C,func,_MultPointByMatrix@8,MultPointByMatrix,sms,confirmed,transform a point by the current matrix (wraps mult_point_by_matrix_asm),"undefined4 __stdcall MultPointByMatrix(undefined4, undefined4)"

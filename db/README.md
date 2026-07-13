@@ -149,6 +149,23 @@ exactly this class of blind spot.
 creates the function before naming it. A run whose `labels` column is non-empty is therefore free to
 claim — the binary is already telling you the function's name.
 
+For the code the binary does **not** name, `scripts/ghidra/SweepUndefinedCode.java` (run by
+`bootstrap.sh` and `rebuild_audit.sh`, so the project stays reproducible) disassembles what is left
+— but only where there is evidence of a function **entry**: a `CALL` to the address, or a `DATA`
+reference (something *stores* the address, which is how a proc-table entry or callback is reached).
+Everything else is left alone and reported. That restraint is not fastidiousness; each rule below
+was written because its absence manufactured functions out of thin air:
+
+| Rejected as evidence | Because |
+|---|---|
+| `8B FF` as a prologue | In this toolchain `mov edi,edi` is **inter-function NOP fill**, not a hot-patch prologue. Reading it as an entry made 90 nine-byte "functions" out of the padding, while the real entry sat just past it. |
+| a `JUMP` to the address | Its target is as likely a switch case or loop head **inside** an existing function. Two such fragments (`0x00465441`, `0x004668B0`) decompiled into the verbatim tails of `_CTEval_maxspeeddiff` and `CTRestoreState`. |
+| a `DATA` ref into a jump table | MSVC emits switch tables into `.text`, so a table slot satisfies "something stores this address". A run whose first two dwords are both `.text` addresses is a table, not an entry. |
+| a body that never terminates | A real function returns or tail-jumps. A decoded-garbage body that merely runs on into the next function's entry is a fragment; it is created, tested, and removed. |
+
+**A wrong function is worse than an undefined gap**: the gap is honest debt the ratchet can see,
+while the fiction inflates the denominator and then reports coverage against it.
+
 ## Definition of done (per subsystem, enforced at `status=complete`)
 
 1. **Functions:** every `inventory/functions.csv` entry inside the subsystem's ranges

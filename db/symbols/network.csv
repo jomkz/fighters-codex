@@ -3,20 +3,38 @@ va,kind,name,display,source,confidence,notes,type
 0x00401780,func,?NET_SlaveShutdown@@YAXXZ,NET_SlaveShutdown,sms,confirmed,client leave/teardown,void __cdecl NET_SlaveShutdown(void)
 0x004017B0,func,?NET_RequestPlayerList@@YADPAUNET_ADDRESS@@PAXP6AX1W4PLAYER_ACTION@@PAD0J@Z1P6AX1W4NET_CONNECTED_STATE@@@Z@Z,NET_RequestPlayerList,sms,confirmed,query lobby for player list (async),"char __cdecl NET_RequestPlayerList(NET_ADDRESS *, void *, void (__cdecl *)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long), void *, void (__cdecl *)(void *, NET_CONNECTED_STATE))"
 0x00401850,func,?NET_CancelPlayerList@@YAXXZ,NET_CancelPlayerList,sms,confirmed,cancel pending player-list query,void __cdecl NET_CancelPlayerList(void)
+0x00401880,func,?PlayerListQueryEvents@@YADIJHPAUsocket_state@@@Z,PlayerListQueryEvents,sms,confirmed,,"char __cdecl PlayerListQueryEvents(unsigned int, long, int, socket_state *)"
 0x004019A0,func,?player_list_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,player_list_process_pkt,sms,confirmed,dispatch player-list-query reply packets,"void __cdecl player_list_process_pkt(NET_PKT *, socket_state *)"
 0x00401A60,func,NETSlaveConnect,,re,inferred,"slave connect helper: proto_ptr->open (vtbl+0x56), register slave_events (0x401B20) via socket_add_state_func, seed socket_state addr fields; net_set_often_state(5). Body @0x401A60 cited","undefined4 __cdecl NETSlaveConnect(undefined4, undefined4)"
+0x00401B20,func,?slave_events@@YADIJHPAUsocket_state@@@Z,slave_events,sms,confirmed,,"char __cdecl slave_events(unsigned int, long, int, socket_state *)"
 0x00401CD0,func,?handle_slave_connection_failed@@YAXPAUsocket_state@@@Z,handle_slave_connection_failed,sms,confirmed,"retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0)",void __cdecl handle_slave_connection_failed(socket_state *)
 0x00401E30,func,NETSlaveLostConn,,re,confirmed,"slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl NETSlaveLostConn(socket_state *)
 0x00401EB0,func,?slave_process_pkt@@YAXPAUNET_PKT@@PAUsocket_state@@@Z,slave_process_pkt,sms,confirmed,"slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected","void __cdecl slave_process_pkt(NET_PKT *, socket_state *)"
+0x00402320,func,?state_func_slave_connecting@@YAXXZ,state_func_slave_connecting,sms,confirmed,,void __cdecl state_func_slave_connecting(void)
 0x00402330,func,NETArmKeepalive,,re,confirmed,arm socket send timer (state+8 = timerTicks+0x400; state+4 = 4 unless already ready). Body @0x402330; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NETArmKeepalive(socket_state *)
 0x00402360,func,NETResetTimer,,re,inferred,reset socket send timer to now (state+8 = timerTicks; state+4 = 4). Body @0x402360,undefined4 __cdecl NETResetTimer(undefined4)
 0x004024D0,func,NETProcessPlayerList,,re,confirmed,"process NET_PLAYER_LIST: find self via NETIsAddrLocal, net_add_self, connect to every other listed peer (mesh) via proto vtbl+0x56 + socket_add_state_func(...,0x401B20); if all ready -> pkt_send_ready. Called from slave_process_pkt case 4. Body @0x4024D0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __cdecl NETProcessPlayerList(NET_PLAYER_LIST *)
 0x00405360,func,NETWaitMasterScreen,,re,confirmed,"slave: spin polling MPReceive/MPCheckDisconnect while _masterNextScreen==-1, then adopt it as _curScreen (thisComputer>0). Body @0x405360; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl NETWaitMasterScreen(void)
 0x004053A0,func,NETApplyMasterScreen,,re,confirmed,slave: apply pending _masterNextScreen to _curScreen once (non-blocking). Body @0x4053A0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NETApplyMasterScreen(void)
 0x004054F0,func,?netDialogAppIO@@YAJJPAD@Z,netDialogAppIO,sms,confirmed,"net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse","long __cdecl netDialogAppIO(long, char *)"
+0x00405580,func,?monoPrintfIO@@YAJJPAD@Z,monoPrintfIO,sms,confirmed,,"long __cdecl monoPrintfIO(long, char *)"
+0x00405590,func,?RunTCPOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunTCPOptionsDialog,sms,confirmed,,"void __cdecl RunTCPOptionsDialog(CN_INFO *, char *)"
+0x00405CC0,data,,,waiver,confirmed,switch jump-table interior (switchdataD_00405cb8),
+0x00405CC4,data,,,waiver,confirmed,switch jump-table interior (switchdataD_00405cb8),
 0x00405CD0,func,NETFormatIP,,re,confirmed,format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __cdecl NETFormatIP(char *, undefined4)"
 0x00405D10,func,?ip2long@@YADPADPAK@Z,ip2long,sms,confirmed,parse dotted-quad string -> packed u32 (strchr('.')+atoi x4),"char __cdecl ip2long(char *, unsigned long *)"
 0x00405DF0,func,?RunNetConfigurationScreen@@YGXJ@Z,RunNetConfigurationScreen,sms,confirmed,net config screen entry; calls doConfigurationScreen(1|4),void __stdcall RunNetConfigurationScreen(long)
+0x0040AF40,func,?state_func_master_query@@YAXXZ,state_func_master_query,sms,confirmed,,void __cdecl state_func_master_query(void)
+0x0040B110,func,?master_events@@YADIJHPAUsocket_state@@@Z,master_events,sms,confirmed,,"char __cdecl master_events(unsigned int, long, int, socket_state *)"
+0x00441F80,func,?UDPopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,UDPopensocket,sms,confirmed,,"unsigned int __cdecl UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
+0x004420D0,func,?UDPserverbroadcast@@YAXIPAUNET_ADDRESS@@PADW4NET_SEND_CANCEL@@@Z,UDPserverbroadcast,sms,confirmed,,"void __cdecl UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL)"
+0x00442200,func,?UDPquery@@YAXIPAUPKT_PLAYER_AD@@PAUNET_ADDRESS@@@Z,UDPquery,sms,confirmed,,"void __cdecl UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *)"
+0x0044BEC0,func,?SER_Transmitting@@YAJJ@Z,SER_Transmitting,sms,confirmed,,long __cdecl SER_Transmitting(long)
+0x0044C080,func,?SER_PeekByte@@YAJJ@Z,SER_PeekByte,sms,confirmed,,long __cdecl SER_PeekByte(long)
+0x0044C0F0,func,?SER_Synchronize@@YAXXZ,SER_Synchronize,sms,confirmed,,void __cdecl SER_Synchronize(void)
+0x0044C1B0,func,?SER_Often@@YAXXZ,SER_Often,sms,confirmed,,void __cdecl SER_Often(void)
+0x0044C1E0,func,?SER_Suspend@@YAXXZ,SER_Suspend,sms,confirmed,,void __cdecl SER_Suspend(void)
+0x0044C200,func,?SER_Resume@@YAXXZ,SER_Resume,sms,confirmed,,void __cdecl SER_Resume(void)
 0x0045D090,func,?pkt_send_can_i_play@@YADHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play,sms,confirmed,client->host join request,"char __cdecl pkt_send_can_i_play(int, char *, NET_ADDRESS *)"
 0x0045D120,func,?pkt_send_can_i_play_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play_player,sms,confirmed,join request naming a player slot,"char __cdecl pkt_send_can_i_play_player(int, int, char *, NET_ADDRESS *)"
 0x0045D1B0,func,?pkt_send_sync@@YADH@Z,pkt_send_sync,sms,confirmed,send sync request,char __cdecl pkt_send_sync(int)
@@ -29,17 +47,25 @@ va,kind,name,display,source,confidence,notes,type
 0x0045D360,func,?pkt_send_error@@YADHJ@Z,pkt_send_error,sms,confirmed,send error code to peer,"char __cdecl pkt_send_error(int, long)"
 0x0045D3A0,func,?pkt_send_new_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_new_player,sms,confirmed,announce new player to peer,"char __cdecl pkt_send_new_player(int, int, char *, NET_ADDRESS *)"
 0x0045D440,func,?pkt_sock_send_new_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_new_player,sms,confirmed,announce new player over socket,"char __cdecl pkt_sock_send_new_player(unsigned int, int, char *, NET_ADDRESS *)"
+0x0045D4E0,func,?pkt_send_lost_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_lost_player,sms,confirmed,,"char __cdecl pkt_send_lost_player(int, int, char *, NET_ADDRESS *)"
 0x0045D580,func,?pkt_sock_send_lost_player@@YADIHPADPAUNET_ADDRESS@@@Z,pkt_sock_send_lost_player,sms,confirmed,announce lost player over socket,"char __cdecl pkt_sock_send_lost_player(unsigned int, int, char *, NET_ADDRESS *)"
+0x0045D620,func,?pkt_build_new_player@@YAXPAUNET_PKT@@HPADPAUNET_ADDRESS@@@Z,pkt_build_new_player,sms,confirmed,,"void __cdecl pkt_build_new_player(NET_PKT *, int, char *, NET_ADDRESS *)"
+0x0045D690,func,?pkt_build_lost_player@@YAXPAUNET_PKT@@HPADPAUNET_ADDRESS@@@Z,pkt_build_lost_player,sms,confirmed,,"void __cdecl pkt_build_lost_player(NET_PKT *, int, char *, NET_ADDRESS *)"
 0x0045D700,func,?pkt_sock_send_error@@YADJI@Z,pkt_sock_send_error,sms,confirmed,send error over socket,"char __cdecl pkt_sock_send_error(long, unsigned int)"
+0x0045D740,func,?pkt_build_sync@@YAXPAUNET_PKT@@@Z,pkt_build_sync,sms,confirmed,,void __cdecl pkt_build_sync(NET_PKT *)
 0x0045D760,func,?pkt_build_sync_reply@@YAXPAUNET_PKT@@@Z,pkt_build_sync_reply,sms,confirmed,fill sync-reply header,void __cdecl pkt_build_sync_reply(NET_PKT *)
 0x0045D780,func,?pkt_build_play_game@@YAXPAUNET_PKT@@@Z,pkt_build_play_game,sms,confirmed,fill play-game (start) header,void __cdecl pkt_build_play_game(NET_PKT *)
+0x0045D7A0,func,?pkt_send_debug@@YADHPAD@Z,pkt_send_debug,sms,confirmed,,"char __cdecl pkt_send_debug(int, char *)"
 0x0045D810,func,?pkt_send_player_info@@YADHGPAUNET_PLAYER_LIST@@@Z,pkt_send_player_info,sms,confirmed,send NET_PLAYER_LIST entry,"char __cdecl pkt_send_player_info(int, unsigned short, NET_PLAYER_LIST *)"
+0x0045D850,func,?pkt_sock_send_player_info@@YADIGPAUNET_PLAYER_LIST@@@Z,pkt_sock_send_player_info,sms,confirmed,,"char __cdecl pkt_sock_send_player_info(unsigned int, unsigned short, NET_PLAYER_LIST *)"
 0x0045D890,func,?pkt_build_player_info@@YAXPAUNET_PKT@@GPAUNET_PLAYER_LIST@@@Z,pkt_build_player_info,sms,confirmed,serialize NET_PLAYER_LIST into NET_PKT,"void __cdecl pkt_build_player_info(NET_PKT *, unsigned short, NET_PLAYER_LIST *)"
 0x0045D940,func,?pkt_sock_send@@YADPAUNET_PKT@@I@Z,pkt_sock_send,sms,confirmed,low-level: send NET_PKT to one socket,"char __cdecl pkt_sock_send(NET_PKT *, unsigned int)"
 0x0045D970,func,?pkt_send@@YADPAUNET_PKT@@H@Z,pkt_send,sms,confirmed,low-level: send NET_PKT to peer index,"char __cdecl pkt_send(NET_PKT *, int)"
 0x0045DA10,func,?pkt_set_header@@YAXHPAUNET_PKT@@H@Z,pkt_set_header,sms,confirmed,fill NET_PKT header (type/len),"void __cdecl pkt_set_header(int, NET_PKT *, int)"
 0x0045DA30,func,pkt_queue_write,,re,inferred,"append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30","undefined4 __cdecl pkt_queue_write(undefined4, undefined4, undefined4)"
 0x0045DB00,func,?pkt_sock_read@@YADPAUNET_PKT@@I@Z,pkt_sock_read,sms,confirmed,read one NET_PKT from a socket,"char __cdecl pkt_sock_read(NET_PKT *, unsigned int)"
+0x00464880,func,?dlg_list_get_new_selection@@YADPAXPAUNET_ADDRESS@@PAD@Z,dlg_list_get_new_selection,sms,confirmed,,"char __cdecl dlg_list_get_new_selection(void *, NET_ADDRESS *, char *)"
+0x0046ACF0,func,?net_test_start_latency_test@@YAXH@Z,net_test_start_latency_test,sms,confirmed,,void __cdecl net_test_start_latency_test(int)
 0x0046BD90,func,,,waiver,confirmed,FOREIGN Cobra input poll (see Part 1 exclusions) — NOT network,
 0x0046C0A0,func,MPEnqueue,,re,confirmed,"core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper')","undefined4 __stdcall MPEnqueue(undefined4, undefined4, undefined4, undefined4)"
 0x0046C28C,func,,,waiver,confirmed,Ghidra split tail of ?MPMissionInit1@@YGXXZ (0x46C280),
@@ -66,6 +92,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004701AC,func,,,waiver,confirmed,Ghidra split tail of ?MPManAdd@@YGXGPADEPAUF24_POINT3@@1J@Z (0x4701A0),
 0x0047025C,func,,,waiver,confirmed,Ghidra split tail of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z (0x470250),
 0x00470780,func,MPMsgRemapAliases,,re,confirmed,"remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","void __fastcall MPMsgRemapAliases(undefined4 *, char)"
+0x00470E80,func,?MPQuickButton@@YIXJJ@Z,MPQuickButton,sms,confirmed,,"void __fastcall MPQuickButton(long, long)"
+0x00470EF0,func,?MPPlayerChoseFort@@YIXE@Z,MPPlayerChoseFort,sms,confirmed,,void __fastcall MPPlayerChoseFort(unsigned char)
+0x00470F30,func,?MPFortButton@@YIXJJ@Z,MPFortButton,sms,confirmed,,"void __fastcall MPFortButton(long, long)"
+0x00470FA0,func,?MPFortButton2@@YIXJJ@Z,MPFortButton2,sms,confirmed,,"void __fastcall MPFortButton2(long, long)"
 0x004715BC,func,,,waiver,confirmed,Ghidra split tail of ?MPStatusDraw@@YIXD@Z (0x4715B0),
 0x00471880,func,MPChatChecksum,,re,confirmed,checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl MPChatChecksum(void)
 0x004718F0,func,MPDrawStatusLine,,re,inferred,truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0,"undefined4 __stdcall MPDrawStatusLine(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
@@ -73,14 +103,23 @@ va,kind,name,display,source,confidence,notes,type
 0x00471B80,func,MPAllPeersAtStatus,,re,confirmed,test whether every connected peer's _mpStatus == param_1. Body @0x471B80; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MPAllPeersAtStatus(undefined4)
 0x00471BDF,func,,,waiver,confirmed,Ghidra split tail of ?MPAssignPlayers@@YGXXZ (0x471BD0),
 0x00471FA0,func,MPAssignPlanePlayers,,re,confirmed,"per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MPAssignPlanePlayers(short)
+0x00472100,func,MPComparePlaneRank,MPComparePlaneRank,re,confirmed,qsort comparator ordering the multiplayer wing-assignment candidates by the 4-byte rank at +3 of each 7-byte record; ?MPAssignPlayers@@YGXXZ passes it to _qsort twice over the table at 0x547180,"int __cdecl MPComparePlaneRank(int, int)"
 0x00472130,func,MPBuildSpawnPayload,,re,inferred,apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130,"undefined4 __stdcall MPBuildSpawnPayload(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00472670,func,MPRevive,,re,inferred,apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670,
 0x0047267C,func,,,waiver,confirmed,Ghidra split tail of the 0x472670 (MPRevive) function; decompile failed,
 0x004735D0,func,MPChatStore,,re,confirmed,"append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MPChatStore(undefined4 *)
+0x0047F5F0,func,?CN_GetBigString@@YAJPADPAE@Z,CN_GetBigString,sms,confirmed,,"long __cdecl CN_GetBigString(char *, unsigned char *)"
 0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),"unsigned int __cdecl sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
+0x00487670,func,?sapserverbroadcast@@YAXIPAUNET_ADDRESS@@PADW4NET_SEND_CANCEL@@@Z,sapserverbroadcast,sms,confirmed,,"void __cdecl sapserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL)"
+0x00487760,func,?sapquery@@YAXIPAUPKT_PLAYER_AD@@PAUNET_ADDRESS@@@Z,sapquery,sms,confirmed,,"void __cdecl sapquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *)"
+0x004878C0,func,?sapprocessadvertisement@@YADPADHPAUNET_PKT@@PAUNET_ADDRESS@@PAJ@Z,sapprocessadvertisement,sms,confirmed,,"char __cdecl sapprocessadvertisement(char *, int, NET_PKT *, NET_ADDRESS *, long *)"
 0x00493780,func,?RunIPXOptionsDialog@@YAXPAUCN_INFO@@PAD@Z,RunIPXOptionsDialog,sms,confirmed,IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild,"void __cdecl RunIPXOptionsDialog(CN_INFO *, char *)"
 0x00493CB0,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table,
 0x00493CB4,data,,,waiver,inferred,RunIPXOptionsDialog compiler-generated switch/jump table,
+0x00493EE0,func,?connected_state_callback@@YAXPAXW4NET_CONNECTED_STATE@@@Z,connected_state_callback,sms,confirmed,,"void __cdecl connected_state_callback(void *, NET_CONNECTED_STATE)"
+0x004940E0,func,?players_box_add@@YAXPAXW4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z,players_box_add,sms,confirmed,,"void __cdecl players_box_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long)"
+0x004941E0,func,?players_box_connected_state_callback@@YAXPAXW4NET_CONNECTED_STATE@@@Z,players_box_connected_state_callback,sms,confirmed,,"void __cdecl players_box_connected_state_callback(void *, NET_CONNECTED_STATE)"
+0x00494D50,func,?MP_Dont_care@@YADXZ,MP_Dont_care,sms,confirmed,,char __cdecl MP_Dont_care(void)
 0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST,char __cdecl spxinit(NET_ADDRESS_LIST *)
 0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO,"char __cdecl spxinit2(NET_PROTOCOL *, CN_INFO *)"
 0x00497010,func,?spxlisten@@YAIXZ,spxlisten,sms,confirmed,open+bind an IPX socket and start SPX listening (backlog 5),unsigned int __cdecl spxlisten(void)
@@ -88,7 +127,9 @@ va,kind,name,display,source,confidence,notes,type
 0x00497150,func,?spxconnect@@YAIPAUNET_ADDRESS@@@Z,spxconnect,sms,confirmed,SPX connect to a NET_ADDRESS,unsigned int __cdecl spxconnect(NET_ADDRESS *)
 0x004971D0,func,?convert_addr_ipx2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_ipx@@@Z,convert_addr_ipx2usnf,sms,confirmed,convert an IPX sockaddr to the engine NET_ADDRESS,"void __cdecl convert_addr_ipx2usnf(NET_ADDRESS *, sockaddr_ipx *)"
 0x00497210,func,?convert_addr_usnf2ipx@@YAXPAUsockaddr_ipx@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2ipx,sms,confirmed,convert an engine NET_ADDRESS to an IPX sockaddr,"void __cdecl convert_addr_usnf2ipx(sockaddr_ipx *, NET_ADDRESS *)"
+0x00497250,func,?spxaddr2str@@YADPAUNET_ADDRESS@@PAD@Z,spxaddr2str,sms,confirmed,,"char __cdecl spxaddr2str(NET_ADDRESS *, char *)"
 0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO,"char __cdecl spxbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *)"
+0x004972D0,func,?spxfactory@@YAXPAUNET_PROTOCOL@@PADH@Z,spxfactory,sms,confirmed,,"void __cdecl spxfactory(NET_PROTOCOL *, char *, int)"
 0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3),"void __cdecl setPacketInfo(SERIAL_PACKET &, long, long)"
 0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type,unsigned long __cdecl packetCRC(SERIAL_PACKET &)
 0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC(),char __cdecl verifyPacketCRC(SERIAL_PACKET &)
@@ -97,6 +138,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0049A100,func,?SER_LeaveCriticalCodeBackground@@YAXXZ,SER_LeaveCriticalCodeBackground,sms,confirmed,clear Ctrl busy flag under critical section,void __cdecl SER_LeaveCriticalCodeBackground(void)
 0x0049A120,func,?SER_CheckDisconnect@@YADXZ,SER_CheckDisconnect,sms,confirmed,detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags,char __cdecl SER_CheckDisconnect(void)
 0x0049A1B0,func,?SER_GetOutholdingLimit@@YAXXZ,SER_GetOutholdingLimit,sms,confirmed,transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window),void __cdecl SER_GetOutholdingLimit(void)
+0x0049A260,func,?SER_BackgroundThread@@YGKPAX@Z,SER_BackgroundThread,sms,confirmed,,unsigned long __stdcall SER_BackgroundThread(void *)
 0x0049A3E0,func,?updateQueueHead@@YAXAAUSERIAL_QUEUE@@J@Z,updateQueueHead,sms,confirmed,head = seq % capacity; returns seq / capacity (wrap count),"void __cdecl updateQueueHead(SERIAL_QUEUE &, long)"
 0x0049A400,func,?insertQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,insertQueue,sms,confirmed,copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count,"void __cdecl insertQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
 0x0049A460,func,?overwriteQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,overwriteQueue,sms,confirmed,overwrite slot by wrapper seq without count bump (history record),"void __cdecl overwriteQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
@@ -104,6 +146,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0049A4D0,func,?fetchFromQueueTail@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,fetchFromQueueTail,sms,confirmed,pop tail slot then zero it; advance tail; returns wrap count,"void __cdecl fetchFromQueueTail(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
 0x0049A660,func,?SER_InitializeLowLevel@@YAXXZ,SER_InitializeLowLevel,sms,confirmed,init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers,void __cdecl SER_InitializeLowLevel(void)
 0x0049A6B0,func,?SER_ShutdownLowLevel@@YAXXZ,SER_ShutdownLowLevel,sms,confirmed,mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag,void __cdecl SER_ShutdownLowLevel(void)
+0x0049A6E0,func,?fnc_toCallDuringAnswer@@YAHH@Z,fnc_toCallDuringAnswer,sms,confirmed,,int __cdecl fnc_toCallDuringAnswer(int)
 0x0049A700,func,?strToCom@@YAJPAE@Z,strToCom,sms,confirmed,"map ""COM1""..""COM8"" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none",long __cdecl strToCom(unsigned char *)
 0x0049A7D0,func,?MOD_InitPortAndModem@@YAJPAUCN_INFO@@J@Z,MOD_InitPortAndModem,sms,confirmed,SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc,"long __cdecl MOD_InitPortAndModem(CN_INFO *, long)"
 0x0049A9B0,func,?MOD_FindModemAndInitPCMCIA@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInitPCMCIA,sms,confirmed,enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem,"long __cdecl MOD_FindModemAndInitPCMCIA(CN_INFO *, long)"
@@ -112,12 +155,35 @@ va,kind,name,display,source,confidence,notes,type
 0x0049AF30,func,?MOD_InitializeAndConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_InitializeAndConnect,sms,confirmed,MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure,"long __cdecl MOD_InitializeAndConnect(CN_INFO *, long, long *)"
 0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce,"long __cdecl MOD_Initialize(CN_INFO *, long)"
 0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3,void __cdecl MOD_Shutdown(void)
+0x0049B110,func,?serIO@@YAJJPAD@Z,serIO,sms,confirmed,,"long __cdecl serIO(long, char *)"
+0x004A62B0,func,?socket_set_socket@@YAXPAUsocket_state@@I@Z,socket_set_socket,sms,confirmed,,"void __cdecl socket_set_socket(socket_state *, unsigned int)"
+0x004ABD40,func,?tcpinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,tcpinit2,sms,confirmed,,"char __cdecl tcpinit2(NET_PROTOCOL *, CN_INFO *)"
+0x004ABD60,func,?tcp_save_settings@@YAXPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,tcp_save_settings,sms,confirmed,,"void __cdecl tcp_save_settings(NET_PROTOCOL *, CN_INFO *)"
+0x004ABDC0,func,?tcplisten@@YAIXZ,tcplisten,sms,confirmed,,unsigned int __cdecl tcplisten(void)
+0x004ABF00,func,?tcpconnect@@YAIPAUNET_ADDRESS@@@Z,tcpconnect,sms,confirmed,,unsigned int __cdecl tcpconnect(NET_ADDRESS *)
+0x004ABF90,func,?tcpaddr2str@@YADPAUNET_ADDRESS@@PAD@Z,tcpaddr2str,sms,confirmed,,"char __cdecl tcpaddr2str(NET_ADDRESS *, char *)"
+0x004ABFE0,func,?convert_addr_usnf2tcp@@YAXPAUsockaddr_in@@PAUNET_ADDRESS@@@Z,convert_addr_usnf2tcp,sms,confirmed,,"void __cdecl convert_addr_usnf2tcp(sockaddr_in *, NET_ADDRESS *)"
+0x004AC030,func,?convert_addr_tcp2usnf@@YAXPAUNET_ADDRESS@@PAUsockaddr_in@@@Z,convert_addr_tcp2usnf,sms,confirmed,,"void __cdecl convert_addr_tcp2usnf(NET_ADDRESS *, sockaddr_in *)"
+0x004AC080,func,?tcpfactory@@YAXPAUNET_PROTOCOL@@PADH@Z,tcpfactory,sms,confirmed,,"void __cdecl tcpfactory(NET_PROTOCOL *, char *, int)"
+0x004AC0C0,func,?tcpbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,tcpbuildaddress,sms,confirmed,,"char __cdecl tcpbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *)"
 0x004AC180,func,?SER_SendBytes@@YAXPAEJ@Z,SER_SendBytes,sms,confirmed,append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba,"void __cdecl SER_SendBytes(unsigned char *, long)"
 0x004AC1D0,func,?SER_SendHoldingBuffer@@YAXXZ,SER_SendHoldingBuffer,sms,confirmed,flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel,void __cdecl SER_SendHoldingBuffer(void)
 0x004AC210,func,?SER_OkToSendPacket@@YADXZ,SER_OkToSendPacket,sms,confirmed,budget check (>0x17=23 bytes free); set pending flag DAT_00570edc,char __cdecl SER_OkToSendPacket(void)
 0x004AC230,func,?SER_SendPacket@@YADAAUSERIAL_PACKET_WRAPPER@@D@Z,SER_SendPacket,sms,confirmed,per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters,"char __cdecl SER_SendPacket(SERIAL_PACKET_WRAPPER &, char)"
 0x004AC2E0,func,?SER_SendRequests@@YAXXZ,SER_SendRequests,sms,confirmed,scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket,void __cdecl SER_SendRequests(void)
 0x004AC480,func,?SER_SendStatus@@YAXXZ,SER_SendStatus,sms,confirmed,send status/ACK packet (type0) carrying last-tx seq + per-player state,void __cdecl SER_SendStatus(void)
+0x004B06C0,func,?NetProtocolPresent@@YADJ@Z,NetProtocolPresent,sms,confirmed,,char __cdecl NetProtocolPresent(long)
+0x004B0BD0,func,?NET_Synchronize@@YAXXZ,NET_Synchronize,sms,confirmed,,void __cdecl NET_Synchronize(void)
+0x004B0CC0,func,?NET_Disconnect@@YAXJ@Z,NET_Disconnect,sms,confirmed,,void __cdecl NET_Disconnect(long)
+0x004B0CF0,func,?NET_Write@@YAJJPAEJ@Z,NET_Write,sms,confirmed,,"long __cdecl NET_Write(long, unsigned char *, long)"
+0x004B0DD0,func,?NET_WriteAvail@@YAJJ@Z,NET_WriteAvail,sms,confirmed,,long __cdecl NET_WriteAvail(long)
+0x004B0E00,func,?NET_Flush@@YADJD@Z,NET_Flush,sms,confirmed,,"char __cdecl NET_Flush(long, char)"
+0x004B0E50,func,?NET_Read@@YAJJPAEJ@Z,NET_Read,sms,confirmed,,"long __cdecl NET_Read(long, unsigned char *, long)"
+0x004B10D0,func,?NET_ReadAvail@@YAJJJ@Z,NET_ReadAvail,sms,confirmed,,"long __cdecl NET_ReadAvail(long, long)"
+0x004B1150,func,?NET_PeekByte@@YAJJ@Z,NET_PeekByte,sms,confirmed,,long __cdecl NET_PeekByte(long)
+0x004B1660,func,?game_event_handler@@YADIJHPAUsocket_state@@@Z,game_event_handler,sms,confirmed,,"char __cdecl game_event_handler(unsigned int, long, int, socket_state *)"
+0x004B1A80,func,?validate_packet@@YADPAUNET_PKT@@@Z,validate_packet,sms,confirmed,,char __cdecl validate_packet(NET_PKT *)
+0x004B25F0,func,?state_func_query_hosts@@YAXXZ,state_func_query_hosts,sms,confirmed,,void __cdecl state_func_query_hosts(void)
 0x004EB4D4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB4F8,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB50C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
@@ -127,10 +193,23 @@ va,kind,name,display,source,confidence,notes,type
 0x004EB56C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB580,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB5A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB8F0,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EB918,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EB934,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
 0x004EB954,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004EB960,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EB994,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EBA30,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EBA7C,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EBB2C,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EBB78,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
+0x004EBBF4,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
 0x004EBC14,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
 0x004EBCC4,data,,,waiver,inferred,unnamed data referenced by network/SPX code - interior or binary-only constant,
+0x004EBCF4,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
 0x004EBCFC,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
+0x004EC1A8,data,,,waiver,confirmed,"string literal — Sprintf format ""%s lost connection with %s"" (_master_events); constant text, not state",
+0x004EC1E0,data,,,waiver,confirmed,"string literal — Sprintf format ""Lost connection with %s"" (_master_events); constant text, not state",
 0x004F7754,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
 0x004F7778,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
 0x004F777A,data,,,waiver,confirmed,interior of / adjacent to ?constConv@?1??cobraTime@@YAJJ@Z@4JA; named at its base or owned by that subsystem,
@@ -222,6 +301,8 @@ va,kind,name,display,source,confidence,notes,type
 0x005382AE,data,,,waiver,confirmed,interior of / adjacent to ?frontV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
 0x00539C96,data,,,waiver,confirmed,interior of / adjacent to ?otherV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
 0x0053BDEE,data,,,waiver,confirmed,interior of / adjacent to ?targetV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
+0x00544CBC,data,,,waiver,confirmed,interior of ?InPacket@@3USERIAL_PACKET_WRAPPER@@A (+0x14) — byte count into the +0x1C payload; named at its base,
+0x00544CC4,data,,,waiver,confirmed,"interior of ?InPacket@@3USERIAL_PACKET_WRAPPER@@A (+0x1C) — payload bytes, indexed by the +0x14 count; named at its base",
 0x00546D58,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
 0x00546D60,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
 0x00546D64,data,,,waiver,confirmed,interior of / adjacent to ?buffRemapTbl@@3PAEA; named at its base or owned by that subsystem,
@@ -259,15 +340,20 @@ va,kind,name,display,source,confidence,notes,type
 0x00560F54,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem,
 0x00560F58,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem,
 0x00560F64,data,,,waiver,confirmed,interior of / adjacent to ?InQueue@@3USERIAL_QUEUE@@A; named at its base or owned by that subsystem,
+0x00570B6C,data,,,waiver,confirmed,"interior of ?OutQueue@@3USERIAL_QUEUE@@A (+4) — queue tail, differenced against the base; named at its base",
 0x00570BB4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570BB5,data,,,waiver,confirmed,interior of ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A (+0x1D); named at its base,
 0x00570BBA,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570BBE,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570CBC,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CBD,data,,,waiver,confirmed,interior of ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A (+0x125); named at its base,
+0x00570CC0,data,,,waiver,confirmed,interior of ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A (+0x128); named at its base,
 0x00570CC1,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570CC2,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570CC3,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570CC4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570CC5,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570CC6,data,,,waiver,confirmed,interior of ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A (+0x12E); named at its base,
 0x00570CF6,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570D26,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570D28,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
@@ -280,12 +366,16 @@ va,kind,name,display,source,confidence,notes,type
 0x00570D94,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570DB0,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570DC0,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00570DC4,data,,,waiver,confirmed,interior of ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A (+0x22C); named at its base,
 0x00570DCC,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
 0x00570ED4,data,,,waiver,confirmed,interior of / adjacent to ?Ctrl@@3USERIAL_CONTROL_STRUCTURE@@A; named at its base or owned by that subsystem,
+0x00572568,data,_querySocket,querySocket,re,confirmed,"master/query socket handle — set from the connect result in ?NET_StartQuery@@…, used for the broadcast host query, closed and reset to -1 by ?NET_MasterShutdown@@YAXXZ",u32
 0x0057256C,data,,,waiver,confirmed,interior of / adjacent to ?socket_list@@3USOCKET_STATE_LIST@@A; named at its base or owned by that subsystem,
 0x00572570,data,,,waiver,confirmed,interior of / adjacent to ?socket_list@@3USOCKET_STATE_LIST@@A; named at its base or owned by that subsystem,
 0x00580C70,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem,
 0x00580C74,data,,,waiver,confirmed,interior of / adjacent to ?callbacks@@3UCALLBACK_FUNC_LIST@@A; named at its base or owned by that subsystem,
+0x00580C78,data,,,waiver,confirmed,interior of ?callbacks@@3UCALLBACK_FUNC_LIST@@A (+0x10) — context argument passed to the +0x14 callback; named at its base,
+0x00580C7C,data,,,waiver,confirmed,"interior of ?callbacks@@3UCALLBACK_FUNC_LIST@@A (+0x14) — callback function pointer, called via (*code)(ctx, 0); named at its base",
 0x00580C9E,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem,
 0x00580CAA,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
 0x00580CAE,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
@@ -297,6 +387,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00580CD2,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem,
 0x00580CDA,data,,,waiver,confirmed,interior of / adjacent to ?ws@@3U_winsock_funcs@@A; named at its base or owned by that subsystem,
 0x00580CE2,data,,,waiver,inferred,winsock/IPX dynamically-resolved function-pointer (socket/bind/listen/ioctl/close table),
+0x00580D0C,data,,,waiver,confirmed,"interior of ?player_list@@3UNET_PLAYER_LIST@@A (+0xC) — player count, incremented/decremented on join/leave; named at its base",
 0x00580D14,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
 0x00580D18,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
 0x00580D1C,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,

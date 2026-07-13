@@ -23,10 +23,13 @@ va,kind,name,display,source,confidence,notes,type
 0x00452760,func,@FMBayIsOpen@0,FMBayIsOpen,sms,confirmed,,undefined4 __fastcall FMBayIsOpen(void)
 0x00452770,func,_HARDPtrs@12,HARDPtrs,sms,confirmed,,"undefined4 __stdcall HARDPtrs(undefined4, undefined4, undefined4)"
 0x004527F0,func,@HARDUnload@8,HARDUnload,sms,confirmed,,"undefined4 __fastcall HARDUnload(undefined4, undefined4)"
+0x00452870,func,?HARDPtrsFort@@YGPAXJPAPAUHARDPOINT@@PAPAUHARDPOINT_TYPE@@@Z,HARDPtrsFort,sms,confirmed,,"void * __stdcall HARDPtrsFort(long, HARDPOINT **, HARDPOINT_TYPE **)"
+0x004528D0,func,?HARDUnloadFort@@YIDJJ@Z,HARDUnloadFort,sms,confirmed,,"char __fastcall HARDUnloadFort(long, long)"
 0x00452940,func,@HARDStoreWeight@4,HARDStoreWeight,sms,confirmed,,undefined4 __fastcall HARDStoreWeight(undefined4)
 0x00452980,func,_HARDCanLoad@8,HARDCanLoad,sms,confirmed,,"undefined4 __stdcall HARDCanLoad(undefined4, undefined4)"
 0x00452C20,func,_HARDLoad@12,HARDLoad,sms,confirmed,,"undefined4 __stdcall HARDLoad(undefined4, undefined4, undefined4)"
 0x00452D10,func,_HARDLoadAll@0,HARDLoadAll,sms,confirmed,,undefined4 __stdcall HARDLoadAll(void)
+0x00452D60,func,_HARDUnloadAll@0,HARDUnloadAll,sms,confirmed,,undefined4 __stdcall HARDUnloadAll(void)
 0x00452D90,func,@HARDBestSeekers@12,HARDBestSeekers,sms,confirmed,,"undefined4 __fastcall HARDBestSeekers(undefined4, undefined4, undefined4)"
 0x00452E60,func,@HARDBestSeeker@8,HARDBestSeeker,sms,confirmed,,"undefined4 __fastcall HARDBestSeeker(undefined4, undefined4)"
 0x00452EA0,func,@HARDFindJammer@4,HARDFindJammer,sms,confirmed,,undefined4 __fastcall HARDFindJammer(undefined4)
@@ -40,6 +43,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004533D0,func,_HARDGunsOnly@0,HARDGunsOnly,sms,confirmed,,undefined4 __stdcall HARDGunsOnly(void)
 0x00453440,func,_HARDGunsOnlyAll@0,HARDGunsOnlyAll,sms,confirmed,,undefined4 __stdcall HARDGunsOnlyAll(void)
 0x00453490,func,@HARDGunLoadPercent@4,HARDGunLoadPercent,sms,confirmed,,undefined4 __fastcall HARDGunLoadPercent(undefined4)
+0x00453510,func,_HARDNameDebug@4,HARDNameDebug,sms,confirmed,,undefined4 __stdcall HARDNameDebug(undefined4)
 0x00453640,func,_HARDUnlimited@0,HARDUnlimited,sms,confirmed,,undefined4 __stdcall HARDUnlimited(void)
 0x00453710,func,@HARDPodHack@4,HARDPodHack,sms,confirmed,,undefined4 __fastcall HARDPodHack(undefined4)
 0x00453800,func,_HARDClearUnloadedHarpoints@0,HARDClearUnloadedHarpoints,sms,confirmed,,undefined4 __stdcall HARDClearUnloadedHarpoints(void)
@@ -49,6 +53,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004538CB,func,,,waiver,confirmed,Ghidra split tail of _HARDSaveHumanLoads@0 (0x4538C0) — the human-loadout save loop,
 0x004539C0,func,_HARDRestoreHumanLoad@0,HARDRestoreHumanLoad,sms,confirmed,,undefined4 __stdcall HARDRestoreHumanLoad(void)
 0x00453A70,func,_HARDTotalFuel@0,HARDTotalFuel,sms,confirmed,,undefined4 __stdcall HARDTotalFuel(void)
+0x00453AC0,func,@HARDNumLoaded@8,HARDNumLoaded,sms,confirmed,,"undefined4 __fastcall HARDNumLoaded(undefined4, undefined4)"
 0x00453AF0,func,_HARDHasInternalBay@4,HARDHasInternalBay,sms,confirmed,,undefined4 __stdcall HARDHasInternalBay(undefined4)
 0x00453B90,func,_HARDRearmTest@0,HARDRearmTest,sms,confirmed,,undefined4 __stdcall HARDRearmTest(void)
 0x00453C50,func,_HARDRearmHumanLoad@0,HARDRearmHumanLoad,sms,confirmed,,undefined4 __stdcall HARDRearmHumanLoad(void)

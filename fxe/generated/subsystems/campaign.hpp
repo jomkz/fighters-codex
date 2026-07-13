@@ -8,11 +8,18 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 121/123 functions have a recovered signature (+2 that are not C functions); 0/0 globals have a recovered type.
+// 128/152 functions have a recovered signature (+2 that are not C functions); 3/3 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
+// --- globals ---------------------------------------------------------
+extern s16 ejectNextTime;  // 0x0050CFD1  ejection seat: next state deadline, in _currentT ticks — EJECTAdd sets _currentT+0xC, EJECTMoveProc re-arms at +1 and parks it at 0x7FFF when the sequence ends
+extern ANGLE ejectAngle;  // 0x0050CFD3  ejection seat: seat attitude — passed as the ANGLE* first argument of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z, which types it, and slewed toward 0x7FF8 by _Slew@16
+extern s32 ejectSpeed;  // 0x0050CFD9  ejection seat: seat velocity — EJECTAdd seeds it from the ejecting aircraft, EJECTMoveProc drains it by _LMultDiv256(speed, _serviceTicks) each tick and drives _Move3d with the remainder, clamping at 0
+
 // --- functions -------------------------------------------------------
+undefined4 ZONEAdd(undefined4);  // 0x00421C80  __stdcall
+undefined4 ZONEForGV(void);  // 0x00421CC0  __stdcall
 undefined4 ZONEActive(undefined4);  // 0x00421D40  __fastcall
 undefined4 ZONEPickTarget(undefined4);  // 0x00422120  __stdcall
 undefined4 MAPWPListBounds(undefined4, undefined4, undefined4);  // 0x00422190  __stdcall
@@ -123,7 +130,12 @@ undefined4 PilotLoadBySortIndex(undefined4, undefined4, undefined4);  // 0x00468
 void PilotFormatRank(undefined4 *);  // 0x00468F00  __fastcall
 undefined4 PilotDiskSpaceError(int);  // 0x00468F40  __fastcall
 void PilotSetField(undefined4,char);  // 0x00468F80  __cdecl
+void PilotFieldProc(int *, int);  // 0x00469010  __cdecl
+char EJECTEventProc(short, long);  // 0x00469300  __cdecl
+void EJECTMoveProc(char);  // 0x004694D0  __cdecl
 undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
+char MyFilterProc(unsigned short *, long *, char *);  // 0x00480B70  __cdecl
+undefined4 CampaignPlanesLeft(void);  // 0x00480D70  __stdcall
 undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
 undefined4 MISSIONEnemiesAlive(void);  // 0x00481A7B  __cdecl
 void TextNextToken(char *);  // 0x00483C90  __fastcall
@@ -146,5 +158,27 @@ undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004226EE  MAPSetFormationWP -- signature not recovered
 // TODO(#453): 0x004282D0  MAPToggleObjControl -- signature not recovered
+// TODO(#453): 0x00467110  AwardMedal -- signature not recovered
+// TODO(#453): 0x004692D0  EJECTProc -- signature not recovered
+// TODO(#453): 0x00480C40  InitCampaignPilot -- signature not recovered
+// TODO(#453): 0x00480C90  AddCampaignPlane -- signature not recovered
+// TODO(#453): 0x00480D90  UkraineCheckMaxPlanes -- signature not recovered
+// TODO(#453): 0x00480DF0  UkraineAddA7 -- signature not recovered
+// TODO(#453): 0x00480F90  UkraineRescued -- signature not recovered
+// TODO(#453): 0x004810C0  KurileRescued -- signature not recovered
+// TODO(#453): 0x004810D0  VietnamRescued -- signature not recovered
+// TODO(#453): 0x004810E0  ATFRescued -- signature not recovered
+// TODO(#453): 0x00481190  UkraineQuit -- signature not recovered
+// TODO(#453): 0x00481260  KurileQuit -- signature not recovered
+// TODO(#453): 0x00481270  VietnamQuit -- signature not recovered
+// TODO(#453): 0x00483E00  UkraineMedals -- signature not recovered
+// TODO(#453): 0x00484050  KurileMedals -- signature not recovered
+// TODO(#453): 0x004842B0  KurilePromotions -- signature not recovered
+// TODO(#453): 0x00484410  VietnamMedals -- signature not recovered
+// TODO(#453): 0x00484420  VietnamPromotions -- signature not recovered
+// TODO(#453): 0x00484430  ATFEgyptMedals -- signature not recovered
+// TODO(#453): 0x00484690  ATFVladMedals -- signature not recovered
+// TODO(#453): 0x004848F0  ATFPromotions -- signature not recovered
+// TODO(#453): 0x00484B70  ATFBalticMedals -- signature not recovered
 
 }  // namespace fxe::fa::campaign

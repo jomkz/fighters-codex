@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Terrain (T_) -- FA.EXE
-// 74/81 functions have a recovered signature (+1 that are not C functions); 0/0 globals have a recovered type.
+// 76/84 functions have a recovered signature (+1 that are not C functions); 0/0 globals have a recovered type.
 
 namespace fxe::fa::terrain {
 
@@ -74,7 +74,9 @@ undefined4 T_SortTmapList(void);  // 0x004AA820  __fastcall
 void T_CellTmapLookup(undefined4, undefined4, undefined4);  // 0x004AA840  __fastcall
 undefined4 T_InitHorizonProc(void);  // 0x004AACA0  __stdcall
 void T_HorizonProc(void);  // 0x004AACE0  __cdecl
+undefined4 HardpointAngle(undefined4);  // 0x004AB7F0  __fastcall
 undefined4 BrushFromIndex(undefined4);  // 0x004AB860  __fastcall
+undefined4 InsectWingAngle(void);  // 0x004ABA60  __stdcall
 undefined4 T_Info(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004ABAB0  __stdcall
 undefined4 T_InitDatabase(void);  // 0x004C5D30  __stdcall
 undefined4 T_ShutdownDatabase(void);  // 0x004C5D50  __stdcall
@@ -103,5 +105,6 @@ undefined4 T_InterpAltSE(undefined4, undefined4, undefined4, undefined4);  // 0x
 // TODO(#453): 0x004A8730  T_InitMooseProc -- signature not recovered
 // TODO(#453): 0x004A8B90  T_InitCloudProc -- signature not recovered
 // TODO(#453): 0x004A9D00  T_BuildQuadCell -- signature not recovered
+// TODO(#453): 0x004AACF0  T_DefaultHorizon -- signature not recovered
 
 }  // namespace fxe::fa::terrain

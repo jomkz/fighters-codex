@@ -82,6 +82,10 @@ run "setup_project (import FA.EXE + FA.SMS)"  "$HERE/setup_project.sh"
 run "import_targets (6 companion binaries)"   "$HERE/import_targets.sh"
 run "apply_symbols ALL"                       "$HERE/apply_symbols.sh" ALL
 run "apply_types ALL"                         "$HERE/apply_types.sh" ALL
+# Disassemble the code auto-analysis never reached (#496). Runs AFTER apply_symbols, so the
+# named functions exist first and the sweep only fills what is genuinely left. Part of the
+# pipeline, not a one-off: the project state has to be reproducible from db/ + these scripts.
+run "sweep_undefined (FA.EXE)"                "$HERE/run_ghidra.sh" SweepUndefinedCode.java --write
 run "export_inventory ALL"                    "$HERE/export_inventory.sh" ALL
 
 if (( EVIDENCE )); then

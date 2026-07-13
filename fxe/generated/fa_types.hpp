@@ -88,6 +88,12 @@ typedef struct HIT_OBJ_DATA HIT_OBJ_DATA; /* objects, weapons: hit record       
 typedef struct LEAF_LIST    LEAF_LIST;    /* terrain: quadtree leaf list             */
 typedef struct MODSPEC      MODSPEC;      /* sound: module / track spec              */
 typedef struct ACTION       ACTION;       /* shell-ui: menu action                   */
+typedef struct VDO          VDO;          /* video: VDO player context               */
+typedef struct ANGLE          ANGLE;          /* objects: attitude vector (MPPrepareForInterp) */
+typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station          */
+typedef struct HARDPOINT_TYPE HARDPOINT_TYPE; /* flight-model: store-station type     */
+typedef struct DIAL           DIAL;           /* shell-ui: dial/knob widget           */
+typedef struct ModemStrings   ModemStrings;   /* input: modem init/dial string set    */
 
 /* network -- the transport types the NET_/SERIAL_ signatures name */
 typedef struct NET_PKT               NET_PKT;
@@ -97,9 +103,12 @@ typedef struct SERIAL_PACKET         SERIAL_PACKET;
 typedef struct SERIAL_PACKET_WRAPPER SERIAL_PACKET_WRAPPER;
 typedef struct SERIAL_QUEUE          SERIAL_QUEUE;
 typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address         */
+typedef struct sockaddr_in           sockaddr_in;   /* Winsock TCP/IP address        */
 typedef struct socket_state          socket_state;
+typedef struct PKT_PLAYER_AD         PKT_PLAYER_AD; /* game advertisement packet (UDP/SAP query) */
 
 /* MSVC CRT internals, named in the startup subsystem's exception-handling signatures */
+typedef struct _iobuf                _iobuf;  /* the CRT FILE struct, by its real name */
 typedef struct EHExceptionRecord     EHExceptionRecord;
 typedef struct EHRegistrationNode    EHRegistrationNode;
 typedef struct _EXCEPTION_POINTERS   _EXCEPTION_POINTERS;
@@ -110,6 +119,7 @@ typedef struct _s_FuncInfo           _s_FuncInfo;
 typedef int JOYRESULT;           /* input:   GetJoystickType / ReadDevice result     */
 typedef int PLAYER_ACTION;       /* network: player-action callback code             */
 typedef int NET_CONNECTED_STATE; /* network: connection-state callback code          */
+typedef int NET_SEND_CANCEL;     /* network: broadcast send/cancel selector          */
 
 /* `undefinedN` -- N bytes, type not recovered. Ghidra's idiom, and the one this database
  * uses wherever the evidence proves a SIZE but not a SEMANTICS:
