@@ -12,86 +12,90 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 ## FA.EXE
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 83/83 (100%) | 15 named · 145 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
-| Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 125/125 (100%) | 3 named · 167 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
-| Flight model / physics (FM/HARD) | `0x451480–0x454800` | 62/62 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
-| HUD / cockpit | `0x405E30–0x40AE50` | 49/49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
-| Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | 59/59 (100%) | 6 named · 49 waived | [doc](weapons.md) | ✓ | [#215](https://github.com/jomkz/fighters-codex/issues/215) | complete |
-| AI interpreter (CT) | `0x464C60–0x467110` | 122/122 (100%) | 8 named · 30 waived | [doc](ai-interpreter.md) | ✓ | [#216](https://github.com/jomkz/fighters-codex/issues/216) | complete |
-| Wingman / group AI (WNG/GRP) | `0x45E460–0x45FEC0` | 40/40 (100%) | 1 named · 16 waived | [doc](wingman.md) | ✓ | [#217](https://github.com/jomkz/fighters-codex/issues/217) | complete |
-| Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) | `0x421D40–0x421DD0`<br>`0x421DE0–0x4221D0`<br>`0x422230–0x422300`<br>`0x422350–0x422380`<br>`0x4224B3–0x4224EE`<br>`0x42256A–0x42267F`<br>`0x4226CB–0x4226F0`<br>`0x422828–0x422851`<br>`0x42297E–0x422A0D`<br>`0x422A71–0x42B800`<br>`0x467240–0x4672C0`<br>`0x4674F0–0x4678B0`<br>`0x467E30–0x467F30`<br>`0x468C40–0x469960`<br>`0x46A57B–0x46A640`<br>`0x47A510–0x47A5A0`<br>`0x47FAAE–0x47FEC0`<br>`0x4805AC–0x480690`<br>`0x4809D0–0x480A30`<br>`0x481920–0x481940`<br>`0x481A7B–0x481B80`<br>`0x483C90–0x484D90`<br>`0x485380–0x4854E0`<br>`0x4856F0–0x485820`<br>`0x4867D0–0x486810`<br>`0x486BF0–0x486C60`<br>`0x486DC0–0x486DF0` | 130/130 (100%) | 0 named · 360 waived | [doc](campaign.md) | ✓ | [#218](https://github.com/jomkz/fighters-codex/issues/218) | complete |
-| Network / multiplayer (NET/SER/UDP/MP) | `0x4016C0–0x402300`<br>`0x402330–0x402380`<br>`0x4024D0–0x402640`<br>`0x405360–0x4053D0`<br>`0x4054F0–0x405E30`<br>`0x45D090–0x45DBD0`<br>`0x46BD90–0x46BDE0`<br>`0x46C0A0–0x46C150`<br>`0x46C28C–0x46C470`<br>`0x46C680–0x46C910`<br>`0x46C980–0x46EED0`<br>`0x46EEDF–0x46FDB0`<br>`0x46FF20–0x46FF70`<br>`0x47001C–0x470150`<br>`0x4701AC–0x470250`<br>`0x47025C–0x470560`<br>`0x470780–0x4708B0`<br>`0x4715BC–0x4719E0`<br>`0x471A90–0x471BD0`<br>`0x471BDF–0x472260`<br>`0x472670–0x472A90`<br>`0x4735D0–0x473680`<br>`0x499F70–0x499F90`<br>`0x49A000–0x49A380`<br>`0x49A3E0–0x49A520`<br>`0x49A660–0x49A850`<br>`0x49A9B0–0x49AD70`<br>`0x49AF30–0x49B1D0`<br>`0x4AC180–0x4AC3E0`<br>`0x4AC480–0x4AC510` | 117/117 (100%) | 0 named · 186 waived | [doc](network.md) | ✓ | [#219](https://github.com/jomkz/fighters-codex/issues/219) | complete |
-| Sound / music (incl. WAIL32) | `0x4328B0–0x435C60` | 53/53 (100%) | 5 named · 179 waived | [doc](sound.md) | ✓ | [#220](https://github.com/jomkz/fighters-codex/issues/220) | complete |
-| Terrain (T_) | `0x4A7310–0x4ABBE2`<br>`0x4C5D30–0x4C60E8` | 85/85 (100%) | 0 named · 114 waived | [doc](terrain.md) | ✓ | [#221](https://github.com/jomkz/fighters-codex/issues/221) | complete |
-| Collision (COL) | `0x42B800–0x42E680` | 21/21 (100%) | 28 named · 16 waived | [doc](collision.md) | ✓ | [#222](https://github.com/jomkz/fighters-codex/issues/222) | complete |
-| Memory & resource managers (MM/RM) | `0x435C60–0x43631C`<br>`0x4A67F0–0x4A6E46` | 50/50 (100%) | 12 named · 22 waived | [doc](memory-resource.md) | ✓ | [#223](https://github.com/jomkz/fighters-codex/issues/223) | complete |
-| Input — joystick / serial / modem | `0x494270–0x494BB0`<br>`0x499CF0–0x499F70`<br>`0x49B1D0–0x49D1B0` | 20/20 (100%) | 0 named · 61 waived | [doc](input.md) | ✓ | [#224](https://github.com/jomkz/fighters-codex/issues/224) | complete |
-| Core shell / menu / dialog UI | `0x40B8A0–0x40BA10`<br>`0x40BC20–0x40C290`<br>`0x40C410–0x40D7A0`<br>`0x42E680–0x42E720`<br>`0x42E9A0–0x42F2E0`<br>`0x432F80–0x432F8B`<br>`0x433170–0x433180`<br>`0x47F0B0–0x47F100`<br>`0x47FA30–0x47FA50`<br>`0x487A3A–0x489170`<br>`0x4891A0–0x48D2B0`<br>`0x4A08A0–0x4A0FE0`<br>`0x4A26F0–0x4A2A30` | 136/136 (100%) | 0 named · 124 waived | [doc](shell-ui.md) | ✓ | [#225](https://github.com/jomkz/fighters-codex/issues/225) | complete |
-| Startup / Phar Lap DOS extender / config | `0x4D715A–0x4E8A2F` | 338/338 (100%) | 40 named · 181 waived | [doc](startup.md) | ✓ | [#226](https://github.com/jomkz/fighters-codex/issues/226) | complete |
-| Video decode (FMV/Cobra) | `0x456300–0x45CDA0` | 23/23 (100%) | 0 named · 0 waived | [doc](video-decode.md) | ✓ | [#227](https://github.com/jomkz/fighters-codex/issues/227) | complete |
-| 3D render core / SH interpreter (GR) | `0x4CD588–0x4D6C00` | 163/163 (100%) | 0 named · 349 waived | [doc](render-core.md) | ✓ | [#228](https://github.com/jomkz/fighters-codex/issues/228) | complete |
-| .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 40/40 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
-| View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19/19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
+| Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 83 named · 0 waived / 83 (100%) | 15 named · 145 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
+| Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 118 named · 7 waived / 125 (100%) | 3 named · 167 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
+| Flight model / physics (FM/HARD) | `0x451480–0x454800` | 58 named · 4 waived / 62 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
+| HUD / cockpit | `0x405E30–0x40AE50` | 42 named · 7 waived / 49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
+| Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | 55 named · 4 waived / 59 (100%) | 6 named · 49 waived | [doc](weapons.md) | ✓ | [#215](https://github.com/jomkz/fighters-codex/issues/215) | complete |
+| AI interpreter (CT) | `0x464C60–0x467110` | 122 named · 0 waived / 122 (100%) | 8 named · 30 waived | [doc](ai-interpreter.md) | ✓ | [#216](https://github.com/jomkz/fighters-codex/issues/216) | complete |
+| Wingman / group AI (WNG/GRP) | `0x45E460–0x45FEC0` | 38 named · 2 waived / 40 (100%) | 1 named · 16 waived | [doc](wingman.md) | ✓ | [#217](https://github.com/jomkz/fighters-codex/issues/217) | complete |
+| Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) | `0x421D40–0x421DD0`<br>`0x421DE0–0x4221D0`<br>`0x422230–0x422300`<br>`0x422350–0x422380`<br>`0x4224B3–0x4224EE`<br>`0x42256A–0x42267F`<br>`0x4226CB–0x4226F0`<br>`0x422828–0x422851`<br>`0x42297E–0x422A0D`<br>`0x422A71–0x42B800`<br>`0x467240–0x4672C0`<br>`0x4674F0–0x4678B0`<br>`0x467E30–0x467F30`<br>`0x468C40–0x469960`<br>`0x46A57B–0x46A640`<br>`0x47A510–0x47A5A0`<br>`0x47FAAE–0x47FEC0`<br>`0x4805AC–0x480690`<br>`0x4809D0–0x480A30`<br>`0x481920–0x481940`<br>`0x481A7B–0x481B80`<br>`0x483C90–0x484D90`<br>`0x485380–0x4854E0`<br>`0x4856F0–0x485820`<br>`0x4867D0–0x486810`<br>`0x486BF0–0x486C60`<br>`0x486DC0–0x486DF0` | 125 named · 5 waived / 130 (100%) | 0 named · 360 waived | [doc](campaign.md) | ✓ | [#218](https://github.com/jomkz/fighters-codex/issues/218) | complete |
+| Network / multiplayer (NET/SER/UDP/MP) | `0x4016C0–0x402300`<br>`0x402330–0x402380`<br>`0x4024D0–0x402640`<br>`0x405360–0x4053D0`<br>`0x4054F0–0x405E30`<br>`0x45D090–0x45DBD0`<br>`0x46BD90–0x46BDE0`<br>`0x46C0A0–0x46C150`<br>`0x46C28C–0x46C470`<br>`0x46C680–0x46C910`<br>`0x46C980–0x46EED0`<br>`0x46EEDF–0x46FDB0`<br>`0x46FF20–0x46FF70`<br>`0x47001C–0x470150`<br>`0x4701AC–0x470250`<br>`0x47025C–0x470560`<br>`0x470780–0x4708B0`<br>`0x4715BC–0x4719E0`<br>`0x471A90–0x471BD0`<br>`0x471BDF–0x472260`<br>`0x472670–0x472A90`<br>`0x4735D0–0x473680`<br>`0x499F70–0x499F90`<br>`0x49A000–0x49A380`<br>`0x49A3E0–0x49A520`<br>`0x49A660–0x49A850`<br>`0x49A9B0–0x49AD70`<br>`0x49AF30–0x49B1D0`<br>`0x4AC180–0x4AC3E0`<br>`0x4AC480–0x4AC510` | 107 named · 10 waived / 117 (100%) | 0 named · 186 waived | [doc](network.md) | ✓ | [#219](https://github.com/jomkz/fighters-codex/issues/219) | complete |
+| Sound / music (incl. WAIL32) | `0x4328B0–0x435C60` | 49 named · 4 waived / 53 (100%) | 5 named · 179 waived | [doc](sound.md) | ✓ | [#220](https://github.com/jomkz/fighters-codex/issues/220) | complete |
+| Terrain (T_) | `0x4A7310–0x4ABBE2`<br>`0x4C5D30–0x4C60E8` | 82 named · 3 waived / 85 (100%) | 0 named · 114 waived | [doc](terrain.md) | ✓ | [#221](https://github.com/jomkz/fighters-codex/issues/221) | complete |
+| Collision (COL) | `0x42B800–0x42E680` | 19 named · 2 waived / 21 (100%) | 28 named · 16 waived | [doc](collision.md) | ✓ | [#222](https://github.com/jomkz/fighters-codex/issues/222) | complete |
+| Memory & resource managers (MM/RM) | `0x435C60–0x43631C`<br>`0x4A67F0–0x4A6E46` | 50 named · 0 waived / 50 (100%) | 12 named · 22 waived | [doc](memory-resource.md) | ✓ | [#223](https://github.com/jomkz/fighters-codex/issues/223) | complete |
+| Input — joystick / serial / modem | `0x494270–0x494BB0`<br>`0x499CF0–0x499F70`<br>`0x49B1D0–0x49D1B0` | 18 named · 2 waived / 20 (100%) | 0 named · 61 waived | [doc](input.md) | ✓ | [#224](https://github.com/jomkz/fighters-codex/issues/224) | complete |
+| Core shell / menu / dialog UI | `0x40B8A0–0x40BA10`<br>`0x40BC20–0x40C290`<br>`0x40C410–0x40D7A0`<br>`0x42E680–0x42E720`<br>`0x42E9A0–0x42F2E0`<br>`0x432F80–0x432F8B`<br>`0x433170–0x433180`<br>`0x47F0B0–0x47F100`<br>`0x47FA30–0x47FA50`<br>`0x487A3A–0x489170`<br>`0x4891A0–0x48D2B0`<br>`0x4A08A0–0x4A0FE0`<br>`0x4A26F0–0x4A2A30` | 136 named · 0 waived / 136 (100%) | 0 named · 124 waived | [doc](shell-ui.md) | ✓ | [#225](https://github.com/jomkz/fighters-codex/issues/225) | complete |
+| Startup / Phar Lap DOS extender / config | `0x4D715A–0x4E8A2F` | 222 named · 116 waived / 338 (100%) | 40 named · 181 waived | [doc](startup.md) | ✓ | [#226](https://github.com/jomkz/fighters-codex/issues/226) | complete |
+| Video decode (FMV/Cobra) | `0x456300–0x45CDA0` | 23 named · 0 waived / 23 (100%) | 0 named · 0 waived | [doc](video-decode.md) | ✓ | [#227](https://github.com/jomkz/fighters-codex/issues/227) | complete |
+| 3D render core / SH interpreter (GR) | `0x4CD588–0x4D6C00` | 163 named · 0 waived / 163 (100%) | 0 named · 349 waived | [doc](render-core.md) | ✓ | [#228](https://github.com/jomkz/fighters-codex/issues/228) | complete |
+| .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 40 named · 0 waived / 40 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
+| View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19 named · 0 waived / 19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
 
 **FA.EXE totals:** 20/20 subsystems complete; 1735/1735 in-scope functions named; 2555/4721 referenced globals resolved.
 
+> **Unclaimed: 1312 of 3047 functions (397,910 of 809,083 code bytes, 49%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+
 ## WAIL32.DLL
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| WAIL32.DLL — Miles Sound System (AIL) audio driver | `0x20001000–0x20019E00` | 503/503 (100%) | 0 named · 577 waived | [doc](wail32.md) | ✓ | [#253](https://github.com/jomkz/fighters-codex/issues/253) | complete |
+| WAIL32.DLL — Miles Sound System (AIL) audio driver | `0x20001000–0x20019E00` | 130 named · 373 waived / 503 (100%) | 0 named · 577 waived | [doc](wail32.md) | ✓ | [#253](https://github.com/jomkz/fighters-codex/issues/253) | complete |
 
 **WAIL32.DLL totals:** 1/1 subsystems complete; 503/503 in-scope functions named; 577/756 referenced globals resolved.
 
 ## IP.EXE
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| IP.EXE — EA system-info & tech-support tool (MFC) | `0x401000–0x4BD800` | 1805/1805 (100%) | 0 named · 1339 waived | [doc](ip-tool.md) | ✓ | [#254](https://github.com/jomkz/fighters-codex/issues/254) | complete |
+| IP.EXE — EA system-info & tech-support tool (MFC) | `0x401000–0x4BD800` | 5 named · 1800 waived / 1805 (100%) | 0 named · 1339 waived | [doc](ip-tool.md) | ✓ | [#254](https://github.com/jomkz/fighters-codex/issues/254) | complete |
 
 **IP.EXE totals:** 1/1 subsystems complete; 1805/1805 in-scope functions named; 1339/1737 referenced globals resolved.
 
 ## CDRVDL32.DLL
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| CDRVDL32.DLL — Cdrv RS-232 serial comms driver | `0x10001000–0x10010000` | 104/104 (100%) | 0 named · 129 waived | [doc](comms.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+| CDRVDL32.DLL — Cdrv RS-232 serial comms driver | `0x10001000–0x10010000` | 26 named · 78 waived / 104 (100%) | 0 named · 129 waived | [doc](comms.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
 
 **CDRVDL32.DLL totals:** 1/1 subsystems complete; 104/104 in-scope functions named; 129/175 referenced globals resolved.
 
 ## CDRVHF32.DLL
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| CDRVHF32.DLL — Cdrv Hayes-modem comms driver | `0x10001000–0x10010000` | 154/154 (100%) | 0 named · 114 waived | [doc](comms-modem.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+| CDRVHF32.DLL — Cdrv Hayes-modem comms driver | `0x10001000–0x10010000` | 75 named · 79 waived / 154 (100%) | 0 named · 114 waived | [doc](comms-modem.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
 
 **CDRVHF32.DLL totals:** 1/1 subsystems complete; 154/154 in-scope functions named; 114/150 referenced globals resolved.
 
 ## CDRVXF32.DLL
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| CDRVXF32.DLL — Cdrv file-transfer comms driver | `0x10001000–0x10010000` | 121/121 (100%) | 0 named · 171 waived | [doc](comms-transfer.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+| CDRVXF32.DLL — Cdrv file-transfer comms driver | `0x10001000–0x10010000` | 33 named · 88 waived / 121 (100%) | 0 named · 171 waived | [doc](comms-transfer.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
 
 **CDRVXF32.DLL totals:** 1/1 subsystems complete; 121/121 in-scope functions named; 171/322 referenced globals resolved.
 
 ## COMMSC32.DLL
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| COMMSC32.DLL — Cdrv comms terminal-screen service | `0x10001000–0x10010000` | 60/60 (100%) | 0 named · 109 waived | [doc](comms-screen.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
+| COMMSC32.DLL — Cdrv comms terminal-screen service | `0x10001000–0x10010000` | 8 named · 52 waived / 60 (100%) | 0 named · 109 waived | [doc](comms-screen.md) | ✓ | [#255](https://github.com/jomkz/fighters-codex/issues/255) | complete |
 
 **COMMSC32.DLL totals:** 1/1 subsystems complete; 60/60 in-scope functions named; 109/153 referenced globals resolved.
 
 ## MSAPI.DLL
 
-| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |
+| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002AB0` | 25/25 (100%) | 12 named · 23 waived | [doc](matchmaking.md) | ✓ | [#275](https://github.com/jomkz/fighters-codex/issues/275) | complete |
+| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002AB0` | 25 named · 0 waived / 25 (100%) | 12 named · 23 waived | [doc](matchmaking.md) | ✓ | [#275](https://github.com/jomkz/fighters-codex/issues/275) | complete |
 
 **MSAPI.DLL totals:** 1/1 subsystems complete; 25/25 in-scope functions named; 35/36 referenced globals resolved.
+
+> **Unclaimed: 773 of 798 functions (68,877 of 75,025 code bytes, 91%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 **Program totals (all binaries):** 27/27 subsystems complete; 4507/4507 in-scope functions named; 5029/8050 referenced globals resolved.
 
