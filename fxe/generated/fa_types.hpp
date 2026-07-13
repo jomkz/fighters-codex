@@ -275,11 +275,19 @@ typedef struct PLANE_EXT {
     u8      pl_state;         /* +0x005  staged into _PLstate for the shape selectors */
     u8      reserved_006[139];/* +0x006  ALIASED with the projectile and GV extensions:
                                *         no field here can be attributed by address    */
-    u32     state_flags;      /* +0x091  gear / flap / afterburner / brake bits, read
-                               *         by ShapeSetup under an obj_class == 4 guard:
-                               *         0x20 afterburner, 0x80 brake, 0x100 flaps,
-                               *         0x1000 gear. THIS is what the .SH embedded x86
-                               *         articulation ultimately selects on.  confirmed */
+    u32     state_flags;      /* +0x091  the aircraft's discrete state word, read by
+                               *         ShapeSetup under an obj_class == 4 guard:
+                               *           0x20   afterburner
+                               *           0x40   gear down     (set/cleared by FMGear)
+                               *           0x80   wheel brake
+                               *           0x100  slats / flaps
+                               *           0x400  arrestor hook
+                               *           0x1000 computer flight (autopilot)
+                               *         An earlier revision of this header read 0x1000 as
+                               *         "gear". It is not: ShapeSetup uses it to set
+                               *         _computerFlight. Gear is 0x40, and the gear
+                               *         ARTICULATION is not a bit at all -- see gear_pos.
+                               *                                            confirmed */
     u8      reserved_095[40]; /* +0x095                                              */
     fixed24 g_load;           /* +0x0BD  0x100 = 1 G (physics.md)          inferred */
     u8      reserved_0C1[79]; /* +0x0C1                                              */
@@ -291,7 +299,12 @@ typedef struct PLANE_EXT {
     fixed24 fuel;             /* +0x11E  internal quantity                 confirmed */
     u8      reserved_122[12]; /* +0x122                                              */
     u8      stall_state;      /* +0x12E  0 normal, 1 warning, 2 stall      confirmed */
-    u8      reserved_12F[103];/* +0x12F                                              */
+    u8      reserved_12F[43]; /* +0x12F                                              */
+    s16     gear_pos;         /* +0x15A  (entity +0x238) gear articulation position.
+                               *         0x7FFF is the sentinel for "not articulating";
+                               *         ShapeSetup stages this into _PLgearPos/_PLgearInc,
+                               *         which the .SH x86 selectors read.     confirmed */
+    u8      reserved_15C[58]; /* +0x15C                                              */
     u16     ab_expiry;        /* +0x196  afterburner timer (vs _currentT)  confirmed */
     u16     brake_expiry;     /* +0x198  wheel-brake timer (vs _currentT)  confirmed */
     u8      reserved_19A[80]; /* +0x19A                                              */

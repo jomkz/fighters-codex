@@ -85,9 +85,11 @@ The x86 embedded in a shape file never touches `_cg` — the engine **stages** t
 plane extension in _cg  →  ShapeSetup  →  _PL* globals  →  .SH embedded x86  →  sub-stream geometry
 ```
 
-`PLANE_EXT::state_flags` (`+0x091`, i.e. `entity +0x16F`) is the source: bit `0x20` afterburner,
-`0x80` brake, `0x100` flaps, `0x1000` gear. See [shape-selection.md](shape-selection.md) and
-[formats/SH.md](formats/SH.md).
+`PLANE_EXT::state_flags` (`+0x091`, i.e. `entity +0x16F`) carries the discrete state:
+`0x20` afterburner · `0x40` gear down · `0x80` brake · `0x100` slats/flaps · `0x400` hook ·
+`0x1000` computer flight. The **gear articulation** is not a bit at all — it is the s16
+`gear_pos` (`entity +0x238`, sentinel `0x7FFF`), which ShapeSetup stages into `_PLgearPos`.
+See [shape-selection.md](shape-selection.md) and [formats/SH.md](formats/SH.md).
 
 ### How the recovered fields were proven
 
@@ -182,13 +184,14 @@ where `ShapeSetup` reads them under an `obj_class == 4` guard.
 | ext | `_cg` | Size | Field | Meaning | Confidence |
 |--------|--------|------|-------|---------|------------|
 | `+0x005` | `0x0E3` | 1 | `pl_state` | staged into `_PLstate` for the shape selectors | inferred |
-| `+0x091` | `0x16F` | 4 | `state_flags` | `0x20` afterburner, `0x80` brake, `0x100` flaps, `0x1000` gear — **the articulation source** | confirmed |
+| `+0x091` | `0x16F` | 4 | `state_flags` | `0x20` afterburner · `0x40` **gear down** (`FMGear`) · `0x80` brake · `0x100` slats/flaps · `0x400` hook · `0x1000` computer flight (autopilot) | confirmed |
 | `+0x0BD` | `0x19B` | 4 | `g_load` | `0x100` = 1 G | inferred |
 | `+0x110` | `0x1EE` | 4 | `throttle` | current, smoothed | confirmed |
 | `+0x114` | `0x1F2` | 2 | `throttle_target` | commanded %, 0–100 | confirmed |
 | `+0x118` | `0x1F6` | 4 | `climb_rate` | tested against `-0x2D00` in the flap gate | inferred |
 | `+0x11E` | `0x1FC` | 4 | `fuel` | internal quantity | confirmed |
 | `+0x12E` | `0x20C` | 1 | `stall_state` | 0 normal, 1 warning, 2 stall | confirmed |
+| `+0x15A` | `0x238` | 2 | `gear_pos` | gear **articulation position** (`0x7FFF` = not articulating) — staged into `_PLgearPos`/`_PLgearInc` | confirmed |
 | `+0x196` | `0x274` | 2 | `ab_expiry` | afterburner timer (vs `_currentT`) | confirmed |
 | `+0x198` | `0x276` | 2 | `brake_expiry` | wheel-brake timer | confirmed |
 
