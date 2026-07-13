@@ -27,42 +27,27 @@ static void RebuildBuffers(const fx::BrfDoc& doc) {
     }
 }
 
-// Return (name, note) for field at index fi using the compound schema for ext.
-// SEE/ECM/GAS are standalone (no OT_GENERAL prefix).
-// OT/NT/PT/JT all begin with OT_GENERAL_FIELDS, then chain extension sections.
-static std::pair<const char*, const char*> FieldLabel(const std::string& ext, int fi) {
-    // Flat standalone schemas
-    if (ext == "see") {
-        if (fi < fx::SEE_COUNT) return { fx::SEE_FIELDS[fi].name, fx::SEE_FIELDS[fi].note };
-        return { nullptr, nullptr };
-    }
-    if (ext == "ecm") {
-        if (fi < fx::ECM_COUNT) return { fx::ECM_FIELDS[fi].name, fx::ECM_FIELDS[fi].note };
-        return { nullptr, nullptr };
-    }
-    if (ext == "gas") {
-        if (fi < fx::GAS_COUNT) return { fx::GAS_FIELDS[fi].name, fx::GAS_FIELDS[fi].note };
-        return { nullptr, nullptr };
-    }
+// Return (name, note) for a field.
+//
+// The positional OT/NT/PT/JT chain that used to live here indexed tables transcribed from
+// OpenFA (GPL) whose field order is not FA's -- so it mislabelled real files. It is gone.
+//
+// Names now come from the same two honest sources the library uses: the field's SECTION and
+// BYTE OFFSET, which the self-describing BRF record declares itself, looked up against what
+// this project actually recovered from the executable. An unrecovered field gets no name.
+static std::pair<const char*, const char*> FieldLabel(const std::string& ext,
+                                                      const fx::BrfField& f) {
+    // SEE / ECM / GAS are flat records whose schemas came from this project's own specs.
+    if (ext == "see") return { nullptr, nullptr };  // handled positionally below
+    if (ext == "ecm") return { nullptr, nullptr };
+    if (ext == "gas") return { nullptr, nullptr };
+    return { fx::brf_field_name(f.section, f.offset), fx::brf_field_note(f.section, f.offset) };
+}
 
-    // OT / NT / PT / JT â€” all begin with the OT_GENERAL section
-    if (fi < fx::OT_GENERAL_COUNT)
-        return { fx::OT_GENERAL_FIELDS[fi].name, fx::OT_GENERAL_FIELDS[fi].note };
-
-    int off = fi - fx::OT_GENERAL_COUNT;
-
-    if (ext == "jt") {
-        if (off < fx::JT_COUNT) return { fx::JT_FIELDS[off].name, fx::JT_FIELDS[off].note };
-        return { nullptr, nullptr };
-    }
-    if (ext == "nt" || ext == "pt") {
-        if (off < fx::NT_COUNT) return { fx::NT_FIELDS[off].name, fx::NT_FIELDS[off].note };
-        off -= fx::NT_COUNT;
-        if (ext == "pt" && off < fx::PT_COUNT)
-            return { fx::PT_FIELDS[off].name, fx::PT_FIELDS[off].note };
-        return { nullptr, nullptr };
-    }
-    // OT â€” only OT_GENERAL (already covered above)
+static std::pair<const char*, const char*> FlatLabel(const std::string& ext, int fi) {
+    if (ext == "see" && fi < fx::SEE_COUNT) return { fx::SEE_FIELDS[fi].name, fx::SEE_FIELDS[fi].note };
+    if (ext == "ecm" && fi < fx::ECM_COUNT) return { fx::ECM_FIELDS[fi].name, fx::ECM_FIELDS[fi].note };
+    if (ext == "gas" && fi < fx::GAS_COUNT) return { fx::GAS_FIELDS[fi].name, fx::GAS_FIELDS[fi].note };
     return { nullptr, nullptr };
 }
 
@@ -98,7 +83,9 @@ void DrawBrfEditor(App& app) {
 
         for (int i = 0; i < (int)s_doc.fields.size(); i++) {
             const auto& f = s_doc.fields[i];
-            auto [fieldName, note] = FieldLabel(ed.ext, i);
+            bool flat = (ed.ext == "see" || ed.ext == "ecm" || ed.ext == "gas");
+            auto [fieldName, note] = flat ? FlatLabel(ed.ext, i)
+                                          : FieldLabel(ed.ext, s_doc.fields[i]);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);

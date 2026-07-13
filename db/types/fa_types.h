@@ -211,7 +211,12 @@ typedef struct OBJ_TYPE {
     u16     obj_class;        /* 0x0D  class bitfield; its high byte & 0xC0 gates   */
                               /*       the _b shape slot                 confirmed */
     u32     shape;            /* 0x0F  base shape                        confirmed */
-    u32     shape_name;       /* 0x13  filename used as the suffix template        */
+    u32     shadow_shape;     /* 0x13  the SHADOW shape. The retail data names this field
+                               *       itself -- every .PT points it at `shadowShape`,
+                               *       resolving to `<name>_s.SH` (a10_s, f16_s, kin_s...).
+                               *       An earlier revision called it `shape_name` ("the
+                               *       suffix template") and marked it confirmed; the game's
+                               *       own files say otherwise.             confirmed */
     u32     shape_a;          /* 0x17  destroyed set {A,B} — world pass  confirmed */
     u32     shape_b;          /* 0x1B  destroyed set {A,B} — graphics    confirmed */
     u8      reserved_01F[6];  /* 0x1F                                              */

@@ -24,9 +24,25 @@
 namespace fx {
 
 struct BrfField {
-    std::string type;   // "byte", "word", "dword", "ptr", "symbol", "string"
-    std::string value;  // raw value token (e.g. "1", "$12bf3", "^300", "ot_names")
+    std::string type;    // "byte", "word", "dword", "ptr", "symbol", "string"
+    std::string value;   // raw value token (e.g. "1", "$12bf3", "^300", "ot_names")
+
+    // What the FILE says about this field. A BRF record is self-describing: it delimits
+    // its records with the developers' own section names (`;--- START OF PLANE_TYPE ---`),
+    // and each field's width is its own type. So the section and the byte offset are FACTS
+    // READ FROM THE FILE, not a schema imposed on it -- which is the whole point, because a
+    // schema imposed from outside is how the labels came to be wrong (see fx/ot.h).
+    std::string section; // "OBJ_TYPE", "NPC_TYPE", "PLANE_TYPE", "PROJ_TYPE", or "" 
+    uint32_t    offset;  // byte offset from the start of `section`
+    std::string comment; // the file's own inline comment, if any (e.g. "utilProc")
 };
+
+// Byte width of a BRF field type, as the format emits it.
+inline uint32_t brf_type_size(const std::string& t) {
+    if (t == "byte") return 1;
+    if (t == "word") return 2;
+    return 4;  // dword, ptr, symbol
+}
 
 struct BrfTable {
     std::string              name;
