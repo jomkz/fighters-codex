@@ -52,8 +52,14 @@ papering over it:
 | global type **not** recovered | `// TODO(#455): 0x… name — type not recovered` |
 
 A guessed `void f()` would compile and then *lie* about what the original function took. A TODO
-cannot. The generated headers are therefore an honest map of what the reconstruction still owes:
-**970 of 1871 functions declared, 149 globals typed.**
+cannot. The generated headers therefore map what the reconstruction owes **of the code `db/`
+carries**: **1687 of 1734 C functions declared (137 more are classified as not-C, see #479), and
+173 of 176 globals typed.**
+
+That is not the whole debt, and the header must not pretend otherwise: **1312 of FA.EXE's 3047
+functions are not in `db/` at all** ([#482](https://github.com/jomkz/fighters-codex/issues/482)),
+so they cannot appear here even as a TODO. The generated tree is honest about what it knows;
+`db/` is what still has to grow.
 
 `undefinedN` is preserved verbatim wherever it appears. It means "N bytes, type not recovered"
 ([#452](https://github.com/jomkz/fighters-codex/issues/452),

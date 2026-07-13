@@ -1353,7 +1353,11 @@ def recon_stats(sub, symbols, inventory, claims):
     g_named = sum(1 for r in rows if r["kind"] == "data" and r["source"] != "waiver")
     g_waived = sum(1 for r in rows if r["kind"] == "data" and r["source"] == "waiver")
     g_total = sum(1 for g in inventory["globals"] if slug in g["subs"])
-    return {"func_named": func_named + func_waived, "func_total": func_total,
+    # NOT func_named + func_waived (#482). Counting a waiver as "named" is how IP.EXE came
+    # to report "1805/1805 (100%)" off FIVE named functions and 1800 waivers. A waiver is a
+    # decision not to document something; presenting it as documentation is the exact
+    # drift this repo keeps warning about.
+    return {"func_named": func_named, "func_waived": func_waived, "func_total": func_total,
             "g_named": g_named, "g_waived": g_waived, "g_total": g_total}
 
 
@@ -1371,8 +1375,10 @@ def _recon_row(sub, st):
     if sub["status"] == "planned":
         funcs = globs = "—"
     else:
-        pct = (100 * st["func_named"] // st["func_total"]) if st["func_total"] else 100
-        funcs = "%d/%d (%d%%)" % (st["func_named"], st["func_total"], pct)
+        dispositioned = st["func_named"] + st["func_waived"]
+        pct = (100 * dispositioned // st["func_total"]) if st["func_total"] else 100
+        funcs = "%d named · %d waived / %d (%d%%)" % (
+            st["func_named"], st["func_waived"], st["func_total"], pct)
         globs = "%d named · %d waived" % (st["g_named"], st["g_waived"])
     has_sym = (SYMBOLS_DIR / ("%s.csv" % sub["slug"])).exists()
     doc_cell = "[doc](%s)" % Path(sub["doc"]).name if sub["status"] != "planned" else "—"
@@ -1381,6 +1387,10 @@ def _recon_row(sub, st):
         if sub["issue"] > 0 else "—"
     return "| %s | %s | %s | %s | %s | %s | %s | %s |" % (
         sub["title"], rng, funcs, globs, doc_cell, diag, issue_cell, sub["status"])
+
+
+def _va2(v):
+    return v if isinstance(v, int) else int(v, 16)
 
 
 def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
@@ -1408,16 +1418,23 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
         lines += [
             "## %s" % binary,
             "",
-            "| Subsystem | Range(s) | Funcs named | Ref. globals | Doc | Diagram | Issue | Status |",
+            "| Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |",
             "|---|---|---|---|---|---|---|---|",
         ]
         tot_named = tot_funcs = tot_gn = tot_gt = 0
         for sub in bsubs:
             st = recon_stats(sub, symbols, inv, claims)
-            tot_named += st["func_named"]; tot_funcs += st["func_total"]
+            tot_named += st["func_named"] + st["func_waived"]; tot_funcs += st["func_total"]
             tot_gn += st["g_named"] + st["g_waived"]; tot_gt += st["g_total"]
             lines.append(_recon_row(sub, st))
         done = sum(1 for s in bsubs if s["status"] == "complete")
+        # "In-scope" means "inside a range we declared" -- so the line above can only ever
+        # report 100%, and says nothing about the code we never claimed. State that debt
+        # here, from the BINARY, or the totals are a tautology (#482).
+        db_vas = {(_va2(r["va"])) for sub2 in bsubs for r in symbols.get(sub2["slug"], [])}
+        unclaimed = [va for va in inv["functions"] if _va2(va) not in db_vas]
+        ubytes = sum(int(inv["functions"][va].get("size", 0) or 0) for va in unclaimed)
+        tbytes = sum(int(f.get("size", 0) or 0) for f in inv["functions"].values())
         lines += [
             "",
             "**%s totals:** %d/%d subsystems complete; %d/%d in-scope functions named; "
@@ -1425,6 +1442,16 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
             % (binary, done, len(bsubs), tot_named, tot_funcs, tot_gn, tot_gt),
             "",
         ]
+        if unclaimed:
+            pct = (100 * ubytes // tbytes) if tbytes else 0
+            lines += [
+                "> **Unclaimed: %d of %d functions (%s of %s code bytes, %d%%) are in the "
+                "binary but in no subsystem** — so nothing above measures them. See "
+                "[#482](https://github.com/jomkz/fighters-codex/issues/482)."
+                % (len(unclaimed), len(inv["functions"]), "{:,}".format(ubytes),
+                   "{:,}".format(tbytes), pct),
+                "",
+            ]
         p_named += tot_named; p_funcs += tot_funcs; p_gn += tot_gn; p_gt += tot_gt
         p_done += done; p_subs += len(bsubs)
     lines += [
@@ -1519,6 +1546,58 @@ def registry_currency(path, tag, block, errs):
                     "tools/check_status.py --write-matrix' and commit" % (rel, tag))
 
 
+
+def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
+    """Every function in the BINARY must be accounted for — not just the ones we claimed.
+
+    This is the check whose absence let 49% of FA.EXE go unnoticed (#482).
+
+    check_coverage() is per-subsystem, and a subsystem only looks at functions inside the VA
+    ranges IT declares. A function outside every declared range therefore belongs to no
+    subsystem, and no rule ever looked at it. The project declared the ranges and then
+    reported 100% of what it had declared -- which is not a measurement, it is a tautology.
+    db/README.md even calls ranges.csv "the code-coverage signal that exposes undiscovered
+    code"; the signal was parsed and then never read.
+
+    So this check is anchored to the BINARY, not to our own bookkeeping: every function the
+    inventory knows about must have a db/symbols row, or it is UNCLAIMED. Unclaimed code is
+    not an error -- 1308 functions were unclaimed the day this landed -- but it must not
+    GROW. The baseline below is a ratchet, and the only legal direction is down.
+    """
+    errs = []
+    base_path = db_dir / "coverage-baseline.csv"
+    baseline = {}
+    if base_path.exists():
+        with open(base_path, newline="", encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                baseline[r["binary"]] = int(r["unclaimed_functions"])
+
+    slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
+    def _va(v):
+        return v if isinstance(v, int) else int(v, 16)
+
+    in_db = {}
+    for slug, rows in symbols.items():
+        b = slug_to_binary.get(slug)
+        for r in rows:
+            in_db.setdefault(b, set()).add(_va(r["va"]))
+
+    actual = {}
+    for binary, inv in sorted(inventories.items()):
+        known = in_db.get(binary, set())
+        unclaimed = [va for va in inv["functions"] if _va(va) not in known]
+        actual[binary] = len(unclaimed)
+        want = baseline.get(binary)
+        if want is None:
+            errs.append("db/coverage-baseline.csv: no baseline for %s (%d functions unclaimed) "
+                        "-- add one" % (binary, len(unclaimed)))
+        elif len(unclaimed) > want:
+            errs.append("%s: %d functions are in the binary but absent from db/symbols/ "
+                        "(baseline allows %d). Unclaimed code may not grow -- add the rows, "
+                        "or waive them explicitly." % (binary, len(unclaimed), want))
+    return errs, actual
+
+
 def check_reconstruction(db_dir=DB_DIR):
     """Validate the symbol DB and return (errors, matrix-or-None, registries).
     registries maps (doc-path, marker-tag) -> generated block text."""
@@ -1552,6 +1631,15 @@ def check_reconstruction(db_dir=DB_DIR):
         if sub["status"] == "complete" and binary in inventories:
             errs += check_coverage(sub, symbols, inventories[binary], claims,
                                    slugs_by_binary.get(binary, set()))
+    # Anchored to the BINARY, not to the ranges we chose to declare (#482).
+    if inventories:
+        cerrs, unclaimed = check_binary_coverage(manifest, symbols, inventories, db_dir)
+        errs += cerrs
+        for b, n in sorted(unclaimed.items()):
+            if n:
+                print("note: %s -- %d functions in the binary are not in db/symbols/ (#482)"
+                      % (b, n))
+
     # The matrix totals come from the inventories, so it can only be
     # (re)generated when every binary's export is present.
     matrix = None if absent else \

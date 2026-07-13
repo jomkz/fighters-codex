@@ -20,10 +20,10 @@ implementation is the proof that a format is truly understood.
 
 **Documentation and research:**
 
-- **44 documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; per-format completeness, codec direction, and test coverage are tracked in the CI-enforced [status matrix](docs/fa/formats/STATUS.md); see [docs/fa/formats/](docs/fa/formats/README.md)
+- **47 documented binary and text formats** — every file type in the game, reverse-engineered from scratch via binary analysis; per-format completeness, codec direction, and test coverage are tracked in the CI-enforced [status matrix](docs/fa/formats/STATUS.md); see [docs/fa/formats/](docs/fa/formats/README.md)
 - **Engine architecture notes** — runtime environment, asset pipeline, physics model, renderer, AI bytecode interpreter, network protocol, and Win32 overlay DLL system; see [docs/fa/architecture.md](docs/fa/architecture.md)
-- **3,829 recovered C++ symbols** from the game executable and all overlay DLLs — organized by subsystem with demangled names and virtual addresses; see [docs/fa/symbols.md](docs/fa/symbols.md)
-- **Game-executable reconstruction program** — a machine-readable symbol database and per-subsystem docs that name and document every function and variable, subsystem by subsystem; progress is tracked in the CI-enforced [reconstruction matrix](docs/fa/reconstruction.md)
+- **1,946 documented symbols** across the game executable and all overlay DLLs — named, typed, and organized by subsystem with virtual addresses; see [docs/fa/symbols.md](docs/fa/symbols.md). (The game's own `FA.SMS` map lists 3,829 — the gap is tracked in [#482](https://github.com/jomkz/fighters-codex/issues/482).)
+- **Game-executable reconstruction program** — a machine-readable symbol database and per-subsystem docs, built subsystem by subsystem; progress *and the code not yet claimed by any subsystem* are tracked in the [reconstruction matrix](docs/fa/reconstruction.md). Coverage is ground-truthed against a local Ghidra export, so it is checked on the bench rather than in CI.
 - **Modding guides** — step-by-step recipes for textures, aircraft stats, missions, audio, and more; see [docs/fa/modding.md](docs/fa/modding.md)
 
 **Validation tools** *(proving the documentation by implementing it)*:
