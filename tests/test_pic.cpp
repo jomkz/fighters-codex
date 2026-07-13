@@ -110,15 +110,39 @@ TEST_CASE("pic_repack round-trips a synthetic sparse PIC byte-identically") {
     w32v(26, 70);  w32v(30, 30);// spans
     w32v(34, 0);   w32v(38, 0); // no rowheads
     pic[50] = 0xAB;             // header-tail sentinel: must carry verbatim
-    w16(70, 0); w16(72, 1); w16(74, 4); w32v(76, 100);  // row 0, x 1..4
-    w16(80, 1); w16(82, 0); w16(84, 3); w32v(86, 104);  // row 1, x 0..3
+    // A span's offset is relative to PIXELS_DATA, not to the file (PIC.md). This fixture
+    // used to write 100/104 -- the ABSOLUTE file positions -- which happens to be what the
+    // buggy decoder expected, so the fixture defended the bug. And the only decode
+    // assertion was on the buffer's SIZE, which cannot see a wrong pixel at all.
+    w16(70, 0); w16(72, 1); w16(74, 4); w32v(76, 0);    // row 0, x 1..4 -> pixels[0..3]
+    w16(80, 1); w16(82, 0); w16(84, 3); w32v(86, 4);    // row 1, x 0..3 -> pixels[4..7]
     w16(90, 0xFFFF);                                    // terminator record
-    for (int i = 0; i < 8; i++) pic[(size_t)(100 + i)] = (uint8_t)(i + 1);
+    for (int i = 0; i < 8; i++) pic[(size_t)(100 + i)] = (uint8_t)(0xF1 + i);
 
     auto out = pic_repack(pic.data(), pic.size());
     REQUIRE(out == pic);
-    auto rgba = pic_decode(pic.data(), pic.size(), nullptr);  // decode sanity
+
+    // Assert the PIXEL VALUES, not just the buffer size. An identity palette makes the
+    // decoded R channel equal the palette index, so a wrong source byte is visible.
+    //
+    // The pixel bytes are 0xF1..0xF8 on purpose: they cannot occur in the 64-byte header,
+    // so if the decoder forgets pixels_offset and reads the header instead, these
+    // assertions fail. (The previous version asserted only rgba.size(), which is why this
+    // bug survived: it painted the header into 493 real files and no test could see it.)
+    Palette ident{};
+    for (int i = 0; i < 256; i++) { ident.r[i] = (uint8_t)i; ident.g[i] = 0; ident.b[i] = 0; }
+    auto rgba = pic_decode(pic.data(), pic.size(), &ident);
     REQUIRE(rgba.size() == 8u * 2u * 4u);
+    auto red_at   = [&](int x, int y) { return rgba[(size_t)((y * 8 + x) * 4)]; };
+    auto alpha_at = [&](int x, int y) { return rgba[(size_t)((y * 8 + x) * 4 + 3)]; };
+
+    REQUIRE(alpha_at(0, 0) == 0);                       // outside row 0's span (1..4)
+    for (int x = 1; x <= 4; x++)                        // pixels[0..3] = 0xF1..0xF4
+        REQUIRE(red_at(x, 0) == (uint8_t)(0xF1 + (x - 1)));
+    REQUIRE(alpha_at(5, 0) == 0);
+    for (int x = 0; x <= 3; x++)                        // pixels[4..7] = 0xF5..0xF8
+        REQUIRE(red_at(x, 1) == (uint8_t)(0xF5 + x));
+    REQUIRE(alpha_at(4, 1) == 0);
 }
 
 TEST_CASE("pic_repack passes JPEG PICs through whole-file") {

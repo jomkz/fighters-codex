@@ -126,7 +126,13 @@ std::vector<uint8_t> pic_decode(const uint8_t* data, size_t size,
             uint32_t idx   = r32(data, (int)soff + 6);
             if (row == 0xFFFF) break;
             for (int x = start; x <= (int)end; x++) {
-                size_t poff = idx + (size_t)(x - start);
+                // The span's `idx` is an offset into PIXELS_DATA, not into the file --
+                // exactly as PIC.md has always said. This used to index `data` absolutely,
+                // which painted the 64-byte header into every sparse image and shifted the
+                // whole thing (493 real files: the `$` ordnance icons). The dense path six
+                // lines up always did this correctly (`data + info.pixels_offset`); only
+                // the sparse path forgot the base.
+                size_t poff = (size_t)info.pixels_offset + idx + (size_t)(x - start);
                 if (poff >= size) break;
                 set_pixel(x, (int)row, data[poff]);
             }
