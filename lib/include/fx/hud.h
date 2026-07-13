@@ -13,7 +13,10 @@ namespace fx {
 struct HudParam {
     std::string gauge;
     std::string field;
-    int16_t     value;
+    // The tape gauges store their parameters as 32-bit, sign-extended (verified across
+    // all 46 shipped HUDs); the rest are 16- or 8-bit. A 16-bit value cannot hold them,
+    // and writing one back 16 bits wide left the high half stale — see hud.cpp.
+    int32_t     value;
 };
 
 struct HudFile {

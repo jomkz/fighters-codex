@@ -31,9 +31,16 @@ Video frames for mission briefing sequences. Found in FA_7.LIB (Disc 1) —
 one same-stem `.FBC` frame-size index. Audio is shared per **3-character
 briefing-group prefix**: `AAC.11K` narrates the whole `AACA`…`AACE` variant
 group (the 4th character `A`–`J` is the angle/variant). 104 of the 105 groups
-carry a `.11K`; one group (`IQC`) is silent — so a `.VDO` is not guaranteed a
-same-stem audio track. All are 320×200, magic `RATV`. Pairing verified across
-the full corpus (#137).
+carry a `.11K`; the odd one out (`IQC`) is **not silent** — its narration is a
+`.5K` ([11K.md](11K.md)), the only one in the corpus paired with video, and the
+file that proves the `.5K` sample rate is 5512 Hz and not 5000
+([#491](https://github.com/jomkz/fighters-codex/issues/491)). A `.VDO` is still not
+guaranteed a same-stem audio track. All are 320×200, magic `RATV`. Pairing verified
+across the full corpus (#137).
+
+Audio and video durations agree exactly (`tests/test_audio.cpp` reconciles all 106
+tracks): `audio_bytes / rate == frames / fps`, the one exception being `ZAC`, whose
+8.0 s narration ends before its 14.7 s clip does.
 
 ## Tools
 

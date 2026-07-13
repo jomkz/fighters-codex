@@ -489,6 +489,12 @@ characters). Everything else — asset strings, PE container, unmodelled
 bytes — carries over verbatim; with no edits the output is byte-identical
 (proven over all 46 install HUDs).
 
+The three tape gauges (heading, speed, altitude) are **32-bit** fields; the rest are
+16- or 8-bit and reject a value that does not fit rather than truncating it. Until
+[#491](https://github.com/jomkz/fighters-codex/issues/491) the tapes were written 16
+bits wide, which left the high half of a negative field stale — `speed_tape.dx=40`
+over a stored `-56` produced `-65496` in the engine.
+
 ```
 > fx hud set F16C.HUD speed_tape.dx=-40 icon_d=BAY -o F16C_mod.HUD
 F16C.HUD -> F16C_mod.HUD (4608 bytes, 2 edit(s))

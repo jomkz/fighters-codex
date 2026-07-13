@@ -785,7 +785,7 @@ std::vector<uint8_t> cb8_repack(const uint8_t* orig, size_t orig_size,
 ```cpp
 namespace fx {
 
-struct HudParam { std::string gauge, field; int16_t value; };
+struct HudParam { std::string gauge, field; int32_t value; };  // tapes are i32 (#491)
 struct HudFile  { bool valid; std::vector<std::string> asset_strings;
                   std::string icon_a, icon_b, icon_c, icon_d;
                   std::vector<HudParam> params; };

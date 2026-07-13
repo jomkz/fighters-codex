@@ -93,31 +93,43 @@ sub-panels. It also uses `BAY` (weapons bay indicator) instead of `HOOK`.
 
 ### Gauge parameter layout — confirmed
 
-All gauge positions are stored as signed s16 offsets from the HUD anchor
-point. Confirmed by tracing the HUD draw functions (`HUDInit`,
+Gauge parameters come in **two widths**, and the difference matters when writing:
+the three tape gauges store **i32** (sign-extended), everything below them stores
+**s16** or a byte. Confirmed by tracing the HUD draw functions (`HUDInit`,
 `?HUDDrawHeading`, `?HUDDrawSpeed`, `?HUDDrawAlt`, `HUDDrawHVel`,
-`?HUDDrawWeaponInfo`, `?HUDDrawRangeInfo`) in the game executable via Ghidra.
+`?HUDDrawWeaponInfo`, `?HUDDrawRangeInfo`) in the game executable via Ghidra, and
+corroborated by the assets: the tape fields are **four bytes apart**
+(`0x1E1` → `0x1E5` → `0x1E9` → `0x1ED`) where the flight-path-marker fields below
+are **two** (`0x231` → `0x233` → `0x235`), and across all 46 shipped HUDs every
+tape field is sign-extended over four bytes (`A7.HUD`: `d8 ff ff ff` = −40).
+
+> This spec previously said *"all gauge positions are stored as signed s16"*, and
+> `lib/src/hud.cpp` typed the tape fields accordingly. Reading looked right — the low
+> half **is** the value — but `fx hud set` wrote only two bytes and left the old high
+> half in place, so the engine read `40` as **−65496**
+> ([#491](https://github.com/jomkz/fighters-codex/issues/491)).
 
 After loading, the struct is resident at `hud`. Field offsets within the
 copied struct:
 
-| Struct offset | Global | Gauge | Field |
-|---------------|--------|-------|-------|
-| `0x1E1` | `DAT_00521541` | Heading tape | width (pixels) |
-| `0x1E5` | `DAT_00521545` | Heading tape | dy from anchor |
-| `0x1ED` | `DAT_0052154d` | Heading tape | tick spacing (dy) |
-| `0x1F7` | `DAT_00521557` | Speed tape | dx from anchor |
-| `0x1FB` | `DAT_0052155b` | Speed tape | dy from anchor |
-| `0x1FF` | `DAT_0052155f` | Speed tape | height (pixels) |
-| `0x209` | `DAT_00521569` | Speed tape | tick increment |
-| `0x214` | `DAT_00521574` | Altitude tape | dx from anchor |
-| `0x218` | `DAT_00521578` | Altitude tape | dy from anchor |
-| `0x21C` | `DAT_0052157c` | Altitude tape | height (pixels) |
-| `0x226` | `DAT_00521586` | Altitude tape | tick increment |
-| `0x231` | `DAT_00521591` | Flight path marker | dx from anchor |
-| `0x233` | `DAT_00521593` | Flight path marker | dy from anchor |
-| `0x235` | `DAT_00521595` | Flight path marker | box half-width |
-| `0x237` | `DAT_00521597` | Flight path marker | box half-height |
+| Struct offset | Global | Type | Gauge | Field |
+|---------------|--------|------|-------|-------|
+| `0x1E1` | `DAT_00521541` | i32 | Heading tape | width (pixels) |
+| `0x1E5` | `DAT_00521545` | i32 | Heading tape | dy from anchor |
+| `0x1E9` | `DAT_00521549` | i32 | Heading tape | **unmapped** — 910 in all 46 HUDs, so the assets alone cannot name it |
+| `0x1ED` | `DAT_0052154d` | i32 | Heading tape | tick spacing (dy) |
+| `0x1F7` | `DAT_00521557` | i32 | Speed tape | dx from anchor |
+| `0x1FB` | `DAT_0052155b` | i32 | Speed tape | dy from anchor |
+| `0x1FF` | `DAT_0052155f` | i32 | Speed tape | height (pixels) |
+| `0x209` | `DAT_00521569` | i32 | Speed tape | tick increment |
+| `0x214` | `DAT_00521574` | i32 | Altitude tape | dx from anchor |
+| `0x218` | `DAT_00521578` | i32 | Altitude tape | dy from anchor |
+| `0x21C` | `DAT_0052157c` | i32 | Altitude tape | height (pixels) |
+| `0x226` | `DAT_00521586` | i32 | Altitude tape | tick increment |
+| `0x231` | `DAT_00521591` | s16 | Flight path marker | dx from anchor |
+| `0x233` | `DAT_00521593` | s16 | Flight path marker | dy from anchor |
+| `0x235` | `DAT_00521595` | s16 | Flight path marker | box half-width |
+| `0x237` | `DAT_00521597` | s16 | Flight path marker | box half-height |
 | `0x238` | `DAT_00521598` | **Unknown** | No cross-references found |
 | `0x239` | `DAT_00521599` | Lock indicator flag A | 3-state lock display; checked against `missile+0xa6 & 0x10` |
 | `0x23A` | `DAT_0052159a` | Lock indicator flag B | Paired with A; selects state 5 (no lock) vs 6 (partial) |

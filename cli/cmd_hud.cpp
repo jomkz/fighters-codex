@@ -98,7 +98,9 @@ static int cmd_set(int argc, char** argv) {
         bool found = false;
         for (auto& p : hud.params) {
             if (p.gauge == gauge && p.field == field) {
-                p.value = (int16_t)atoi(val.c_str());
+                // Not (int16_t): the tape gauges are 32-bit, and truncating here would
+                // reintroduce the very corruption the widened codec fixes (#491).
+                p.value = (int32_t)strtol(val.c_str(), nullptr, 10);
                 found = true;
                 break;
             }
