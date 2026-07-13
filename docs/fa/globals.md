@@ -127,7 +127,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004EC420` | `viewModeTable` | re | view-mode dispatch table scanned by VIEWModeLookup |
 | `0x005223F0` | `replayWindowStart` | re | replay capture window start tick |
 | `0x005223F4` | `replayWindowEnd` | re | replay capture window end tick |
-| `0x00522400` | `replaySaveBuf` | re | saved-view replay buffer base (0x30 dwords copied in/out of the view) |
+| `0x00522400` | `replaySaveBuf` | re | saved-view replay buffer base (0x30 dwords copied in/out of the view); extent proven by the save/restore loops, which move 0x30 dwords |
 | `0x005224C0` | `replayActive` | re | replay-active flag (set by VIEWReplayRecordGate, read by VIEWReplayPlayback) |
 
 ### Collision (COL)
@@ -204,7 +204,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00538248` | `mm_page_size` | sms | GetSystemInfo dwPageSize; VirtualAlloc-vs-GlobalAlloc threshold (shared reader: sound) |
 | `0x0053824C` | `mmAllocId` | sms | current alloc-id tag stamped on new handles/RES_LIST rows; widely read (campaign/network/shell-ui) but MM-owned |
 | `0x00573208` | `brsColorProcess` | sms | bitmap color-process mode set by SetupBitmapAccess |
-| `0x00573248` | `resCache` | re | 20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248] |
+| `0x00573248` | `resCache` | re | 20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248]; extent proven by the init loop, which clears 0x28 dwords = 160 bytes = the 20 x 8-byte slots |
 
 ### .SEQ scripted-cutscene / sequence player (SEQ)
 
@@ -270,7 +270,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00546BA4` | `_lastPadlockId` | re | previous padlock/tracked id, compared by CheckForEvents1/2 |
 | `0x00546BA8` | `_requeueChain` | re | objects serviced this frame; ChainMergeSorted folds it back into chainStart |
 | `0x00546BB8` | `_lastCurZ` | re | previous frame Z of current object (CheckForEvents1) |
-| `0x00553120` | `_objSizes` | re | word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext |
+| `0x00553120` | `_objSizes` | re | word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16 |
 | `0x00553828` | `_objArenaNext` | re | bump cursor into the entity arena (OBJAdd memcpy target) |
 | `0x0055382C` | `_tempAliasBase` | re | lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999 |
 | `0x00553830` | `_tempAliasMax` | re | highest temp-alias id: (-0x14 - thisComputer)*1000; OBJTempAlias wraps to base past it |
@@ -285,7 +285,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00546BC0` | `_ctCompareActor` | re | actor slot used by CTVarDiff to evaluate attributes under the other object |
-| `0x00546BC8` | `_ctState` | re | 0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority) |
+| `0x00546BC8` | `_ctState` | re | 0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority); extent proven by CTInit, which clears 0x20 dwords = 0x80 bytes; interior not mapped, so bytes not dwords |
 | `0x00546C48` | `_ctPrintBuf` | re | HUD message text staged by CTDo_print/printnum, flushed on loop exit |
 | `0x00546C8C` | `_ctCheckPass` | re | validate/dry-run flag: skips branches and side effects, enables the stack-imbalance check |
 | `0x00546C90` | `_ctActionTaken` | re | set 1 when a CTDo action fires; returned by CTExecProgram |

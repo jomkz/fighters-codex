@@ -8,13 +8,14 @@
 #include "../fa_types.hpp"
 
 // View / camera & replay (VIEW) -- FA.EXE
-// 6/19 functions have a recovered signature; 3/5 globals have a recovered type.
+// 6/19 functions have a recovered signature; 4/5 globals have a recovered type.
 
 namespace fxe::fa::view {
 
 // --- globals ---------------------------------------------------------
 extern undefined4 replayWindowStart;  // 0x005223F0  replay capture window start tick
 extern undefined4 replayWindowEnd;  // 0x005223F4  replay capture window end tick
+extern undefined4 replaySaveBuf[48];  // 0x00522400  saved-view replay buffer base (0x30 dwords copied in/out of the view); extent proven by the save/restore loops, which move 0x30 dwords
 extern undefined1 replayActive;  // 0x005224C0  replay-active flag (set by VIEWReplayRecordGate, read by VIEWReplayPlayback)
 
 // --- functions -------------------------------------------------------
@@ -42,6 +43,5 @@ undefined4 VIEWChangeObj(undefined4, undefined4, undefined4);  // 0x0040F590  __
 // TODO(#453): 0x0040F2D0  VIEWSlewIntegrate -- signature not recovered
 // TODO(#453): 0x0040F5D0  VIEWCanSeeTarget -- signature not recovered
 // TODO(#455): 0x004EC420  viewModeTable -- type not recovered
-// TODO(#455): 0x00522400  replaySaveBuf -- type not recovered
 
 }  // namespace fxe::fa::view

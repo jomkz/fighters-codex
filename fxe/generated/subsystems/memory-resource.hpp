@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Memory & resource managers (MM/RM) -- FA.EXE
-// 46/50 functions have a recovered signature; 11/12 globals have a recovered type.
+// 46/50 functions have a recovered signature; 12/12 globals have a recovered type.
 
 namespace fxe::fa::memory_resource {
 
@@ -24,6 +24,7 @@ extern undefined1 rmNotifyEnabled;  // 0x0050A61C  guards RMNotify; cleared duri
 extern u32 mm_page_size;  // 0x00538248  GetSystemInfo dwPageSize; VirtualAlloc-vs-GlobalAlloc threshold (shared reader: sound)
 extern u8 mmAllocId;  // 0x0053824C  current alloc-id tag stamped on new handles/RES_LIST rows; widely read (campaign/network/shell-ui) but MM-owned
 extern undefined2 brsColorProcess;  // 0x00573208  bitmap color-process mode set by SetupBitmapAccess
+extern undefined4 resCache[40];  // 0x00573248  20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248]; extent proven by the init loop, which clears 0x28 dwords = 160 bytes = the 20 x 8-byte slots
 
 // --- functions -------------------------------------------------------
 undefined4 MMInit(undefined4);  // 0x00435C60  __fastcall
@@ -80,6 +81,5 @@ undefined4 RMLegalFilename(undefined4);  // 0x004A7240  __fastcall
 // TODO(#453): 0x00436300  MMLongAt -- signature not recovered
 // TODO(#453): 0x004A6AB0  RMCacheInsert -- signature not recovered
 // TODO(#453): 0x004A6DF0  RMSetup -- signature not recovered
-// TODO(#455): 0x00573248  resCache -- type not recovered
 
 }  // namespace fxe::fa::memory_resource

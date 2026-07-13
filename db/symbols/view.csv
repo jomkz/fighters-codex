@@ -35,7 +35,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00522362,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,
 0x005223F0,data,_replayWindowStart,replayWindowStart,re,inferred,replay capture window start tick,undefined4
 0x005223F4,data,_replayWindowEnd,replayWindowEnd,re,inferred,replay capture window end tick,undefined4
-0x00522400,data,_replaySaveBuf,replaySaveBuf,re,inferred,saved-view replay buffer base (0x30 dwords copied in/out of the view),
+0x00522400,data,_replaySaveBuf,replaySaveBuf,re,inferred,"saved-view replay buffer base (0x30 dwords copied in/out of the view); extent proven by the save/restore loops, which move 0x30 dwords",undefined4[48]
 0x00522404,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,
 0x005224C0,data,_replayActive,replayActive,re,inferred,"replay-active flag (set by VIEWReplayRecordGate, read by VIEWReplayPlayback)",undefined1
 0x005225A4,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,
