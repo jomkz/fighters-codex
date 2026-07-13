@@ -135,13 +135,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004F70EC,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,
 0x004F70FC,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,
 0x004F710C,data,,,waiver,confirmed,CT interpreter scratch / cross-subsystem state read by the AI interpreter,
-0x0050CF83,data,_ctOverrideName,,re,inferred,alternate/override AI script-name buffer; selected by _ctState+0x1d,
+0x0050CF83,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x103, in the class-extension region): alternate/override AI script-name buffer, selected by _ctState+0x1d. Not a standalone global — inside the record OBJAdd memmoves (#454)",
 0x0050CF84,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv,
 0x0050CF86,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv,
-0x0050CF90,data,_ctStateCheckpoint,,re,confirmed,heap copy of _ctState for preemptible save/restore,
+0x0050CF90,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x110, in the class-extension region): heap copy of _ctState for preemptible save/restore. Not a standalone global — inside the record OBJAdd memmoves (#454)",
 0x0050D095,data,,,waiver,confirmed,interior of _cg current-object mirror read by CTEval_*; base named in objects.csv,
 0x0050D2DD,data,,,waiver,confirmed,interior of _cgt type-record mirror read by the interpreter; base named in objects.csv,
-0x0050D312,data,_ctProgramNamePtr,,re,inferred,pointer to the current AI script name; NULL gates the interpreter off,undefined4
+0x0050D312,data,,,waiver,confirmed,"interior of _cgt type-record mirror (= OBJ_TYPE +0xAA, past the common header): pointer to the current AI script name, NULL gates the interpreter off. Not a standalone global — inside the type record (#454)",
 0x00546BC0,data,_ctCompareActor,,re,inferred,actor slot used by CTVarDiff to evaluate attributes under the other object,undefined2
 0x00546BC8,data,_ctState,,re,confirmed,0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority),
 0x00546BCC,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,

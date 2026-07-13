@@ -8,13 +8,11 @@
 #include "../fa_types.hpp"
 
 // Weapons — projectiles / seekers / ECM (PROJ) -- FA.EXE
-// 29/55 functions have a recovered signature; 6/8 globals have a recovered type.
+// 29/55 functions have a recovered signature; 4/6 globals have a recovered type.
 
 namespace fxe::fa::weapons {
 
 // --- globals ---------------------------------------------------------
-extern undefined2 projGunSoundHandle;  // 0x0050D0F8  active looping gun-sound handle
-extern undefined4 projGunSoundExpiry;  // 0x0050D0FA  gun-sound expiry tick
 extern undefined4 projBestTargetCost;  // 0x0058F0F8  seeker-search best-cost accumulator (init 0x7FFFFFFF)
 extern undefined2 projBestTargetId;  // 0x0058F10C  seeker-search result id
 extern undefined4 projPkPenalty;  // 0x0058F110  running hit-chance (Pk) multiplier
