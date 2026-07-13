@@ -2,7 +2,7 @@
 
 Master struct reference for Jane's Fighters Anthology.
 
-> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied. The **recovered layouts** (§1, §2) are derived from the engine's own code and are asserted in [`db/types/fa_types.h`](https://github.com/jomkz/fighters-codex/blob/main/db/types/fa_types.h); the **field census** (§4 onward) is raw `RecoverStructs.java` output kept as leads. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md) symbols applied. The **recovered layouts** (§1, §2) are derived from the engine's own code and are asserted in [`db/types/fa_types.h`](https://github.com/jomkz/fighters-codex/blob/main/db/types/fa_types.h); the **field census** (§5 onward) is raw `RecoverStructs.java` output kept as leads. Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ## The object model — two families, both self-describing
 
@@ -32,13 +32,62 @@ back into `_cg`. `OBJAdd` records each record's byte length in `_objSizes[id]`.
 So **there is no `sizeof(entity)` for a whole object**: `0xDE` is the *common region* every class
 shares, and the class extension begins immediately after it.
 
-### Why the class extensions are not mapped
+### The classes, and how big each extension is
 
-Every class's extension starts at the same offset (`0xDE`), so their fields **alias**: an aircraft's
-flight-model state and a missile's guidance state occupy the same byte ranges. They cannot be
-separated by offset — only by attributing each access to the *class of object the accessing code
-services*. That is genuine RE, tracked as a follow-up; until it is done, a named extension field
-would be a guess, and a wrong datatype is worse than none.
+The extension's length is declared per type at `OBJ_TYPE +0x03` — and **the retail data states it
+outright.** The type files are `[brent's_relocatable_format]`: *text*, which delimits the record
+with the developers' own section names. Read from all **534** type records shipped in the game's
+LIB archives:
+
+| file | sections in the record | `utilProc` (the class) | object extension |
+|---|---|---|---|
+| `.OT` | `OBJ_TYPE` | `_OBJProc` ×157, `_STRIPProc` ×13 | **0 — all 170 records** |
+| `.JT` | `OBJ_TYPE` + `PROJ_TYPE` | `_PROJProc` ×135 | **52 — all 135 records** |
+| `.NT` | `OBJ_TYPE` + `NPC_TYPE` | `_GVProc` ×73, `_CARRIERProc`, `_EJECTProc`, `_CATGUYProc` | 145–247 |
+| `.PT` | `OBJ_TYPE` + `NPC_TYPE` + `PLANE_TYPE` | `_PLANEProc` ×145 | 490–626 |
+
+So a **static object has no extension at all** — its record is exactly `0xDE` bytes. And `OBJ_TYPE`
+turns out not to be our coinage: it is the game's own name for the header.
+
+The class procs also declare a **hierarchy**, by falling back to one another for selectors they do
+not handle:
+
+```
+PLANE → GV → OBJ        CARRIER / EJECT / CATGUY → OBJ        PROJ, STRIP → (none)
+```
+
+### Why the low band still cannot be attributed by address
+
+Every class's extension starts at `0xDE`, so the first 52 bytes are *simultaneously* a projectile's
+whole extension, an aircraft's first 52 and a ground vehicle's first 52. An access to `_cg + 0xDE`
+names no class at all.
+
+**Two things do attribute a field:**
+
+1. **Size.** A GV extension is at most 247 bytes and a projectile's is 52 — so a field at
+   `ext ≥ 247` can *only* be an aircraft's. The shipped data proves it.
+2. **A class guard in the code.** `ShapeSetup` reads its fields only after testing
+   `entity.obj_class == 4` (aircraft), which proves the class of what it then reads.
+
+**And one thing does not: call-graph reachability from the class procs.** It looks sound and is not
+— a handler routinely mirrors *another* object into `_cg` (`GetCurObj` on a target id), so "reached
+from `_PROJProc`" does not mean "a projectile's field". Measured, it attributes fields at `ext 0x99`
+and `0x9D` to projectiles, whose extension is only 52 bytes long. Recorded so it is not retried.
+
+### The `.SH` articulation runs through this extension
+
+The x86 embedded in a shape file never touches `_cg` — the engine **stages** the state for it.
+`ShapeSetup` (`0x4AB450`) reads the aircraft extension and marshals it into the `_PL*` globals
+(`_PLgearDown`, `_PLgearPos`, `_PLhook`, `_PLrightFlap`, `_PLafterBurner`, …), and the `.SH` x86
+*selectors* read those to pick which sub-stream geometry to draw:
+
+```
+plane extension in _cg  →  ShapeSetup  →  _PL* globals  →  .SH embedded x86  →  sub-stream geometry
+```
+
+`PLANE_EXT::state_flags` (`+0x091`, i.e. `entity +0x16F`) is the source: bit `0x20` afterburner,
+`0x80` brake, `0x100` flaps, `0x1000` gear. See [shape-selection.md](shape-selection.md) and
+[formats/SH.md](formats/SH.md).
 
 ### How the recovered fields were proven
 
@@ -117,7 +166,45 @@ The shape fields are documented in full in [shape-selection.md](shape-selection.
 
 ---
 
-## 3. `CN_INFO` — network configuration
+## 3. The class extensions — `PLANE_EXT`, `PROJ_EXT` (#476)
+
+The extension begins at `entity + 0xDE`. Offsets below are **relative to the extension**; the
+`_cg` column gives the absolute mirror address the code actually uses, which is how these were
+recovered.
+
+### `PLANE_EXT` — the aircraft extension
+
+Every aircraft type in the retail data ships **at least 490 bytes** of extension (the tail beyond
+that varies per type), so `sizeof(PLANE_EXT) == 490` is a floor the compiler checks, not the whole
+record. Fields at `ext ≥ 247` are aircraft-only by the size argument above; the rest are named only
+where `ShapeSetup` reads them under an `obj_class == 4` guard.
+
+| ext | `_cg` | Size | Field | Meaning | Confidence |
+|--------|--------|------|-------|---------|------------|
+| `+0x005` | `0x0E3` | 1 | `pl_state` | staged into `_PLstate` for the shape selectors | inferred |
+| `+0x091` | `0x16F` | 4 | `state_flags` | `0x20` afterburner, `0x80` brake, `0x100` flaps, `0x1000` gear — **the articulation source** | confirmed |
+| `+0x0BD` | `0x19B` | 4 | `g_load` | `0x100` = 1 G | inferred |
+| `+0x110` | `0x1EE` | 4 | `throttle` | current, smoothed | confirmed |
+| `+0x114` | `0x1F2` | 2 | `throttle_target` | commanded %, 0–100 | confirmed |
+| `+0x118` | `0x1F6` | 4 | `climb_rate` | tested against `-0x2D00` in the flap gate | inferred |
+| `+0x11E` | `0x1FC` | 4 | `fuel` | internal quantity | confirmed |
+| `+0x12E` | `0x20C` | 1 | `stall_state` | 0 normal, 1 warning, 2 stall | confirmed |
+| `+0x196` | `0x274` | 2 | `ab_expiry` | afterburner timer (vs `_currentT`) | confirmed |
+| `+0x198` | `0x276` | 2 | `brake_expiry` | wheel-brake timer | confirmed |
+
+Everything else is `reserved`. In particular `+0x006`–`+0x090` is the band that **aliases** the
+projectile and GV extensions: nothing there can be attributed by address, so nothing there is named.
+
+### `PROJ_EXT` — the projectile extension
+
+**Exactly 52 bytes, in all 135 shipped `.JT` records** — so unlike the aircraft's, this size is not
+a floor but the whole thing, and it is asserted. Its interior is deliberately **unmapped**: those
+52 bytes alias the aircraft and GV extensions byte for byte, and no census can tell them apart.
+An honest 52-byte hole beats ten invented fields.
+
+---
+
+## 4. `CN_INFO` — network configuration
 
 Persisted to and loaded from `EA.CFG` / `NET.DAT` on disk. `CN_ReadConfig` reads `0xDDC` bytes after a 4-byte checksum header; `CN_WriteConfig` writes the same. The struct is version-stamped at `[0x00]` (version byte: `1`, `2`, or `3`). Version 3 is the current live format.
 
@@ -169,7 +256,7 @@ Persisted to and loaded from `EA.CFG` / `NET.DAT` on disk. `CN_ReadConfig` reads
 
 ---
 
-## 4. The field census — leads, not layouts
+## 5. The field census — leads, not layouts
 
 Everything below this point is raw `RecoverStructs.java` output: it records every `[reg + constant]`
 dereference where the register held a struct-pointer argument. It is a **census of accesses with
@@ -190,7 +277,7 @@ Three of its tables are **superseded**, and are kept only for provenance:
 
 ### Confidence in the census tables
 
-These tags describe the census tables in this section only; the recovered layouts in §1–§3
+These tags describe the census tables in this section only; the recovered layouts in §1–§4
 carry their own confidence markers, earned from the code.
 
 Every `inferred` (Low-confidence) field was reviewed against its accessor set (#130). A field is

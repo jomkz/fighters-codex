@@ -173,8 +173,15 @@ def emit_types():
     out.append("//   CN_INFO  0xDDC -- the config body CN_ReadConfig reads.")
     out.append("// The per-class extensions stay opaque on purpose: they all begin at the same")
     out.append("// offset, so their fields alias, and a named one would be a guess (#454).")
+    out.append("//   PLANE_EXT 490  -- the aircraft class extension (entity + 0xDE). Every aircraft")
+    out.append("//                     type in the retail data ships at least this much; the tail")
+    out.append("//                     beyond it varies per type.")
+    out.append("//   PROJ_EXT   52  -- the projectile extension. EXACTLY 52 in all 135 shipped .JT")
+    out.append("//                     records, so this one is not a floor but the whole thing.")
     for t, n, why in [("entity", 0xDE, "the common region of an object record"),
-                      ("OBJ_TYPE", 0x81, "the common header of a type record"),
+                      ("OBJ_TYPE", 166, "a 166-byte type record header (the retail data says so)"),
+                      ("PLANE_EXT", 490, "the guaranteed prefix of an aircraft extension"),
+                      ("PROJ_EXT", 52, "a projectile extension, exactly"),
                       ("CN_INFO", 0xDDC, "a 0xDDC-byte config body")]:
         out.append("static_assert(sizeof(%s) == 0x%X, \"%s is %s\");" % (t, n, t, why))
     out.append("")

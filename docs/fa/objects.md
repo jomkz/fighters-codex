@@ -105,6 +105,28 @@ Each object **class** publishes its procs through a small selector function.
 projectiles, and ground vehicles (`GV`) publish their own proc sets the same way, so
 the same `CallUtilProc` call reaches class-appropriate code.
 
+The type record names its class proc **by symbol** — the `.OT`/`.NT`/`.PT`/`.JT` files
+literally carry `symbol _PLANEProc ; utilProc`, which the loader resolves through
+[FA.SMS](formats/SMS.md). There are **eight** classes, and they form a hierarchy: a proc
+that does not handle a selector **tail-calls its parent's**, so a parent's handlers run on
+a child's objects.
+
+| class proc | VA | used by | falls back to |
+|---|---|---|---|
+| `_PLANEProc` | `0x49FB10` | `.PT` — aircraft (×145) | `_GVProc` |
+| `_GVProc` | `0x473DB0` | `.NT` — ground vehicles (×73) | `_OBJProc` |
+| `_OBJProc` | `0x473BE0` | `.OT` — static objects (×157) | — |
+| `_PROJProc` | `0x4C1F50` | `.JT` — projectiles (×135) | — |
+| `_STRIPProc` | `0x4BE640` | `.OT` — runways (×13) | — |
+| `_CARRIERProc` | `0x4BD5B0` | `.NT` (×5) | `_OBJProc` |
+| `_EJECTProc` | `0x4692D0` | `.NT` (×1) | `_OBJProc` |
+| `_CATGUYProc` | `0x442720` | `.NT` (×1) | `_OBJProc` |
+
+That hierarchy is why a plane responds to ground-vehicle events, and why the aircraft
+extension is the only one big enough to hold the flight model — see
+[structs.md](structs.md) for the per-class extension sizes, which the retail type records
+state outright.
+
 ## Allocation and aliases
 
 Objects are bump-allocated from a single arena. `OBJInit` (`0x491250`) reserves the
