@@ -63,42 +63,80 @@ bool plt_parse(const uint8_t* data, size_t size, PltInfo* info) {
 
     if (cam_pos == std::string::npos) return true; // no active campaign, identity only
 
-    // Collect all strings from the campaign block
+    // The campaign name and file are the only free-form strings here; everything else is
+    // read from the two fixed tables below, which the engine addresses directly.
     auto strings = scan_strings(data, size, cam_pos, scan_end - cam_pos);
-
-    // Classify strings by extension
-    for (size_t i = 0; i < strings.size(); i++) {
-        const std::string& s = strings[i];
+    for (const std::string& s : strings) {
         auto dot = s.rfind('.');
         if (dot == std::string::npos) {
-            // Could be campaign display name (no extension, human-readable)
-            if (!info->cam_file.empty() && info->cam_name.empty())
-                info->cam_name = s;
+            if (!info->cam_file.empty() && info->cam_name.empty()) info->cam_name = s;
             continue;
         }
         std::string ext = s.substr(dot);
         for (auto& c : ext) c = (char)toupper((unsigned char)c);
+        if (ext == ".CAM" && info->cam_file.empty()) info->cam_file = s;
+    }
 
-        if (ext == ".CAM" && info->cam_file.empty()) {
-            info->cam_file = s;
-        } else if (ext == ".PT") {
-            if (info->aircraft.empty())
-                info->aircraft = s;
-            else
-                info->aircraft_pool.push_back(s);
-        } else if (ext == ".JT") {
-            // Next byte after this string's null terminator is the quantity;
-            // walk through raw data to find this JT string and its quantity byte
-            for (size_t p = cam_pos; p + s.size() < scan_end; p++) {
-                if (memcmp(data + p, s.c_str(), s.size()) == 0 && data[p + s.size()] == 0) {
-                    uint8_t qty = (p + s.size() + 1 < size) ? data[p + s.size() + 1] : 0;
-                    info->ordnance.push_back({ s, qty });
-                    break;
-                }
-            }
-        } else if (ext == ".SEE" || ext == ".ECM") {
-            info->sensors.push_back(s);
+    // --- The two campaign tables, read where the engine reads them (#491) ---------------
+    //
+    // These used to be recovered by scanning the block for printable strings and taking the
+    // byte after each one as a quantity. That scan was capped at 0x0F00 — 3,840 bytes short
+    // of the store table at 0x1C60 — so a fully-equipped campaign pilot decoded to NO
+    // aircraft, NO ordnance and NO sensors at all. (It also read a lone 0x01 byte as a
+    // one-character "string" and stopped early on it.) Nothing caught that: `fx plt` never
+    // writes these fields, so the byte-identical round-trip was untouched by the bug.
+    //
+    // The engine states both layouts outright, and the pilot file is a straight image of
+    // the `_campaignPilot` record (0x4F8BB8):
+    //
+    //   _AddCampaignPlane (0x480C90)  walks 0x4F9968, stride 0xBC, while the s16 at +0x0E
+    //                                 is non-zero -> file 0xDB0, 20 slots of 188 bytes
+    //   _AddCampaignStore (0x480E10)  walks 0x4FA818, stride 0x10, 0x32 (50) times, with
+    //                                 the quantity an s16 at +0x0E -> file 0x1C60
+    //
+    // The 20 plane slots end at exactly 0x1C60, where the 50 store slots begin: the two
+    // tables tile the campaign block with nothing between them.
+    constexpr size_t kPlanes      = 0x0DB0, kPlaneStride = 0xBC, kPlaneCount = 20;
+    constexpr size_t kStores      = 0x1C60, kStoreStride = 0x10, kStoreCount = 50;
+    constexpr size_t kNameLen     = 14;     // char[14], null-padded
+    constexpr size_t kQtyOffset   = 0x0E;   // s16
+
+    auto slot_name = [&](size_t off) -> std::string {
+        return (off + kNameLen <= size) ? read_fixed(data + off, kNameLen) : std::string();
+    };
+    auto slot_s16 = [&](size_t off) -> int16_t {
+        if (off + 2 > size) return 0;
+        return (int16_t)((uint16_t)data[off] | ((uint16_t)data[off + 1] << 8));
+    };
+
+    for (size_t i = 0; i < kPlaneCount; ++i) {
+        const size_t off = kPlanes + i * kPlaneStride;
+        if (off + kPlaneStride > size) break;
+        // Occupancy is the s16 at +0x0E, which is what the engine tests — not the name.
+        if (slot_s16(off + kQtyOffset) == 0) continue;
+        std::string name = slot_name(off);
+        if (name.empty()) continue;
+        if (info->aircraft.empty()) info->aircraft = name;   // the first slot the game finds
+        info->aircraft_pool.push_back(std::move(name));
+    }
+
+    for (size_t i = 0; i < kStoreCount; ++i) {
+        const size_t off = kStores + i * kStoreStride;
+        if (off + kStoreStride > size) break;
+        std::string name = slot_name(off);
+        if (name.empty()) continue;              // a free slot has no name
+        const int16_t qty = slot_s16(off + kQtyOffset);
+
+        std::string ext;
+        auto dot = name.rfind('.');
+        if (dot != std::string::npos) {
+            ext = name.substr(dot);
+            for (auto& c : ext) c = (char)toupper((unsigned char)c);
         }
+        // Sensor and ECM pods live in the same table as the weapons and tanks; they are
+        // surfaced separately because that is how the game's own loadout screen groups them.
+        if (ext == ".SEE" || ext == ".ECM") info->sensors.push_back(name);
+        info->ordnance.push_back({ std::move(name), qty });
     }
 
     return true;

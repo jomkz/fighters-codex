@@ -63,7 +63,7 @@ void DrawAiEditor(App& app) {
                                                biName, biBytes);
                 sess.entries = fx::ealib_read_dir(sess.data.data(), sess.data.size());
                 sess.dirty   = true;
-                app.statusMsg  = "Compiled OK â€” " + biName + " updated";
+                app.statusMsg  = "Compiled OK — " + biName + " updated";
                 app.statusKind = App::StatusKind::Info;
             } else {
                 app.statusMsg  = "Compiled OK (no .BI entry to patch)";
@@ -71,7 +71,7 @@ void DrawAiEditor(App& app) {
             }
             s_compiled = true;
         } else {
-            app.statusMsg  = "Compile failed â€” " + std::to_string(s_errors.size()) + " error(s)";
+            app.statusMsg  = "Compile failed — " + std::to_string(s_errors.size()) + " error(s)";
             app.statusKind = App::StatusKind::Error;
         }
     }

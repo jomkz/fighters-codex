@@ -9,7 +9,7 @@ struct FntGlyph {
     uint8_t  ch;
     uint32_t width;
     uint32_t height;
-    // rendered bitmap: width Ã— height bytes, 0x00=transparent 0xFF=set
+    // rendered bitmap: width × height bytes, 0x00=transparent 0xFF=set
     std::vector<uint8_t> pixels;
 };
 

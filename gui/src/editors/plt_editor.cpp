@@ -85,7 +85,7 @@ void DrawPltEditor(App& app) {
         s_hasStats = plt_parse_stats(ed.data.data(), ed.data.size(), &s_stats);
     }
 
-    // â”€â”€ Identity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Identity ────────────────────────────────────────────────────────────
     ImGui::SeparatorText("Identity");
 
     bool changed = false;
@@ -118,7 +118,7 @@ void DrawPltEditor(App& app) {
         ed.modified = true;
     }
 
-    // â”€â”€ Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Stats ───────────────────────────────────────────────────────────────
     ImGui::SeparatorText("Stats");
 
     if (!s_hasStats) {
@@ -195,7 +195,7 @@ void DrawPltEditor(App& app) {
         ImGui::Spacing();
     }
 
-    // â”€â”€ Gap Explorer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Gap Explorer ────────────────────────────────────────────────────────
     ImGui::SeparatorText("Gap Explorer");
     ImGui::TextDisabled("Probe workflow: set bytes below, Save, launch the game, observe what changes.");
     ImGui::Spacing();
@@ -204,7 +204,7 @@ void DrawPltEditor(App& app) {
     // Returns true if any byte was modified.
     auto GapHexGrid = [&](int base, int len) -> bool {
         if (base + len > (int)ed.data.size()) {
-            ImGui::TextDisabled("(file too small â€” %d bytes needed)", base + len);
+            ImGui::TextDisabled("(file too small — %d bytes needed)", base + len);
             return false;
         }
         bool edited = false;
@@ -242,14 +242,14 @@ void DrawPltEditor(App& app) {
         }
     };
 
-    if (ImGui::TreeNodeEx("Gap 1 â€” 0xB0â€“0xC1  (18 bytes)", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::TreeNodeEx("Gap 1 — 0xB0–0xC1  (18 bytes)", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::TextDisabled("Adjacent to rank string. Likely rank index, score tier, or medal count.");
         ShowNonZero(0xB0, 18);
         if (GapHexGrid(0xB0, 18)) ed.modified = true;
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Gap 2 â€” 0xCFâ€“0x5AE  (1344 bytes, first 128 shown)")) {
+    if (ImGui::TreeNode("Gap 2 — 0xCF–0x5AE  (1344 bytes, first 128 shown)")) {
         ImGui::TextDisabled("Likely variable-length mission log text (null-terminated strings).");
         ImGui::TextDisabled("Edit as text with a hex editor for full access; probe first 128 bytes here.");
         ShowNonZero(0xCF, 1344);
@@ -257,14 +257,14 @@ void DrawPltEditor(App& app) {
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Gap 3 â€” 0x2018â€“0x20B7  (160 bytes)")) {
+    if (ImGui::TreeNode("Gap 3 — 0x2018–0x20B7  (160 bytes)")) {
         ImGui::TextDisabled("Between kill tallies (ends 0x2017) and weapon accuracy (starts 0x20B8).");
         ShowNonZero(0x2018, 0xA0);
         if (GapHexGrid(0x2018, 0xA0)) ed.modified = true;
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Gap 4 â€” 0x21F8â€“0x25DF  (~1000 bytes, first 128 shown)")) {
+    if (ImGui::TreeNode("Gap 4 — 0x21F8–0x25DF  (~1000 bytes, first 128 shown)")) {
         ImGui::TextDisabled("Fort/campaign-phase stats. Populated only after fort-assault missions.");
         ShowNonZero(0x21F8, 0x3E8);
         if (GapHexGrid(0x21F8, 128)) ed.modified = true;

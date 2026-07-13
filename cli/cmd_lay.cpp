@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-// stb_image_write declarations only â€” implementation compiled in cmd_pic.cpp
+// stb_image_write declarations only — implementation compiled in cmd_pic.cpp
 #include "stb_image_write.h"
 
 static std::string json_str(const std::string& s) {

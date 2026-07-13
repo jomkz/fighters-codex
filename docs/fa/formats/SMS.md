@@ -16,6 +16,7 @@ codec:
   fixtures:
     synthetic: false
     real_manifest: true
+    real_install: true
 related: []
 ---
 

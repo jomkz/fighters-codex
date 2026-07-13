@@ -16,6 +16,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
+    real_install: false
 related: [BRF, PIC, HUD]
 ---
 

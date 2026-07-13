@@ -47,9 +47,13 @@ static int cmd_mus_dump(const char* path) {
         case 0xFE:
             printf("{\"op\": \"FE\", \"state\": \"0x%08X\"}", e.value);
             break;
-        case 0xFD:
-            printf("{\"op\": \"FD\", \"target\": \"0x%06X\"}", e.value);
+        case 0xFD: {
+            printf("{\"op\": \"FD\", \"tracks\": [");
+            for (size_t t = 0; t < e.tracks.size(); t++)
+                printf("%s%u", t ? ", " : "", (unsigned)e.tracks[t]);
+            printf("]}");
             break;
+        }
         default:
             break;
         }

@@ -17,6 +17,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
+    real_install: true
 related: [MM, MT, BRF]
 ---
 

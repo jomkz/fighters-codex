@@ -13,8 +13,8 @@ static GpuTexture   s_tex;
 static int          s_lastLib   = -2;
 static int          s_lastEntry = -2;
 
-// Build an RGBA atlas of all rendered glyphs arranged in a 16Ã—16 grid.
-// Each cell is cellWÃ—cellH pixels.  White glyph on dark background.
+// Build an RGBA atlas of all rendered glyphs arranged in a 16×16 grid.
+// Each cell is cellW×cellH pixels.  White glyph on dark background.
 static GpuTexture BuildGlyphAtlas(const fx::FntFile& fnt) {
     // Determine cell size from the widest / tallest glyph.
     uint32_t cellW = 8, cellH = fnt.font_height ? fnt.font_height : 8;

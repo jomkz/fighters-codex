@@ -19,22 +19,27 @@
 //
 // Ordnance inventory (0x1C60): 50 entries x 16 bytes each.
 //
-// Stats block (0x1F80-0x21F7) â€” confirmed from RE:
+// Stats block (0x1F80-0x21F7) — confirmed from RE:
 //   Mission counters  0x1F80-0x1FAF  (12 x u32)
 //   Kill tallies      0x1FB0-0x2017  (13 categories x 8 bytes: player u32 + wingman u32)
-//   Unknown gap       0x2018-0x20B7  (0xA0 bytes â€” not accessed in decompile)
+//   Unknown gap       0x2018-0x20B7  (0xA0 bytes — not accessed in decompile)
 //   Weapon accuracy   0x20B8-0x21F7  (8 groups x 0x28 bytes: player slot + wingman slot)
 //
 // Remaining gaps (0xB0-0xC1, 0xCF-0x5AE, 0x21F8-0x25DF):
 //   No code in the game executable was found accessing these regions via static analysis.
-//   Differential save of fresh pilot files shows all zeros â€” populated only after
+//   Differential save of fresh pilot files shows all zeros — populated only after
 //   actual campaign gameplay. Layout unknown; marked reserved.
 
 namespace fx {
 
+// One slot of the campaign store table (0x1C60): 50 entries x 16 bytes.
+//
+// Not just weapons: the table also holds drop tanks (.GAS), sensor pods (.SEE) and
+// ECM pods (.ECM) — everything the campaign lets a pilot draw from.
 struct PltOrdnance {
-    std::string jt_name;  // e.g. "AIM9M.JT"
-    uint8_t     quantity;
+    std::string name;      // "AIM9M.JT", "F250.GAS", "AAS38.SEE", "ALQ167.ECM"
+    int16_t     quantity;  // 0x7FFF = unlimited (_AddCampaignStore returns early on it);
+                           // -1 is carried by the gun entries in every campaign save
 };
 
 struct PltInfo {
@@ -68,7 +73,7 @@ struct PltWpnSlot {
     uint32_t damage_total;
     uint32_t shots_fired;
     uint32_t hits;
-    uint32_t type3;   // role TBD â€” present in FA struct; confirmed 5th field is kills
+    uint32_t type3;   // role TBD — present in FA struct; confirmed 5th field is kills
     uint32_t kills;
 };
 
@@ -77,7 +82,7 @@ struct PltWpnGroup {
     PltWpnSlot wingman;
 };
 
-// Confirmed stats block â€” requires file size >= 0x21F8.
+// Confirmed stats block — requires file size >= 0x21F8.
 struct PltStats {
     // Mission and loss counters (0x1F80-0x1FAF)
     uint32_t missions_flown;

@@ -21,6 +21,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
+    real_install: true
 related: [XMI, SEQ, 11K]
 ---
 
@@ -69,7 +70,8 @@ indices resolved at runtime.
 | `FB <mode> <idx>` | 3 bytes | Play XMI track — short form (no `F9` terminator); appears in M_LAUNCH context |
 | `FC` | 1 byte | Shuffle/loop marker; followed by state dispatch block `01 02 03 02 01 02 03 02 01` |
 | `FE <u32>` | 5 bytes | Conditional branch (game-state test) |
-| `FD <u24>` | 4 bytes | Loop / jump |
+| `FD <n> <n bytes>` | 2 + n | Track list: a **count-prefixed** run of `n` XMI track indices |
+| `<idx> [F9]` | 1–2 bytes | A bare track index, played under the mode the last `FB` set — MIDI-style **running status** |
 
 The `01 02 03 02 01 02 03 02 01` byte pattern immediately following `FC` is a
 **state machine dispatch table** — the same pattern appears in DLG CODE
@@ -188,3 +190,24 @@ Miles Sound System XMIDI documentation.
 [SEQ](SEQ.md) — the cutscene sequencer whose `_SEQmusic` path triggers these
 slots; [11K](11K.md) — PCM sound effects (a music slot does *not* reference
 these — see the correction note there).
+
+### `FD` is a list, not a jump target (#491)
+
+This table used to read `FD <u24> — 4 bytes — loop / jump`, and `lib/src/mus.cpp` was
+written from it. The retail bytes say otherwise — the operand is a **count** followed by
+that many track indices:
+
+```
+M_AIR    fd 02 07 1f              n=2
+M_EJECT  fd 03 0f 16 27           n=3
+M_SUCC   fd 05 03 0b 14 31 10     n=5
+```
+
+Reading a fixed 3-byte operand consumed the count plus two entries and then landed
+mid-list, so the disassembler aborted on a track index it mistook for an opcode: **3 of
+the 9 shipped playlists** (`M_AIR`, `M_EJECT`, `M_SUCC`) stopped early and lost their
+tail. `M_AIR` also ends with bare indices under the last `FB` mode
+(`fb 50 13 f9 | 17 f9 | 15 f9 | 06`) — the running-status form above.
+
+The oracle is that a playlist ends at its dispatch table and zero padding; all nine now
+disassemble to that boundary (`tests/test_mus.cpp`, real-asset mode).

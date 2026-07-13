@@ -20,6 +20,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
+    real_install: false
 related: [LIB, SSF, RGN]
 credits:
   - "PKWare DCL decode based on blast.c by Mark Adler (zlib project)"

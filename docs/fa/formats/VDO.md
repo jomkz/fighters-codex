@@ -21,6 +21,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
+    real_install: true
 related: [FBC, 11K, CB8]
 ---
 
@@ -119,9 +120,18 @@ struct's decode buffers.
 | Tag (`u16`) | Meaning |
 |-------------|---------|
 | `0` | Reuse the current codebook; decode the index stream only (delta frame) |
-| `1` | Color-table refresh (RLE) — no pixel blit this frame |
+| `1` | **Whole-canvas RLE keyframe**: `UnRLE` straight into the canvas, no pixel blit. A `u16` at `+2` gives the frame's remaining bytes (`FBC[n] - 4`) and is *stepped over*; the RLE stream — whose own `u16` output count is 64,000, the full 320×200 canvas — starts at `+4` |
 | `2` | Image keyframe → `DecompressVideoImage`; a second `u16` gives the sub-stream length |
 | other | Codebook sub-stream: **bit `0x8000` set ⇒ RLE-compressed**, low 15 bits = its byte length (`UnRLE` expands it); raw otherwise |
+
+> **The `+4`, not `+2`, matters** ([#491](https://github.com/jomkz/fighters-codex/issues/491)).
+> `GetVDOFrame` (`0x4AF510`) calls `UnRLE((short *)((int)p + 2), canvas)` with `p = frame+2`,
+> so the RLE header sits at `frame+4`. This spec said "color-table refresh" and the codec
+> read the count from `frame+2` — which is the frame's *length*, not a pixel count — so it
+> decoded roughly `frame_size` pixels instead of 64,000 and left a black band across the
+> bottom of every keyframe. 89 such frames in 28 of the 355 videos; `LACA.VDO` uses one for
+> 62 of its 135 frames. `tests/test_vdo.cpp` now decodes every real frame and compares the
+> keyframes against an independent RLE expansion.
 
 After the codebook sub-stream a `u16` **marker** separates the index sub-stream:
 `0` = end, `0xFFFF` = an RLE-compressed index stream follows (`UnRLE`). The

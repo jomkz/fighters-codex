@@ -21,6 +21,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
+    real_install: false
 related: [BRF, PIC, LIB]
 ---
 

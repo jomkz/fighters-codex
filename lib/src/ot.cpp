@@ -118,13 +118,13 @@ const OtField ECM_FIELDS[] = {
     { "ecm_power",          "u16 bitmask: $10=radar jammer $100=IR jammer; $0=passive only" },
     { "chaff_eff",          "u8 chaff effectiveness (0=no chaff dispensers)" },
     { "radar_scale",        "u8 radar jammer effect scale (passed to MakeObjRotationMatrix)" },
-    { "radar_az",           "u8 radar jammer azimuth half-angle (valueÃ—256 = fixed-point deg)" },
-    { "radar_el",           "u8 radar jammer elevation half-angle (valueÃ—256)" },
+    { "radar_az",           "u8 radar jammer azimuth half-angle (value×256 = fixed-point deg)" },
+    { "radar_el",           "u8 radar jammer elevation half-angle (value×256)" },
     { "flare_eff",          "u8 flare effectiveness (0=no flare dispensers)" },
     { "ir_scale",           "u8 IR jammer effect scale" },
-    { "ir_az",              "u8 IR jammer azimuth half-angle (valueÃ—256)" },
-    { "ir_el",              "u8 IR jammer elevation half-angle (valueÃ—256)" },
-    { "radar_pk_red",       "u8 radar Pk reduction % (Pk_final = (100-byte)Ã—Pk_base/100)" },
+    { "ir_az",              "u8 IR jammer azimuth half-angle (value×256)" },
+    { "ir_el",              "u8 IR jammer elevation half-angle (value×256)" },
+    { "radar_pk_red",       "u8 radar Pk reduction % (Pk_final = (100-byte)×Pk_base/100)" },
     { "radar_strength",     "u16 overall radar ECM strength (100=full 0=none)" },
     { "unk_ecm_1",          "u8" },
     { "unk_ecm_2",          "u8" },
@@ -141,9 +141,9 @@ const int ECM_COUNT = (int)(sizeof(ECM_FIELDS) / sizeof(ECM_FIELDS[0]));
 const OtField GAS_FIELDS[] = {
     { "struct_type",        "u8 always 8 (fuel tank)" },
     { "names",              "ptr -> short, long, filename strings" },
-    { "empty_weight",       "u16 lbs â€” tank structural weight when empty" },
+    { "empty_weight",       "u16 lbs — tank structural weight when empty" },
     { "flags",              "u8 always $1 (fuel-tank category flag)" },
-    { "fuel_weight",        "u32 lbs â€” usable fuel weight when full (JP-8: 6.6 lb/US gal)" },
+    { "fuel_weight",        "u32 lbs — usable fuel weight when full (JP-8: 6.6 lb/US gal)" },
 };
 const int GAS_COUNT = (int)(sizeof(GAS_FIELDS) / sizeof(GAS_FIELDS[0]));
 

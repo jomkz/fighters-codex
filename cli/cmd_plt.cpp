@@ -54,7 +54,10 @@ static int cmd_info(int argc, char** argv) {
         if (!info.ordnance.empty()) {
             printf("Ordnance:\n");
             for (auto& o : info.ordnance)
-                printf("  %-16s x%u\n", o.jt_name.c_str(), o.quantity);
+                if (o.quantity == 0x7FFF)
+                    printf("  %-16s unlimited\n", o.name.c_str());
+                else
+                    printf("  %-16s x%d\n", o.name.c_str(), (int)o.quantity);
         }
         if (!info.sensors.empty()) {
             printf("Sensors:    ");
