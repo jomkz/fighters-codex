@@ -72,17 +72,33 @@ MAX_ARITY = 16  # a RET operand implying more is a misread frame, not a 17-argum
 
 
 def load_frames():
-    """va -> frame observations, across every exported binary."""
+    """(binary, va) -> frame observations.
+
+    Keyed by BINARY as well as address, and that is not pedantry: the comms DLLs all load at
+    0x10000000 and IP.EXE collides with FA.EXE at 0x00400000, so an address alone does not name
+    a function. Keying on the VA alone silently merges evidence from different binaries -- it
+    typed five comms-DLL functions from the arity of whatever happened to sit at the same
+    address in another module (`ser_rs232_block` took a 1-argument signature from a function
+    whose real RET operand is 12). A wrong signature is worse than none, and this is exactly
+    how one gets written.
+    """
     frames = {}
     for path in glob.glob(os.path.join(INV, "*", "frames.csv")):
+        binary = os.path.basename(os.path.dirname(path))
         with open(path, newline="", encoding="utf-8") as fh:
             for r in csv.DictReader(fh):
-                frames[int(r["va"], 16)] = {
+                frames[(binary, int(r["va"], 16))] = {
                     "ret": int(r["ret_imm"]),
                     "ecx": r["reads_ecx"] == "true",
                     "edx": r["reads_edx"] == "true",
                 }
     return frames
+
+
+def binary_of_slug():
+    """subsystem slug -> the binary it lives in (db/subsystems.csv)."""
+    with open(os.path.join(DB, "subsystems.csv"), newline="", encoding="utf-8") as fh:
+        return {r["slug"]: r["binary"] for r in csv.DictReader(fh)}
 
 
 def parse_sig(sig):
@@ -133,17 +149,19 @@ def main():
         return 1
 
     frames = load_frames()
+    binaries = binary_of_slug()
 
     # --- validate against the decorations, every run. The rule does not get to be
     # trusted on the strength of having been measured once, in a session nobody can see.
     ok = bad = 0
     fastcall_fires = 0
     for path in sorted(glob.glob(os.path.join(DB, "symbols", "*.csv"))):
+        binary = binaries[os.path.basename(path)[:-4]]
         with open(path, newline="", encoding="utf-8") as fh:
             for r in csv.DictReader(fh):
                 if r["kind"] != "func" or r["source"] == "waiver" or not r["type"].strip():
                     continue
-                p = predict(frames.get(int(r["va"], 16)))
+                p = predict(frames.get((binary, int(r["va"], 16))))
                 if p is None:
                     continue
                 truth = parse_sig(r["type"])
@@ -167,6 +185,7 @@ def main():
     per_sub = collections.Counter()
     for path in sorted(glob.glob(os.path.join(DB, "symbols", "*.csv"))):
         slug = os.path.basename(path)[:-4]
+        binary = binaries[slug]
         with open(path, newline="", encoding="utf-8") as fh:
             rows = list(csv.DictReader(fh))
             cols = rows[0].keys() if rows else []
@@ -174,7 +193,7 @@ def main():
         for r in rows:
             if r["kind"] != "func" or r["source"] == "waiver" or r["type"].strip():
                 continue
-            p = predict(frames.get(int(r["va"], 16)))
+            p = predict(frames.get((binary, int(r["va"], 16))))
             if p is None:
                 continue
             r["type"] = signature(r["name"], p[1])

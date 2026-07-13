@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // CDRVHF32.DLL — Cdrv Hayes-modem comms driver -- CDRVHF32.DLL
-// 64/75 functions have a recovered signature; 0/0 globals have a recovered type.
+// 75/75 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::cdrvhf32::comms_hf {
 
 // --- functions -------------------------------------------------------
+undefined4 InitializePort(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x10001000  __stdcall
 undefined4 SetBaud(undefined4, undefined4);  // 0x100013D0  __stdcall
 undefined4 SetFlowControlCharacters(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x10001430  __stdcall
 undefined4 SetFlowControlThreshold(undefined4, undefined4, undefined4);  // 0x100014B0  __stdcall
@@ -27,6 +28,7 @@ undefined4 ModemGetCarrierSpeed(undefined4);  // 0x10001C20  __stdcall
 undefined4 ModemGetConnectSpeed(undefined4);  // 0x10001C50  __stdcall
 undefined4 ModemHangup(undefined4);  // 0x10001C80  __stdcall
 undefined4 ModemInit(undefined4);  // 0x10001D30  __stdcall
+undefined4 ModemModifyString(undefined4, undefined4, undefined4);  // 0x10001DE0  __stdcall
 undefined4 ModemModifyValue(undefined4, undefined4, undefined4);  // 0x10001F40  __stdcall
 undefined4 SendBreak(undefined4, undefined4);  // 0x10002010  __stdcall
 undefined4 ModemWaitForCall(undefined4, undefined4, undefined4, undefined4);  // 0x10002090  __stdcall
@@ -37,6 +39,8 @@ undefined4 PeekChar(undefined4);  // 0x100024C0  __stdcall
 undefined4 PutByte(undefined4, undefined4);  // 0x10002540  __stdcall
 undefined4 PutPacket(undefined4, undefined4, undefined4);  // 0x100025C0  __stdcall
 undefined4 PutString(undefined4, undefined4);  // 0x100026B0  __stdcall
+undefined4 BytesInReceiveBuffer(undefined4);  // 0x100026E0  __stdcall
+undefined4 BytesInTransmitBuffer(undefined4);  // 0x10002700  __stdcall
 undefined4 FlushReceiveBuffer(undefined4);  // 0x10002720  __stdcall
 undefined4 FlushTransmitBuffer(undefined4);  // 0x10002740  __stdcall
 undefined4 ReceiveBufferSize(undefined4);  // 0x10002760  __stdcall
@@ -51,6 +55,7 @@ undefined4 WaitForFixed(undefined4, undefined4, undefined4, undefined4, undefine
 undefined4 WaitForPeekTable(undefined4, undefined4, undefined4, undefined4);  // 0x10002C60  __stdcall
 undefined4 WaitForPeek(undefined4, undefined4, undefined4, undefined4);  // 0x10002DB0  __stdcall
 undefined4 WaitForTable(undefined4, undefined4, undefined4, undefined4);  // 0x10002DF0  __stdcall
+undefined4 WaitFor(undefined4, undefined4, undefined4, undefined4);  // 0x10003010  __stdcall
 undefined4 CdrvCrc16(undefined4, undefined4);  // 0x10003050  __stdcall
 undefined4 CdrvCrc32(undefined4, undefined4);  // 0x100030A0  __stdcall
 undefined4 DtrOff(undefined4);  // 0x100030E0  __stdcall
@@ -64,33 +69,24 @@ undefined4 CdrvReturnStringAddress(undefined4);  // 0x10003270  __stdcall
 undefined4 CdrvSetTime(undefined4, undefined4, undefined4);  // 0x10003280  __stdcall
 undefined4 CdrvSetTimeoutFunction(undefined4, undefined4);  // 0x100032D0  __stdcall
 undefined4 CdrvSetTimerResolution(undefined4, undefined4);  // 0x10003300  __stdcall
+undefined4 GetPaceTime(undefined4);  // 0x10003320  __stdcall
+undefined4 GetTimeout(undefined4);  // 0x10003350  __stdcall
 undefined4 SetPaceTime(undefined4, undefined4);  // 0x10003380  __stdcall
 undefined4 SetTimeout(undefined4, undefined4);  // 0x100033B0  __stdcall
-undefined4 DataStreamGetPacket(undefined4, undefined4);  // 0x100033E0  __stdcall
+undefined4 DataStreamGetPacket(undefined4, undefined4, undefined4);  // 0x100033E0  __stdcall
+undefined4 DataStreamGetByte(undefined4, undefined4);  // 0x10003430  __stdcall
 undefined4 SetDataStreamFunction(undefined4, undefined4);  // 0x10003480  __stdcall
 undefined4 IsBreak(undefined4);  // 0x100034B0  __stdcall
 undefined4 IsCarrierDetect(undefined4);  // 0x100034F0  __stdcall
+undefined4 IsCts(undefined4);  // 0x10003520  __stdcall
 undefined4 IsDsr(undefined4);  // 0x10003550  __stdcall
 undefined4 IsFramingError(undefined4);  // 0x10003580  __stdcall
 undefined4 IsInputOverrun(undefined4);  // 0x100035C0  __stdcall
 undefined4 IsOverrunError(undefined4);  // 0x10003600  __stdcall
-undefined4 IsParityError(undefined4, undefined4, undefined4);  // 0x10003640  __stdcall
+undefined4 IsParityError(undefined4);  // 0x10003640  __stdcall
+undefined4 IsPortAvailable(undefined4);  // 0x10003680  __stdcall
 undefined4 IsReceiveBufferEmpty(undefined4);  // 0x100036A0  __stdcall
 undefined4 IsRing(undefined4);  // 0x100036C0  __stdcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x10001000  InitializePort -- signature not recovered
-// TODO(#453): 0x10001DE0  ModemModifyString -- signature not recovered
-// TODO(#453): 0x100026E0  BytesInReceiveBuffer -- signature not recovered
-// TODO(#453): 0x10002700  BytesInTransmitBuffer -- signature not recovered
-// TODO(#453): 0x10003010  WaitFor -- signature not recovered
-// TODO(#453): 0x10003320  GetPaceTime -- signature not recovered
-// TODO(#453): 0x10003350  GetTimeout -- signature not recovered
-// TODO(#453): 0x10003430  DataStreamGetByte -- signature not recovered
-// TODO(#453): 0x10003520  IsCts -- signature not recovered
-// TODO(#453): 0x10003680  IsPortAvailable -- signature not recovered
-// TODO(#453): 0x10003700  IsTransmitBufferEmpty -- signature not recovered
+undefined4 IsTransmitBufferEmpty(undefined4);  // 0x10003700  __stdcall
 
 }  // namespace fxe::cdrvhf32::comms_hf

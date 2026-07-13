@@ -22,7 +22,7 @@ va,kind,name,display,source,confidence,notes,type
 0x10003320,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10003350,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x100033E0,func,cdrvxfer_getfiles,cdrvxfer_getfiles,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall cdrvxfer_getfiles(undefined4, undefined4)"
-0x10003410,func,cdrvxfer_sendfiles,cdrvxfer_sendfiles,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10003410,func,cdrvxfer_sendfiles,cdrvxfer_sendfiles,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall cdrvxfer_sendfiles(undefined4, undefined4)"
 0x10003440,func,SetXferParameters,SetXferParameters,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall SetXferParameters(undefined4, undefined4)"
 0x10003500,func,TransferFiles,TransferFiles,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall TransferFiles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x10003640,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
@@ -73,12 +73,12 @@ va,kind,name,display,source,confidence,notes,type
 0x10005DA0,func,dos_gettime,dos_gettime,re,confirmed,Cdrv comms driver (file transfer) public export,
 0x10005E00,func,dos_open,dos_open,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_open(undefined4, undefined4)"
 0x10005EA0,func,dos_read,dos_read,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_read(undefined4, undefined4, undefined4)"
-0x10005EE0,func,dos_rename,dos_rename,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10005EE0,func,dos_rename,dos_rename,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_rename(undefined4, undefined4)"
 0x10005F00,func,dos_seek,dos_seek,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_seek(undefined4, undefined4, undefined4)"
 0x10005F40,func,dos_setfdate,dos_setfdate,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_setfdate(undefined4, undefined4, undefined4)"
 0x10005F90,func,dos_setfileattribute,dos_setfileattribute,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_setfileattribute(undefined4, undefined4)"
 0x10005FE0,func,dos_setfiledatetime,dos_setfiledatetime,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_setfiledatetime(undefined4, undefined4, undefined4)"
-0x10006070,func,dos_write,dos_write,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10006070,func,dos_write,dos_write,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_write(undefined4, undefined4, undefined4)"
 0x100060AA,func,,,waiver,confirmed,statically-linked C runtime / library helper (Ghidra FID) — third-party,
 0x100060B0,func,,,waiver,confirmed,statically-linked C runtime / library helper (Ghidra FID) — third-party,
 0x100060B6,func,,,waiver,confirmed,statically-linked C runtime / library helper (Ghidra FID) — third-party,
