@@ -2,6 +2,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00436B30,func,_MoveObj@0,MoveObj,sms,confirmed,,undefined4 __stdcall MoveObj(void)
 0x004382D0,func,MoveGoalValue,,re,confirmed,resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall MoveGoalValue(undefined4, undefined4)"
 0x0043846C,data,,,waiver,confirmed,MoveGoalValue switch jump-table / tail data (computed access),
+0x00442640,func,_CATGUYEventProc,CATGUYEventProc,sms,confirmed,,
+0x00442720,func,_CATGUYProc,CATGUYProc,sms,confirmed,,
+0x00442750,func,_CATGUYMoveProc,CATGUYMoveProc,sms,confirmed,,
+0x00442AB0,func,_CATGUYDraw@4,CATGUYDraw,sms,confirmed,,undefined4 __stdcall CATGUYDraw(undefined4)
 0x00442C00,func,_GRAPHICInit@0,GRAPHICInit,sms,confirmed,init the 100-entry _graphics effect pool + per-type .SH handle table (crater/smoke/fire/exp/debris/chaff/flare/spd/mpd/lpd); see objects.md GRAPHIC effect spawning,undefined4 __stdcall GRAPHICInit(void)
 0x00442DE0,func,_GRAPHICUpdate@0,GRAPHICUpdate,sms,confirmed,"step every live GRAPHIC entry via FUN_00442e10 (motion/fuse/adder emission), then _UpdateLoopSounds",undefined4 __stdcall GRAPHICUpdate(void)
 0x004431B0,func,_GRAPHICAddYourObjs@4,GRAPHICAddYourObjs,sms,confirmed,,undefined4 __stdcall GRAPHICAddYourObjs(undefined4)
@@ -55,11 +59,14 @@ va,kind,name,display,source,confidence,notes,type
 0x00464520,func,_PreferredProtectId@0,PreferredProtectId,sms,confirmed,,undefined4 __stdcall PreferredProtectId(void)
 0x00464550,func,@CloseToAnything@4,CloseToAnything,sms,confirmed,,undefined4 __fastcall CloseToAnything(undefined4)
 0x00464640,func,@SetScenarioEndTime@4,SetScenarioEndTime,sms,confirmed,,undefined4 __fastcall SetScenarioEndTime(undefined4)
+0x004736F0,func,_NPCWeaponsProc,NPCWeaponsProc,sms,confirmed,,
 0x00473A40,func,_OBJEventProc,OBJEventProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __cdecl OBJEventProc(u16, undefined4)"
 0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,void __cdecl OBJDamageProc(HIT_OBJ_DATA *)
 0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,undefined4 __cdecl OBJProc(undefined4)
 0x00473C10,func,_Kill@0,Kill,sms,confirmed,,undefined4 __stdcall Kill(void)
+0x0048D780,func,_PLANESayProc,PLANESayProc,sms,confirmed,,
 0x0048E8D0,func,_OBJSayProc,OBJSayProc,sms,confirmed,,
+0x0048EC40,func,_PLANECommentProc,PLANECommentProc,sms,confirmed,,
 0x00491240,func,@OBJGet@4,OBJGet,sms,confirmed,,undefined4 __fastcall OBJGet(undefined4)
 0x00491250,func,_OBJInit@4,OBJInit,sms,confirmed,,undefined4 __stdcall OBJInit(undefined4)
 0x004912C0,func,_OBJShutdown@0,OBJShutdown,sms,confirmed,,undefined4 __stdcall OBJShutdown(void)
@@ -78,6 +85,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004917F0,func,_OBJTempAlias@0,OBJTempAlias,sms,confirmed,,undefined4 __stdcall OBJTempAlias(void)
 0x00491810,func,_OBJSetControl@16,OBJSetControl,sms,confirmed,,"undefined4 __stdcall OBJSetControl(undefined4, undefined4, undefined4, undefined4)"
 0x004918D0,func,_OBJHumanName@0,OBJHumanName,sms,confirmed,,undefined4 __stdcall OBJHumanName(void)
+0x0049D860,func,?PLANEBlow@@YAXXZ,PLANEBlow,sms,confirmed,,void __cdecl PLANEBlow(void)
+0x0049F840,func,?PLANEMoveProc@@YAXD@Z,PLANEMoveProc,sms,confirmed,,void __cdecl PLANEMoveProc(char)
+0x0049FA50,func,?PLANEAddProc@@YAJXZ,PLANEAddProc,sms,confirmed,,long __cdecl PLANEAddProc(void)
+0x0049FB10,func,_PLANEProc,PLANEProc,sms,confirmed,,
 0x004A6B10,func,ResolveTypeRecord,,re,confirmed,resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall ResolveTypeRecord(undefined4)
 0x004A6EB0,func,_SetupOT,SetupOT,sms,confirmed,,undefined4 __cdecl SetupOT(undefined4)
 0x004A71C0,func,LoadShapeVariantPair,,re,confirmed,load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B); not a C function (#479): mid-function split of _SetupOT (0x004A6EB0),!split
@@ -86,6 +97,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004A7220,func,_SetupPT,SetupPT,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SetupPT(undefined4)
 0x004A7230,func,_SetupJT,SetupJT,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SetupJT(undefined4)
 0x004AB450,func,@ShapeSetup@4,ShapeSetup,sms,confirmed,,undefined4 __fastcall ShapeSetup(undefined4)
+0x004BD5B0,func,_CARRIERProc,CARRIERProc,sms,confirmed,,
+0x004BD950,func,_RotatePattern,RotatePattern,re,confirmed,"transforms a landing/takeoff pattern into world space for the current object: runs the nine local (x,y,z) offsets in the pattern record through _RotatedOffset@20 against the current-object mirror _cg (0x50CE80), then copies _cg heading into the record and slews it by the record pitch/roll deltas. Reached from the carrier/strip pattern build (?STRIPAddProc@@YAJXZ, _CARRIERProc)",void __fastcall RotatePattern(int)
+0x004BE2A0,func,?STRIPAddProc@@YAJXZ,STRIPAddProc,sms,confirmed,,long __cdecl STRIPAddProc(void)
+0x004BE640,func,_STRIPProc,STRIPProc,sms,confirmed,,
 0x004D709A,func,_WriteFile@20,WriteFile,sms,confirmed,,"undefined4 __stdcall WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004EB612,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 1),
 0x004EB618,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 4),
@@ -95,6 +110,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004EB650,data,,,waiver,confirmed,view/camera state consumed read-only (FlyingLoop/HUDDraw/ViewPan/SlewKey); hud/shell-ui pass names it,
 0x004EB658,data,,,waiver,confirmed,view/camera state consumed read-only (FlyingLoop/HUDDraw/ViewPan/SlewKey); hud/shell-ui pass names it,
 0x004EB70C,data,,,waiver,confirmed,interior (+0x4) of _zeroPoint3; read by _GRAPHICAddExp@28,
+0x004F4825,data,,,waiver,confirmed,"interior (+5) of the 6-entry animation-frame byte table at 0x004F4820, indexed frame%6 by _CATGUYDraw@4 (case 0x27)",
+0x004F4833,data,,,waiver,confirmed,"interior (+3) of the 4-entry animation-frame byte table at 0x004F4830, indexed by _CATGUYDraw@4 (case 0x29)",
 0x004F4868,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F49CC,data,,,waiver,confirmed,interior (+0x44) of the tracer/explosion graphics table at s_&BULLTS1.5K; read by _GRAPHICAddExp@28,
 0x004F4A58,data,,,waiver,confirmed,interior (+0xD0) of the tracer/explosion graphics table at s_&BULLTS1.5K; read by _GRAPHICAddExp@28,
@@ -138,8 +155,30 @@ va,kind,name,display,source,confidence,notes,type
 0x004F7C08,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C14,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C24,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
+0x004FF5E0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF5E8,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF620,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF658,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF670,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF688,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF690,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF6A0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF6B0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF6C0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF6F0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF6F8,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF700,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF710,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF740,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF760,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF798,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF7E8,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF7F0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF818,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
+0x004FF838,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
 0x004FFE34,data,_objArena,,re,confirmed,entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding),undefined4
 0x004FFE38,data,,,waiver,confirmed,entity-arena bookkeeping next to _objArena,
+0x0050CCC8,data,_takeoffPattern,takeoffPattern,re,confirmed,"autopilot takeoff-pattern record — field 0 holds &?APTakeoff@@YGDXZ, registered with the autopilot dispatcher by _APAdd@4 from ?STRIPAddProc@@YAJXZ",
 0x0050CE84,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x04); named via structs.md, not a standalone global",
 0x0050CE89,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x09); named via structs.md, not a standalone global",
 0x0050CE8A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x0A); named via structs.md, not a standalone global",
@@ -193,6 +232,13 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D076,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1F6); named via structs.md, not a standalone global",
 0x0050D07A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x1FA); named via structs.md, not a standalone global",
 0x0050D0B1,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x231); named via structs.md, not a standalone global",
+0x0050D0B7,data,_cmDispenser,cmDispenser,re,confirmed,"countermeasure dispenser state — low 7 bits are the remaining count (decremented per launch), bit 0x80 selects chaff vs flare; read by _NPCWeaponsProc and _PLANEEventProc",u8
+0x0050D0E5,data,_sayLastComment,sayLastComment,re,confirmed,"wingman chatter: id of the last line spoken, compared against the new candidate so a line never repeats back-to-back (_PLANECommentProc)",u8
+0x0050D0E6,data,_sayLastStress,sayLastStress,re,confirmed,"wingman chatter: snapshot of the pilot g-stress byte, compared against the current value to gate the grunt lines (_PLANECommentProc)",u8
+0x0050D0E7,data,_sayHighGTicks,sayHighGTicks,re,confirmed,"wingman chatter: high-g tick count this minute — 0x12 triggers ""Ease up on the stick"", 0x14 a grunt; reset on the minute rollover (_PLANECommentProc)",u8
+0x0050D0E8,data,_sayCommentMinute,sayCommentMinute,re,confirmed,wingman chatter: current minute bucket (_currentTime / 0x3C); a change resets _sayHighGTicks (_PLANECommentProc),u16
+0x0050D0EA,data,_sayLastAngleOff,sayLastAngleOff,re,confirmed,"wingman chatter: last angle-off-nose snapshot — the angle must change before ""Approaching target"" is repeated (_PLANECommentProc)",u16
+0x0050D0EC,data,_sayCommentUntil,sayCommentUntil,re,confirmed,wingman chatter: per-line cooldown deadline in _currentTime ticks; chatter is suppressed while _currentTime < this (_PLANECommentProc),u16
 0x0050D0F3,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x273); named via structs.md, not a standalone global",
 0x0050D26D,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x05),
 0x0050D271,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x09 type flags dword; bit 0x400 = auto-remove when destroyed),
@@ -209,6 +255,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D32C,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0xC4),
 0x0050D390,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x128),
 0x0050D392,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x12A),
+0x0052253D,data,_damageQuietUntil,damageQuietUntil,re,confirmed,damage: cooldown deadline in _currentTime ticks — _DAMAGEInit@0 parks it at 0x7FFF (disabled) and _DAMAGEUpdate@0 gates on it; also read as the end-of-mission grace check by _PLANECommentProc,u16
 0x00538260,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass,
 0x00538264,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass,
 0x00538268,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass,
@@ -236,6 +283,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2",undefined2
 0x00546BA8,data,_requeueChain,,re,confirmed,objects serviced this frame; ChainMergeSorted folds it back into chainStart,undefined2
 0x00546BB8,data,_lastCurZ,,re,inferred,previous frame Z of current object (CheckForEvents1); extent proven in the #455 close-out,fixed24
+0x00552FC8,data,_sayFailedSent,sayFailedSent,re,confirmed,"wingman chatter: mission-failed line already spoken (set once, gates the failure callout); cleared by _SAYInit2@0",u8
+0x00552FDC,data,_sayChatterUntil,sayChatterUntil,re,confirmed,wingman chatter: global chatter cooldown deadline gating the top of _PLANECommentProc; re-armed by @SAYRearmMessage@8,u16
+0x00552FE0,data,_saySucceededSent,saySucceededSent,re,confirmed,wingman chatter: mission-succeeded line already spoken; suppresses further home-approach callouts. Cleared by _SAYInit2@0,u8
+0x00552FE8,data,_sayAlmostHomeUntil,sayAlmostHomeUntil,re,confirmed,"wingman chatter: ""Almost home"" cooldown deadline — re-armed to _currentTime + 4 each time it fires (_PLANECommentProc)",u16
 0x00553120,data,_objSizes,,re,confirmed,"word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16",u16[900]
 0x00553124,data,,,waiver,confirmed,interior of _objSizes word[900] table,
 0x00553828,data,_objArenaNext,,re,confirmed,bump cursor into the entity arena (OBJAdd memcpy target),undefined4
@@ -246,3 +297,5 @@ va,kind,name,display,source,confidence,notes,type
 0x00553840,data,_objArenaSize,,re,confirmed,"arena byte capacity (OBJInit parameter), bounds OBJAdd",undefined4
 0x0055384C,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 1),
 0x00553850,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 2),
+0x005713AA,data,,,waiver,confirmed,interior of _planes (+2) — element [1] of the u16 active-plane-id array walked as &_planes + _numPlanes; named at its base,
+0x00571420,data,_wasOnGround,wasOnGround,re,confirmed,"previous-frame ground contact, fed to _PLANEUpdateJustLanded@8 and then refreshed from _OnTheGround@0 — the edge that makes a landing ""just landed"" exactly once",u8

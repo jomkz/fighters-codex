@@ -1,4 +1,8 @@
 va,kind,name,display,source,confidence,notes,type
+0x0041DE80,func,?DestroySurface@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z,,sms,confirmed,,
+0x0041E010,func,?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ,,sms,confirmed,,
+0x0041E030,func,?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z,,sms,confirmed,,
+0x0041E050,func,?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z,,sms,confirmed,,
 0x0045CA70,func,?DrawAcrossBankInter@@YAGFFFFKPAUGlobalData@@GPAE@Z,DrawAcrossBankInter,sms,confirmed,,"unsigned short __cdecl DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *)"
 0x0045CDA0,func,?DrawAcrossBank@@YAGFFFFKPAUGlobalData@@G@Z,DrawAcrossBank,sms,confirmed,,"unsigned short __cdecl DrawAcrossBank(short, short, short, short, unsigned long, GlobalData *, unsigned short)"
 0x0045DBD0,func,@GG_InitMode@0,GG_InitMode,sms,confirmed,,undefined4 __fastcall GG_InitMode(void)
@@ -91,6 +95,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004992B0,func,_G_UHline2@12,G_UHline2,sms,confirmed,,"undefined4 __stdcall G_UHline2(undefined4, undefined4, undefined4)"
 0x004992E0,func,_G_Box2@16,G_Box2,sms,confirmed,,"undefined4 __stdcall G_Box2(undefined4, undefined4, undefined4, undefined4)"
 0x00499330,func,_G_UBox2@16,G_UBox2,sms,confirmed,,"undefined4 __stdcall G_UBox2(undefined4, undefined4, undefined4, undefined4)"
+0x004AF8F0,func,?GLASSESSaveBitmap@@YGXXZ,GLASSESSaveBitmap,sms,confirmed,,void __stdcall GLASSESSaveBitmap(void)
+0x004AF930,func,?GLASSESInterleaveBitmap@@YGXXZ,GLASSESInterleaveBitmap,sms,confirmed,,void __stdcall GLASSESInterleaveBitmap(void)
+0x004AFB40,func,_ShowPicture,ShowPicture,re,confirmed,"shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it",void __fastcall ShowPicture(char *)
+0x004B0130,func,?GLASSESSpreadLines@@YIXD@Z,GLASSESSpreadLines,sms,confirmed,,void __fastcall GLASSESSpreadLines(char)
+0x004B01E0,func,?GLASSESPrintAmount@@YGXXZ,GLASSESPrintAmount,sms,confirmed,,void __stdcall GLASSESPrintAmount(void)
 0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl G_AllocBitmapBuffer(undefined4)
 0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,"undefined4 __fastcall G_RelocBitmap(undefined4, undefined4)"
 0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocBitmap(undefined4, undefined4, undefined4)"
@@ -128,6 +137,16 @@ va,kind,name,display,source,confidence,notes,type
 0x004BA400,func,@G_FloatFlatFlip@8,G_FloatFlatFlip,sms,confirmed,,"undefined4 __fastcall G_FloatFlatFlip(undefined4, undefined4)"
 0x004BA500,func,@G_FloatTextureFlip@12,G_FloatTextureFlip,sms,confirmed,,"undefined4 __fastcall G_FloatTextureFlip(undefined4, undefined4, undefined4)"
 0x004BA660,func,@G_FloatPerspectiveFlip@12,G_FloatPerspectiveFlip,sms,confirmed,,"undefined4 __fastcall G_FloatPerspectiveFlip(undefined4, undefined4, undefined4)"
+0x004BEE60,func,_unknown_divide_error,unknown_divide_error,sms,confirmed,,
+0x004BEE70,func,_divide_by_ecx_handler,divide_by_ecx_handler,sms,confirmed,,
+0x004BEF50,func,_divide_by_ebp_handler,divide_by_ebp_handler,sms,confirmed,,
+0x004BF040,func,_divide_by_bp_handler,divide_by_bp_handler,sms,confirmed,,
+0x004BF130,func,_divide_overflow_handler_common,divide_overflow_handler_common,sms,confirmed,,
+0x004BF220,func,_sphere_overflow,sphere_overflow,sms,confirmed,,
+0x004BF250,func,_overflow_handler_reg,overflow_handler_reg,sms,confirmed,,
+0x004BF2C0,func,_line_overflow1,line_overflow1,sms,confirmed,,
+0x004BF310,func,_line_overflow2,line_overflow2,sms,confirmed,,
+0x004BF340,func,_access_violation_handler,access_violation_handler,sms,confirmed,,
 0x004C619C,func,_G_UPatLine@20,G_UPatLine,sms,confirmed,,"undefined4 __stdcall G_UPatLine(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C6334,func,_G_UBresenhamLine@16,G_UBresenhamLine,sms,confirmed,,"undefined4 __stdcall G_UBresenhamLine(undefined4, undefined4, undefined4, undefined4)"
 0x004C6ECC,func,@G_UPolygon@8,G_UPolygon,sms,confirmed,,"undefined4 __fastcall G_UPolygon(undefined4, undefined4)"
@@ -158,6 +177,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00501500,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox),
 0x00501528,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox),
 0x0050153C,data,,,waiver,confirmed,clip-box push/pop stack state (G_PushClipBox/G_PopClipBox),
+0x0050C5C4,data,_glassesBitmap,glassesBitmap,re,confirmed,"stereo-glasses overlay bitmap handle — allocated by _G_AllocBitmap@12 in ?GLASSESInit@@YGXXZ, freed in ?GLASSESShutDown@@YGXXZ",u32
+0x0050C5E0,data,,,waiver,confirmed,"string literal — ""h3d_off.PIC"", the resource name _ShowPicture displays when the stereo-glasses mode is switched off; constant text, not state",
 0x0050C992,data,,,waiver,confirmed,interior of _tabStops text tab-stop table,
 0x0050C994,data,,,waiver,confirmed,interior of _tabStops text tab-stop table,
 0x0050CE68,data,,,waiver,confirmed,Bresenham/pattern-line rasterizer state near reduceLookDown,
@@ -313,3 +334,5 @@ va,kind,name,display,source,confidence,notes,type
 0x0058B7E0,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array),
 0x0058B7E4,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array),
 0x0058B818,data,,,waiver,confirmed,interior of the NPM edge table (VEDGE array),
+0x0058F0E8,data,_overflowQuotient,overflowQuotient,re,confirmed,"divide-overflow handler scratch: the saturated quotient magnitude, computed as (mask ^ 0x70000000) - mask. Reached through the _overflow_ptr slot the raster inner loops install (renderer.md)",u32
+0x0058F0F4,data,_overflowSignMask,overflowSignMask,re,confirmed,divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign,u32

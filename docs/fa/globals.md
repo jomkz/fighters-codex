@@ -95,6 +95,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 **Binary: `FA.EXE`**
 
+### Network / multiplayer (NET/SER/UDP/MP)
+
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 1 named referenced globals
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00572568` | `querySocket` | re | master/query socket handle — set from the connect result in ?NET_StartQuery@@…, used for the broadcast host query, closed and reset to -1 by ?NET_MasterShutdown@@YAXXZ |
+
 ### HUD / cockpit
 
 [`hud.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/hud.csv) · [page](hud.md) — 16 named referenced globals
@@ -240,13 +248,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 3 named referenced globals
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 6 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004F6CA4` | `_blitDestX` | re | destination X of the present blit rect (GG_FlushShaken/FlushDirtyLines) |
 | `0x004F6CA8` | `_blitDestY` | re | destination Y of the present blit rect; offset by screen shake |
 | `0x004F6CAC` | `_shakeParity` | re | current screen-shake parity toggle (GG_FlushShaken) |
+| `0x0050C5C4` | `glassesBitmap` | re | stereo-glasses overlay bitmap handle — allocated by _G_AllocBitmap@12 in ?GLASSESInit@@YGXXZ, freed in ?GLASSESShutDown@@YGXXZ |
+| `0x0058F0E8` | `overflowQuotient` | re | divide-overflow handler scratch: the saturated quotient magnitude, computed as (mask ^ 0x70000000) - mask. Reached through the _overflow_ptr slot the raster inner loops install (renderer.md) |
+| `0x0058F0F4` | `overflowSignMask` | re | divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign |
 
 ### Wingman / group AI (WNG/GRP)
 
@@ -258,18 +269,31 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 15 named referenced globals
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 29 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004F6FDC` | `_curObjStackTop` | re | PushCurObj/PopCurObj nesting stack for GetCurObj |
 | `0x004F6FE0` | `_cmdBufWritePtr` | re | command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf) |
 | `0x004FFE34` | `_objArena` | re | entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding) |
+| `0x0050CCC8` | `takeoffPattern` | re | autopilot takeoff-pattern record — field 0 holds &?APTakeoff@@YGDXZ, registered with the autopilot dispatcher by _APAdd@4 from ?STRIPAddProc@@YAJXZ |
+| `0x0050D0B7` | `cmDispenser` | re | countermeasure dispenser state — low 7 bits are the remaining count (decremented per launch), bit 0x80 selects chaff vs flare; read by _NPCWeaponsProc and _PLANEEventProc |
+| `0x0050D0E5` | `sayLastComment` | re | wingman chatter: id of the last line spoken, compared against the new candidate so a line never repeats back-to-back (_PLANECommentProc) |
+| `0x0050D0E6` | `sayLastStress` | re | wingman chatter: snapshot of the pilot g-stress byte, compared against the current value to gate the grunt lines (_PLANECommentProc) |
+| `0x0050D0E7` | `sayHighGTicks` | re | wingman chatter: high-g tick count this minute — 0x12 triggers "Ease up on the stick", 0x14 a grunt; reset on the minute rollover (_PLANECommentProc) |
+| `0x0050D0E8` | `sayCommentMinute` | re | wingman chatter: current minute bucket (_currentTime / 0x3C); a change resets _sayHighGTicks (_PLANECommentProc) |
+| `0x0050D0EA` | `sayLastAngleOff` | re | wingman chatter: last angle-off-nose snapshot — the angle must change before "Approaching target" is repeated (_PLANECommentProc) |
+| `0x0050D0EC` | `sayCommentUntil` | re | wingman chatter: per-line cooldown deadline in _currentTime ticks; chatter is suppressed while _currentTime < this (_PLANECommentProc) |
+| `0x0052253D` | `damageQuietUntil` | re | damage: cooldown deadline in _currentTime ticks — _DAMAGEInit@0 parks it at 0x7FFF (disabled) and _DAMAGEUpdate@0 gates on it; also read as the end-of-mission grace check by _PLANECommentProc |
 | `0x00546B94` | `_curObjSize` | re | byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6 |
 | `0x00546B9C` | `_curTypeSize` | re | byte size of the current type-record mirror (from type +0x01) |
 | `0x00546BA4` | `_lastPadlockId` | re | previous padlock/tracked id, compared by CheckForEvents1/2 |
 | `0x00546BA8` | `_requeueChain` | re | objects serviced this frame; ChainMergeSorted folds it back into chainStart |
 | `0x00546BB8` | `_lastCurZ` | re | previous frame Z of current object (CheckForEvents1); extent proven in the #455 close-out |
+| `0x00552FC8` | `sayFailedSent` | re | wingman chatter: mission-failed line already spoken (set once, gates the failure callout); cleared by _SAYInit2@0 |
+| `0x00552FDC` | `sayChatterUntil` | re | wingman chatter: global chatter cooldown deadline gating the top of _PLANECommentProc; re-armed by @SAYRearmMessage@8 |
+| `0x00552FE0` | `saySucceededSent` | re | wingman chatter: mission-succeeded line already spoken; suppresses further home-approach callouts. Cleared by _SAYInit2@0 |
+| `0x00552FE8` | `sayAlmostHomeUntil` | re | wingman chatter: "Almost home" cooldown deadline — re-armed to _currentTime + 4 each time it fires (_PLANECommentProc) |
 | `0x00553120` | `_objSizes` | re | word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16 |
 | `0x00553828` | `_objArenaNext` | re | bump cursor into the entity arena (OBJAdd memcpy target) |
 | `0x0055382C` | `_tempAliasBase` | re | lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999 |
@@ -277,6 +301,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00553834` | `_multiAliasCursor` | re | OBJAliasForMulti/OBJNextAliasForMulti iteration cursor |
 | `0x0055383C` | `_tempAliasNext` | re | next temp alias returned by OBJTempAlias (negative per-computer id band) |
 | `0x00553840` | `_objArenaSize` | re | arena byte capacity (OBJInit parameter), bounds OBJAdd |
+| `0x00571420` | `wasOnGround` | re | previous-frame ground contact, fed to _PLANEUpdateJustLanded@8 and then refreshed from _OnTheGround@0 — the edge that makes a landing "just landed" exactly once |
 
 ### AI interpreter (CT)
 
@@ -292,6 +317,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00546C94` | `_ctActorObj` | re | pointer to the current actor entity record |
 | `0x00546C98` | `_ctHalt` | re | halt flag; the CTExecProgram loop runs while *IP!='%' and !_ctHalt |
 | `0x00546CA4` | `_ctExecuting` | re | re-entry guard set across CTExecProgram |
+
+### Input — joystick / serial / modem
+
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 1 named referenced globals
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00522C18` | `lastThrottle` | re | analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one |
 
 ### Weapons — projectiles / seekers / ECM (PROJ)
 

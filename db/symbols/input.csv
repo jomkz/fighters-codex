@@ -1,4 +1,11 @@
 va,kind,name,display,source,confidence,notes,type
+0x004115C0,func,_KeyAvail,KeyAvail,sms,confirmed,,
+0x00417A10,func,?PotStick@@YAGFG@Z,PotStick,sms,confirmed,,"unsigned short __cdecl PotStick(short, unsigned short)"
+0x00417C20,func,?KeyThrottle@@YAGFG@Z,KeyThrottle,sms,confirmed,,"unsigned short __cdecl KeyThrottle(short, unsigned short)"
+0x00417D10,func,?KeyRudder@@YAGFG@Z,KeyRudder,sms,confirmed,,"unsigned short __cdecl KeyRudder(short, unsigned short)"
+0x00417D80,func,?PotThrottle@@YAGFG@Z,PotThrottle,sms,confirmed,,"unsigned short __cdecl PotThrottle(short, unsigned short)"
+0x00417ED0,func,?PotRudder@@YAGFG@Z,PotRudder,sms,confirmed,,"unsigned short __cdecl PotRudder(short, unsigned short)"
+0x00481280,func,_GetKeySlow,GetKeySlow,sms,confirmed,,
 0x00494270,func,@ReadSticksRaw@0,ReadSticksRaw,sms,confirmed,poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10),undefined4 __fastcall ReadSticksRaw(void)
 0x004942D0,func,_InitJoysticks@0,InitJoysticks,sms,confirmed,joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions,undefined4 __stdcall InitJoysticks(void)
 0x00494430,func,?GetJoystickType@@YA?AW4JOYRESULT@@K@Z,GetJoystickType,sms,confirmed,JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4,JOYRESULT __cdecl GetJoystickType(unsigned long)
@@ -30,6 +37,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0049C260,func,?RunModemAdvSetupDialog@@YGXPAUCN_INFO@@PAJ1@Z,RunModemAdvSetupDialog,sms,confirmed,,"void __stdcall RunModemAdvSetupDialog(CN_INFO *, long *, long *)"
 0x0049C780,func,?RunModemConfigurationScreen@@YGXXZ,RunModemConfigurationScreen,sms,confirmed,large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui,void __stdcall RunModemConfigurationScreen(void)
 0x004EBCE4,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
+0x004EE6F4,data,,,waiver,confirmed,"string literal — joystick-calibration prompt passed to _DialogInfoBox@12, which walks it as char* (?PotThrottle@@YAGFG@Z); constant text, not state",
 0x004F8448,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
 0x004FFE9C,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
 0x004FFF20,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
@@ -76,8 +84,13 @@ va,kind,name,display,source,confidence,notes,type
 0x00502158,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
 0x00502160,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
 0x00502168,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x005225E7,data,,,waiver,confirmed,"interior of _keyarray (+0x4F) — scan-code 0x4F (End) key state, read as rudder-left by ?KeyRudder@@YAGFG@Z; named at its base",
+0x005225E9,data,,,waiver,confirmed,"interior of _keyarray (+0x51) — scan-code 0x51 (PgDn) key state, read as rudder-right by ?KeyRudder@@YAGFG@Z; named at its base",
+0x00522C18,data,_lastThrottle,lastThrottle,re,confirmed,"analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one",s32
 0x0054B824,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem,
 0x00554ABC,data,,,waiver,confirmed,interior of / adjacent to _buttonPresses; named at its base or owned by that subsystem,
+0x00554AC0,data,,,waiver,confirmed,"interior of _buttonPresses (+8) — element [2], the pending select-next-missile press count drained by ?PotStick@@YAGFG@Z; named at its base",
+0x00554AC4,data,,,waiver,confirmed,"interior of _buttonPresses (+0xC) — element [3], folded into _selectNextMissile and cleared by ?PotStick@@YAGFG@Z; named at its base",
 0x00554EBC,data,,,waiver,confirmed,interior of / adjacent to ?joystickXDevice@@3KA; named at its base or owned by that subsystem,
 0x00554EC4,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem,
 0x00554EC8,data,,,waiver,confirmed,interior of / adjacent to _joystickFunctions; named at its base or owned by that subsystem,

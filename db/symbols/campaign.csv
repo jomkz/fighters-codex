@@ -107,6 +107,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0042B0F6,func,MAPGroupSetLeader,,re,confirmed,make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPGroupSetLeader(void)
 0x0042B19D,func,MAPGroupAdd,,re,confirmed,"add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MAPGroupAdd(short)
 0x0042B275,func,MAPDeleteSpecial,,re,confirmed,delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPDeleteSpecial(void)
+0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,,
 0x00467240,func,PilotFindFreeSlot,,re,confirmed,find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl PilotFindFreeSlot(void)
 0x004674F0,func,PilotBuildPaper,,re,confirmed,"build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","undefined4 __fastcall PilotBuildPaper(undefined4,int)"
 0x00467860,func,PilotPaperAddLine,,re,confirmed,append one label/value line pair into the pilot-paper text buffer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall PilotPaperAddLine(undefined4 *,undefined4 *)"
@@ -129,6 +130,19 @@ va,kind,name,display,source,confidence,notes,type
 0x0047FAAE,func,JOGCFetchMission,,re,inferred,"download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0)",!split
 0x004805AC,func,,,waiver,inferred,FOREIGN: anti-cheat CRC accumulator per _thisComputer; owner = network/integrity #219,
 0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport,undefined4 __stdcall MISSIONLoadOrdIcons(undefined4)
+0x00480B70,func,?MyFilterProc@@YADPAGPAJPAD@Z,MyFilterProc,sms,confirmed,,"char __cdecl MyFilterProc(unsigned short *, long *, char *)"
+0x00480C40,func,_InitCampaignPilot,InitCampaignPilot,sms,confirmed,,
+0x00480C90,func,_AddCampaignPlane,AddCampaignPlane,sms,confirmed,,
+0x00480D70,func,_CampaignPlanesLeft@0,CampaignPlanesLeft,sms,confirmed,,undefined4 __stdcall CampaignPlanesLeft(void)
+0x00480D90,func,_UkraineCheckMaxPlanes,UkraineCheckMaxPlanes,sms,confirmed,,
+0x00480DF0,func,_UkraineAddA7,UkraineAddA7,sms,confirmed,,
+0x00480F90,func,_UkraineRescued,UkraineRescued,sms,confirmed,,
+0x004810C0,func,_KurileRescued,KurileRescued,sms,confirmed,,
+0x004810D0,func,_VietnamRescued,VietnamRescued,sms,confirmed,,
+0x004810E0,func,_ATFRescued,ATFRescued,sms,confirmed,,
+0x00481190,func,_UkraineQuit,UkraineQuit,sms,confirmed,,
+0x00481260,func,_KurileQuit,KurileQuit,sms,confirmed,,
+0x00481270,func,_VietnamQuit,VietnamQuit,sms,confirmed,,
 0x00481920,func,CampaignProcInvoke,,re,confirmed,low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4,undefined4 __stdcall CampaignProcInvoke(undefined4)
 0x00481A7B,func,MISSIONEnemiesAlive,,re,inferred,"scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __cdecl MISSIONEnemiesAlive(void)
 0x00483C90,func,TextNextToken,,re,confirmed,whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall TextNextToken(char *)

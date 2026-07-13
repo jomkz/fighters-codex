@@ -22,6 +22,10 @@ va,kind,name,display,source,confidence,notes,type
 0x0045B9C0,func,_DecodeInterSVGA15NONFrame,DecodeInterSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp single; dispatch inter submode6 case1,"undefined4 __cdecl DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4)"
 0x0045BE60,func,_DecodeInterDSVGA15NONFrame,DecodeInterDSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0),"undefined4 __cdecl DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4)"
 0x0045C500,func,_DecodeInterDSVGA15NONSkipFrame,DecodeInterDSVGA15NONSkipFrame,sms,confirmed,INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0),"undefined4 __cdecl DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4)"
+0x004AE410,func,?PlayVDOFile@@YAFPADFD@Z,PlayVDOFile,sms,confirmed,,"short __cdecl PlayVDOFile(char *, short, char)"
+0x004AE440,func,?PlayVDOString@@YAFPADFPAUT_HANDLE@@PAEJJD@Z,PlayVDOString,sms,confirmed,,"short __cdecl PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char)"
+0x004AED50,func,?VDOSetMode@@YAXPAUVDO@@@Z,VDOSetMode,sms,confirmed,,void __cdecl VDOSetMode(VDO *)
+0x004AF760,func,?VDOCompareBitmaps@@YAKPAUT_HANDLE@@0PAEK@Z,VDOCompareBitmaps,sms,confirmed,,"unsigned long __cdecl VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long)"
 0x004CCFFC,func,_DecodeYUV15,DecodeYUV15,sms,confirmed,,
 0x004CD1C0,func,_DecodeYUV15Double1,DecodeYUV15Double1,sms,confirmed,,
 0x004CD394,func,_DecodeYUV15Double2,DecodeYUV15Double2,sms,confirmed,,

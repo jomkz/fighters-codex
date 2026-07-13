@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 136 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 170 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -75,6 +75,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00401CD0` | `handle_slave_connection_failed` | sms | retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0) |
 | `0x00401E30` | `NETSlaveLostConn` | re | slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00401EB0` | `slave_process_pkt` | sms | slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected |
+| `0x00402320` | `state_func_slave_connecting` | sms |  |
 | `0x00402330` | `NETArmKeepalive` | re | arm socket send timer (state+8 = timerTicks+0x400; state+4 = 4 unless already ready). Body @0x402330; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00402360` | `NETResetTimer` | re | reset socket send timer to now (state+8 = timerTicks; state+4 = 4). Body @0x402360 |
 | `0x004024D0` | `NETProcessPlayerList` | re | process NET_PLAYER_LIST: find self via NETIsAddrLocal, net_add_self, connect to every other listed peer (mesh) via proto vtbl+0x56 + socket_add_state_func(...,0x401B20); if all ready -> pkt_send_ready. Called from slave_process_pkt case 4. Body @0x4024D0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -86,6 +87,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00405CD0` | `NETFormatIP` | re | format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00405D10` | `ip2long` | sms | parse dotted-quad string -> packed u32 (strchr('.')+atoi x4) |
 | `0x00405DF0` | `RunNetConfigurationScreen` | sms | net config screen entry; calls doConfigurationScreen(1\|4) |
+| `0x0040AF40` | `state_func_master_query` | sms |  |
+| `0x0040B110` | `master_events` | sms |  |
+| `0x00441F80` | `UDPopensocket` | sms |  |
+| `0x004420D0` | `UDPserverbroadcast` | sms |  |
+| `0x00442200` | `UDPquery` | sms |  |
 | `0x0044BEC0` | `SER_Transmitting` | sms |  |
 | `0x0044C080` | `SER_PeekByte` | sms |  |
 | `0x0044C0F0` | `SER_Synchronize` | sms |  |
@@ -121,6 +127,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DA10` | `pkt_set_header` | sms | fill NET_PKT header (type/len) |
 | `0x0045DA30` | `pkt_queue_write` | re | append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30 |
 | `0x0045DB00` | `pkt_sock_read` | sms | read one NET_PKT from a socket |
+| `0x00464880` | `dlg_list_get_new_selection` | sms |  |
+| `0x0046ACF0` | `net_test_start_latency_test` | sms |  |
 | `0x0046C0A0` | `MPEnqueue` | re | core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper') |
 | `0x0046C680` | `MPInterpPosAxis` | re | interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680 |
 | `0x0046C780` | `MPUpdateInterval` | re | per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -140,6 +148,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0046FD50` | `MPSendSyncOnce` | re | broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046FF20` | `MPSendScenarioEndTime` | re | broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00470780` | `MPMsgRemapAliases` | re | remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00470E80` | `MPQuickButton` | sms |  |
+| `0x00470EF0` | `MPPlayerChoseFort` | sms |  |
+| `0x00470F30` | `MPFortButton` | sms |  |
+| `0x00470FA0` | `MPFortButton2` | sms |  |
 | `0x00471880` | `MPChatChecksum` | re | checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004718F0` | `MPDrawStatusLine` | re | truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0 |
 | `0x00471A90` | `MPWaitStatus` | re | modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status) |
@@ -148,8 +160,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00472130` | `MPBuildSpawnPayload` | re | apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130 |
 | `0x00472670` | `MPRevive` | re | apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670 |
 | `0x004735D0` | `MPChatStore` | re | append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0047F5F0` | `CN_GetBigString` | sms |  |
 | `0x004874C0` | `sapopensocket` | sms | SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild) |
+| `0x00487670` | `sapserverbroadcast` | sms |  |
+| `0x00487760` | `sapquery` | sms |  |
+| `0x004878C0` | `sapprocessadvertisement` | sms |  |
 | `0x00493780` | `RunIPXOptionsDialog` | sms | IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild |
+| `0x00493EE0` | `connected_state_callback` | sms |  |
+| `0x004940E0` | `players_box_add` | sms |  |
+| `0x004941E0` | `players_box_connected_state_callback` | sms |  |
+| `0x00494D50` | `MP_Dont_care` | sms |  |
 | `0x00496F40` | `spxinit` | sms | SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST |
 | `0x00497000` | `spxinit2` | sms | SPX secondary init from NET_PROTOCOL/CN_INFO |
 | `0x00497010` | `spxlisten` | sms | open+bind an IPX socket and start SPX listening (backlog 5) |
@@ -186,12 +206,23 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049AFF0` | `MOD_Initialize` | sms | top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce |
 | `0x0049B0D0` | `MOD_Shutdown` | sms | SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3 |
 | `0x0049B110` | `serIO` | sms |  |
+| `0x004A62B0` | `socket_set_socket` | sms |  |
+| `0x004ABD40` | `tcpinit2` | sms |  |
+| `0x004ABD60` | `tcp_save_settings` | sms |  |
+| `0x004ABDC0` | `tcplisten` | sms |  |
+| `0x004ABF00` | `tcpconnect` | sms |  |
+| `0x004ABF90` | `tcpaddr2str` | sms |  |
+| `0x004ABFE0` | `convert_addr_usnf2tcp` | sms |  |
+| `0x004AC030` | `convert_addr_tcp2usnf` | sms |  |
+| `0x004AC080` | `tcpfactory` | sms |  |
+| `0x004AC0C0` | `tcpbuildaddress` | sms |  |
 | `0x004AC180` | `SER_SendBytes` | sms | append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba |
 | `0x004AC1D0` | `SER_SendHoldingBuffer` | sms | flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel |
 | `0x004AC210` | `SER_OkToSendPacket` | sms | budget check (>0x17=23 bytes free); set pending flag DAT_00570edc |
 | `0x004AC230` | `SER_SendPacket` | sms | per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters |
 | `0x004AC2E0` | `SER_SendRequests` | sms | scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket |
 | `0x004AC480` | `SER_SendStatus` | sms | send status/ACK packet (type0) carrying last-tx seq + per-player state |
+| `0x004B06C0` | `NetProtocolPresent` | sms |  |
 | `0x004B0BD0` | `NET_Synchronize` | sms |  |
 | `0x004B0CC0` | `NET_Disconnect` | sms |  |
 | `0x004B0CF0` | `NET_Write` | sms |  |
@@ -200,6 +231,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B0E50` | `NET_Read` | sms |  |
 | `0x004B10D0` | `NET_ReadAvail` | sms |  |
 | `0x004B1150` | `NET_PeekByte` | sms |  |
+| `0x004B1660` | `game_event_handler` | sms |  |
+| `0x004B1A80` | `validate_packet` | sms |  |
+| `0x004B25F0` | `state_func_query_hosts` | sms |  |
 
 ### HUD / cockpit
 
@@ -426,7 +460,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 139 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 153 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -533,6 +567,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0042B0F6` | `MAPGroupSetLeader` | re | make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042B19D` | `MAPGroupAdd` | re | add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042B275` | `MAPDeleteSpecial` | re | delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00467110` | `AwardMedal` | sms |  |
 | `0x00467240` | `PilotFindFreeSlot` | re | find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004674F0` | `PilotBuildPaper` | re | build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00467860` | `PilotPaperAddLine` | re | append one label/value line pair into the pilot-paper text buffer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -550,6 +585,19 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004694D0` | `EJECTMoveProc` | sms |  |
 | `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0) |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
+| `0x00480B70` | `MyFilterProc` | sms |  |
+| `0x00480C40` | `InitCampaignPilot` | sms |  |
+| `0x00480C90` | `AddCampaignPlane` | sms |  |
+| `0x00480D70` | `CampaignPlanesLeft` | sms |  |
+| `0x00480D90` | `UkraineCheckMaxPlanes` | sms |  |
+| `0x00480DF0` | `UkraineAddA7` | sms |  |
+| `0x00480F90` | `UkraineRescued` | sms |  |
+| `0x004810C0` | `KurileRescued` | sms |  |
+| `0x004810D0` | `VietnamRescued` | sms |  |
+| `0x004810E0` | `ATFRescued` | sms |  |
+| `0x00481190` | `UkraineQuit` | sms |  |
+| `0x00481260` | `KurileQuit` | sms |  |
+| `0x00481270` | `VietnamQuit` | sms |  |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
 | `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483C90` | `TextNextToken` | re | whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -829,7 +877,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 26 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 30 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -856,16 +904,24 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045B9C0` | `DecodeInterSVGA15NONFrame` | sms | INTER/delta NON 8bpp single; dispatch inter submode6 case1 |
 | `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
 | `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
+| `0x004AE410` | `PlayVDOFile` | sms |  |
+| `0x004AE440` | `PlayVDOString` | sms |  |
+| `0x004AED50` | `VDOSetMode` | sms |  |
+| `0x004AF760` | `VDOCompareBitmaps` | sms |  |
 | `0x004CCFFC` | `DecodeYUV15` | sms |  |
 | `0x004CD1C0` | `DecodeYUV15Double1` | sms |  |
 | `0x004CD394` | `DecodeYUV15Double2` | sms |  |
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 137 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 156 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x0041DE80` | `?DestroySurface@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
+| `0x0041E010` | `?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ` | sms |  |
+| `0x0041E030` | `?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z` | sms |  |
+| `0x0041E050` | `?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
 | `0x0045CA70` | `DrawAcrossBankInter` | sms |  |
 | `0x0045CDA0` | `DrawAcrossBank` | sms |  |
 | `0x0045DBD0` | `GG_InitMode` | sms |  |
@@ -952,6 +1008,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004992B0` | `G_UHline2` | sms |  |
 | `0x004992E0` | `G_Box2` | sms |  |
 | `0x00499330` | `G_UBox2` | sms |  |
+| `0x004AF8F0` | `GLASSESSaveBitmap` | sms |  |
+| `0x004AF930` | `GLASSESInterleaveBitmap` | sms |  |
+| `0x004AFB40` | `ShowPicture` | re | shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it |
+| `0x004B0130` | `GLASSESSpreadLines` | sms |  |
+| `0x004B01E0` | `GLASSESPrintAmount` | sms |  |
 | `0x004B7910` | `G_AllocBitmapBuffer` | re | allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004B7930` | `G_RelocBitmap` | sms |  |
 | `0x004B79B0` | `G_AllocBitmap` | sms |  |
@@ -988,6 +1049,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004BA400` | `G_FloatFlatFlip` | sms |  |
 | `0x004BA500` | `G_FloatTextureFlip` | sms |  |
 | `0x004BA660` | `G_FloatPerspectiveFlip` | sms |  |
+| `0x004BEE60` | `unknown_divide_error` | sms |  |
+| `0x004BEE70` | `divide_by_ecx_handler` | sms |  |
+| `0x004BEF50` | `divide_by_ebp_handler` | sms |  |
+| `0x004BF040` | `divide_by_bp_handler` | sms |  |
+| `0x004BF130` | `divide_overflow_handler_common` | sms |  |
+| `0x004BF220` | `sphere_overflow` | sms |  |
+| `0x004BF250` | `overflow_handler_reg` | sms |  |
+| `0x004BF2C0` | `line_overflow1` | sms |  |
+| `0x004BF310` | `line_overflow2` | sms |  |
+| `0x004BF340` | `access_violation_handler` | sms |  |
 | `0x004C619C` | `G_UPatLine` | sms |  |
 | `0x004C6334` | `G_UBresenhamLine` | sms |  |
 | `0x004C6ECC` | `G_UPolygon` | sms |  |
@@ -1061,12 +1132,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 87 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 102 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00436B30` | `MoveObj` | sms |  |
 | `0x004382D0` | `MoveGoalValue` | re | resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00442640` | `CATGUYEventProc` | sms |  |
+| `0x00442720` | `CATGUYProc` | sms |  |
+| `0x00442750` | `CATGUYMoveProc` | sms |  |
+| `0x00442AB0` | `CATGUYDraw` | sms |  |
 | `0x00442C00` | `GRAPHICInit` | sms | init the 100-entry _graphics effect pool + per-type .SH handle table (crater/smoke/fire/exp/debris/chaff/flare/spd/mpd/lpd); see objects.md GRAPHIC effect spawning |
 | `0x00442DE0` | `GRAPHICUpdate` | sms | step every live GRAPHIC entry via FUN_00442e10 (motion/fuse/adder emission), then _UpdateLoopSounds |
 | `0x004431B0` | `GRAPHICAddYourObjs` | sms |  |
@@ -1120,11 +1195,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00464520` | `PreferredProtectId` | sms |  |
 | `0x00464550` | `CloseToAnything` | sms |  |
 | `0x00464640` | `SetScenarioEndTime` | sms |  |
+| `0x004736F0` | `NPCWeaponsProc` | sms |  |
 | `0x00473A40` | `OBJEventProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00473B40` | `OBJDamageProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
 | `0x00473BE0` | `OBJProc` | sms |  |
 | `0x00473C10` | `Kill` | sms |  |
+| `0x0048D780` | `PLANESayProc` | sms |  |
 | `0x0048E8D0` | `OBJSayProc` | sms |  |
+| `0x0048EC40` | `PLANECommentProc` | sms |  |
 | `0x00491240` | `OBJGet` | sms |  |
 | `0x00491250` | `OBJInit` | sms |  |
 | `0x004912C0` | `OBJShutdown` | sms |  |
@@ -1143,6 +1221,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004917F0` | `OBJTempAlias` | sms |  |
 | `0x00491810` | `OBJSetControl` | sms |  |
 | `0x004918D0` | `OBJHumanName` | sms |  |
+| `0x0049D860` | `PLANEBlow` | sms |  |
+| `0x0049F840` | `PLANEMoveProc` | sms |  |
+| `0x0049FA50` | `PLANEAddProc` | sms |  |
+| `0x0049FB10` | `PLANEProc` | sms |  |
 | `0x004A6B10` | `ResolveTypeRecord` | re | resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A6EB0` | `SetupOT` | sms |  |
 | `0x004A71C0` | `LoadShapeVariantPair` | re | load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B); not a C function (#479): mid-function split of _SetupOT (0x004A6EB0) |
@@ -1151,11 +1233,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A7220` | `SetupPT` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A7230` | `SetupJT` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004AB450` | `ShapeSetup` | sms |  |
+| `0x004BD5B0` | `CARRIERProc` | sms |  |
+| `0x004BD950` | `RotatePattern` | re | transforms a landing/takeoff pattern into world space for the current object: runs the nine local (x,y,z) offsets in the pattern record through _RotatedOffset@20 against the current-object mirror _cg (0x50CE80), then copies _cg heading into the record and slews it by the record pitch/roll deltas. Reached from the carrier/strip pattern build (?STRIPAddProc@@YAJXZ, _CARRIERProc) |
+| `0x004BE2A0` | `STRIPAddProc` | sms |  |
+| `0x004BE640` | `STRIPProc` | sms |  |
 | `0x004D709A` | `WriteFile` | sms |  |
 
 ### AI interpreter (CT)
 
-[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 122 named functions
+[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 128 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1281,13 +1367,26 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00466970` | `CTExecProgram` | sms |  |
 | `0x00466A80` | `CTStep` | re | fetch one opcode and dispatch via switch; CALL_BY_NAME(0x27) resolves via SMAddress then self-patches to CALL_DIRECT(0x26); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004670E0` | `CTVarPtr` | re | return &_ctState[i] for script var index i in [0,4]; out-of-range raises CTError(3); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004AC680` | `MVRMoveToAlt` | sms |  |
+| `0x004AC760` | `MVRInvert` | sms |  |
+| `0x004AC780` | `MVRYoyo` | sms |  |
+| `0x004AC9E0` | `MVRJink` | sms |  |
+| `0x004ACB80` | `MVRSplitS` | sms |  |
+| `0x004ACCB0` | `MVRImmelman` | sms |  |
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 28 named functions
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 35 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004115C0` | `KeyAvail` | sms |  |
+| `0x00417A10` | `PotStick` | sms |  |
+| `0x00417C20` | `KeyThrottle` | sms |  |
+| `0x00417D10` | `KeyRudder` | sms |  |
+| `0x00417D80` | `PotThrottle` | sms |  |
+| `0x00417ED0` | `PotRudder` | sms |  |
+| `0x00481280` | `GetKeySlow` | sms |  |
 | `0x00494270` | `ReadSticksRaw` | sms | poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10) |
 | `0x004942D0` | `InitJoysticks` | sms | joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions |
 | `0x00494430` | `GetJoystickType` | sms | JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4 |
@@ -1651,10 +1750,94 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 329 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 465 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004D6F5C` | `timeGetTime` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F62` | `joyGetPos` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F68` | `joyGetDevCapsA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F6E` | `joyGetNumDevs` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F74` | `joyGetPosEx` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F7A` | `Sleep` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F80` | `SetCurrentDirectoryA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F86` | `InitializeCriticalSection` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F8C` | `DeleteCriticalSection` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F92` | `LeaveCriticalSection` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F98` | `EnterCriticalSection` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6F9E` | `GetDriveTypeA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FA4` | `GetLogicalDrives` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FAA` | `SetThreadPriority` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FB0` | `GetCurrentThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FB6` | `GetThreadPriority` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FBC` | `GetSystemInfo` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FC2` | `MapViewOfFile` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FC8` | `CreateFileMappingA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FCE` | `GetFileSize` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FD4` | `CreateFileA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FDA` | `IsBadStringPtrA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FE0` | `CloseHandle` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FE6` | `UnmapViewOfFile` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FEC` | `GlobalAlloc` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FF2` | `VirtualAlloc` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FF8` | `GlobalFree` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D6FFE` | `VirtualFree` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7004` | `ExitThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D700A` | `ExitProcess` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7010` | `SuspendThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7016` | `GetCurrentThreadId` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D701C` | `CreateThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7022` | `GetExitCodeThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7028` | `QueryPerformanceCounter` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D702E` | `QueryPerformanceFrequency` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7034` | `ResumeThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D703A` | `TerminateThread` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7040` | `FindClose` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7046` | `FindFirstFileA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D704C` | `GetDiskFreeSpaceA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7052` | `FindNextFileA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7058` | `FileTimeToDosDateTime` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D705E` | `FileTimeToLocalFileTime` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7064` | `GetFileTime` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D706A` | `GetLocalTime` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7070` | `GetSystemTime` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7076` | `FreeLibrary` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D707C` | `GetProcAddress` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7082` | `LoadLibraryA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7088` | `SetErrorMode` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D708E` | `SetFilePointer` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7094` | `ReadFile` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70A0` | `DeleteFileA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70A6` | `MoveFileA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70AC` | `lstrcpyA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70B2` | `GetCurrentDirectoryA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70B8` | `GetModuleFileNameA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70BE` | `GetTickCount` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70C4` | `PostMessageA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70CA` | `SendMessageA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70D0` | `GetCursorPos` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70D6` | `ClipCursor` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70DC` | `SetRect` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70E2` | `MessageBoxA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70E8` | `ShowWindow` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70EE` | `DispatchMessageA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70F4` | `GetMessageA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D70FA` | `DestroyWindow` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7100` | `SetCursor` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7106` | `SetForegroundWindow` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D710C` | `GetForegroundWindow` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7112` | `DefWindowProcA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7118` | `PostQuitMessage` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D711E` | `ShowCursor` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7124` | `SetFocus` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D712A` | `CreateWindowExA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7130` | `GetSystemMetrics` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7136` | `RegisterClassA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D713C` | `LoadIconA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7142` | `FindWindowA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7148` | `SystemParametersInfoA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D714E` | `SetDlgItemTextA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004D7154` | `CreateDialogParamA` | sms | IAT import thunk (jmp [__imp__…]) |
 | `0x004D715A` | `_DirectDrawCreate@12` | sms | IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D7160` | `AIL_midiOutOpen` | sms |  |
 | `0x004D7166` | `AIL_set_preference` | sms |  |
@@ -1984,6 +2167,58 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004E8A22` | `TerminateProcess` | sms |  |
 | `0x004E8A28` | `GetCurrentProcess` | sms |  |
 | `0x004E8A2E` | `_RtlUnwind@16` | sms | IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004E8A34` | `GetLastError` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A3A` | `SetEnvironmentVariableA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A40` | `GetFullPathNameA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A46` | `GetModuleHandleA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A4C` | `GetStartupInfoA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A52` | `GetCommandLineA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A58` | `GetVersion` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A5E` | `FatalAppExitA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A64` | `MultiByteToWideChar` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A6A` | `LCMapStringA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A70` | `WideCharToMultiByte` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A76` | `LCMapStringW` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A7C` | `HeapFree` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A82` | `TlsSetValue` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A88` | `TlsAlloc` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A8E` | `TlsFree` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A94` | `SetLastError` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8A9A` | `TlsGetValue` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AA0` | `HeapAlloc` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AA6` | `GetCPInfo` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AAC` | `GetACP` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AB2` | `GetOEMCP` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AB8` | `FlushFileBuffers` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8ABE` | `UnhandledExceptionFilter` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AC4` | `FreeEnvironmentStringsA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8ACA` | `GetEnvironmentStrings` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AD0` | `FreeEnvironmentStringsW` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AD6` | `GetEnvironmentStringsW` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8ADC` | `SetHandleCount` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AE2` | `GetFileType` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AE8` | `GetStdHandle` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AEE` | `HeapDestroy` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AF4` | `HeapCreate` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8AFA` | `GetStringTypeA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B00` | `GetStringTypeW` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B06` | `IsValidLocale` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B0C` | `IsValidCodePage` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B12` | `GetUserDefaultLCID` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B18` | `SetStdHandle` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B1E` | `SetUnhandledExceptionFilter` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B24` | `IsBadReadPtr` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B2A` | `IsBadWritePtr` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B30` | `IsBadCodePtr` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B36` | `CompareStringA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B3C` | `CompareStringW` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B42` | `GetLocaleInfoA` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B48` | `GetLocaleInfoW` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B4E` | `SetEndOfFile` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B54` | `SetConsoleCtrlHandler` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B5A` | `HeapReAlloc` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B60` | `GetTimeZoneInformation` | sms | IAT import thunk (jmp [__imp__…]) |
+| `0x004E8B66` | `HeapSize` | sms | IAT import thunk (jmp [__imp__…]) |
 
 **Binary: `WAIL32.DLL`**
 
