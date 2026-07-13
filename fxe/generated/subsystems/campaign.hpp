@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 128/152 functions have a recovered signature (+2 that are not C functions); 3/3 globals have a recovered type.
+// 130/152 functions have a recovered signature (+2 that are not C functions); 3/3 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -118,6 +118,7 @@ void MAPGroupRejoin(void);  // 0x0042B056  __cdecl
 void MAPGroupSetLeader(void);  // 0x0042B0F6  __cdecl
 void MAPGroupAdd(short);  // 0x0042B19D  __fastcall
 void MAPDeleteSpecial(void);  // 0x0042B275  __cdecl
+undefined4 AwardMedal(undefined4);  // 0x00467110  __cdecl
 undefined4 PilotFindFreeSlot(void);  // 0x00467240  __cdecl
 undefined4 PilotBuildPaper(undefined4,int);  // 0x004674F0  __fastcall
 void PilotPaperAddLine(undefined4 *,undefined4 *);  // 0x00467860  __fastcall
@@ -135,6 +136,7 @@ char EJECTEventProc(short, long);  // 0x00469300  __cdecl
 void EJECTMoveProc(char);  // 0x004694D0  __cdecl
 undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
 char MyFilterProc(unsigned short *, long *, char *);  // 0x00480B70  __cdecl
+undefined4 AddCampaignPlane(undefined4, undefined4);  // 0x00480C90  __cdecl
 undefined4 CampaignPlanesLeft(void);  // 0x00480D70  __stdcall
 undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
 undefined4 MISSIONEnemiesAlive(void);  // 0x00481A7B  __cdecl
@@ -158,10 +160,8 @@ undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004226EE  MAPSetFormationWP -- signature not recovered
 // TODO(#453): 0x004282D0  MAPToggleObjControl -- signature not recovered
-// TODO(#453): 0x00467110  AwardMedal -- signature not recovered
 // TODO(#453): 0x004692D0  EJECTProc -- signature not recovered
 // TODO(#453): 0x00480C40  InitCampaignPilot -- signature not recovered
-// TODO(#453): 0x00480C90  AddCampaignPlane -- signature not recovered
 // TODO(#453): 0x00480D90  UkraineCheckMaxPlanes -- signature not recovered
 // TODO(#453): 0x00480DF0  UkraineAddA7 -- signature not recovered
 // TODO(#453): 0x00480F90  UkraineRescued -- signature not recovered

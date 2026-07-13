@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 390/461 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
+// 395/461 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -272,6 +272,8 @@ undefined4 stricmp(undefined4, undefined4);  // 0x004D9660  __cdecl
 undefined4 strlen(undefined4);  // 0x004D9730  __cdecl
 undefined4 strcat(undefined4, undefined4);  // 0x004D97C0  __cdecl
 int rand(void);  // 0x004D98B0  __cdecl
+undefined4 fgets(undefined4, undefined4, undefined4);  // 0x004D98E0  __cdecl
+undefined4 _lsearch(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D99B0  __cdecl
 undefined4 sscanf(undefined4, undefined4, undefined4, undefined4);  // 0x004D9A10  __cdecl
 undefined4 getenv(undefined4);  // 0x004D9A60  __cdecl
 undefined4 _getenv_lk(undefined4);  // 0x004D9A90  __cdecl
@@ -288,6 +290,7 @@ undefined4 _lock_file2(undefined4, undefined4);  // 0x004DA2B0  __cdecl
 undefined4 _unlock_file(undefined4);  // 0x004DA2E0  __cdecl
 undefined4 _unlock_file2(undefined4, undefined4);  // 0x004DA320  __cdecl
 undefined4 _isctype(undefined4, undefined4);  // 0x004DA370  __cdecl
+undefined4 _expandlocale(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004DB560  __cdecl
 undefined4 free(undefined4);  // 0x004DBDB0  __cdecl
 undefined4 _close(undefined4);  // 0x004DBE20  __cdecl
 undefined4 _close_lk(undefined4);  // 0x004DBE90  __cdecl
@@ -365,6 +368,7 @@ undefined4 _ShrMan(undefined4, undefined4);  // 0x004E36E0  __cdecl
 undefined4 _ld12cvt(undefined4, undefined4, undefined4);  // 0x004E3790  __cdecl
 undefined4 _ld12tod(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E3960  __cdecl
 undefined4 _ld12tof(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E3980  __cdecl
+undefined4 _ld12told(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E39A0  __cdecl
 int _atodbl(undefined4 *, char *);  // 0x004E3A30  __cdecl
 int _atoflt(undefined4 *, char *);  // 0x004E3AB0  __cdecl
 undefined4 _fltout2(undefined4, undefined4, undefined4, undefined4);  // 0x004E3B80  __cdecl
@@ -375,6 +379,7 @@ int _fcloseall(void);  // 0x004E47C0  __cdecl
 undefined4 wcslen(undefined4);  // 0x004E4860  __cdecl
 char * _Getdays(void);  // 0x004E4920  __cdecl
 char * _Getmonths(void);  // 0x004E4A10  __cdecl
+undefined4 _Strftime(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E4E80  __cdecl
 undefined4 _chsize_lk(undefined4, undefined4);  // 0x004E6270  __cdecl
 undefined4 _onexit(undefined4);  // 0x004E63B0  __cdecl
 undefined4 atexit(undefined4);  // 0x004E6440  __cdecl
@@ -473,14 +478,11 @@ undefined4 HeapSize(undefined4, undefined4, undefined4);  // 0x004E8B66  __stdca
 // TODO(#453): 0x004D8F20  _getdcwd -- signature not recovered
 // TODO(#453): 0x004D97B0  _strcpy -- signature not recovered
 // TODO(#453): 0x004D98A0  srand -- signature not recovered
-// TODO(#453): 0x004D98E0  fgets -- signature not recovered
 // TODO(#453): 0x004D9960  fprintf -- signature not recovered
-// TODO(#453): 0x004D99B0  _lsearch -- signature not recovered
 // TODO(#453): 0x004D9B30  fflush -- signature not recovered
 // TODO(#453): 0x004D9D00  WinMainCRTStartup -- signature not recovered
 // TODO(#453): 0x004DA350  _lockerr_exit -- signature not recovered
 // TODO(#453): 0x004DB020  setlocale -- signature not recovered
-// TODO(#453): 0x004DB560  _expandlocale -- signature not recovered
 // TODO(#453): 0x004DB740  _strcats -- signature not recovered
 // TODO(#453): 0x004DCD80  _mtterm -- signature not recovered
 // TODO(#453): 0x004DCE40  _freeptd -- signature not recovered
@@ -508,12 +510,10 @@ undefined4 HeapSize(undefined4, undefined4, undefined4);  // 0x004E8B66  __stdca
 // TODO(#453): 0x004E2960  _open_osfhandle -- signature not recovered
 // TODO(#453): 0x004E3210  _set_new_handler -- signature not recovered
 // TODO(#453): 0x004E3240  _query_new_handler -- signature not recovered
-// TODO(#453): 0x004E39A0  _ld12told -- signature not recovered
 // TODO(#453): 0x004E3A70  _atoldbl -- signature not recovered
 // TODO(#453): 0x004E3E40  ungetc -- signature not recovered
 // TODO(#453): 0x004E4B00  _Gettnames -- signature not recovered
 // TODO(#453): 0x004E4E60  strftime -- signature not recovered
-// TODO(#453): 0x004E4E80  _Strftime -- signature not recovered
 // TODO(#453): 0x004E5B40  localeconv -- signature not recovered
 // TODO(#453): 0x004E5BF0  _ltoa -- signature not recovered
 // TODO(#453): 0x004E5C20  _ultoa -- signature not recovered

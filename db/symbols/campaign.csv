@@ -107,7 +107,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0042B0F6,func,MAPGroupSetLeader,,re,confirmed,make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPGroupSetLeader(void)
 0x0042B19D,func,MAPGroupAdd,,re,confirmed,"add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MAPGroupAdd(short)
 0x0042B275,func,MAPDeleteSpecial,,re,confirmed,delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPDeleteSpecial(void)
-0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,,
+0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,,undefined4 __cdecl AwardMedal(undefined4)
 0x00467240,func,PilotFindFreeSlot,,re,confirmed,find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl PilotFindFreeSlot(void)
 0x004674F0,func,PilotBuildPaper,,re,confirmed,"build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","undefined4 __fastcall PilotBuildPaper(undefined4,int)"
 0x00467860,func,PilotPaperAddLine,,re,confirmed,append one label/value line pair into the pilot-paper text buffer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall PilotPaperAddLine(undefined4 *,undefined4 *)"
@@ -133,7 +133,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport,undefined4 __stdcall MISSIONLoadOrdIcons(undefined4)
 0x00480B70,func,?MyFilterProc@@YADPAGPAJPAD@Z,MyFilterProc,sms,confirmed,,"char __cdecl MyFilterProc(unsigned short *, long *, char *)"
 0x00480C40,func,_InitCampaignPilot,InitCampaignPilot,sms,confirmed,,
-0x00480C90,func,_AddCampaignPlane,AddCampaignPlane,sms,confirmed,,
+0x00480C90,func,_AddCampaignPlane,AddCampaignPlane,sms,confirmed,,"undefined4 __cdecl AddCampaignPlane(undefined4, undefined4)"
 0x00480D70,func,_CampaignPlanesLeft@0,CampaignPlanesLeft,sms,confirmed,,undefined4 __stdcall CampaignPlanesLeft(void)
 0x00480D90,func,_UkraineCheckMaxPlanes,UkraineCheckMaxPlanes,sms,confirmed,,
 0x00480DF0,func,_UkraineAddA7,UkraineAddA7,sms,confirmed,,
