@@ -76,6 +76,11 @@ typedef struct HIT_OBJ_DATA HIT_OBJ_DATA; /* objects, weapons: hit record       
 typedef struct LEAF_LIST    LEAF_LIST;    /* terrain: quadtree leaf list             */
 typedef struct MODSPEC      MODSPEC;      /* sound: module / track spec              */
 typedef struct ACTION       ACTION;       /* shell-ui: menu action                   */
+typedef struct ANGLE          ANGLE;          /* objects: attitude vector (MPPrepareForInterp) */
+typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station          */
+typedef struct HARDPOINT_TYPE HARDPOINT_TYPE; /* flight-model: store-station type     */
+typedef struct DIAL           DIAL;           /* shell-ui: dial/knob widget           */
+typedef struct ModemStrings   ModemStrings;   /* input: modem init/dial string set    */
 
 /* network -- the transport types the NET_/SERIAL_ signatures name */
 typedef struct NET_PKT               NET_PKT;
@@ -88,6 +93,7 @@ typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address    
 typedef struct socket_state          socket_state;
 
 /* MSVC CRT internals, named in the startup subsystem's exception-handling signatures */
+typedef struct _iobuf                _iobuf;  /* the CRT FILE struct, by its real name */
 typedef struct EHExceptionRecord     EHExceptionRecord;
 typedef struct EHRegistrationNode    EHRegistrationNode;
 typedef struct _EXCEPTION_POINTERS   _EXCEPTION_POINTERS;

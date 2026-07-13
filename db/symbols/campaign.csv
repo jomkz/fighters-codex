@@ -1,4 +1,6 @@
 va,kind,name,display,source,confidence,notes,type
+0x00421C80,func,_ZONEAdd@4,ZONEAdd,sms,confirmed,,undefined4 __stdcall ZONEAdd(undefined4)
+0x00421CC0,func,_ZONEForGV@0,ZONEForGV,sms,confirmed,,undefined4 __stdcall ZONEForGV(void)
 0x00421D40,func,ZONEActive,,re,confirmed,"zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __fastcall ZONEActive(undefined4)
 0x00421DE0,func,ZONEServiceRange,,re,inferred,per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent; not a C function (#479): mid-function split of _ZONEUpdate@0 (0x00421DD0),!split
 0x00422100,data,,,waiver,confirmed,MAPScreen switch jump-table (computed access),
@@ -117,6 +119,11 @@ va,kind,name,display,source,confidence,notes,type
 0x00468F00,func,PilotFormatRank,,re,confirmed,format a pilot's rank string from the _pilotRanks table; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall PilotFormatRank(undefined4 *)
 0x00468F40,func,PilotDiskSpaceError,,re,confirmed,'You don't have enough free disk space' dialog before a pilot save; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall PilotDiskSpaceError(int)
 0x00468F80,func,PilotSetField,,re,confirmed,"small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","void __cdecl PilotSetField(undefined4,char)"
+0x004692D0,func,_EJECTProc,EJECTProc,sms,confirmed,,
+0x00469300,func,?EJECTEventProc@@YADFJ@Z,EJECTEventProc,sms,confirmed,,"char __cdecl EJECTEventProc(short, long)"
+0x004694D0,func,?EJECTMoveProc@@YAXD@Z,EJECTMoveProc,sms,confirmed,,void __cdecl EJECTMoveProc(char)
+0x00469950,data,,,waiver,confirmed,switch jump-table interior (switchdataD_0046994c),
+0x00469958,data,,,waiver,confirmed,switch jump-table interior (switchdataD_0046994c),
 0x0046A57B,func,,,waiver,inferred,FOREIGN: SM module proc-by-name resolver (_SMAddress); owner = memory-resource/overlay #223,
 0x0047A510,func,,,waiver,inferred,FOREIGN: file-exists/open helper in the LIB filesystem block (AnalyzeMM mislabels it 'MM keyword handler'); owner = memory-resource #223,
 0x0047FAAE,func,JOGCFetchMission,,re,inferred,"download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0)",!split
@@ -128,6 +135,15 @@ va,kind,name,display,source,confidence,notes,type
 0x00483D10,func,TextIsDelim,,re,confirmed,predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall TextIsDelim(char)
 0x00483D30,func,TextNextNumber,,re,confirmed,read next token and convert to integer (_StringToNumber); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl TextNextNumber(void)
 0x00483D50,func,TextTokenToValue,,re,inferred,"scalar token->value conversion helper (uint->uint); low-confidence, revisit",undefined4 __stdcall TextTokenToValue(undefined4)
+0x00483E00,func,_UkraineMedals,UkraineMedals,sms,confirmed,,
+0x00484050,func,_KurileMedals,KurileMedals,sms,confirmed,,
+0x004842B0,func,_KurilePromotions,KurilePromotions,sms,confirmed,,
+0x00484410,func,_VietnamMedals,VietnamMedals,sms,confirmed,,
+0x00484420,func,_VietnamPromotions,VietnamPromotions,sms,confirmed,,
+0x00484430,func,_ATFEgyptMedals,ATFEgyptMedals,sms,confirmed,,
+0x00484690,func,_ATFVladMedals,ATFVladMedals,sms,confirmed,,
+0x004848F0,func,_ATFPromotions,ATFPromotions,sms,confirmed,,
+0x00484B70,func,_ATFBalticMedals,ATFBalticMedals,sms,confirmed,,
 0x00485380,func,CampaignAccumStats,,re,confirmed,fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl CampaignAccumStats(void)
 0x004854A0,func,StatsAddPair,,re,confirmed,add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall StatsAddPair(int *,int *)"
 0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall StatsBucketFor(int,u16,u16)"
@@ -340,11 +356,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004F7324,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
 0x004F7330,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
 0x004F7338,data,,,waiver,confirmed,interior of / adjacent to _pilotsUpdated; named at its base or owned by that subsystem,
+0x004F73BC,data,,,waiver,confirmed,"string literal (""CHUTE.5K"", the parachute sound sample) — constant text, not state",
 0x004F8184,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
 0x004F86F0,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
 0x004F8930,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
 0x004F8BA0,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
 0x004F8BA8,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
+0x004F9966,data,,,waiver,confirmed,"interior of _campaignPilot (+0xDAE) — promotion counter; the high byte is the rank index (>>8 compares it against the campaign rank table, += 0x100 promotes), zeroed by _CampaignOff; named at its base",
 0x004FAB40,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FAB44,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FAB50,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
@@ -358,6 +376,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004FAB70,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FB1C9,data,,,waiver,confirmed,interior of / adjacent to _mapName; named at its base or owned by that subsystem,
 0x004FB2BC,data,,,waiver,confirmed,interior of / adjacent to _nationStrings; named at its base or owned by that subsystem,
+0x004FB4FC,data,,,waiver,confirmed,"interior of _pilotRanks (+0x4) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
+0x004FB500,data,,,waiver,confirmed,"interior of _pilotRanks (+0x8) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
+0x004FB504,data,,,waiver,confirmed,"interior of _pilotRanks (+0xC) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
+0x004FB508,data,,,waiver,confirmed,"interior of _pilotRanks (+0x10) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
 0x004FBAA4,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
 0x004FBAC0,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
 0x004FBAC1,data,,,waiver,confirmed,interior of / adjacent to ?crc_table@@3PAKA; named at its base or owned by that subsystem,
@@ -378,6 +400,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004FC928,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem,
 0x004FC92C,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem,
 0x00502424,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x0050CFD1,data,_ejectNextTime,ejectNextTime,re,confirmed,"ejection seat: next state deadline, in _currentT ticks — EJECTAdd sets _currentT+0xC, EJECTMoveProc re-arms at +1 and parks it at 0x7FFF when the sequence ends",s16
+0x0050CFD3,data,_ejectAngle,ejectAngle,re,confirmed,"ejection seat: seat attitude — passed as the ANGLE* first argument of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z, which types it, and slewed toward 0x7FF8 by _Slew@16",ANGLE
+0x0050CFD5,data,,,waiver,confirmed,interior of _ejectAngle (+2) — second component of the ANGLE; named at its base,
+0x0050CFD9,data,_ejectSpeed,ejectSpeed,re,confirmed,"ejection seat: seat velocity — EJECTAdd seeds it from the ejecting aircraft, EJECTMoveProc drains it by _LMultDiv256(speed, _serviceTicks) each tick and drives _Move3d with the remainder, clamping at 0",s32
+0x005224F0,data,,,waiver,confirmed,"interior of _dam (+0x28) — damage flag, cleared by _DAMAGEInit and tested by _DAMAGEDoHit; named at its base",
 0x00529134,data,,,waiver,confirmed,interior of / adjacent to _itemPicked; named at its base or owned by that subsystem,
 0x005362C8,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
 0x005362D0,data,,,waiver,confirmed,interior of / adjacent to ?cobraData@@3UGlobalData@@A; named at its base or owned by that subsystem,
@@ -472,6 +499,10 @@ va,kind,name,display,source,confidence,notes,type
 0x0054DDE8,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDEC,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDF0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DE00,data,,,waiver,confirmed,interior of _stats (+0x1FC8) — the 0x978-dword mission statistics array; named at its base,
+0x0054DE28,data,,,waiver,confirmed,interior of _stats (+0x1FF0) — the 0x978-dword mission statistics array; named at its base,
+0x0054DE38,data,,,waiver,confirmed,interior of _stats (+0x2000) — the 0x978-dword mission statistics array; named at its base,
+0x0054DE40,data,,,waiver,confirmed,interior of _stats (+0x2008) — the 0x978-dword mission statistics array; named at its base,
 0x0054E54D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
 0x0054E56D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
 0x00551668,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,

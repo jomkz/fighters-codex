@@ -8,12 +8,15 @@ va,kind,name,display,source,confidence,notes,type
 0x0045DEC0,func,@GG_Shake@0,GG_Shake,sms,confirmed,,undefined4 __fastcall GG_Shake(void)
 0x0045DEDF,func,GG_FlushShaken,,re,inferred,present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path); not a C function (#479): mid-function split of @GG_Shake@0 (0x0045DEC0),!split
 0x0045E0EF,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushShaken — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk,
+0x0045E100,func,@GG_GetSubmodes@4,GG_GetSubmodes,sms,confirmed,,undefined4 __fastcall GG_GetSubmodes(undefined4)
+0x0045E110,func,@GG_GetSubmodeName@0,GG_GetSubmodeName,sms,confirmed,,undefined4 __fastcall GG_GetSubmodeName(void)
 0x0045E120,func,@GG_Flush@4,GG_Flush,sms,confirmed,,undefined4 __fastcall GG_Flush(undefined4)
 0x0045E13F,func,GG_FlushDirtyLines,,re,inferred,"the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable; not a C function (#479): mid-function split of @GG_Flush@4 (0x0045E120)",!split
 0x0045E360,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushDirtyLines — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk,
 0x0045E370,func,@flushLineStats@0,flushLineStats,sms,confirmed,,undefined4 __fastcall flushLineStats(void)
 0x0045E3A0,func,@GG_RestoreSurfaces@0,GG_RestoreSurfaces,sms,confirmed,,undefined4 __fastcall GG_RestoreSurfaces(void)
 0x0045E410,func,@GG_WaitRetrace@0,GG_WaitRetrace,sms,confirmed,,undefined4 __fastcall GG_WaitRetrace(void)
+0x0045E430,func,_GG_QuickBlt,GG_QuickBlt,sms,confirmed,,
 0x0045E440,func,_GG_VideoModesAvailable@0,GG_VideoModesAvailable,sms,confirmed,,undefined4 __stdcall GG_VideoModesAvailable(void)
 0x00497330,func,@G_FlipY@4,G_FlipY,sms,confirmed,,undefined4 __fastcall G_FlipY(undefined4)
 0x00497340,func,@G_Init@0,G_Init,sms,confirmed,,undefined4 __fastcall G_Init(void)
@@ -28,12 +31,14 @@ va,kind,name,display,source,confidence,notes,type
 0x00497680,func,@G_SetColor@4,G_SetColor,sms,confirmed,,undefined4 __fastcall G_SetColor(undefined4)
 0x004976D0,func,@G_Point@8,G_Point,sms,confirmed,,"undefined4 __fastcall G_Point(undefined4, undefined4)"
 0x00497700,func,@G_UPoint@8,G_UPoint,sms,confirmed,,"undefined4 __fastcall G_UPoint(undefined4, undefined4)"
+0x00497750,func,@G_GetPoint@8,G_GetPoint,sms,confirmed,,"undefined4 __fastcall G_GetPoint(undefined4, undefined4)"
 0x00497770,func,_G_UHline@12,G_UHline,sms,confirmed,,"undefined4 __stdcall G_UHline(undefined4, undefined4, undefined4)"
 0x00497A10,func,_G_Hline@12,G_Hline,sms,confirmed,,"undefined4 __stdcall G_Hline(undefined4, undefined4, undefined4)"
 0x00497A60,func,_G_UVline@12,G_UVline,sms,confirmed,,"undefined4 __stdcall G_UVline(undefined4, undefined4, undefined4)"
 0x00497B00,func,_G_Vline@12,G_Vline,sms,confirmed,,"undefined4 __stdcall G_Vline(undefined4, undefined4, undefined4)"
 0x00497B60,func,_G_URect@16,G_URect,sms,confirmed,,"undefined4 __stdcall G_URect(undefined4, undefined4, undefined4, undefined4)"
 0x00497BF0,func,_G_Rect@16,G_Rect,sms,confirmed,,"undefined4 __stdcall G_Rect(undefined4, undefined4, undefined4, undefined4)"
+0x00497CE0,func,_G_Rect2@16,G_Rect2,sms,confirmed,,"undefined4 __stdcall G_Rect2(undefined4, undefined4, undefined4, undefined4)"
 0x00497D10,func,_G_URect2@16,G_URect2,sms,confirmed,,"undefined4 __stdcall G_URect2(undefined4, undefined4, undefined4, undefined4)"
 0x00497D40,func,_G_UBox@16,G_UBox,sms,confirmed,,"undefined4 __stdcall G_UBox(undefined4, undefined4, undefined4, undefined4)"
 0x00497D90,func,_G_Box@16,G_Box,sms,confirmed,,"undefined4 __stdcall G_Box(undefined4, undefined4, undefined4, undefined4)"
@@ -46,8 +51,13 @@ va,kind,name,display,source,confidence,notes,type
 0x00498420,func,@G_Flush@4,G_Flush,sms,confirmed,,undefined4 __fastcall G_Flush(undefined4)
 0x00498430,func,@G_ReverseVertices@8,G_ReverseVertices,sms,confirmed,,"undefined4 __fastcall G_ReverseVertices(undefined4, undefined4)"
 0x00498480,func,@G_Flip@8,G_Flip,sms,confirmed,,"undefined4 __fastcall G_Flip(undefined4, undefined4)"
+0x004984B0,func,@G_PolygonFlip@8,G_PolygonFlip,sms,confirmed,,"undefined4 __fastcall G_PolygonFlip(undefined4, undefined4)"
 0x004984F0,func,@G_UPolygonFlip@8,G_UPolygonFlip,sms,confirmed,,"undefined4 __fastcall G_UPolygonFlip(undefined4, undefined4)"
+0x00498530,func,@G_SPolygonFlip@8,G_SPolygonFlip,sms,confirmed,,"undefined4 __fastcall G_SPolygonFlip(undefined4, undefined4)"
+0x00498550,func,@G_SUPolygonFlip@8,G_SUPolygonFlip,sms,confirmed,,"undefined4 __fastcall G_SUPolygonFlip(undefined4, undefined4)"
 0x00498570,func,@G_PointFlip@8,G_PointFlip,sms,confirmed,,"undefined4 __fastcall G_PointFlip(undefined4, undefined4)"
+0x00498590,func,@G_UPointFlip@8,G_UPointFlip,sms,confirmed,,"undefined4 __fastcall G_UPointFlip(undefined4, undefined4)"
+0x004985B0,func,_G_UHlineFlip@12,G_UHlineFlip,sms,confirmed,,"undefined4 __stdcall G_UHlineFlip(undefined4, undefined4, undefined4)"
 0x004985E0,func,_G_ULineFlip@16,G_ULineFlip,sms,confirmed,,"undefined4 __stdcall G_ULineFlip(undefined4, undefined4, undefined4, undefined4)"
 0x00498610,func,_G_LineFlip@16,G_LineFlip,sms,confirmed,,"undefined4 __stdcall G_LineFlip(undefined4, undefined4, undefined4, undefined4)"
 0x00498640,func,_G_CircleFlip@16,G_CircleFlip,sms,confirmed,,"undefined4 __stdcall G_CircleFlip(undefined4, undefined4, undefined4, undefined4)"
@@ -58,7 +68,11 @@ va,kind,name,display,source,confidence,notes,type
 0x00498980,func,_G_Printf,G_Printf,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __cdecl G_Printf(int, int, undefined4, char *, ...)"
 0x004989F0,func,@G_StringWidth@4,G_StringWidth,sms,confirmed,,undefined4 __fastcall G_StringWidth(undefined4)
 0x00498A20,func,@G_StringHeight@0,G_StringHeight,sms,confirmed,,undefined4 __fastcall G_StringHeight(void)
+0x00498A30,func,@G_LoadDriver@4,G_LoadDriver,sms,confirmed,,undefined4 __fastcall G_LoadDriver(undefined4)
+0x00498A40,func,@G_UnloadDriver@0,G_UnloadDriver,sms,confirmed,,undefined4 __fastcall G_UnloadDriver(void)
+0x00498A50,func,_G_Visible,G_Visible,sms,confirmed,,
 0x00498AF0,func,?code@@YAJJJ@Z,code,sms,confirmed,,"long __cdecl code(long, long)"
+0x00498B80,func,?printPoly@@YAXHPAUTVERTEX@@@Z,printPoly,sms,confirmed,,"void __cdecl printPoly(int, TVERTEX *)"
 0x00498B90,func,?clipT@@YAJJPAUTVERTEX@@@Z,clipT,sms,confirmed,,"long __cdecl clipT(long, TVERTEX *)"
 0x00498B9A,func,,,waiver,confirmed,Ghidra mid-function split of clipT (edge-clip helper at 0x498B90),
 0x00498CE0,func,?clipB@@YAJJPAUTVERTEX@@@Z,clipB,sms,confirmed,,"long __cdecl clipB(long, TVERTEX *)"
@@ -68,6 +82,9 @@ va,kind,name,display,source,confidence,notes,type
 0x00498F90,func,?clipR@@YAJJPAUTVERTEX@@@Z,clipR,sms,confirmed,,"long __cdecl clipR(long, TVERTEX *)"
 0x00498F9A,func,,,waiver,confirmed,Ghidra mid-function split of clipR (edge-clip helper at 0x498F90),
 0x004990F0,func,_G_ClipDestPoly,G_ClipDestPoly,sms,confirmed,,"undefined4 __cdecl G_ClipDestPoly(undefined4, undefined4)"
+0x004991B0,func,_G_CopyDriverName,G_CopyDriverName,sms,confirmed,,
+0x004991E0,func,?G_LoadVesa@@YAXXZ,G_LoadVesa,sms,confirmed,,void __cdecl G_LoadVesa(void)
+0x004991F0,func,?G_UnloadVesa@@YAXXZ,G_UnloadVesa,sms,confirmed,,void __cdecl G_UnloadVesa(void)
 0x00499200,func,@G_SetHShake@8,G_SetHShake,sms,confirmed,,"undefined4 __fastcall G_SetHShake(undefined4, undefined4)"
 0x00499240,func,@G_SetVShake@8,G_SetVShake,sms,confirmed,,"undefined4 __fastcall G_SetVShake(undefined4, undefined4)"
 0x00499280,func,_G_Hline2@12,G_Hline2,sms,confirmed,,"undefined4 __stdcall G_Hline2(undefined4, undefined4, undefined4)"
@@ -87,11 +104,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004B7FA0,func,_G_BlitToScreen@16,G_BlitToScreen,sms,confirmed,,"undefined4 __stdcall G_BlitToScreen(undefined4, undefined4, undefined4, undefined4)"
 0x004B7FE0,func,_G_Blit@36,G_Blit,sms,confirmed,,"undefined4 __stdcall G_Blit(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004B8460,func,@G_ColorPrint@20,G_ColorPrint,sms,confirmed,,"undefined4 __fastcall G_ColorPrint(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004B8570,func,_G_ColorPrintf,G_ColorPrintf,sms,confirmed,,
 0x004B85F0,func,@G_ColorStringWidth@8,G_ColorStringWidth,sms,confirmed,,"undefined4 __fastcall G_ColorStringWidth(undefined4, undefined4)"
 0x004B8620,func,@G_ColorStringHeight@4,G_ColorStringHeight,sms,confirmed,,undefined4 __fastcall G_ColorStringHeight(undefined4)
 0x004B8630,func,@G_NextTab@4,G_NextTab,sms,confirmed,,undefined4 __fastcall G_NextTab(undefined4)
 0x004B8670,func,@G_Scale@20,G_Scale,sms,confirmed,,"undefined4 __fastcall G_Scale(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004B8710,func,@G_ScaleFlip@8,G_ScaleFlip,sms,confirmed,,"undefined4 __fastcall G_ScaleFlip(undefined4, undefined4)"
+0x004B87C0,func,@G_Texture@12,G_Texture,sms,confirmed,,"undefined4 __fastcall G_Texture(undefined4, undefined4, undefined4)"
 0x004B87F0,func,@G_AcTexture@12,G_AcTexture,sms,confirmed,,"undefined4 __fastcall G_AcTexture(undefined4, undefined4, undefined4)"
 0x004B8820,func,@G_TextureFlip@12,G_TextureFlip,sms,confirmed,,"undefined4 __fastcall G_TextureFlip(undefined4, undefined4, undefined4)"
 0x004B8890,func,@G_PerspectiveFlip@12,G_PerspectiveFlip,sms,confirmed,,"undefined4 __fastcall G_PerspectiveFlip(undefined4, undefined4, undefined4)"

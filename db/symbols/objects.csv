@@ -14,6 +14,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004627B0,func,_RemoveCurObj@0,RemoveCurObj,sms,confirmed,,undefined4 __stdcall RemoveCurObj(void)
 0x004628B0,func,@GetCurObj@4,GetCurObj,sms,confirmed,,undefined4 __fastcall GetCurObj(undefined4)
 0x00462980,func,@PutCurObj@0,PutCurObj,sms,confirmed,,undefined4 __fastcall PutCurObj(void)
+0x004629C0,func,_GetCurObj2@4,GetCurObj2,sms,confirmed,,undefined4 __stdcall GetCurObj2(undefined4)
+0x004629D0,func,_PutCurObj2@0,PutCurObj2,sms,confirmed,,undefined4 __stdcall PutCurObj2(void)
 0x004629E0,func,_PushCurObj@4,PushCurObj,sms,confirmed,,undefined4 __stdcall PushCurObj(undefined4)
 0x00462A20,func,_PopCurObj@0,PopCurObj,sms,confirmed,,undefined4 __stdcall PopCurObj(void)
 0x00462A50,func,_ServiceObjects,ServiceObjects,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl ServiceObjects(void)
@@ -57,6 +59,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,void __cdecl OBJDamageProc(HIT_OBJ_DATA *)
 0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,undefined4 __cdecl OBJProc(undefined4)
 0x00473C10,func,_Kill@0,Kill,sms,confirmed,,undefined4 __stdcall Kill(void)
+0x0048E8D0,func,_OBJSayProc,OBJSayProc,sms,confirmed,,
 0x00491240,func,@OBJGet@4,OBJGet,sms,confirmed,,undefined4 __fastcall OBJGet(undefined4)
 0x00491250,func,_OBJInit@4,OBJInit,sms,confirmed,,undefined4 __stdcall OBJInit(undefined4)
 0x004912C0,func,_OBJShutdown@0,OBJShutdown,sms,confirmed,,undefined4 __stdcall OBJShutdown(void)
@@ -83,6 +86,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004A7220,func,_SetupPT,SetupPT,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SetupPT(undefined4)
 0x004A7230,func,_SetupJT,SetupJT,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SetupJT(undefined4)
 0x004AB450,func,@ShapeSetup@4,ShapeSetup,sms,confirmed,,undefined4 __fastcall ShapeSetup(undefined4)
+0x004D709A,func,_WriteFile@20,WriteFile,sms,confirmed,,"undefined4 __stdcall WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004EB612,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 1),
 0x004EB618,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 4),
 0x004EB61C,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 6),

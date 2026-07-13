@@ -70,9 +70,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004AA840,func,T_CellTmapLookup,,re,confirmed,binary-search _tlist by packed cell coord ((y&~3)<<16|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand,"void __fastcall T_CellTmapLookup(undefined4, undefined4, undefined4)"
 0x004AACA0,func,_T_InitHorizonProc@0,T_InitHorizonProc,sms,confirmed,RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH,undefined4 __stdcall T_InitHorizonProc(void)
 0x004AACE0,func,_T_HorizonProc,T_HorizonProc,sms,confirmed,1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand,void __cdecl T_HorizonProc(void)
-0x004AACF0,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: default horizon descriptor (14 B) embedded after T_HorizonProc; pushed into leaf list by T_Make",
+0x004AACF0,func,_T_DefaultHorizon,T_DefaultHorizon,sms,confirmed,,
 0x004AACFE,func,T_DrawHorizon,,re,inferred,"horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol; not a C function (#479): mid-function split of the routine at 0x004AACF0",!split
+0x004AB7F0,func,@HardpointAngle@4,HardpointAngle,sms,confirmed,,undefined4 __fastcall HardpointAngle(undefined4)
 0x004AB860,func,@BrushFromIndex@4,BrushFromIndex,sms,confirmed,,undefined4 __fastcall BrushFromIndex(undefined4)
+0x004ABA60,func,_InsectWingAngle@0,InsectWingAngle,sms,confirmed,,undefined4 __stdcall InsectWingAngle(void)
 0x004ABAB0,func,_T_Info@24,T_Info,sms,confirmed,,"undefined4 __stdcall T_Info(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C5D30,func,_T_InitDatabase@0,T_InitDatabase,sms,confirmed,set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB),undefined4 __stdcall T_InitDatabase(void)
 0x004C5D50,func,_T_ShutdownDatabase@0,T_ShutdownDatabase,sms,confirmed,zero _dbDynamicLow/High,undefined4 __stdcall T_ShutdownDatabase(void)

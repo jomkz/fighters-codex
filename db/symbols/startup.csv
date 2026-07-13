@@ -1,5 +1,37 @@
 va,kind,name,display,source,confidence,notes,type
 0x004D715A,func,_DirectDrawCreate@12,,sms,confirmed,"IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall DirectDrawCreate(undefined4, undefined4, undefined4)"
+0x004D7160,func,_AIL_midiOutOpen@12,AIL_midiOutOpen,sms,confirmed,,"undefined4 __stdcall AIL_midiOutOpen(undefined4, undefined4, undefined4)"
+0x004D7166,func,_AIL_set_preference@8,AIL_set_preference,sms,confirmed,,"undefined4 __stdcall AIL_set_preference(undefined4, undefined4)"
+0x004D716C,func,_AIL_startup@0,AIL_startup,sms,confirmed,,undefined4 __stdcall AIL_startup(void)
+0x004D7172,func,_AIL_shutdown@0,AIL_shutdown,sms,confirmed,,undefined4 __stdcall AIL_shutdown(void)
+0x004D7178,func,_AIL_stop_timer@4,AIL_stop_timer,sms,confirmed,,undefined4 __stdcall AIL_stop_timer(undefined4)
+0x004D717E,func,_AIL_midiOutClose@4,AIL_midiOutClose,sms,confirmed,,undefined4 __stdcall AIL_midiOutClose(undefined4)
+0x004D7184,func,_AIL_start_sequence@4,AIL_start_sequence,sms,confirmed,,undefined4 __stdcall AIL_start_sequence(undefined4)
+0x004D718A,func,_AIL_release_sequence_handle@4,AIL_release_sequence_handle,sms,confirmed,,undefined4 __stdcall AIL_release_sequence_handle(undefined4)
+0x004D7190,func,_AIL_init_sequence@12,AIL_init_sequence,sms,confirmed,,"undefined4 __stdcall AIL_init_sequence(undefined4, undefined4, undefined4)"
+0x004D7196,func,_AIL_allocate_sequence_handle@4,AIL_allocate_sequence_handle,sms,confirmed,,undefined4 __stdcall AIL_allocate_sequence_handle(undefined4)
+0x004D719C,func,_AIL_unlock@0,AIL_unlock,sms,confirmed,,undefined4 __stdcall AIL_unlock(void)
+0x004D71A2,func,_AIL_set_XMIDI_master_volume@8,AIL_set_XMIDI_master_volume,sms,confirmed,,"undefined4 __stdcall AIL_set_XMIDI_master_volume(undefined4, undefined4)"
+0x004D71A8,func,_AIL_lock@0,AIL_lock,sms,confirmed,,undefined4 __stdcall AIL_lock(void)
+0x004D71AE,func,_AIL_sequence_status@4,AIL_sequence_status,sms,confirmed,,undefined4 __stdcall AIL_sequence_status(undefined4)
+0x004D71B4,func,_AIL_allocate_sample_handle@4,AIL_allocate_sample_handle,sms,confirmed,,undefined4 __stdcall AIL_allocate_sample_handle(undefined4)
+0x004D71BA,func,_AIL_waveOutOpen@16,AIL_waveOutOpen,sms,confirmed,,"undefined4 __stdcall AIL_waveOutOpen(undefined4, undefined4, undefined4, undefined4)"
+0x004D71C0,func,_AIL_start_timer@4,AIL_start_timer,sms,confirmed,,undefined4 __stdcall AIL_start_timer(undefined4)
+0x004D71C6,func,_AIL_set_timer_frequency@8,AIL_set_timer_frequency,sms,confirmed,,"undefined4 __stdcall AIL_set_timer_frequency(undefined4, undefined4)"
+0x004D71CC,func,_AIL_register_timer@4,AIL_register_timer,sms,confirmed,,undefined4 __stdcall AIL_register_timer(undefined4)
+0x004D71D2,func,_AIL_waveOutClose@4,AIL_waveOutClose,sms,confirmed,,undefined4 __stdcall AIL_waveOutClose(undefined4)
+0x004D71D8,func,_AIL_end_sample@4,AIL_end_sample,sms,confirmed,,undefined4 __stdcall AIL_end_sample(undefined4)
+0x004D71DE,func,_AIL_sample_status@4,AIL_sample_status,sms,confirmed,,undefined4 __stdcall AIL_sample_status(undefined4)
+0x004D71E4,func,_AIL_stop_sequence@4,AIL_stop_sequence,sms,confirmed,,undefined4 __stdcall AIL_stop_sequence(undefined4)
+0x004D71EA,func,_AIL_resume_sequence@4,AIL_resume_sequence,sms,confirmed,,undefined4 __stdcall AIL_resume_sequence(undefined4)
+0x004D71F0,func,_AIL_start_sample@4,AIL_start_sample,sms,confirmed,,undefined4 __stdcall AIL_start_sample(undefined4)
+0x004D71F6,func,_AIL_set_sample_type@12,AIL_set_sample_type,sms,confirmed,,"undefined4 __stdcall AIL_set_sample_type(undefined4, undefined4, undefined4)"
+0x004D71FC,func,_AIL_set_sample_address@12,AIL_set_sample_address,sms,confirmed,,"undefined4 __stdcall AIL_set_sample_address(undefined4, undefined4, undefined4)"
+0x004D7202,func,_AIL_set_sample_loop_count@8,AIL_set_sample_loop_count,sms,confirmed,,"undefined4 __stdcall AIL_set_sample_loop_count(undefined4, undefined4)"
+0x004D7208,func,_AIL_init_sample@4,AIL_init_sample,sms,confirmed,,undefined4 __stdcall AIL_init_sample(undefined4)
+0x004D720E,func,_AIL_set_sample_pan@8,AIL_set_sample_pan,sms,confirmed,,"undefined4 __stdcall AIL_set_sample_pan(undefined4, undefined4)"
+0x004D7214,func,_AIL_set_sample_volume@8,AIL_set_sample_volume,sms,confirmed,,"undefined4 __stdcall AIL_set_sample_volume(undefined4, undefined4)"
+0x004D721A,func,_AIL_set_sample_playback_rate@8,AIL_set_sample_playback_rate,sms,confirmed,,"undefined4 __stdcall AIL_set_sample_playback_rate(undefined4, undefined4)"
 0x004D7220,func,_ser_rs232_getpacket@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_getpacket(undefined4, undefined4, undefined4)"
 0x004D7226,func,_ser_rs232_block@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_block(undefined4, undefined4, undefined4)"
 0x004D722C,func,_ser_rs232_flush@8,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ser_rs232_flush(undefined4, undefined4)"
@@ -33,6 +65,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004D72D4,func,_Dial@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall Dial(undefined4, undefined4, undefined4)"
 0x004D72DA,func,_ModemModifyValue@12,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall ModemModifyValue(undefined4, undefined4, undefined4)"
 0x004D72E0,func,_ModemHangup@4,,sms,confirmed,"IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem",undefined4 __stdcall ModemHangup(undefined4)
+0x004D72E6,func,_RegCloseKey@4,RegCloseKey,sms,confirmed,,undefined4 __stdcall RegCloseKey(undefined4)
+0x004D72EC,func,_RegQueryValueExA@24,RegQueryValueExA,sms,confirmed,,"undefined4 __stdcall RegQueryValueExA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004D72F2,func,_RegOpenKeyExA@20,RegOpenKeyExA,sms,confirmed,,"undefined4 __stdcall RegOpenKeyExA(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004D72F8,func,_RegEnumKeyExA@32,RegEnumKeyExA,sms,confirmed,,"undefined4 __stdcall RegEnumKeyExA(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004D72FE,func,_closeMS,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem",
 0x004D7304,func,_getMSdatafile,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __cdecl getMSdatafile(undefined4, undefined4, undefined4)"
 0x004D730A,func,_getMSdatafilesize,,sms,confirmed,"IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __cdecl getMSdatafilesize(undefined4, undefined4)"
@@ -43,6 +79,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D7430,func,__cinit,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _cinit(void)
 0x004D7460,func,_exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl exit(int)
 0x004D7480,func,__exit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _exit(undefined4)
+0x004D74A0,func,__cexit,_cexit,sms,confirmed,,
 0x004D74C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: doexit,
 0x004D7580,func,__lockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _lockexit(void)
 0x004D7590,func,__unlockexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _unlockexit(void)
@@ -54,6 +91,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D7790,func,_sprintf,,sms,confirmed,"MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): va_list built at [esp+0xC] (MSVC CRT sprintf: char *, const char *, ...)",!variadic
 0x004D7810,func,_strchr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strchr(undefined4, undefined4)"
 0x004D78D0,func,_memmove,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl memmove(undefined4, undefined4, undefined4)"
+0x004D7A20,func,__tolower,_tolower,sms,confirmed,,
 0x004D7A30,func,_tolower,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl tolower(undefined4)
 0x004D7AA0,func,__tolower_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _tolower_lk(undefined4)
 0x004D7B90,func,_fclose,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl fclose(undefined4)
@@ -61,10 +99,18 @@ va,kind,name,display,source,confidence,notes,type
 0x004D7C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fsopen,
 0x004D7C70,func,_fopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl fopen(undefined4, undefined4)"
 0x004D7C90,func,_strstr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strstr(undefined4, undefined4)"
+0x004D7D10,func,_isalpha,isalpha,sms,confirmed,,
+0x004D7D50,func,_isupper,isupper,sms,confirmed,,
+0x004D7D80,func,_islower,islower,sms,confirmed,,
 0x004D7DB0,func,_isdigit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isdigit(undefined4)
+0x004D7DE0,func,_isxdigit,isxdigit,sms,confirmed,,
 0x004D7E20,func,_isspace,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isspace(undefined4)
+0x004D7E50,func,_ispunct,ispunct,sms,confirmed,,
 0x004D7E80,func,_isalnum,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isalnum(undefined4)
 0x004D7EC0,func,_isprint,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl isprint(undefined4)
+0x004D7F00,func,_isgraph,isgraph,sms,confirmed,,
+0x004D7F40,func,_iscntrl,iscntrl,sms,confirmed,,
+0x004D8040,func,__toupper,_toupper,sms,confirmed,,
 0x004D8050,func,_toupper,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl toupper(undefined4)
 0x004D80C0,func,__toupper_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _toupper_lk(undefined4)
 0x004D81B0,func,__chkstk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): frame size in EAX; adjusts ESP and the return address in place,!asm
@@ -89,7 +135,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D8648,func,__ftol,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): double argument in the x87 register ST(0); result in EDX:EAX,!asm
 0x004D8670,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fpmath,
 0x004D86A0,func,__cfltcvt_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _cfltcvt_init(void)
-0x004D86F8,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=7)",
+0x004D86F8,func,__except_handler3,_except_handler3,sms,confirmed,,
 0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __stdcall _seh_longjmp_unwind(undefined4)
 0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl labs(undefined4)
 0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncat(undefined4, undefined4, undefined4)"
@@ -102,6 +148,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004D8CB0,func,__fullpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"char * __cdecl _fullpath(char *, char *, u32)"
 0x004D8D90,func,__splitpath,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __cdecl _splitpath(char *, char *, char *, char *, char *)"
 0x004D8EF0,func,__getcwd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _getcwd(undefined4, undefined4)"
+0x004D8F20,func,__getdcwd,_getdcwd,sms,confirmed,,
 0x004D8F60,func,__getdcwd_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _getdcwd_lk(undefined4, undefined4, undefined4)"
 0x004D90A0,func,__validdrive,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _validdrive(undefined4)
 0x004D90F0,func,_strupr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl strupr(undefined4)
@@ -114,10 +161,15 @@ va,kind,name,display,source,confidence,notes,type
 0x004D9730,func,_strlen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl strlen(undefined4)
 0x004D97B0,func,_strcpy,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
 0x004D97C0,func,_strcat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strcat(undefined4, undefined4)"
+0x004D98A0,func,_srand,srand,sms,confirmed,,
 0x004D98B0,func,_rand,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl rand(void)
+0x004D98E0,func,_fgets,fgets,sms,confirmed,,
+0x004D9960,func,_fprintf,fprintf,sms,confirmed,,
+0x004D99B0,func,__lsearch,_lsearch,sms,confirmed,,
 0x004D9A10,func,_sscanf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl sscanf(undefined4, undefined4, undefined4, undefined4)"
 0x004D9A60,func,_getenv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl getenv(undefined4)
 0x004D9A90,func,__getenv_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _getenv_lk(undefined4)
+0x004D9B30,func,_fflush,fflush,sms,confirmed,,
 0x004D9B70,func,__fflush_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _fflush_lk(undefined4)
 0x004D9BB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flush,
 0x004D9C30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: flsall,
@@ -133,6 +185,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004DA2B0,func,__lock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _lock_file2(undefined4, undefined4)"
 0x004DA2E0,func,__unlock_file,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _unlock_file(undefined4)
 0x004DA320,func,__unlock_file2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _unlock_file2(undefined4, undefined4)"
+0x004DA350,func,__lockerr_exit,_lockerr_exit,sms,confirmed,,
 0x004DA370,func,__isctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _isctype(undefined4, undefined4)"
 0x004DA410,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __flsbuf,
 0x004DA560,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __output,
@@ -143,6 +196,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004DAFE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int_arg,
 0x004DAFF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int64_arg,
 0x004DB010,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_short_arg,
+0x004DB020,func,_setlocale,setlocale,sms,confirmed,,
+0x004DB560,func,__expandlocale,_expandlocale,sms,confirmed,,
+0x004DB740,func,__strcats,_strcats,sms,confirmed,,
 0x004DB900,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringW,
 0x004DBB10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
 0x004DBB50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringA,
@@ -166,24 +222,26 @@ va,kind,name,display,source,confidence,notes,type
 0x004DCCA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: AdjustPointer,
 0x004DCCD0,func,__CallSettingFrame@12,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _CallSettingFrame(undefined4, undefined4, undefined4)"
 0x004DCD20,func,__mtinit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _mtinit(void)
+0x004DCD80,func,__mtterm,_mtterm,sms,confirmed,,
 0x004DCDB0,func,__initptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _initptd(undefined4)
 0x004DCDD0,func,__getptd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl _getptd(void)
+0x004DCE40,func,__freeptd,_freeptd,sms,confirmed,,
 0x004DCF10,func,_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl malloc(undefined4)
 0x004DCF30,func,__nh_malloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _nh_malloc(undefined4, undefined4)"
 0x004DCF80,func,__heap_alloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _heap_alloc(undefined4)
 0x004DCFE0,func,__setdefaultprecision,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _setdefaultprecision(void)
 0x004DD000,func,__ms_p5_test_fdiv,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _ms_p5_test_fdiv(void)
 0x004DD050,func,__ms_p5_mp_test_fdiv,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _ms_p5_mp_test_fdiv(void)
-0x004DD080,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
-0x004DD0F0,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
-0x004DD150,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
-0x004DD170,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
+0x004DD080,func,__forcdecpt,_forcdecpt,sms,confirmed,,
+0x004DD0F0,func,__cropzeros,_cropzeros,sms,confirmed,,
+0x004DD150,func,__positive,_positive,sms,confirmed,,
+0x004DD170,func,__fassign,_fassign,sms,confirmed,,
 0x004DD1C0,func,__cftoe,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftoe(undefined4, undefined4, undefined4, undefined4)"
 0x004DD240,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftoe2,
 0x004DD330,func,__cftof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftof(undefined4, undefined4, undefined4)"
 0x004DD3A0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __cftof2,
 0x004DD460,func,__cftog,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _cftog(undefined4, undefined4, undefined4, undefined4)"
-0x004DD510,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
+0x004DD510,func,__cfltcvt,_cfltcvt,sms,confirmed,,
 0x004DD580,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __shift,
 0x004DD5B0,func,__dosmaperr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _dosmaperr(undefined4)
 0x004DD630,func,__errno,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int * __cdecl _errno(void)
@@ -194,12 +252,14 @@ va,kind,name,display,source,confidence,notes,type
 0x004DD9C0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: getSystemCP,
 0x004DDA10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _CPtoLCID,
 0x004DDA70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: setSBCS,
+0x004DDAA0,func,__getmbcp,_getmbcp,sms,confirmed,,
 0x004DDAB0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___initmbctable,
 0x004DDAC0,func,__filbuf,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _filbuf(undefined4)
 0x004DDBC0,func,__read,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _read(undefined4, undefined4, undefined4)"
 0x004DDC40,func,__read_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _read_lk(undefined4, undefined4, undefined4)"
 0x004DDE70,func,__write,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _write(undefined4, undefined4, undefined4)"
 0x004DDEF0,func,__write_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _write_lk(undefined4, undefined4, undefined4)"
+0x004DE0F0,func,__stbuf,_stbuf,sms,confirmed,,
 0x004DE1D0,func,__input,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _input(undefined4, undefined4, undefined4)"
 0x004DEDED,data,,,waiver,confirmed,interior of / adjacent to __input; named at its base or owned by that subsystem,
 0x004DEE70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hextodec,
@@ -211,7 +271,17 @@ va,kind,name,display,source,confidence,notes,type
 0x004DF000,func,__commit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _commit(undefined4)
 0x004DF1A0,func,__XcptFilter,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl _XcptFilter(u32, _EXCEPTION_POINTERS *)"
 0x004DF2F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: xcptlookup,
+0x004DF320,func,__ismbbkalnum,_ismbbkalnum,sms,confirmed,,
+0x004DF340,func,__ismbbkprint,_ismbbkprint,sms,confirmed,,
+0x004DF360,func,__ismbbkpunct,_ismbbkpunct,sms,confirmed,,
+0x004DF380,func,__ismbbalnum,_ismbbalnum,sms,confirmed,,
+0x004DF3A0,func,__ismbbalpha,_ismbbalpha,sms,confirmed,,
+0x004DF3C0,func,__ismbbgraph,_ismbbgraph,sms,confirmed,,
+0x004DF3E0,func,__ismbbprint,_ismbbprint,sms,confirmed,,
+0x004DF400,func,__ismbbpunct,_ismbbpunct,sms,confirmed,,
 0x004DF420,func,__ismbblead,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _ismbblead(undefined4)
+0x004DF440,func,__ismbbtrail,_ismbbtrail,sms,confirmed,,
+0x004DF460,func,__ismbbkana,_ismbbkana,sms,confirmed,,
 0x004DF490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x_ismbbtype,
 0x004DF4D0,func,__setenvp,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _setenvp(void)
 0x004DF5C0,func,__setargv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _setargv(void)
@@ -220,8 +290,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004DFBC0,func,__ioinit,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _ioinit(void)
 0x004DFDA0,func,__ioterm,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _ioterm(void)
 0x004DFE00,func,__heap_init,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _heap_init(void)
+0x004DFE40,func,__heap_term,_heap_term,sms,confirmed,,
 0x004DFE80,func,__FF_MSGBANNER,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _FF_MSGBANNER(void)
 0x004DFEC0,func,__NMSG_WRITE,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _NMSG_WRITE(undefined4)
+0x004E00C0,func,__GET_RTERRMSG,_GET_RTERRMSG,sms,confirmed,,
 0x004E00F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeW,
 0x004E02B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetStringTypeA,
 0x004E03E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __lseek,
@@ -245,6 +317,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004E1740,func,_strpbrk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"char * __cdecl strpbrk(char *, char *)"
 0x004E1A80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_lang_lang,
 0x004E1AE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_ctry_ctry,
+0x004E1C40,func,__get_sbh_threshold,_get_sbh_threshold,sms,confirmed,,
+0x004E1C50,func,__set_sbh_threshold,_set_sbh_threshold,sms,confirmed,,
 0x004E1C70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_new_region,
 0x004E1DE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_release_region,
 0x004E1E40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_decommit_pages,
@@ -258,19 +332,24 @@ va,kind,name,display,source,confidence,notes,type
 0x004E27C0,func,__set_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _set_osfhnd(undefined4, undefined4)"
 0x004E2870,func,__free_osfhnd,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _free_osfhnd(undefined4)
 0x004E2910,func,__get_osfhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _get_osfhandle(undefined4)
+0x004E2960,func,__open_osfhandle,_open_osfhandle,sms,confirmed,,
 0x004E2A20,func,__lock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _lock_fhandle(undefined4)
 0x004E2A90,func,__unlock_fhandle,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _unlock_fhandle(undefined4)
 0x004E2AE0,func,__sopen,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _sopen(undefined4, undefined4, undefined4, undefined4)"
 0x004E2EF8,data,,,waiver,confirmed,interior of / adjacent to __sopen; named at its base or owned by that subsystem,
 0x004E2F70,func,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,long __stdcall __CxxUnhandledExceptionFilter(_EXCEPTION_POINTERS *)
+0x004E2FD0,func,?__CxxRestoreUnhandledExceptionFilter@@YAXXZ,__CxxRestoreUnhandledExceptionFilter,sms,confirmed,,void __cdecl __CxxRestoreUnhandledExceptionFilter(void)
 0x004E2FE0,func,?terminate@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,void __cdecl terminate(void)
 0x004E3055,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: _abort,
+0x004E3060,func,?unexpected@@YAXXZ,unexpected,sms,confirmed,,void __cdecl unexpected(void)
 0x004E3080,func,?_inconsistency@@YAXXZ,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,void __cdecl _inconsistency(void)
 0x004E30ED,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: terminate,
 0x004E3100,func,?_ValidateRead@@YAHPBXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _ValidateRead(const void *, unsigned int)"
 0x004E3120,func,?_ValidateWrite@@YAHPAXI@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _ValidateWrite(void *, unsigned int)"
 0x004E3140,func,?_ValidateExecute@@YAHP6GHXZ@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,int __cdecl _ValidateExecute(int (__stdcall *)(void))
 0x004E3160,func,_calloc,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl calloc(undefined4, undefined4)"
+0x004E3210,func,?_set_new_handler@@YAP6AHI@ZP6AHI@Z@Z,_set_new_handler,sms,confirmed,,
+0x004E3240,func,?_query_new_handler@@YAP6AHI@ZXZ,_query_new_handler,sms,confirmed,,
 0x004E3250,func,__callnewh,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _callnewh(undefined4)
 0x004E3290,func,__statusfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u32 __cdecl _statusfp(void)
 0x004E32B0,func,__clearfp,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u32 __cdecl _clearfp(void)
@@ -290,13 +369,16 @@ va,kind,name,display,source,confidence,notes,type
 0x004E3790,func,__ld12cvt,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ld12cvt(undefined4, undefined4, undefined4)"
 0x004E3960,func,__ld12tod,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ld12tod(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004E3980,func,__ld12tof,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ld12tof(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004E39A0,func,__ld12told,_ld12told,sms,confirmed,,
 0x004E3A30,func,__atodbl,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl _atodbl(undefined4 *, char *)"
+0x004E3A70,func,__atoldbl,_atoldbl,sms,confirmed,,
 0x004E3AB0,func,__atoflt,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl _atoflt(undefined4 *, char *)"
 0x004E3AF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __fptostr,
 0x004E3B80,func,__fltout2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand,"undefined4 __cdecl _fltout2(undefined4, undefined4, undefined4, undefined4)"
 0x004E3C10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___dtold,
 0x004E3CD0,func,_mbtowc,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __cdecl mbtowc(u16 *, char *, u32)"
 0x004E3D30,func,__mbtowc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbtowc_lk(undefined4, undefined4, undefined4)"
+0x004E3E40,func,_ungetc,ungetc,sms,confirmed,,
 0x004E3E70,func,__ungetc_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _ungetc_lk(undefined4, undefined4)"
 0x004E3F00,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtCompareStringW,
 0x004E4140,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
@@ -310,19 +392,31 @@ va,kind,name,display,source,confidence,notes,type
 0x004E4880,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtMessageBoxA,
 0x004E4920,func,__Getdays,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,char * __cdecl _Getdays(void)
 0x004E4A10,func,__Getmonths,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,char * __cdecl _Getmonths(void)
+0x004E4B00,func,__Gettnames,_Gettnames,sms,confirmed,,
+0x004E4E60,func,_strftime,strftime,sms,confirmed,,
+0x004E4E80,func,__Strftime,_Strftime,sms,confirmed,,
 0x004E4FA0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __expandtime,
 0x004E5540,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_str,
 0x004E5570,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_num,
 0x004E5600,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_number,
 0x004E5660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_winword,
 0x004E5980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___getlocaleinfo,
+0x004E5B40,func,_localeconv,localeconv,sms,confirmed,,
+0x004E5BF0,func,__ltoa,_ltoa,sms,confirmed,,
+0x004E5C20,func,__ultoa,_ultoa,sms,confirmed,,
+0x004E5C40,func,__i64toa,_i64toa,sms,confirmed,,
 0x004E5C80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: x64toa,
+0x004E5D20,func,__ui64toa,_ui64toa,sms,confirmed,,
 0x004E5D40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoW,
 0x004E5E70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoA,
+0x004E5FB0,func,_wcstol,wcstol,sms,confirmed,,
+0x004E61E0,func,_wcstoul,wcstoul,sms,confirmed,,
+0x004E6200,func,__chsize,_chsize,sms,confirmed,,
 0x004E6270,func,__chsize_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _chsize_lk(undefined4, undefined4)"
 0x004E63B0,func,__onexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _onexit(undefined4)
 0x004E6440,func,_atexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atexit(undefined4)
 0x004E64A0,func,_abort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl abort(void)
+0x004E64C0,func,_signal,signal,sms,confirmed,,
 0x004E6730,func,_raise,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl raise(undefined4)
 0x004E6910,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: siglookup,
 0x004E6970,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___addl,
@@ -339,9 +433,14 @@ va,kind,name,display,source,confidence,notes,type
 0x004E7890,func,__mbschr,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _mbschr(undefined4, undefined4)"
 0x004E7950,func,__strdup,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _strdup(undefined4)
 0x004E7980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___tzset,
+0x004E79C0,func,__tzset,_tzset,sms,confirmed,,
 0x004E79E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __tzset_lk,
+0x004E7CC0,func,__isindst,_isindst,sms,confirmed,,
+0x004E80E0,func,_towupper,towupper,sms,confirmed,,
 0x004E8160,func,__towupper_lk,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u16 __cdecl _towupper_lk(u16)
 0x004E8200,func,_iswctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl iswctype(undefined4, undefined4)"
+0x004E8280,func,_is_wctype,is_wctype,sms,confirmed,,
+0x004E82A0,func,__setmode,_setmode,sms,confirmed,,
 0x004E8310,func,__setmode_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _setmode_lk(undefined4, undefined4)"
 0x004E8380,func,__msize,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _msize(undefined4)
 0x004E83F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___ld12mul,
@@ -349,6 +448,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004E8720,func,_wcstombs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl wcstombs(undefined4, undefined4, undefined4)"
 0x004E8780,func,__wcstombs_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _wcstombs_lk(undefined4, undefined4, undefined4)"
 0x004E89F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
+0x004E8A22,func,_TerminateProcess@8,TerminateProcess,sms,confirmed,,"undefined4 __stdcall TerminateProcess(undefined4, undefined4)"
+0x004E8A28,func,_GetCurrentProcess@0,GetCurrentProcess,sms,confirmed,,undefined4 __stdcall GetCurrentProcess(void)
 0x004E8A2E,func,_RtlUnwind@16,,sms,confirmed,"IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem","undefined4 __stdcall RtlUnwind(undefined4, undefined4, undefined4, undefined4)"
 0x004E95C0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004E95C4,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,

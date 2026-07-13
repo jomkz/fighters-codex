@@ -24,6 +24,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0040CE00,func,MenuItemByIndex,,re,confirmed,"resolve a packed index (hi=menu#, lo=item#) to a MENU_ITEM* by walking _firstMenu; used by Check/Enable/DisableItem; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void * __fastcall MenuItemByIndex(u16)
 0x0040CE70,func,?EnableItem@@YIXG@Z,EnableItem,sms,confirmed,enable a menu item by index,void __fastcall EnableItem(unsigned short)
 0x0040CE80,func,?DisableItem@@YIXG@Z,DisableItem,sms,confirmed,disable/dim a menu item by index,void __fastcall DisableItem(unsigned short)
+0x0040CE90,func,?IsItemEnabled@@YIDG@Z,IsItemEnabled,sms,confirmed,,char __fastcall IsItemEnabled(unsigned short)
 0x0040CEA0,func,MenuSaveBackground,,re,confirmed,save the screen region under a submenu into menuSaveBrush (+shadowWidth/Height margin); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall MenuSaveBackground(undefined4)
 0x0040CF00,func,MenuRestoreBackground,,re,confirmed,blit menuSaveBrush back to screen and free it; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuRestoreBackground(void)
 0x0040CF40,func,MenuSaveBackground2,,re,confirmed,second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall MenuSaveBackground2(undefined4)
@@ -84,12 +85,14 @@ va,kind,name,display,source,confidence,notes,type
 0x0048A080,func,DialogFlush,,re,confirmed,ShellShowMouse + G_Flush + ShellHideMouse,
 0x0048A260,func,DialogBlitModuleBitmap,,re,confirmed,blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y,"undefined4 __stdcall DialogBlitModuleBitmap(undefined4, undefined4, undefined4, undefined4)"
 0x0048A2B0,func,DialogSetupBitmap,,re,confirmed,SetupBitmapAccess wrapper for dialog rendering; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogSetupBitmap(void)
+0x0048A2F0,func,?DialClick@@YAXPAUDIAL@@JJPADPAKD@Z,DialClick,sms,confirmed,,"void __cdecl DialClick(DIAL *, long, long, char *, unsigned long *, char)"
 0x0048A4C0,func,_DrawDial,DrawDial,sms,confirmed,rotary dial control renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawDial(void *)
 0x0048A730,func,_DrawLight,DrawLight,sms,confirmed,indicator light/LED renderer,
 0x0048A7D0,func,_PrintPageNums@16,PrintPageNums,sms,confirmed,render 'page N of M' for paged list widgets,"undefined4 __stdcall PrintPageNums(undefined4, undefined4, undefined4, undefined4)"
 0x0048A8E0,func,DialogEnsureListFont,,re,confirmed,lazy-load SMLFONT into _listFont if null; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogEnsureListFont(void)
 0x0048A910,func,_DrawFormattedText,DrawFormattedText,sms,confirmed,type-9 variant multi-line/paged text renderer (DLG.md); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawFormattedText(void *)
 0x0048A9F0,func,_DrawMissList,DrawMissList,sms,confirmed,single-mission list renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawMissList(void *)
+0x0048ABF0,func,_DrawCampaignList,DrawCampaignList,sms,confirmed,,
 0x0048ADE0,func,_DrawListBox,DrawListBox,sms,confirmed,generic scrollable list-box renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawListBox(void *)
 0x0048B320,func,_DrawCheck,DrawCheck,sms,confirmed,checkbox renderer (type 3); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawCheck(void *)
 0x0048B450,func,DialogRockerRepeat,,re,confirmed,"rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl DialogRockerRepeat(void)
@@ -123,6 +126,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0048CD40,func,_DrawLight320,DrawLight320,sms,confirmed,320 indicator light renderer,
 0x0048CD70,func,_DrawSwitch320,DrawSwitch320,sms,confirmed,320 switch renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawSwitch320(void *)
 0x0048CF10,func,_SliderVert320,SliderVert320,sms,inferred,320 vertical slider renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SliderVert320(void *)
+0x0048CFE0,func,@ShellButtonSound@4,ShellButtonSound,sms,confirmed,,undefined4 __fastcall ShellButtonSound(undefined4)
 0x0048D030,func,@ShellClickSound@8,ShellClickSound,sms,confirmed,play the UI click sound on a valid activation,"undefined4 __fastcall ShellClickSound(undefined4, undefined4)"
 0x0048D090,func,@ShellDisabledSound@4,ShellDisabledSound,sms,confirmed,play the 'disabled' buzz when a dimmed control is clicked,undefined4 __fastcall ShellDisabledSound(undefined4)
 0x0048D0D0,func,@DisableActionButton@4,DisableActionButton,sms,confirmed,set record type_flags bit15 (dim); see DLG.md +0x00,undefined4 __fastcall DisableActionButton(undefined4)
@@ -135,6 +139,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004A08A0,func,_ChooseActivity@0,ChooseActivity,sms,confirmed,"TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection",undefined4 __stdcall ChooseActivity(void)
 0x004A26F0,func,_DoDialogInfoBox@8,DoDialogInfoBox,sms,confirmed,modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10),"undefined4 __stdcall DoDialogInfoBox(undefined4, undefined4)"
 0x004A27C0,func,_DialogInfoBox@12,DialogInfoBox,sms,confirmed,generic INFO320/INFO640 message-box builder+run,"undefined4 __stdcall DialogInfoBox(undefined4, undefined4, undefined4)"
+0x004C6710,func,_QuickDist@8,QuickDist,sms,confirmed,,"undefined4 __stdcall QuickDist(undefined4, undefined4)"
 0x004EC218,data,,,waiver,confirmed,interior of / adjacent to ?menuSelecting@@3DA; named at its base or owned by that subsystem,
 0x004EC21C,data,,,waiver,confirmed,interior of / adjacent to ?menuSelecting@@3DA; named at its base or owned by that subsystem,
 0x004EC260,data,,,waiver,confirmed,interior of / adjacent to ?mouseShown@@3FA; named at its base or owned by that subsystem,

@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 107 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 136 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -68,8 +68,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00401780` | `NET_SlaveShutdown` | sms | client leave/teardown |
 | `0x004017B0` | `NET_RequestPlayerList` | sms | query lobby for player list (async) |
 | `0x00401850` | `NET_CancelPlayerList` | sms | cancel pending player-list query |
+| `0x00401880` | `PlayerListQueryEvents` | sms |  |
 | `0x004019A0` | `player_list_process_pkt` | sms | dispatch player-list-query reply packets |
 | `0x00401A60` | `NETSlaveConnect` | re | slave connect helper: proto_ptr->open (vtbl+0x56), register slave_events (0x401B20) via socket_add_state_func, seed socket_state addr fields; net_set_often_state(5). Body @0x401A60 cited |
+| `0x00401B20` | `slave_events` | sms |  |
 | `0x00401CD0` | `handle_slave_connection_failed` | sms | retry-or-fail: emits 'Connection to %s failed', pkt_send_error(6), net_set_often_state(0) |
 | `0x00401E30` | `NETSlaveLostConn` | re | slave lost-connection notifier: 'Lost connection to %s', socket_close, net_set_often_state(0). Body @0x401E30; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00401EB0` | `slave_process_pkt` | sms | slave lobby FSM: type 3=can-i-play reply,4=player_list,7=err,8=new_player,0xB/0xC=ready,0xD=play_game,0x11/0x12=sync,0x13=lost,0x16=msg,0x1B=connected |
@@ -79,9 +81,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00405360` | `NETWaitMasterScreen` | re | slave: spin polling MPReceive/MPCheckDisconnect while _masterNextScreen==-1, then adopt it as _curScreen (thisComputer>0). Body @0x405360; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004053A0` | `NETApplyMasterScreen` | re | slave: apply pending _masterNextScreen to _curScreen once (non-blocking). Body @0x4053A0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004054F0` | `netDialogAppIO` | sms | net-config dialog appIO callback: 0x65=CN_NewPrint,0x66/67=info box,0x68=yes/no; else poll key/mouse |
+| `0x00405580` | `monoPrintfIO` | sms |  |
+| `0x00405590` | `RunTCPOptionsDialog` | sms |  |
 | `0x00405CD0` | `NETFormatIP` | re | format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00405D10` | `ip2long` | sms | parse dotted-quad string -> packed u32 (strchr('.')+atoi x4) |
 | `0x00405DF0` | `RunNetConfigurationScreen` | sms | net config screen entry; calls doConfigurationScreen(1\|4) |
+| `0x0044BEC0` | `SER_Transmitting` | sms |  |
+| `0x0044C080` | `SER_PeekByte` | sms |  |
+| `0x0044C0F0` | `SER_Synchronize` | sms |  |
+| `0x0044C1B0` | `SER_Often` | sms |  |
+| `0x0044C1E0` | `SER_Suspend` | sms |  |
+| `0x0044C200` | `SER_Resume` | sms |  |
 | `0x0045D090` | `pkt_send_can_i_play` | sms | client->host join request |
 | `0x0045D120` | `pkt_send_can_i_play_player` | sms | join request naming a player slot |
 | `0x0045D1B0` | `pkt_send_sync` | sms | send sync request |
@@ -94,11 +104,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045D360` | `pkt_send_error` | sms | send error code to peer |
 | `0x0045D3A0` | `pkt_send_new_player` | sms | announce new player to peer |
 | `0x0045D440` | `pkt_sock_send_new_player` | sms | announce new player over socket |
+| `0x0045D4E0` | `pkt_send_lost_player` | sms |  |
 | `0x0045D580` | `pkt_sock_send_lost_player` | sms | announce lost player over socket |
+| `0x0045D620` | `pkt_build_new_player` | sms |  |
+| `0x0045D690` | `pkt_build_lost_player` | sms |  |
 | `0x0045D700` | `pkt_sock_send_error` | sms | send error over socket |
+| `0x0045D740` | `pkt_build_sync` | sms |  |
 | `0x0045D760` | `pkt_build_sync_reply` | sms | fill sync-reply header |
 | `0x0045D780` | `pkt_build_play_game` | sms | fill play-game (start) header |
+| `0x0045D7A0` | `pkt_send_debug` | sms |  |
 | `0x0045D810` | `pkt_send_player_info` | sms | send NET_PLAYER_LIST entry |
+| `0x0045D850` | `pkt_sock_send_player_info` | sms |  |
 | `0x0045D890` | `pkt_build_player_info` | sms | serialize NET_PLAYER_LIST into NET_PKT |
 | `0x0045D940` | `pkt_sock_send` | sms | low-level: send NET_PKT to one socket |
 | `0x0045D970` | `pkt_send` | sms | low-level: send NET_PKT to peer index |
@@ -141,7 +157,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00497150` | `spxconnect` | sms | SPX connect to a NET_ADDRESS |
 | `0x004971D0` | `convert_addr_ipx2usnf` | sms | convert an IPX sockaddr to the engine NET_ADDRESS |
 | `0x00497210` | `convert_addr_usnf2ipx` | sms | convert an engine NET_ADDRESS to an IPX sockaddr |
+| `0x00497250` | `spxaddr2str` | sms |  |
 | `0x00497290` | `spxbuildaddress` | sms | build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO |
+| `0x004972D0` | `spxfactory` | sms |  |
 | `0x00499F70` | `setPacketInfo` | sms | write SERIAL_PACKET type (low2 bits of byte0 \| 0xfc) and seq (byte3) |
 | `0x0049A000` | `packetCRC` | sms | extract stored CRC (byte1 [+byte10 for type0/3]) by packet type |
 | `0x0049A040` | `verifyPacketCRC` | sms | packetCRC()==computePacketCRC() |
@@ -150,6 +168,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049A100` | `SER_LeaveCriticalCodeBackground` | sms | clear Ctrl busy flag under critical section |
 | `0x0049A120` | `SER_CheckDisconnect` | sms | detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags |
 | `0x0049A1B0` | `SER_GetOutholdingLimit` | sms | transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window) |
+| `0x0049A260` | `SER_BackgroundThread` | sms |  |
 | `0x0049A3E0` | `updateQueueHead` | sms | head = seq % capacity; returns seq / capacity (wrap count) |
 | `0x0049A400` | `insertQueue` | sms | copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count |
 | `0x0049A460` | `overwriteQueue` | sms | overwrite slot by wrapper seq without count bump (history record) |
@@ -157,6 +176,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049A4D0` | `fetchFromQueueTail` | sms | pop tail slot then zero it; advance tail; returns wrap count |
 | `0x0049A660` | `SER_InitializeLowLevel` | sms | init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers |
 | `0x0049A6B0` | `SER_ShutdownLowLevel` | sms | mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag |
+| `0x0049A6E0` | `fnc_toCallDuringAnswer` | sms |  |
 | `0x0049A700` | `strToCom` | sms | map "COM1".."COM8" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none |
 | `0x0049A7D0` | `MOD_InitPortAndModem` | sms | SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc |
 | `0x0049A9B0` | `MOD_FindModemAndInitPCMCIA` | sms | enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem |
@@ -165,12 +185,21 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049AF30` | `MOD_InitializeAndConnect` | sms | MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure |
 | `0x0049AFF0` | `MOD_Initialize` | sms | top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce |
 | `0x0049B0D0` | `MOD_Shutdown` | sms | SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3 |
+| `0x0049B110` | `serIO` | sms |  |
 | `0x004AC180` | `SER_SendBytes` | sms | append bytes to holding buffer DAT_00570bc2; debit out-holding budget DAT_00570bba |
 | `0x004AC1D0` | `SER_SendHoldingBuffer` | sms | flush holding buffer via ser_rs232_putpacket; on error set flag + SER_ShutdownLowLevel |
 | `0x004AC210` | `SER_OkToSendPacket` | sms | budget check (>0x17=23 bytes free); set pending flag DAT_00570edc |
 | `0x004AC230` | `SER_SendPacket` | sms | per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters |
 | `0x004AC2E0` | `SER_SendRequests` | sms | scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket |
 | `0x004AC480` | `SER_SendStatus` | sms | send status/ACK packet (type0) carrying last-tx seq + per-player state |
+| `0x004B0BD0` | `NET_Synchronize` | sms |  |
+| `0x004B0CC0` | `NET_Disconnect` | sms |  |
+| `0x004B0CF0` | `NET_Write` | sms |  |
+| `0x004B0DD0` | `NET_WriteAvail` | sms |  |
+| `0x004B0E00` | `NET_Flush` | sms |  |
+| `0x004B0E50` | `NET_Read` | sms |  |
+| `0x004B10D0` | `NET_ReadAvail` | sms |  |
+| `0x004B1150` | `NET_PeekByte` | sms |  |
 
 ### HUD / cockpit
 
@@ -223,7 +252,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Core shell / menu / dialog UI
 
-[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 136 named functions
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 141 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -252,6 +281,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0040CE00` | `MenuItemByIndex` | re | resolve a packed index (hi=menu#, lo=item#) to a MENU_ITEM* by walking _firstMenu; used by Check/Enable/DisableItem; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0040CE70` | `EnableItem` | sms | enable a menu item by index |
 | `0x0040CE80` | `DisableItem` | sms | disable/dim a menu item by index |
+| `0x0040CE90` | `IsItemEnabled` | sms |  |
 | `0x0040CEA0` | `MenuSaveBackground` | re | save the screen region under a submenu into menuSaveBrush (+shadowWidth/Height margin); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0040CF00` | `MenuRestoreBackground` | re | blit menuSaveBrush back to screen and free it; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0040CF40` | `MenuSaveBackground2` | re | second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -312,12 +342,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0048A080` | `DialogFlush` | re | ShellShowMouse + G_Flush + ShellHideMouse |
 | `0x0048A260` | `DialogBlitModuleBitmap` | re | blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y |
 | `0x0048A2B0` | `DialogSetupBitmap` | re | SetupBitmapAccess wrapper for dialog rendering; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0048A2F0` | `DialClick` | sms |  |
 | `0x0048A4C0` | `DrawDial` | sms | rotary dial control renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048A730` | `DrawLight` | sms | indicator light/LED renderer |
 | `0x0048A7D0` | `PrintPageNums` | sms | render 'page N of M' for paged list widgets |
 | `0x0048A8E0` | `DialogEnsureListFont` | re | lazy-load SMLFONT into _listFont if null; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048A910` | `DrawFormattedText` | sms | type-9 variant multi-line/paged text renderer (DLG.md); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048A9F0` | `DrawMissList` | sms | single-mission list renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0048ABF0` | `DrawCampaignList` | sms |  |
 | `0x0048ADE0` | `DrawListBox` | sms | generic scrollable list-box renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048B320` | `DrawCheck` | sms | checkbox renderer (type 3); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048B450` | `DialogRockerRepeat` | re | rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -351,6 +383,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0048CD40` | `DrawLight320` | sms | 320 indicator light renderer |
 | `0x0048CD70` | `DrawSwitch320` | sms | 320 switch renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048CF10` | `SliderVert320` | sms | 320 vertical slider renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0048CFE0` | `ShellButtonSound` | sms |  |
 | `0x0048D030` | `ShellClickSound` | sms | play the UI click sound on a valid activation |
 | `0x0048D090` | `ShellDisabledSound` | sms | play the 'disabled' buzz when a dimmed control is clicked |
 | `0x0048D0D0` | `DisableActionButton` | sms | set record type_flags bit15 (dim); see DLG.md +0x00 |
@@ -363,6 +396,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A08A0` | `ChooseActivity` | sms | TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection |
 | `0x004A26F0` | `DoDialogInfoBox` | sms | modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10) |
 | `0x004A27C0` | `DialogInfoBox` | sms | generic INFO320/INFO640 message-box builder+run |
+| `0x004C6710` | `QuickDist` | sms |  |
 
 ### View / camera & replay (VIEW)
 
@@ -392,10 +426,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 125 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 139 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00421C80` | `ZONEAdd` | sms |  |
+| `0x00421CC0` | `ZONEForGV` | sms |  |
 | `0x00421D40` | `ZONEActive` | re | zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00421DE0` | `ZONEServiceRange` | re | per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent; not a C function (#479): mid-function split of _ZONEUpdate@0 (0x00421DD0) |
 | `0x00422120` | `ZONEPickTarget` | re | resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6) |
@@ -509,6 +545,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00468F00` | `PilotFormatRank` | re | format a pilot's rank string from the _pilotRanks table; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468F40` | `PilotDiskSpaceError` | re | 'You don't have enough free disk space' dialog before a pilot save; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468F80` | `PilotSetField` | re | small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004692D0` | `EJECTProc` | sms |  |
+| `0x00469300` | `EJECTEventProc` | sms |  |
+| `0x004694D0` | `EJECTMoveProc` | sms |  |
 | `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0) |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
@@ -517,6 +556,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00483D10` | `TextIsDelim` | re | predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D30` | `TextNextNumber` | re | read next token and convert to integer (_StringToNumber); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D50` | `TextTokenToValue` | re | scalar token->value conversion helper (uint->uint); low-confidence, revisit |
+| `0x00483E00` | `UkraineMedals` | sms |  |
+| `0x00484050` | `KurileMedals` | sms |  |
+| `0x004842B0` | `KurilePromotions` | sms |  |
+| `0x00484410` | `VietnamMedals` | sms |  |
+| `0x00484420` | `VietnamPromotions` | sms |  |
+| `0x00484430` | `ATFEgyptMedals` | sms |  |
+| `0x00484690` | `ATFVladMedals` | sms |  |
+| `0x004848F0` | `ATFPromotions` | sms |  |
+| `0x00484B70` | `ATFBalticMedals` | sms |  |
 | `0x00485380` | `CampaignAccumStats` | re | fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004854A0` | `StatsAddPair` | re | add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -550,7 +598,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Sound / music (incl. WAIL32)
 
-[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 49 named functions
+[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 50 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -603,6 +651,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00435BC0` | `SndLostFocus` | sms |  |
 | `0x00435C20` | `SndGotFocus` | sms |  |
 | `0x00435C30` | `SoundName` | sms |  |
+| `0x0047A670` | `ShutdownGraphicsSystem` | sms |  |
 
 ### Memory & resource managers (MM/RM)
 
@@ -710,7 +759,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 58 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 63 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -737,10 +786,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00452760` | `FMBayIsOpen` | sms |  |
 | `0x00452770` | `HARDPtrs` | sms |  |
 | `0x004527F0` | `HARDUnload` | sms |  |
+| `0x00452870` | `HARDPtrsFort` | sms |  |
+| `0x004528D0` | `HARDUnloadFort` | sms |  |
 | `0x00452940` | `HARDStoreWeight` | sms |  |
 | `0x00452980` | `HARDCanLoad` | sms |  |
 | `0x00452C20` | `HARDLoad` | sms |  |
 | `0x00452D10` | `HARDLoadAll` | sms |  |
+| `0x00452D60` | `HARDUnloadAll` | sms |  |
 | `0x00452D90` | `HARDBestSeekers` | sms |  |
 | `0x00452E60` | `HARDBestSeeker` | sms |  |
 | `0x00452EA0` | `HARDFindJammer` | sms |  |
@@ -753,6 +805,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004533D0` | `HARDGunsOnly` | sms |  |
 | `0x00453440` | `HARDGunsOnlyAll` | sms |  |
 | `0x00453490` | `HARDGunLoadPercent` | sms |  |
+| `0x00453510` | `HARDNameDebug` | sms |  |
 | `0x00453640` | `HARDUnlimited` | sms |  |
 | `0x00453710` | `HARDPodHack` | sms |  |
 | `0x00453800` | `HARDClearUnloadedHarpoints` | sms |  |
@@ -761,6 +814,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004538C0` | `HARDSaveHumanLoads` | sms |  |
 | `0x004539C0` | `HARDRestoreHumanLoad` | sms |  |
 | `0x00453A70` | `HARDTotalFuel` | sms |  |
+| `0x00453AC0` | `HARDNumLoaded` | sms |  |
 | `0x00453AF0` | `HARDHasInternalBay` | sms |  |
 | `0x00453B90` | `HARDRearmTest` | sms |  |
 | `0x00453C50` | `HARDRearmHumanLoad` | sms |  |
@@ -775,7 +829,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 23 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 26 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -802,10 +856,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045B9C0` | `DecodeInterSVGA15NONFrame` | sms | INTER/delta NON 8bpp single; dispatch inter submode6 case1 |
 | `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
 | `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
+| `0x004CCFFC` | `DecodeYUV15` | sms |  |
+| `0x004CD1C0` | `DecodeYUV15Double1` | sms |  |
+| `0x004CD394` | `DecodeYUV15Double2` | sms |  |
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 118 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 137 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -817,11 +874,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DE70` | `GG_SetPalette` | sms |  |
 | `0x0045DEC0` | `GG_Shake` | sms |  |
 | `0x0045DEDF` | `GG_FlushShaken` | re | present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path); not a C function (#479): mid-function split of @GG_Shake@0 (0x0045DEC0) |
+| `0x0045E100` | `GG_GetSubmodes` | sms |  |
+| `0x0045E110` | `GG_GetSubmodeName` | sms |  |
 | `0x0045E120` | `GG_Flush` | sms |  |
 | `0x0045E13F` | `GG_FlushDirtyLines` | re | the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable; not a C function (#479): mid-function split of @GG_Flush@4 (0x0045E120) |
 | `0x0045E370` | `flushLineStats` | sms |  |
 | `0x0045E3A0` | `GG_RestoreSurfaces` | sms |  |
 | `0x0045E410` | `GG_WaitRetrace` | sms |  |
+| `0x0045E430` | `GG_QuickBlt` | sms |  |
 | `0x0045E440` | `GG_VideoModesAvailable` | sms |  |
 | `0x00497330` | `G_FlipY` | sms |  |
 | `0x00497340` | `G_Init` | sms |  |
@@ -836,12 +896,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00497680` | `G_SetColor` | sms |  |
 | `0x004976D0` | `G_Point` | sms |  |
 | `0x00497700` | `G_UPoint` | sms |  |
+| `0x00497750` | `G_GetPoint` | sms |  |
 | `0x00497770` | `G_UHline` | sms |  |
 | `0x00497A10` | `G_Hline` | sms |  |
 | `0x00497A60` | `G_UVline` | sms |  |
 | `0x00497B00` | `G_Vline` | sms |  |
 | `0x00497B60` | `G_URect` | sms |  |
 | `0x00497BF0` | `G_Rect` | sms |  |
+| `0x00497CE0` | `G_Rect2` | sms |  |
 | `0x00497D10` | `G_URect2` | sms |  |
 | `0x00497D40` | `G_UBox` | sms |  |
 | `0x00497D90` | `G_Box` | sms |  |
@@ -854,8 +916,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00498420` | `G_Flush` | sms |  |
 | `0x00498430` | `G_ReverseVertices` | sms |  |
 | `0x00498480` | `G_Flip` | sms |  |
+| `0x004984B0` | `G_PolygonFlip` | sms |  |
 | `0x004984F0` | `G_UPolygonFlip` | sms |  |
+| `0x00498530` | `G_SPolygonFlip` | sms |  |
+| `0x00498550` | `G_SUPolygonFlip` | sms |  |
 | `0x00498570` | `G_PointFlip` | sms |  |
+| `0x00498590` | `G_UPointFlip` | sms |  |
+| `0x004985B0` | `G_UHlineFlip` | sms |  |
 | `0x004985E0` | `G_ULineFlip` | sms |  |
 | `0x00498610` | `G_LineFlip` | sms |  |
 | `0x00498640` | `G_CircleFlip` | sms |  |
@@ -866,12 +933,19 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00498980` | `G_Printf` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004989F0` | `G_StringWidth` | sms |  |
 | `0x00498A20` | `G_StringHeight` | sms |  |
+| `0x00498A30` | `G_LoadDriver` | sms |  |
+| `0x00498A40` | `G_UnloadDriver` | sms |  |
+| `0x00498A50` | `G_Visible` | sms |  |
 | `0x00498AF0` | `code` | sms |  |
+| `0x00498B80` | `printPoly` | sms |  |
 | `0x00498B90` | `clipT` | sms |  |
 | `0x00498CE0` | `clipB` | sms |  |
 | `0x00498E30` | `clipL` | sms |  |
 | `0x00498F90` | `clipR` | sms |  |
 | `0x004990F0` | `G_ClipDestPoly` | sms |  |
+| `0x004991B0` | `G_CopyDriverName` | sms |  |
+| `0x004991E0` | `G_LoadVesa` | sms |  |
+| `0x004991F0` | `G_UnloadVesa` | sms |  |
 | `0x00499200` | `G_SetHShake` | sms |  |
 | `0x00499240` | `G_SetVShake` | sms |  |
 | `0x00499280` | `G_Hline2` | sms |  |
@@ -891,11 +965,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B7FA0` | `G_BlitToScreen` | sms |  |
 | `0x004B7FE0` | `G_Blit` | sms |  |
 | `0x004B8460` | `G_ColorPrint` | sms |  |
+| `0x004B8570` | `G_ColorPrintf` | sms |  |
 | `0x004B85F0` | `G_ColorStringWidth` | sms |  |
 | `0x004B8620` | `G_ColorStringHeight` | sms |  |
 | `0x004B8630` | `G_NextTab` | sms |  |
 | `0x004B8670` | `G_Scale` | sms |  |
 | `0x004B8710` | `G_ScaleFlip` | sms |  |
+| `0x004B87C0` | `G_Texture` | sms |  |
 | `0x004B87F0` | `G_AcTexture` | sms |  |
 | `0x004B8820` | `G_TextureFlip` | sms |  |
 | `0x004B8890` | `G_PerspectiveFlip` | sms |  |
@@ -930,7 +1006,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Wingman / group AI (WNG/GRP)
 
-[`wingman.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/wingman.csv) · [page](wingman.md) — 38 named functions
+[`wingman.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/wingman.csv) · [page](wingman.md) — 48 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -942,6 +1018,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045E6E0` | `WNGWingmen` | sms |  |
 | `0x0045E710` | `WNGPart` | sms |  |
 | `0x0045E790` | `WNGWingmenNearby` | re | count wingmen within distance/alt (twin of GRPWingmenNearby); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0045E850` | `WNGSetWaypoints` | sms |  |
 | `0x0045E8A0` | `WNGControl` | re | if wingman, optional FormationMove; return formControl (twin of GRPControl); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0045E8F0` | `WNGLeaderLanding` | sms |  |
 | `0x0045E970` | `WNGFormationMove` | sms |  |
@@ -961,21 +1038,30 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045F1C0` | `GRPAdd` | sms |  |
 | `0x0045F250` | `GRPRemove` | sms |  |
 | `0x0045F360` | `GRPLeader` | sms |  |
+| `0x0045F3C0` | `GRPWingman` | sms |  |
 | `0x0045F410` | `GRPWingmen` | sms |  |
 | `0x0045F440` | `GRPPart` | sms |  |
+| `0x0045F4C0` | `GRPWingmenNearby` | sms |  |
+| `0x0045F580` | `GRPSetWaypoints` | sms |  |
 | `0x0045F5D0` | `GRPControl` | sms |  |
+| `0x0045F620` | `GRPLeaderLanding` | sms |  |
 | `0x0045F6A0` | `GRPFormationMove` | sms |  |
 | `0x0045F7F0` | `GRPSetControl` | sms |  |
 | `0x0045F860` | `GRPSetType` | sms |  |
 | `0x0045F8A0` | `GRPSetSpacingH` | sms |  |
 | `0x0045F8E0` | `GRPSetSpacingV` | sms |  |
+| `0x0045F920` | `GRPSetStateTarget` | sms |  |
+| `0x0045FAC0` | `GRPSendWM` | sms |  |
 | `0x0045FC20` | `GRPResponseSize` | sms |  |
 | `0x0045FC50` | `GRPAttackingObj` | sms |  |
 | `0x0045FCE0` | `GRPHumansFirst` | sms |  |
+| `0x0045FD60` | `GRPInHumanWing` | sms |  |
+| `0x0045FDC0` | `GRPPlayerWM` | sms |  |
+| `0x0045FE30` | `GRPName` | sms |  |
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 83 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 87 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -993,6 +1079,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004627B0` | `RemoveCurObj` | sms |  |
 | `0x004628B0` | `GetCurObj` | sms |  |
 | `0x00462980` | `PutCurObj` | sms |  |
+| `0x004629C0` | `GetCurObj2` | sms |  |
+| `0x004629D0` | `PutCurObj2` | sms |  |
 | `0x004629E0` | `PushCurObj` | sms |  |
 | `0x00462A20` | `PopCurObj` | sms |  |
 | `0x00462A50` | `ServiceObjects` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1036,6 +1124,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00473B40` | `OBJDamageProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
 | `0x00473BE0` | `OBJProc` | sms |  |
 | `0x00473C10` | `Kill` | sms |  |
+| `0x0048E8D0` | `OBJSayProc` | sms |  |
 | `0x00491240` | `OBJGet` | sms |  |
 | `0x00491250` | `OBJInit` | sms |  |
 | `0x004912C0` | `OBJShutdown` | sms |  |
@@ -1062,6 +1151,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A7220` | `SetupPT` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A7230` | `SetupJT` | sms | signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004AB450` | `ShapeSetup` | sms |  |
+| `0x004D709A` | `WriteFile` | sms |  |
 
 ### AI interpreter (CT)
 
@@ -1194,7 +1284,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 18 named functions
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 28 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1207,6 +1297,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00494A50` | `GetPOV` | sms | read POV hat; map centidegrees/100 to keypad scancode 0x48/0x4D/0x50/0x4B (U/R/D/L); 0xFFFF=centered->0 |
 | `0x00494AE0` | `ASynchJoystick` | sms | poll buttons via ReadJoystickButtons; edge-detect new presses into buttonPresses[] per JOYCAPS button count |
 | `0x00494B50` | `ReadJoystickButtons` | sms | return button mask from joystickInfo+0x14 (legacy) or joystickInfoEx+0x28 (extended) |
+| `0x00494BA0` | `MP_DoNothing` | sms |  |
 | `0x00499CF0` | `MOUSESetLimits` | sms | set cursor clamp limits (mouse-ring limit fields DAT_00560f38/f3a) |
 | `0x00499D10` | `MOUSESetPos` | sms | center mousePos to screen/2 (DAT_0055c06a/c06c halved) |
 | `0x00499D40` | `MOUSECenter` | sms | FA.SMS symbol at 0x499d40 not split by current Ghidra inventory; ~16-byte helper between MOUSESetPos and MOUSERead — candidate to define; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1215,11 +1306,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00499E30` | `MOUSEShutdown` | sms | DeleteCriticalSection(mouse_critical_section) if initialized; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00499E50` | `MOUSEEvent` | sms | WndProc mouse handler WM_MOUSEMOVE/L/R DOWN+UP (0x200/201/202/204/205); edge-count mouseButtonPresses & DAT_00560ef1; push to ring; update mousePos |
 | `0x0049B1D0` | `RunSerialConfigurationScreen` | sms | large device-config dialog for direct-serial link (baud/port/etc.); ~5.4KB UI — could alternatively be shell-ui |
+| `0x0049B9B0` | `ParseStrForModemName` | sms |  |
+| `0x0049BA60` | `CompareDBEntry` | sms |  |
+| `0x0049BA80` | `SortModemDB` | sms |  |
+| `0x0049BAA0` | `IsComment` | sms |  |
+| `0x0049BAE0` | `ReadModemDB` | sms |  |
+| `0x0049BD60` | `WriteModemEntry` | sms |  |
+| `0x0049BDC0` | `SelectModemFromDB` | sms |  |
+| `0x0049BF70` | `WriteModemFile` | sms |  |
+| `0x0049C260` | `RunModemAdvSetupDialog` | sms |  |
 | `0x0049C780` | `RunModemConfigurationScreen` | sms | large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui |
 
 ### Terrain (T_)
 
-[`terrain.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/terrain.csv) · [page](terrain.md) — 82 named functions
+[`terrain.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/terrain.csv) · [page](terrain.md) — 85 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1291,8 +1391,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AA840` | `T_CellTmapLookup` | re | binary-search _tlist by packed cell coord ((y&~3)<<16\|(x&~3)) to pick the tile texture; gated by _lowMemory/_tlistSize/DAT_00573396&2; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004AACA0` | `T_InitHorizonProc` | sms | RMAccess stars.SH/moon.SH/sun.SH into _starsH/_moonH/_sunH |
 | `0x004AACE0` | `T_HorizonProc` | sms | 1-B stub in current Ghidra (single RET / proc-ptr slot); SMS underscore differs from current label; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
+| `0x004AACF0` | `T_DefaultHorizon` | sms |  |
 | `0x004AACFE` | `T_DrawHorizon` | re | horizon/sky band render: _T_Info horizon sample + _WRMakeHazeList + _currentTintTable sky colors + _hackSky/_clip* extents; static, no SMS symbol; not a C function (#479): mid-function split of the routine at 0x004AACF0 |
+| `0x004AB7F0` | `HardpointAngle` | sms |  |
 | `0x004AB860` | `BrushFromIndex` | sms |  |
+| `0x004ABA60` | `InsectWingAngle` | sms |  |
 | `0x004ABAB0` | `T_Info` | sms |  |
 | `0x004C5D30` | `T_InitDatabase` | sms | set _dbDynamicLow/High to _dbaseLow bounds (dynamic terrain-object DB) |
 | `0x004C5D50` | `T_ShutdownDatabase` | sms | zero _dbDynamicLow/High |
@@ -1370,15 +1473,19 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### 3D render core / SH interpreter (GR)
 
-[`render-core.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/render-core.csv) · [page](render-core.md) — 163 named functions
+[`render-core.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/render-core.csv) · [page](render-core.md) — 171 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004CD588` | `sincos` | re | sin/cos via sin_table lookup+lerp; AL=frac AH=index; core of GRSinCos/angles_2_matrix/all rotates; not a C function (#479): angle in BX; sin in AX, cos in BX |
+| `0x004CD5C6` | `fast_sincos` | sms |  |
 | `0x004CD5DF` | `isqrt16` | re | tail-call wrapper of FUN_004cd5ee (16-bit integer sqrt); not a C function (#479): 32-bit value in CX:BX, result in DI |
 | `0x004CD5EE` | `isqrt16_body` | re | Newton-Raphson 16-bit integer square root (magnitude-classed); used by distance/normalize; not a C function (#479): 32-bit value in CX:BX, result in DI |
+| `0x004CD73B` | `fast_asin` | sms |  |
+| `0x004CD75F` | `asin` | sms |  |
 | `0x004CD7A0` | `GRACos` | sms | public arccos wrapper over acos |
 | `0x004CD7B4` | `acos` | re | arccos via DAT_00515dcc table lookup+lerp; not a C function (#479): cosine in BX, angle result in CX |
+| `0x004CD7FF` | `atan2` | sms |  |
 | `0x004CD834` | `GRSetLightSource` | sms | store world light dir into _worldLightSource/515ED2/515ED4 |
 | `0x004CD854` | `SetShading` | re | thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT; not a C function (#479): 3-component vector in EAX/EBX/ECX |
 | `0x004CD8B0` | `Sun` | re | lighting dot product of _worldLightSource against current matrix rows (518384/38A/390); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1396,12 +1503,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004CE7F7` | `mxmul` | re | hand-asm matrix*scalar accumulate helper (axis-select); not a C function (#479): vector in EBX/ECX/EBP; result in BX/CX/BP |
 | `0x004CE89C` | `compute_axis_check` | re | derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CE968` | `sort_objs_wrapper` | re | painter depth sort wrapper over _SortObjs_8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004CE980` | `dmxmul` | sms |  |
+| `0x004CEA40` | `dmxmul2` | sms |  |
 | `0x004CEB00` | `rotate_vec_roll` | re | rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CEB70` | `rotate_matrix_roll` | re | object-instancing: concat roll rotation into current matrix (m1..m9) via sincos; not a C function (#479): angle in BX, result in the carry flag |
 | `0x004CED44` | `rotate_vec_pitch` | re | rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CEDB8` | `rotate_matrix_pitch` | re | object-instancing: concat pitch rotation into current matrix via sincos; not a C function (#479): angle in BX, result in the carry flag |
 | `0x004CEF8C` | `rotate_vec_yaw` | re | rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004CF000` | `rotate_matrix_yaw` | re | object-instancing: concat yaw rotation into current matrix via sincos; not a C function (#479): angle in BX, result in the carry flag |
+| `0x004CF258` | `CodePnt` | sms |  |
 | `0x004CF270` | `code_pnt` | re | compute 5-bit frustum outcode of a projected point (BP/BX bounds); not a C function (#479): point in BX/CX/BP, outcode in AL |
 | `0x004CF2A4` | `ecode_pnt` | re | extended outcode (near-plane aware) returned in AL; used by clippers; not a C function (#479): point in EBX/ECX/EBP, outcode in AL |
 | `0x004CF2D0` | `matrix_from_angle3` | re | build 3x3 rotation matrix (3x FUN_004cf410) for MakeObj/ViewRotationMatrix; not a C function (#479): source vector in ESI and destination matrix in EBP |
@@ -1523,6 +1633,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D5BCC` | `GRRender` | sms | top-level 3D render: set viewer xyz + view angles + zoom + obj/ter detail/effects; angles_2_matrix; render_3d; export _unscaled_matrix |
 | `0x004D5C98` | `GRSinCos` | sms | public sin/cos wrapper over sincos |
 | `0x004D5CC0` | `GRTo2d` | sms |  |
+| `0x004D5E18` | `TransposeMatrix` | sms |  |
 | `0x004D5E58` | `MakeObjRotationMatrix` | sms | build object rotation matrix (roll/pitch/yaw) into caller buffer |
 | `0x004D60D8` | `MakeViewRotationMatrix` | sms | build view rotation matrix (yaw/pitch/roll order) into caller buffer |
 | `0x004D631C` | `MultPointByMatrix` | sms | transform a point by the current matrix (wraps mult_point_by_matrix_asm) |
@@ -1540,11 +1651,43 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 222 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 329 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004D715A` | `_DirectDrawCreate@12` | sms | IAT jump thunk -> DDRAW.DLL import (used by InitVideo); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D7160` | `AIL_midiOutOpen` | sms |  |
+| `0x004D7166` | `AIL_set_preference` | sms |  |
+| `0x004D716C` | `AIL_startup` | sms |  |
+| `0x004D7172` | `AIL_shutdown` | sms |  |
+| `0x004D7178` | `AIL_stop_timer` | sms |  |
+| `0x004D717E` | `AIL_midiOutClose` | sms |  |
+| `0x004D7184` | `AIL_start_sequence` | sms |  |
+| `0x004D718A` | `AIL_release_sequence_handle` | sms |  |
+| `0x004D7190` | `AIL_init_sequence` | sms |  |
+| `0x004D7196` | `AIL_allocate_sequence_handle` | sms |  |
+| `0x004D719C` | `AIL_unlock` | sms |  |
+| `0x004D71A2` | `AIL_set_XMIDI_master_volume` | sms |  |
+| `0x004D71A8` | `AIL_lock` | sms |  |
+| `0x004D71AE` | `AIL_sequence_status` | sms |  |
+| `0x004D71B4` | `AIL_allocate_sample_handle` | sms |  |
+| `0x004D71BA` | `AIL_waveOutOpen` | sms |  |
+| `0x004D71C0` | `AIL_start_timer` | sms |  |
+| `0x004D71C6` | `AIL_set_timer_frequency` | sms |  |
+| `0x004D71CC` | `AIL_register_timer` | sms |  |
+| `0x004D71D2` | `AIL_waveOutClose` | sms |  |
+| `0x004D71D8` | `AIL_end_sample` | sms |  |
+| `0x004D71DE` | `AIL_sample_status` | sms |  |
+| `0x004D71E4` | `AIL_stop_sequence` | sms |  |
+| `0x004D71EA` | `AIL_resume_sequence` | sms |  |
+| `0x004D71F0` | `AIL_start_sample` | sms |  |
+| `0x004D71F6` | `AIL_set_sample_type` | sms |  |
+| `0x004D71FC` | `AIL_set_sample_address` | sms |  |
+| `0x004D7202` | `AIL_set_sample_loop_count` | sms |  |
+| `0x004D7208` | `AIL_init_sample` | sms |  |
+| `0x004D720E` | `AIL_set_sample_pan` | sms |  |
+| `0x004D7214` | `AIL_set_sample_volume` | sms |  |
+| `0x004D721A` | `AIL_set_sample_playback_rate` | sms |  |
 | `0x004D7220` | `_ser_rs232_getpacket@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D7226` | `_ser_rs232_block@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D722C` | `_ser_rs232_flush@8` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
@@ -1578,6 +1721,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D72D4` | `_Dial@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D72DA` | `_ModemModifyValue@12` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D72E0` | `_ModemHangup@4` | sms | IAT jump thunk -> CDRVxF32/COMMSC32 serial+modem driver import (network/input transport); FA.SMS-named linker stub, conceptual owner is another subsystem |
+| `0x004D72E6` | `RegCloseKey` | sms |  |
+| `0x004D72EC` | `RegQueryValueExA` | sms |  |
+| `0x004D72F2` | `RegOpenKeyExA` | sms |  |
+| `0x004D72F8` | `RegEnumKeyExA` | sms |  |
 | `0x004D72FE` | `_closeMS` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D7304` | `_getMSdatafile` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
 | `0x004D730A` | `_getMSdatafilesize` | sms | IAT jump thunk -> msapi.dll matchmaking-service import (network subsystem); FA.SMS-named linker stub, conceptual owner is another subsystem |
@@ -1588,6 +1735,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D7430` | `__cinit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D7460` | `_exit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D7480` | `__exit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D74A0` | `_cexit` | sms |  |
 | `0x004D7580` | `__lockexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D7590` | `__unlockexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D75C0` | `_strrchr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1597,16 +1745,25 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D7790` | `_sprintf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): va_list built at [esp+0xC] (MSVC CRT sprintf: char *, const char *, ...) |
 | `0x004D7810` | `_strchr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D78D0` | `_memmove` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7A20` | `_tolower` | sms |  |
 | `0x004D7A30` | `_tolower` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7AA0` | `__tolower_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7B90` | `_fclose` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7BD0` | `__fclose_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7C70` | `_fopen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7C90` | `_strstr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7D10` | `isalpha` | sms |  |
+| `0x004D7D50` | `isupper` | sms |  |
+| `0x004D7D80` | `islower` | sms |  |
 | `0x004D7DB0` | `_isdigit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7DE0` | `isxdigit` | sms |  |
 | `0x004D7E20` | `_isspace` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7E50` | `ispunct` | sms |  |
 | `0x004D7E80` | `_isalnum` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D7EC0` | `_isprint` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D7F00` | `isgraph` | sms |  |
+| `0x004D7F40` | `iscntrl` | sms |  |
+| `0x004D8040` | `_toupper` | sms |  |
 | `0x004D8050` | `_toupper` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D80C0` | `__toupper_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D81B0` | `__chkstk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): frame size in EAX; adjusts ESP and the return address in place |
@@ -1625,6 +1782,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D8610` | `_strncmp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D8648` | `__ftol` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; not a C function (#479): double argument in the x87 register ST(0); result in EDX:EAX |
 | `0x004D86A0` | `__cfltcvt_init` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004D86F8` | `_except_handler3` | sms |  |
 | `0x004D87B5` | `__seh_longjmp_unwind@4` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D87D0` | `_labs` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D87E0` | `_strncat` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1635,6 +1793,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D8CB0` | `__fullpath` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D8D90` | `__splitpath` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004D8EF0` | `__getcwd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D8F20` | `_getdcwd` | sms |  |
 | `0x004D8F60` | `__getdcwd_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D90A0` | `__validdrive` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D90F0` | `_strupr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1647,10 +1806,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D9730` | `_strlen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D97B0` | `_strcpy` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D97C0` | `_strcat` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D98A0` | `srand` | sms |  |
 | `0x004D98B0` | `_rand` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004D98E0` | `fgets` | sms |  |
+| `0x004D9960` | `fprintf` | sms |  |
+| `0x004D99B0` | `_lsearch` | sms |  |
 | `0x004D9A10` | `_sscanf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D9A60` | `_getenv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D9A90` | `__getenv_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004D9B30` | `fflush` | sms |  |
 | `0x004D9B70` | `__fflush_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004D9D00` | `WinMainCRTStartup` | sms | PE entry point / MSVC CRT startup: GetVersion, __heap_init, __mtinit, __ioinit, ___initmbctable, __setargv/__setenvp/__cinit, then _WinMain@16 (0x476120, outside range), _exit. THE one true startup element in range |
 | `0x004D9EB0` | `__amsg_exit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1664,45 +1828,70 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004DA2B0` | `__lock_file2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DA2E0` | `__unlock_file` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DA320` | `__unlock_file2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DA350` | `_lockerr_exit` | sms |  |
 | `0x004DA370` | `__isctype` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DB020` | `setlocale` | sms |  |
+| `0x004DB560` | `_expandlocale` | sms |  |
+| `0x004DB740` | `_strcats` | sms |  |
 | `0x004DBDB0` | `_free` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DBE20` | `__close` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DBE90` | `__close_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DCCD0` | `__CallSettingFrame@12` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DCD20` | `__mtinit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004DCD80` | `_mtterm` | sms |  |
 | `0x004DCDB0` | `__initptd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DCDD0` | `__getptd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004DCE40` | `_freeptd` | sms |  |
 | `0x004DCF10` | `_malloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DCF30` | `__nh_malloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DCF80` | `__heap_alloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DCFE0` | `__setdefaultprecision` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DD000` | `__ms_p5_test_fdiv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DD050` | `__ms_p5_mp_test_fdiv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004DD080` | `_forcdecpt` | sms |  |
+| `0x004DD0F0` | `_cropzeros` | sms |  |
+| `0x004DD150` | `_positive` | sms |  |
+| `0x004DD170` | `_fassign` | sms |  |
 | `0x004DD1C0` | `__cftoe` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DD330` | `__cftof` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DD460` | `__cftog` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DD510` | `_cfltcvt` | sms |  |
 | `0x004DD5B0` | `__dosmaperr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DD630` | `__errno` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DD650` | `__mbctoupper` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DD6E0` | `__mbsnbcpy` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DD790` | `__setmbcp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DDAA0` | `_getmbcp` | sms |  |
 | `0x004DDAC0` | `__filbuf` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DDBC0` | `__read` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DDC40` | `__read_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DDE70` | `__write` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DDEF0` | `__write_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DE0F0` | `_stbuf` | sms |  |
 | `0x004DE1D0` | `__input` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DEF30` | `__mbsnbicoll` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DF000` | `__commit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004DF1A0` | `__XcptFilter` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004DF320` | `_ismbbkalnum` | sms |  |
+| `0x004DF340` | `_ismbbkprint` | sms |  |
+| `0x004DF360` | `_ismbbkpunct` | sms |  |
+| `0x004DF380` | `_ismbbalnum` | sms |  |
+| `0x004DF3A0` | `_ismbbalpha` | sms |  |
+| `0x004DF3C0` | `_ismbbgraph` | sms |  |
+| `0x004DF3E0` | `_ismbbprint` | sms |  |
+| `0x004DF400` | `_ismbbpunct` | sms |  |
 | `0x004DF420` | `__ismbblead` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004DF440` | `_ismbbtrail` | sms |  |
+| `0x004DF460` | `_ismbbkana` | sms |  |
 | `0x004DF4D0` | `__setenvp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DF5C0` | `__setargv` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DFBC0` | `__ioinit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DFDA0` | `__ioterm` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DFE00` | `__heap_init` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004DFE40` | `_heap_term` | sms |  |
 | `0x004DFE80` | `__FF_MSGBANNER` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004DFEC0` | `__NMSG_WRITE` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E00C0` | `_GET_RTERRMSG` | sms |  |
 | `0x004E0460` | `__lseek_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E0540` | `__isatty` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E0570` | `_wctomb` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
@@ -1711,20 +1900,27 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004E06E0` | `__aullrem` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E1700` | `_strcspn` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E1740` | `_strpbrk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004E1C40` | `_get_sbh_threshold` | sms |  |
+| `0x004E1C50` | `_set_sbh_threshold` | sms |  |
 | `0x004E2680` | `__alloc_osfhnd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E27C0` | `__set_osfhnd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E2870` | `__free_osfhnd` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E2910` | `__get_osfhandle` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2960` | `_open_osfhandle` | sms |  |
 | `0x004E2A20` | `__lock_fhandle` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E2A90` | `__unlock_fhandle` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E2AE0` | `__sopen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E2F70` | `?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E2FD0` | `__CxxRestoreUnhandledExceptionFilter` | sms |  |
 | `0x004E2FE0` | `?terminate@@YAXXZ` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3060` | `unexpected` | sms |  |
 | `0x004E3080` | `?_inconsistency@@YAXXZ` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3100` | `?_ValidateRead@@YAHPBXI@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3120` | `?_ValidateWrite@@YAHPAXI@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3140` | `?_ValidateExecute@@YAHP6GHXZ@Z` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3160` | `_calloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3210` | `_set_new_handler` | sms |  |
+| `0x004E3240` | `_query_new_handler` | sms |  |
 | `0x004E3250` | `__callnewh` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3290` | `__statusfp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E32B0` | `__clearfp` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1740,31 +1936,53 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004E3790` | `__ld12cvt` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3960` | `__ld12tod` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E3980` | `__ld12tof` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E39A0` | `_ld12told` | sms |  |
 | `0x004E3A30` | `__atodbl` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004E3A70` | `_atoldbl` | sms |  |
 | `0x004E3AB0` | `__atoflt` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E3B80` | `__fltout2` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004E3CD0` | `_mbtowc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E3D30` | `__mbtowc_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E3E40` | `ungetc` | sms |  |
 | `0x004E3E70` | `__ungetc_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E47C0` | `__fcloseall` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E4860` | `_wcslen` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E4920` | `__Getdays` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E4A10` | `__Getmonths` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004E4B00` | `_Gettnames` | sms |  |
+| `0x004E4E60` | `strftime` | sms |  |
+| `0x004E4E80` | `_Strftime` | sms |  |
+| `0x004E5B40` | `localeconv` | sms |  |
+| `0x004E5BF0` | `_ltoa` | sms |  |
+| `0x004E5C20` | `_ultoa` | sms |  |
+| `0x004E5C40` | `_i64toa` | sms |  |
+| `0x004E5D20` | `_ui64toa` | sms |  |
+| `0x004E5FB0` | `wcstol` | sms |  |
+| `0x004E61E0` | `wcstoul` | sms |  |
+| `0x004E6200` | `_chsize` | sms |  |
 | `0x004E6270` | `__chsize_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E63B0` | `__onexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E6440` | `_atexit` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E64A0` | `_abort` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004E64C0` | `signal` | sms |  |
 | `0x004E6730` | `_raise` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E7320` | `_$I10_OUTPUT` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E76C0` | `_realloc` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E7890` | `__mbschr` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E7950` | `__strdup` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E79C0` | `_tzset` | sms |  |
+| `0x004E7CC0` | `_isindst` | sms |  |
+| `0x004E80E0` | `towupper` | sms |  |
 | `0x004E8160` | `__towupper_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004E8200` | `_iswctype` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8280` | `is_wctype` | sms |  |
+| `0x004E82A0` | `_setmode` | sms |  |
 | `0x004E8310` | `__setmode_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E8380` | `__msize` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E8720` | `_wcstombs` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
 | `0x004E8780` | `__wcstombs_lk` | sms | MSVC C runtime (statically linked); FA.SMS public symbol |
+| `0x004E8A22` | `TerminateProcess` | sms |  |
+| `0x004E8A28` | `GetCurrentProcess` | sms |  |
 | `0x004E8A2E` | `_RtlUnwind@16` | sms | IAT jump thunk -> ntdll RtlUnwind import (used by CRT C++ EH); FA.SMS-named linker stub, conceptual owner is another subsystem |
 
 **Binary: `WAIL32.DLL`**
