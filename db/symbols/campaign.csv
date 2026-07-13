@@ -120,6 +120,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00468F00,func,PilotFormatRank,,re,confirmed,format a pilot's rank string from the _pilotRanks table; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall PilotFormatRank(undefined4 *)
 0x00468F40,func,PilotDiskSpaceError,,re,confirmed,'You don't have enough free disk space' dialog before a pilot save; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall PilotDiskSpaceError(int)
 0x00468F80,func,PilotSetField,,re,confirmed,"small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","void __cdecl PilotSetField(undefined4,char)"
+0x00469010,func,PilotFieldProc,PilotFieldProc,re,confirmed,"proc for the pilot-record field object: PilotSetField allocates the object, stores it at +0x17A and installs this as its proc (*puVar1 = FUN_00469010); it branches on the message in param_2 (0/2/3) and resets the two sub-fields to 0","void __cdecl PilotFieldProc(int *, int)"
 0x004692D0,func,_EJECTProc,EJECTProc,sms,confirmed,,
 0x00469300,func,?EJECTEventProc@@YADFJ@Z,EJECTEventProc,sms,confirmed,,"char __cdecl EJECTEventProc(short, long)"
 0x004694D0,func,?EJECTMoveProc@@YAXD@Z,EJECTMoveProc,sms,confirmed,,void __cdecl EJECTMoveProc(char)

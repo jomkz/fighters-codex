@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 170 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 171 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -157,6 +157,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00471A90` | `MPWaitStatus` | re | modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status) |
 | `0x00471B80` | `MPAllPeersAtStatus` | re | test whether every connected peer's _mpStatus == param_1. Body @0x471B80; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00471FA0` | `MPAssignPlanePlayers` | re | per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00472100` | `MPComparePlaneRank` | re | qsort comparator ordering the multiplayer wing-assignment candidates by the 4-byte rank at +3 of each 7-byte record; ?MPAssignPlayers@@YGXXZ passes it to _qsort twice over the table at 0x547180 |
 | `0x00472130` | `MPBuildSpawnPayload` | re | apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130 |
 | `0x00472670` | `MPRevive` | re | apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670 |
 | `0x004735D0` | `MPChatStore` | re | append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -286,7 +287,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Core shell / menu / dialog UI
 
-[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 141 named functions
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 144 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -371,6 +372,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004897D0` | `SndPrefPreload` | sms | preload header for SNDPREF.DLG |
 | `0x004897F0` | `ChoosePreload` | sms | DLG header record: PushShellAlloc, load action-button PIC/font by type (DLG.md); dispatched via computed indirect call |
 | `0x00489810` | `MultiPreload` | sms | preload header for multiplayer dialogs |
+| `0x00489840` | `LoadActionFont` | re | loads one action-button font/bitmap set (blue / red / blue2 / green, selected by the register argument) and warms the RM cache for the "LMR"+digit labels; called by _Info640Preload, _GrafPrefPreload, _SndPrefPreload, _ChoosePreload and _MultiPreload |
 | `0x00489AC0` | `DrawText` | sms | type-9 static text renderer (DLG.md field layout); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00489B90` | `DrawAction` | sms | type-0 clickable action-button renderer (DLG.md field layout); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048A080` | `DialogFlush` | re | ShellShowMouse + G_Flush + ShellHideMouse |
@@ -426,7 +428,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0048D140` | `DialogItemIsEnabled` | sms | query a dialog item's enabled bit |
 | `0x0048D150` | `LimitEditFieldLength` | sms | cap an edit field's character length |
 | `0x0048D160` | `DialogTextStreamInit` | re | init a paged text-stream reader object (vtable[2]=LAB_0048d1d0, [3]=FUN_0048d1e0; alloc 0x26+0x1000); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0048D1D0` | `DialogTextStreamMarkDone` | re | text-stream vtable slot 2: sets the one-shot notify flag at +0x24 that DialogTextStreamRead tests and clears, firing event 0x29 to the owning control |
 | `0x0048D1E0` | `DialogTextStreamRead` | re | text-stream read callback: FUN_00486f20 decode into 0x1000 buffer; sets state 0x29/0x74; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0048D260` | `DialogTextStreamSkip` | re | text-stream vtable slot 4: advances the cursor by n bytes, calling DialogTextStreamRead to refill the buffer whenever the remaining count runs short |
 | `0x004A08A0` | `ChooseActivity` | sms | TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection |
 | `0x004A26F0` | `DoDialogInfoBox` | sms | modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10) |
 | `0x004A27C0` | `DialogInfoBox` | sms | generic INFO320/INFO640 message-box builder+run |
@@ -460,7 +464,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 153 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 154 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -580,6 +584,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00468F00` | `PilotFormatRank` | re | format a pilot's rank string from the _pilotRanks table; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468F40` | `PilotDiskSpaceError` | re | 'You don't have enough free disk space' dialog before a pilot save; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468F80` | `PilotSetField` | re | small pilot-record field setter (cdecl int,char); exact field low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00469010` | `PilotFieldProc` | re | proc for the pilot-record field object: PilotSetField allocates the object, stores it at +0x17A and installs this as its proc (*puVar1 = FUN_00469010); it branches on the message in param_2 (0/2/3) and resets the two sub-fields to 0 |
 | `0x004692D0` | `EJECTProc` | sms |  |
 | `0x00469300` | `EJECTEventProc` | sms |  |
 | `0x004694D0` | `EJECTMoveProc` | sms |  |
@@ -914,7 +919,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 156 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 157 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1038,6 +1043,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B8890` | `G_PerspectiveFlip` | sms |  |
 | `0x004B8920` | `G_HFlipBitmap` | sms |  |
 | `0x004B8960` | `G_DoubleBitmapY` | sms |  |
+| `0x004B8BA0` | `G_CompareBitmapSpan` | re | qsort comparator ordering the doubled span list by (y, x): @G_DoubleBitmapY@4 passes it to _qsort with stride 10 over the span records it just built |
 | `0x004B8BF0` | `G_DoubleBitmapX` | sms |  |
 | `0x004B8D90` | `carefulDiv` | sms |  |
 | `0x004B8E10` | `NPM_clipTop` | sms |  |
@@ -1572,7 +1578,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### 3D render core / SH interpreter (GR)
 
-[`render-core.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/render-core.csv) · [page](render-core.md) — 171 named functions
+[`render-core.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/render-core.csv) · [page](render-core.md) — 174 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1659,9 +1665,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004D2690` | `sh_op_18` | re | SH opcode 0x18 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D2740` | `sh_op_84` | re | SH opcode 0x84 handler (epic #52 placeholder name); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D2798` | `load_dest` | re | interpreter helper: load destination operand; not a C function (#479): SH bytecode cursor in ESI (advanced in place); result in EAX |
+| `0x004D27C8` | `sh_op_1C_flat` | re | SH opcode 0x1C/0x88 handler, FLAT-path variant; not a C function (#479): threaded-code jump target. check_flat installs it into PTR_sh_op_1C_* where the perspective path installs sh_op_1C (0x4D2880) — it drops that sibling's m4/m6 matrix multiply |
 | `0x004D2880` | `sh_op_1C` | re | SH opcode 0x1C/0x88 handler (perspective-path variant swapped by check_flat); not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D2910` | `sh_op_26` | re | SH opcode 0x26 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2948` | `sh_op_2A_flat` | re | SH opcode 0x2A/0x86 handler, FLAT-path variant; not a C function (#479): threaded-code jump target. Installed by check_flat into PTR_sh_op_2A_* opposite sh_op_2A (0x4D29EC) — keeps the _scaled_matrix multiply, drops the m3 one |
 | `0x004D29EC` | `sh_op_2A` | re | SH opcode 0x2A/0x86 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
+| `0x004D2A7C` | `sh_op_2C_flat` | re | SH opcode 0x2C/0x8A handler, FLAT-path variant; not a C function (#479): threaded-code jump target. Installed by check_flat into PTR_sh_op_2C_* opposite sh_op_2C (0x4D2B20) |
 | `0x004D2B20` | `sh_op_2C` | re | SH opcode 0x2C/0x8A handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D2BB0` | `sh_op_92` | re | SH opcode 0x92 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |
 | `0x004D2C70` | `sh_op_90` | re | SH opcode 0x90 handler; not a C function (#479): threaded-code jump target dispatched through vector_table (0x5183A0) with ESI live as the bytecode cursor; no RET of its own |

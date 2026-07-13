@@ -49,6 +49,13 @@ echo "[audit 3/4] apply db/symbols (ApplySymbols materialises functions)"
     -postScript ApplySymbols.java "$REPO_ROOT" \
     -scriptPath "$SCRIPT_DIR" -noanalysis
 
+if [[ "$BINARY" == "FA.EXE" ]]; then
+    echo "[audit 3b/4] sweep the code auto-analysis never reached (#496)"
+    "$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process "$BINARY" \
+        -postScript SweepUndefinedCode.java --write \
+        -scriptPath "$SCRIPT_DIR" -noanalysis
+fi
+
 echo "[audit 4/4] export fresh inventory -> $AUDIT_OUT"
 "$ANALYZE_HEADLESS" "$FA_PROJECT" "$PROJ" -process "$BINARY" \
     -postScript ExportInventory.java "$REPO_ROOT" "$AUDIT_OUT" \

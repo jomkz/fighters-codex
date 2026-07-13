@@ -205,10 +205,12 @@ va,kind,name,display,source,confidence,notes,type
 0x004D8250,func,?_UnwindNestedFrames@@YGXPAUEHRegistrationNode@@PAUEHExceptionRecord@@@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void __stdcall _UnwindNestedFrames(EHRegistrationNode *, EHExceptionRecord *)"
 0x004D82B0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___CxxFrameHandler,
 0x004D8310,func,?_CallCatchBlock2@@YAPAXPAUEHRegistrationNode@@PBU_s_FuncInfo@@PAXHK@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"void * __cdecl _CallCatchBlock2(EHRegistrationNode *, const _s_FuncInfo *, void *, int, unsigned long)"
+0x004D8380,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004D83B0,func,?_CallSETranslator@@YAHPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAX2PBU_s_FuncInfo@@H1@Z,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"int __cdecl _CallSETranslator(EHExceptionRecord *, EHRegistrationNode *, void *, void *, const _s_FuncInfo *, int, EHRegistrationNode *)"
 0x004D8490,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: TranslatorGuardHandler,
 0x004D8500,func,,,waiver,confirmed,CRT C++ EH exception-object free thunk (calls _free); unwind funclet helper,
 0x004D8510,func,__global_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _global_unwind2(undefined4)
+0x004D8530,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004D8552,func,__local_unwind2,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _local_unwind2(undefined4, undefined4)"
 0x004D85AA,data,,,waiver,confirmed,"CODE misfiled as a data row: the bytes here are a function prologue / branch label, not data (verified by disassembly). Re-kinding tracked in #479. Was: MSVC CRT global (xrefs=1)",
 0x004D85BA,func,__abnormal_termination,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _abnormal_termination(void)
@@ -281,8 +283,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004DAFF0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_int64_arg,
 0x004DB010,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: get_short_arg,
 0x004DB020,func,_setlocale,setlocale,sms,confirmed,,
+0x004DB2F0,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004DB560,func,__expandlocale,_expandlocale,sms,confirmed,,
 0x004DB740,func,__strcats,_strcats,sms,confirmed,,
+0x004DB790,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004DB900,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringW,
 0x004DBB10,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: wcsncnt,
 0x004DBB50,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtLCMapStringA,
@@ -344,6 +348,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004DDE70,func,__write,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _write(undefined4, undefined4, undefined4)"
 0x004DDEF0,func,__write_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _write_lk(undefined4, undefined4, undefined4)"
 0x004DE0F0,func,__stbuf,_stbuf,sms,confirmed,,
+0x004DE190,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004DE1D0,func,__input,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _input(undefined4, undefined4, undefined4)"
 0x004DEDED,data,,,waiver,confirmed,interior of / adjacent to __input; named at its base or owned by that subsystem,
 0x004DEE70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __hextodec,
@@ -370,6 +375,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004DF4D0,func,__setenvp,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _setenvp(void)
 0x004DF5C0,func,__setargv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _setargv(void)
 0x004DF660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: parse_cmdline,
+0x004DF830,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004DFA30,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetEnvironmentStringsA,
 0x004DFBC0,func,__ioinit,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl _ioinit(void)
 0x004DFDA0,func,__ioterm,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl _ioterm(void)
@@ -388,19 +394,23 @@ va,kind,name,display,source,confidence,notes,type
 0x004E05D0,func,__wctomb_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _wctomb_lk(undefined4, undefined4)"
 0x004E0670,func,__aulldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _aulldiv(undefined4, undefined4, undefined4, undefined4)"
 0x004E06E0,func,__aullrem,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _aullrem(undefined4, undefined4, undefined4, undefined4)"
+0x004E0760,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E0810,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __get_lc_time,
 0x004E0B90,func,,,waiver,confirmed,CRT locale __free_lc_time: frees the __lc_time_data pointer table (~0x27 entries),
 0x004E0DD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: storeTimeFmt,
 0x004E0ED0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___init_numeric,
 0x004E10F0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: fix_grouping,
+0x004E1140,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E1230,func,,,waiver,confirmed,CRT locale ___init_monetary: fills lconv monetary struct via ___getlocaleinfo x16,
 0x004E1380,func,,,waiver,confirmed,"CRT locale grouping-string normalizer (subtract '0', collapse ';'); twin of fix_grouping",
 0x004E13D0,func,,,waiver,confirmed,CRT locale __free_lconv_mon: frees monetary lconv strings unless default (&DAT_00520584),
 0x004E1440,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___init_ctype,
 0x004E1700,func,_strcspn,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"u32 __cdecl strcspn(char *, char *)"
 0x004E1740,func,_strpbrk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"char * __cdecl strpbrk(char *, char *)"
+0x004E1780,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E1A80,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_lang_lang,
 0x004E1AE0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: trans_ctry_ctry,
+0x004E1B40,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E1C40,func,__get_sbh_threshold,_get_sbh_threshold,sms,confirmed,,
 0x004E1C50,func,__set_sbh_threshold,_set_sbh_threshold,sms,confirmed,,
 0x004E1C70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___sbh_new_region,
@@ -486,6 +496,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E5660,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __store_winword,
 0x004E5980,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___getlocaleinfo,
 0x004E5B40,func,_localeconv,localeconv,sms,confirmed,,
+0x004E5B50,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E5BF0,func,__ltoa,_ltoa,sms,confirmed,,
 0x004E5C20,func,__ultoa,_ultoa,sms,confirmed,,
 0x004E5C40,func,__i64toa,_i64toa,sms,confirmed,,
@@ -494,6 +505,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E5D40,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoW,
 0x004E5E70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___crtGetLocaleInfoA,
 0x004E5FB0,func,_wcstol,wcstol,sms,confirmed,,
+0x004E5FD0,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E61E0,func,_wcstoul,wcstoul,sms,confirmed,,
 0x004E6200,func,__chsize,_chsize,sms,confirmed,,
 0x004E6270,func,__chsize_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _chsize_lk(undefined4, undefined4)"
@@ -501,6 +513,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E6440,func,_atexit,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl atexit(undefined4)
 0x004E64A0,func,_abort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl abort(void)
 0x004E64C0,func,_signal,signal,sms,confirmed,,
+0x004E661C,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E6730,func,_raise,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl raise(undefined4)
 0x004E6910,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: siglookup,
 0x004E6970,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: ___addl,
@@ -520,6 +533,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004E79C0,func,__tzset,_tzset,sms,confirmed,,
 0x004E79E0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __tzset_lk,
 0x004E7CC0,func,__isindst,_isindst,sms,confirmed,,
+0x004E7CF0,func,,,waiver,confirmed,"CRT runtime helper (MSVC) — reached only through a function pointer, so auto-analysis never defined it; disassembled by SweepUndefinedCode (#496)",
 0x004E80E0,func,_towupper,towupper,sms,confirmed,,
 0x004E8160,func,__towupper_lk,,sms,inferred,MSVC C runtime (statically linked); FA.SMS public symbol; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u16 __cdecl _towupper_lk(u16)
 0x004E8200,func,_iswctype,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl iswctype(undefined4, undefined4)"
@@ -662,7 +676,9 @@ va,kind,name,display,source,confidence,notes,type
 0x0051EAC8,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EACC,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EC48,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC4C,data,,,waiver,confirmed,MSVC CRT internal data — third-party (boundary); referenced by a CRT helper that auto-analysis never defined and SweepUndefinedCode disassembled (#496),
 0x0051EC50,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
+0x0051EC54,data,,,waiver,confirmed,MSVC CRT internal data — third-party (boundary); referenced by a CRT helper that auto-analysis never defined and SweepUndefinedCode disassembled (#496),
 0x0051EC58,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EC5C,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
 0x0051EC60,data,,,waiver,confirmed,interior of / adjacent to __ctype; named at its base or owned by that subsystem,
@@ -705,9 +721,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0051F3F8,data,__adbgmsg,,sms,confirmed,MSVC CRT global (xrefs=2),undefined4
 0x0051F3FC,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F400,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F410,data,,,waiver,confirmed,MSVC CRT internal data — third-party (boundary); referenced by a CRT helper that auto-analysis never defined and SweepUndefinedCode disassembled (#496),
 0x0051F414,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F418,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F41C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
+0x0051F420,data,,,waiver,confirmed,MSVC CRT internal data — third-party (boundary); referenced by a CRT helper that auto-analysis never defined and SweepUndefinedCode disassembled (#496),
 0x0051F424,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F428,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,
 0x0051F43C,data,,,waiver,confirmed,interior of / adjacent to __adbgmsg; named at its base or owned by that subsystem,

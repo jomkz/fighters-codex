@@ -11,11 +11,13 @@ va,kind,name,display,source,confidence,notes,type
 0x0045DE70,func,_GG_SetPalette@16,GG_SetPalette,sms,confirmed,,"undefined4 __stdcall GG_SetPalette(undefined4, undefined4, undefined4, undefined4)"
 0x0045DEC0,func,@GG_Shake@0,GG_Shake,sms,confirmed,,undefined4 __fastcall GG_Shake(void)
 0x0045DEDF,func,GG_FlushShaken,,re,inferred,present the back buffer with the current screen-shake offset (reads _vShakeTicks/_hShakeTicks); shake variant of GG_Flush with no direct callers in the image (dead or indirect shake path); not a C function (#479): mid-function split of @GG_Shake@0 (0x0045DEC0),!split
+0x0045E0E5,func,,,waiver,confirmed,"SEH frame handler for GG_Shake — forwards to ___CxxFrameHandler; compiler-generated 10-byte thunk installed by @GG_Shake@0, the pair of the unwind funnel at 0x0045E0EF",
 0x0045E0EF,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushShaken — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk,
 0x0045E100,func,@GG_GetSubmodes@4,GG_GetSubmodes,sms,confirmed,,undefined4 __fastcall GG_GetSubmodes(undefined4)
 0x0045E110,func,@GG_GetSubmodeName@0,GG_GetSubmodeName,sms,confirmed,,undefined4 __fastcall GG_GetSubmodeName(void)
 0x0045E120,func,@GG_Flush@4,GG_Flush,sms,confirmed,,undefined4 __fastcall GG_Flush(undefined4)
 0x0045E13F,func,GG_FlushDirtyLines,,re,inferred,"the dirty-line blit region of GG_Flush (0x45E120, whose SEH body spans 0x45E120-0x45E356); a Ghidra mid-function split reached only by fall-through (no callers) — not separately callable; not a C function (#479): mid-function split of @GG_Flush@4 (0x0045E120)",!split
+0x0045E356,func,,,waiver,confirmed,"SEH frame handler for GG_Flush — forwards to ___CxxFrameHandler; compiler-generated 10-byte thunk, shared by @GG_Flush@4 and @G_Flush@4 (the compiler folded the identical thunks together), the pair of the unwind funnel at 0x0045E360",
 0x0045E360,func,,,waiver,confirmed,SEH unwind funnel for GG_FlushDirtyLines — releases the DirectDraw critical section (_ddLCS); compiler-generated 8-byte thunk,
 0x0045E370,func,@flushLineStats@0,flushLineStats,sms,confirmed,,undefined4 __fastcall flushLineStats(void)
 0x0045E3A0,func,@GG_RestoreSurfaces@0,GG_RestoreSurfaces,sms,confirmed,,undefined4 __fastcall GG_RestoreSurfaces(void)
@@ -125,6 +127,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004B8890,func,@G_PerspectiveFlip@12,G_PerspectiveFlip,sms,confirmed,,"undefined4 __fastcall G_PerspectiveFlip(undefined4, undefined4, undefined4)"
 0x004B8920,func,@G_HFlipBitmap@4,G_HFlipBitmap,sms,confirmed,,undefined4 __fastcall G_HFlipBitmap(undefined4)
 0x004B8960,func,@G_DoubleBitmapY@4,G_DoubleBitmapY,sms,confirmed,,undefined4 __fastcall G_DoubleBitmapY(undefined4)
+0x004B8BA0,func,G_CompareBitmapSpan,G_CompareBitmapSpan,re,confirmed,"qsort comparator ordering the doubled span list by (y, x): @G_DoubleBitmapY@4 passes it to _qsort with stride 10 over the span records it just built","int __cdecl G_CompareBitmapSpan(short *, short *)"
 0x004B8BF0,func,@G_DoubleBitmapX@4,G_DoubleBitmapX,sms,confirmed,,undefined4 __fastcall G_DoubleBitmapX(undefined4)
 0x004B8D90,func,?carefulDiv@@YANPAMMM@Z,carefulDiv,sms,confirmed,,"double __cdecl carefulDiv(float *, float, float)"
 0x004B8E10,func,?NPM_clipTop@@YIJPAUFVERTEX@@0@Z,NPM_clipTop,sms,confirmed,,"long __fastcall NPM_clipTop(FVERTEX *, FVERTEX *)"
