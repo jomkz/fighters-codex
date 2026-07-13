@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 65/83 functions have a recovered signature; 13/15 globals have a recovered type.
+// 65/83 functions have a recovered signature; 14/15 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -20,6 +20,7 @@ extern undefined2 curObjSize;  // 0x00546B94  byte size of the current entity mi
 extern undefined2 curTypeSize;  // 0x00546B9C  byte size of the current type-record mirror (from type +0x01)
 extern undefined2 lastPadlockId;  // 0x00546BA4  previous padlock/tracked id, compared by CheckForEvents1/2
 extern undefined2 requeueChain;  // 0x00546BA8  objects serviced this frame; ChainMergeSorted folds it back into chainStart
+extern u16 objSizes[900];  // 0x00553120  word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16
 extern undefined4 objArenaNext;  // 0x00553828  bump cursor into the entity arena (OBJAdd memcpy target)
 extern undefined4 tempAliasBase;  // 0x0055382C  lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999
 extern undefined4 tempAliasMax;  // 0x00553830  highest temp-alias id: (-0x14 - thisComputer)*1000; OBJTempAlias wraps to base past it
@@ -116,6 +117,5 @@ undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 // TODO(#453): 0x004A7220  SetupPT -- signature not recovered
 // TODO(#453): 0x004A7230  SetupJT -- signature not recovered
 // TODO(#455): 0x00546BB8  _lastCurZ -- type not recovered
-// TODO(#455): 0x00553120  _objSizes -- type not recovered
 
 }  // namespace fxe::fa::objects

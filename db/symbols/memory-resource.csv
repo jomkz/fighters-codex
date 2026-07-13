@@ -77,7 +77,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00573208,data,_brsColorProcess,brsColorProcess,sms,confirmed,bitmap color-process mode set by SetupBitmapAccess,undefined2
 0x00573238,data,,,waiver,confirmed,bitmap-access param written by SetupBitmapAccess (paired with 0x0057323C),
 0x0057323C,data,,,waiver,confirmed,bitmap-access param written by SetupBitmapAccess,
-0x00573248,data,resCache,,re,confirmed,20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248],
+0x00573248,data,resCache,,re,confirmed,"20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248]; extent proven by the init loop, which clears 0x28 dwords = 160 bytes = the 20 x 8-byte slots",undefined4[40]
 0x0057324C,data,,,waiver,confirmed,interior of / adjacent to ?vdoColorProcess@@3FA; named at its base or owned by that subsystem,
 0x00573250,data,,,waiver,confirmed,interior of / adjacent to ?vdoColorProcess@@3FA; named at its base or owned by that subsystem,
 0x00573254,data,,,waiver,confirmed,interior of / adjacent to ?vdoColorProcess@@3FA; named at its base or owned by that subsystem,

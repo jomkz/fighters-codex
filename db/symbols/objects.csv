@@ -232,7 +232,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2",undefined2
 0x00546BA8,data,_requeueChain,,re,confirmed,objects serviced this frame; ChainMergeSorted folds it back into chainStart,undefined2
 0x00546BB8,data,_lastCurZ,,re,inferred,previous frame Z of current object (CheckForEvents1),
-0x00553120,data,_objSizes,,re,confirmed,word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext,
+0x00553120,data,_objSizes,,re,confirmed,"word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16",u16[900]
 0x00553124,data,,,waiver,confirmed,interior of _objSizes word[900] table,
 0x00553828,data,_objArenaNext,,re,confirmed,bump cursor into the entity arena (OBJAdd memcpy target),undefined4
 0x0055382C,data,_tempAliasBase,,re,confirmed,lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999,undefined4

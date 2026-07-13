@@ -106,6 +106,19 @@ def undecorate(name):
     return m.group(1) if m else re.sub(r"\W", "_", name)
 
 
+def split_array(ctype):
+    """`u16[900]` -> ('u16', '[900]'). C declares an array around its identifier.
+
+    db/ stores a global's type the way one would say it out loud -- `u16[900]`, `char[16]` --
+    but C++ puts the extent AFTER the name: `extern u16 objSizes[900];`. Emitting the db/
+    spelling verbatim produced `extern u16[900] objSizes;`, which gcc parses as an attempt at
+    a structured binding and rejects. Caught by the fxe compile check the first time a typed
+    array reached it (#455), which is the entire reason that check exists.
+    """
+    m = re.match(r"^(.*?)\s*((?:\[[^\]]*\])+)$", ctype)
+    return (m.group(1), m.group(2)) if m else (ctype, "")
+
+
 def load():
     subs = []
     with open(DB / "subsystems.csv", encoding="utf-8", newline="") as fh:
@@ -179,8 +192,9 @@ def emit_subsystem(sub, rows):
         for r in typed:
             ident = undecorate(r["display"].strip() or r["name"])
             note = (r["notes"] or "").strip().replace("\n", " ")
-            o.append("extern %s %s;%s" % (r["type"].strip(), ident,
-                                          ("  // %s  %s" % (r["va"], note)).rstrip()))
+            elem, dims = split_array(r["type"].strip())
+            o.append("extern %s %s%s;%s" % (elem, ident, dims,
+                                            ("  // %s  %s" % (r["va"], note)).rstrip()))
         o.append("")
 
     if signed:
@@ -268,6 +282,7 @@ def check(files):
 # --- self-test ---------------------------------------------------------------------
 def self_test():
     fails = []
+    cases = 0
     for proto, want_p, want_c in [
         ("char __fastcall COLFlatGround(long, F24_POINT3 *)",
          "char COLFlatGround(long, F24_POINT3 *)", "__fastcall"),
@@ -278,14 +293,28 @@ def self_test():
         ("int __cdecl _ValidateExecute(int (__stdcall *)(void))",
          "int _ValidateExecute(int (*)(void))", "__cdecl"),
     ]:
+        cases += 1
         got_p, got_c = strip_convention(proto)
         if got_p != want_p or got_c != want_c:
             fails.append("  strip_convention(%r) -> %r/%r, want %r/%r"
                          % (proto, got_p, got_c, want_p, want_c))
 
+    # C declares an array around its identifier: `extern u16 objSizes[900]`, never
+    # `extern u16[900] objSizes`. gcc reads the latter as a structured binding and rejects it.
+    for ctype, want in [("u16[900]", ("u16", "[900]")),
+                        ("char[16]", ("char", "[16]")),
+                        ("undefined4", ("undefined4", "")),
+                        ("CN_INFO *", ("CN_INFO *", "")),
+                        ("s32[37][3]", ("s32", "[37][3]"))]:
+        cases += 1
+        got = split_array(ctype)
+        if got != want:
+            fails.append("  split_array(%r) -> %r, want %r" % (ctype, got, want))
+
     for proto, want in [("char __fastcall COLFlatGround(long, F24_POINT3 *)", "COLFlatGround"),
                         ("undefined4 CTInit(void)", "CTInit"),
                         ("int f(int (*)(void))", "f")]:
+        cases += 1
         if proto_ident(proto) != want:
             fails.append("  proto_ident(%r) -> %r, want %r" % (proto, proto_ident(proto), want))
 
@@ -293,18 +322,21 @@ def self_test():
                        ("?mm_initialized@@3DA", "mm_initialized"), ("NETSlaveConnect",
                                                                     "NETSlaveConnect"),
                        ("_CTVarDiff", "CTVarDiff")]:
+        cases += 1
         if undecorate(name) != want:
             fails.append("  undecorate(%r) -> %r, want %r" % (name, undecorate(name), want))
 
+    cases += 1
     if ns("flight-model") != "flight_model":
         fails.append("  a slug is not a C++ identifier: flight-model")
+    cases += 1
     if binary_ns("WAIL32.DLL") != "wail32" or binary_ns("FA.EXE") != "fa":
         fails.append("  binary_ns wrong")
 
     if fails:
         print("gen_fxe self-test FAILED:\n" + "\n".join(fails))
         return 1
-    print("gen_fxe self-test: %d cases OK" % 13)
+    print("gen_fxe self-test: %d cases OK" % cases)
     return 0
 
 

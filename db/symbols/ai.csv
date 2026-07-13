@@ -143,7 +143,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D2DD,data,,,waiver,confirmed,interior of _cgt type-record mirror read by the interpreter; base named in objects.csv,
 0x0050D312,data,,,waiver,confirmed,"interior of _cgt type-record mirror (= OBJ_TYPE +0xAA, past the common header): pointer to the current AI script name, NULL gates the interpreter off. Not a standalone global — inside the type record (#454)",
 0x00546BC0,data,_ctCompareActor,,re,inferred,actor slot used by CTVarDiff to evaluate attributes under the other object,undefined2
-0x00546BC8,data,_ctState,,re,confirmed,0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority),
+0x00546BC8,data,_ctState,,re,confirmed,"0x80-byte CT execution state block copied by CTSaveState/CTRestoreState (vars+stack+IP+base+name+line+priority); extent proven by CTInit, which clears 0x20 dwords = 0x80 bytes; interior not mapped, so bytes not dwords",u8[128]
 0x00546BCC,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
 0x00546BD8,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
 0x00546BD9,data,,,waiver,confirmed,interior of _ctState CT execution-state block (vars/stack/IP/base/name/line/priority); base named here,
