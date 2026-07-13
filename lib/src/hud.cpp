@@ -16,21 +16,35 @@ struct GaugeEntry {
     uint16_t offset;
     const char* gauge;
     const char* field;
-    enum Type { S16, S8, U8 } type;
+    enum Type { I32, S16, S8, U8 } type;
 };
 
+// The three tape gauges store their parameters as 32-bit ints, not 16 (#491).
+//
+// The table's own stride says so — 0x1E1 → 0x1E5 → 0x1E9 → 0x1ED is four bytes apart, and
+// the fields at 0x231+ that really ARE 16-bit sit two apart. The bytes confirm it: across
+// all 46 shipped HUDs every one of these fields is sign-extended over four bytes
+// (A7.HUD: `d8 ff ff ff` = -40, `c8 ff ff ff` = -56), and 44 of the 46 carry a negative
+// value in at least one of them, so the high half is not incidental zero padding.
+//
+// Reading them as S16 LOOKED right, because the low half is the value. WRITING them as
+// S16 was the corruption: `fx hud set A7.HUD speed_tape.dx=40` wrote `28 00` and left the
+// old `ff ff` in the high half, so the engine read -65496. No round-trip test could see
+// it, because an UNEDITED repack rewrites the same bytes it read.
 static const GaugeEntry kGauges[] = {
-    {0x1E1, "heading_tape",       "width",            GaugeEntry::S16},
-    {0x1E5, "heading_tape",       "dy",               GaugeEntry::S16},
-    {0x1ED, "heading_tape",       "tick_spacing",     GaugeEntry::S16},
-    {0x1F7, "speed_tape",         "dx",               GaugeEntry::S16},
-    {0x1FB, "speed_tape",         "dy",               GaugeEntry::S16},
-    {0x1FF, "speed_tape",         "height",           GaugeEntry::S16},
-    {0x209, "speed_tape",         "tick_increment",   GaugeEntry::S16},
-    {0x214, "altitude_tape",      "dx",               GaugeEntry::S16},
-    {0x218, "altitude_tape",      "dy",               GaugeEntry::S16},
-    {0x21C, "altitude_tape",      "height",           GaugeEntry::S16},
-    {0x226, "altitude_tape",      "tick_increment",   GaugeEntry::S16},
+    {0x1E1, "heading_tape",       "width",            GaugeEntry::I32},
+    {0x1E5, "heading_tape",       "dy",               GaugeEntry::I32},
+    // 0x1E9 is a fourth 4-byte field of this gauge (910 in all 46 HUDs). It is left out
+    // rather than named: constant everywhere, so the assets alone cannot say what it is.
+    {0x1ED, "heading_tape",       "tick_spacing",     GaugeEntry::I32},
+    {0x1F7, "speed_tape",         "dx",               GaugeEntry::I32},
+    {0x1FB, "speed_tape",         "dy",               GaugeEntry::I32},
+    {0x1FF, "speed_tape",         "height",           GaugeEntry::I32},
+    {0x209, "speed_tape",         "tick_increment",   GaugeEntry::I32},
+    {0x214, "altitude_tape",      "dx",               GaugeEntry::I32},
+    {0x218, "altitude_tape",      "dy",               GaugeEntry::I32},
+    {0x21C, "altitude_tape",      "height",           GaugeEntry::I32},
+    {0x226, "altitude_tape",      "tick_increment",   GaugeEntry::I32},
     {0x231, "flight_path_marker", "dx",               GaugeEntry::S16},
     {0x233, "flight_path_marker", "dy",               GaugeEntry::S16},
     {0x235, "flight_path_marker", "box_half_width",   GaugeEntry::S16},
@@ -54,6 +68,11 @@ static const GaugeEntry kGauges[] = {
     {0x273, "range_info",         "dy",               GaugeEntry::S16},
 };
 
+static int32_t rd_i32(const uint8_t* cs, size_t sz, uint32_t off) {
+    if (off + 4 > sz) return 0;
+    return (int32_t)((uint32_t)cs[off] | ((uint32_t)cs[off + 1] << 8)
+                     | ((uint32_t)cs[off + 2] << 16) | ((uint32_t)cs[off + 3] << 24));
+}
 static int16_t rd_s16(const uint8_t* cs, size_t sz, uint32_t off) {
     if (off + 2 > sz) return 0;
     return (int16_t)u16le(cs + off);
@@ -113,9 +132,10 @@ HudFile hud_parse(const uint8_t* data, size_t size) {
         p.gauge = g.gauge;
         p.field = g.field;
         switch (g.type) {
+        case GaugeEntry::I32: p.value = rd_i32(cs.data, cs.size, g.offset); break;
         case GaugeEntry::S16: p.value = rd_s16(cs.data, cs.size, g.offset); break;
-        case GaugeEntry::S8:  p.value = (int16_t)rd_s8(cs.data, cs.size, g.offset); break;
-        case GaugeEntry::U8:  p.value = (int16_t)rd_u8(cs.data, cs.size, g.offset); break;
+        case GaugeEntry::S8:  p.value = (int32_t)rd_s8(cs.data, cs.size, g.offset); break;
+        case GaugeEntry::U8:  p.value = (int32_t)rd_u8(cs.data, cs.size, g.offset); break;
         }
         result.params.push_back(std::move(p));
     }
@@ -161,11 +181,20 @@ std::vector<uint8_t> hud_repack(const uint8_t* orig, size_t orig_size,
         if (found < 0) return {};
         used[(size_t)found] = true;
 
-        const int16_t v = hud.params[(size_t)found].value;
+        const int32_t v = hud.params[(size_t)found].value;
         switch (g.type) {
+        case GaugeEntry::I32:
+            // All four bytes, every time. Writing only the low half is what corrupted the
+            // field: the stale high half turned 40 into -65496 for the engine (#491).
+            ocs[g.offset]     = (uint8_t)((uint32_t)v);
+            ocs[g.offset + 1] = (uint8_t)((uint32_t)v >> 8);
+            ocs[g.offset + 2] = (uint8_t)((uint32_t)v >> 16);
+            ocs[g.offset + 3] = (uint8_t)((uint32_t)v >> 24);
+            break;
         case GaugeEntry::S16:
+            if (v < -32768 || v > 32767) return {};
             ocs[g.offset]     = (uint8_t)v;
-            ocs[g.offset + 1] = (uint8_t)((uint16_t)v >> 8);
+            ocs[g.offset + 1] = (uint8_t)((uint16_t)(int16_t)v >> 8);
             break;
         case GaugeEntry::S8:
             if (v < -128 || v > 127) return {};

@@ -39,7 +39,11 @@ uint32_t audio_rate_from_ext(const std::string& ext) {
     std::string e = lower(ext);
     if (e == ".22k") return 22050;
     if (e == ".11k") return 11025;
-    if (e == ".5k")  return  5000;
+    // 5512, not 5000 (#491): the extension is a rounded label, and .5K is half of .11K
+    // (11025 / 2 = 5512). The assets prove it against an independent clock — IQC.5K is
+    // 619,237 bytes and its paired IQCA.VDO runs 1,685 frames at 15 fps = 112.33 s, so
+    // 619237 / 112.33 = 5,513 Hz. At 5000 every .5K we emitted played 10% long.
+    if (e == ".5k")  return  5512;
     if (e == ".8k")  return  8000;
     return 0;
 }
