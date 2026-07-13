@@ -8,12 +8,13 @@
 #include "../fa_types.hpp"
 
 // Collision (COL) -- FA.EXE
-// 18/19 functions have a recovered signature; 20/38 globals have a recovered type.
+// 18/19 functions have a recovered signature; 28/28 globals have a recovered type.
 
 namespace fxe::fa::collision {
 
 // --- globals ---------------------------------------------------------
 extern undefined4 colSelfObj;  // 0x00536728  querying entity ptr (predicted-pos cache follows)
+extern fixed24 colRayEndX[3];  // 0x00536730  query ray end X; extent proven in the #455 close-out
 extern undefined2 colObjPart;  // 0x0053673C  hit child-box/part id
 extern undefined4 colObjCount;  // 0x00536740  registered collidable count this frame
 extern undefined4 colBoundMaxX;  // 0x00536748  swept AABB max X
@@ -25,11 +26,18 @@ extern undefined4 colBoundMinZ;  // 0x00536760  swept AABB min Z
 extern undefined1 colBlockType;  // 0x00536764  blocking-hit terrain-leaf/structure type
 extern undefined4 colStructCount;  // 0x00536768  registered structure count
 extern undefined4 colBlockDist;  // 0x0053676C  nearest blocking-hit distance (sentinel 0x7FFFFFFF)
+extern u16 colStructList[450];  // 0x00536770  structure id list (word[0x1c2]); extent proven in the #455 close-out
+extern s16 colObjAngleH[3];  // 0x00536AF8  object-hit angle H; extent proven in the #455 close-out
 extern undefined4 colClosureRadius;  // 0x00536B00  closure radius (query param)
 extern undefined4 colGearHeight;  // 0x00536B04  gear/ground clearance (COLInfo+8 <<8)
 extern undefined1 colSelfSide;  // 0x00536B0C  IFF side bit of the querying object
+extern u16 colObjList[900];  // 0x00536B10  collidable id list (word[900]); extent proven in the #455 close-out
+extern s16 colBlockAngleH[3];  // 0x00537218  blocking-hit angle H; extent proven in the #455 close-out
+extern fixed24 colRayStartX[3];  // 0x00537220  query ray start X; extent proven in the #455 close-out
 extern undefined2 colObjId;  // 0x0053722C  nearest hit object id
+extern fixed24 colBlockPosX[3];  // 0x00537230  blocking-hit pos X; extent proven in the #455 close-out
 extern undefined2 colSelfId;  // 0x0053723C  querying entity id
+extern fixed24 colObjPosX[3];  // 0x00537240  object-hit pos X; extent proven in the #455 close-out
 extern undefined2 colTargetId;  // 0x0053724C  single-target id (excluded from broad-phase)
 extern undefined4 colObjDist;  // 0x00537250  nearest object-hit distance (sentinel 0x7FFFFFFF)
 extern undefined2 colObjBox;  // 0x00537254  hit box pointer
@@ -58,23 +66,5 @@ undefined4 COLRemoveCurObj(void);  // 0x0042E5C0  __fastcall
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x0042BDC0  COLSweepTerrain -- signature not recovered
-// TODO(#455): 0x00536730  _colRayEndX -- type not recovered
-// TODO(#455): 0x00536734  _colRayEndY -- type not recovered
-// TODO(#455): 0x00536738  _colRayEndZ -- type not recovered
-// TODO(#455): 0x00536770  _colStructList -- type not recovered
-// TODO(#455): 0x00536AF8  _colObjAngleH -- type not recovered
-// TODO(#455): 0x00536AFC  _colObjAngleP -- type not recovered
-// TODO(#455): 0x00536B10  _colObjList -- type not recovered
-// TODO(#455): 0x00537218  _colBlockAngleH -- type not recovered
-// TODO(#455): 0x0053721C  _colBlockAngleP -- type not recovered
-// TODO(#455): 0x00537220  _colRayStartX -- type not recovered
-// TODO(#455): 0x00537224  _colRayStartY -- type not recovered
-// TODO(#455): 0x00537228  _colRayStartZ -- type not recovered
-// TODO(#455): 0x00537230  _colBlockPosX -- type not recovered
-// TODO(#455): 0x00537234  _colBlockPosY -- type not recovered
-// TODO(#455): 0x00537238  _colBlockPosZ -- type not recovered
-// TODO(#455): 0x00537240  _colObjPosX -- type not recovered
-// TODO(#455): 0x00537244  _colObjPosY -- type not recovered
-// TODO(#455): 0x00537248  _colObjPosZ -- type not recovered
 
 }  // namespace fxe::fa::collision

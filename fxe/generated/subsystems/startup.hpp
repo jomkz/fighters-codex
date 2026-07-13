@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 212/222 functions have a recovered signature; 35/47 globals have a recovered type.
+// 214/218 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -22,14 +22,19 @@ extern undefined4 _wenviron;  // 0x0051E778  MSVC CRT global (xrefs=6)
 extern undefined1 _exitflag;  // 0x0051E788  MSVC CRT global (xrefs=1)
 extern undefined4 _C_Termination_Done;  // 0x0051E78C  MSVC CRT global (xrefs=1)
 extern undefined4 _C_Exit_Done;  // 0x0051E790  MSVC CRT global (xrefs=2)
+extern undefined4 _NLG_Destination[4];  // 0x0051E7A0  MSVC CRT global (xrefs=2); extent proven in the #455 close-out
 extern undefined4 _adjust_fdiv;  // 0x0051E7BC  MSVC CRT global (xrefs=1)
 extern undefined4 _FPinit;  // 0x0051E7C0  MSVC CRT global (xrefs=1)
 extern undefined4 _aenvptr;  // 0x0051E7D0  MSVC CRT global (xrefs=5)
 extern undefined4 _aexit_rtn;  // 0x0051E7D8  MSVC CRT global (xrefs=1)
+extern undefined4 _locktable[48];  // 0x0051E7F0  MSVC CRT global (xrefs=9); extent proven in the #455 close-out
 extern undefined4 _pctype;  // 0x0051E8B0  MSVC CRT global (xrefs=38)
 extern undefined4 _pwctype;  // 0x0051E8B4  MSVC CRT global (xrefs=3)
 extern undefined4 _cfltcvt_tab;  // 0x0051EC78  MSVC CRT global (xrefs=2)
+extern u8 _mbctype[257];  // 0x0051EDF8  MSVC CRT global (xrefs=7); extent proven in the #455 close-out
+extern undefined4 _stdbuf[2];  // 0x0051F010  MSVC CRT global (xrefs=1); extent proven in the #455 close-out
 extern undefined4 _cflush;  // 0x0051F2A8  MSVC CRT global (xrefs=2)
+extern undefined4 _XcptActTab[30];  // 0x0051F2B0  MSVC CRT global (xrefs=1); extent proven in the #455 close-out
 extern undefined4 _First_FPE_Indx;  // 0x0051F328  MSVC CRT global (xrefs=4)
 extern undefined4 _Num_FPE;  // 0x0051F32C  MSVC CRT global (xrefs=4)
 extern undefined4 _XcptActTabCount;  // 0x0051F334  MSVC CRT global (xrefs=2)
@@ -98,6 +103,7 @@ void _unlockexit(void);  // 0x004D7590  __cdecl
 undefined4 strrchr(undefined4, undefined4);  // 0x004D75C0  __cdecl
 undefined4 atol(undefined4);  // 0x004D75F0  __cdecl
 undefined4 atoi(undefined4);  // 0x004D76A0  __cdecl
+longlong _atoi64(char *);  // 0x004D76B0  __cdecl
 undefined4 strchr(undefined4, undefined4);  // 0x004D7810  __cdecl
 undefined4 memmove(undefined4, undefined4, undefined4);  // 0x004D78D0  __cdecl
 undefined4 tolower(undefined4);  // 0x004D7A30  __cdecl
@@ -239,6 +245,7 @@ undefined4 _ld12tod(undefined4, undefined4, undefined4, undefined4, undefined4, 
 undefined4 _ld12tof(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E3980  __cdecl
 int _atodbl(undefined4 *, char *);  // 0x004E3A30  __cdecl
 int _atoflt(undefined4 *, char *);  // 0x004E3AB0  __cdecl
+undefined4 _fltout2(undefined4, undefined4, undefined4, undefined4);  // 0x004E3B80  __cdecl
 int mbtowc(u16 *, char *, u32);  // 0x004E3CD0  __cdecl
 undefined4 _mbtowc_lk(undefined4, undefined4, undefined4);  // 0x004E3D30  __cdecl
 undefined4 _ungetc_lk(undefined4, undefined4);  // 0x004E3E70  __cdecl
@@ -263,30 +270,20 @@ undefined4 wcstombs(undefined4, undefined4, undefined4);  // 0x004E8720  __cdecl
 undefined4 _wcstombs_lk(undefined4, undefined4, undefined4);  // 0x004E8780  __cdecl
 undefined4 RtlUnwind(undefined4, undefined4, undefined4, undefined4);  // 0x004E8A2E  __stdcall
 
+// --- not C functions --------------------------------------------------
+// Recovered, and deliberately NOT declared. A C prototype cannot express
+// these, so one would misrepresent the mechanism rather than describe it.
+// variadic: 0x004D7790  _sprintf  -- no fixed arity exists (call sites clean differing byte counts)
+// asm:      0x004D81B0  __chkstk  -- arguments arrive in registers no C convention can name
+// asm:      0x004D85E6  __NLG_Notify  -- arguments arrive in registers no C convention can name
+// asm:      0x004D8648  __ftol  -- arguments arrive in registers no C convention can name
+
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004D72FE  _closeMS -- signature not recovered
-// TODO(#453): 0x004D76B0  __atoi64 -- signature not recovered
-// TODO(#453): 0x004D7790  _sprintf -- signature not recovered
-// TODO(#453): 0x004D81B0  __chkstk -- signature not recovered
 // TODO(#453): 0x004D85DD  __NLG_Notify1 -- signature not recovered
-// TODO(#453): 0x004D85E6  __NLG_Notify -- signature not recovered
-// TODO(#453): 0x004D8648  __ftol -- signature not recovered
 // TODO(#453): 0x004D97B0  _strcpy -- signature not recovered
 // TODO(#453): 0x004D9D00  WinMainCRTStartup -- signature not recovered
-// TODO(#453): 0x004E3B80  __fltout2 -- signature not recovered
-// TODO(#455): 0x004D85AA  __NLG_Return2 -- type not recovered
-// TODO(#455): 0x004D86F8  __except_handler3 -- type not recovered
-// TODO(#455): 0x004DD080  __forcdecpt -- type not recovered
-// TODO(#455): 0x004DD0F0  __cropzeros -- type not recovered
-// TODO(#455): 0x004DD150  __positive -- type not recovered
-// TODO(#455): 0x004DD170  __fassign -- type not recovered
-// TODO(#455): 0x004DD510  __cfltcvt -- type not recovered
-// TODO(#455): 0x0051E7A0  __NLG_Destination -- type not recovered
-// TODO(#455): 0x0051E7F0  __locktable -- type not recovered
-// TODO(#455): 0x0051EDF8  __mbctype -- type not recovered
-// TODO(#455): 0x0051F010  __stdbuf -- type not recovered
-// TODO(#455): 0x0051F2B0  __XcptActTab -- type not recovered
 
 }  // namespace fxe::fa::startup

@@ -1089,6 +1089,17 @@ def declared_types(types_dir, binary):
     return names
 
 
+# Entry points that are NOT C functions (#479). A signature for one of these would not be a
+# gap being filled -- it would be a lie. `db/` says so explicitly, so the generated tree can
+# state the fact instead of promising a prototype it can never deliver.
+NON_C_CLASSES = {
+    "!asm",       # arguments arrive in registers no C convention names (EBX, DX:BX, ST(0)...)
+    "!threaded",  # a threaded-code JUMP TARGET (vector_table), not a callable function
+    "!variadic",  # no fixed arity exists (call sites clean different byte counts)
+    "!split",     # not an entry point: a Ghidra mid-function split of an enclosing routine
+}
+
+
 def check_types(db_dir, symbols, slug_to_binary):
     """Every identifier used in a `type` column must resolve. Returns errors."""
     errs = []
@@ -1102,6 +1113,16 @@ def check_types(db_dir, symbols, slug_to_binary):
         for r in rows:
             ctype = (r.get("type") or "").strip()
             if not ctype:
+                continue
+            # `!asm` / `!threaded` / `!variadic` / `!split` (#479): a CLASSIFICATION, not a type.
+            # These entry points are not C functions -- a register-convention routine, a
+            # threaded-code jump target, a variadic, or a Ghidra mid-function split -- so there
+            # is no prototype to resolve, and demanding one would be demanding a lie.
+            if ctype.startswith("!"):
+                if ctype not in NON_C_CLASSES:
+                    errs.append(
+                        "db/symbols/%s.csv: %s: unknown classification %r (expected one of %s)"
+                        % (slug, r.get("name"), ctype, ", ".join(sorted(NON_C_CLASSES))))
                 continue
             allowed = set(known)
             # A prototype spells the function's own name before its parameter list. That

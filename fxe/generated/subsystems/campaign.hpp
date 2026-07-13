@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 118/125 functions have a recovered signature; 0/0 globals have a recovered type.
+// 121/123 functions have a recovered signature (+2 that are not C functions); 0/0 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -45,15 +45,18 @@ void MAPStatusText(char *);  // 0x00424F20  __fastcall
 undefined4 MAPWPOwnerIndex(undefined4);  // 0x00424FA3  __fastcall
 void MAPSnapWPToStrip(undefined4);  // 0x00425023  __fastcall
 undefined4 MAPWPNearStrip(entity *,F24_POINT3 *);  // 0x00425072  __fastcall
+undefined4 MAPScreenSpan(undefined4);  // 0x00425096  __fastcall
 undefined4 MAPPickObjIcon(short *,char);  // 0x004250CE  __fastcall
 undefined4 MAPObjVisible(u16);  // 0x00425196  __fastcall
 undefined4 MAPPickWPIcon(short *);  // 0x00425249  __fastcall
 void MAPSwapPalette(void);  // 0x0042532A  __cdecl
 void MAPDraw(char);  // 0x00425358  __fastcall
 void MAPDrawRuler(void);  // 0x00425948  __cdecl
+undefined2 MAPIconRadius(undefined4);  // 0x00425A8F  __fastcall
 void MAPDrawEra(void);  // 0x00425ACD  __cdecl
 void MAPSyncSliders(void);  // 0x00425B8B  __cdecl
 void MAPRedrawSelection(void);  // 0x00425C0A  __cdecl
+void MAPDrawObjIcon(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00425C77  __fastcall
 void MAPDrawTargetLink(u16,short *);  // 0x00426277  __fastcall
 void MAPDrawAllPaths(void);  // 0x004262DE  __cdecl
 void MAPDrawObjPath(undefined4);  // 0x00426325  __fastcall
@@ -132,15 +135,16 @@ void StatsAddPair(int *,int *);  // 0x004854A0  __fastcall
 undefined4 StatsBucketFor(int,u16,u16);  // 0x004856F0  __fastcall
 undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 
+// --- not C functions --------------------------------------------------
+// Recovered, and deliberately NOT declared. A C prototype cannot express
+// these, so one would misrepresent the mechanism rather than describe it.
+// split:    0x00421DE0  ZONEServiceRange  -- not an entry point: a mid-function split of an enclosing routine
+// split:    0x0047FAAE  JOGCFetchMission  -- not an entry point: a mid-function split of an enclosing routine
+
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x00421DE0  ZONEServiceRange -- signature not recovered
 // TODO(#453): 0x004226EE  MAPSetFormationWP -- signature not recovered
-// TODO(#453): 0x00425096  MAPScreenSpan -- signature not recovered
-// TODO(#453): 0x00425A8F  MAPIconRadius -- signature not recovered
-// TODO(#453): 0x00425C77  MAPDrawObjIcon -- signature not recovered
 // TODO(#453): 0x004282D0  MAPToggleObjControl -- signature not recovered
-// TODO(#453): 0x0047FAAE  JOGCFetchMission -- signature not recovered
 
 }  // namespace fxe::fa::campaign

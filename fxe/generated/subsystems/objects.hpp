@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 80/83 functions have a recovered signature; 14/15 globals have a recovered type.
+// 80/80 functions have a recovered signature (+3 that are not C functions); 15/15 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -20,6 +20,7 @@ extern undefined2 curObjSize;  // 0x00546B94  byte size of the current entity mi
 extern undefined2 curTypeSize;  // 0x00546B9C  byte size of the current type-record mirror (from type +0x01)
 extern undefined2 lastPadlockId;  // 0x00546BA4  previous padlock/tracked id, compared by CheckForEvents1/2
 extern undefined2 requeueChain;  // 0x00546BA8  objects serviced this frame; ChainMergeSorted folds it back into chainStart
+extern fixed24 lastCurZ;  // 0x00546BB8  previous frame Z of current object (CheckForEvents1); extent proven in the #455 close-out
 extern u16 objSizes[900];  // 0x00553120  word[900] per-id entity size table (OBJAdd/OBJSubtract); ends at _objArenaNext; element width from OBJAdd (*(short*)(&_objSizes + id*2)); extent from OBJInit, which clears 0x1C2 dwords = 1800 bytes = 900 u16
 extern undefined4 objArenaNext;  // 0x00553828  bump cursor into the entity arena (OBJAdd memcpy target)
 extern undefined4 tempAliasBase;  // 0x0055382C  lowest temp-alias id: (-0x14 - thisComputer)*1000 - 999
@@ -110,12 +111,11 @@ void SetupPT(undefined4);  // 0x004A7220  __cdecl
 void SetupJT(undefined4);  // 0x004A7230  __cdecl
 undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x00463F60  CallUtilProc -- signature not recovered
-// TODO(#453): 0x0046442B  InSearchAreaBody -- signature not recovered
-// TODO(#453): 0x004A71C0  LoadShapeVariantPair -- signature not recovered
-// TODO(#455): 0x00546BB8  _lastCurZ -- type not recovered
+// --- not C functions --------------------------------------------------
+// Recovered, and deliberately NOT declared. A C prototype cannot express
+// these, so one would misrepresent the mechanism rather than describe it.
+// variadic: 0x00463F60  CallUtilProc  -- no fixed arity exists (call sites clean differing byte counts)
+// split:    0x0046442B  InSearchAreaBody  -- not an entry point: a mid-function split of an enclosing routine
+// split:    0x004A71C0  LoadShapeVariantPair  -- not an entry point: a mid-function split of an enclosing routine
 
 }  // namespace fxe::fa::objects

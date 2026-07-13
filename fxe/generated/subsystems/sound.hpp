@@ -8,12 +8,16 @@
 #include "../fa_types.hpp"
 
 // Sound / music (incl. WAIL32) -- FA.EXE
-// 49/49 functions have a recovered signature; 1/5 globals have a recovered type.
+// 49/49 functions have a recovered signature; 5/5 globals have a recovered type.
 
 namespace fxe::fa::sound {
 
 // --- globals ---------------------------------------------------------
 extern undefined1 musicOn;  // 0x004EB5F0  music/MIDI subsystem-available master flag
+extern u16 warnSndVol[8];  // 0x004F3C10  initial-volume table for _warnSnd; extent proven in the #455 close-out
+extern undefined4 warnSndName[8];  // 0x004F3C20  filename table for _warnSnd (IR1.11K, ...); extent proven in the #455 close-out
+extern s32 curShellMusic;  // 0x004F3CCC  current shell-music category; extent proven in the #455 close-out
+extern u8 warnSnd[96];  // 0x005380B8  RWR/IR threat-warning tone channel table (8 entries); extent proven in the #455 close-out
 
 // --- functions -------------------------------------------------------
 void InitMusic(void);  // 0x004328B0  __fastcall
@@ -65,13 +69,5 @@ short SoundStatus(void);  // 0x00435B80  __cdecl
 void SndLostFocus(void);  // 0x00435BC0  __cdecl
 void SndGotFocus(void);  // 0x00435C20  __cdecl
 char * SoundName(short);  // 0x00435C30  __fastcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#455): 0x004F3C10  _warnSndVol -- type not recovered
-// TODO(#455): 0x004F3C20  _warnSndName -- type not recovered
-// TODO(#455): 0x004F3CCC  _curShellMusic -- type not recovered
-// TODO(#455): 0x005380B8  _warnSnd -- type not recovered
 
 }  // namespace fxe::fa::sound

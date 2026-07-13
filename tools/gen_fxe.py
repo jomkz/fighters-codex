@@ -57,6 +57,17 @@ BANNER = """\
 
 CONVENTIONS = ("__cdecl", "__stdcall", "__fastcall", "__thiscall", "__pascal")
 
+# Entry points that are NOT C functions (#479). db/ classifies them explicitly so this
+# generator can state the fact rather than emit a TODO promising a prototype that can never
+# exist. `sincos` is not "not yet recovered" -- it takes its angle in EBX, and it will never
+# have a C signature.
+NON_C_WHY = {
+    "!asm": "arguments arrive in registers no C convention can name",
+    "!threaded": "a threaded-code JUMP TARGET (vector_table), not a callable function",
+    "!variadic": "no fixed arity exists (call sites clean differing byte counts)",
+    "!split": "not an entry point: a mid-function split of an enclosing routine",
+}
+
 # A subsystem slug is not a C++ identifier ("flight-model", "comms-dl").
 def ns(slug):
     return slug.replace("-", "_")
@@ -175,15 +186,19 @@ def emit_subsystem(sub, rows):
     slug, binary = sub["slug"], sub["binary"]
     funcs = [r for r in rows if r["kind"] == "func"]
     data = [r for r in rows if r["kind"] == "data"]
-    signed = [r for r in funcs if r["type"].strip()]
+    signed = [r for r in funcs if r["type"].strip()
+              and not r["type"].strip().startswith("!")]
+    classified = [r for r in funcs if r["type"].strip().startswith("!")]
     unsigned = [r for r in funcs if not r["type"].strip()]
     typed = [r for r in data if r["type"].strip()]
     untyped = [r for r in data if not r["type"].strip()]
 
     o = [BANNER, "#pragma once", "", '#include "../fa_types.hpp"', "",
          "// %s -- %s" % (sub["title"], binary),
-         "// %d/%d functions have a recovered signature; %d/%d globals have a recovered type."
-         % (len(signed), len(funcs), len(typed), len(data)),
+         "// %d/%d functions have a recovered signature%s; %d/%d globals have a recovered type."
+         % (len(signed), len(funcs) - len(classified),
+            (" (+%d that are not C functions)" % len(classified)) if classified else "",
+            len(typed), len(data)),
          "",
          "namespace fxe::%s::%s {" % (binary_ns(binary), ns(slug)), ""]
 
@@ -202,6 +217,21 @@ def emit_subsystem(sub, rows):
         for r in signed:
             proto, conv = strip_convention(r["type"].strip())
             o.append("%s;  // %s%s" % (proto, r["va"], "  " + conv if conv else ""))
+        o.append("")
+
+    # Entry points that are NOT C functions (#479). These are not debt -- they will never have a
+    # prototype, because they are not called the way C calls things. Saying "TODO: signature not
+    # recovered" about `sincos` (which takes its angle in EBX) would overstate what the
+    # reconstruction owes, and a coverage number that counts them can never reach 100%.
+    if classified:
+        o.append("// --- not C functions --------------------------------------------------")
+        o.append("// Recovered, and deliberately NOT declared. A C prototype cannot express")
+        o.append("// these, so one would misrepresent the mechanism rather than describe it.")
+        for r in classified:
+            o.append("// %-9s %s  %s%s"
+                     % (r["type"].strip().lstrip("!") + ":", r["va"],
+                        r["display"].strip() or r["name"],
+                        ("  -- " + NON_C_WHY.get(r["type"].strip(), "")).rstrip()))
         o.append("")
 
     # The reconstruction's remaining debt, stated in the generated source rather than hidden.
