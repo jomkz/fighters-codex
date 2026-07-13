@@ -1,15 +1,15 @@
 va,kind,name,display,source,confidence,notes,type
 0x10001000,func,,,waiver,confirmed,Cdrv comms service (terminal screen) internal — third-party; boundary-documented via the exports,
 0x10001180,func,,,waiver,confirmed,Cdrv comms service (terminal screen) internal — third-party; boundary-documented via the exports,
-0x100011F0,func,commdrvw_char_screen,commdrvw_char_screen,re,confirmed,Cdrv comms service (terminal screen) public export,
+0x100011F0,func,commdrvw_char_screen,commdrvw_char_screen,re,confirmed,Cdrv comms service (terminal screen) public export,"undefined4 __stdcall commdrvw_char_screen(undefined4, undefined4, undefined4, undefined4)"
 0x100018C4,data,,,waiver,confirmed,Cdrv comms service (terminal screen) internal data — third-party,
-0x10001990,func,CdrvScrDestroy,CdrvScrDestroy,re,confirmed,Cdrv comms service (terminal screen) public export,
-0x100019B0,func,CdrvScrCreate,CdrvScrCreate,re,confirmed,Cdrv comms service (terminal screen) public export,
-0x100019D0,func,CdrvScrResize,CdrvScrResize,re,confirmed,Cdrv comms service (terminal screen) public export,
-0x100019F0,func,CdrvScrWrite,CdrvScrWrite,re,confirmed,Cdrv comms service (terminal screen) public export,
-0x10001A10,func,CdrvScrKillFocus,CdrvScrKillFocus,re,confirmed,Cdrv comms service (terminal screen) public export,
-0x10001A30,func,CdrvScrSetFocus,CdrvScrSetFocus,re,confirmed,Cdrv comms service (terminal screen) public export,
-0x10001A50,func,CdrvScrPaint,CdrvScrPaint,re,confirmed,Cdrv comms service (terminal screen) public export,
+0x10001990,func,CdrvScrDestroy,CdrvScrDestroy,re,confirmed,Cdrv comms service (terminal screen) public export,undefined4 __stdcall CdrvScrDestroy(undefined4)
+0x100019B0,func,CdrvScrCreate,CdrvScrCreate,re,confirmed,Cdrv comms service (terminal screen) public export,"undefined4 __stdcall CdrvScrCreate(undefined4, undefined4, undefined4)"
+0x100019D0,func,CdrvScrResize,CdrvScrResize,re,confirmed,Cdrv comms service (terminal screen) public export,undefined4 __stdcall CdrvScrResize(undefined4)
+0x100019F0,func,CdrvScrWrite,CdrvScrWrite,re,confirmed,Cdrv comms service (terminal screen) public export,"undefined4 __stdcall CdrvScrWrite(undefined4, undefined4, undefined4)"
+0x10001A10,func,CdrvScrKillFocus,CdrvScrKillFocus,re,confirmed,Cdrv comms service (terminal screen) public export,undefined4 __stdcall CdrvScrKillFocus(undefined4)
+0x10001A30,func,CdrvScrSetFocus,CdrvScrSetFocus,re,confirmed,Cdrv comms service (terminal screen) public export,undefined4 __stdcall CdrvScrSetFocus(undefined4)
+0x10001A50,func,CdrvScrPaint,CdrvScrPaint,re,confirmed,Cdrv comms service (terminal screen) public export,undefined4 __stdcall CdrvScrPaint(undefined4)
 0x10001A65,func,,,waiver,confirmed,Cdrv comms service (terminal screen) internal — third-party; boundary-documented via the exports,
 0x10001A86,func,,,waiver,confirmed,Cdrv comms service (terminal screen) internal — third-party; boundary-documented via the exports,
 0x10001AEE,func,,,waiver,confirmed,Cdrv comms service (terminal screen) internal — third-party; boundary-documented via the exports,

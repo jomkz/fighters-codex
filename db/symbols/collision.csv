@@ -5,14 +5,14 @@ va,kind,name,display,source,confidence,notes,type
 0x0042BDC0,func,COLSweepTerrain,,re,inferred,swept segment-vs-terrain grid walk (<=20 cells; ClipSegToCell + TestTerrainCell),
 0x0042BDC8,func,,,waiver,confirmed,Ghidra mid-function split of COLSweepTerrain (0x42BDC0),
 0x0042BFC0,func,COLTestTerrainCell,,re,inferred,test one terrain grid cell's two triangles (corner heights + normals),
-0x0042C1A0,func,COLTestTerrainTri,,re,inferred,segment vs one terrain triangle plane; records a blocking hit,
-0x0042C420,func,COLClipSegToCell,,re,inferred,Cohen-Sutherland XZ clip of the segment to one terrain cell column,
+0x0042C1A0,func,COLTestTerrainTri,,re,inferred,segment vs one terrain triangle plane; records a blocking hit,"undefined4 __stdcall COLTestTerrainTri(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x0042C420,func,COLClipSegToCell,,re,inferred,Cohen-Sutherland XZ clip of the segment to one terrain cell column,"undefined4 __stdcall COLClipSegToCell(undefined4, undefined4, undefined4, undefined4)"
 0x0042C840,func,COLTestObjects,,re,inferred,object broad-phase: AABB-overlap the frame's registered ids,
 0x0042C9B0,func,COLTestObj,,re,inferred,"object narrow-phase: ray into object local frame, box-hierarchy clip",
 0x0042D040,data,,,waiver,confirmed,interior of / adjacent to @COLSetAngle@8; named at its base or owned by that subsystem,
-0x0042D050,func,COLClipSegToBox,,re,inferred,segment vs oriented box: 6-plane clip with closure radius,
+0x0042D050,func,COLClipSegToBox,,re,inferred,segment vs oriented box: 6-plane clip with closure radius,"undefined4 __stdcall COLClipSegToBox(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x0042DDA0,func,?COLFlatGround@@YIDJPAUF24_POINT3@@00@Z,COLFlatGround,sms,confirmed,,"char __fastcall COLFlatGround(long, F24_POINT3 *, F24_POINT3 *, F24_POINT3 *)"
-0x0042DE60,func,COLRecordHit,,re,inferred,keep-nearest hit accumulator (blocking slot / object slot),
+0x0042DE60,func,COLRecordHit,,re,inferred,keep-nearest hit accumulator (blocking slot / object slot),"undefined4 __stdcall COLRecordHit(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x0042DF80,func,@COLPitchToAvoidTerrain@0,COLPitchToAvoidTerrain,sms,confirmed,,undefined4 __fastcall COLPitchToAvoidTerrain(void)
 0x0042E0C0,func,_COLGetInfo@4,COLGetInfo,sms,confirmed,,undefined4 __stdcall COLGetInfo(undefined4)
 0x0042E100,func,@COLGetBox@8,COLGetBox,sms,confirmed,,"undefined4 __fastcall COLGetBox(undefined4, undefined4)"

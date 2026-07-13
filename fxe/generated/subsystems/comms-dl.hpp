@@ -8,38 +8,40 @@
 #include "../fa_types.hpp"
 
 // CDRVDL32.DLL — Cdrv RS-232 serial comms driver -- CDRVDL32.DLL
-// 0/26 functions have a recovered signature; 0/0 globals have a recovered type.
+// 20/26 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::cdrvdl32::comms_dl {
+
+// --- functions -------------------------------------------------------
+undefined4 ser_rs232_block(undefined4);  // 0x100019D0  __stdcall
+undefined4 ser_rs232_cleanup(undefined4);  // 0x100019E0  __stdcall
+undefined4 ser_rs232_dtr_off(undefined4);  // 0x10001A90  __stdcall
+undefined4 ser_rs232_dtr_on(undefined4);  // 0x10001AE0  __stdcall
+undefined4 ser_rs232_flush(undefined4, undefined4);  // 0x10001B30  __stdcall
+undefined4 ser_rs232_getbyte(undefined4);  // 0x10001C50  __stdcall
+undefined4 ser_rs232_getport(undefined4, undefined4);  // 0x10001DF0  __stdcall
+undefined4 ser_rs232_getregister(undefined4, undefined4, undefined4);  // 0x10001E50  __stdcall
+undefined4 ser_rs232_getstatus(undefined4, undefined4);  // 0x10001EB0  __stdcall
+undefined4 ser_rs232_putbyte(undefined4, undefined4);  // 0x10001F10  __stdcall
+undefined4 ser_rs232_putpacket(undefined4, undefined4, undefined4);  // 0x10001FE0  __stdcall
+undefined4 ser_rs232_putregister(undefined4, undefined4, undefined4);  // 0x100020B0  __stdcall
+undefined4 ser_rs232_rts_on(undefined4);  // 0x10002110  __stdcall
+undefined4 ser_rs232_set_intfunc(undefined4, undefined4, undefined4);  // 0x10002160  __stdcall
+undefined4 ser_rs232_setbauddiv(undefined4, undefined4, undefined4);  // 0x10002420  __stdcall
+undefined4 ser_rs232_setup(undefined4, undefined4);  // 0x10002450  __stdcall
+undefined4 ser_rs232_viewpacket(undefined4, undefined4, undefined4);  // 0x10002B10  __stdcall
+undefined4 bio_get_elapsedtime(undefined4);  // 0x10002BE0  __stdcall
+undefined4 bio_get_timer(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x10002C10  __stdcall
+undefined4 bio_set_timerresolution(undefined4);  // 0x10002C40  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x100019D0  ser_rs232_block -- signature not recovered
-// TODO(#453): 0x100019E0  ser_rs232_cleanup -- signature not recovered
-// TODO(#453): 0x10001A90  ser_rs232_dtr_off -- signature not recovered
-// TODO(#453): 0x10001AE0  ser_rs232_dtr_on -- signature not recovered
-// TODO(#453): 0x10001B30  ser_rs232_flush -- signature not recovered
-// TODO(#453): 0x10001C50  ser_rs232_getbyte -- signature not recovered
 // TODO(#453): 0x10001D20  ser_rs232_getpacket -- signature not recovered
-// TODO(#453): 0x10001DF0  ser_rs232_getport -- signature not recovered
-// TODO(#453): 0x10001E50  ser_rs232_getregister -- signature not recovered
-// TODO(#453): 0x10001EB0  ser_rs232_getstatus -- signature not recovered
 // TODO(#453): 0x10001F00  ser_rs232_maxport -- signature not recovered
-// TODO(#453): 0x10001F10  ser_rs232_putbyte -- signature not recovered
-// TODO(#453): 0x10001FE0  ser_rs232_putpacket -- signature not recovered
-// TODO(#453): 0x100020B0  ser_rs232_putregister -- signature not recovered
 // TODO(#453): 0x100020C0  ser_rs232_rts_off -- signature not recovered
-// TODO(#453): 0x10002110  ser_rs232_rts_on -- signature not recovered
-// TODO(#453): 0x10002160  ser_rs232_set_intfunc -- signature not recovered
 // TODO(#453): 0x100021D0  ser_rs232_misc_func -- signature not recovered
-// TODO(#453): 0x10002420  ser_rs232_setbauddiv -- signature not recovered
-// TODO(#453): 0x10002450  ser_rs232_setup -- signature not recovered
-// TODO(#453): 0x10002B10  ser_rs232_viewpacket -- signature not recovered
 // TODO(#453): 0x10002B80  ser_rs232_get_sdata -- signature not recovered
 // TODO(#453): 0x10002BC0  bio_set_timer -- signature not recovered
-// TODO(#453): 0x10002BE0  bio_get_elapsedtime -- signature not recovered
-// TODO(#453): 0x10002C10  bio_get_timer -- signature not recovered
-// TODO(#453): 0x10002C40  bio_set_timerresolution -- signature not recovered
 
 }  // namespace fxe::cdrvdl32::comms_dl

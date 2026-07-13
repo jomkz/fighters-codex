@@ -2,29 +2,29 @@ va,kind,name,display,source,confidence,notes,type
 0x10001000,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x100018D0,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10002150,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
-0x10002410,func,CdrvXferCreateDialog,CdrvXferCreateDialog,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10002580,func,CdrvXferUpdateDialog,CdrvXferUpdateDialog,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x100026A0,func,CdrvXferDestroyDialog,CdrvXferDestroyDialog,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10002410,func,CdrvXferCreateDialog,CdrvXferCreateDialog,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall CdrvXferCreateDialog(undefined4)
+0x10002580,func,CdrvXferUpdateDialog,CdrvXferUpdateDialog,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall CdrvXferUpdateDialog(undefined4)
+0x100026A0,func,CdrvXferDestroyDialog,CdrvXferDestroyDialog,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall CdrvXferDestroyDialog(undefined4)
 0x100026E0,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
-0x10002A90,func,cdrvxfer_files,cdrvxfer_files,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10002AC0,func,cdrvxfer_sfiles,cdrvxfer_sfiles,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10002AF0,func,FileTransferDialog,FileTransferDialog,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10002A90,func,cdrvxfer_files,cdrvxfer_files,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall cdrvxfer_files(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x10002AC0,func,cdrvxfer_sfiles,cdrvxfer_sfiles,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall cdrvxfer_sfiles(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x10002AF0,func,FileTransferDialog,FileTransferDialog,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall FileTransferDialog(undefined4, undefined4)"
 0x10002B30,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10002C20,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10002D90,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10002E20,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10002E70,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10002FB0,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
-0x10003080,func,cdrvxfer_gclose,cdrvxfer_gclose,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10003080,func,cdrvxfer_gclose,cdrvxfer_gclose,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall cdrvxfer_gclose(undefined4)
 0x100030D0,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x100031B0,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x100032A0,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10003320,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10003350,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
-0x100033E0,func,cdrvxfer_getfiles,cdrvxfer_getfiles,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x100033E0,func,cdrvxfer_getfiles,cdrvxfer_getfiles,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall cdrvxfer_getfiles(undefined4, undefined4)"
 0x10003410,func,cdrvxfer_sendfiles,cdrvxfer_sendfiles,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10003440,func,SetXferParameters,SetXferParameters,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10003500,func,TransferFiles,TransferFiles,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10003440,func,SetXferParameters,SetXferParameters,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall SetXferParameters(undefined4, undefined4)"
+0x10003500,func,TransferFiles,TransferFiles,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall TransferFiles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x10003640,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10003660,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
 0x10003680,func,,,waiver,confirmed,Cdrv comms driver (file transfer) internal — third-party; boundary-documented via the exports,
@@ -57,27 +57,27 @@ va,kind,name,display,source,confidence,notes,type
 0x100057C8,data,,,waiver,confirmed,Cdrv comms driver (file transfer) internal data — third-party,
 0x100057D0,data,,,waiver,confirmed,Cdrv comms driver (file transfer) internal data — third-party,
 0x100057F1,data,,,waiver,confirmed,Cdrv comms driver (file transfer) internal data — third-party,
-0x100058B0,func,dos_close,dos_close,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x100058D0,func,dos_commit,dos_commit,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x100058F0,func,dos_create,dos_create,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005960,func,dos_createdir,dos_createdir,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005980,func,dos_delete,dos_delete,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x100059A0,func,dos_deletedir,dos_deletedir,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x100059C0,func,dos_getdate,dos_getdate,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005A10,func,dos_getdir,dos_getdir,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005A80,func,dos_getfdate,dos_getfdate,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005AD0,func,dos_getfileattribute,dos_getfileattribute,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005B20,func,dos_getfiledatetime,dos_getfiledatetime,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005BC0,func,dos_getfirstfile,dos_getfirstfile,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005C70,func,dos_getnextfile,dos_getnextfile,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x100058B0,func,dos_close,dos_close,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_close(undefined4)
+0x100058D0,func,dos_commit,dos_commit,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_commit(undefined4)
+0x100058F0,func,dos_create,dos_create,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_create(undefined4, undefined4)"
+0x10005960,func,dos_createdir,dos_createdir,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_createdir(undefined4)
+0x10005980,func,dos_delete,dos_delete,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_delete(undefined4)
+0x100059A0,func,dos_deletedir,dos_deletedir,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_deletedir(undefined4)
+0x100059C0,func,dos_getdate,dos_getdate,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getdate(undefined4, undefined4, undefined4, undefined4)"
+0x10005A10,func,dos_getdir,dos_getdir,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_getdir(undefined4)
+0x10005A80,func,dos_getfdate,dos_getfdate,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getfdate(undefined4, undefined4, undefined4)"
+0x10005AD0,func,dos_getfileattribute,dos_getfileattribute,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getfileattribute(undefined4, undefined4)"
+0x10005B20,func,dos_getfiledatetime,dos_getfiledatetime,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getfiledatetime(undefined4, undefined4, undefined4)"
+0x10005BC0,func,dos_getfirstfile,dos_getfirstfile,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getfirstfile(undefined4, undefined4, undefined4)"
+0x10005C70,func,dos_getnextfile,dos_getnextfile,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_getnextfile(undefined4)
 0x10005DA0,func,dos_gettime,dos_gettime,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005E00,func,dos_open,dos_open,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005EA0,func,dos_read,dos_read,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10005E00,func,dos_open,dos_open,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_open(undefined4, undefined4)"
+0x10005EA0,func,dos_read,dos_read,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_read(undefined4, undefined4, undefined4)"
 0x10005EE0,func,dos_rename,dos_rename,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005F00,func,dos_seek,dos_seek,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005F40,func,dos_setfdate,dos_setfdate,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005F90,func,dos_setfileattribute,dos_setfileattribute,re,confirmed,Cdrv comms driver (file transfer) public export,
-0x10005FE0,func,dos_setfiledatetime,dos_setfiledatetime,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10005F00,func,dos_seek,dos_seek,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_seek(undefined4, undefined4, undefined4)"
+0x10005F40,func,dos_setfdate,dos_setfdate,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_setfdate(undefined4, undefined4, undefined4)"
+0x10005F90,func,dos_setfileattribute,dos_setfileattribute,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_setfileattribute(undefined4, undefined4)"
+0x10005FE0,func,dos_setfiledatetime,dos_setfiledatetime,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_setfiledatetime(undefined4, undefined4, undefined4)"
 0x10006070,func,dos_write,dos_write,re,confirmed,Cdrv comms driver (file transfer) public export,
 0x100060AA,func,,,waiver,confirmed,statically-linked C runtime / library helper (Ghidra FID) — third-party,
 0x100060B0,func,,,waiver,confirmed,statically-linked C runtime / library helper (Ghidra FID) — third-party,

@@ -22,25 +22,25 @@ va,kind,name,display,source,confidence,notes,type
 0x004C1F50,func,_PROJProc,PROJProc,sms,confirmed,,
 0x004C20C0,func,_PROJHit@8,PROJHit,sms,confirmed,,"undefined4 __stdcall PROJHit(undefined4, undefined4)"
 0x004C2170,func,_PROJFire@16,PROJFire,sms,confirmed,,"undefined4 __stdcall PROJFire(undefined4, undefined4, undefined4, undefined4)"
-0x004C24B0,func,PROJAimAngles,,re,inferred,compute launch/boresight angles in the launcher frame (gimbal-limited),
+0x004C24B0,func,PROJAimAngles,,re,inferred,compute launch/boresight angles in the launcher frame (gimbal-limited),"undefined4 __stdcall PROJAimAngles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C26F0,func,_PROJFireSound@4,PROJFireSound,sms,confirmed,,undefined4 __stdcall PROJFireSound(undefined4)
 0x004C2860,func,_PROJInFOV@40,PROJInFOV,sms,confirmed,,"undefined4 __stdcall PROJInFOV(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C2B50,func,PROJTargetSignal,,re,inferred,"seeker signal/lock quality (contrast, IR notch, look-down, clutter)",
 0x004C2B5A,func,,,waiver,confirmed,Ghidra mid-function split of PROJTargetSignal (0x4C2B50),
-0x004C2E40,func,PROJInNotch,,re,inferred,Doppler-notch/beaming detection (defeats pulse-doppler),
+0x004C2E40,func,PROJInNotch,,re,inferred,Doppler-notch/beaming detection (defeats pulse-doppler),"undefined4 __stdcall PROJInNotch(undefined4, undefined4)"
 0x004C2EB0,func,_PROJRadarIsOn@8,PROJRadarIsOn,sms,confirmed,,"undefined4 __stdcall PROJRadarIsOn(undefined4, undefined4)"
 0x004C2F20,func,_PROJLock@24,PROJLock,sms,confirmed,,"undefined4 __stdcall PROJLock(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
-0x004C31F0,func,PROJIRSensorOn,,re,inferred,IR-seeker detectability duty gate,
-0x004C3250,func,PROJProximityFuze,,re,inferred,closest-approach detonation decision + hit roll,
+0x004C31F0,func,PROJIRSensorOn,,re,inferred,IR-seeker detectability duty gate,"undefined4 __stdcall PROJIRSensorOn(undefined4, undefined4)"
+0x004C3250,func,PROJProximityFuze,,re,inferred,closest-approach detonation decision + hit roll,undefined4 __stdcall PROJProximityFuze(undefined4)
 0x004C3360,func,PROJTargetIsFastAir,,re,inferred,"predicate: fast maneuvering aircraft (class4, speed>0x3A00)",
 0x004C3380,func,_PROJHitChance@28,PROJHitChance,sms,confirmed,,"undefined4 __stdcall PROJHitChance(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C338A,func,,,waiver,confirmed,Ghidra mid-function split of _PROJHitChance@28 (0x4C3380),
-0x004C3830,func,PROJApplyPkCurve,,re,inferred,interpolate and clamp the running Pk penalty,
+0x004C3830,func,PROJApplyPkCurve,,re,inferred,interpolate and clamp the running Pk penalty,"undefined4 __stdcall PROJApplyPkCurve(undefined4, undefined4, undefined4, undefined4)"
 0x004C3890,func,PROJRangePk,,re,confirmed,range->Pk envelope lookup from the type range table,
 0x004C3960,func,PROJSizePk,,re,inferred,target-size/RCS vs weapon-sensitivity Pk scalar,
 0x004C39A0,func,@PROJLaunchDevice@4,PROJLaunchDevice,sms,confirmed,,undefined4 __fastcall PROJLaunchDevice(undefined4)
 0x004C3AF0,func,_PROJRetargetMissilesOnDevice@12,PROJRetargetMissilesOnDevice,sms,confirmed,,"undefined4 __stdcall PROJRetargetMissilesOnDevice(undefined4, undefined4, undefined4)"
-0x004C3C40,func,PROJGuideToDevice,,re,inferred,steer a seduced missile toward the decoy device,
+0x004C3C40,func,PROJGuideToDevice,,re,inferred,steer a seduced missile toward the decoy device,undefined4 __stdcall PROJGuideToDevice(undefined4)
 0x004C3CA0,func,_PROJRemove@0,PROJRemove,sms,confirmed,,undefined4 __stdcall PROJRemove(void)
 0x004C3DD0,func,@PROJRetargetMissiles@4,PROJRetargetMissiles,sms,confirmed,,undefined4 __fastcall PROJRetargetMissiles(undefined4)
 0x004C3EB0,func,_PROJMakeBombEq@28,PROJMakeBombEq,sms,confirmed,,"undefined4 __stdcall PROJMakeBombEq(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"

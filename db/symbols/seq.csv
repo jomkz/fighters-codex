@@ -18,7 +18,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00446100,func,SeqNextOverlap,,re,confirmed,iterate SEQGR ring for next node whose rect overlaps a given rect,"undefined4 __cdecl SeqNextOverlap(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00446170,func,SeqGraphicOrder,,re,inferred,SEQGR list walk via prev-links (+0x28) to a target node - returns its left-x,
 0x004461A0,func,SeqDrawGraphic,,re,confirmed,draw one SEQGR node by type - 1 bitmap blit - 2 filled rect - 4 multiline color text; mark overlaps dirty,
-0x00446330,func,SeqAccessResource,,re,confirmed,RMAccessHandle wrapper that credits the load time back into seqIgnoreTicks,
+0x00446330,func,SeqAccessResource,,re,confirmed,RMAccessHandle wrapper that credits the load time back into seqIgnoreTicks,"undefined4 __stdcall SeqAccessResource(undefined4, undefined4)"
 0x00446360,func,SeqRedrawRegion,,re,confirmed,redraw a SEQGR node clipped to a sub-rect (partial refresh of overlapped area),
 0x00446500,func,SeqNewGraphic,,re,confirmed,allocate a SEQGR node from seqGrList free-list - link into seqGraphics ring - set rect/type/expiry/name,
 0x00446610,func,?SeqGRFind@@YAPAUSEQGR@@PAD@Z,SeqGRFind,sms,confirmed,find a SEQGR node by its name string; absent-from-inventory,SEQGR * __cdecl SeqGRFind(char *)

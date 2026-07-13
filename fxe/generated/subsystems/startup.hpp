@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 166/222 functions have a recovered signature; 35/47 globals have a recovered type.
+// 170/222 functions have a recovered signature; 35/47 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -121,6 +121,8 @@ undefined4 strncmp(undefined4, undefined4, undefined4);  // 0x004D8610  __cdecl
 undefined4 _seh_longjmp_unwind(undefined4);  // 0x004D87B5  __stdcall
 undefined4 labs(undefined4);  // 0x004D87D0  __cdecl
 undefined4 strncat(undefined4, undefined4, undefined4);  // 0x004D87E0  __cdecl
+undefined4 _alldiv(undefined4, undefined4, undefined4, undefined4);  // 0x004D8910  __stdcall
+undefined4 _allmul(undefined4, undefined4, undefined4, undefined4);  // 0x004D89C0  __stdcall
 undefined4 qsort(undefined4, undefined4, undefined4, undefined4);  // 0x004D8A00  __cdecl
 undefined4 _chdir(undefined4);  // 0x004D8C00  __cdecl
 undefined4 _getcwd(undefined4, undefined4);  // 0x004D8EF0  __cdecl
@@ -176,6 +178,8 @@ undefined4 _lseek_lk(undefined4, undefined4, undefined4);  // 0x004E0460  __cdec
 undefined4 _isatty(undefined4);  // 0x004E0540  __cdecl
 undefined4 wctomb(undefined4, undefined4);  // 0x004E0570  __cdecl
 undefined4 _wctomb_lk(undefined4, undefined4);  // 0x004E05D0  __cdecl
+undefined4 _aulldiv(undefined4, undefined4, undefined4, undefined4);  // 0x004E0670  __stdcall
+undefined4 _aullrem(undefined4, undefined4, undefined4, undefined4);  // 0x004E06E0  __stdcall
 undefined4 _set_osfhnd(undefined4, undefined4);  // 0x004E27C0  __cdecl
 undefined4 _free_osfhnd(undefined4);  // 0x004E2870  __cdecl
 undefined4 _get_osfhandle(undefined4);  // 0x004E2910  __cdecl
@@ -233,8 +237,6 @@ undefined4 RtlUnwind(undefined4, undefined4, undefined4, undefined4);  // 0x004E
 // TODO(#453): 0x004D85E6  __NLG_Notify -- signature not recovered
 // TODO(#453): 0x004D8648  __ftol -- signature not recovered
 // TODO(#453): 0x004D86A0  __cfltcvt_init -- signature not recovered
-// TODO(#453): 0x004D8910  __alldiv -- signature not recovered
-// TODO(#453): 0x004D89C0  __allmul -- signature not recovered
 // TODO(#453): 0x004D8CB0  __fullpath -- signature not recovered
 // TODO(#453): 0x004D8D90  __splitpath -- signature not recovered
 // TODO(#453): 0x004D97B0  _strcpy -- signature not recovered
@@ -257,8 +259,6 @@ undefined4 RtlUnwind(undefined4, undefined4, undefined4, undefined4);  // 0x004E
 // TODO(#453): 0x004DFDA0  __ioterm -- signature not recovered
 // TODO(#453): 0x004DFE00  __heap_init -- signature not recovered
 // TODO(#453): 0x004DFE80  __FF_MSGBANNER -- signature not recovered
-// TODO(#453): 0x004E0670  __aulldiv -- signature not recovered
-// TODO(#453): 0x004E06E0  __aullrem -- signature not recovered
 // TODO(#453): 0x004E1700  _strcspn -- signature not recovered
 // TODO(#453): 0x004E1740  _strpbrk -- signature not recovered
 // TODO(#453): 0x004E2680  __alloc_osfhnd -- signature not recovered

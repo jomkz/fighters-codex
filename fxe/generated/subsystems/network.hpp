@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 74/107 functions have a recovered signature; 0/0 globals have a recovered type.
+// 86/107 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -48,7 +48,19 @@ char pkt_send(NET_PKT *, int);  // 0x0045D970  __cdecl
 void pkt_set_header(int, NET_PKT *, int);  // 0x0045DA10  __cdecl
 undefined4 pkt_queue_write(undefined4, undefined4, undefined4);  // 0x0045DA30  __cdecl
 char pkt_sock_read(NET_PKT *, unsigned int);  // 0x0045DB00  __cdecl
+undefined4 MPEnqueue(undefined4, undefined4, undefined4, undefined4);  // 0x0046C0A0  __stdcall
+undefined4 MPInterpPosAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C680  __stdcall
+undefined4 MPInterpAngleAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C860  __stdcall
 char MPReceive(void);  // 0x0046C980  __stdcall
+undefined4 MPResolveAlias(undefined4, undefined4, undefined4, undefined4);  // 0x0046EC60  __stdcall
+undefined4 MPDecodeState16(undefined4, undefined4, undefined4);  // 0x0046ED10  __stdcall
+undefined4 MPDecodePos(undefined4, undefined4, undefined4);  // 0x0046EDB0  __stdcall
+undefined4 MPReadPayload(undefined4, undefined4, undefined4, undefined4);  // 0x0046EE40  __stdcall
+undefined4 MPEncodeState14(undefined4, undefined4);  // 0x0046FA60  __stdcall
+undefined4 MPEncodeState15(undefined4, undefined4);  // 0x0046FBF0  __stdcall
+undefined4 MPDrawStatusLine(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004718F0  __stdcall
+undefined4 MPWaitStatus(undefined4, undefined4, undefined4, undefined4);  // 0x00471A90  __stdcall
+undefined4 MPBuildSpawnPayload(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00472130  __stdcall
 unsigned int sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x004874C0  __cdecl
 void RunIPXOptionsDialog(CN_INFO *, char *);  // 0x00493780  __cdecl
 char spxinit(NET_ADDRESS_LIST *);  // 0x00496F40  __cdecl
@@ -97,30 +109,18 @@ void SER_SendStatus(void);  // 0x004AC480  __cdecl
 // TODO(#453): 0x00405360  NETWaitMasterScreen -- signature not recovered
 // TODO(#453): 0x004053A0  NETApplyMasterScreen -- signature not recovered
 // TODO(#453): 0x00405CD0  NETFormatIP -- signature not recovered
-// TODO(#453): 0x0046C0A0  MPEnqueue -- signature not recovered
-// TODO(#453): 0x0046C680  MPInterpPosAxis -- signature not recovered
 // TODO(#453): 0x0046C780  MPUpdateInterval -- signature not recovered
-// TODO(#453): 0x0046C860  MPInterpAngleAxis -- signature not recovered
 // TODO(#453): 0x0046EC40  MPRelToAbsTime -- signature not recovered
-// TODO(#453): 0x0046EC60  MPResolveAlias -- signature not recovered
 // TODO(#453): 0x0046ECD0  MPReadAlloc -- signature not recovered
-// TODO(#453): 0x0046ED10  MPDecodeState16 -- signature not recovered
-// TODO(#453): 0x0046EDB0  MPDecodePos -- signature not recovered
 // TODO(#453): 0x0046EE00  MPGetType -- signature not recovered
-// TODO(#453): 0x0046EE40  MPReadPayload -- signature not recovered
 // TODO(#453): 0x0046EE90  MPClearDeadStatus -- signature not recovered
 // TODO(#453): 0x0046FA40  MPAbsToRelTime -- signature not recovered
-// TODO(#453): 0x0046FA60  MPEncodeState14 -- signature not recovered
-// TODO(#453): 0x0046FBF0  MPEncodeState15 -- signature not recovered
 // TODO(#453): 0x0046FD50  MPSendSyncOnce -- signature not recovered
 // TODO(#453): 0x0046FF20  MPSendScenarioEndTime -- signature not recovered
 // TODO(#453): 0x00470780  MPMsgRemapAliases -- signature not recovered
 // TODO(#453): 0x00471880  MPChatChecksum -- signature not recovered
-// TODO(#453): 0x004718F0  MPDrawStatusLine -- signature not recovered
-// TODO(#453): 0x00471A90  MPWaitStatus -- signature not recovered
 // TODO(#453): 0x00471B80  MPAllPeersAtStatus -- signature not recovered
 // TODO(#453): 0x00471FA0  MPAssignPlanePlayers -- signature not recovered
-// TODO(#453): 0x00472130  MPBuildSpawnPayload -- signature not recovered
 // TODO(#453): 0x00472670  MPRevive -- signature not recovered
 // TODO(#453): 0x004735D0  MPChatStore -- signature not recovered
 // TODO(#453): 0x004970C0  spxopensocket -- signature not recovered

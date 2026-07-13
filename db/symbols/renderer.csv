@@ -82,7 +82,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004B7C30,func,?RemapAdd@@YAXPAUT_HANDLE@@H@Z,RemapAdd,sms,confirmed,,"void __cdecl RemapAdd(T_HANDLE *, int)"
 0x004B7C60,func,?RemapRelocate@@YAXPAUT_HANDLE@@F@Z,RemapRelocate,sms,confirmed,,"void __cdecl RemapRelocate(T_HANDLE *, short)"
 0x004B7CD0,func,_G_LoadBitmap@20,G_LoadBitmap,sms,confirmed,,"undefined4 __stdcall G_LoadBitmap(undefined4, undefined4, undefined4, undefined4, undefined4)"
-0x004B7E10,func,G_RemapBitmapToPalette,,re,confirmed,remap a bitmap's RGB triples to the nearest _curPalette index (sum-of-squared-channel-diff nearest-colour match),
+0x004B7E10,func,G_RemapBitmapToPalette,,re,confirmed,remap a bitmap's RGB triples to the nearest _curPalette index (sum-of-squared-channel-diff nearest-colour match),undefined4 __stdcall G_RemapBitmapToPalette(undefined4)
 0x004B7F60,func,_G_BlitToBrush@16,G_BlitToBrush,sms,confirmed,,"undefined4 __stdcall G_BlitToBrush(undefined4, undefined4, undefined4, undefined4)"
 0x004B7FA0,func,_G_BlitToScreen@16,G_BlitToScreen,sms,confirmed,,"undefined4 __stdcall G_BlitToScreen(undefined4, undefined4, undefined4, undefined4)"
 0x004B7FE0,func,_G_Blit@36,G_Blit,sms,confirmed,,"undefined4 __stdcall G_Blit(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"

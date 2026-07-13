@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 106/118 functions have a recovered signature; 3/3 globals have a recovered type.
+// 107/118 functions have a recovered signature; 3/3 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -91,6 +91,7 @@ undefined4 G_FreeSurfaceBitmap(undefined4);  // 0x004B7BF0  __fastcall
 void RemapAdd(T_HANDLE *, int);  // 0x004B7C30  __cdecl
 void RemapRelocate(T_HANDLE *, short);  // 0x004B7C60  __cdecl
 undefined4 G_LoadBitmap(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004B7CD0  __stdcall
+undefined4 G_RemapBitmapToPalette(undefined4);  // 0x004B7E10  __stdcall
 undefined4 G_BlitToBrush(undefined4, undefined4, undefined4, undefined4);  // 0x004B7F60  __stdcall
 undefined4 G_BlitToScreen(undefined4, undefined4, undefined4, undefined4);  // 0x004B7FA0  __stdcall
 undefined4 G_Blit(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004B7FE0  __stdcall
@@ -132,7 +133,6 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x0045E13F  GG_FlushDirtyLines -- signature not recovered
 // TODO(#453): 0x00498980  G_Printf -- signature not recovered
 // TODO(#453): 0x004B7910  G_AllocBitmapBuffer -- signature not recovered
-// TODO(#453): 0x004B7E10  G_RemapBitmapToPalette -- signature not recovered
 // TODO(#453): 0x004C8FD4  Horizon2d -- signature not recovered
 // TODO(#453): 0x004C9224  NoHorizon -- signature not recovered
 // TODO(#453): 0x004C924C  SolidHorizon -- signature not recovered

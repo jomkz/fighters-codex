@@ -4,8 +4,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0040BD00,func,?MaybeCampaignMenu2@@YGXPADJJD@Z,MaybeCampaignMenu2,sms,confirmed,tail variant of MaybeCampaignMenu,"void __stdcall MaybeCampaignMenu2(char *, long, long, char)"
 0x0040BD30,func,?MenuStartUp@@YGXPADJJDJ@Z,MenuStartUp,sms,confirmed,"build+show a menu bar from a .MNU name; calls ShellSetup, clears _menuSelecting","void __stdcall MenuStartUp(char *, long, long, char, long)"
 0x0040BF40,func,MenuInstallRemap,,re,inferred,install a palette color-remap table into a G-remap slot (0x114-0x118); called 5x by MenuCreateRemaps,
-0x0040BF60,func,MenuMeasureItemWidth,,re,confirmed,"measure widest menu item label via G_ColorStringWidth over the item linked list (+0x12 text, +submenu via FUN_0040c130)",
-0x0040C130,func,MenuItemSubString,,re,confirmed,"skip a menu label's leading marker bytes (>1) and return the submenu/secondary substring, or NULL",
+0x0040BF60,func,MenuMeasureItemWidth,,re,confirmed,"measure widest menu item label via G_ColorStringWidth over the item linked list (+0x12 text, +submenu via FUN_0040c130)","undefined4 __stdcall MenuMeasureItemWidth(undefined4, undefined4, undefined4, undefined4)"
+0x0040C130,func,MenuItemSubString,,re,confirmed,"skip a menu label's leading marker bytes (>1) and return the submenu/secondary substring, or NULL",undefined4 __stdcall MenuItemSubString(undefined4)
 0x0040C160,func,MenuLoadFont,,re,confirmed,load MENUFONT.PIC (640) or MFONT320.PIC (320) per _menuResolution into DAT_004ec21c,
 0x0040C1A0,func,?MenuRemoveItem@@YAXJ@Z,MenuRemoveItem,sms,confirmed,remove a menu item by packed G-index,void __cdecl MenuRemoveItem(long)
 0x0040C1D0,func,MenuLinkTerminate,,re,confirmed,walk _firstMenu linked list to the tail and null-terminate it,
@@ -29,10 +29,10 @@ va,kind,name,display,source,confidence,notes,type
 0x0040CF40,func,MenuSaveBackground2,,re,inferred,second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0,
 0x0040CFA0,func,MenuRestoreBackground2,,re,inferred,restore pair for FUN_0040cf40,
 0x0040CFE0,func,?ShadowBox@@YGXJJJJ@Z,ShadowBox,sms,confirmed,11-byte entry; drop-shadow frame around a rect. Worker is FUN_0040cfeb (tail),"void __stdcall ShadowBox(long, long, long, long)"
-0x0040CFEB,func,ShadowBoxDraw,,re,inferred,403-byte worker behind ShadowBox@0x40CFE0: renders the 8-piece drop-shadow frame (shadowUR/LL/LR/H/V handles),
+0x0040CFEB,func,ShadowBoxDraw,,re,inferred,403-byte worker behind ShadowBox@0x40CFE0: renders the 8-piece drop-shadow frame (shadowUR/LL/LR/H/V handles),"undefined4 __stdcall ShadowBoxDraw(undefined4, undefined4, undefined4, undefined4)"
 0x0040D180,func,?MenuSteelRect@@YGXJJJJ@Z,MenuSteelRect,sms,confirmed,"draw the brushed-steel panel rectangle (uses steelHandle, FUN_0040d390 pattern)","void __stdcall MenuSteelRect(long, long, long, long)"
-0x0040D390,func,MenuSteelPattern,,re,inferred,builds an i*i square table and tiles the brushed-steel gradient (DAT_004ec260) used by MenuSteelRect,
-0x0040D4E0,func,MenuBuildRemap,,re,confirmed,build a palette remap table scaling _curPalette RGB by param%/100; confirmed by MenuCreateRemaps callsites,
+0x0040D390,func,MenuSteelPattern,,re,inferred,builds an i*i square table and tiles the brushed-steel gradient (DAT_004ec260) used by MenuSteelRect,"undefined4 __stdcall MenuSteelPattern(undefined4, undefined4, undefined4)"
+0x0040D4E0,func,MenuBuildRemap,,re,confirmed,build a palette remap table scaling _curPalette RGB by param%/100; confirmed by MenuCreateRemaps callsites,"undefined4 __stdcall MenuBuildRemap(undefined4, undefined4, undefined4)"
 0x0040D5F0,func,?PushShellAlloc@@YGXXZ,PushShellAlloc,sms,confirmed,push MM alloc-id scope for shell allocations (paired with PopShellAlloc),void __stdcall PushShellAlloc(void)
 0x0040D620,func,?PopShellAlloc@@YGXXZ,PopShellAlloc,sms,confirmed,pop shell MM alloc scope,void __stdcall PopShellAlloc(void)
 0x0040D640,func,?ShellShowMouse@@YGXXZ,ShellShowMouse,sms,confirmed,show software mouse cursor (ref counts via mouseShown),void __stdcall ShellShowMouse(void)
@@ -58,10 +58,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00488F30,func,DialogHelper488f30,,re,inferred,small dialog helper (31 B); role not confirmed,
 0x00488F50,func,DialogRadioGroupClear,,re,confirmed,"walk records; for type 1/5 matching group id at +0x17, clear the pressed flag (+0xb) — radio de-select",undefined4 __cdecl DialogRadioGroupClear(undefined4)
 0x00488FC0,func,_DialogWhatItem@0,DialogWhatItem,sms,confirmed,return _dialogItemPtr (last record that passed hit-test),undefined4 __stdcall DialogWhatItem(void)
-0x00488FD0,func,DialogScrollbarHit,,re,confirmed,type-7 scrollbar custom hit handler: PointInBox(+0x18) then callback +0x24 (DLG.md hit-zone table),
+0x00488FD0,func,DialogScrollbarHit,,re,confirmed,type-7 scrollbar custom hit handler: PointInBox(+0x18) then callback +0x24 (DLG.md hit-zone table),"undefined4 __stdcall DialogScrollbarHit(undefined4, undefined4)"
 0x00489070,func,DialogSliderRelease,,re,confirmed,active-slider mouse handler: on button-up call slider callback +0x2c and clear _activeSlider,undefined4 __cdecl DialogSliderRelease(undefined4)
-0x004891A0,func,DialogScrollThumbInit,,re,confirmed,initialise scrollbar thumb position from +0xb/+0xc/+0xe/+0x10 (DLG.md: called on show),
-0x00489220,func,DialogClampThumb,,re,confirmed,clamp scrollbar thumb (+0x12) within track bounds (+0x16/+0x1a/+0x1e),
+0x004891A0,func,DialogScrollThumbInit,,re,confirmed,initialise scrollbar thumb position from +0xb/+0xc/+0xe/+0x10 (DLG.md: called on show),undefined4 __stdcall DialogScrollThumbInit(undefined4)
+0x00489220,func,DialogClampThumb,,re,confirmed,clamp scrollbar thumb (+0x12) within track bounds (+0x16/+0x1a/+0x1e),undefined4 __stdcall DialogClampThumb(undefined4)
 0x004892E0,func,@DialogGetPtr@4,DialogGetPtr,sms,confirmed,resolve a record pointer by item id,undefined4 __fastcall DialogGetPtr(undefined4)
 0x00489300,func,@DialogGetValue@4,DialogGetValue,sms,confirmed,read a control's current value,undefined4 __fastcall DialogGetValue(undefined4)
 0x00489360,func,_DialogMatchListString,DialogMatchListString,sms,confirmed,find a list-box row by string,
@@ -82,7 +82,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00489AC0,func,_DrawText,DrawText,sms,confirmed,type-9 static text renderer (DLG.md field layout),
 0x00489B90,func,_DrawAction,DrawAction,sms,confirmed,type-0 clickable action-button renderer (DLG.md field layout),
 0x0048A080,func,DialogFlush,,re,confirmed,ShellShowMouse + G_Flush + ShellHideMouse,
-0x0048A260,func,DialogBlitModuleBitmap,,re,confirmed,blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y,
+0x0048A260,func,DialogBlitModuleBitmap,,re,confirmed,blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y,"undefined4 __stdcall DialogBlitModuleBitmap(undefined4, undefined4, undefined4, undefined4)"
 0x0048A2B0,func,DialogSetupBitmap,,re,inferred,SetupBitmapAccess wrapper for dialog rendering,
 0x0048A4C0,func,_DrawDial,DrawDial,sms,confirmed,rotary dial control renderer,
 0x0048A730,func,_DrawLight,DrawLight,sms,confirmed,indicator light/LED renderer,
@@ -99,17 +99,17 @@ va,kind,name,display,source,confidence,notes,type
 0x0048B930,func,_DrawToggle,DrawToggle,sms,confirmed,two-state toggle renderer (type 8),
 0x0048BAD0,func,_DrawSliderHoriz,DrawSliderHoriz,sms,confirmed,horizontal slider renderer,
 0x0048BBE0,func,DialogHelper48bbe0,,re,inferred,small slider helper (31 B),
-0x0048BC00,func,DialogHelper48bc00,,re,inferred,slider helper (96 B),
+0x0048BC00,func,DialogHelper48bc00,,re,inferred,slider helper (96 B),"undefined4 __stdcall DialogHelper48bc00(undefined4, undefined4, undefined4)"
 0x0048BC60,func,_DrawSliderVert,DrawSliderVert,sms,confirmed,vertical slider renderer,
-0x0048BDF0,func,DialogHelper48bdf0,,re,inferred,slider/edit helper (99 B),
+0x0048BDF0,func,DialogHelper48bdf0,,re,inferred,slider/edit helper (99 B),"undefined4 __stdcall DialogHelper48bdf0(undefined4, undefined4, undefined4)"
 0x0048BE60,func,_CheckMousePtr@16,CheckMousePtr,sms,confirmed,test/redraw mouse pointer over a widget rect during draw,"undefined4 __stdcall CheckMousePtr(undefined4, undefined4, undefined4, undefined4)"
 0x0048BEC0,func,DialogEditGeom,,re,inferred,compute edit-box on-screen geometry from _curDialog + focused record (+0x1e),
 0x0048BF50,func,DialogHelper48bf50,,re,inferred,edit-box helper (66 B),
 0x0048BFA0,func,DialogDrawEditCaret,,re,confirmed,draw the blinking text caret (G_Vline) at _cursorAt within the focused edit box; _selectEnd gate,
 0x0048C040,func,DialogEditKey,,re,inferred,edit-box keystroke handler (1220 B; char insert/delete/cursor),
 0x0048C510,func,DialogHelper48c510,,re,inferred,edit helper (94 B),
-0x0048C570,func,DialogHelper48c570,,re,inferred,edit helper (45 B),
-0x0048C5A0,func,DialogDrawEditText,,re,inferred,render edit-box text/selection (359 B),
+0x0048C570,func,DialogHelper48c570,,re,inferred,edit helper (45 B),"undefined4 __stdcall DialogHelper48c570(undefined4, undefined4, undefined4)"
+0x0048C5A0,func,DialogDrawEditText,,re,inferred,render edit-box text/selection (359 B),"undefined4 __stdcall DialogDrawEditText(undefined4, undefined4, undefined4)"
 0x0048C710,func,_DrawEditBox,DrawEditBox,sms,confirmed,type-2 edit-box renderer (DLG.md field layout),
 0x0048C800,func,_DrawText320,DrawText320,sms,confirmed,320x200 static text renderer,
 0x0048C8A0,func,_DrawCheck320,DrawCheck320,sms,confirmed,320x200 checkbox renderer,

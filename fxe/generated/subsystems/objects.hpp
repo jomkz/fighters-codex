@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 63/83 functions have a recovered signature; 13/15 globals have a recovered type.
+// 65/83 functions have a recovered signature; 13/15 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -59,6 +59,7 @@ undefined4 AllocCmdBuf(void);  // 0x00463D00  __stdcall
 undefined4 CancelCmdBuf(void);  // 0x00463E50  __stdcall
 undefined4 MaskEvents(undefined4);  // 0x00463EA0  __fastcall
 undefined4 CallDamageProc(undefined4);  // 0x00463EC0  __fastcall
+undefined4 GetObjProc(undefined4, undefined4);  // 0x00463F30  __stdcall
 undefined4 Ignore(undefined4);  // 0x00463FA0  __fastcall
 undefined4 Reaction(undefined4, undefined4, undefined4);  // 0x00464040  __fastcall
 undefined4 EnterState(undefined4);  // 0x00464300  __fastcall
@@ -89,6 +90,7 @@ undefined4 OBJTempAlias(void);  // 0x004917F0  __stdcall
 undefined4 OBJSetControl(undefined4, undefined4, undefined4, undefined4);  // 0x00491810  __stdcall
 undefined4 OBJHumanName(void);  // 0x004918D0  __stdcall
 undefined4 SetupOT(undefined4);  // 0x004A6EB0  __cdecl
+undefined4 LoadShapeSlot(undefined4);  // 0x004A71E0  __stdcall
 undefined4 SetupNT(undefined4);  // 0x004A7200  __cdecl
 undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 
@@ -106,13 +108,11 @@ undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 // TODO(#453): 0x00463900  NearbyGroupLeader -- signature not recovered
 // TODO(#453): 0x00463B90  TimeAddSat -- signature not recovered
 // TODO(#453): 0x00463D40  ReadCmdBuf -- signature not recovered
-// TODO(#453): 0x00463F30  GetObjProc -- signature not recovered
 // TODO(#453): 0x00463F60  CallUtilProc -- signature not recovered
 // TODO(#453): 0x0046442B  InSearchAreaBody -- signature not recovered
 // TODO(#453): 0x00473A40  OBJEventProc -- signature not recovered
 // TODO(#453): 0x004A6B10  ResolveTypeRecord -- signature not recovered
 // TODO(#453): 0x004A71C0  LoadShapeVariantPair -- signature not recovered
-// TODO(#453): 0x004A71E0  LoadShapeSlot -- signature not recovered
 // TODO(#453): 0x004A7220  SetupPT -- signature not recovered
 // TODO(#453): 0x004A7230  SetupJT -- signature not recovered
 // TODO(#455): 0x00546BB8  _lastCurZ -- type not recovered

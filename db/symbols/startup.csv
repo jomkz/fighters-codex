@@ -93,8 +93,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004D87B5,func,__seh_longjmp_unwind@4,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __stdcall _seh_longjmp_unwind(undefined4)
 0x004D87D0,func,_labs,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl labs(undefined4)
 0x004D87E0,func,_strncat,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl strncat(undefined4, undefined4, undefined4)"
-0x004D8910,func,__alldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004D89C0,func,__allmul,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004D8910,func,__alldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _alldiv(undefined4, undefined4, undefined4, undefined4)"
+0x004D89C0,func,__allmul,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _allmul(undefined4, undefined4, undefined4, undefined4)"
 0x004D8A00,func,_qsort,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl qsort(undefined4, undefined4, undefined4, undefined4)"
 0x004D8B70,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: shortsort,
 0x004D8BD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: swap,
@@ -230,8 +230,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004E0540,func,__isatty,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,undefined4 __cdecl _isatty(undefined4)
 0x004E0570,func,_wctomb,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl wctomb(undefined4, undefined4)"
 0x004E05D0,func,__wctomb_lk,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __cdecl _wctomb_lk(undefined4, undefined4)"
-0x004E0670,func,__aulldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
-0x004E06E0,func,__aullrem,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,
+0x004E0670,func,__aulldiv,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _aulldiv(undefined4, undefined4, undefined4, undefined4)"
+0x004E06E0,func,__aullrem,,sms,confirmed,MSVC C runtime (statically linked); FA.SMS public symbol,"undefined4 __stdcall _aullrem(undefined4, undefined4, undefined4, undefined4)"
 0x004E0810,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: __get_lc_time,
 0x004E0B90,func,,,waiver,confirmed,CRT locale __free_lc_time: frees the __lc_time_data pointer table (~0x27 entries),
 0x004E0DD0,func,,,waiver,confirmed,CRT runtime helper (MSVC); Ghidra FID library name: storeTimeFmt,

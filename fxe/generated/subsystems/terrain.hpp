@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Terrain (T_) -- FA.EXE
-// 54/82 functions have a recovered signature; 0/1 globals have a recovered type.
+// 56/82 functions have a recovered signature; 0/1 globals have a recovered type.
 
 namespace fxe::fa::terrain {
 
@@ -20,6 +20,8 @@ undefined4 T_ImmediateVisibility(undefined4);  // 0x004A7D70  __stdcall
 undefined4 T_ObjList(undefined4, undefined4);  // 0x004A7DF0  __stdcall
 undefined4 T_Render(undefined4);  // 0x004A7E50  __stdcall
 void T_ForestProc(long);  // 0x004A7F70  __cdecl
+undefined4 T_ScatterGrid(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A8090  __stdcall
+undefined4 T_ScatterDecorTile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A8130  __stdcall
 void T_Forest1Proc(long);  // 0x004A8400  __cdecl
 void T_Forest2Proc(long);  // 0x004A8540  __cdecl
 void T_FarmProc(long);  // 0x004A8670  __cdecl
@@ -73,8 +75,6 @@ undefined4 T_InterpAltSE(undefined4, undefined4, undefined4, undefined4);  // 0x
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004A7F20  T_InitForestProc -- signature not recovered
 // TODO(#453): 0x004A7F40  T_ResolveDecorShapes -- signature not recovered
-// TODO(#453): 0x004A8090  T_ScatterGrid -- signature not recovered
-// TODO(#453): 0x004A8130  T_ScatterDecorTile -- signature not recovered
 // TODO(#453): 0x004A83E0  T_InitForest1Proc -- signature not recovered
 // TODO(#453): 0x004A8520  T_InitForest2Proc -- signature not recovered
 // TODO(#453): 0x004A8660  T_InitFarmProc -- signature not recovered

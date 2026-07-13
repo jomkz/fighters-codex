@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Memory & resource managers (MM/RM) -- FA.EXE
-// 45/50 functions have a recovered signature; 11/12 globals have a recovered type.
+// 46/50 functions have a recovered signature; 11/12 globals have a recovered type.
 
 namespace fxe::fa::memory_resource {
 
@@ -65,6 +65,7 @@ undefined4 RMLocate(undefined4, undefined4, undefined4);  // 0x004A68F0  __stdca
 void RMUnlocate(char *);  // 0x004A6970  __stdcall
 undefined4 RMFind(undefined4);  // 0x004A6990  __fastcall
 undefined4 RMAccess(undefined4, undefined4);  // 0x004A6AE0  __stdcall
+undefined4 RMFindAndLoad(undefined4, undefined4);  // 0x004A6B30  __stdcall
 undefined4 RMAccessHandle(undefined4, undefined4);  // 0x004A6CC0  __stdcall
 undefined4 RMFree(undefined4);  // 0x004A6CE0  __stdcall
 undefined4 RMFreeAllId(undefined4);  // 0x004A6D60  __stdcall
@@ -78,7 +79,6 @@ undefined4 RMLegalFilename(undefined4);  // 0x004A7240  __fastcall
 // TODO(#453): 0x004362F0  MMUWordAt -- signature not recovered
 // TODO(#453): 0x00436300  MMLongAt -- signature not recovered
 // TODO(#453): 0x004A6AB0  RMCacheInsert -- signature not recovered
-// TODO(#453): 0x004A6B30  RMFindAndLoad -- signature not recovered
 // TODO(#453): 0x004A6DF0  RMSetup -- signature not recovered
 // TODO(#455): 0x00573248  resCache -- type not recovered
 

@@ -1,80 +1,80 @@
 va,kind,name,display,source,confidence,notes,type
 0x10001000,func,InitializePort,InitializePort,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100013D0,func,SetBaud,SetBaud,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001430,func,SetFlowControlCharacters,SetFlowControlCharacters,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100014B0,func,SetFlowControlThreshold,SetFlowControlThreshold,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001510,func,SetPortCharacteristics,SetPortCharacteristics,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100015A0,func,UnInitializePort,UnInitializePort,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001640,func,SetSpecialBehavior,SetSpecialBehavior,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001720,func,Dial,Dial,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x100013D0,func,SetBaud,SetBaud,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetBaud(undefined4, undefined4)"
+0x10001430,func,SetFlowControlCharacters,SetFlowControlCharacters,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetFlowControlCharacters(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x100014B0,func,SetFlowControlThreshold,SetFlowControlThreshold,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetFlowControlThreshold(undefined4, undefined4, undefined4)"
+0x10001510,func,SetPortCharacteristics,SetPortCharacteristics,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetPortCharacteristics(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x100015A0,func,UnInitializePort,UnInitializePort,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall UnInitializePort(undefined4)
+0x10001640,func,SetSpecialBehavior,SetSpecialBehavior,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetSpecialBehavior(undefined4, undefined4, undefined4, undefined4)"
+0x10001720,func,Dial,Dial,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall Dial(undefined4, undefined4, undefined4)"
 0x100017C0,func,,,waiver,confirmed,Cdrv comms driver (Hayes modem) internal — third-party; boundary-documented via the exports,
-0x10001880,func,ModemAnswerMode,ModemAnswerMode,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001950,func,ModemAttention,ModemAttention,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001A70,func,ModemConnect,ModemConnect,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001C20,func,ModemGetCarrierSpeed,ModemGetCarrierSpeed,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001C50,func,ModemGetConnectSpeed,ModemGetConnectSpeed,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001C80,func,ModemHangup,ModemHangup,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001D30,func,ModemInit,ModemInit,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10001880,func,ModemAnswerMode,ModemAnswerMode,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall ModemAnswerMode(undefined4, undefined4)"
+0x10001950,func,ModemAttention,ModemAttention,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ModemAttention(undefined4)
+0x10001A70,func,ModemConnect,ModemConnect,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ModemConnect(undefined4)
+0x10001C20,func,ModemGetCarrierSpeed,ModemGetCarrierSpeed,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ModemGetCarrierSpeed(undefined4)
+0x10001C50,func,ModemGetConnectSpeed,ModemGetConnectSpeed,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ModemGetConnectSpeed(undefined4)
+0x10001C80,func,ModemHangup,ModemHangup,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ModemHangup(undefined4)
+0x10001D30,func,ModemInit,ModemInit,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ModemInit(undefined4)
 0x10001DE0,func,ModemModifyString,ModemModifyString,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10001F40,func,ModemModifyValue,ModemModifyValue,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002010,func,SendBreak,SendBreak,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002090,func,ModemWaitForCall,ModemWaitForCall,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10001F40,func,ModemModifyValue,ModemModifyValue,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall ModemModifyValue(undefined4, undefined4, undefined4)"
+0x10002010,func,SendBreak,SendBreak,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SendBreak(undefined4, undefined4)"
+0x10002090,func,ModemWaitForCall,ModemWaitForCall,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall ModemWaitForCall(undefined4, undefined4, undefined4, undefined4)"
 0x10002240,func,,,waiver,confirmed,Cdrv comms driver (Hayes modem) internal — third-party; boundary-documented via the exports,
-0x10002270,func,GetByte,GetByte,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100022F0,func,GetPacket,GetPacket,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100023A0,func,GetString,GetString,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100024C0,func,PeekChar,PeekChar,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002540,func,PutByte,PutByte,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100025C0,func,PutPacket,PutPacket,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100026B0,func,PutString,PutString,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10002270,func,GetByte,GetByte,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall GetByte(undefined4)
+0x100022F0,func,GetPacket,GetPacket,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall GetPacket(undefined4, undefined4, undefined4)"
+0x100023A0,func,GetString,GetString,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall GetString(undefined4, undefined4, undefined4)"
+0x100024C0,func,PeekChar,PeekChar,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall PeekChar(undefined4)
+0x10002540,func,PutByte,PutByte,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall PutByte(undefined4, undefined4)"
+0x100025C0,func,PutPacket,PutPacket,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall PutPacket(undefined4, undefined4, undefined4)"
+0x100026B0,func,PutString,PutString,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall PutString(undefined4, undefined4)"
 0x100026E0,func,BytesInReceiveBuffer,BytesInReceiveBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
 0x10002700,func,BytesInTransmitBuffer,BytesInTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002720,func,FlushReceiveBuffer,FlushReceiveBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002740,func,FlushTransmitBuffer,FlushTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002760,func,ReceiveBufferSize,ReceiveBufferSize,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002780,func,SpaceInReceiveBuffer,SpaceInReceiveBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100027B0,func,SpaceInTransmitBuffer,SpaceInTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100027E0,func,SpaceTransmitBuffer,SpaceTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100027F0,func,TransmitBufferSize,TransmitBufferSize,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002810,func,WaitForPeekTableFixed,WaitForPeekTableFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002970,func,WaitForPeekFixed,WaitForPeekFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100029C0,func,WaitForTableFixed,WaitForTableFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002C10,func,WaitForFixed,WaitForFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002C60,func,WaitForPeekTable,WaitForPeekTable,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002DB0,func,WaitForPeek,WaitForPeek,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10002DF0,func,WaitForTable,WaitForTable,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10002720,func,FlushReceiveBuffer,FlushReceiveBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall FlushReceiveBuffer(undefined4)
+0x10002740,func,FlushTransmitBuffer,FlushTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall FlushTransmitBuffer(undefined4)
+0x10002760,func,ReceiveBufferSize,ReceiveBufferSize,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall ReceiveBufferSize(undefined4)
+0x10002780,func,SpaceInReceiveBuffer,SpaceInReceiveBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall SpaceInReceiveBuffer(undefined4)
+0x100027B0,func,SpaceInTransmitBuffer,SpaceInTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall SpaceInTransmitBuffer(undefined4)
+0x100027E0,func,SpaceTransmitBuffer,SpaceTransmitBuffer,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall SpaceTransmitBuffer(undefined4)
+0x100027F0,func,TransmitBufferSize,TransmitBufferSize,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall TransmitBufferSize(undefined4)
+0x10002810,func,WaitForPeekTableFixed,WaitForPeekTableFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForPeekTableFixed(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x10002970,func,WaitForPeekFixed,WaitForPeekFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForPeekFixed(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x100029C0,func,WaitForTableFixed,WaitForTableFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForTableFixed(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x10002C10,func,WaitForFixed,WaitForFixed,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForFixed(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x10002C60,func,WaitForPeekTable,WaitForPeekTable,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForPeekTable(undefined4, undefined4, undefined4, undefined4)"
+0x10002DB0,func,WaitForPeek,WaitForPeek,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForPeek(undefined4, undefined4, undefined4, undefined4)"
+0x10002DF0,func,WaitForTable,WaitForTable,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall WaitForTable(undefined4, undefined4, undefined4, undefined4)"
 0x10003010,func,WaitFor,WaitFor,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003050,func,CdrvCrc16,CdrvCrc16,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100030A0,func,CdrvCrc32,CdrvCrc32,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100030E0,func,DtrOff,DtrOff,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003100,func,DtrOn,DtrOn,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003120,func,RtsOff,RtsOff,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003140,func,RtsOn,RtsOn,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003160,func,CdrvGetPcb,CdrvGetPcb,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003180,func,CdrvCheckTime,CdrvCheckTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003240,func,CdrvDelay,CdrvDelay,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003270,func,CdrvReturnStringAddress,CdrvReturnStringAddress,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003280,func,CdrvSetTime,CdrvSetTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100032D0,func,CdrvSetTimeoutFunction,CdrvSetTimeoutFunction,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003300,func,CdrvSetTimerResolution,CdrvSetTimerResolution,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10003050,func,CdrvCrc16,CdrvCrc16,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall CdrvCrc16(undefined4, undefined4)"
+0x100030A0,func,CdrvCrc32,CdrvCrc32,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall CdrvCrc32(undefined4, undefined4)"
+0x100030E0,func,DtrOff,DtrOff,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall DtrOff(undefined4)
+0x10003100,func,DtrOn,DtrOn,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall DtrOn(undefined4)
+0x10003120,func,RtsOff,RtsOff,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall RtsOff(undefined4)
+0x10003140,func,RtsOn,RtsOn,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall RtsOn(undefined4)
+0x10003160,func,CdrvGetPcb,CdrvGetPcb,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall CdrvGetPcb(undefined4)
+0x10003180,func,CdrvCheckTime,CdrvCheckTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall CdrvCheckTime(undefined4)
+0x10003240,func,CdrvDelay,CdrvDelay,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall CdrvDelay(undefined4, undefined4)"
+0x10003270,func,CdrvReturnStringAddress,CdrvReturnStringAddress,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall CdrvReturnStringAddress(undefined4)
+0x10003280,func,CdrvSetTime,CdrvSetTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall CdrvSetTime(undefined4, undefined4, undefined4)"
+0x100032D0,func,CdrvSetTimeoutFunction,CdrvSetTimeoutFunction,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall CdrvSetTimeoutFunction(undefined4, undefined4)"
+0x10003300,func,CdrvSetTimerResolution,CdrvSetTimerResolution,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall CdrvSetTimerResolution(undefined4, undefined4)"
 0x10003320,func,GetPaceTime,GetPaceTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,
 0x10003350,func,GetTimeout,GetTimeout,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003380,func,SetPaceTime,SetPaceTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100033B0,func,SetTimeout,SetTimeout,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100033E0,func,DataStreamGetPacket,DataStreamGetPacket,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10003380,func,SetPaceTime,SetPaceTime,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetPaceTime(undefined4, undefined4)"
+0x100033B0,func,SetTimeout,SetTimeout,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetTimeout(undefined4, undefined4)"
+0x100033E0,func,DataStreamGetPacket,DataStreamGetPacket,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall DataStreamGetPacket(undefined4, undefined4)"
 0x10003430,func,DataStreamGetByte,DataStreamGetByte,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003480,func,SetDataStreamFunction,SetDataStreamFunction,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100034B0,func,IsBreak,IsBreak,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100034F0,func,IsCarrierDetect,IsCarrierDetect,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10003480,func,SetDataStreamFunction,SetDataStreamFunction,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall SetDataStreamFunction(undefined4, undefined4)"
+0x100034B0,func,IsBreak,IsBreak,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsBreak(undefined4)
+0x100034F0,func,IsCarrierDetect,IsCarrierDetect,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsCarrierDetect(undefined4)
 0x10003520,func,IsCts,IsCts,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003550,func,IsDsr,IsDsr,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003580,func,IsFramingError,IsFramingError,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100035C0,func,IsInputOverrun,IsInputOverrun,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003600,func,IsOverrunError,IsOverrunError,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x10003640,func,IsParityError,IsParityError,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x10003550,func,IsDsr,IsDsr,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsDsr(undefined4)
+0x10003580,func,IsFramingError,IsFramingError,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsFramingError(undefined4)
+0x100035C0,func,IsInputOverrun,IsInputOverrun,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsInputOverrun(undefined4)
+0x10003600,func,IsOverrunError,IsOverrunError,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsOverrunError(undefined4)
+0x10003640,func,IsParityError,IsParityError,re,confirmed,Cdrv comms driver (Hayes modem) public export,"undefined4 __stdcall IsParityError(undefined4, undefined4, undefined4)"
 0x10003680,func,IsPortAvailable,IsPortAvailable,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100036A0,func,IsReceiveBufferEmpty,IsReceiveBufferEmpty,re,confirmed,Cdrv comms driver (Hayes modem) public export,
-0x100036C0,func,IsRing,IsRing,re,confirmed,Cdrv comms driver (Hayes modem) public export,
+0x100036A0,func,IsReceiveBufferEmpty,IsReceiveBufferEmpty,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsReceiveBufferEmpty(undefined4)
+0x100036C0,func,IsRing,IsRing,re,confirmed,Cdrv comms driver (Hayes modem) public export,undefined4 __stdcall IsRing(undefined4)
 0x10003700,func,IsTransmitBufferEmpty,IsTransmitBufferEmpty,re,confirmed,Cdrv comms driver (Hayes modem) public export,
 0x10003720,func,,,waiver,confirmed,Cdrv comms driver (Hayes modem) internal — third-party; boundary-documented via the exports,
 0x10003740,func,,,waiver,confirmed,Cdrv comms driver (Hayes modem) internal — third-party; boundary-documented via the exports,
