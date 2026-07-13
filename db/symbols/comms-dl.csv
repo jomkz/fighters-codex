@@ -17,7 +17,7 @@ va,kind,name,display,source,confidence,notes,type
 0x10001DF0,func,ser_rs232_getport,ser_rs232_getport,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_getport(undefined4, undefined4)"
 0x10001E50,func,ser_rs232_getregister,ser_rs232_getregister,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_getregister(undefined4, undefined4, undefined4)"
 0x10001EB0,func,ser_rs232_getstatus,ser_rs232_getstatus,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_getstatus(undefined4, undefined4)"
-0x10001F00,func,ser_rs232_maxport,ser_rs232_maxport,re,confirmed,Cdrv comms driver (RS-232 serial) public export,
+0x10001F00,func,ser_rs232_maxport,ser_rs232_maxport,re,confirmed,Cdrv comms driver (RS-232 serial) public export; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __stdcall ser_rs232_maxport(void)
 0x10001F10,func,ser_rs232_putbyte,ser_rs232_putbyte,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_putbyte(undefined4, undefined4)"
 0x10001FE0,func,ser_rs232_putpacket,ser_rs232_putpacket,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_putpacket(undefined4, undefined4, undefined4)"
 0x100020B0,func,ser_rs232_putregister,ser_rs232_putregister,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_putregister(undefined4, undefined4, undefined4)"
@@ -28,7 +28,7 @@ va,kind,name,display,source,confidence,notes,type
 0x10002420,func,ser_rs232_setbauddiv,ser_rs232_setbauddiv,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_setbauddiv(undefined4, undefined4, undefined4)"
 0x10002450,func,ser_rs232_setup,ser_rs232_setup,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_setup(undefined4, undefined4)"
 0x10002B10,func,ser_rs232_viewpacket,ser_rs232_viewpacket,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall ser_rs232_viewpacket(undefined4, undefined4, undefined4)"
-0x10002B80,func,ser_rs232_get_sdata,ser_rs232_get_sdata,re,confirmed,Cdrv comms driver (RS-232 serial) public export,
+0x10002B80,func,ser_rs232_get_sdata,ser_rs232_get_sdata,re,confirmed,Cdrv comms driver (RS-232 serial) public export; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined1 * __stdcall ser_rs232_get_sdata(void)
 0x10002BC0,func,bio_set_timer,bio_set_timer,re,confirmed,Cdrv comms driver (RS-232 serial) public export,"undefined4 __stdcall bio_set_timer(undefined4, undefined4)"
 0x10002BE0,func,bio_get_elapsedtime,bio_get_elapsedtime,re,confirmed,Cdrv comms driver (RS-232 serial) public export,undefined4 __stdcall bio_get_elapsedtime(undefined4)
 0x10002C10,func,bio_get_timer,bio_get_timer,re,confirmed,Cdrv comms driver (RS-232 serial) public export,undefined4 __stdcall bio_get_timer(undefined4)

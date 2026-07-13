@@ -3,31 +3,31 @@ va,kind,name,display,source,confidence,notes,type
 0x0040BC20,func,?MaybeCampaignMenu@@YGXPADJJD@Z,MaybeCampaignMenu,sms,confirmed,conditionally overlay the campaign action bar (MAINMENU.MNU) on a screen,"void __stdcall MaybeCampaignMenu(char *, long, long, char)"
 0x0040BD00,func,?MaybeCampaignMenu2@@YGXPADJJD@Z,MaybeCampaignMenu2,sms,confirmed,tail variant of MaybeCampaignMenu,"void __stdcall MaybeCampaignMenu2(char *, long, long, char)"
 0x0040BD30,func,?MenuStartUp@@YGXPADJJDJ@Z,MenuStartUp,sms,confirmed,"build+show a menu bar from a .MNU name; calls ShellSetup, clears _menuSelecting","void __stdcall MenuStartUp(char *, long, long, char, long)"
-0x0040BF40,func,MenuInstallRemap,,re,inferred,install a palette color-remap table into a G-remap slot (0x114-0x118); called 5x by MenuCreateRemaps,
+0x0040BF40,func,MenuInstallRemap,,re,confirmed,install a palette color-remap table into a G-remap slot (0x114-0x118); called 5x by MenuCreateRemaps; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall MenuInstallRemap(short, undefined4)"
 0x0040BF60,func,MenuMeasureItemWidth,,re,confirmed,"measure widest menu item label via G_ColorStringWidth over the item linked list (+0x12 text, +submenu via FUN_0040c130)","undefined4 __stdcall MenuMeasureItemWidth(undefined4, undefined4, undefined4, undefined4)"
 0x0040C130,func,MenuItemSubString,,re,confirmed,"skip a menu label's leading marker bytes (>1) and return the submenu/secondary substring, or NULL",undefined4 __stdcall MenuItemSubString(undefined4)
-0x0040C160,func,MenuLoadFont,,re,confirmed,load MENUFONT.PIC (640) or MFONT320.PIC (320) per _menuResolution into DAT_004ec21c,
+0x0040C160,func,MenuLoadFont,,re,confirmed,load MENUFONT.PIC (640) or MFONT320.PIC (320) per _menuResolution into DAT_004ec21c; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuLoadFont(void)
 0x0040C1A0,func,?MenuRemoveItem@@YAXJ@Z,MenuRemoveItem,sms,confirmed,remove a menu item by packed G-index,void __cdecl MenuRemoveItem(long)
-0x0040C1D0,func,MenuLinkTerminate,,re,confirmed,walk _firstMenu linked list to the tail and null-terminate it,
+0x0040C1D0,func,MenuLinkTerminate,,re,confirmed,walk _firstMenu linked list to the tail and null-terminate it; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuLinkTerminate(void)
 0x0040C1F0,func,?MenuCreateRemaps@@YGXXZ,MenuCreateRemaps,sms,confirmed,"build 5 shadow palette-remaps (menuShadow1..5 at 0x5221f0/0x5220f0/0x521ef0/0x521df0/0x521ff0, %=60/66/74/84/96) via FUN_0040d4e0; install slots 0x114-0x118 via FUN_0040bf40",void __stdcall MenuCreateRemaps(void)
 0x0040C410,func,?MenuDrawBar@@YIXD@Z,MenuDrawBar,sms,confirmed,save region under bar (menuBarSave) then draw the top menu bar from _firstMenu list,void __fastcall MenuDrawBar(char)
 0x0040C4F0,func,?MenuUpdate@@YGGXZ,MenuUpdate,sms,confirmed,"per-frame menu poll: ShellMousePos, hover/hit-test, returns selected G-index; skips mouse poll while _dialogOn",unsigned short __stdcall MenuUpdate(void)
-0x0040C5A0,func,MenuCurrentIndex,,re,confirmed,"close open sub-item/menu highlights, then compute the packed (menu<<8 | item) index of the current selection",
-0x0040C670,func,MenuMouseSelect,,re,confirmed,"hit-test mouse over bar entries/items via MouseInBox; update _curMenu/_curSubMenu/_curItem, open/close dropdowns",
-0x0040C990,func,MenuDrawDropdown,,re,confirmed,"draw an opened submenu: save background (FUN_0040cea0/cf40), MenuSteelRect frame, item rows",
-0x0040CB10,func,MenuClearItemInvert,,re,inferred,restore the current item's inverted-highlight brush (pair of FUN_0040cb80); called by MenuCurrentIndex,
-0x0040CB40,func,MenuCloseSubMenu,,re,inferred,close/restore the open sub-menu highlight; called by MenuCurrentIndex and MenuMouseSelect,
-0x0040CB80,func,MenuInvertItem,,re,confirmed,"toggle the highlight brush over _curItem (invertItemBrush: AllocBitmap+BlitToBrush+URect2, or blit back+free)",
-0x0040CC50,func,MenuInvertSubItem,,re,confirmed,toggle the highlight brush over _curSubItem (invertSubItem),
-0x0040CD20,func,MenuInvertBar,,re,confirmed,toggle the highlight brush over the _curMenu bar entry (invertMenuBrush),
+0x0040C5A0,func,MenuCurrentIndex,,re,confirmed,"close open sub-item/menu highlights, then compute the packed (menu<<8 | item) index of the current selection; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",short __cdecl MenuCurrentIndex(void)
+0x0040C670,func,MenuMouseSelect,,re,confirmed,"hit-test mouse over bar entries/items via MouseInBox; update _curMenu/_curSubMenu/_curItem, open/close dropdowns; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl MenuMouseSelect(void)
+0x0040C990,func,MenuDrawDropdown,,re,confirmed,"draw an opened submenu: save background (FUN_0040cea0/cf40), MenuSteelRect frame, item rows; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MenuDrawDropdown(undefined4)
+0x0040CB10,func,MenuClearItemInvert,,re,confirmed,restore the current item's inverted-highlight brush (pair of FUN_0040cb80); called by MenuCurrentIndex; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuClearItemInvert(void)
+0x0040CB40,func,MenuCloseSubMenu,,re,confirmed,close/restore the open sub-menu highlight; called by MenuCurrentIndex and MenuMouseSelect; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuCloseSubMenu(void)
+0x0040CB80,func,MenuInvertItem,,re,confirmed,"toggle the highlight brush over _curItem (invertItemBrush: AllocBitmap+BlitToBrush+URect2, or blit back+free); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl MenuInvertItem(void)
+0x0040CC50,func,MenuInvertSubItem,,re,confirmed,toggle the highlight brush over _curSubItem (invertSubItem); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuInvertSubItem(void)
+0x0040CD20,func,MenuInvertBar,,re,confirmed,toggle the highlight brush over the _curMenu bar entry (invertMenuBrush); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuInvertBar(void)
 0x0040CDE0,func,?CheckItem@@YIXDG@Z,CheckItem,sms,confirmed,set/clear checkmark on a menu item (via FUN_0040ce00 index lookup),"void __fastcall CheckItem(char, unsigned short)"
-0x0040CE00,func,MenuItemByIndex,,re,confirmed,"resolve a packed index (hi=menu#, lo=item#) to a MENU_ITEM* by walking _firstMenu; used by Check/Enable/DisableItem",
+0x0040CE00,func,MenuItemByIndex,,re,confirmed,"resolve a packed index (hi=menu#, lo=item#) to a MENU_ITEM* by walking _firstMenu; used by Check/Enable/DisableItem; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void * __fastcall MenuItemByIndex(u16)
 0x0040CE70,func,?EnableItem@@YIXG@Z,EnableItem,sms,confirmed,enable a menu item by index,void __fastcall EnableItem(unsigned short)
 0x0040CE80,func,?DisableItem@@YIXG@Z,DisableItem,sms,confirmed,disable/dim a menu item by index,void __fastcall DisableItem(unsigned short)
-0x0040CEA0,func,MenuSaveBackground,,re,confirmed,save the screen region under a submenu into menuSaveBrush (+shadowWidth/Height margin),
-0x0040CF00,func,MenuRestoreBackground,,re,confirmed,blit menuSaveBrush back to screen and free it,
-0x0040CF40,func,MenuSaveBackground2,,re,inferred,second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0,
-0x0040CFA0,func,MenuRestoreBackground2,,re,inferred,restore pair for FUN_0040cf40,
+0x0040CEA0,func,MenuSaveBackground,,re,confirmed,save the screen region under a submenu into menuSaveBrush (+shadowWidth/Height margin); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall MenuSaveBackground(undefined4)
+0x0040CF00,func,MenuRestoreBackground,,re,confirmed,blit menuSaveBrush back to screen and free it; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuRestoreBackground(void)
+0x0040CF40,func,MenuSaveBackground2,,re,confirmed,second save-background path (item flag==0 branch of MenuDrawDropdown); pairs with FUN_0040cfa0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall MenuSaveBackground2(undefined4)
+0x0040CFA0,func,MenuRestoreBackground2,,re,confirmed,restore pair for FUN_0040cf40; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MenuRestoreBackground2(void)
 0x0040CFE0,func,?ShadowBox@@YGXJJJJ@Z,ShadowBox,sms,confirmed,11-byte entry; drop-shadow frame around a rect. Worker is FUN_0040cfeb (tail),"void __stdcall ShadowBox(long, long, long, long)"
 0x0040CFEB,func,ShadowBoxDraw,,re,inferred,403-byte worker behind ShadowBox@0x40CFE0: renders the 8-piece drop-shadow frame (shadowUR/LL/LR/H/V handles),"undefined4 __stdcall ShadowBoxDraw(undefined4, undefined4, undefined4, undefined4)"
 0x0040D180,func,?MenuSteelRect@@YGXJJJJ@Z,MenuSteelRect,sms,confirmed,"draw the brushed-steel panel rectangle (uses steelHandle, FUN_0040d390 pattern)","void __stdcall MenuSteelRect(long, long, long, long)"
@@ -46,7 +46,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0047FA30,func,?RunDisconnectScreen@@YGXXZ,RunDisconnectScreen,sms,confirmed,multiplayer disconnect confirmation screen (DDIAG.DLG),void __stdcall RunDisconnectScreen(void)
 0x00487A3A,func,@WaitTicks@4,WaitTicks,sms,confirmed,busy-wait N ticks (TIMESystemTime); dialog animation delay,undefined4 __fastcall WaitTicks(undefined4)
 0x00487A63,func,_DialogSetup@12,DialogSetup,sms,confirmed,"push a DIALOG frame (_curDialog = &_dialogStruct + ++_dialogNum*0x29); ChoosePreload header, link records","undefined4 __stdcall DialogSetup(undefined4, undefined4, undefined4)"
-0x00487E90,func,DialogLinkRecords,,re,inferred,per-record setup pass over the DIALOG record list (short-field init); called by DialogSetup,
+0x00487E90,func,DialogLinkRecords,,re,inferred,per-record setup pass over the DIALOG record list (short-field init); called by DialogSetup; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall DialogLinkRecords(BOX *)
 0x004880D0,func,_DialogShow@0,DialogShow,sms,confirmed,"render the dialog: alloc/lazy-init background bitmap (+0x16/+0x1a), draw all records",undefined4 __stdcall DialogShow(void)
 0x00488170,func,DialogBeginDraw,,re,confirmed,common draw prologue: PushShellAlloc + ShellHideMouse,
 0x00488180,func,DialogEndDraw,,re,inferred,paired draw epilogue (ShellShowMouse/PopShellAlloc),
@@ -54,8 +54,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00488300,func,_DialogDone@0,DialogDone,sms,confirmed,free all shared dialog fonts (wheel/list/panel/panelDisabled/panel2/actionBlue),undefined4 __stdcall DialogDone(void)
 0x00488470,func,?DialogDraw@@YGXPAX@Z,DialogDraw,sms,confirmed,record draw dispatcher: walks next_record_ptr calling (**draw_fn_ptr)(record),void __stdcall DialogDraw(void *)
 0x00488490,func,@DialogUpdate@4,DialogUpdate,sms,confirmed,"event dispatcher (2617 B): per-record PointInBox hit-test, focus, slider/rocker/edit input, returns selected item",undefined4 __fastcall DialogUpdate(undefined4)
-0x00488F00,func,DialogWaitUntilTick,,re,confirmed,spin on TIMESystemTime until a target tick reached (returns bool),
-0x00488F30,func,DialogHelper488f30,,re,inferred,small dialog helper (31 B); role not confirmed,
+0x00488F00,func,DialogWaitUntilTick,,re,inferred,spin on TIMESystemTime until a target tick reached (returns bool); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"u8 __fastcall DialogWaitUntilTick(int, int)"
+0x00488F30,func,DialogHelper488f30,,re,confirmed,small dialog helper (31 B); role not confirmed; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogHelper488f30(short *)
 0x00488F50,func,DialogRadioGroupClear,,re,confirmed,"walk records; for type 1/5 matching group id at +0x17, clear the pressed flag (+0xb) — radio de-select",undefined4 __cdecl DialogRadioGroupClear(undefined4)
 0x00488FC0,func,_DialogWhatItem@0,DialogWhatItem,sms,confirmed,return _dialogItemPtr (last record that passed hit-test),undefined4 __stdcall DialogWhatItem(void)
 0x00488FD0,func,DialogScrollbarHit,,re,confirmed,type-7 scrollbar custom hit handler: PointInBox(+0x18) then callback +0x24 (DLG.md hit-zone table),"undefined4 __stdcall DialogScrollbarHit(undefined4, undefined4)"
@@ -64,56 +64,56 @@ va,kind,name,display,source,confidence,notes,type
 0x00489220,func,DialogClampThumb,,re,confirmed,clamp scrollbar thumb (+0x12) within track bounds (+0x16/+0x1a/+0x1e),undefined4 __stdcall DialogClampThumb(undefined4)
 0x004892E0,func,@DialogGetPtr@4,DialogGetPtr,sms,confirmed,resolve a record pointer by item id,undefined4 __fastcall DialogGetPtr(undefined4)
 0x00489300,func,@DialogGetValue@4,DialogGetValue,sms,confirmed,read a control's current value,undefined4 __fastcall DialogGetValue(undefined4)
-0x00489360,func,_DialogMatchListString,DialogMatchListString,sms,confirmed,find a list-box row by string,
+0x00489360,func,_DialogMatchListString,DialogMatchListString,sms,inferred,find a list-box row by string; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"u16 __cdecl DialogMatchListString(u16, char *)"
 0x00489400,func,_DialogSetRocker@8,DialogSetRocker,sms,confirmed,set a rocker control's state,"undefined4 __stdcall DialogSetRocker(undefined4, undefined4)"
-0x00489430,func,_DialogSetValue,DialogSetValue,sms,confirmed,set a control's value,
+0x00489430,func,_DialogSetValue,DialogSetValue,sms,inferred,set a control's value; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __cdecl DialogSetValue(u16, ...)"
 0x004894F0,func,@DialogSelectItem@4,DialogSelectItem,sms,confirmed,mark a record selected (highlight),undefined4 __fastcall DialogSelectItem(undefined4)
 0x00489580,func,@DialogDeselectItem@4,DialogDeselectItem,sms,confirmed,clear a record's selected/disabled bit,undefined4 __fastcall DialogDeselectItem(undefined4)
 0x004895D0,func,_DialogSetString@12,DialogSetString,sms,confirmed,set an edit/text record's string,"undefined4 __stdcall DialogSetString(undefined4, undefined4, undefined4)"
-0x00489660,func,_DialogUpdateString,DialogUpdateString,sms,confirmed,refresh a text record after edit,
+0x00489660,func,_DialogUpdateString,DialogUpdateString,sms,inferred,refresh a text record after edit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __cdecl DialogUpdateString(u16, char *, u16)"
 0x004896A0,func,@DialogGetString@4,DialogGetString,sms,confirmed,read an edit box's text buffer,undefined4 __fastcall DialogGetString(undefined4)
-0x00489710,func,_TopCenterDialog,TopCenterDialog,sms,confirmed,"center dialog: x=(sw-w)/2, y=(sh-h)/3",
+0x00489710,func,_TopCenterDialog,TopCenterDialog,sms,confirmed,"center dialog: x=(sw-w)/2, y=(sh-h)/3; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl TopCenterDialog(void)
 0x00489760,func,_Info2640Preload,Info2640Preload,sms,confirmed,preload header for INFO2640.DLG (OK+Cancel 640),
 0x00489780,func,_Info640Preload,Info640Preload,sms,confirmed,preload header for INFO640.DLG,
 0x004897A0,func,_GrafPrefPreload,GrafPrefPreload,sms,confirmed,preload header for GRAFPREF.DLG,
 0x004897D0,func,_SndPrefPreload,SndPrefPreload,sms,confirmed,preload header for SNDPREF.DLG,
 0x004897F0,func,_ChoosePreload,ChoosePreload,sms,confirmed,"DLG header record: PushShellAlloc, load action-button PIC/font by type (DLG.md); dispatched via computed indirect call",
 0x00489810,func,_MultiPreload,MultiPreload,sms,confirmed,preload header for multiplayer dialogs,
-0x00489AC0,func,_DrawText,DrawText,sms,confirmed,type-9 static text renderer (DLG.md field layout),
-0x00489B90,func,_DrawAction,DrawAction,sms,confirmed,type-0 clickable action-button renderer (DLG.md field layout),
+0x00489AC0,func,_DrawText,DrawText,sms,confirmed,type-9 static text renderer (DLG.md field layout); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawText(void *)
+0x00489B90,func,_DrawAction,DrawAction,sms,confirmed,type-0 clickable action-button renderer (DLG.md field layout); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawAction(void *)
 0x0048A080,func,DialogFlush,,re,confirmed,ShellShowMouse + G_Flush + ShellHideMouse,
 0x0048A260,func,DialogBlitModuleBitmap,,re,confirmed,blit from the DLG module bitmap (MMAccessR of _curDialog+0x1a) at dialog-relative x/y,"undefined4 __stdcall DialogBlitModuleBitmap(undefined4, undefined4, undefined4, undefined4)"
-0x0048A2B0,func,DialogSetupBitmap,,re,inferred,SetupBitmapAccess wrapper for dialog rendering,
-0x0048A4C0,func,_DrawDial,DrawDial,sms,confirmed,rotary dial control renderer,
+0x0048A2B0,func,DialogSetupBitmap,,re,confirmed,SetupBitmapAccess wrapper for dialog rendering; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogSetupBitmap(void)
+0x0048A4C0,func,_DrawDial,DrawDial,sms,confirmed,rotary dial control renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawDial(void *)
 0x0048A730,func,_DrawLight,DrawLight,sms,confirmed,indicator light/LED renderer,
 0x0048A7D0,func,_PrintPageNums@16,PrintPageNums,sms,confirmed,render 'page N of M' for paged list widgets,"undefined4 __stdcall PrintPageNums(undefined4, undefined4, undefined4, undefined4)"
-0x0048A8E0,func,DialogEnsureListFont,,re,confirmed,lazy-load SMLFONT into _listFont if null,
-0x0048A910,func,_DrawFormattedText,DrawFormattedText,sms,confirmed,type-9 variant multi-line/paged text renderer (DLG.md),
-0x0048A9F0,func,_DrawMissList,DrawMissList,sms,confirmed,single-mission list renderer,
-0x0048ADE0,func,_DrawListBox,DrawListBox,sms,confirmed,generic scrollable list-box renderer,
-0x0048B320,func,_DrawCheck,DrawCheck,sms,confirmed,checkbox renderer (type 3),
-0x0048B450,func,DialogRockerRepeat,,re,confirmed,"rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16",
+0x0048A8E0,func,DialogEnsureListFont,,re,confirmed,lazy-load SMLFONT into _listFont if null; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogEnsureListFont(void)
+0x0048A910,func,_DrawFormattedText,DrawFormattedText,sms,confirmed,type-9 variant multi-line/paged text renderer (DLG.md); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawFormattedText(void *)
+0x0048A9F0,func,_DrawMissList,DrawMissList,sms,confirmed,single-mission list renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawMissList(void *)
+0x0048ADE0,func,_DrawListBox,DrawListBox,sms,confirmed,generic scrollable list-box renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawListBox(void *)
+0x0048B320,func,_DrawCheck,DrawCheck,sms,confirmed,checkbox renderer (type 3); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawCheck(void *)
+0x0048B450,func,DialogRockerRepeat,,re,confirmed,"rocker auto-repeat: reset rockerTicks/rockerLastTicks, step _activeRocker parent (+0x22) by +0x16; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl DialogRockerRepeat(void)
 0x0048B4E0,func,_DrawRocker,DrawRocker,sms,confirmed,type-6 rocker/toggle renderer (two hit halves),undefined4 __cdecl DrawRocker(undefined4)
-0x0048B8B0,func,DialogHelper48b8b0,,re,inferred,rocker/slider draw helper (62 B),
-0x0048B8F0,func,DialogHelper48b8f0,,re,inferred,rocker/slider draw helper (62 B),
-0x0048B930,func,_DrawToggle,DrawToggle,sms,confirmed,two-state toggle renderer (type 8),
-0x0048BAD0,func,_DrawSliderHoriz,DrawSliderHoriz,sms,confirmed,horizontal slider renderer,
-0x0048BBE0,func,DialogHelper48bbe0,,re,inferred,small slider helper (31 B),
+0x0048B8B0,func,DialogHelper48b8b0,,re,confirmed,rocker/slider draw helper (62 B); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogHelper48b8b0(void)
+0x0048B8F0,func,DialogHelper48b8f0,,re,confirmed,rocker/slider draw helper (62 B); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogHelper48b8f0(void)
+0x0048B930,func,_DrawToggle,DrawToggle,sms,confirmed,two-state toggle renderer (type 8); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawToggle(void *)
+0x0048BAD0,func,_DrawSliderHoriz,DrawSliderHoriz,sms,confirmed,horizontal slider renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawSliderHoriz(void *)
+0x0048BBE0,func,DialogHelper48bbe0,,re,confirmed,small slider helper (31 B); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogHelper48bbe0(short *)
 0x0048BC00,func,DialogHelper48bc00,,re,inferred,slider helper (96 B),"undefined4 __stdcall DialogHelper48bc00(undefined4, undefined4, undefined4)"
-0x0048BC60,func,_DrawSliderVert,DrawSliderVert,sms,confirmed,vertical slider renderer,
+0x0048BC60,func,_DrawSliderVert,DrawSliderVert,sms,confirmed,vertical slider renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawSliderVert(void *)
 0x0048BDF0,func,DialogHelper48bdf0,,re,inferred,slider/edit helper (99 B),"undefined4 __stdcall DialogHelper48bdf0(undefined4, undefined4, undefined4)"
 0x0048BE60,func,_CheckMousePtr@16,CheckMousePtr,sms,confirmed,test/redraw mouse pointer over a widget rect during draw,"undefined4 __stdcall CheckMousePtr(undefined4, undefined4, undefined4, undefined4)"
-0x0048BEC0,func,DialogEditGeom,,re,inferred,compute edit-box on-screen geometry from _curDialog + focused record (+0x1e),
-0x0048BF50,func,DialogHelper48bf50,,re,inferred,edit-box helper (66 B),
-0x0048BFA0,func,DialogDrawEditCaret,,re,confirmed,draw the blinking text caret (G_Vline) at _cursorAt within the focused edit box; _selectEnd gate,
-0x0048C040,func,DialogEditKey,,re,inferred,edit-box keystroke handler (1220 B; char insert/delete/cursor),
-0x0048C510,func,DialogHelper48c510,,re,inferred,edit helper (94 B),
+0x0048BEC0,func,DialogEditGeom,,re,confirmed,compute edit-box on-screen geometry from _curDialog + focused record (+0x1e); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogEditGeom(void)
+0x0048BF50,func,DialogHelper48bf50,,re,confirmed,edit-box helper (66 B); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogHelper48bf50(void)
+0x0048BFA0,func,DialogDrawEditCaret,,re,confirmed,draw the blinking text caret (G_Vline) at _cursorAt within the focused edit box; _selectEnd gate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogDrawEditCaret(void)
+0x0048C040,func,DialogEditKey,,re,confirmed,edit-box keystroke handler (1220 B; char insert/delete/cursor); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall DialogEditKey(u16)
+0x0048C510,func,DialogHelper48c510,,re,confirmed,edit helper (94 B); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DialogHelper48c510(void)
 0x0048C570,func,DialogHelper48c570,,re,inferred,edit helper (45 B),"undefined4 __stdcall DialogHelper48c570(undefined4, undefined4, undefined4)"
 0x0048C5A0,func,DialogDrawEditText,,re,inferred,render edit-box text/selection (359 B),"undefined4 __stdcall DialogDrawEditText(undefined4, undefined4, undefined4)"
-0x0048C710,func,_DrawEditBox,DrawEditBox,sms,confirmed,type-2 edit-box renderer (DLG.md field layout),
-0x0048C800,func,_DrawText320,DrawText320,sms,confirmed,320x200 static text renderer,
-0x0048C8A0,func,_DrawCheck320,DrawCheck320,sms,confirmed,320x200 checkbox renderer,
-0x0048C970,func,_DrawDial320,DrawDial320,sms,confirmed,320x200 dial renderer,
+0x0048C710,func,_DrawEditBox,DrawEditBox,sms,confirmed,type-2 edit-box renderer (DLG.md field layout); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawEditBox(void *)
+0x0048C800,func,_DrawText320,DrawText320,sms,confirmed,320x200 static text renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawText320(void *)
+0x0048C8A0,func,_DrawCheck320,DrawCheck320,sms,confirmed,320x200 checkbox renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawCheck320(void *)
+0x0048C970,func,_DrawDial320,DrawDial320,sms,confirmed,320x200 dial renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawDial320(void *)
 0x0048CB00,func,?Do320Button@@YGXPAUT_HANDLE@@PAUACTION@@@Z,Do320Button,sms,confirmed,320x200 action-button dispatcher,"void __stdcall Do320Button(T_HANDLE *, ACTION *)"
 0x0048CBE0,func,_DrawYes320,DrawYes320,sms,confirmed,320 'Yes' button label renderer,
 0x0048CC10,func,_DrawNo320,DrawNo320,sms,confirmed,320 'No' button label renderer,
@@ -121,8 +121,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0048CC70,func,_DrawDone320,DrawDone320,sms,confirmed,320 'Done' button label renderer,
 0x0048CCA0,func,_DrawOK320,DrawOK320,sms,confirmed,320 'OK' button label renderer,
 0x0048CD40,func,_DrawLight320,DrawLight320,sms,confirmed,320 indicator light renderer,
-0x0048CD70,func,_DrawSwitch320,DrawSwitch320,sms,confirmed,320 switch renderer,
-0x0048CF10,func,_SliderVert320,SliderVert320,sms,confirmed,320 vertical slider renderer,
+0x0048CD70,func,_DrawSwitch320,DrawSwitch320,sms,confirmed,320 switch renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl DrawSwitch320(void *)
+0x0048CF10,func,_SliderVert320,SliderVert320,sms,inferred,320 vertical slider renderer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SliderVert320(void *)
 0x0048D030,func,@ShellClickSound@8,ShellClickSound,sms,confirmed,play the UI click sound on a valid activation,"undefined4 __fastcall ShellClickSound(undefined4, undefined4)"
 0x0048D090,func,@ShellDisabledSound@4,ShellDisabledSound,sms,confirmed,play the 'disabled' buzz when a dimmed control is clicked,undefined4 __fastcall ShellDisabledSound(undefined4)
 0x0048D0D0,func,@DisableActionButton@4,DisableActionButton,sms,confirmed,set record type_flags bit15 (dim); see DLG.md +0x00,undefined4 __fastcall DisableActionButton(undefined4)
@@ -130,8 +130,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0048D0F0,func,_DialogEnableItem@12,DialogEnableItem,sms,confirmed,enable/disable a dialog item,"undefined4 __stdcall DialogEnableItem(undefined4, undefined4, undefined4)"
 0x0048D140,func,@DialogItemIsEnabled@4,DialogItemIsEnabled,sms,confirmed,query a dialog item's enabled bit,undefined4 __fastcall DialogItemIsEnabled(undefined4)
 0x0048D150,func,@LimitEditFieldLength@4,LimitEditFieldLength,sms,confirmed,cap an edit field's character length,undefined4 __fastcall LimitEditFieldLength(undefined4)
-0x0048D160,func,DialogTextStreamInit,,re,confirmed,"init a paged text-stream reader object (vtable[2]=LAB_0048d1d0, [3]=FUN_0048d1e0; alloc 0x26+0x1000)",
-0x0048D1E0,func,DialogTextStreamRead,,re,confirmed,text-stream read callback: FUN_00486f20 decode into 0x1000 buffer; sets state 0x29/0x74,
+0x0048D160,func,DialogTextStreamInit,,re,confirmed,"init a paged text-stream reader object (vtable[2]=LAB_0048d1d0, [3]=FUN_0048d1e0; alloc 0x26+0x1000); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","void __cdecl DialogTextStreamInit(void *, undefined4)"
+0x0048D1E0,func,DialogTextStreamRead,,re,confirmed,text-stream read callback: FUN_00486f20 decode into 0x1000 buffer; sets state 0x29/0x74; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u8 __cdecl DialogTextStreamRead(void *)
 0x004A08A0,func,_ChooseActivity@0,ChooseActivity,sms,confirmed,"TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection",undefined4 __stdcall ChooseActivity(void)
 0x004A26F0,func,_DoDialogInfoBox@8,DoDialogInfoBox,sms,confirmed,modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10),"undefined4 __stdcall DoDialogInfoBox(undefined4, undefined4)"
 0x004A27C0,func,_DialogInfoBox@12,DialogInfoBox,sms,confirmed,generic INFO320/INFO640 message-box builder+run,"undefined4 __stdcall DialogInfoBox(undefined4, undefined4, undefined4)"

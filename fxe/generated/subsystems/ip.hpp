@@ -8,19 +8,15 @@
 #include "../fa_types.hpp"
 
 // IP.EXE — EA system-info & tech-support tool (MFC) -- IP.EXE
-// 1/5 functions have a recovered signature; 0/0 globals have a recovered type.
+// 5/5 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::ip::ip {
 
 // --- functions -------------------------------------------------------
+int CDROMBenchmark(undefined4, undefined4, undefined4, undefined4);  // 0x004019B0  __fastcall
+void LaunchSystemProperties(undefined4);  // 0x00403FE0  __fastcall
+int LoadDetectionDlls(void);  // 0x00404061  __cdecl
+void BuildSupportReport(undefined4);  // 0x0040DC60  __fastcall
 undefined4 WinMain(undefined4, undefined4, undefined4, undefined4);  // 0x00436EF0  __stdcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x004019B0  CDROMBenchmark -- signature not recovered
-// TODO(#453): 0x00403FE0  LaunchSystemProperties -- signature not recovered
-// TODO(#453): 0x00404061  LoadDetectionDlls -- signature not recovered
-// TODO(#453): 0x0040DC60  BuildSupportReport -- signature not recovered
 
 }  // namespace fxe::ip::ip

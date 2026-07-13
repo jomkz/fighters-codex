@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Memory & resource managers (MM/RM) -- FA.EXE
-// 46/50 functions have a recovered signature; 12/12 globals have a recovered type.
+// 50/50 functions have a recovered signature; 12/12 globals have a recovered type.
 
 namespace fxe::fa::memory_resource {
 
@@ -57,6 +57,8 @@ undefined4 MMAccessE(undefined4, undefined4, undefined4);  // 0x00436290  __stdc
 unsigned long MMAreaFree(void);  // 0x004362C0  __fastcall
 undefined4 MMByteAt(undefined4, undefined4);  // 0x004362D0  __cdecl
 undefined4 MMWordAt(undefined4, undefined4);  // 0x004362E0  __cdecl
+u16 MMUWordAt(undefined4, int);  // 0x004362F0  __cdecl
+undefined4 MMLongAt(undefined4, int);  // 0x00436300  __cdecl
 undefined4 MMULongAt(undefined4, undefined4);  // 0x00436310  __cdecl
 undefined4 RMInit(void);  // 0x004A67F0  __stdcall
 undefined4 RMShutdown(void);  // 0x004A6820  __stdcall
@@ -65,21 +67,15 @@ undefined4 RMChangeType(undefined4, undefined4, undefined4);  // 0x004A6870  __s
 undefined4 RMLocate(undefined4, undefined4, undefined4);  // 0x004A68F0  __stdcall
 void RMUnlocate(char *);  // 0x004A6970  __stdcall
 undefined4 RMFind(undefined4);  // 0x004A6990  __fastcall
+void RMCacheInsert(RES_LIST *);  // 0x004A6AB0  __fastcall
 undefined4 RMAccess(undefined4, undefined4);  // 0x004A6AE0  __stdcall
 undefined4 RMFindAndLoad(undefined4, undefined4);  // 0x004A6B30  __stdcall
 undefined4 RMAccessHandle(undefined4, undefined4);  // 0x004A6CC0  __stdcall
 undefined4 RMFree(undefined4);  // 0x004A6CE0  __stdcall
 undefined4 RMFreeAllId(undefined4);  // 0x004A6D60  __stdcall
 undefined4 RMNotify(undefined4);  // 0x004A6DB0  __fastcall
+void RMSetup(char *, undefined4);  // 0x004A6DF0  __fastcall
 undefined4 SetupBitmapAccess(undefined4, undefined4, undefined4);  // 0x004A6E20  __stdcall
 undefined4 RMLegalFilename(undefined4);  // 0x004A7240  __fastcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x004362F0  MMUWordAt -- signature not recovered
-// TODO(#453): 0x00436300  MMLongAt -- signature not recovered
-// TODO(#453): 0x004A6AB0  RMCacheInsert -- signature not recovered
-// TODO(#453): 0x004A6DF0  RMSetup -- signature not recovered
 
 }  // namespace fxe::fa::memory_resource

@@ -1,6 +1,6 @@
 va,kind,name,display,source,confidence,notes,type
 0x00436B30,func,_MoveObj@0,MoveObj,sms,confirmed,,undefined4 __stdcall MoveObj(void)
-0x004382D0,func,MoveGoalValue,,re,inferred,resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj,
+0x004382D0,func,MoveGoalValue,,re,confirmed,resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall MoveGoalValue(undefined4, undefined4)"
 0x0043846C,data,,,waiver,confirmed,MoveGoalValue switch jump-table / tail data (computed access),
 0x00442C00,func,_GRAPHICInit@0,GRAPHICInit,sms,confirmed,init the 100-entry _graphics effect pool + per-type .SH handle table (crater/smoke/fire/exp/debris/chaff/flare/spd/mpd/lpd); see objects.md GRAPHIC effect spawning,undefined4 __stdcall GRAPHICInit(void)
 0x00442DE0,func,_GRAPHICUpdate@0,GRAPHICUpdate,sms,confirmed,"step every live GRAPHIC entry via FUN_00442e10 (motion/fuse/adder emission), then _UpdateLoopSounds",undefined4 __stdcall GRAPHICUpdate(void)
@@ -8,28 +8,28 @@ va,kind,name,display,source,confidence,notes,type
 0x004432D0,func,_GRAPHICAddExp@28,GRAPHICAddExp,sms,confirmed,"spawn an explosion: random type-variation, chained debris/cluster-release/smoke children, MP mirror","undefined4 __stdcall GRAPHICAddExp(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00462600,func,_InitChain@0,InitChain,sms,confirmed,,undefined4 __stdcall InitChain(void)
 0x00462620,func,_RemoveFromChains@0,RemoveFromChains,sms,confirmed,,undefined4 __stdcall RemoveFromChains(void)
-0x00462640,func,ChainRemoveCurObj,,re,confirmed,unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1),
+0x00462640,func,ChainRemoveCurObj,,re,confirmed,unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall ChainRemoveCurObj(u16 *)
 0x004626B0,func,_ImmediateService@0,ImmediateService,sms,confirmed,,undefined4 __stdcall ImmediateService(void)
-0x004626D0,func,ChainInsertCurObj,,re,confirmed,ordered insert of the current object by service key (+0x68); honors correctChainPlacement,
+0x004626D0,func,ChainInsertCurObj,,re,confirmed,ordered insert of the current object by service key (+0x68); honors correctChainPlacement; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall ChainInsertCurObj(u16 *)
 0x004627B0,func,_RemoveCurObj@0,RemoveCurObj,sms,confirmed,,undefined4 __stdcall RemoveCurObj(void)
 0x004628B0,func,@GetCurObj@4,GetCurObj,sms,confirmed,,undefined4 __fastcall GetCurObj(undefined4)
 0x00462980,func,@PutCurObj@0,PutCurObj,sms,confirmed,,undefined4 __fastcall PutCurObj(void)
 0x004629E0,func,_PushCurObj@4,PushCurObj,sms,confirmed,,undefined4 __stdcall PushCurObj(undefined4)
 0x00462A20,func,_PopCurObj@0,PopCurObj,sms,confirmed,,undefined4 __stdcall PopCurObj(void)
-0x00462A50,func,_ServiceObjects,ServiceObjects,sms,confirmed,,
-0x00462B70,func,ChainMergeSorted,,re,confirmed,merge the re-queue chain back into chainStart keeping +0x68 order,
-0x00462C91,func,ProcessHitMsgs,,re,inferred,drain MSG 0x800B/0x800C remote hit events; raises event 0x4000 and spawns explosion via GRAPHICAddExp,
-0x00462D40,func,ProcessEffectMsgs,,re,inferred,drain per-computer MSG 0x8003+n remote effect spawns: explosion / smoke / MANAdd,
+0x00462A50,func,_ServiceObjects,ServiceObjects,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl ServiceObjects(void)
+0x00462B70,func,ChainMergeSorted,,re,confirmed,merge the re-queue chain back into chainStart keeping +0x68 order; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall ChainMergeSorted(u16)
+0x00462C91,func,ProcessHitMsgs,,re,inferred,drain MSG 0x800B/0x800C remote hit events; raises event 0x4000 and spawns explosion via GRAPHICAddExp; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl ProcessHitMsgs(void)
+0x00462D40,func,ProcessEffectMsgs,,re,confirmed,drain per-computer MSG 0x8003+n remote effect spawns: explosion / smoke / MANAdd; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl ProcessEffectMsgs(void)
 0x00462E70,func,?Service@@YGXXZ,Service,sms,confirmed,,void __stdcall Service(void)
 0x004631B0,func,?CheckForEvents1@@YGXXZ,CheckForEvents1,sms,confirmed,,void __stdcall CheckForEvents1(void)
 0x004631F0,func,?CheckForEvents2@@YGXD@Z,CheckForEvents2,sms,confirmed,,void __stdcall CheckForEvents2(char)
-0x00463730,func,PadlockTarget,,re,inferred,"pick the object id the player is visually tracking (angle+distance gates, wingman fallback)",
-0x00463900,func,NearbyGroupLeader,,re,inferred,return the group leader id when the current object flies in role 2 within 0xC800,
+0x00463730,func,PadlockTarget,,re,confirmed,"pick the object id the player is visually tracking (angle+distance gates, wingman fallback); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",u16 __cdecl PadlockTarget(void)
+0x00463900,func,NearbyGroupLeader,,re,confirmed,return the group leader id when the current object flies in role 2 within 0xC800; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u16 __cdecl NearbyGroupLeader(void)
 0x00463980,func,_MaybeCallEventProc@8,MaybeCallEventProc,sms,confirmed,,"undefined4 __stdcall MaybeCallEventProc(undefined4, undefined4)"
 0x004639C0,func,_CallEventProc@8,CallEventProc,sms,confirmed,,"undefined4 __stdcall CallEventProc(undefined4, undefined4)"
 0x00463A20,func,_CreateMove@52,CreateMove,sms,confirmed,,"undefined4 __stdcall CreateMove(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00463AF0,func,_CreateMoveGoal@20,CreateMoveGoal,sms,confirmed,,"undefined4 __stdcall CreateMoveGoal(undefined4, undefined4, undefined4, undefined4, undefined4)"
-0x00463B90,func,TimeAddSat,,re,confirmed,"saturating add to currentT, clamped at 0x7FFF",
+0x00463B90,func,TimeAddSat,,re,confirmed,"saturating add to currentT, clamped at 0x7FFF; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",s16 __fastcall TimeAddSat(u16)
 0x00463BC0,func,@ObjPlusAngleParm@8,ObjPlusAngleParm,sms,confirmed,,"undefined4 __fastcall ObjPlusAngleParm(undefined4, undefined4)"
 0x00463BE0,func,@ObjPlusDeltaParm@12,ObjPlusDeltaParm,sms,confirmed,,"undefined4 __fastcall ObjPlusDeltaParm(undefined4, undefined4, undefined4)"
 0x00463C50,func,@WriteCmdBuf@12,WriteCmdBuf,sms,confirmed,,"undefined4 __fastcall WriteCmdBuf(undefined4, undefined4, undefined4)"
@@ -38,7 +38,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00463CD0,func,_WriteCmdBufEnd@0,WriteCmdBufEnd,sms,confirmed,,undefined4 __stdcall WriteCmdBufEnd(void)
 0x00463CE0,func,@FinishCmdBuf@4,FinishCmdBuf,sms,confirmed,,undefined4 __fastcall FinishCmdBuf(undefined4)
 0x00463D00,func,_AllocCmdBuf@0,AllocCmdBuf,sms,confirmed,,undefined4 __stdcall AllocCmdBuf(void)
-0x00463D40,func,_ReadCmdBuf,ReadCmdBuf,sms,confirmed,,
+0x00463D40,func,_ReadCmdBuf,ReadCmdBuf,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl ReadCmdBuf(void)
 0x00463E50,func,_CancelCmdBuf@0,CancelCmdBuf,sms,confirmed,,undefined4 __stdcall CancelCmdBuf(void)
 0x00463EA0,func,@MaskEvents@4,MaskEvents,sms,confirmed,,undefined4 __fastcall MaskEvents(undefined4)
 0x00463EC0,func,@CallDamageProc@4,CallDamageProc,sms,confirmed,,undefined4 __fastcall CallDamageProc(undefined4)
@@ -53,7 +53,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00464520,func,_PreferredProtectId@0,PreferredProtectId,sms,confirmed,,undefined4 __stdcall PreferredProtectId(void)
 0x00464550,func,@CloseToAnything@4,CloseToAnything,sms,confirmed,,undefined4 __fastcall CloseToAnything(undefined4)
 0x00464640,func,@SetScenarioEndTime@4,SetScenarioEndTime,sms,confirmed,,undefined4 __fastcall SetScenarioEndTime(undefined4)
-0x00473A40,func,_OBJEventProc,OBJEventProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,
+0x00473A40,func,_OBJEventProc,OBJEventProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __cdecl OBJEventProc(u16, undefined4)"
 0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,void __cdecl OBJDamageProc(HIT_OBJ_DATA *)
 0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,undefined4 __cdecl OBJProc(undefined4)
 0x00473C10,func,_Kill@0,Kill,sms,confirmed,,undefined4 __stdcall Kill(void)
@@ -75,13 +75,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004917F0,func,_OBJTempAlias@0,OBJTempAlias,sms,confirmed,,undefined4 __stdcall OBJTempAlias(void)
 0x00491810,func,_OBJSetControl@16,OBJSetControl,sms,confirmed,,"undefined4 __stdcall OBJSetControl(undefined4, undefined4, undefined4, undefined4)"
 0x004918D0,func,_OBJHumanName@0,OBJHumanName,sms,confirmed,,undefined4 __stdcall OBJHumanName(void)
-0x004A6B10,func,ResolveTypeRecord,,re,confirmed,resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step,
+0x004A6B10,func,ResolveTypeRecord,,re,confirmed,resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall ResolveTypeRecord(undefined4)
 0x004A6EB0,func,_SetupOT,SetupOT,sms,confirmed,,undefined4 __cdecl SetupOT(undefined4)
 0x004A71C0,func,LoadShapeVariantPair,,re,confirmed,load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B),
 0x004A71E0,func,LoadShapeSlot,,re,confirmed,resolve one shape-slot filename to a loaded pointer via RMAccess (was proposed type_load_shape_slot),undefined4 __stdcall LoadShapeSlot(undefined4)
 0x004A7200,func,_SetupNT,SetupNT,sms,confirmed,,undefined4 __cdecl SetupNT(undefined4)
-0x004A7220,func,_SetupPT,SetupPT,sms,confirmed,,
-0x004A7230,func,_SetupJT,SetupJT,sms,confirmed,,
+0x004A7220,func,_SetupPT,SetupPT,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SetupPT(undefined4)
+0x004A7230,func,_SetupJT,SetupJT,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl SetupJT(undefined4)
 0x004AB450,func,@ShapeSetup@4,ShapeSetup,sms,confirmed,,undefined4 __fastcall ShapeSetup(undefined4)
 0x004EB612,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 1),
 0x004EB618,data,,,waiver,confirmed,interior of _objControlledBy per-computer id array (element 4),

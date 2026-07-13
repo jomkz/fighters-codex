@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 107/118 functions have a recovered signature; 3/3 globals have a recovered type.
+// 111/118 functions have a recovered signature; 3/3 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -70,6 +70,7 @@ undefined4 G_URectFlip(undefined4, undefined4, undefined4, undefined4);  // 0x00
 undefined4 G_SetFont(undefined4);  // 0x004986A0  __fastcall
 undefined4 G_Print(undefined4, undefined4, undefined4, undefined4);  // 0x004986B0  __fastcall
 undefined4 G_PrintOutline(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004988F0  __stdcall
+void G_Printf(int, int, undefined4, char *, ...);  // 0x00498980  __cdecl
 undefined4 G_StringWidth(undefined4);  // 0x004989F0  __fastcall
 undefined4 G_StringHeight(void);  // 0x00498A20  __fastcall
 long code(long, long);  // 0x00498AF0  __cdecl
@@ -84,6 +85,7 @@ undefined4 G_Hline2(undefined4, undefined4, undefined4);  // 0x00499280  __stdca
 undefined4 G_UHline2(undefined4, undefined4, undefined4);  // 0x004992B0  __stdcall
 undefined4 G_Box2(undefined4, undefined4, undefined4, undefined4);  // 0x004992E0  __stdcall
 undefined4 G_UBox2(undefined4, undefined4, undefined4, undefined4);  // 0x00499330  __stdcall
+undefined4 G_AllocBitmapBuffer(undefined4);  // 0x004B7910  __cdecl
 undefined4 G_RelocBitmap(undefined4, undefined4);  // 0x004B7930  __fastcall
 undefined4 G_AllocBitmap(undefined4, undefined4, undefined4);  // 0x004B79B0  __stdcall
 undefined4 G_AllocSurfaceBitmap(undefined4, undefined4);  // 0x004B7A80  __stdcall
@@ -123,6 +125,8 @@ undefined4 G_UPolygon(undefined4, undefined4);  // 0x004C6ECC  __fastcall
 undefined4 G_SUPolygon(undefined4, undefined4);  // 0x004C77D0  __fastcall
 undefined4 G_Polygon(undefined4, undefined4);  // 0x004C8A38  __fastcall
 undefined4 G_SPolygon(undefined4, undefined4);  // 0x004C8A74  __fastcall
+void Horizon2d(void);  // 0x004C8FD4  __cdecl
+void NoHorizon(void);  // 0x004C9224  __cdecl
 undefined4 GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C942C  __cdecl
 undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 
@@ -131,10 +135,6 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // compile and then lie about what the original function took.
 // TODO(#453): 0x0045DEDF  GG_FlushShaken -- signature not recovered
 // TODO(#453): 0x0045E13F  GG_FlushDirtyLines -- signature not recovered
-// TODO(#453): 0x00498980  G_Printf -- signature not recovered
-// TODO(#453): 0x004B7910  G_AllocBitmapBuffer -- signature not recovered
-// TODO(#453): 0x004C8FD4  Horizon2d -- signature not recovered
-// TODO(#453): 0x004C9224  NoHorizon -- signature not recovered
 // TODO(#453): 0x004C924C  SolidHorizon -- signature not recovered
 // TODO(#453): 0x004CA028  G__AC_Texture -- signature not recovered
 // TODO(#453): 0x004CAE38  G__Texture -- signature not recovered

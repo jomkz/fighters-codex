@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Flight model / physics (FM/HARD) -- FA.EXE
-// 57/58 functions have a recovered signature; 0/0 globals have a recovered type.
+// 58/58 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::flight_model {
 
@@ -56,6 +56,7 @@ undefined4 HARDUnlimited(void);  // 0x00453640  __stdcall
 undefined4 HARDPodHack(undefined4);  // 0x00453710  __fastcall
 undefined4 HARDClearUnloadedHarpoints(void);  // 0x00453800  __stdcall
 undefined4 HARDResourceName(undefined4);  // 0x00453870  __fastcall
+char * HARDStoreName(char *);  // 0x00453890  __fastcall
 undefined4 HARDSaveHumanLoads(void);  // 0x004538C0  __stdcall
 undefined4 HARDRestoreHumanLoad(void);  // 0x004539C0  __stdcall
 undefined4 HARDTotalFuel(void);  // 0x00453A70  __stdcall
@@ -70,10 +71,5 @@ undefined4 HARDRearmFortLoad(void);  // 0x00454060  __stdcall
 undefined4 ChangePlaneType(undefined4, undefined4, undefined4);  // 0x00454140  __stdcall
 long RepairTime(long);  // 0x004543A0  __fastcall
 undefined4 SelectRepairPlane(undefined4, undefined4, undefined4, undefined4);  // 0x004543C0  __stdcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x00453890  HARDStoreName -- signature not recovered
 
 }  // namespace fxe::fa::flight_model

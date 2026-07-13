@@ -11,7 +11,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0040163A,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00401650,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00401890,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
-0x004019B0,func,CDROMBenchmark,CDROMBenchmark,re,confirmed,"CD-ROM speed/transfer benchmark (""Benchmarking CD-ROM Drive"", Single/Double/Quad-Speed, KB/s)",
+0x004019B0,func,CDROMBenchmark,CDROMBenchmark,re,confirmed,"CD-ROM speed/transfer benchmark (""Benchmarking CD-ROM Drive"", Single/Double/Quad-Speed, KB/s); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","int __fastcall CDROMBenchmark(undefined4, undefined4, undefined4, undefined4)"
 0x00401F2D,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00401F38,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00401F43,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
@@ -63,10 +63,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00403F84,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00403F92,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00403FA7,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
-0x00403FE0,func,LaunchSystemProperties,LaunchSystemProperties,re,confirmed,ShellExecute sysdm.cpl (Windows System control panel),
+0x00403FE0,func,LaunchSystemProperties,LaunchSystemProperties,re,confirmed,ShellExecute sysdm.cpl (Windows System control panel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall LaunchSystemProperties(undefined4)
 0x00404020,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00404040,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
-0x00404061,func,LoadDetectionDlls,LoadDetectionDlls,re,inferred,LoadLibrary hdd.dll + cd.dll (hardware-detection helper libraries),
+0x00404061,func,LoadDetectionDlls,LoadDetectionDlls,re,confirmed,LoadLibrary hdd.dll + cd.dll (hardware-detection helper libraries); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __cdecl LoadDetectionDlls(void)
 0x004040D3,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00404230,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00404250,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
@@ -248,7 +248,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0040DAB0,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x0040DB60,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x0040DC30,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
-0x0040DC60,func,BuildSupportReport,BuildSupportReport,re,confirmed,builds the [CPU]/[VIDEO]/[SOUND]/[MODEM] system-config report and faxes/e-mails it to EA support (support@ea.com),
+0x0040DC60,func,BuildSupportReport,BuildSupportReport,re,confirmed,builds the [CPU]/[VIDEO]/[SOUND]/[MODEM] system-config report and faxes/e-mails it to EA support (support@ea.com); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall BuildSupportReport(undefined4)
 0x00410182,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x0041018A,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",
 0x00410192,func,,,waiver,confirmed,"statically-linked MFC / MSVC-CRT framework or bundled-tool internal — third-party, out of scope by license (boundary treatment)",

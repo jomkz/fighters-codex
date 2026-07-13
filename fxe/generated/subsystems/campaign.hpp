@@ -8,139 +8,139 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 11/125 functions have a recovered signature; 0/0 globals have a recovered type.
+// 118/125 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
 // --- functions -------------------------------------------------------
+undefined4 ZONEActive(undefined4);  // 0x00421D40  __fastcall
 undefined4 ZONEPickTarget(undefined4);  // 0x00422120  __stdcall
 undefined4 MAPWPListBounds(undefined4, undefined4, undefined4);  // 0x00422190  __stdcall
+void MAPAdjustObjAlt(char,char);  // 0x00422230  __fastcall
+void MAPMarkDirty(void);  // 0x00422350  __cdecl
+void MAPScreenToWorld(short *,F24_POINT3 *);  // 0x004224B3  __fastcall
+void MAPLoadBG(void);  // 0x0042256A  __cdecl
+void MAPRefreshBG(void);  // 0x004225D4  __cdecl
+void MAPFreeBG(void);  // 0x00422667  __cdecl
+void MAPSetObjWP(entity *,undefined4);  // 0x004226CB  __fastcall
+void MAPClearSelection(void);  // 0x00422828  __cdecl
+void MAPClearHover(void);  // 0x00422840  __cdecl
 undefined4 MAPAddSpecial(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042297E  __stdcall
+undefined4 MAPScreen(void);  // 0x00422A71  __cdecl
+void MAPRebuildWPLoop(u16,undefined4);  // 0x00423ED4  __fastcall
+void MAPStoreLeafTmap(void);  // 0x00423F30  __cdecl
+undefined4 MAPFindLeafTmap(u16,u16);  // 0x00423F90  __fastcall
+void MAPReadLeafTmap(void);  // 0x00423FD0  __cdecl
+void MAPSetLeafTmapPic(short);  // 0x00424040  __fastcall
+void MAPEditTmapDialog(void);  // 0x004240D0  __cdecl
+void MAPReadLeafTmap2(void);  // 0x004241A0  __cdecl
+undefined4 MAPSelWPIsPlayers(void);  // 0x004241D0  __cdecl
+undefined4 MAPObjInPlayerWing(u16);  // 0x00424220  __fastcall
+undefined4 MAPSpecialSelectable(void);  // 0x00424290  __cdecl
+void MAPResetObjects(char);  // 0x004242A0  __fastcall
+void MAPSetWPTargetPos(entity *,undefined4);  // 0x00424DE0  __fastcall
+void MAPClaimObjControl(char);  // 0x00424E60  __fastcall
+void MAPSetObjWPFlags(entity *);  // 0x00424EC0  __fastcall
+void MAPStatusText(char *);  // 0x00424F20  __fastcall
+undefined4 MAPWPOwnerIndex(undefined4);  // 0x00424FA3  __fastcall
+void MAPSnapWPToStrip(undefined4);  // 0x00425023  __fastcall
+undefined4 MAPWPNearStrip(entity *,F24_POINT3 *);  // 0x00425072  __fastcall
+undefined4 MAPPickObjIcon(short *,char);  // 0x004250CE  __fastcall
+undefined4 MAPObjVisible(u16);  // 0x00425196  __fastcall
+undefined4 MAPPickWPIcon(short *);  // 0x00425249  __fastcall
+void MAPSwapPalette(void);  // 0x0042532A  __cdecl
+void MAPDraw(char);  // 0x00425358  __fastcall
+void MAPDrawRuler(void);  // 0x00425948  __cdecl
+void MAPDrawEra(void);  // 0x00425ACD  __cdecl
+void MAPSyncSliders(void);  // 0x00425B8B  __cdecl
+void MAPRedrawSelection(void);  // 0x00425C0A  __cdecl
+void MAPDrawTargetLink(u16,short *);  // 0x00426277  __fastcall
+void MAPDrawAllPaths(void);  // 0x004262DE  __cdecl
+void MAPDrawObjPath(undefined4);  // 0x00426325  __fastcall
 undefined4 MAPDrawWPIcon(undefined4, undefined4, undefined4, undefined4);  // 0x0042648F  __stdcall
+void MAPSetSelection(u16,undefined4,undefined4);  // 0x0042658D  __fastcall
+void MAPStepSelection(int);  // 0x004265C1  __fastcall
+undefined4 MAPAssignWPTarget(u16);  // 0x00426696  __fastcall
+void MAPInsertWP(void);  // 0x004267E4  __cdecl
+undefined4 MAPObjEditable(u16,int);  // 0x00426ACB  __fastcall
+undefined4 MAPObjEditableP(u16);  // 0x00426B70  __fastcall
+void MAPInitWPSpeed(undefined4);  // 0x00426BF0  __fastcall
+void MAPSetWPFormationParams(undefined4,int);  // 0x00426C45  __fastcall
+void MAPDeleteWP(void);  // 0x00426C6D  __cdecl
+undefined4 MAPRequirePlayerPlane(void);  // 0x00426D6D  __cdecl
 undefined4 MAPHasFlyablePlane(undefined4, undefined4);  // 0x00426D98  __stdcall
+void MAPMakeSelPlayer(void);  // 0x00426DE2  __cdecl
+undefined4 MAPAddObject(char,short);  // 0x00426E37  __fastcall
+void MAPDeleteObject(u16,char);  // 0x00427195  __fastcall
+void MAPWPButtons(short,u16);  // 0x004271ED  __fastcall
+undefined4 MAPWPFormationIndex(undefined4);  // 0x004276A0  __fastcall
 undefined4 MAPQuantizeAlt(undefined4, undefined4, undefined4);  // 0x004276E9  __stdcall
+void MAPQuantizeToTable(undefined4,int);  // 0x00427721  __fastcall
+void MAPObjButtons(short,u16);  // 0x00427769  __fastcall
+undefined4 MAPObjCampaignLocked(u16);  // 0x004281DD  __fastcall
+undefined4 MAPObjEditableCheck(u16);  // 0x00428270  __fastcall
+void MAPCenterOnPlayer(void);  // 0x00428340  __cdecl
+void MISSIONLoad(char *);  // 0x00428412  __fastcall
+undefined4 MAPSaveMission(char);  // 0x004284CA  __fastcall
+void MAPDragItem(void);  // 0x0042866A  __cdecl
+void MAPSelWorldPos(F24_POINT3 *);  // 0x004289EE  __fastcall
+void MAPDrawSelInfo(char);  // 0x00428A3B  __fastcall
+void MAPBuildWPInfo(void);  // 0x00428AEF  __cdecl
+undefined4 MAPFormatWPTarget(undefined4,char *);  // 0x00429245  __fastcall
 undefined4 MAPFormatReactFlags(undefined4, undefined4, undefined4, undefined4);  // 0x004292D2  __stdcall
+void MAPBuildObjInfo(void);  // 0x0042934C  __cdecl
+undefined4 MAPMissionMenu(void);  // 0x00429DDE  __cdecl
+void MAPRandomizeSkill(u8,char,short);  // 0x0042A656  __fastcall
+void MAPLoadMissionDialog(void);  // 0x0042A71A  __cdecl
+void MAPDlgWeather(void);  // 0x0042A780  __cdecl
+void MAPDlgEndTime(void);  // 0x0042A93A  __cdecl
+void MAPDlgRevive(void);  // 0x0042A9C4  __cdecl
+void MAPDlgReviveDelay(void);  // 0x0042AA50  __cdecl
+void MAPDlgReviveDist(void);  // 0x0042AADC  __cdecl
+void MAPDlgEndKills(void);  // 0x0042AB68  __cdecl
+void MAPDlgEndKillType(void);  // 0x0042ABF4  __cdecl
+void MAPDlgNatoFighters(void);  // 0x0042AC80  __cdecl
+void MAPDlgScoring(void);  // 0x0042AD35  __cdecl
+void MAPWingRejoin(void);  // 0x0042AE3F  __cdecl
+void MAPWingSetLeader(void);  // 0x0042AEDF  __cdecl
+void MAPWingAdd(short);  // 0x0042AF86  __fastcall
+void MAPGroupRejoin(void);  // 0x0042B056  __cdecl
+void MAPGroupSetLeader(void);  // 0x0042B0F6  __cdecl
+void MAPGroupAdd(short);  // 0x0042B19D  __fastcall
+void MAPDeleteSpecial(void);  // 0x0042B275  __cdecl
+undefined4 PilotFindFreeSlot(void);  // 0x00467240  __cdecl
+undefined4 PilotBuildPaper(undefined4,int);  // 0x004674F0  __fastcall
+void PilotPaperAddLine(undefined4 *,undefined4 *);  // 0x00467860  __fastcall
+void PilotPaperEndLine(undefined4 *,undefined4 *);  // 0x00467880  __fastcall
+undefined4 PilotListAddAvail(char *);  // 0x00467E30  __fastcall
+void PilotListAddUnavail(char *);  // 0x00468C40  __fastcall
+void PilotMakeCopyName(char *);  // 0x00468CA0  __fastcall
+void PilotStripCopySuffix(char *,char *);  // 0x00468DF0  __fastcall
 undefined4 PilotLoadBySortIndex(undefined4, undefined4, undefined4);  // 0x00468E40  __stdcall
+void PilotFormatRank(undefined4 *);  // 0x00468F00  __fastcall
+undefined4 PilotDiskSpaceError(int);  // 0x00468F40  __fastcall
+void PilotSetField(undefined4,char);  // 0x00468F80  __cdecl
 undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
 undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
+undefined4 MISSIONEnemiesAlive(void);  // 0x00481A7B  __cdecl
+void TextNextToken(char *);  // 0x00483C90  __fastcall
+undefined4 TextIsDelim(char);  // 0x00483D10  __fastcall
+void TextNextNumber(void);  // 0x00483D30  __cdecl
 undefined4 TextTokenToValue(undefined4);  // 0x00483D50  __stdcall
+void CampaignAccumStats(void);  // 0x00485380  __cdecl
+void StatsAddPair(int *,int *);  // 0x004854A0  __fastcall
+undefined4 StatsBucketFor(int,u16,u16);  // 0x004856F0  __fastcall
+undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x00421D40  ZONEActive -- signature not recovered
 // TODO(#453): 0x00421DE0  ZONEServiceRange -- signature not recovered
-// TODO(#453): 0x00422230  MAPAdjustObjAlt -- signature not recovered
-// TODO(#453): 0x00422350  MAPMarkDirty -- signature not recovered
-// TODO(#453): 0x004224B3  MAPScreenToWorld -- signature not recovered
-// TODO(#453): 0x0042256A  MAPLoadBG -- signature not recovered
-// TODO(#453): 0x004225D4  MAPRefreshBG -- signature not recovered
-// TODO(#453): 0x00422667  MAPFreeBG -- signature not recovered
-// TODO(#453): 0x004226CB  MAPSetObjWP -- signature not recovered
 // TODO(#453): 0x004226EE  MAPSetFormationWP -- signature not recovered
-// TODO(#453): 0x00422828  MAPClearSelection -- signature not recovered
-// TODO(#453): 0x00422840  MAPClearHover -- signature not recovered
-// TODO(#453): 0x00422A71  MAPScreen -- signature not recovered
-// TODO(#453): 0x00423ED4  MAPRebuildWPLoop -- signature not recovered
-// TODO(#453): 0x00423F30  MAPStoreLeafTmap -- signature not recovered
-// TODO(#453): 0x00423F90  MAPFindLeafTmap -- signature not recovered
-// TODO(#453): 0x00423FD0  MAPReadLeafTmap -- signature not recovered
-// TODO(#453): 0x00424040  MAPSetLeafTmapPic -- signature not recovered
-// TODO(#453): 0x004240D0  MAPEditTmapDialog -- signature not recovered
-// TODO(#453): 0x004241A0  MAPReadLeafTmap2 -- signature not recovered
-// TODO(#453): 0x004241D0  MAPSelWPIsPlayers -- signature not recovered
-// TODO(#453): 0x00424220  MAPObjInPlayerWing -- signature not recovered
-// TODO(#453): 0x00424290  MAPSpecialSelectable -- signature not recovered
-// TODO(#453): 0x004242A0  MAPResetObjects -- signature not recovered
-// TODO(#453): 0x00424DE0  MAPSetWPTargetPos -- signature not recovered
-// TODO(#453): 0x00424E60  MAPClaimObjControl -- signature not recovered
-// TODO(#453): 0x00424EC0  MAPSetObjWPFlags -- signature not recovered
-// TODO(#453): 0x00424F20  MAPStatusText -- signature not recovered
-// TODO(#453): 0x00424FA3  MAPWPOwnerIndex -- signature not recovered
-// TODO(#453): 0x00425023  MAPSnapWPToStrip -- signature not recovered
-// TODO(#453): 0x00425072  MAPWPNearStrip -- signature not recovered
 // TODO(#453): 0x00425096  MAPScreenSpan -- signature not recovered
-// TODO(#453): 0x004250CE  MAPPickObjIcon -- signature not recovered
-// TODO(#453): 0x00425196  MAPObjVisible -- signature not recovered
-// TODO(#453): 0x00425249  MAPPickWPIcon -- signature not recovered
-// TODO(#453): 0x0042532A  MAPSwapPalette -- signature not recovered
-// TODO(#453): 0x00425358  MAPDraw -- signature not recovered
-// TODO(#453): 0x00425948  MAPDrawRuler -- signature not recovered
 // TODO(#453): 0x00425A8F  MAPIconRadius -- signature not recovered
-// TODO(#453): 0x00425ACD  MAPDrawEra -- signature not recovered
-// TODO(#453): 0x00425B8B  MAPSyncSliders -- signature not recovered
-// TODO(#453): 0x00425C0A  MAPRedrawSelection -- signature not recovered
 // TODO(#453): 0x00425C77  MAPDrawObjIcon -- signature not recovered
-// TODO(#453): 0x00426277  MAPDrawTargetLink -- signature not recovered
-// TODO(#453): 0x004262DE  MAPDrawAllPaths -- signature not recovered
-// TODO(#453): 0x00426325  MAPDrawObjPath -- signature not recovered
-// TODO(#453): 0x0042658D  MAPSetSelection -- signature not recovered
-// TODO(#453): 0x004265C1  MAPStepSelection -- signature not recovered
-// TODO(#453): 0x00426696  MAPAssignWPTarget -- signature not recovered
-// TODO(#453): 0x004267E4  MAPInsertWP -- signature not recovered
-// TODO(#453): 0x00426ACB  MAPObjEditable -- signature not recovered
-// TODO(#453): 0x00426B70  MAPObjEditableP -- signature not recovered
-// TODO(#453): 0x00426BF0  MAPInitWPSpeed -- signature not recovered
-// TODO(#453): 0x00426C45  MAPSetWPFormationParams -- signature not recovered
-// TODO(#453): 0x00426C6D  MAPDeleteWP -- signature not recovered
-// TODO(#453): 0x00426D6D  MAPRequirePlayerPlane -- signature not recovered
-// TODO(#453): 0x00426DE2  MAPMakeSelPlayer -- signature not recovered
-// TODO(#453): 0x00426E37  MAPAddObject -- signature not recovered
-// TODO(#453): 0x00427195  MAPDeleteObject -- signature not recovered
-// TODO(#453): 0x004271ED  MAPWPButtons -- signature not recovered
-// TODO(#453): 0x004276A0  MAPWPFormationIndex -- signature not recovered
-// TODO(#453): 0x00427721  MAPQuantizeToTable -- signature not recovered
-// TODO(#453): 0x00427769  MAPObjButtons -- signature not recovered
-// TODO(#453): 0x004281DD  MAPObjCampaignLocked -- signature not recovered
-// TODO(#453): 0x00428270  MAPObjEditableCheck -- signature not recovered
 // TODO(#453): 0x004282D0  MAPToggleObjControl -- signature not recovered
-// TODO(#453): 0x00428340  MAPCenterOnPlayer -- signature not recovered
-// TODO(#453): 0x00428412  MISSIONLoad -- signature not recovered
-// TODO(#453): 0x004284CA  MAPSaveMission -- signature not recovered
-// TODO(#453): 0x0042866A  MAPDragItem -- signature not recovered
-// TODO(#453): 0x004289EE  MAPSelWorldPos -- signature not recovered
-// TODO(#453): 0x00428A3B  MAPDrawSelInfo -- signature not recovered
-// TODO(#453): 0x00428AEF  MAPBuildWPInfo -- signature not recovered
-// TODO(#453): 0x00429245  MAPFormatWPTarget -- signature not recovered
-// TODO(#453): 0x0042934C  MAPBuildObjInfo -- signature not recovered
-// TODO(#453): 0x00429DDE  MAPMissionMenu -- signature not recovered
-// TODO(#453): 0x0042A656  MAPRandomizeSkill -- signature not recovered
-// TODO(#453): 0x0042A71A  MAPLoadMissionDialog -- signature not recovered
-// TODO(#453): 0x0042A780  MAPDlgWeather -- signature not recovered
-// TODO(#453): 0x0042A93A  MAPDlgEndTime -- signature not recovered
-// TODO(#453): 0x0042A9C4  MAPDlgRevive -- signature not recovered
-// TODO(#453): 0x0042AA50  MAPDlgReviveDelay -- signature not recovered
-// TODO(#453): 0x0042AADC  MAPDlgReviveDist -- signature not recovered
-// TODO(#453): 0x0042AB68  MAPDlgEndKills -- signature not recovered
-// TODO(#453): 0x0042ABF4  MAPDlgEndKillType -- signature not recovered
-// TODO(#453): 0x0042AC80  MAPDlgNatoFighters -- signature not recovered
-// TODO(#453): 0x0042AD35  MAPDlgScoring -- signature not recovered
-// TODO(#453): 0x0042AE3F  MAPWingRejoin -- signature not recovered
-// TODO(#453): 0x0042AEDF  MAPWingSetLeader -- signature not recovered
-// TODO(#453): 0x0042AF86  MAPWingAdd -- signature not recovered
-// TODO(#453): 0x0042B056  MAPGroupRejoin -- signature not recovered
-// TODO(#453): 0x0042B0F6  MAPGroupSetLeader -- signature not recovered
-// TODO(#453): 0x0042B19D  MAPGroupAdd -- signature not recovered
-// TODO(#453): 0x0042B275  MAPDeleteSpecial -- signature not recovered
-// TODO(#453): 0x00467240  PilotFindFreeSlot -- signature not recovered
-// TODO(#453): 0x004674F0  PilotBuildPaper -- signature not recovered
-// TODO(#453): 0x00467860  PilotPaperAddLine -- signature not recovered
-// TODO(#453): 0x00467880  PilotPaperEndLine -- signature not recovered
-// TODO(#453): 0x00467E30  PilotListAddAvail -- signature not recovered
-// TODO(#453): 0x00468C40  PilotListAddUnavail -- signature not recovered
-// TODO(#453): 0x00468CA0  PilotMakeCopyName -- signature not recovered
-// TODO(#453): 0x00468DF0  PilotStripCopySuffix -- signature not recovered
-// TODO(#453): 0x00468F00  PilotFormatRank -- signature not recovered
-// TODO(#453): 0x00468F40  PilotDiskSpaceError -- signature not recovered
-// TODO(#453): 0x00468F80  PilotSetField -- signature not recovered
 // TODO(#453): 0x0047FAAE  JOGCFetchMission -- signature not recovered
-// TODO(#453): 0x00481A7B  MISSIONEnemiesAlive -- signature not recovered
-// TODO(#453): 0x00483C90  TextNextToken -- signature not recovered
-// TODO(#453): 0x00483D10  TextIsDelim -- signature not recovered
-// TODO(#453): 0x00483D30  TextNextNumber -- signature not recovered
-// TODO(#453): 0x00485380  CampaignAccumStats -- signature not recovered
-// TODO(#453): 0x004854A0  StatsAddPair -- signature not recovered
-// TODO(#453): 0x004856F0  StatsBucketFor -- signature not recovered
-// TODO(#453): 0x004867D0  MISSIONPlayerSlot -- signature not recovered
 
 }  // namespace fxe::fa::campaign

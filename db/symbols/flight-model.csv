@@ -44,7 +44,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00453710,func,@HARDPodHack@4,HARDPodHack,sms,confirmed,,undefined4 __fastcall HARDPodHack(undefined4)
 0x00453800,func,_HARDClearUnloadedHarpoints@0,HARDClearUnloadedHarpoints,sms,confirmed,,undefined4 __stdcall HARDClearUnloadedHarpoints(void)
 0x00453870,func,@HARDResourceName@4,HARDResourceName,sms,confirmed,,undefined4 __fastcall HARDResourceName(undefined4)
-0x00453890,func,HARDStoreName,,re,inferred,"resolve a hardpoint store's resource-name string via _NextString (name at +5 for loaded stores, +1 otherwise)",
+0x00453890,func,HARDStoreName,,re,confirmed,"resolve a hardpoint store's resource-name string via _NextString (name at +5 for loaded stores, +1 otherwise); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",char * __fastcall HARDStoreName(char *)
 0x004538C0,func,_HARDSaveHumanLoads@0,HARDSaveHumanLoads,sms,confirmed,,undefined4 __stdcall HARDSaveHumanLoads(void)
 0x004538CB,func,,,waiver,confirmed,Ghidra split tail of _HARDSaveHumanLoads@0 (0x4538C0) — the human-loadout save loop,
 0x004539C0,func,_HARDRestoreHumanLoad@0,HARDRestoreHumanLoad,sms,confirmed,,undefined4 __stdcall HARDRestoreHumanLoad(void)

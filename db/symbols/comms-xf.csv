@@ -70,7 +70,7 @@ va,kind,name,display,source,confidence,notes,type
 0x10005B20,func,dos_getfiledatetime,dos_getfiledatetime,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getfiledatetime(undefined4, undefined4, undefined4)"
 0x10005BC0,func,dos_getfirstfile,dos_getfirstfile,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_getfirstfile(undefined4, undefined4, undefined4)"
 0x10005C70,func,dos_getnextfile,dos_getnextfile,re,confirmed,Cdrv comms driver (file transfer) public export,undefined4 __stdcall dos_getnextfile(undefined4)
-0x10005DA0,func,dos_gettime,dos_gettime,re,confirmed,Cdrv comms driver (file transfer) public export,
+0x10005DA0,func,dos_gettime,dos_gettime,re,confirmed,Cdrv comms driver (file transfer) public export; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __stdcall dos_gettime(undefined4 *, undefined4 *, undefined4 *, undefined4 *)"
 0x10005E00,func,dos_open,dos_open,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_open(undefined4, undefined4)"
 0x10005EA0,func,dos_read,dos_read,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_read(undefined4, undefined4, undefined4)"
 0x10005EE0,func,dos_rename,dos_rename,re,confirmed,Cdrv comms driver (file transfer) public export,"undefined4 __stdcall dos_rename(undefined4, undefined4)"

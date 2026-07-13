@@ -8,18 +8,32 @@
 #include "../fa_types.hpp"
 
 // Wingman / group AI (WNG/GRP) -- FA.EXE
-// 23/38 functions have a recovered signature; 0/1 globals have a recovered type.
+// 37/38 functions have a recovered signature; 0/1 globals have a recovered type.
 
 namespace fxe::fa::wingman {
 
 // --- functions -------------------------------------------------------
 undefined4 WNGInit(void);  // 0x0045E460  __stdcall
 undefined4 WNGAdd(undefined4, undefined4);  // 0x0045E490  __stdcall
+void WNGRemove(void);  // 0x0045E520  __cdecl
+u16 WNGLeader(s16);  // 0x0045E630  __fastcall
+u16 WNGWingman(u16);  // 0x0045E690  __fastcall
 undefined4 WNGWingmen(undefined4, undefined4);  // 0x0045E6E0  __stdcall
 undefined4 WNGPart(undefined4, undefined4, undefined4);  // 0x0045E710  __stdcall
+int WNGWingmenNearby(u16);  // 0x0045E790  __fastcall
+u8 WNGControl(char);  // 0x0045E8A0  __fastcall
 undefined4 WNGLeaderLanding(void);  // 0x0045E8F0  __stdcall
 undefined4 WNGFormationMove(undefined4, undefined4, undefined4);  // 0x0045E970  __stdcall
+void WNGSetControl(u8, char);  // 0x0045EAC0  __fastcall
+void WNGSetType(u8);  // 0x0045EB30  __fastcall
+void WNGSetSpacingH(u16);  // 0x0045EB70  __fastcall
+void WNGSetSpacingV(u16);  // 0x0045EBB0  __fastcall
+void WNGSetStateTarget(u8, u16);  // 0x0045EBF0  __fastcall
 undefined4 WNGSendWM(undefined4, undefined4);  // 0x0045ED90  __stdcall
+char WNGResponseSize(void);  // 0x0045EEF0  __cdecl
+int WNGAttackingObj(u16);  // 0x0045EF20  __fastcall
+void WNGHumansFirst(int);  // 0x0045EFB0  __fastcall
+u8 WNGInHumanWing(u16);  // 0x0045F030  __fastcall
 undefined4 WNGPlayerWM(void);  // 0x0045F090  __stdcall
 undefined4 GRPInit(void);  // 0x0045F190  __stdcall
 undefined4 GRPAdd(undefined4, undefined4);  // 0x0045F1C0  __stdcall
@@ -40,20 +54,6 @@ undefined4 GRPHumansFirst(undefined4);  // 0x0045FCE0  __fastcall
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x0045E520  WNGRemove -- signature not recovered
-// TODO(#453): 0x0045E630  WNGLeader -- signature not recovered
-// TODO(#453): 0x0045E690  WNGWingman -- signature not recovered
-// TODO(#453): 0x0045E790  WNGWingmenNearby -- signature not recovered
-// TODO(#453): 0x0045E8A0  WNGControl -- signature not recovered
-// TODO(#453): 0x0045EAC0  WNGSetControl -- signature not recovered
-// TODO(#453): 0x0045EB30  WNGSetType -- signature not recovered
-// TODO(#453): 0x0045EB70  WNGSetSpacingH -- signature not recovered
-// TODO(#453): 0x0045EBB0  WNGSetSpacingV -- signature not recovered
-// TODO(#453): 0x0045EBF0  WNGSetStateTarget -- signature not recovered
-// TODO(#453): 0x0045EEF0  WNGResponseSize -- signature not recovered
-// TODO(#453): 0x0045EF20  WNGAttackingObj -- signature not recovered
-// TODO(#453): 0x0045EFB0  WNGHumansFirst -- signature not recovered
-// TODO(#453): 0x0045F030  WNGInHumanWing -- signature not recovered
 // TODO(#453): 0x0045F100  WNGName -- signature not recovered
 // TODO(#455): 0x00546AB8  _wmNameBuf -- type not recovered
 

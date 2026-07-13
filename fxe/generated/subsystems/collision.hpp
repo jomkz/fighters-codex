@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Collision (COL) -- FA.EXE
-// 15/19 functions have a recovered signature; 20/38 globals have a recovered type.
+// 18/19 functions have a recovered signature; 20/38 globals have a recovered type.
 
 namespace fxe::fa::collision {
 
@@ -37,8 +37,11 @@ extern undefined2 colObjBox;  // 0x00537254  hit box pointer
 // --- functions -------------------------------------------------------
 undefined4 Collision(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042B800  __stdcall
 undefined4 COLSetAngle(undefined4, undefined4);  // 0x0042BD30  __fastcall
+void COLTestTerrainCell(F24_POINT3 *, F24_POINT3 *, int, int);  // 0x0042BFC0  __fastcall
 undefined4 COLTestTerrainTri(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042C1A0  __stdcall
 undefined4 COLClipSegToCell(undefined4, undefined4, undefined4, undefined4);  // 0x0042C420  __stdcall
+void COLTestObjects(void);  // 0x0042C840  __cdecl
+u8 COLTestObj(short);  // 0x0042C9B0  __fastcall
 undefined4 COLClipSegToBox(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042D050  __stdcall
 char COLFlatGround(long, F24_POINT3 *, F24_POINT3 *, F24_POINT3 *);  // 0x0042DDA0  __fastcall
 undefined4 COLRecordHit(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042DE60  __stdcall
@@ -55,9 +58,6 @@ undefined4 COLRemoveCurObj(void);  // 0x0042E5C0  __fastcall
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x0042BDC0  COLSweepTerrain -- signature not recovered
-// TODO(#453): 0x0042BFC0  COLTestTerrainCell -- signature not recovered
-// TODO(#453): 0x0042C840  COLTestObjects -- signature not recovered
-// TODO(#453): 0x0042C9B0  COLTestObj -- signature not recovered
 // TODO(#455): 0x00536730  _colRayEndX -- type not recovered
 // TODO(#455): 0x00536734  _colRayEndY -- type not recovered
 // TODO(#455): 0x00536738  _colRayEndZ -- type not recovered

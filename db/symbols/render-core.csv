@@ -6,26 +6,26 @@ va,kind,name,display,source,confidence,notes,type
 0x004CD7B4,func,acos,,re,confirmed,arccos via DAT_00515dcc table lookup+lerp,
 0x004CD834,func,@GRSetLightSource@4,GRSetLightSource,sms,confirmed,store world light dir into _worldLightSource/515ED2/515ED4,undefined4 __fastcall GRSetLightSource(undefined4)
 0x004CD854,func,SetShading,,re,confirmed,thin wrapper -> SetShadingTable (renderer span); rebuilds shade LUT,
-0x004CD8B0,func,_Sun,Sun,re,confirmed,lighting dot product of _worldLightSource against current matrix rows (518384/38A/390),
-0x004CD8F0,func,clip_edge_right,,re,inferred,Sutherland-Hodgman clip vs screen edge (outcode bit4); vbuf/vbuf2 ping-pong; calls ecode_pnt,
-0x004CD9DA,func,clip_edge_left,,re,inferred,S-H clip vs screen edge (outcode bit8); vbuf ping-pong,
-0x004CDAC6,func,clip_edge_top,,re,inferred,S-H clip vs screen edge (outcode bit2); vbuf ping-pong,
-0x004CDBB3,func,clip_edge_bottom,,re,inferred,S-H clip vs screen edge (outcode bit1); vbuf ping-pong,
+0x004CD8B0,func,_Sun,Sun,re,inferred,lighting dot product of _worldLightSource against current matrix rows (518384/38A/390); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl Sun(void)
+0x004CD8F0,func,clip_edge_right,,re,confirmed,Sutherland-Hodgman clip vs screen edge (outcode bit4); vbuf/vbuf2 ping-pong; calls ecode_pnt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl clip_edge_right(void)
+0x004CD9DA,func,clip_edge_left,,re,confirmed,S-H clip vs screen edge (outcode bit8); vbuf ping-pong; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl clip_edge_left(void)
+0x004CDAC6,func,clip_edge_top,,re,confirmed,S-H clip vs screen edge (outcode bit2); vbuf ping-pong; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl clip_edge_top(void)
+0x004CDBB3,func,clip_edge_bottom,,re,confirmed,S-H clip vs screen edge (outcode bit1); vbuf ping-pong; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl clip_edge_bottom(void)
 0x004CDCA8,func,do_nop,,sms,confirmed,SH opcode 0x34 no-op handler,
-0x004CDCB8,func,render_3d,,re,confirmed,scene traversal: sets viewport from _cb clip box; inits sort list; T_AddYourObjs; dispatches dddEntry via vector_table; painter-sorts cur_sort_list then draws via PTR_FUN_0051839c,
-0x004CDEB4,func,setup_view_projection,,re,inferred,per-frame view/projection setup (aspect/head vectors/frustum) from zoom + screen dims,
+0x004CDCB8,func,render_3d,,re,confirmed,scene traversal: sets viewport from _cb clip box; inits sort list; T_AddYourObjs; dispatches dddEntry via vector_table; painter-sorts cur_sort_list then draws via PTR_FUN_0051839c; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl render_3d(void)
+0x004CDEB4,func,setup_view_projection,,re,confirmed,per-frame view/projection setup (aspect/head vectors/frustum) from zoom + screen dims; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl setup_view_projection(void)
 0x004CE4A8,func,set_render_mode,,re,inferred,tail into check_flat body; installs perspective-path rasterizer fn-ptr table (5184AC-518674/5185F0-51861C),
-0x004CE4B4,func,check_flat,,re,confirmed,pick flat vs perspective render path from matrix (m4=m2=m8=m6=0 && m5~0x7FFF); swaps the rasterizer fn-ptr dispatch tables; sets DAT_00518679/515F84,
+0x004CE4B4,func,check_flat,,re,confirmed,pick flat vs perspective render path from matrix (m4=m2=m8=m6=0 && m5~0x7FFF); swaps the rasterizer fn-ptr dispatch tables; sets DAT_00518679/515F84; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl check_flat(void)
 0x004CE784,func,load_normal_table,,re,inferred,copy lighting normal_table (or DAT_00518620 variant) into working DAT_00518484 by in_AL selector,
 0x004CE7BC,func,load_xlate_rotate_pnt,,re,confirmed,hand-asm vertex load+translate+rotate helper (axis-select on DAT_00515f84),
 0x004CE7F7,func,mxmul,,re,confirmed,hand-asm matrix*scalar accumulate helper (axis-select),
-0x004CE89C,func,compute_axis_check,,re,inferred,derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant,
-0x004CE968,func,sort_objs_wrapper,,re,inferred,painter depth sort wrapper over _SortObjs_8,
-0x004CEB00,func,rotate_vec_roll,,re,inferred,rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll,
+0x004CE89C,func,compute_axis_check,,re,confirmed,derive axis_check_type from dominant matrix axis (m3/m6/m9 vs aspect); selects transform/cull variant; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl compute_axis_check(void)
+0x004CE968,func,sort_objs_wrapper,,re,confirmed,painter depth sort wrapper over _SortObjs_8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl sort_objs_wrapper(void)
+0x004CEB00,func,rotate_vec_roll,,re,inferred,rotate _xv/_zv by cached sin/cos (roll axis) helper of rotate_matrix_roll; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl rotate_vec_roll(void)
 0x004CEB70,func,rotate_matrix_roll,,re,inferred,object-instancing: concat roll rotation into current matrix (m1..m9) via sincos,
-0x004CED44,func,rotate_vec_pitch,,re,inferred,rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch,
+0x004CED44,func,rotate_vec_pitch,,re,inferred,rotate _yv/_zv (pitch axis) helper of rotate_matrix_pitch; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl rotate_vec_pitch(void)
 0x004CEDB8,func,rotate_matrix_pitch,,re,inferred,object-instancing: concat pitch rotation into current matrix via sincos,
-0x004CEF8C,func,rotate_vec_yaw,,re,inferred,rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw,
+0x004CEF8C,func,rotate_vec_yaw,,re,inferred,rotate _xv/_yv (yaw axis) helper of rotate_matrix_yaw; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl rotate_vec_yaw(void)
 0x004CF000,func,rotate_matrix_yaw,,re,inferred,object-instancing: concat yaw rotation into current matrix via sincos,
 0x004CF270,func,code_pnt,,re,confirmed,compute 5-bit frustum outcode of a projected point (BP/BX bounds),
 0x004CF2A4,func,ecode_pnt,,re,confirmed,extended outcode (near-plane aware) returned in AL; used by clippers,
@@ -127,8 +127,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004D478C,func,do_force_no_pmap,,sms,confirmed,SH opcode 0x46 (sets _force_no_pmap),
 0x004D47A4,func,do_streamer_def,,sms,confirmed,SH opcode 0xCE (streamer/contrail define),
 0x004D47B8,func,do_streamer_draw,,sms,confirmed,SH opcode 0xD0 (streamer/contrail draw),
-0x004D4874,func,_NeedClip,NeedClip,re,confirmed,helper: mark clip needed,
-0x004D4888,func,_RestoreClip,RestoreClip,re,confirmed,helper: restore prior clip state,
+0x004D4874,func,_NeedClip,NeedClip,re,confirmed,helper: mark clip needed; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NeedClip(void)
+0x004D4888,func,_RestoreClip,RestoreClip,re,inferred,helper: restore prior clip state; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl RestoreClip(void)
 0x004D4894,func,do_screen_coords,,sms,confirmed,SH opcode 0xD2 (project to screen coords),
 0x004D4988,func,do_texture_index,,re,inferred,SH opcode 0xE0 (TextureIndex): select current texture by index,
 0x004D49C0,func,do_texture_file,,re,inferred,SH opcode 0xE2 (TextureFile): set current texture by 14-byte name,
@@ -138,10 +138,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004D4A6D,func,do_brush_area_full,,sms,confirmed,SH opcode 0xE6,
 0x004D4ACA,func,sh_op_DC,,re,inferred,SH opcode 0xDC handler (UnkDC; 610 bytes; textured-fill path),
 0x004D4D2C,func,sh_op_DE,,re,inferred,SH opcode 0xDE handler (perspective textured-fill; 723 bytes),
-0x004D4FFF,func,shade_span_a,,re,inferred,do_new_smap/rmap shade-span builder variant A,
-0x004D511B,func,shade_span_b,,re,inferred,do_new_smap/rmap shade-span builder variant B,
-0x004D523B,func,shade_span_c,,re,inferred,do_new_smap/rmap shade-span builder variant C,
-0x004D5356,func,shade_span_d,,re,inferred,do_new_smap/rmap shade-span builder variant D,
+0x004D4FFF,func,shade_span_a,,re,inferred,do_new_smap/rmap shade-span builder variant A; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl shade_span_a(void)
+0x004D511B,func,shade_span_b,,re,inferred,do_new_smap/rmap shade-span builder variant B; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl shade_span_b(void)
+0x004D523B,func,shade_span_c,,re,inferred,do_new_smap/rmap shade-span builder variant C; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl shade_span_c(void)
+0x004D5356,func,shade_span_d,,re,inferred,do_new_smap/rmap shade-span builder variant D; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl shade_span_d(void)
 0x004D5475,func,do_new_smap,,sms,confirmed,SH opcode 0xE8 (shade map),
 0x004D5644,func,do_new_rmap,,sms,confirmed,SH opcode 0xEA (remap; 872 bytes),
 0x004D59AC,func,do_new_pmap_or_tmap,,sms,confirmed,SH opcodes 0x36/0x3E (perspective/texture map),
@@ -160,10 +160,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004D65C4,func,@Sqrt@4,Sqrt,sms,confirmed,,undefined4 __fastcall Sqrt(undefined4)
 0x004D6640,func,do_nt,,sms,confirmed,SH opcode 0xFE (terrain node/tile): read tile verts; compute bbox+sort key; insert into sort list; draw_quad or draw_tri_nw+se by diagonal,
 0x004D69EC,func,__compute_viewer_dot_product,,re,confirmed,backface cull: face-normal dot (vertex - viewer) for do_nt tiles,
-0x004D6A38,func,draw_quad,,re,confirmed,assemble 4-vertex tile working set -> draw_nt,
-0x004D6A90,func,draw_tri_nw,,re,confirmed,assemble NW-triangle working set -> draw_nt,
-0x004D6B24,func,draw_tri_se,,re,confirmed,assemble SE-triangle working set -> draw_nt,
-0x004D6BB8,func,draw_nt,,re,confirmed,build terrain-tile polygon (flat/gouraud/textured) from working set and submit to the 2D rasterizer,
+0x004D6A38,func,draw_quad,,re,inferred,assemble 4-vertex tile working set -> draw_nt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl draw_quad(void)
+0x004D6A90,func,draw_tri_nw,,re,inferred,assemble NW-triangle working set -> draw_nt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl draw_tri_nw(void)
+0x004D6B24,func,draw_tri_se,,re,inferred,assemble SE-triangle working set -> draw_nt; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl draw_tri_se(void)
+0x004D6BB8,func,draw_nt,,re,inferred,build terrain-tile polygon (flat/gouraud/textured) from working set and submit to the 2D rasterizer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl draw_nt(void)
 0x0050DE10,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem,
 0x0050DE14,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem,
 0x0050DE18,data,,,waiver,confirmed,interior of / adjacent to _cjt; named at its base or owned by that subsystem,

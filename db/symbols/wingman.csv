@@ -1,26 +1,26 @@
 va,kind,name,display,source,confidence,notes,type
 0x0045E460,func,_WNGInit@0,WNGInit,sms,confirmed,,undefined4 __stdcall WNGInit(void)
 0x0045E490,func,_WNGAdd@8,WNGAdd,sms,confirmed,,"undefined4 __stdcall WNGAdd(undefined4, undefined4)"
-0x0045E520,func,WNGRemove,,re,confirmed,remove _curId from a wing; MSGSend 0x14 handoff (twin of GRPRemove),
-0x0045E630,func,WNGLeader,,re,confirmed,first live member of a wing (twin of GRPLeader),
-0x0045E690,func,WNGWingman,,re,inferred,undetected twin of GRPWingman; materialized on apply,
+0x0045E520,func,WNGRemove,,re,confirmed,remove _curId from a wing; MSGSend 0x14 handoff (twin of GRPRemove); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl WNGRemove(void)
+0x0045E630,func,WNGLeader,,re,confirmed,first live member of a wing (twin of GRPLeader); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u16 __fastcall WNGLeader(s16)
+0x0045E690,func,WNGWingman,,re,confirmed,undetected twin of GRPWingman; materialized on apply; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u16 __fastcall WNGWingman(u16)
 0x0045E6E0,func,_WNGWingmen@8,WNGWingmen,sms,confirmed,,"undefined4 __stdcall WNGWingmen(undefined4, undefined4)"
 0x0045E710,func,_WNGPart@12,WNGPart,sms,confirmed,,"undefined4 __stdcall WNGPart(undefined4, undefined4, undefined4)"
-0x0045E790,func,WNGWingmenNearby,,re,confirmed,count wingmen within distance/alt (twin of GRPWingmenNearby),
-0x0045E8A0,func,WNGControl,,re,confirmed,"if wingman, optional FormationMove; return formControl (twin of GRPControl)",
+0x0045E790,func,WNGWingmenNearby,,re,confirmed,count wingmen within distance/alt (twin of GRPWingmenNearby); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __fastcall WNGWingmenNearby(u16)
+0x0045E8A0,func,WNGControl,,re,confirmed,"if wingman, optional FormationMove; return formControl (twin of GRPControl); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",u8 __fastcall WNGControl(char)
 0x0045E8F0,func,_WNGLeaderLanding@0,WNGLeaderLanding,sms,confirmed,,undefined4 __stdcall WNGLeaderLanding(void)
 0x0045E970,func,_WNGFormationMove@12,WNGFormationMove,sms,confirmed,,"undefined4 __stdcall WNGFormationMove(undefined4, undefined4, undefined4)"
-0x0045EAC0,func,WNGSetControl,,re,confirmed,set formation control; MSGSend subcode 10,
-0x0045EB30,func,WNGSetType,,re,confirmed,set formation type; MSGSend subcode 9,
-0x0045EB70,func,WNGSetSpacingH,,re,confirmed,set horizontal spacing; MSGSend subcode 7,
-0x0045EBB0,func,WNGSetSpacingV,,re,confirmed,set vertical spacing; MSGSend subcode 8,
-0x0045EBF0,func,WNGSetStateTarget,,re,confirmed,EnterState + set target; MSGSend 0x11 (twin of GRPSetStateTarget),
+0x0045EAC0,func,WNGSetControl,,re,confirmed,set formation control; MSGSend subcode 10; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall WNGSetControl(u8, char)"
+0x0045EB30,func,WNGSetType,,re,confirmed,set formation type; MSGSend subcode 9; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall WNGSetType(u8)
+0x0045EB70,func,WNGSetSpacingH,,re,confirmed,set horizontal spacing; MSGSend subcode 7; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall WNGSetSpacingH(u16)
+0x0045EBB0,func,WNGSetSpacingV,,re,confirmed,set vertical spacing; MSGSend subcode 8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall WNGSetSpacingV(u16)
+0x0045EBF0,func,WNGSetStateTarget,,re,confirmed,EnterState + set target; MSGSend 0x11 (twin of GRPSetStateTarget); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall WNGSetStateTarget(u8, u16)"
 0x0045ED90,func,_WNGSendWM@8,WNGSendWM,sms,confirmed,,"undefined4 __stdcall WNGSendWM(undefined4, undefined4)"
 0x0045ED9A,func,,,waiver,confirmed,Ghidra split of _WNGSendWM@8 (0x45ED90) after the 10-byte stub,
-0x0045EEF0,func,WNGResponseSize,,re,confirmed,response capacity from the orders-block flags,
-0x0045EF20,func,WNGAttackingObj,,re,confirmed,count wing members attacking a target,
-0x0045EFB0,func,WNGHumansFirst,,re,confirmed,move human-controlled members to slot 0,
-0x0045F030,func,WNGInHumanWing,,re,confirmed,true if id shares the player's wing,
+0x0045EEF0,func,WNGResponseSize,,re,confirmed,response capacity from the orders-block flags; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,char __cdecl WNGResponseSize(void)
+0x0045EF20,func,WNGAttackingObj,,re,confirmed,count wing members attacking a target; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __fastcall WNGAttackingObj(u16)
+0x0045EFB0,func,WNGHumansFirst,,re,confirmed,move human-controlled members to slot 0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall WNGHumansFirst(int)
+0x0045F030,func,WNGInHumanWing,,re,confirmed,true if id shares the player's wing; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u8 __fastcall WNGInHumanWing(u16)
 0x0045F090,func,_WNGPlayerWM@0,WNGPlayerWM,sms,confirmed,,undefined4 __stdcall WNGPlayerWM(void)
 0x0045F100,func,WNGName,,re,confirmed,format 'Wingleader'/'Wingman'/'Wingman %d' (twin of GRPName),
 0x0045F190,func,_GRPInit@0,GRPInit,sms,confirmed,,undefined4 __stdcall GRPInit(void)

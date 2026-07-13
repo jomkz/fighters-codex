@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // View / camera & replay (VIEW) -- FA.EXE
-// 6/19 functions have a recovered signature; 4/5 globals have a recovered type.
+// 19/19 functions have a recovered signature; 4/5 globals have a recovered type.
 
 namespace fxe::fa::view {
 
@@ -20,28 +20,28 @@ extern undefined1 replayActive;  // 0x005224C0  replay-active flag (set by VIEWR
 
 // --- functions -------------------------------------------------------
 undefined4 VIEWSlew(undefined4, undefined4, undefined4);  // 0x0040D7A0  __stdcall
+void VIEWApplyMode(s16 *);  // 0x0040D7F0  __fastcall
+void VIEWFromObject(s16 *);  // 0x0040D810  __fastcall
 undefined4 VIEWUpdateByType(undefined4);  // 0x0040E240  __stdcall
+s32 VIEWFitDistance(OBJ_TYPE *, s32);  // 0x0040E2C0  __fastcall
 undefined4 VIEWAngleScale(undefined4);  // 0x0040E330  __cdecl
 undefined4 VIEWImmediateVisibility(void);  // 0x0040E380  __stdcall
+void VIEWInit(s16 *, u32, undefined4, undefined4);  // 0x0040E3A0  __fastcall
+void VIEWFree(s16 *);  // 0x0040E450  __fastcall
+undefined4 VIEWSnapshot(s16 *, u16, u16);  // 0x0040E470  __fastcall
 undefined4 VIEWInTransition(void);  // 0x0040E930  __stdcall
+void VIEWReplayRecordGate(s16 *);  // 0x0040E960  __fastcall
+void VIEWReplayPlayback(s16 *);  // 0x0040EBA0  __fastcall
+u16 VIEWBuild(s16 *, u16);  // 0x0040EBC0  __fastcall
+undefined4 VIEWModeLookup(undefined4, s32);  // 0x0040F230  __fastcall
+void VIEWScaleClamp(s32);  // 0x0040F270  __fastcall
+void VIEWSlewIntegrate(s16 *);  // 0x0040F2D0  __fastcall
 undefined4 VIEWChangeObj(undefined4, undefined4, undefined4);  // 0x0040F590  __stdcall
+int VIEWCanSeeTarget(s16 *);  // 0x0040F5D0  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x0040D7F0  VIEWApplyMode -- signature not recovered
-// TODO(#453): 0x0040D810  VIEWFromObject -- signature not recovered
-// TODO(#453): 0x0040E2C0  VIEWFitDistance -- signature not recovered
-// TODO(#453): 0x0040E3A0  VIEWInit -- signature not recovered
-// TODO(#453): 0x0040E450  VIEWFree -- signature not recovered
-// TODO(#453): 0x0040E470  VIEWSnapshot -- signature not recovered
-// TODO(#453): 0x0040E960  VIEWReplayRecordGate -- signature not recovered
-// TODO(#453): 0x0040EBA0  VIEWReplayPlayback -- signature not recovered
-// TODO(#453): 0x0040EBC0  VIEWBuild -- signature not recovered
-// TODO(#453): 0x0040F230  VIEWModeLookup -- signature not recovered
-// TODO(#453): 0x0040F270  VIEWScaleClamp -- signature not recovered
-// TODO(#453): 0x0040F2D0  VIEWSlewIntegrate -- signature not recovered
-// TODO(#453): 0x0040F5D0  VIEWCanSeeTarget -- signature not recovered
 // TODO(#455): 0x004EC420  viewModeTable -- type not recovered
 
 }  // namespace fxe::fa::view

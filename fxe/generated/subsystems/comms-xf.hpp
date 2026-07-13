@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // CDRVXF32.DLL — Cdrv file-transfer comms driver -- CDRVXF32.DLL
-// 32/33 functions have a recovered signature; 0/0 globals have a recovered type.
+// 33/33 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::cdrvxf32::comms_xf {
 
@@ -37,6 +37,7 @@ undefined4 dos_getfileattribute(undefined4, undefined4);  // 0x10005AD0  __stdca
 undefined4 dos_getfiledatetime(undefined4, undefined4, undefined4);  // 0x10005B20  __stdcall
 undefined4 dos_getfirstfile(undefined4, undefined4, undefined4);  // 0x10005BC0  __stdcall
 undefined4 dos_getnextfile(undefined4);  // 0x10005C70  __stdcall
+void dos_gettime(undefined4 *, undefined4 *, undefined4 *, undefined4 *);  // 0x10005DA0  __stdcall
 undefined4 dos_open(undefined4, undefined4);  // 0x10005E00  __stdcall
 undefined4 dos_read(undefined4, undefined4, undefined4);  // 0x10005EA0  __stdcall
 undefined4 dos_rename(undefined4, undefined4);  // 0x10005EE0  __stdcall
@@ -45,10 +46,5 @@ undefined4 dos_setfdate(undefined4, undefined4, undefined4);  // 0x10005F40  __s
 undefined4 dos_setfileattribute(undefined4, undefined4);  // 0x10005F90  __stdcall
 undefined4 dos_setfiledatetime(undefined4, undefined4, undefined4);  // 0x10005FE0  __stdcall
 undefined4 dos_write(undefined4, undefined4, undefined4);  // 0x10006070  __stdcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x10005DA0  dos_gettime -- signature not recovered
 
 }  // namespace fxe::cdrvxf32::comms_xf

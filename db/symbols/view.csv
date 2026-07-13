@@ -1,23 +1,23 @@
 va,kind,name,display,source,confidence,notes,type
 0x0040D7A0,func,_VIEWSlew@12,VIEWSlew,sms,confirmed,slew (free-look) camera control,"undefined4 __stdcall VIEWSlew(undefined4, undefined4, undefined4)"
-0x0040D7F0,func,VIEWApplyMode,VIEWApplyMode,re,inferred,if the view mode word (+0xB4) is set delegate to the view builder VIEWBuild,
-0x0040D810,func,VIEWFromObject,VIEWFromObject,re,inferred,position the view from the tracked object (_objPtrs[view+0x1C]) and its state,
+0x0040D7F0,func,VIEWApplyMode,VIEWApplyMode,re,confirmed,if the view mode word (+0xB4) is set delegate to the view builder VIEWBuild; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWApplyMode(s16 *)
+0x0040D810,func,VIEWFromObject,VIEWFromObject,re,confirmed,position the view from the tracked object (_objPtrs[view+0x1C]) and its state; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWFromObject(s16 *)
 0x0040E240,func,VIEWUpdateByType,VIEWUpdateByType,re,inferred,per-object-type view update (object class 7/0xC/0xF branches),undefined4 __stdcall VIEWUpdateByType(undefined4)
-0x0040E2C0,func,VIEWFitDistance,VIEWFitDistance,re,inferred,compute camera stand-off distance from the object radius (_ObjRadius),
+0x0040E2C0,func,VIEWFitDistance,VIEWFitDistance,re,confirmed,compute camera stand-off distance from the object radius (_ObjRadius); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"s32 __fastcall VIEWFitDistance(OBJ_TYPE *, s32)"
 0x0040E330,func,VIEWAngleScale,VIEWAngleScale,re,inferred,angle-to-scale clamp helper for the view transform,undefined4 __cdecl VIEWAngleScale(undefined4)
 0x0040E380,func,_VIEWImmediateVisibility@0,VIEWImmediateVisibility,sms,confirmed,force the view to immediate (no-transition) visibility,undefined4 __stdcall VIEWImmediateVisibility(void)
-0x0040E3A0,func,VIEWInit,VIEWInit,re,inferred,allocate/initialise a view slot (MMPushAllocId; zero +0x1C/+0x1E),
-0x0040E450,func,VIEWFree,VIEWFree,re,inferred,free the view's allocated buffer (_MMFreePtr on +0x60),
-0x0040E470,func,VIEWSnapshot,VIEWSnapshot,re,inferred,copy the 0x30-dword view state block (snapshot/restore helper),
+0x0040E3A0,func,VIEWInit,VIEWInit,re,confirmed,allocate/initialise a view slot (MMPushAllocId; zero +0x1C/+0x1E); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall VIEWInit(s16 *, u32, undefined4, undefined4)"
+0x0040E450,func,VIEWFree,VIEWFree,re,confirmed,free the view's allocated buffer (_MMFreePtr on +0x60); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWFree(s16 *)
+0x0040E470,func,VIEWSnapshot,VIEWSnapshot,re,confirmed,copy the 0x30-dword view state block (snapshot/restore helper); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall VIEWSnapshot(s16 *, u16, u16)"
 0x0040E930,func,_VIEWInTransition@0,VIEWInTransition,sms,confirmed,returns non-zero while the view is mid-transition,undefined4 __stdcall VIEWInTransition(void)
-0x0040E960,func,VIEWReplayRecordGate,VIEWReplayRecordGate,re,confirmed,replay record gate: inside the _timerTicks window (DAT_005223F0/F4) set replay-active DAT_005224C0,
-0x0040EBA0,func,VIEWReplayPlayback,VIEWReplayPlayback,re,confirmed,replay playback: when replay-active copy the 0x30-dword saved-view buffer (DAT_00522400) into the view,
-0x0040EBC0,func,VIEWBuild,VIEWBuild,re,inferred,build the external/spot view for the given mode (the view builder VIEWApplyMode calls),
-0x0040F230,func,VIEWModeLookup,VIEWModeLookup,re,inferred,scan the view-mode table at DAT_004EC420,
-0x0040F270,func,VIEWScaleClamp,VIEWScaleClamp,re,inferred,clamp/scale helper for the view field-of-view or zoom,
-0x0040F2D0,func,VIEWSlewIntegrate,VIEWSlewIntegrate,re,inferred,frame-rate-scaled slew integration (_LMultDiv256 by _systemFrameTicks),
+0x0040E960,func,VIEWReplayRecordGate,VIEWReplayRecordGate,re,confirmed,replay record gate: inside the _timerTicks window (DAT_005223F0/F4) set replay-active DAT_005224C0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWReplayRecordGate(s16 *)
+0x0040EBA0,func,VIEWReplayPlayback,VIEWReplayPlayback,re,confirmed,replay playback: when replay-active copy the 0x30-dword saved-view buffer (DAT_00522400) into the view; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWReplayPlayback(s16 *)
+0x0040EBC0,func,VIEWBuild,VIEWBuild,re,confirmed,build the external/spot view for the given mode (the view builder VIEWApplyMode calls); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"u16 __fastcall VIEWBuild(s16 *, u16)"
+0x0040F230,func,VIEWModeLookup,VIEWModeLookup,re,confirmed,scan the view-mode table at DAT_004EC420; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall VIEWModeLookup(undefined4, s32)"
+0x0040F270,func,VIEWScaleClamp,VIEWScaleClamp,re,confirmed,clamp/scale helper for the view field-of-view or zoom; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWScaleClamp(s32)
+0x0040F2D0,func,VIEWSlewIntegrate,VIEWSlewIntegrate,re,confirmed,frame-rate-scaled slew integration (_LMultDiv256 by _systemFrameTicks); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall VIEWSlewIntegrate(s16 *)
 0x0040F590,func,_VIEWChangeObj@12,VIEWChangeObj,sms,confirmed,switch the view to a different tracked object,"undefined4 __stdcall VIEWChangeObj(undefined4, undefined4, undefined4)"
-0x0040F5D0,func,VIEWCanSeeTarget,VIEWCanSeeTarget,re,inferred,visibility/padlock check (_WRCanSee) gated on a _gamePrefs bit,
+0x0040F5D0,func,VIEWCanSeeTarget,VIEWCanSeeTarget,re,confirmed,visibility/padlock check (_WRCanSee) gated on a _gamePrefs bit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,int __fastcall VIEWCanSeeTarget(s16 *)
 0x004EC420,data,_viewModeTable,viewModeTable,re,inferred,view-mode dispatch table scanned by VIEWModeLookup,
 0x004EC424,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,
 0x004EC428,data,,,waiver,confirmed,VIEW subsystem internal state / struct interior,

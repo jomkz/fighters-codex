@@ -202,6 +202,65 @@ python3 tools/recover_frames.py --write    # needs the local Ghidra export
 It re-proves itself against the decorations on every run and **refuses to write** if the rule stops
 validating.
 
+## The per-subsystem pass: reading what each function does
+
+The rules above are exhausted by ~1167 of the 1871 functions. The rest have no decoration, no
+caller cleanup, and no callee-cleaned stack — nothing a rule can read. They were recovered the
+only way left: **by reading what each function does**, subsystem by subsystem, against the prose
+docs. That is judgment work, so the point is not the reading — it is what the judgment is *checked
+against*.
+
+### The binary gates every judgment
+
+A reader of a decompile inherits its parameter error (~16%). So every proposed signature was
+mechanically checked against facts the instruction stream carries, and a proposal that contradicts
+them was rejected outright:
+
+```
+ret_imm  > 0  =>  the callee cleans its own stack: the stack arity is EXACTLY ret_imm/4.
+ret_imm == 0  =>  the callee cleans NOTHING. Either __cdecl (any arity, nothing in registers),
+                  or a __fastcall whose arguments ALL ride in registers (zero stack args).
+ret_imm == -1 =>  no consistent RET: the convention is unprovable. Refused.
+reg_args >= 1 =>  requires that the function actually READ ECX (and EDX for two).
+```
+
+**`ret 0` does not mean cdecl** — that was an error in the first version of this gate. A fastcall
+taking only register arguments has no stack to clean either, so it also emits a plain `RET`. What
+`ret 0` proves is that *no callee-cleaned stack arguments exist*, which is a weaker and different
+claim.
+
+Of 563 proposals: **511 accepted, 52 rejected by the gate** (26 with no consistent RET operand, the
+rest contradicting the arity or claiming a register argument the function never reads).
+
+### The one judgment the binary cannot settle — and what it cost
+
+Whether a register the function reads is an **incoming argument** or **scratch**. No rule decides
+this (every attempt is in the table above, at 7.6–16% error). Where an analyst claimed "scratch" for
+a register the function demonstrably reads, the claim went to an **adversarial reviewer** whose brief
+was to *refute* it from the raw bytes.
+
+It refuted **3 of 11** — and one of those matters more than the other two put together:
+`SetShading` (`0x4CD854`) was proposed as `void __cdecl SetShading(void)`. It is really a hand-written
+routine taking a **3-component vector in EAX/EBX/ECX**. A no-argument prototype would have compiled,
+propagated into the generator, and lied about the function forever.
+
+**It also found that an evidence string can be fabricated even where the conclusion is correct** (one
+cited a `rep stos` counter where the bytes show eight `push eax`). So `db/` does **not** store the
+analyst's prose. Each row records what was actually *proven* — convention and stack arity, checked
+against the RET operand — because a claim a later reader cannot re-derive is not evidence.
+
+### What is honestly left
+
+Whole classes of "function" are **not C functions and must never be signed as such**:
+
+- **`render-core`'s ~110 `sh_op_*` handlers** are threaded-code **jump targets** dispatched through
+  `vector_table` with ESI live as the bytecode cursor — several fall through into one another. They
+  have no RET of their own. Declining them is the correct answer, not a gap.
+- **Hand-written assembly with register conventions** C cannot express (`sincos` takes its angle in
+  EBX; `isqrt16` a DX:BX pair; `_G__Texture` its arguments in EAX/EDI).
+- **Variadic functions** (`sprintf`, `G_Printf`, `CallUtilProc` — whose call sites clean 4, 8 and 12
+  bytes) have no fixed arity to record.
+
 ## Typing the globals: `tools/recover_globals.py`
 
 `db/symbols/*.csv` carries thousands of `data` rows, and 32 of them had a type. The fxe

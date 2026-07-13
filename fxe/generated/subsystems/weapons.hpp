@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Weapons — projectiles / seekers / ECM (PROJ) -- FA.EXE
-// 35/55 functions have a recovered signature; 4/6 globals have a recovered type.
+// 53/55 functions have a recovered signature; 4/6 globals have a recovered type.
 
 namespace fxe::fa::weapons {
 
@@ -28,8 +28,17 @@ undefined4 PROJAdd(undefined4, undefined4, undefined4, undefined4, undefined4, u
 undefined4 PROJSpeed(undefined4, undefined4);  // 0x004C1120  __stdcall
 undefined4 PROJEngineState(void);  // 0x004C1170  __stdcall
 void PROJMoveProc(char);  // 0x004C11B0  __cdecl
+void PROJGuideToTarget(void);  // 0x004C1630  __cdecl
+void PROJGuideLoft(void);  // 0x004C1660  __cdecl
+void PROJHoldCourse(void);  // 0x004C1720  __cdecl
+void PROJGuideToSun(void);  // 0x004C1760  __cdecl
+void PROJUpdateWeave(void);  // 0x004C17A0  __cdecl
+u8 PROJSunInSeeker(void);  // 0x004C17F0  __cdecl
 void PROJDamageProc(HIT_OBJ_DATA *);  // 0x004C1870  __cdecl
+char * PROJBuildName(void);  // 0x004C1C10  __cdecl
 char PROJEventProc(short, long);  // 0x004C1CC0  __cdecl
+u8 PROJIsLockableTarget(u16);  // 0x004C1F10  __fastcall
+undefined4 PROJProc(char);  // 0x004C1F50  __cdecl
 undefined4 PROJHit(undefined4, undefined4);  // 0x004C20C0  __stdcall
 undefined4 PROJFire(undefined4, undefined4, undefined4, undefined4);  // 0x004C2170  __stdcall
 undefined4 PROJAimAngles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C24B0  __stdcall
@@ -40,8 +49,11 @@ undefined4 PROJRadarIsOn(undefined4, undefined4);  // 0x004C2EB0  __stdcall
 undefined4 PROJLock(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C2F20  __stdcall
 undefined4 PROJIRSensorOn(undefined4, undefined4);  // 0x004C31F0  __stdcall
 undefined4 PROJProximityFuze(undefined4);  // 0x004C3250  __stdcall
+u8 PROJTargetIsFastAir(entity *);  // 0x004C3360  __fastcall
 undefined4 PROJHitChance(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C3380  __stdcall
 undefined4 PROJApplyPkCurve(undefined4, undefined4, undefined4, undefined4);  // 0x004C3830  __stdcall
+undefined4 PROJRangePk(undefined4, s32);  // 0x004C3890  __fastcall
+int PROJSizePk(undefined4, undefined4);  // 0x004C3960  __fastcall
 undefined4 PROJLaunchDevice(undefined4);  // 0x004C39A0  __fastcall
 undefined4 PROJRetargetMissilesOnDevice(undefined4, undefined4, undefined4);  // 0x004C3AF0  __stdcall
 undefined4 PROJGuideToDevice(undefined4);  // 0x004C3C40  __stdcall
@@ -51,33 +63,21 @@ undefined4 PROJMakeBombEq(undefined4, undefined4, undefined4, undefined4, undefi
 undefined4 PROJChangeBombEq(undefined4, undefined4);  // 0x004C4030  __stdcall
 undefined4 PROJBombPos(undefined4, undefined4, undefined4);  // 0x004C4050  __stdcall
 undefined4 PROJSelectTarget(void);  // 0x004C4100  __stdcall
+undefined4 PROJScoreTarget(u16);  // 0x004C4390  __cdecl
 undefined4 PROJServiceWeapon(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C4700  __stdcall
+void PROJSetReattackTimer(void);  // 0x004C5000  __cdecl
+void PROJAimGunSolution(s32, u16);  // 0x004C5050  __fastcall
+u8 PROJHasMissileOnTarget(u16);  // 0x004C5270  __fastcall
+undefined4 PROJSelectStore(char, undefined4, u16);  // 0x004C52D0  __fastcall
 undefined4 PROJMissileAttacking(undefined4);  // 0x004C5570  __fastcall
 undefined4 PROJSendCollateralDamages(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C5670  __stdcall
+s16 PROJMinScatterAngle(s16);  // 0x004C5D00  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x004C1630  PROJGuideToTarget -- signature not recovered
-// TODO(#453): 0x004C1660  PROJGuideLoft -- signature not recovered
-// TODO(#453): 0x004C1720  PROJHoldCourse -- signature not recovered
-// TODO(#453): 0x004C1760  PROJGuideToSun -- signature not recovered
-// TODO(#453): 0x004C17A0  PROJUpdateWeave -- signature not recovered
-// TODO(#453): 0x004C17F0  PROJSunInSeeker -- signature not recovered
-// TODO(#453): 0x004C1C10  PROJBuildName -- signature not recovered
-// TODO(#453): 0x004C1F10  PROJIsLockableTarget -- signature not recovered
-// TODO(#453): 0x004C1F50  PROJProc -- signature not recovered
 // TODO(#453): 0x004C2B50  PROJTargetSignal -- signature not recovered
-// TODO(#453): 0x004C3360  PROJTargetIsFastAir -- signature not recovered
-// TODO(#453): 0x004C3890  PROJRangePk -- signature not recovered
-// TODO(#453): 0x004C3960  PROJSizePk -- signature not recovered
-// TODO(#453): 0x004C4390  PROJScoreTarget -- signature not recovered
-// TODO(#453): 0x004C5000  PROJSetReattackTimer -- signature not recovered
-// TODO(#453): 0x004C5050  PROJAimGunSolution -- signature not recovered
-// TODO(#453): 0x004C5270  PROJHasMissileOnTarget -- signature not recovered
-// TODO(#453): 0x004C52D0  PROJSelectStore -- signature not recovered
 // TODO(#453): 0x004C58A0  PROJAreaWeaponHit -- signature not recovered
-// TODO(#453): 0x004C5D00  PROJMinScatterAngle -- signature not recovered
 // TODO(#455): 0x0058F118  _projNameBuf -- type not recovered
 // TODO(#455): 0x0058F180  _projSeekerList -- type not recovered
 

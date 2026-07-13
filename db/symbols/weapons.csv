@@ -9,17 +9,17 @@ va,kind,name,display,source,confidence,notes,type
 0x004C1120,func,_PROJSpeed@8,PROJSpeed,sms,confirmed,,"undefined4 __stdcall PROJSpeed(undefined4, undefined4)"
 0x004C1170,func,_PROJEngineState@0,PROJEngineState,sms,confirmed,,undefined4 __stdcall PROJEngineState(void)
 0x004C11B0,func,?PROJMoveProc@@YAXD@Z,PROJMoveProc,sms,confirmed,,void __cdecl PROJMoveProc(char)
-0x004C1630,func,PROJGuideToTarget,,re,inferred,CreateMove toward lock target (proportional guidance),
-0x004C1660,func,PROJGuideLoft,,re,inferred,loft/high-trajectory guidance when range>=type+0x10D,
-0x004C1720,func,PROJHoldCourse,,re,inferred,hold current commanded angles (fly straight),
-0x004C1760,func,PROJGuideToSun,,re,inferred,steer IR seeker toward the sun when decoyed,
-0x004C17A0,func,PROJUpdateWeave,,re,inferred,random weave/jink aim offsets from type weave amp,
-0x004C17F0,func,PROJSunInSeeker,,re,inferred,IR seeker sun/sky FOV check (decoy source),
+0x004C1630,func,PROJGuideToTarget,,re,confirmed,CreateMove toward lock target (proportional guidance); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl PROJGuideToTarget(void)
+0x004C1660,func,PROJGuideLoft,,re,confirmed,loft/high-trajectory guidance when range>=type+0x10D; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl PROJGuideLoft(void)
+0x004C1720,func,PROJHoldCourse,,re,confirmed,hold current commanded angles (fly straight); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl PROJHoldCourse(void)
+0x004C1760,func,PROJGuideToSun,,re,confirmed,steer IR seeker toward the sun when decoyed; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl PROJGuideToSun(void)
+0x004C17A0,func,PROJUpdateWeave,,re,inferred,random weave/jink aim offsets from type weave amp; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl PROJUpdateWeave(void)
+0x004C17F0,func,PROJSunInSeeker,,re,confirmed,IR seeker sun/sky FOV check (decoy source); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u8 __cdecl PROJSunInSeeker(void)
 0x004C1870,func,?PROJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,PROJDamageProc,sms,confirmed,,void __cdecl PROJDamageProc(HIT_OBJ_DATA *)
-0x004C1C10,func,PROJBuildName,,re,confirmed,compose '<nation> <weapon> <type>' into the kill-chatter name buffer,
+0x004C1C10,func,PROJBuildName,,re,confirmed,compose '<nation> <weapon> <type>' into the kill-chatter name buffer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,char * __cdecl PROJBuildName(void)
 0x004C1CC0,func,?PROJEventProc@@YADFJ@Z,PROJEventProc,sms,confirmed,label-only in FA.SMS; ApplySymbols materializes the function,"char __cdecl PROJEventProc(short, long)"
-0x004C1F10,func,PROJIsLockableTarget,,re,inferred,predicate: valid non-player lock candidate,
-0x004C1F50,func,_PROJProc,PROJProc,sms,confirmed,,
+0x004C1F10,func,PROJIsLockableTarget,,re,confirmed,predicate: valid non-player lock candidate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u8 __fastcall PROJIsLockableTarget(u16)
+0x004C1F50,func,_PROJProc,PROJProc,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl PROJProc(char)
 0x004C20C0,func,_PROJHit@8,PROJHit,sms,confirmed,,"undefined4 __stdcall PROJHit(undefined4, undefined4)"
 0x004C2170,func,_PROJFire@16,PROJFire,sms,confirmed,,"undefined4 __stdcall PROJFire(undefined4, undefined4, undefined4, undefined4)"
 0x004C24B0,func,PROJAimAngles,,re,inferred,compute launch/boresight angles in the launcher frame (gimbal-limited),"undefined4 __stdcall PROJAimAngles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
@@ -32,12 +32,12 @@ va,kind,name,display,source,confidence,notes,type
 0x004C2F20,func,_PROJLock@24,PROJLock,sms,confirmed,,"undefined4 __stdcall PROJLock(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C31F0,func,PROJIRSensorOn,,re,inferred,IR-seeker detectability duty gate,"undefined4 __stdcall PROJIRSensorOn(undefined4, undefined4)"
 0x004C3250,func,PROJProximityFuze,,re,inferred,closest-approach detonation decision + hit roll,undefined4 __stdcall PROJProximityFuze(undefined4)
-0x004C3360,func,PROJTargetIsFastAir,,re,inferred,"predicate: fast maneuvering aircraft (class4, speed>0x3A00)",
+0x004C3360,func,PROJTargetIsFastAir,,re,confirmed,"predicate: fast maneuvering aircraft (class4, speed>0x3A00); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",u8 __fastcall PROJTargetIsFastAir(entity *)
 0x004C3380,func,_PROJHitChance@28,PROJHitChance,sms,confirmed,,"undefined4 __stdcall PROJHitChance(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C338A,func,,,waiver,confirmed,Ghidra mid-function split of _PROJHitChance@28 (0x4C3380),
 0x004C3830,func,PROJApplyPkCurve,,re,inferred,interpolate and clamp the running Pk penalty,"undefined4 __stdcall PROJApplyPkCurve(undefined4, undefined4, undefined4, undefined4)"
-0x004C3890,func,PROJRangePk,,re,confirmed,range->Pk envelope lookup from the type range table,
-0x004C3960,func,PROJSizePk,,re,inferred,target-size/RCS vs weapon-sensitivity Pk scalar,
+0x004C3890,func,PROJRangePk,,re,confirmed,range->Pk envelope lookup from the type range table; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall PROJRangePk(undefined4, s32)"
+0x004C3960,func,PROJSizePk,,re,confirmed,target-size/RCS vs weapon-sensitivity Pk scalar; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"int __fastcall PROJSizePk(undefined4, undefined4)"
 0x004C39A0,func,@PROJLaunchDevice@4,PROJLaunchDevice,sms,confirmed,,undefined4 __fastcall PROJLaunchDevice(undefined4)
 0x004C3AF0,func,_PROJRetargetMissilesOnDevice@12,PROJRetargetMissilesOnDevice,sms,confirmed,,"undefined4 __stdcall PROJRetargetMissilesOnDevice(undefined4, undefined4, undefined4)"
 0x004C3C40,func,PROJGuideToDevice,,re,inferred,steer a seduced missile toward the decoy device,undefined4 __stdcall PROJGuideToDevice(undefined4)
@@ -47,17 +47,17 @@ va,kind,name,display,source,confidence,notes,type
 0x004C4030,func,_PROJChangeBombEq@8,PROJChangeBombEq,sms,confirmed,,"undefined4 __stdcall PROJChangeBombEq(undefined4, undefined4)"
 0x004C4050,func,_PROJBombPos@12,PROJBombPos,sms,confirmed,,"undefined4 __stdcall PROJBombPos(undefined4, undefined4, undefined4)"
 0x004C4100,func,_PROJSelectTarget@0,PROJSelectTarget,sms,confirmed,,undefined4 __stdcall PROJSelectTarget(void)
-0x004C4390,func,PROJScoreTarget,,re,inferred,per-candidate seeker scoring callback (dist+penalties),
+0x004C4390,func,PROJScoreTarget,,re,confirmed,per-candidate seeker scoring callback (dist+penalties); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl PROJScoreTarget(u16)
 0x004C4700,func,_PROJServiceWeapon@24,PROJServiceWeapon,sms,confirmed,,"undefined4 __stdcall PROJServiceWeapon(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
-0x004C5000,func,PROJSetReattackTimer,,re,confirmed,set a random AI re-attack delay from aggression,
-0x004C5050,func,PROJAimGunSolution,,re,inferred,gun/dumb-weapon aim point with dispersion + terrain clamp,
-0x004C5270,func,PROJHasMissileOnTarget,,re,inferred,predicate: already have a guided missile locked on target,
-0x004C52D0,func,PROJSelectStore,,re,inferred,AI: pick the best weapon store for a target,
+0x004C5000,func,PROJSetReattackTimer,,re,confirmed,set a random AI re-attack delay from aggression; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl PROJSetReattackTimer(void)
+0x004C5050,func,PROJAimGunSolution,,re,confirmed,gun/dumb-weapon aim point with dispersion + terrain clamp; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall PROJAimGunSolution(s32, u16)"
+0x004C5270,func,PROJHasMissileOnTarget,,re,confirmed,predicate: already have a guided missile locked on target; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,u8 __fastcall PROJHasMissileOnTarget(u16)
+0x004C52D0,func,PROJSelectStore,,re,confirmed,AI: pick the best weapon store for a target; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall PROJSelectStore(char, undefined4, u16)"
 0x004C5570,func,@PROJMissileAttacking@4,PROJMissileAttacking,sms,confirmed,,undefined4 __fastcall PROJMissileAttacking(undefined4)
 0x004C5670,func,_PROJSendCollateralDamages@24,PROJSendCollateralDamages,sms,confirmed,,"undefined4 __stdcall PROJSendCollateralDamages(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C58A0,func,PROJAreaWeaponHit,,re,inferred,special-warhead detonation (submunition scatter + collateral),
 0x004C58AD,func,,,waiver,confirmed,Ghidra mid-function split of PROJAreaWeaponHit (0x4C58A0),
-0x004C5D00,func,PROJMinScatterAngle,,re,confirmed,clamp a scatter angle away from zero for submunition dispersion,
+0x004C5D00,func,PROJMinScatterAngle,,re,confirmed,clamp a scatter angle away from zero for submunition dispersion; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,s16 __fastcall PROJMinScatterAngle(s16)
 0x004EBB28,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
 0x004F465C,data,,,waiver,confirmed,interior of / adjacent to ?ifmShow@@3GA; named at its base or owned by that subsystem,
 0x004F465D,data,,,waiver,confirmed,interior of / adjacent to ?ifmShow@@3GA; named at its base or owned by that subsystem,

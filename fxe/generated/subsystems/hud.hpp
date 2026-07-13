@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // HUD / cockpit -- FA.EXE
-// 30/42 functions have a recovered signature; 12/16 globals have a recovered type.
+// 38/42 functions have a recovered signature; 12/16 globals have a recovered type.
 
 namespace fxe::fa::hud {
 
@@ -36,17 +36,25 @@ undefined4 HUDRevive(void);  // 0x00406920  __stdcall
 undefined4 HUDShutdown(void);  // 0x00406950  __stdcall
 undefined4 HUDDraw(undefined4);  // 0x00406A50  __stdcall
 undefined4 HUDSetWarning(undefined4, undefined4);  // 0x004077B0  __fastcall
+void HUDDrawWarning(void);  // 0x004078B0  __cdecl
+void HUDDrawConfigFlags(void);  // 0x00407930  __cdecl
+void HUDDrawGLoadThrottle(void);  // 0x00407A00  __cdecl
 void HUDDrawHeading(void);  // 0x00407B60  __fastcall
 long HUDSpeedToY(long);  // 0x00407EC0  __fastcall
 void HUDDrawSpeed(void);  // 0x00407EE0  __fastcall
 long HUDAltToY(long);  // 0x00408400  __fastcall
 void HUDDrawAlt(void);  // 0x00408420  __fastcall
 undefined4 InitScreenMove(undefined4);  // 0x00408930  __fastcall
+void HUDDrawPitchLadder(void);  // 0x004089A0  __cdecl
 void HUDDrawHVel(void);  // 0x00408E20  __fastcall
 void HUDDrawWeaponInfo(void);  // 0x00409030  __fastcall
 void HUDDrawRangeInfo(void);  // 0x004092D0  __fastcall
+void HUDDrawBombFall(void);  // 0x00409760  __cdecl
+void HUDDrawTargetBox(void);  // 0x00409F30  __cdecl
 undefined4 HUDSquawk(void);  // 0x0040A450  __fastcall
 undefined4 HUDFindNearest(undefined4, undefined4);  // 0x0040A530  __fastcall
+void HUDDrawTargetLabels(void);  // 0x0040A6C0  __cdecl
+void HUDDrawContacts(void);  // 0x0040A7F0  __cdecl
 undefined4 HUDBrightness(undefined4);  // 0x0040AAC0  __fastcall
 undefined4 HUDSetFont(void);  // 0x0040AB10  __stdcall
 undefined4 HUDSetSymFont(void);  // 0x0040AB30  __stdcall
@@ -62,17 +70,9 @@ char HUDHasFlaps(void);  // 0x0040AE40  __fastcall
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004075D0  HUDDrawTargetView -- signature not recovered
-// TODO(#453): 0x004078B0  HUDDrawWarning -- signature not recovered
-// TODO(#453): 0x00407930  HUDDrawConfigFlags -- signature not recovered
-// TODO(#453): 0x00407A00  HUDDrawGLoadThrottle -- signature not recovered
-// TODO(#453): 0x004089A0  HUDDrawPitchLadder -- signature not recovered
 // TODO(#453): 0x00408C80  HUDDrawLeadCaret -- signature not recovered
-// TODO(#453): 0x00409760  HUDDrawBombFall -- signature not recovered
 // TODO(#453): 0x00409910  HUDDrawGunReticle -- signature not recovered
 // TODO(#453): 0x00409BF0  HUDDrawApproach -- signature not recovered
-// TODO(#453): 0x00409F30  HUDDrawTargetBox -- signature not recovered
-// TODO(#453): 0x0040A6C0  HUDDrawTargetLabels -- signature not recovered
-// TODO(#453): 0x0040A7F0  HUDDrawContacts -- signature not recovered
 // TODO(#455): 0x004EBD30  _hudPitchBarTable -- type not recovered
 // TODO(#455): 0x005213D8  _hudShape -- type not recovered
 // TODO(#455): 0x00521620  _hudWarnText2 -- type not recovered
