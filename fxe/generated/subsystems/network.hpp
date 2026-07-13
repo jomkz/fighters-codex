@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 86/107 functions have a recovered signature; 0/0 globals have a recovered type.
+// 106/107 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -20,9 +20,15 @@ void NET_CancelPlayerList(void);  // 0x00401850  __cdecl
 void player_list_process_pkt(NET_PKT *, socket_state *);  // 0x004019A0  __cdecl
 undefined4 NETSlaveConnect(undefined4, undefined4);  // 0x00401A60  __cdecl
 void handle_slave_connection_failed(socket_state *);  // 0x00401CD0  __cdecl
+void NETSlaveLostConn(socket_state *);  // 0x00401E30  __cdecl
 void slave_process_pkt(NET_PKT *, socket_state *);  // 0x00401EB0  __cdecl
+void NETArmKeepalive(socket_state *);  // 0x00402330  __cdecl
 undefined4 NETResetTimer(undefined4);  // 0x00402360  __cdecl
+undefined4 NETProcessPlayerList(NET_PLAYER_LIST *);  // 0x004024D0  __cdecl
+void NETWaitMasterScreen(void);  // 0x00405360  __cdecl
+void NETApplyMasterScreen(void);  // 0x004053A0  __cdecl
 long netDialogAppIO(long, char *);  // 0x004054F0  __cdecl
+void NETFormatIP(char *, undefined4);  // 0x00405CD0  __cdecl
 char ip2long(char *, unsigned long *);  // 0x00405D10  __cdecl
 void RunNetConfigurationScreen(long);  // 0x00405DF0  __stdcall
 char pkt_send_can_i_play(int, char *, NET_ADDRESS *);  // 0x0045D090  __cdecl
@@ -50,22 +56,36 @@ undefined4 pkt_queue_write(undefined4, undefined4, undefined4);  // 0x0045DA30  
 char pkt_sock_read(NET_PKT *, unsigned int);  // 0x0045DB00  __cdecl
 undefined4 MPEnqueue(undefined4, undefined4, undefined4, undefined4);  // 0x0046C0A0  __stdcall
 undefined4 MPInterpPosAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C680  __stdcall
+undefined4 MPUpdateInterval(short, entity *);  // 0x0046C780  __fastcall
 undefined4 MPInterpAngleAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C860  __stdcall
 char MPReceive(void);  // 0x0046C980  __stdcall
+short MPRelToAbsTime(short);  // 0x0046EC40  __fastcall
 undefined4 MPResolveAlias(undefined4, undefined4, undefined4, undefined4);  // 0x0046EC60  __stdcall
+undefined4 MPReadAlloc(undefined4);  // 0x0046ECD0  __fastcall
 undefined4 MPDecodeState16(undefined4, undefined4, undefined4);  // 0x0046ED10  __stdcall
 undefined4 MPDecodePos(undefined4, undefined4, undefined4);  // 0x0046EDB0  __stdcall
+undefined4 MPGetType(undefined4);  // 0x0046EE00  __fastcall
 undefined4 MPReadPayload(undefined4, undefined4, undefined4, undefined4);  // 0x0046EE40  __stdcall
+void MPClearDeadStatus(void);  // 0x0046EE90  __cdecl
+short MPAbsToRelTime(short);  // 0x0046FA40  __fastcall
 undefined4 MPEncodeState14(undefined4, undefined4);  // 0x0046FA60  __stdcall
 undefined4 MPEncodeState15(undefined4, undefined4);  // 0x0046FBF0  __stdcall
+void MPSendSyncOnce(void);  // 0x0046FD50  __cdecl
+void MPSendScenarioEndTime(void);  // 0x0046FF20  __cdecl
+void MPMsgRemapAliases(undefined4 *, char);  // 0x00470780  __fastcall
+undefined4 MPChatChecksum(void);  // 0x00471880  __cdecl
 undefined4 MPDrawStatusLine(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004718F0  __stdcall
 undefined4 MPWaitStatus(undefined4, undefined4, undefined4, undefined4);  // 0x00471A90  __stdcall
+undefined4 MPAllPeersAtStatus(undefined4);  // 0x00471B80  __fastcall
+void MPAssignPlanePlayers(short);  // 0x00471FA0  __fastcall
 undefined4 MPBuildSpawnPayload(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00472130  __stdcall
+void MPChatStore(undefined4 *);  // 0x004735D0  __fastcall
 unsigned int sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x004874C0  __cdecl
 void RunIPXOptionsDialog(CN_INFO *, char *);  // 0x00493780  __cdecl
 char spxinit(NET_ADDRESS_LIST *);  // 0x00496F40  __cdecl
 char spxinit2(NET_PROTOCOL *, CN_INFO *);  // 0x00497000  __cdecl
 unsigned int spxlisten(void);  // 0x00497010  __cdecl
+undefined4 spxopensocket(void);  // 0x004970C0  __cdecl
 unsigned int spxconnect(NET_ADDRESS *);  // 0x00497150  __cdecl
 void convert_addr_ipx2usnf(NET_ADDRESS *, sockaddr_ipx *);  // 0x004971D0  __cdecl
 void convert_addr_usnf2ipx(sockaddr_ipx *, NET_ADDRESS *);  // 0x00497210  __cdecl
@@ -103,26 +123,6 @@ void SER_SendStatus(void);  // 0x004AC480  __cdecl
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x00401E30  NETSlaveLostConn -- signature not recovered
-// TODO(#453): 0x00402330  NETArmKeepalive -- signature not recovered
-// TODO(#453): 0x004024D0  NETProcessPlayerList -- signature not recovered
-// TODO(#453): 0x00405360  NETWaitMasterScreen -- signature not recovered
-// TODO(#453): 0x004053A0  NETApplyMasterScreen -- signature not recovered
-// TODO(#453): 0x00405CD0  NETFormatIP -- signature not recovered
-// TODO(#453): 0x0046C780  MPUpdateInterval -- signature not recovered
-// TODO(#453): 0x0046EC40  MPRelToAbsTime -- signature not recovered
-// TODO(#453): 0x0046ECD0  MPReadAlloc -- signature not recovered
-// TODO(#453): 0x0046EE00  MPGetType -- signature not recovered
-// TODO(#453): 0x0046EE90  MPClearDeadStatus -- signature not recovered
-// TODO(#453): 0x0046FA40  MPAbsToRelTime -- signature not recovered
-// TODO(#453): 0x0046FD50  MPSendSyncOnce -- signature not recovered
-// TODO(#453): 0x0046FF20  MPSendScenarioEndTime -- signature not recovered
-// TODO(#453): 0x00470780  MPMsgRemapAliases -- signature not recovered
-// TODO(#453): 0x00471880  MPChatChecksum -- signature not recovered
-// TODO(#453): 0x00471B80  MPAllPeersAtStatus -- signature not recovered
-// TODO(#453): 0x00471FA0  MPAssignPlanePlayers -- signature not recovered
 // TODO(#453): 0x00472670  MPRevive -- signature not recovered
-// TODO(#453): 0x004735D0  MPChatStore -- signature not recovered
-// TODO(#453): 0x004970C0  spxopensocket -- signature not recovered
 
 }  // namespace fxe::fa::network

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Terrain (T_) -- FA.EXE
-// 56/82 functions have a recovered signature; 0/1 globals have a recovered type.
+// 70/82 functions have a recovered signature; 0/1 globals have a recovered type.
 
 namespace fxe::fa::terrain {
 
@@ -19,6 +19,7 @@ undefined4 T_AddYourObjs(void);  // 0x004A7A40  __stdcall
 undefined4 T_ImmediateVisibility(undefined4);  // 0x004A7D70  __stdcall
 undefined4 T_ObjList(undefined4, undefined4);  // 0x004A7DF0  __stdcall
 undefined4 T_Render(undefined4);  // 0x004A7E50  __stdcall
+void T_ResolveDecorShapes(undefined4 *);  // 0x004A7F40  __fastcall
 void T_ForestProc(long);  // 0x004A7F70  __cdecl
 undefined4 T_ScatterGrid(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A8090  __stdcall
 undefined4 T_ScatterDecorTile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A8130  __stdcall
@@ -46,11 +47,24 @@ void T_InitVietTrees3Proc(void);  // 0x004A8A30  __cdecl
 void T_VietTrees3Proc(long);  // 0x004A8A40  __cdecl
 void T_InitVietWaterBuffaloProc(void);  // 0x004A8A50  __cdecl
 void T_VietWaterBuffaloProc(long);  // 0x004A8A60  __cdecl
+void T_InitWaterProc(void);  // 0x004A8A70  __cdecl
 void T_WaterProc(long);  // 0x004A8AB0  __cdecl
 void T_CloudProc(long);  // 0x004A8BA0  __cdecl
+u8 T_QueueDecor(short, undefined1 *, char);  // 0x004A8C30  __fastcall
+u8 T_ObjIsVisible(entity *, short);  // 0x004A8CC0  __fastcall
 undefined4 T_Normal(undefined4, undefined4, undefined4, undefined4);  // 0x004A8D30  __stdcall
 void T_LeafOp(char, LEAF_LIST *, WORD_POINT3 *, LONG_POINT *, long, WORD_POINT3 *, WORD_POINT3 *);  // 0x004A8E50  __stdcall
 undefined4 T_Make(undefined4, undefined4, undefined4);  // 0x004A9660  __stdcall
+void T_RunAmbientProcs(void);  // 0x004A9BB0  __cdecl
+void T_AddVisibleObjs(void);  // 0x004A9C20  __cdecl
+undefined4 T_QuadAltitude(undefined1 *);  // 0x004A9E20  __fastcall
+void T_QuadSetFlags(undefined1 *);  // 0x004A9EA0  __fastcall
+void T_ViewBounds(void);  // 0x004A9ED0  __cdecl
+void T_SubdivideCells(void);  // 0x004AA070  __cdecl
+u8 T_CellScreenBounds(undefined1 *, short *);  // 0x004AA260  __fastcall
+void T_CompactCells(undefined4 *);  // 0x004AA2B0  __fastcall
+void T_SortCells(undefined1 *, undefined1 *);  // 0x004AA380  __fastcall
+undefined4 T_CountCells(undefined4 *, undefined4 *);  // 0x004AA440  __fastcall
 undefined4 T_InitDictionary(void);  // 0x004AA620  __stdcall
 undefined4 T_InitDictionaryEntry(undefined4, undefined4);  // 0x004AA680  __fastcall
 undefined4 T_NamedTmaps(void);  // 0x004AA790  __stdcall
@@ -74,26 +88,12 @@ undefined4 T_InterpAltSE(undefined4, undefined4, undefined4, undefined4);  // 0x
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004A7F20  T_InitForestProc -- signature not recovered
-// TODO(#453): 0x004A7F40  T_ResolveDecorShapes -- signature not recovered
 // TODO(#453): 0x004A83E0  T_InitForest1Proc -- signature not recovered
 // TODO(#453): 0x004A8520  T_InitForest2Proc -- signature not recovered
 // TODO(#453): 0x004A8660  T_InitFarmProc -- signature not recovered
 // TODO(#453): 0x004A8730  T_InitMooseProc -- signature not recovered
-// TODO(#453): 0x004A8A70  T_InitWaterProc -- signature not recovered
 // TODO(#453): 0x004A8B90  T_InitCloudProc -- signature not recovered
-// TODO(#453): 0x004A8C30  T_QueueDecor -- signature not recovered
-// TODO(#453): 0x004A8CC0  T_ObjIsVisible -- signature not recovered
-// TODO(#453): 0x004A9BB0  T_RunAmbientProcs -- signature not recovered
-// TODO(#453): 0x004A9C20  T_AddVisibleObjs -- signature not recovered
 // TODO(#453): 0x004A9D00  T_BuildQuadCell -- signature not recovered
-// TODO(#453): 0x004A9E20  T_QuadAltitude -- signature not recovered
-// TODO(#453): 0x004A9EA0  T_QuadSetFlags -- signature not recovered
-// TODO(#453): 0x004A9ED0  T_ViewBounds -- signature not recovered
-// TODO(#453): 0x004AA070  T_SubdivideCells -- signature not recovered
-// TODO(#453): 0x004AA260  T_CellScreenBounds -- signature not recovered
-// TODO(#453): 0x004AA2B0  T_CompactCells -- signature not recovered
-// TODO(#453): 0x004AA380  T_SortCells -- signature not recovered
-// TODO(#453): 0x004AA440  T_CountCells -- signature not recovered
 // TODO(#453): 0x004AA4A0  T_EmitCells -- signature not recovered
 // TODO(#453): 0x004AA840  T_CellTmapLookup -- signature not recovered
 // TODO(#453): 0x004AACE0  T_HorizonProc -- signature not recovered

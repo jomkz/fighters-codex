@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 170/222 functions have a recovered signature; 35/47 globals have a recovered type.
+// 212/222 functions have a recovered signature; 35/47 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -90,7 +90,11 @@ undefined4 initializeMS(undefined4, undefined4, undefined4, undefined4);  // 0x0
 undefined4 connectMS(undefined4);  // 0x004D7316  __cdecl
 undefined4 sendMSresults(undefined4, undefined4, undefined4);  // 0x004D731C  __cdecl
 undefined4 strncpy(undefined4, undefined4, undefined4);  // 0x004D7330  __cdecl
+void _cinit(void);  // 0x004D7430  __cdecl
+void exit(int);  // 0x004D7460  __cdecl
 undefined4 _exit(undefined4);  // 0x004D7480  __cdecl
+void _lockexit(void);  // 0x004D7580  __cdecl
+void _unlockexit(void);  // 0x004D7590  __cdecl
 undefined4 strrchr(undefined4, undefined4);  // 0x004D75C0  __cdecl
 undefined4 atol(undefined4);  // 0x004D75F0  __cdecl
 undefined4 atoi(undefined4);  // 0x004D76A0  __cdecl
@@ -117,7 +121,9 @@ void * _CallCatchBlock2(EHRegistrationNode *, const _s_FuncInfo *, void *, int, 
 int _CallSETranslator(EHExceptionRecord *, EHRegistrationNode *, void *, void *, const _s_FuncInfo *, int, EHRegistrationNode *);  // 0x004D83B0  __cdecl
 undefined4 _global_unwind2(undefined4);  // 0x004D8510  __cdecl
 undefined4 _local_unwind2(undefined4, undefined4);  // 0x004D8552  __cdecl
+int _abnormal_termination(void);  // 0x004D85BA  __cdecl
 undefined4 strncmp(undefined4, undefined4, undefined4);  // 0x004D8610  __cdecl
+void _cfltcvt_init(void);  // 0x004D86A0  __cdecl
 undefined4 _seh_longjmp_unwind(undefined4);  // 0x004D87B5  __stdcall
 undefined4 labs(undefined4);  // 0x004D87D0  __cdecl
 undefined4 strncat(undefined4, undefined4, undefined4);  // 0x004D87E0  __cdecl
@@ -125,6 +131,8 @@ undefined4 _alldiv(undefined4, undefined4, undefined4, undefined4);  // 0x004D89
 undefined4 _allmul(undefined4, undefined4, undefined4, undefined4);  // 0x004D89C0  __stdcall
 undefined4 qsort(undefined4, undefined4, undefined4, undefined4);  // 0x004D8A00  __cdecl
 undefined4 _chdir(undefined4);  // 0x004D8C00  __cdecl
+char * _fullpath(char *, char *, u32);  // 0x004D8CB0  __cdecl
+void _splitpath(char *, char *, char *, char *, char *);  // 0x004D8D90  __cdecl
 undefined4 _getcwd(undefined4, undefined4);  // 0x004D8EF0  __cdecl
 undefined4 _getdcwd_lk(undefined4, undefined4, undefined4);  // 0x004D8F60  __cdecl
 undefined4 _validdrive(undefined4);  // 0x004D90A0  __cdecl
@@ -137,12 +145,16 @@ undefined4 _fwrite_lk(undefined4, undefined4, undefined4, undefined4);  // 0x004
 undefined4 stricmp(undefined4, undefined4);  // 0x004D9660  __cdecl
 undefined4 strlen(undefined4);  // 0x004D9730  __cdecl
 undefined4 strcat(undefined4, undefined4);  // 0x004D97C0  __cdecl
+int rand(void);  // 0x004D98B0  __cdecl
 undefined4 sscanf(undefined4, undefined4, undefined4, undefined4);  // 0x004D9A10  __cdecl
 undefined4 getenv(undefined4);  // 0x004D9A60  __cdecl
 undefined4 _getenv_lk(undefined4);  // 0x004D9A90  __cdecl
 undefined4 _fflush_lk(undefined4);  // 0x004D9B70  __cdecl
 undefined4 _amsg_exit(undefined4);  // 0x004D9EB0  __cdecl
+char * _strlwr(char *);  // 0x004D9EE0  __cdecl
 undefined4 strnicmp(undefined4, undefined4, undefined4);  // 0x004DA040  __cdecl
+void _mtinitlocks(void);  // 0x004DA140  __cdecl
+void _mtdeletelocks(void);  // 0x004DA170  __cdecl
 undefined4 _lock(undefined4);  // 0x004DA1E0  __cdecl
 undefined4 _unlock(undefined4);  // 0x004DA250  __cdecl
 undefined4 _lock_file(undefined4);  // 0x004DA270  __cdecl
@@ -154,14 +166,21 @@ undefined4 free(undefined4);  // 0x004DBDB0  __cdecl
 undefined4 _close(undefined4);  // 0x004DBE20  __cdecl
 undefined4 _close_lk(undefined4);  // 0x004DBE90  __cdecl
 undefined4 _CallSettingFrame(undefined4, undefined4, undefined4);  // 0x004DCCD0  __stdcall
+int _mtinit(void);  // 0x004DCD20  __cdecl
 undefined4 _initptd(undefined4);  // 0x004DCDB0  __cdecl
+undefined4 _getptd(void);  // 0x004DCDD0  __cdecl
 undefined4 malloc(undefined4);  // 0x004DCF10  __cdecl
 undefined4 _nh_malloc(undefined4, undefined4);  // 0x004DCF30  __cdecl
 undefined4 _heap_alloc(undefined4);  // 0x004DCF80  __cdecl
+void _setdefaultprecision(void);  // 0x004DCFE0  __cdecl
+int _ms_p5_test_fdiv(void);  // 0x004DD000  __cdecl
+void _ms_p5_mp_test_fdiv(void);  // 0x004DD050  __cdecl
 undefined4 _cftoe(undefined4, undefined4, undefined4, undefined4);  // 0x004DD1C0  __cdecl
 undefined4 _cftof(undefined4, undefined4, undefined4);  // 0x004DD330  __cdecl
 undefined4 _cftog(undefined4, undefined4, undefined4, undefined4);  // 0x004DD460  __cdecl
 undefined4 _dosmaperr(undefined4);  // 0x004DD5B0  __cdecl
+int * _errno(void);  // 0x004DD630  __cdecl
+u32 _mbctoupper(u32);  // 0x004DD650  __cdecl
 undefined4 _mbsnbcpy(undefined4, undefined4, undefined4);  // 0x004DD6E0  __cdecl
 undefined4 _setmbcp(undefined4);  // 0x004DD790  __cdecl
 undefined4 _filbuf(undefined4);  // 0x004DDAC0  __cdecl
@@ -172,7 +191,14 @@ undefined4 _write_lk(undefined4, undefined4, undefined4);  // 0x004DDEF0  __cdec
 undefined4 _input(undefined4, undefined4, undefined4);  // 0x004DE1D0  __cdecl
 undefined4 _mbsnbicoll(undefined4, undefined4, undefined4);  // 0x004DEF30  __cdecl
 undefined4 _commit(undefined4);  // 0x004DF000  __cdecl
+int _XcptFilter(u32, _EXCEPTION_POINTERS *);  // 0x004DF1A0  __cdecl
 undefined4 _ismbblead(undefined4);  // 0x004DF420  __cdecl
+void _setenvp(void);  // 0x004DF4D0  __cdecl
+int _setargv(void);  // 0x004DF5C0  __cdecl
+int _ioinit(void);  // 0x004DFBC0  __cdecl
+void _ioterm(void);  // 0x004DFDA0  __cdecl
+int _heap_init(void);  // 0x004DFE00  __cdecl
+void _FF_MSGBANNER(void);  // 0x004DFE80  __cdecl
 undefined4 _NMSG_WRITE(undefined4);  // 0x004DFEC0  __cdecl
 undefined4 _lseek_lk(undefined4, undefined4, undefined4);  // 0x004E0460  __cdecl
 undefined4 _isatty(undefined4);  // 0x004E0540  __cdecl
@@ -180,6 +206,9 @@ undefined4 wctomb(undefined4, undefined4);  // 0x004E0570  __cdecl
 undefined4 _wctomb_lk(undefined4, undefined4);  // 0x004E05D0  __cdecl
 undefined4 _aulldiv(undefined4, undefined4, undefined4, undefined4);  // 0x004E0670  __stdcall
 undefined4 _aullrem(undefined4, undefined4, undefined4, undefined4);  // 0x004E06E0  __stdcall
+u32 strcspn(char *, char *);  // 0x004E1700  __cdecl
+char * strpbrk(char *, char *);  // 0x004E1740  __cdecl
+int _alloc_osfhnd(void);  // 0x004E2680  __cdecl
 undefined4 _set_osfhnd(undefined4, undefined4);  // 0x004E27C0  __cdecl
 undefined4 _free_osfhnd(undefined4);  // 0x004E2870  __cdecl
 undefined4 _get_osfhandle(undefined4);  // 0x004E2910  __cdecl
@@ -194,26 +223,39 @@ int _ValidateWrite(void *, unsigned int);  // 0x004E3120  __cdecl
 int _ValidateExecute(int (*)(void));  // 0x004E3140  __cdecl
 undefined4 calloc(undefined4, undefined4);  // 0x004E3160  __cdecl
 undefined4 _callnewh(undefined4);  // 0x004E3250  __cdecl
+u32 _statusfp(void);  // 0x004E3290  __cdecl
+u32 _clearfp(void);  // 0x004E32B0  __cdecl
 undefined4 _control87(undefined4, undefined4);  // 0x004E32D0  __cdecl
 undefined4 _controlfp(undefined4, undefined4);  // 0x004E3310  __cdecl
 undefined4 _ZeroTail(undefined4, undefined4);  // 0x004E3500  __cdecl
+void _IncMan(u32 *, int);  // 0x004E3570  __cdecl
 undefined4 _RoundMan(undefined4, undefined4);  // 0x004E35E0  __cdecl
+void _CopyMan(undefined4 *, undefined4 *);  // 0x004E3690  __cdecl
 undefined4 _FillZeroMan(undefined4);  // 0x004E36B0  __cdecl
 undefined4 _IsZeroMan(undefined4);  // 0x004E36C0  __cdecl
 undefined4 _ShrMan(undefined4, undefined4);  // 0x004E36E0  __cdecl
 undefined4 _ld12cvt(undefined4, undefined4, undefined4);  // 0x004E3790  __cdecl
 undefined4 _ld12tod(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E3960  __cdecl
 undefined4 _ld12tof(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004E3980  __cdecl
+int _atodbl(undefined4 *, char *);  // 0x004E3A30  __cdecl
+int _atoflt(undefined4 *, char *);  // 0x004E3AB0  __cdecl
+int mbtowc(u16 *, char *, u32);  // 0x004E3CD0  __cdecl
 undefined4 _mbtowc_lk(undefined4, undefined4, undefined4);  // 0x004E3D30  __cdecl
 undefined4 _ungetc_lk(undefined4, undefined4);  // 0x004E3E70  __cdecl
+int _fcloseall(void);  // 0x004E47C0  __cdecl
 undefined4 wcslen(undefined4);  // 0x004E4860  __cdecl
+char * _Getdays(void);  // 0x004E4920  __cdecl
+char * _Getmonths(void);  // 0x004E4A10  __cdecl
 undefined4 _chsize_lk(undefined4, undefined4);  // 0x004E6270  __cdecl
 undefined4 _onexit(undefined4);  // 0x004E63B0  __cdecl
 undefined4 atexit(undefined4);  // 0x004E6440  __cdecl
+void abort(void);  // 0x004E64A0  __cdecl
 undefined4 raise(undefined4);  // 0x004E6730  __cdecl
+int $I10_OUTPUT(u32, u32, u16, int, u8, short *);  // 0x004E7320  __cdecl
 undefined4 realloc(undefined4, undefined4);  // 0x004E76C0  __cdecl
 undefined4 _mbschr(undefined4, undefined4);  // 0x004E7890  __cdecl
 undefined4 _strdup(undefined4);  // 0x004E7950  __cdecl
+u16 _towupper_lk(u16);  // 0x004E8160  __cdecl
 undefined4 iswctype(undefined4, undefined4);  // 0x004E8200  __cdecl
 undefined4 _setmode_lk(undefined4, undefined4);  // 0x004E8310  __cdecl
 undefined4 _msize(undefined4);  // 0x004E8380  __cdecl
@@ -225,57 +267,15 @@ undefined4 RtlUnwind(undefined4, undefined4, undefined4, undefined4);  // 0x004E
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004D72FE  _closeMS -- signature not recovered
-// TODO(#453): 0x004D7430  __cinit -- signature not recovered
-// TODO(#453): 0x004D7460  _exit -- signature not recovered
-// TODO(#453): 0x004D7580  __lockexit -- signature not recovered
-// TODO(#453): 0x004D7590  __unlockexit -- signature not recovered
 // TODO(#453): 0x004D76B0  __atoi64 -- signature not recovered
 // TODO(#453): 0x004D7790  _sprintf -- signature not recovered
 // TODO(#453): 0x004D81B0  __chkstk -- signature not recovered
-// TODO(#453): 0x004D85BA  __abnormal_termination -- signature not recovered
 // TODO(#453): 0x004D85DD  __NLG_Notify1 -- signature not recovered
 // TODO(#453): 0x004D85E6  __NLG_Notify -- signature not recovered
 // TODO(#453): 0x004D8648  __ftol -- signature not recovered
-// TODO(#453): 0x004D86A0  __cfltcvt_init -- signature not recovered
-// TODO(#453): 0x004D8CB0  __fullpath -- signature not recovered
-// TODO(#453): 0x004D8D90  __splitpath -- signature not recovered
 // TODO(#453): 0x004D97B0  _strcpy -- signature not recovered
-// TODO(#453): 0x004D98B0  _rand -- signature not recovered
 // TODO(#453): 0x004D9D00  WinMainCRTStartup -- signature not recovered
-// TODO(#453): 0x004D9EE0  __strlwr -- signature not recovered
-// TODO(#453): 0x004DA140  __mtinitlocks -- signature not recovered
-// TODO(#453): 0x004DA170  __mtdeletelocks -- signature not recovered
-// TODO(#453): 0x004DCD20  __mtinit -- signature not recovered
-// TODO(#453): 0x004DCDD0  __getptd -- signature not recovered
-// TODO(#453): 0x004DCFE0  __setdefaultprecision -- signature not recovered
-// TODO(#453): 0x004DD000  __ms_p5_test_fdiv -- signature not recovered
-// TODO(#453): 0x004DD050  __ms_p5_mp_test_fdiv -- signature not recovered
-// TODO(#453): 0x004DD630  __errno -- signature not recovered
-// TODO(#453): 0x004DD650  __mbctoupper -- signature not recovered
-// TODO(#453): 0x004DF1A0  __XcptFilter -- signature not recovered
-// TODO(#453): 0x004DF4D0  __setenvp -- signature not recovered
-// TODO(#453): 0x004DF5C0  __setargv -- signature not recovered
-// TODO(#453): 0x004DFBC0  __ioinit -- signature not recovered
-// TODO(#453): 0x004DFDA0  __ioterm -- signature not recovered
-// TODO(#453): 0x004DFE00  __heap_init -- signature not recovered
-// TODO(#453): 0x004DFE80  __FF_MSGBANNER -- signature not recovered
-// TODO(#453): 0x004E1700  _strcspn -- signature not recovered
-// TODO(#453): 0x004E1740  _strpbrk -- signature not recovered
-// TODO(#453): 0x004E2680  __alloc_osfhnd -- signature not recovered
-// TODO(#453): 0x004E3290  __statusfp -- signature not recovered
-// TODO(#453): 0x004E32B0  __clearfp -- signature not recovered
-// TODO(#453): 0x004E3570  __IncMan -- signature not recovered
-// TODO(#453): 0x004E3690  __CopyMan -- signature not recovered
-// TODO(#453): 0x004E3A30  __atodbl -- signature not recovered
-// TODO(#453): 0x004E3AB0  __atoflt -- signature not recovered
 // TODO(#453): 0x004E3B80  __fltout2 -- signature not recovered
-// TODO(#453): 0x004E3CD0  _mbtowc -- signature not recovered
-// TODO(#453): 0x004E47C0  __fcloseall -- signature not recovered
-// TODO(#453): 0x004E4920  __Getdays -- signature not recovered
-// TODO(#453): 0x004E4A10  __Getmonths -- signature not recovered
-// TODO(#453): 0x004E64A0  _abort -- signature not recovered
-// TODO(#453): 0x004E7320  _$I10_OUTPUT -- signature not recovered
-// TODO(#453): 0x004E8160  __towupper_lk -- signature not recovered
 // TODO(#455): 0x004D85AA  __NLG_Return2 -- type not recovered
 // TODO(#455): 0x004D86F8  __except_handler3 -- type not recovered
 // TODO(#455): 0x004DD080  __forcdecpt -- type not recovered

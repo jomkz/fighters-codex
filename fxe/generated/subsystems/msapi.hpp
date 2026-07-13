@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Matchmaking / internet-play client (MSAPI) -- MSAPI.DLL
-// 3/25 functions have a recovered signature; 12/12 globals have a recovered type.
+// 25/25 functions have a recovered signature; 12/12 globals have a recovered type.
 
 namespace fxe::msapi::msapi {
 
@@ -27,34 +27,30 @@ extern undefined4 ms_list_inited;  // 0x10020C14  Game-list-initialised flag (se
 extern undefined4 ms_game_count;  // 0x10020C18  Number of games accumulated in the list (incremented per 'P' record, reset by resetMSfilter).
 
 // --- functions -------------------------------------------------------
+int connectMS(char *);  // 0x100011E0  __cdecl
+int initializeMS(undefined1 *, undefined4 *, undefined4);  // 0x10001670  __cdecl
+int ms_upload_init_arrays(undefined4 *);  // 0x10001A20  __cdecl
+int loginMShost(undefined4);  // 0x10001D20  __cdecl
+int loginMSPlayer(void);  // 0x10001D80  __cdecl
+int requestMSgame(undefined4 *, undefined4 *);  // 0x10001DE0  __cdecl
+int selectMSgame(undefined1 *);  // 0x10002030  __cdecl
+int deselectMSgame(undefined1 *);  // 0x100020C0  __cdecl
+int resetMSfilter(void);  // 0x10002120  __cdecl
+int updateMSgame(undefined1 *);  // 0x10002170  __cdecl
+int fetchMSgame(undefined1 *, undefined1 *);  // 0x100021D0  __cdecl
+int sendMSresults(undefined4, undefined1 *, undefined4);  // 0x10002280  __cdecl
+int getMSdatafilesize(char *, undefined4 *);  // 0x10002330  __cdecl
+int getMSdatafile(char *, undefined1 *, undefined4);  // 0x10002440  __cdecl
+int closeMS(void);  // 0x10002570  __cdecl
+int ms_recv_all(undefined4, undefined1 *, int);  // 0x10002630  __cdecl
 undefined4 ms_send_all(undefined4, undefined4, undefined4);  // 0x10002680  __cdecl
 undefined4 ms_recv_u32(undefined4, undefined4);  // 0x100026D0  __cdecl
 undefined4 ms_send_u32(undefined4, undefined4);  // 0x10002700  __cdecl
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x100011E0  connectMS -- signature not recovered
-// TODO(#453): 0x10001670  initializeMS -- signature not recovered
-// TODO(#453): 0x10001A20  ms_upload_init_arrays -- signature not recovered
-// TODO(#453): 0x10001D20  loginMShost -- signature not recovered
-// TODO(#453): 0x10001D80  loginMSPlayer -- signature not recovered
-// TODO(#453): 0x10001DE0  requestMSgame -- signature not recovered
-// TODO(#453): 0x10002030  selectMSgame -- signature not recovered
-// TODO(#453): 0x100020C0  deselectMSgame -- signature not recovered
-// TODO(#453): 0x10002120  resetMSfilter -- signature not recovered
-// TODO(#453): 0x10002170  updateMSgame -- signature not recovered
-// TODO(#453): 0x100021D0  fetchMSgame -- signature not recovered
-// TODO(#453): 0x10002280  sendMSresults -- signature not recovered
-// TODO(#453): 0x10002330  getMSdatafilesize -- signature not recovered
-// TODO(#453): 0x10002440  getMSdatafile -- signature not recovered
-// TODO(#453): 0x10002570  closeMS -- signature not recovered
-// TODO(#453): 0x10002630  ms_recv_all -- signature not recovered
-// TODO(#453): 0x10002730  ms_disconnect -- signature not recovered
-// TODO(#453): 0x10002800  ms_reg_open -- signature not recovered
-// TODO(#453): 0x10002950  ms_reg_close -- signature not recovered
-// TODO(#453): 0x100029A0  ms_reg_select_subkey -- signature not recovered
-// TODO(#453): 0x10002A00  ms_reg_read_value -- signature not recovered
-// TODO(#453): 0x100034D0  ms_atoi -- signature not recovered
+void ms_disconnect(undefined4);  // 0x10002730  __fastcall
+undefined4 ms_reg_open(undefined4, char *);  // 0x10002800  __fastcall
+void ms_reg_close(undefined4);  // 0x10002950  __fastcall
+void ms_reg_select_subkey(undefined4, char *);  // 0x100029A0  __fastcall
+undefined4 ms_reg_read_value(undefined4, char *, undefined1 *, undefined4, char *);  // 0x10002A00  __fastcall
+int ms_atoi(char *);  // 0x100034D0  __cdecl
 
 }  // namespace fxe::msapi::msapi

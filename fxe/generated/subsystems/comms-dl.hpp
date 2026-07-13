@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // CDRVDL32.DLL — Cdrv RS-232 serial comms driver -- CDRVDL32.DLL
-// 24/26 functions have a recovered signature; 0/0 globals have a recovered type.
+// 26/26 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::cdrvdl32::comms_dl {
 
@@ -23,6 +23,7 @@ undefined4 ser_rs232_getpacket(undefined4, undefined4, undefined4);  // 0x10001D
 undefined4 ser_rs232_getport(undefined4, undefined4);  // 0x10001DF0  __stdcall
 undefined4 ser_rs232_getregister(undefined4, undefined4, undefined4);  // 0x10001E50  __stdcall
 undefined4 ser_rs232_getstatus(undefined4, undefined4);  // 0x10001EB0  __stdcall
+int ser_rs232_maxport(void);  // 0x10001F00  __stdcall
 undefined4 ser_rs232_putbyte(undefined4, undefined4);  // 0x10001F10  __stdcall
 undefined4 ser_rs232_putpacket(undefined4, undefined4, undefined4);  // 0x10001FE0  __stdcall
 undefined4 ser_rs232_putregister(undefined4, undefined4, undefined4);  // 0x100020B0  __stdcall
@@ -33,15 +34,10 @@ undefined4 ser_rs232_misc_func(undefined4, undefined4, undefined4);  // 0x100021
 undefined4 ser_rs232_setbauddiv(undefined4, undefined4, undefined4);  // 0x10002420  __stdcall
 undefined4 ser_rs232_setup(undefined4, undefined4);  // 0x10002450  __stdcall
 undefined4 ser_rs232_viewpacket(undefined4, undefined4, undefined4);  // 0x10002B10  __stdcall
+undefined1 * ser_rs232_get_sdata(void);  // 0x10002B80  __stdcall
 undefined4 bio_set_timer(undefined4, undefined4);  // 0x10002BC0  __stdcall
 undefined4 bio_get_elapsedtime(undefined4);  // 0x10002BE0  __stdcall
 undefined4 bio_get_timer(undefined4);  // 0x10002C10  __stdcall
 undefined4 bio_set_timerresolution(undefined4);  // 0x10002C40  __stdcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x10001F00  ser_rs232_maxport -- signature not recovered
-// TODO(#453): 0x10002B80  ser_rs232_get_sdata -- signature not recovered
 
 }  // namespace fxe::cdrvdl32::comms_dl

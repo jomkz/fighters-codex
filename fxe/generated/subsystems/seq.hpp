@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // .SEQ scripted-cutscene / sequence player (SEQ) -- FA.EXE
-// 12/40 functions have a recovered signature; 25/25 globals have a recovered type.
+// 40/40 functions have a recovered signature; 25/25 globals have a recovered type.
 
 namespace fxe::fa::seq {
 
@@ -41,48 +41,44 @@ extern SEQLBL * seqLabels;  // 0x00541450  SEQLBL node pool base
 
 // --- functions -------------------------------------------------------
 char PlaySeq(char *, long, long);  // 0x00412C10  __stdcall
+void SeqInit(void);  // 0x00444F70  __cdecl
+short SeqStart(char *, undefined4, short *, undefined4, undefined4, undefined4);  // 0x00445060  __cdecl
 undefined4 SeqLoadScript(undefined4, undefined4);  // 0x00445330  __cdecl
+char * SeqSkipComments(char *, char *);  // 0x00445440  __cdecl
 char * SeqSubstitute(char **, char *, char **, short);  // 0x004454D0  __cdecl
+char * SeqExpandLine(char *, char *, undefined4);  // 0x00445550  __cdecl
+char * SeqParseInclude(undefined4);  // 0x004456B0  __cdecl
+short SeqContinue(undefined4, undefined4, undefined4);  // 0x00445700  __cdecl
+void SeqFetchLine(undefined4);  // 0x00445B40  __cdecl
+char * SeqParseLabel(undefined4);  // 0x00445CC0  __cdecl
 undefined4 SeqStop(undefined4);  // 0x00445D30  __cdecl
+void SeqEnd(void);  // 0x00445E30  __cdecl
 void SeqRect(long, long, long, long);  // 0x00445E70  __stdcall
+undefined4 SeqRender(void);  // 0x00445ED0  __cdecl
+undefined4 SeqExpireGraphics(void);  // 0x00446090  __cdecl
 undefined4 SeqNextOverlap(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00446100  __cdecl
+undefined4 SeqGraphicOrder(undefined4, undefined4);  // 0x00446170  __cdecl
+void SeqDrawGraphic(SEQGR *);  // 0x004461A0  __cdecl
 undefined4 SeqAccessResource(undefined4, undefined4);  // 0x00446330  __stdcall
+void SeqRedrawRegion(SEQGR *, short, short, short, short);  // 0x00446360  __cdecl
+SEQGR * SeqNewGraphic(undefined4, char *, short, short, short, short, undefined4, undefined4);  // 0x00446500  __cdecl
 SEQGR * SeqGRFind(char *);  // 0x00446610  __cdecl
+void SEQbitmap(char *, short, short, undefined4, undefined2);  // 0x00446660  __cdecl
 undefined4 SeqLinkLabel(undefined4);  // 0x00446710  __cdecl
 SEQGR * SEQblock(long, long, long, long, long, long);  // 0x004467B0  __cdecl
+void SEQcall(char *, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00446850  __cdecl
+void SEQfadein(undefined4);  // 0x00446890  __cdecl
+void SEQfadeout(undefined4);  // 0x00446910  __cdecl
 char SeqFadeOut(unsigned short, unsigned short);  // 0x00446990  __cdecl
 char SeqFadeIn(unsigned short, unsigned short);  // 0x004469F0  __cdecl
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x00444F70  SeqInit -- signature not recovered
-// TODO(#453): 0x00445060  SeqStart -- signature not recovered
-// TODO(#453): 0x00445440  SeqSkipComments -- signature not recovered
-// TODO(#453): 0x00445550  SeqExpandLine -- signature not recovered
-// TODO(#453): 0x004456B0  SeqParseInclude -- signature not recovered
-// TODO(#453): 0x00445700  SeqContinue -- signature not recovered
-// TODO(#453): 0x00445B40  SeqFetchLine -- signature not recovered
-// TODO(#453): 0x00445CC0  SeqParseLabel -- signature not recovered
-// TODO(#453): 0x00445E30  SeqEnd -- signature not recovered
-// TODO(#453): 0x00445ED0  SeqRender -- signature not recovered
-// TODO(#453): 0x00446090  SeqExpireGraphics -- signature not recovered
-// TODO(#453): 0x00446170  SeqGraphicOrder -- signature not recovered
-// TODO(#453): 0x004461A0  SeqDrawGraphic -- signature not recovered
-// TODO(#453): 0x00446360  SeqRedrawRegion -- signature not recovered
-// TODO(#453): 0x00446500  SeqNewGraphic -- signature not recovered
-// TODO(#453): 0x00446660  SEQbitmap -- signature not recovered
-// TODO(#453): 0x00446850  SEQcall -- signature not recovered
-// TODO(#453): 0x00446890  SEQfadein -- signature not recovered
-// TODO(#453): 0x00446910  SEQfadeout -- signature not recovered
-// TODO(#453): 0x00446A50  SEQfont -- signature not recovered
-// TODO(#453): 0x00446B70  SEQmusic -- signature not recovered
-// TODO(#453): 0x00446BE0  SEQpalette -- signature not recovered
-// TODO(#453): 0x00446C60  SEQrun -- signature not recovered
-// TODO(#453): 0x00446C70  SEQsound -- signature not recovered
-// TODO(#453): 0x00446D30  SEQsndoff -- signature not recovered
-// TODO(#453): 0x00446F10  SEQtext -- signature not recovered
-// TODO(#453): 0x00447090  SEQvideo -- signature not recovered
-// TODO(#453): 0x00447120  SEQwait -- signature not recovered
+void SEQfont(char *);  // 0x00446A50  __cdecl
+void SEQmusic(char *, short);  // 0x00446B70  __cdecl
+void SEQpalette(char *, undefined4, undefined4);  // 0x00446BE0  __cdecl
+void SEQrun(void);  // 0x00446C60  __cdecl
+void SEQsound(char *);  // 0x00446C70  __cdecl
+void SEQsndoff(char *);  // 0x00446D30  __cdecl
+void SEQtext(char *, int, int, int, int, int, char);  // 0x00446F10  __cdecl
+void SEQvideo(undefined4, char *, char, undefined4);  // 0x00447090  __cdecl
+void SEQwait(char *);  // 0x00447120  __cdecl
 
 }  // namespace fxe::fa::seq

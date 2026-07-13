@@ -8,14 +8,33 @@
 #include "../fa_types.hpp"
 
 // 3D render core / SH interpreter (GR) -- FA.EXE
-// 15/163 functions have a recovered signature; 0/0 globals have a recovered type.
+// 38/163 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::render_core {
 
 // --- functions -------------------------------------------------------
 undefined4 GRACos(undefined4);  // 0x004CD7A0  __fastcall
 undefined4 GRSetLightSource(undefined4);  // 0x004CD834  __fastcall
+undefined4 Sun(void);  // 0x004CD8B0  __cdecl
+void clip_edge_right(void);  // 0x004CD8F0  __cdecl
+void clip_edge_left(void);  // 0x004CD9DA  __cdecl
+void clip_edge_top(void);  // 0x004CDAC6  __cdecl
+void clip_edge_bottom(void);  // 0x004CDBB3  __cdecl
+void render_3d(void);  // 0x004CDCB8  __cdecl
+void setup_view_projection(void);  // 0x004CDEB4  __cdecl
+void check_flat(void);  // 0x004CE4B4  __cdecl
+void compute_axis_check(void);  // 0x004CE89C  __cdecl
+void sort_objs_wrapper(void);  // 0x004CE968  __cdecl
+void rotate_vec_roll(void);  // 0x004CEB00  __cdecl
+void rotate_vec_pitch(void);  // 0x004CED44  __cdecl
+void rotate_vec_yaw(void);  // 0x004CEF8C  __cdecl
 undefined4 GRAddBrentObj(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D057C  __stdcall
+void NeedClip(void);  // 0x004D4874  __cdecl
+void RestoreClip(void);  // 0x004D4888  __cdecl
+void shade_span_a(void);  // 0x004D4FFF  __cdecl
+void shade_span_b(void);  // 0x004D511B  __cdecl
+void shade_span_c(void);  // 0x004D523B  __cdecl
+void shade_span_d(void);  // 0x004D5356  __cdecl
 undefined4 GRInit3d(undefined4);  // 0x004D5BA8  __stdcall
 undefined4 GRRender(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D5BCC  __stdcall
 undefined4 GRSinCos(undefined4, undefined4, undefined4);  // 0x004D5C98  __stdcall
@@ -28,6 +47,10 @@ undefined4 GRRestoreContext(void);  // 0x004D63F0  __stdcall
 undefined4 GRExec(undefined4);  // 0x004D6498  __fastcall
 undefined4 MultF24PointByMatrix(undefined4, undefined4);  // 0x004D64D8  __stdcall
 undefined4 Sqrt(undefined4);  // 0x004D65C4  __fastcall
+void draw_quad(void);  // 0x004D6A38  __cdecl
+void draw_tri_nw(void);  // 0x004D6A90  __cdecl
+void draw_tri_se(void);  // 0x004D6B24  __cdecl
+void draw_nt(void);  // 0x004D6BB8  __cdecl
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
@@ -37,26 +60,13 @@ undefined4 Sqrt(undefined4);  // 0x004D65C4  __fastcall
 // TODO(#453): 0x004CD5EE  isqrt16_body -- signature not recovered
 // TODO(#453): 0x004CD7B4  acos -- signature not recovered
 // TODO(#453): 0x004CD854  SetShading -- signature not recovered
-// TODO(#453): 0x004CD8B0  Sun -- signature not recovered
-// TODO(#453): 0x004CD8F0  clip_edge_right -- signature not recovered
-// TODO(#453): 0x004CD9DA  clip_edge_left -- signature not recovered
-// TODO(#453): 0x004CDAC6  clip_edge_top -- signature not recovered
-// TODO(#453): 0x004CDBB3  clip_edge_bottom -- signature not recovered
 // TODO(#453): 0x004CDCA8  do_nop -- signature not recovered
-// TODO(#453): 0x004CDCB8  render_3d -- signature not recovered
-// TODO(#453): 0x004CDEB4  setup_view_projection -- signature not recovered
 // TODO(#453): 0x004CE4A8  set_render_mode -- signature not recovered
-// TODO(#453): 0x004CE4B4  check_flat -- signature not recovered
 // TODO(#453): 0x004CE784  load_normal_table -- signature not recovered
 // TODO(#453): 0x004CE7BC  load_xlate_rotate_pnt -- signature not recovered
 // TODO(#453): 0x004CE7F7  mxmul -- signature not recovered
-// TODO(#453): 0x004CE89C  compute_axis_check -- signature not recovered
-// TODO(#453): 0x004CE968  sort_objs_wrapper -- signature not recovered
-// TODO(#453): 0x004CEB00  rotate_vec_roll -- signature not recovered
 // TODO(#453): 0x004CEB70  rotate_matrix_roll -- signature not recovered
-// TODO(#453): 0x004CED44  rotate_vec_pitch -- signature not recovered
 // TODO(#453): 0x004CEDB8  rotate_matrix_pitch -- signature not recovered
-// TODO(#453): 0x004CEF8C  rotate_vec_yaw -- signature not recovered
 // TODO(#453): 0x004CF000  rotate_matrix_yaw -- signature not recovered
 // TODO(#453): 0x004CF270  code_pnt -- signature not recovered
 // TODO(#453): 0x004CF2A4  ecode_pnt -- signature not recovered
@@ -155,8 +165,6 @@ undefined4 Sqrt(undefined4);  // 0x004D65C4  __fastcall
 // TODO(#453): 0x004D478C  do_force_no_pmap -- signature not recovered
 // TODO(#453): 0x004D47A4  do_streamer_def -- signature not recovered
 // TODO(#453): 0x004D47B8  do_streamer_draw -- signature not recovered
-// TODO(#453): 0x004D4874  NeedClip -- signature not recovered
-// TODO(#453): 0x004D4888  RestoreClip -- signature not recovered
 // TODO(#453): 0x004D4894  do_screen_coords -- signature not recovered
 // TODO(#453): 0x004D4988  do_texture_index -- signature not recovered
 // TODO(#453): 0x004D49C0  do_texture_file -- signature not recovered
@@ -166,19 +174,11 @@ undefined4 Sqrt(undefined4);  // 0x004D65C4  __fastcall
 // TODO(#453): 0x004D4A6D  do_brush_area_full -- signature not recovered
 // TODO(#453): 0x004D4ACA  sh_op_DC -- signature not recovered
 // TODO(#453): 0x004D4D2C  sh_op_DE -- signature not recovered
-// TODO(#453): 0x004D4FFF  shade_span_a -- signature not recovered
-// TODO(#453): 0x004D511B  shade_span_b -- signature not recovered
-// TODO(#453): 0x004D523B  shade_span_c -- signature not recovered
-// TODO(#453): 0x004D5356  shade_span_d -- signature not recovered
 // TODO(#453): 0x004D5475  do_new_smap -- signature not recovered
 // TODO(#453): 0x004D5644  do_new_rmap -- signature not recovered
 // TODO(#453): 0x004D59AC  do_new_pmap_or_tmap -- signature not recovered
 // TODO(#453): 0x004D5A2C  angles_2_matrix -- signature not recovered
 // TODO(#453): 0x004D6640  do_nt -- signature not recovered
 // TODO(#453): 0x004D69EC  __compute_viewer_dot_product -- signature not recovered
-// TODO(#453): 0x004D6A38  draw_quad -- signature not recovered
-// TODO(#453): 0x004D6A90  draw_tri_nw -- signature not recovered
-// TODO(#453): 0x004D6B24  draw_tri_se -- signature not recovered
-// TODO(#453): 0x004D6BB8  draw_nt -- signature not recovered
 
 }  // namespace fxe::fa::render_core

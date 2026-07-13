@@ -55,7 +55,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004986A0,func,@G_SetFont@4,G_SetFont,sms,confirmed,,undefined4 __fastcall G_SetFont(undefined4)
 0x004986B0,func,@G_Print@16,G_Print,sms,confirmed,,"undefined4 __fastcall G_Print(undefined4, undefined4, undefined4, undefined4)"
 0x004988F0,func,_G_PrintOutline@24,G_PrintOutline,sms,confirmed,,"undefined4 __stdcall G_PrintOutline(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
-0x00498980,func,_G_Printf,G_Printf,sms,confirmed,,
+0x00498980,func,_G_Printf,G_Printf,sms,confirmed,signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __cdecl G_Printf(int, int, undefined4, char *, ...)"
 0x004989F0,func,@G_StringWidth@4,G_StringWidth,sms,confirmed,,undefined4 __fastcall G_StringWidth(undefined4)
 0x00498A20,func,@G_StringHeight@0,G_StringHeight,sms,confirmed,,undefined4 __fastcall G_StringHeight(void)
 0x00498AF0,func,?code@@YAJJJ@Z,code,sms,confirmed,,"long __cdecl code(long, long)"
@@ -74,7 +74,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004992B0,func,_G_UHline2@12,G_UHline2,sms,confirmed,,"undefined4 __stdcall G_UHline2(undefined4, undefined4, undefined4)"
 0x004992E0,func,_G_Box2@16,G_Box2,sms,confirmed,,"undefined4 __stdcall G_Box2(undefined4, undefined4, undefined4, undefined4)"
 0x00499330,func,_G_UBox2@16,G_UBox2,sms,confirmed,,"undefined4 __stdcall G_UBox2(undefined4, undefined4, undefined4, undefined4)"
-0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag,
+0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl G_AllocBitmapBuffer(undefined4)
 0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,"undefined4 __fastcall G_RelocBitmap(undefined4, undefined4)"
 0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocBitmap(undefined4, undefined4, undefined4)"
 0x004B7A80,func,_G_AllocSurfaceBitmap@8,G_AllocSurfaceBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocSurfaceBitmap(undefined4, undefined4)"
@@ -115,8 +115,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004C77D0,func,@G_SUPolygon@8,G_SUPolygon,sms,confirmed,,"undefined4 __fastcall G_SUPolygon(undefined4, undefined4)"
 0x004C8A38,func,@G_Polygon@8,G_Polygon,sms,confirmed,,"undefined4 __fastcall G_Polygon(undefined4, undefined4)"
 0x004C8A74,func,@G_SPolygon@8,G_SPolygon,sms,confirmed,,"undefined4 __fastcall G_SPolygon(undefined4, undefined4)"
-0x004C8FD4,func,Horizon2d,,re,inferred,scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10),
-0x004C9224,func,NoHorizon,,re,inferred,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output,
+0x004C8FD4,func,Horizon2d,,re,confirmed,scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl Horizon2d(void)
+0x004C9224,func,NoHorizon,,re,confirmed,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NoHorizon(void)
 0x004C924C,func,_SolidHorizon,SolidHorizon,re,inferred,"solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10)",
 0x004C942C,func,_GouraudHorizon,GouraudHorizon,re,inferred,"Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10)","undefined4 __cdecl GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004CA028,func,_G__AC_Texture,G__AC_Texture,sms,confirmed,,

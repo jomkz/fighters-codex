@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 22/23 functions have a recovered signature; 0/0 globals have a recovered type.
+// 23/23 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
@@ -17,6 +17,7 @@ undefined4 DecodeDSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456300
 void EDB(unsigned char *, unsigned char *, FrameHeader *, GlobalData *);  // 0x00456AD0  __cdecl
 undefined4 DecodeSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456EC0  __cdecl
 void DecodeDBook(unsigned char *, unsigned short *, unsigned short, GlobalData *);  // 0x00457230  __cdecl
+short ClampU8(short);  // 0x004575E0  __cdecl
 void DoubleDecodeDBook(unsigned char *, unsigned short *, unsigned short, unsigned short, GlobalData *);  // 0x00457600  __cdecl
 undefined4 DecodeSVGA15Frame(undefined4, undefined4, undefined4);  // 0x00457A50  __cdecl
 undefined4 DecodeDSVGA15Frame(undefined4, undefined4, undefined4);  // 0x00457E00  __cdecl
@@ -35,10 +36,5 @@ undefined4 DecodeSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B
 undefined4 DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B9C0  __cdecl
 undefined4 DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045BE60  __cdecl
 undefined4 DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4);  // 0x0045C500  __cdecl
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x004575E0  ClampU8 -- signature not recovered
 
 }  // namespace fxe::fa::video

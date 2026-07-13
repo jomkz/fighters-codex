@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 65/83 functions have a recovered signature; 14/15 globals have a recovered type.
+// 80/83 functions have a recovered signature; 14/15 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -30,25 +30,35 @@ extern undefined4 objArenaSize;  // 0x00553840  arena byte capacity (OBJInit par
 
 // --- functions -------------------------------------------------------
 undefined4 MoveObj(void);  // 0x00436B30  __stdcall
+undefined4 MoveGoalValue(undefined4, undefined4);  // 0x004382D0  __fastcall
 undefined4 GRAPHICInit(void);  // 0x00442C00  __stdcall
 undefined4 GRAPHICUpdate(void);  // 0x00442DE0  __stdcall
 undefined4 GRAPHICAddYourObjs(undefined4);  // 0x004431B0  __stdcall
 undefined4 GRAPHICAddExp(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004432D0  __stdcall
 undefined4 InitChain(void);  // 0x00462600  __stdcall
 undefined4 RemoveFromChains(void);  // 0x00462620  __stdcall
+void ChainRemoveCurObj(u16 *);  // 0x00462640  __fastcall
 undefined4 ImmediateService(void);  // 0x004626B0  __stdcall
+void ChainInsertCurObj(u16 *);  // 0x004626D0  __fastcall
 undefined4 RemoveCurObj(void);  // 0x004627B0  __stdcall
 undefined4 GetCurObj(undefined4);  // 0x004628B0  __fastcall
 undefined4 PutCurObj(void);  // 0x00462980  __fastcall
 undefined4 PushCurObj(undefined4);  // 0x004629E0  __stdcall
 undefined4 PopCurObj(void);  // 0x00462A20  __stdcall
+void ServiceObjects(void);  // 0x00462A50  __cdecl
+void ChainMergeSorted(u16);  // 0x00462B70  __fastcall
+void ProcessHitMsgs(void);  // 0x00462C91  __cdecl
+void ProcessEffectMsgs(void);  // 0x00462D40  __cdecl
 void Service(void);  // 0x00462E70  __stdcall
 void CheckForEvents1(void);  // 0x004631B0  __stdcall
 void CheckForEvents2(char);  // 0x004631F0  __stdcall
+u16 PadlockTarget(void);  // 0x00463730  __cdecl
+u16 NearbyGroupLeader(void);  // 0x00463900  __cdecl
 undefined4 MaybeCallEventProc(undefined4, undefined4);  // 0x00463980  __stdcall
 undefined4 CallEventProc(undefined4, undefined4);  // 0x004639C0  __stdcall
 undefined4 CreateMove(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00463A20  __stdcall
 undefined4 CreateMoveGoal(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00463AF0  __stdcall
+s16 TimeAddSat(u16);  // 0x00463B90  __fastcall
 undefined4 ObjPlusAngleParm(undefined4, undefined4);  // 0x00463BC0  __fastcall
 undefined4 ObjPlusDeltaParm(undefined4, undefined4, undefined4);  // 0x00463BE0  __fastcall
 undefined4 WriteCmdBuf(undefined4, undefined4, undefined4);  // 0x00463C50  __fastcall
@@ -57,6 +67,7 @@ undefined4 WriteCmdBufMove(undefined4);  // 0x00463CC0  __fastcall
 undefined4 WriteCmdBufEnd(void);  // 0x00463CD0  __stdcall
 undefined4 FinishCmdBuf(undefined4);  // 0x00463CE0  __fastcall
 undefined4 AllocCmdBuf(void);  // 0x00463D00  __stdcall
+undefined4 ReadCmdBuf(void);  // 0x00463D40  __cdecl
 undefined4 CancelCmdBuf(void);  // 0x00463E50  __stdcall
 undefined4 MaskEvents(undefined4);  // 0x00463EA0  __fastcall
 undefined4 CallDamageProc(undefined4);  // 0x00463EC0  __fastcall
@@ -69,6 +80,7 @@ undefined4 PreferredTargetId(void);  // 0x004644F0  __stdcall
 undefined4 PreferredProtectId(void);  // 0x00464520  __stdcall
 undefined4 CloseToAnything(undefined4);  // 0x00464550  __fastcall
 undefined4 SetScenarioEndTime(undefined4);  // 0x00464640  __fastcall
+undefined4 OBJEventProc(u16, undefined4);  // 0x00473A40  __cdecl
 void OBJDamageProc(HIT_OBJ_DATA *);  // 0x00473B40  __cdecl
 undefined4 OBJProc(undefined4);  // 0x00473BE0  __cdecl
 undefined4 Kill(void);  // 0x00473C10  __stdcall
@@ -90,32 +102,20 @@ undefined4 OBJNextAliasForMulti(void);  // 0x004917D0  __stdcall
 undefined4 OBJTempAlias(void);  // 0x004917F0  __stdcall
 undefined4 OBJSetControl(undefined4, undefined4, undefined4, undefined4);  // 0x00491810  __stdcall
 undefined4 OBJHumanName(void);  // 0x004918D0  __stdcall
+undefined4 ResolveTypeRecord(undefined4);  // 0x004A6B10  __fastcall
 undefined4 SetupOT(undefined4);  // 0x004A6EB0  __cdecl
 undefined4 LoadShapeSlot(undefined4);  // 0x004A71E0  __stdcall
 undefined4 SetupNT(undefined4);  // 0x004A7200  __cdecl
+void SetupPT(undefined4);  // 0x004A7220  __cdecl
+void SetupJT(undefined4);  // 0x004A7230  __cdecl
 undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x004382D0  MoveGoalValue -- signature not recovered
-// TODO(#453): 0x00462640  ChainRemoveCurObj -- signature not recovered
-// TODO(#453): 0x004626D0  ChainInsertCurObj -- signature not recovered
-// TODO(#453): 0x00462A50  ServiceObjects -- signature not recovered
-// TODO(#453): 0x00462B70  ChainMergeSorted -- signature not recovered
-// TODO(#453): 0x00462C91  ProcessHitMsgs -- signature not recovered
-// TODO(#453): 0x00462D40  ProcessEffectMsgs -- signature not recovered
-// TODO(#453): 0x00463730  PadlockTarget -- signature not recovered
-// TODO(#453): 0x00463900  NearbyGroupLeader -- signature not recovered
-// TODO(#453): 0x00463B90  TimeAddSat -- signature not recovered
-// TODO(#453): 0x00463D40  ReadCmdBuf -- signature not recovered
 // TODO(#453): 0x00463F60  CallUtilProc -- signature not recovered
 // TODO(#453): 0x0046442B  InSearchAreaBody -- signature not recovered
-// TODO(#453): 0x00473A40  OBJEventProc -- signature not recovered
-// TODO(#453): 0x004A6B10  ResolveTypeRecord -- signature not recovered
 // TODO(#453): 0x004A71C0  LoadShapeVariantPair -- signature not recovered
-// TODO(#453): 0x004A7220  SetupPT -- signature not recovered
-// TODO(#453): 0x004A7230  SetupJT -- signature not recovered
 // TODO(#455): 0x00546BB8  _lastCurZ -- type not recovered
 
 }  // namespace fxe::fa::objects

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // AI interpreter (CT) -- FA.EXE
-// 5/122 functions have a recovered signature; 8/8 globals have a recovered type.
+// 115/122 functions have a recovered signature; 8/8 globals have a recovered type.
 
 namespace fxe::fa::ai {
 
@@ -26,128 +26,128 @@ extern undefined1 ctExecuting;  // 0x00546CA4  re-entry guard set across CTExecP
 undefined4 CTInit(void);  // 0x00464C60  __stdcall
 undefined4 CTShutdown(void);  // 0x00464C80  __stdcall
 undefined4 CTRespondToCancelCmdBuf(void);  // 0x00464C90  __stdcall
+u8 CTLoadProgram(char);  // 0x00464CD0  __fastcall
+void CTResetPC(char);  // 0x00464DB0  __fastcall
 undefined4 CTVarDiff(undefined4);  // 0x00464DE0  __cdecl
+char CTEval_do_nothing(void);  // 0x00464E30  __cdecl
+char CTEval_do_evade(void);  // 0x00464E40  __cdecl
+char CTEval_do_attack(void);  // 0x00464E50  __cdecl
+char CTEval_do_radar_launch(void);  // 0x00464E60  __cdecl
+char CTEval_do_ir_launch(void);  // 0x00464E70  __cdecl
+char CTEval_do_hit(void);  // 0x00464E80  __cdecl
+undefined4 CTEval_tgtattackingme(void);  // 0x00464E90  __cdecl
+undefined4 CTEval_tgtattackinganyone(void);  // 0x00464ED0  __cdecl
+undefined4 CTEval_tgt(void);  // 0x00464F10  __cdecl
+u16 CTEval_tgtclass(void);  // 0x00464F50  __cdecl
+u32 CTEval_tgtisfighter(void);  // 0x00464F90  __cdecl
+u32 CTEval_tgtisbomber(void);  // 0x00464FB0  __cdecl
+u32 CTEval_tgtisplane(void);  // 0x00464FD0  __cdecl
+u32 CTEval_tgtisship(void);  // 0x00464FF0  __cdecl
+u32 CTEval_tgtissam(void);  // 0x00465000  __cdecl
+u32 CTEval_tgtisaaa(void);  // 0x00465010  __cdecl
+u8 CTEval_tgthumancontrol(void);  // 0x00465020  __cdecl
+int CTEval_maxrange(void);  // 0x00465040  __cdecl
+int CTEval_maxrangediff(void);  // 0x00465060  __cdecl
+int CTEval_bestrange(void);  // 0x00465080  __cdecl
+int CTEval_bestrangediff(void);  // 0x00465090  __cdecl
+u32 CTEval_radar(void);  // 0x004650A0  __cdecl
+undefined4 CTEval_tgtradar(void);  // 0x004650B0  __cdecl
+u32 CTEval_ir(void);  // 0x004650E0  __cdecl
+undefined4 CTEval_tgtir(void);  // 0x004650F0  __cdecl
+int CTEval_tgtoffbeam(void);  // 0x00465120  __cdecl
+char CTEval_tgtahead(void);  // 0x00465150  __cdecl
+char CTEval_tgtfacing(void);  // 0x00465180  __cdecl
+int CTEval_hrzdisttotgt(void);  // 0x004651D0  __cdecl
+int CTEval_disttotgt(void);  // 0x00465220  __cdecl
+int CTEval_htotgt(void);  // 0x00465240  __cdecl
+int CTEval_ptotgt(void);  // 0x00465290  __cdecl
+int CTEval_tgtaspectangle(void);  // 0x004652E0  __cdecl
+char CTEval_canclimb(void);  // 0x00465380  __cdecl
+int CTEval_speed(void);  // 0x004653A0  __cdecl
+int CTEval_speeddiff(void);  // 0x004653B0  __cdecl
+int CTEval_minspeeddiff(void);  // 0x004653E0  __cdecl
+int CTEval_cornerspeeddiff(void);  // 0x00465410  __cdecl
+int CTEval_maxrudderh(void);  // 0x00465420  __cdecl
+int CTEval_maxrudderp(void);  // 0x00465430  __cdecl
+int CTEval_maxspeeddiff(void);  // 0x00465450  __cdecl
+char CTEval_betterspeed(void);  // 0x00465460  __cdecl
+int CTEval_twrdiff(void);  // 0x00465490  __cdecl
+char CTEval_bettertwr(void);  // 0x004654A0  __cdecl
+int CTEval_turnrate(void);  // 0x004654C0  __cdecl
+int CTEval_turnratediff(void);  // 0x004654D0  __cdecl
+int CTEval_turnradiusdiff(void);  // 0x00465500  __cdecl
+int CTEval_alt(void);  // 0x00465510  __cdecl
+int CTEval_altdiff(void);  // 0x00465540  __cdecl
+int CTEval_maxalt(void);  // 0x00465560  __cdecl
+int CTEval_maxaltdiff(void);  // 0x00465590  __cdecl
+int CTEval_minalt(void);  // 0x004655B0  __cdecl
+int CTEval_minaltdiff(void);  // 0x004655C0  __cdecl
+int CTEval_waypointalt(void);  // 0x004655E0  __cdecl
+int CTEval_disttowaypoint(void);  // 0x00465640  __cdecl
+int CTEval_cloudalt(void);  // 0x004656B0  __cdecl
+u8 CTEval_skill(void);  // 0x004656C0  __cdecl
+u16 CTEval_h(void);  // 0x004656D0  __cdecl
+int CTEval_p(void);  // 0x00465710  __cdecl
+int CTEval_b(void);  // 0x00465730  __cdecl
+int CTEval_hdiff(void);  // 0x00465750  __cdecl
+int CTEval_pdiff(void);  // 0x00465770  __cdecl
+int CTEval_any(void);  // 0x00465790  __cdecl
+int CTEval_engagep(void);  // 0x004657A0  __cdecl
+int CTEval_wingapproach(void);  // 0x004658A0  __cdecl
+int CTEval_wingcombat(void);  // 0x00465960  __cdecl
+int CTEval_wm_hspacing_is(void);  // 0x004659F0  __cdecl
+int CTEval_wm_vspacing_is(void);  // 0x00465A00  __cdecl
+u8 CTEval_wm_formation_is(void);  // 0x00465A10  __cdecl
+u8 CTEval_wm_control_is(void);  // 0x00465A20  __cdecl
+void CTDo_exit(void);  // 0x00465A30  __cdecl
+char CTDo_restart(void);  // 0x00465A50  __cdecl
+void CTDo_maneuver(void);  // 0x00465A70  __cdecl
+undefined4 CTPop(void);  // 0x00465AD0  __cdecl
+void CTDo_print(void);  // 0x00465B00  __cdecl
+void CTDo_printnum(void);  // 0x00465B60  __cdecl
+void CTDo_play(void);  // 0x00465BC0  __cdecl
+void CTDo_rudder(void);  // 0x00465C20  __cdecl
+int CTReadAngle(void);  // 0x00465C90  __cdecl
+void CTDo_move(void);  // 0x00465CC0  __cdecl
+int CTReadHeading(void);  // 0x00465D40  __cdecl
+int CTReadAngle180(void);  // 0x00465DA0  __cdecl
+int CTReadDuration(void);  // 0x00465DE0  __cdecl
+int CTReadSpeed(void);  // 0x00465E00  __cdecl
+void CTDo_movetoalt(void);  // 0x00465E20  __cdecl
+void CTDo_turn(void);  // 0x00465EA0  __cdecl
+void CTDo_yoyo(void);  // 0x00466052  __cdecl
+void CTDo_circle(void);  // 0x004660C0  __cdecl
+void CTDo_homeangle(void);  // 0x004661A0  __cdecl
+void CTPush(undefined4);  // 0x00466290  __fastcall
+void CTDo_homepos(void);  // 0x004662C0  __cdecl
+void CTDo_uhomepos(void);  // 0x004663E0  __cdecl
+void CTDo_jink(void);  // 0x004663F0  __cdecl
+void CTDo_invert(void);  // 0x004664C0  __cdecl
+void CTDo_btoh(void);  // 0x004664F0  __cdecl
+int CTDo_splits(void);  // 0x00466540  __cdecl
+int CTDo_immelman(void);  // 0x00466590  __cdecl
+void CTDo_wm_break(void);  // 0x004665E0  __cdecl
+void CTDo_wm_approach(void);  // 0x00466630  __cdecl
+void CTDo_wm_hspacing(void);  // 0x00466700  __cdecl
+void CTDo_wm_vspacing(void);  // 0x00466750  __cdecl
+void CTDo_wm_formation(void);  // 0x004667A0  __cdecl
+void CTDo_wm_control(void);  // 0x004667E0  __cdecl
+void CTError(short);  // 0x00466820  __fastcall
+void CTRestoreState(void);  // 0x004668F0  __cdecl
+void CTSaveState(void);  // 0x00466920  __cdecl
 undefined4 CTExecProgram(undefined4);  // 0x00466970  __stdcall
+void CTStep(void);  // 0x00466A80  __cdecl
+undefined4 * CTVarPtr(short);  // 0x004670E0  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x00464CD0  CTLoadProgram -- signature not recovered
-// TODO(#453): 0x00464DB0  CTResetPC -- signature not recovered
 // TODO(#453): 0x00464E20  CTEval_time -- signature not recovered
-// TODO(#453): 0x00464E30  CTEval_do_nothing -- signature not recovered
-// TODO(#453): 0x00464E40  CTEval_do_evade -- signature not recovered
-// TODO(#453): 0x00464E50  CTEval_do_attack -- signature not recovered
-// TODO(#453): 0x00464E60  CTEval_do_radar_launch -- signature not recovered
-// TODO(#453): 0x00464E70  CTEval_do_ir_launch -- signature not recovered
-// TODO(#453): 0x00464E80  CTEval_do_hit -- signature not recovered
-// TODO(#453): 0x00464E90  CTEval_tgtattackingme -- signature not recovered
-// TODO(#453): 0x00464ED0  CTEval_tgtattackinganyone -- signature not recovered
-// TODO(#453): 0x00464F10  CTEval_tgt -- signature not recovered
-// TODO(#453): 0x00464F50  CTEval_tgtclass -- signature not recovered
-// TODO(#453): 0x00464F90  CTEval_tgtisfighter -- signature not recovered
-// TODO(#453): 0x00464FB0  CTEval_tgtisbomber -- signature not recovered
-// TODO(#453): 0x00464FD0  CTEval_tgtisplane -- signature not recovered
-// TODO(#453): 0x00464FF0  CTEval_tgtisship -- signature not recovered
-// TODO(#453): 0x00465000  CTEval_tgtissam -- signature not recovered
-// TODO(#453): 0x00465010  CTEval_tgtisaaa -- signature not recovered
-// TODO(#453): 0x00465020  CTEval_tgthumancontrol -- signature not recovered
-// TODO(#453): 0x00465040  CTEval_maxrange -- signature not recovered
-// TODO(#453): 0x00465060  CTEval_maxrangediff -- signature not recovered
-// TODO(#453): 0x00465080  CTEval_bestrange -- signature not recovered
-// TODO(#453): 0x00465090  CTEval_bestrangediff -- signature not recovered
-// TODO(#453): 0x004650A0  CTEval_radar -- signature not recovered
-// TODO(#453): 0x004650B0  CTEval_tgtradar -- signature not recovered
-// TODO(#453): 0x004650E0  CTEval_ir -- signature not recovered
-// TODO(#453): 0x004650F0  CTEval_tgtir -- signature not recovered
-// TODO(#453): 0x00465120  CTEval_tgtoffbeam -- signature not recovered
-// TODO(#453): 0x00465150  CTEval_tgtahead -- signature not recovered
-// TODO(#453): 0x00465180  CTEval_tgtfacing -- signature not recovered
-// TODO(#453): 0x004651D0  CTEval_hrzdisttotgt -- signature not recovered
-// TODO(#453): 0x00465220  CTEval_disttotgt -- signature not recovered
-// TODO(#453): 0x00465240  CTEval_htotgt -- signature not recovered
-// TODO(#453): 0x00465290  CTEval_ptotgt -- signature not recovered
-// TODO(#453): 0x004652E0  CTEval_tgtaspectangle -- signature not recovered
-// TODO(#453): 0x00465380  CTEval_canclimb -- signature not recovered
-// TODO(#453): 0x004653A0  CTEval_speed -- signature not recovered
-// TODO(#453): 0x004653B0  CTEval_speeddiff -- signature not recovered
 // TODO(#453): 0x004653D0  CTEval_minspeed -- signature not recovered
-// TODO(#453): 0x004653E0  CTEval_minspeeddiff -- signature not recovered
 // TODO(#453): 0x004653F0  CTEval_cornerspeed -- signature not recovered
 // TODO(#453): 0x00465400  CTEval_corner -- signature not recovered
-// TODO(#453): 0x00465410  CTEval_cornerspeeddiff -- signature not recovered
-// TODO(#453): 0x00465420  CTEval_maxrudderh -- signature not recovered
-// TODO(#453): 0x00465430  CTEval_maxrudderp -- signature not recovered
 // TODO(#453): 0x00465440  CTEval_maxspeed -- signature not recovered
-// TODO(#453): 0x00465450  CTEval_maxspeeddiff -- signature not recovered
-// TODO(#453): 0x00465460  CTEval_betterspeed -- signature not recovered
 // TODO(#453): 0x00465480  CTEval_twr -- signature not recovered
-// TODO(#453): 0x00465490  CTEval_twrdiff -- signature not recovered
-// TODO(#453): 0x004654A0  CTEval_bettertwr -- signature not recovered
-// TODO(#453): 0x004654C0  CTEval_turnrate -- signature not recovered
-// TODO(#453): 0x004654D0  CTEval_turnratediff -- signature not recovered
 // TODO(#453): 0x004654F0  CTEval_turnradius -- signature not recovered
-// TODO(#453): 0x00465500  CTEval_turnradiusdiff -- signature not recovered
-// TODO(#453): 0x00465510  CTEval_alt -- signature not recovered
-// TODO(#453): 0x00465540  CTEval_altdiff -- signature not recovered
-// TODO(#453): 0x00465560  CTEval_maxalt -- signature not recovered
-// TODO(#453): 0x00465590  CTEval_maxaltdiff -- signature not recovered
-// TODO(#453): 0x004655B0  CTEval_minalt -- signature not recovered
-// TODO(#453): 0x004655C0  CTEval_minaltdiff -- signature not recovered
-// TODO(#453): 0x004655E0  CTEval_waypointalt -- signature not recovered
-// TODO(#453): 0x00465640  CTEval_disttowaypoint -- signature not recovered
-// TODO(#453): 0x004656B0  CTEval_cloudalt -- signature not recovered
-// TODO(#453): 0x004656C0  CTEval_skill -- signature not recovered
-// TODO(#453): 0x004656D0  CTEval_h -- signature not recovered
-// TODO(#453): 0x00465710  CTEval_p -- signature not recovered
-// TODO(#453): 0x00465730  CTEval_b -- signature not recovered
-// TODO(#453): 0x00465750  CTEval_hdiff -- signature not recovered
-// TODO(#453): 0x00465770  CTEval_pdiff -- signature not recovered
-// TODO(#453): 0x00465790  CTEval_any -- signature not recovered
-// TODO(#453): 0x004657A0  CTEval_engagep -- signature not recovered
-// TODO(#453): 0x004658A0  CTEval_wingapproach -- signature not recovered
-// TODO(#453): 0x00465960  CTEval_wingcombat -- signature not recovered
-// TODO(#453): 0x004659F0  CTEval_wm_hspacing_is -- signature not recovered
-// TODO(#453): 0x00465A00  CTEval_wm_vspacing_is -- signature not recovered
-// TODO(#453): 0x00465A10  CTEval_wm_formation_is -- signature not recovered
-// TODO(#453): 0x00465A20  CTEval_wm_control_is -- signature not recovered
-// TODO(#453): 0x00465A30  CTDo_exit -- signature not recovered
-// TODO(#453): 0x00465A50  CTDo_restart -- signature not recovered
-// TODO(#453): 0x00465A70  CTDo_maneuver -- signature not recovered
-// TODO(#453): 0x00465AD0  CTPop -- signature not recovered
-// TODO(#453): 0x00465B00  CTDo_print -- signature not recovered
-// TODO(#453): 0x00465B60  CTDo_printnum -- signature not recovered
-// TODO(#453): 0x00465BC0  CTDo_play -- signature not recovered
-// TODO(#453): 0x00465C20  CTDo_rudder -- signature not recovered
-// TODO(#453): 0x00465C90  CTReadAngle -- signature not recovered
-// TODO(#453): 0x00465CC0  CTDo_move -- signature not recovered
-// TODO(#453): 0x00465D40  CTReadHeading -- signature not recovered
-// TODO(#453): 0x00465DA0  CTReadAngle180 -- signature not recovered
-// TODO(#453): 0x00465DE0  CTReadDuration -- signature not recovered
-// TODO(#453): 0x00465E00  CTReadSpeed -- signature not recovered
-// TODO(#453): 0x00465E20  CTDo_movetoalt -- signature not recovered
-// TODO(#453): 0x00465EA0  CTDo_turn -- signature not recovered
-// TODO(#453): 0x00466052  CTDo_yoyo -- signature not recovered
-// TODO(#453): 0x004660C0  CTDo_circle -- signature not recovered
-// TODO(#453): 0x004661A0  CTDo_homeangle -- signature not recovered
-// TODO(#453): 0x00466290  CTPush -- signature not recovered
-// TODO(#453): 0x004662C0  CTDo_homepos -- signature not recovered
-// TODO(#453): 0x004663E0  CTDo_uhomepos -- signature not recovered
-// TODO(#453): 0x004663F0  CTDo_jink -- signature not recovered
-// TODO(#453): 0x004664C0  CTDo_invert -- signature not recovered
-// TODO(#453): 0x004664F0  CTDo_btoh -- signature not recovered
-// TODO(#453): 0x00466540  CTDo_splits -- signature not recovered
-// TODO(#453): 0x00466590  CTDo_immelman -- signature not recovered
-// TODO(#453): 0x004665E0  CTDo_wm_break -- signature not recovered
-// TODO(#453): 0x00466630  CTDo_wm_approach -- signature not recovered
-// TODO(#453): 0x00466700  CTDo_wm_hspacing -- signature not recovered
-// TODO(#453): 0x00466750  CTDo_wm_vspacing -- signature not recovered
-// TODO(#453): 0x004667A0  CTDo_wm_formation -- signature not recovered
-// TODO(#453): 0x004667E0  CTDo_wm_control -- signature not recovered
-// TODO(#453): 0x00466820  CTError -- signature not recovered
-// TODO(#453): 0x004668F0  CTRestoreState -- signature not recovered
-// TODO(#453): 0x00466920  CTSaveState -- signature not recovered
-// TODO(#453): 0x00466A80  CTStep -- signature not recovered
-// TODO(#453): 0x004670E0  CTVarPtr -- signature not recovered
 
 }  // namespace fxe::fa::ai

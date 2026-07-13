@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 16/18 functions have a recovered signature; 0/0 globals have a recovered type.
+// 18/18 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::input {
 
@@ -24,16 +24,12 @@ undefined4 ASynchJoystick(void);  // 0x00494AE0  __fastcall
 undefined4 ReadJoystickButtons(void);  // 0x00494B50  __fastcall
 undefined4 MOUSESetLimits(undefined4, undefined4);  // 0x00499CF0  __stdcall
 undefined4 MOUSESetPos(undefined4, undefined4);  // 0x00499D10  __stdcall
+void MOUSECenter(void);  // 0x00499D40  __cdecl
 undefined4 MOUSERead(undefined4, undefined4);  // 0x00499D50  __stdcall
 undefined4 MOUSEInit(void);  // 0x00499DF0  __stdcall
+void MOUSEShutdown(void);  // 0x00499E30  __cdecl
 void MOUSEEvent(unsigned int, unsigned int, long);  // 0x00499E50  __fastcall
 void RunSerialConfigurationScreen(void);  // 0x0049B1D0  __stdcall
 void RunModemConfigurationScreen(void);  // 0x0049C780  __stdcall
-
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x00499D40  MOUSECenter -- signature not recovered
-// TODO(#453): 0x00499E30  MOUSEShutdown -- signature not recovered
 
 }  // namespace fxe::fa::input
