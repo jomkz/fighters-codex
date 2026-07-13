@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core shell / menu / dialog UI -- FA.EXE
-// 55/136 functions have a recovered signature; 0/0 globals have a recovered type.
+// 68/136 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::shell_ui {
 
@@ -17,6 +17,8 @@ void MouseLoadPtr(void);  // 0x0040B8A0  __stdcall
 void MaybeCampaignMenu(char *, long, long, char);  // 0x0040BC20  __stdcall
 void MaybeCampaignMenu2(char *, long, long, char);  // 0x0040BD00  __stdcall
 void MenuStartUp(char *, long, long, char, long);  // 0x0040BD30  __stdcall
+undefined4 MenuMeasureItemWidth(undefined4, undefined4, undefined4, undefined4);  // 0x0040BF60  __stdcall
+undefined4 MenuItemSubString(undefined4);  // 0x0040C130  __stdcall
 void MenuRemoveItem(long);  // 0x0040C1A0  __cdecl
 void MenuCreateRemaps(void);  // 0x0040C1F0  __stdcall
 void MenuDrawBar(char);  // 0x0040C410  __fastcall
@@ -25,7 +27,10 @@ void CheckItem(char, unsigned short);  // 0x0040CDE0  __fastcall
 void EnableItem(unsigned short);  // 0x0040CE70  __fastcall
 void DisableItem(unsigned short);  // 0x0040CE80  __fastcall
 void ShadowBox(long, long, long, long);  // 0x0040CFE0  __stdcall
+undefined4 ShadowBoxDraw(undefined4, undefined4, undefined4, undefined4);  // 0x0040CFEB  __stdcall
 void MenuSteelRect(long, long, long, long);  // 0x0040D180  __stdcall
+undefined4 MenuSteelPattern(undefined4, undefined4, undefined4);  // 0x0040D390  __stdcall
+undefined4 MenuBuildRemap(undefined4, undefined4, undefined4);  // 0x0040D4E0  __stdcall
 void PushShellAlloc(void);  // 0x0040D5F0  __stdcall
 void PopShellAlloc(void);  // 0x0040D620  __stdcall
 void ShellShowMouse(void);  // 0x0040D640  __stdcall
@@ -46,7 +51,10 @@ void DialogDraw(void *);  // 0x00488470  __stdcall
 undefined4 DialogUpdate(undefined4);  // 0x00488490  __fastcall
 undefined4 DialogRadioGroupClear(undefined4);  // 0x00488F50  __cdecl
 undefined4 DialogWhatItem(void);  // 0x00488FC0  __stdcall
+undefined4 DialogScrollbarHit(undefined4, undefined4);  // 0x00488FD0  __stdcall
 undefined4 DialogSliderRelease(undefined4);  // 0x00489070  __cdecl
+undefined4 DialogScrollThumbInit(undefined4);  // 0x004891A0  __stdcall
+undefined4 DialogClampThumb(undefined4);  // 0x00489220  __stdcall
 undefined4 DialogGetPtr(undefined4);  // 0x004892E0  __fastcall
 undefined4 DialogGetValue(undefined4);  // 0x00489300  __fastcall
 undefined4 DialogSetRocker(undefined4, undefined4);  // 0x00489400  __stdcall
@@ -54,9 +62,14 @@ undefined4 DialogSelectItem(undefined4);  // 0x004894F0  __fastcall
 undefined4 DialogDeselectItem(undefined4);  // 0x00489580  __fastcall
 undefined4 DialogSetString(undefined4, undefined4, undefined4);  // 0x004895D0  __stdcall
 undefined4 DialogGetString(undefined4);  // 0x004896A0  __fastcall
+undefined4 DialogBlitModuleBitmap(undefined4, undefined4, undefined4, undefined4);  // 0x0048A260  __stdcall
 undefined4 PrintPageNums(undefined4, undefined4, undefined4, undefined4);  // 0x0048A7D0  __stdcall
 undefined4 DrawRocker(undefined4);  // 0x0048B4E0  __cdecl
+undefined4 DialogHelper48bc00(undefined4, undefined4, undefined4);  // 0x0048BC00  __stdcall
+undefined4 DialogHelper48bdf0(undefined4, undefined4, undefined4);  // 0x0048BDF0  __stdcall
 undefined4 CheckMousePtr(undefined4, undefined4, undefined4, undefined4);  // 0x0048BE60  __stdcall
+undefined4 DialogHelper48c570(undefined4, undefined4, undefined4);  // 0x0048C570  __stdcall
+undefined4 DialogDrawEditText(undefined4, undefined4, undefined4);  // 0x0048C5A0  __stdcall
 void Do320Button(T_HANDLE *, ACTION *);  // 0x0048CB00  __stdcall
 undefined4 ShellClickSound(undefined4, undefined4);  // 0x0048D030  __fastcall
 undefined4 ShellDisabledSound(undefined4);  // 0x0048D090  __fastcall
@@ -73,8 +86,6 @@ undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x0040BF40  MenuInstallRemap -- signature not recovered
-// TODO(#453): 0x0040BF60  MenuMeasureItemWidth -- signature not recovered
-// TODO(#453): 0x0040C130  MenuItemSubString -- signature not recovered
 // TODO(#453): 0x0040C160  MenuLoadFont -- signature not recovered
 // TODO(#453): 0x0040C1D0  MenuLinkTerminate -- signature not recovered
 // TODO(#453): 0x0040C5A0  MenuCurrentIndex -- signature not recovered
@@ -90,17 +101,11 @@ undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __
 // TODO(#453): 0x0040CF00  MenuRestoreBackground -- signature not recovered
 // TODO(#453): 0x0040CF40  MenuSaveBackground2 -- signature not recovered
 // TODO(#453): 0x0040CFA0  MenuRestoreBackground2 -- signature not recovered
-// TODO(#453): 0x0040CFEB  ShadowBoxDraw -- signature not recovered
-// TODO(#453): 0x0040D390  MenuSteelPattern -- signature not recovered
-// TODO(#453): 0x0040D4E0  MenuBuildRemap -- signature not recovered
 // TODO(#453): 0x00487E90  DialogLinkRecords -- signature not recovered
 // TODO(#453): 0x00488170  DialogBeginDraw -- signature not recovered
 // TODO(#453): 0x00488180  DialogEndDraw -- signature not recovered
 // TODO(#453): 0x00488F00  DialogWaitUntilTick -- signature not recovered
 // TODO(#453): 0x00488F30  DialogHelper488f30 -- signature not recovered
-// TODO(#453): 0x00488FD0  DialogScrollbarHit -- signature not recovered
-// TODO(#453): 0x004891A0  DialogScrollThumbInit -- signature not recovered
-// TODO(#453): 0x00489220  DialogClampThumb -- signature not recovered
 // TODO(#453): 0x00489360  DialogMatchListString -- signature not recovered
 // TODO(#453): 0x00489430  DialogSetValue -- signature not recovered
 // TODO(#453): 0x00489660  DialogUpdateString -- signature not recovered
@@ -114,7 +119,6 @@ undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __
 // TODO(#453): 0x00489AC0  DrawText -- signature not recovered
 // TODO(#453): 0x00489B90  DrawAction -- signature not recovered
 // TODO(#453): 0x0048A080  DialogFlush -- signature not recovered
-// TODO(#453): 0x0048A260  DialogBlitModuleBitmap -- signature not recovered
 // TODO(#453): 0x0048A2B0  DialogSetupBitmap -- signature not recovered
 // TODO(#453): 0x0048A4C0  DrawDial -- signature not recovered
 // TODO(#453): 0x0048A730  DrawLight -- signature not recovered
@@ -129,16 +133,12 @@ undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __
 // TODO(#453): 0x0048B930  DrawToggle -- signature not recovered
 // TODO(#453): 0x0048BAD0  DrawSliderHoriz -- signature not recovered
 // TODO(#453): 0x0048BBE0  DialogHelper48bbe0 -- signature not recovered
-// TODO(#453): 0x0048BC00  DialogHelper48bc00 -- signature not recovered
 // TODO(#453): 0x0048BC60  DrawSliderVert -- signature not recovered
-// TODO(#453): 0x0048BDF0  DialogHelper48bdf0 -- signature not recovered
 // TODO(#453): 0x0048BEC0  DialogEditGeom -- signature not recovered
 // TODO(#453): 0x0048BF50  DialogHelper48bf50 -- signature not recovered
 // TODO(#453): 0x0048BFA0  DialogDrawEditCaret -- signature not recovered
 // TODO(#453): 0x0048C040  DialogEditKey -- signature not recovered
 // TODO(#453): 0x0048C510  DialogHelper48c510 -- signature not recovered
-// TODO(#453): 0x0048C570  DialogHelper48c570 -- signature not recovered
-// TODO(#453): 0x0048C5A0  DialogDrawEditText -- signature not recovered
 // TODO(#453): 0x0048C710  DrawEditBox -- signature not recovered
 // TODO(#453): 0x0048C800  DrawText320 -- signature not recovered
 // TODO(#453): 0x0048C8A0  DrawCheck320 -- signature not recovered

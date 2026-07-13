@@ -8,45 +8,47 @@
 #include "../fa_types.hpp"
 
 // CDRVXF32.DLL — Cdrv file-transfer comms driver -- CDRVXF32.DLL
-// 0/33 functions have a recovered signature; 0/0 globals have a recovered type.
+// 29/33 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::cdrvxf32::comms_xf {
+
+// --- functions -------------------------------------------------------
+undefined4 CdrvXferCreateDialog(undefined4);  // 0x10002410  __stdcall
+undefined4 CdrvXferUpdateDialog(undefined4);  // 0x10002580  __stdcall
+undefined4 CdrvXferDestroyDialog(undefined4);  // 0x100026A0  __stdcall
+undefined4 cdrvxfer_files(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x10002A90  __stdcall
+undefined4 cdrvxfer_sfiles(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x10002AC0  __stdcall
+undefined4 FileTransferDialog(undefined4, undefined4);  // 0x10002AF0  __stdcall
+undefined4 cdrvxfer_gclose(undefined4);  // 0x10003080  __stdcall
+undefined4 cdrvxfer_getfiles(undefined4, undefined4);  // 0x100033E0  __stdcall
+undefined4 SetXferParameters(undefined4, undefined4);  // 0x10003440  __stdcall
+undefined4 TransferFiles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x10003500  __stdcall
+undefined4 dos_close(undefined4);  // 0x100058B0  __stdcall
+undefined4 dos_commit(undefined4);  // 0x100058D0  __stdcall
+undefined4 dos_create(undefined4, undefined4);  // 0x100058F0  __stdcall
+undefined4 dos_createdir(undefined4);  // 0x10005960  __stdcall
+undefined4 dos_delete(undefined4);  // 0x10005980  __stdcall
+undefined4 dos_deletedir(undefined4);  // 0x100059A0  __stdcall
+undefined4 dos_getdate(undefined4, undefined4, undefined4, undefined4);  // 0x100059C0  __stdcall
+undefined4 dos_getdir(undefined4);  // 0x10005A10  __stdcall
+undefined4 dos_getfdate(undefined4, undefined4, undefined4);  // 0x10005A80  __stdcall
+undefined4 dos_getfileattribute(undefined4, undefined4);  // 0x10005AD0  __stdcall
+undefined4 dos_getfiledatetime(undefined4, undefined4, undefined4);  // 0x10005B20  __stdcall
+undefined4 dos_getfirstfile(undefined4, undefined4, undefined4);  // 0x10005BC0  __stdcall
+undefined4 dos_getnextfile(undefined4);  // 0x10005C70  __stdcall
+undefined4 dos_open(undefined4, undefined4);  // 0x10005E00  __stdcall
+undefined4 dos_read(undefined4, undefined4, undefined4);  // 0x10005EA0  __stdcall
+undefined4 dos_seek(undefined4, undefined4, undefined4);  // 0x10005F00  __stdcall
+undefined4 dos_setfdate(undefined4, undefined4, undefined4);  // 0x10005F40  __stdcall
+undefined4 dos_setfileattribute(undefined4, undefined4);  // 0x10005F90  __stdcall
+undefined4 dos_setfiledatetime(undefined4, undefined4, undefined4);  // 0x10005FE0  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x10002410  CdrvXferCreateDialog -- signature not recovered
-// TODO(#453): 0x10002580  CdrvXferUpdateDialog -- signature not recovered
-// TODO(#453): 0x100026A0  CdrvXferDestroyDialog -- signature not recovered
-// TODO(#453): 0x10002A90  cdrvxfer_files -- signature not recovered
-// TODO(#453): 0x10002AC0  cdrvxfer_sfiles -- signature not recovered
-// TODO(#453): 0x10002AF0  FileTransferDialog -- signature not recovered
-// TODO(#453): 0x10003080  cdrvxfer_gclose -- signature not recovered
-// TODO(#453): 0x100033E0  cdrvxfer_getfiles -- signature not recovered
 // TODO(#453): 0x10003410  cdrvxfer_sendfiles -- signature not recovered
-// TODO(#453): 0x10003440  SetXferParameters -- signature not recovered
-// TODO(#453): 0x10003500  TransferFiles -- signature not recovered
-// TODO(#453): 0x100058B0  dos_close -- signature not recovered
-// TODO(#453): 0x100058D0  dos_commit -- signature not recovered
-// TODO(#453): 0x100058F0  dos_create -- signature not recovered
-// TODO(#453): 0x10005960  dos_createdir -- signature not recovered
-// TODO(#453): 0x10005980  dos_delete -- signature not recovered
-// TODO(#453): 0x100059A0  dos_deletedir -- signature not recovered
-// TODO(#453): 0x100059C0  dos_getdate -- signature not recovered
-// TODO(#453): 0x10005A10  dos_getdir -- signature not recovered
-// TODO(#453): 0x10005A80  dos_getfdate -- signature not recovered
-// TODO(#453): 0x10005AD0  dos_getfileattribute -- signature not recovered
-// TODO(#453): 0x10005B20  dos_getfiledatetime -- signature not recovered
-// TODO(#453): 0x10005BC0  dos_getfirstfile -- signature not recovered
-// TODO(#453): 0x10005C70  dos_getnextfile -- signature not recovered
 // TODO(#453): 0x10005DA0  dos_gettime -- signature not recovered
-// TODO(#453): 0x10005E00  dos_open -- signature not recovered
-// TODO(#453): 0x10005EA0  dos_read -- signature not recovered
 // TODO(#453): 0x10005EE0  dos_rename -- signature not recovered
-// TODO(#453): 0x10005F00  dos_seek -- signature not recovered
-// TODO(#453): 0x10005F40  dos_setfdate -- signature not recovered
-// TODO(#453): 0x10005F90  dos_setfileattribute -- signature not recovered
-// TODO(#453): 0x10005FE0  dos_setfiledatetime -- signature not recovered
 // TODO(#453): 0x10006070  dos_write -- signature not recovered
 
 }  // namespace fxe::cdrvxf32::comms_xf

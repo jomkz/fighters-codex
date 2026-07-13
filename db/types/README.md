@@ -125,13 +125,13 @@ to guess whether arguments arrived in `ECX`/`EDX`, and none can:
 | callee-side "reads `ECX` before writing it" | **11.6%** — `_GRTo2d@8` is stdcall with no register arguments, yet its prologue reads both |
 | Ghidra's own decompiler parameter list | **~16%** — `MPBuildSpawnPayload` pops 20 bytes (5 arguments); Ghidra says 2 |
 
-A `ret N` in the callee *looks* like proof, and is not: it pins the N **stack** bytes, but a
-fastcall callee may take 1–2 further arguments in registers on top of them. It cannot settle an
-arity unless the convention is already known.
+A `ret N` in the callee *looks* like proof, and **on its own it is not**: it pins the N **stack**
+bytes, but a fastcall callee may take 1–2 further arguments in registers on top of them. It cannot
+settle an arity unless the convention is already known — which is exactly what
+[`tools/recover_frames.py`](#the-ret-operand-toolsrecover_framespy) supplies, below.
 
 Any of these would have corrupted `db/` at exactly the rate hardest to notice — and whatever the
-fxe generator emits downstream with it. **A wrong datatype is worse than none.** The remaining
-~900 rows are left to the per-subsystem, docs-corroborated pass #453 describes.
+fxe generator emits downstream with it. **A wrong datatype is worse than none.**
 
 ### The corroboration gate
 
@@ -150,6 +150,57 @@ Strictness scales with what is actually being inferred:
 
 `--check` re-proves the rule against the known-arity functions on every run: if a Ghidra upgrade
 ever perturbs the evidence, the rule's accuracy must be re-demonstrated, not assumed.
+
+## The RET operand: `tools/recover_frames.py`
+
+The two passes above both read the **caller**. What is left after them — the #453 tail — is the set
+where the caller says nothing: no decoration to read, and no visible cleanup (MSVC merged or deferred
+the pop). The evidence has to come from the **callee**, and one rule survived measurement:
+
+```
+ret_imm > 0                    the callee cleans its own stack  -> callee-cleans
+AND ECX/EDX never read as an input   ...and takes nothing in registers -> stdcall
+=> stdcall, arity = ret_imm / 4
+```
+
+This is the composition the negative result above is missing. `ret N` alone cannot settle an arity
+because a fastcall callee may take arguments in registers *on top* of the N stack bytes — so pair it
+with a test that rules the register arguments out, and the RET operand becomes the whole arity.
+
+**The register test only ever disqualifies, and that is the whole trick.** Inferring arity *from*
+register use failed at 7.6–16% (table above) because an incoming register argument is
+indistinguishable from a scratch use. But the converse costs nothing: a function that reads `ECX` or
+`EDX` as an input *might* be taking arguments there, so its RET operand is not the whole story —
+refuse it. `_GRTo2d@8` (stdcall, no register arguments, yet its prologue reads both) is not
+mistyped by this rule; it is **declined**. Refusing on a maybe costs recall. Counting on a maybe
+costs correctness.
+
+Measured against the 970 signatures the decorations prove independently, on every run:
+
+- **263 / 263 correct, 0 false positives**
+- fires on **0 of 242** known `__fastcall` functions — the counterexample class
+
+One leak was found and closed while measuring: registers must be matched on their **base register**,
+so `CX` and `CL` count as touching `ECX`. A fastcall callee taking a `ushort` receives it in `CX`,
+and an exact-name comparison sees no `ECX` anywhere in the function — that single leak was the rule's
+only false positive (`@Reaction@12`, fastcall/3, typed as stdcall/1).
+
+### Also rejected here — measured, and not to be retried
+
+| approach | result |
+|---|---|
+| arity from the callee's `[EBP + N]` argument reads | **unavailable**: FA.EXE is built with frame-pointer omission — only 26 of 733 unsigned functions have an EBP frame at all |
+| arity from Ghidra's normalized stack references (these *do* survive FPO) | **9 false positives / 221**. It undercounts: a callee that never touches its trailing argument leaves no reference to it (true arity 10, predicted 1) |
+| arity from counting the caller's `PUSH`es | **74.6%** precision. MSVC stages arguments with `SUB ESP,N` + `MOV [ESP+k]`, and pushes non-argument values |
+| the two above, gated on **agreeing with each other** | 0 false positives — but it fires on **6** functions in the tail-like domain. Six samples cannot establish a precision, and an unproven rule is not a rule. Left unapplied on purpose |
+
+```
+python3 tools/recover_frames.py            # report
+python3 tools/recover_frames.py --write    # needs the local Ghidra export
+```
+
+It re-proves itself against the decorations on every run and **refuses to write** if the rule stops
+validating.
 
 ## Typing the globals: `tools/recover_globals.py`
 

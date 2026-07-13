@@ -8,17 +8,28 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 0/125 functions have a recovered signature; 0/0 globals have a recovered type.
+// 11/125 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::campaign {
+
+// --- functions -------------------------------------------------------
+undefined4 ZONEPickTarget(undefined4);  // 0x00422120  __stdcall
+undefined4 MAPWPListBounds(undefined4, undefined4, undefined4);  // 0x00422190  __stdcall
+undefined4 MAPAddSpecial(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042297E  __stdcall
+undefined4 MAPDrawWPIcon(undefined4, undefined4, undefined4, undefined4);  // 0x0042648F  __stdcall
+undefined4 MAPHasFlyablePlane(undefined4, undefined4);  // 0x00426D98  __stdcall
+undefined4 MAPQuantizeAlt(undefined4, undefined4, undefined4);  // 0x004276E9  __stdcall
+undefined4 MAPFormatReactFlags(undefined4, undefined4, undefined4, undefined4);  // 0x004292D2  __stdcall
+undefined4 PilotLoadBySortIndex(undefined4, undefined4, undefined4);  // 0x00468E40  __stdcall
+undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
+undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
+undefined4 TextTokenToValue(undefined4);  // 0x00483D50  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x00421D40  ZONEActive -- signature not recovered
 // TODO(#453): 0x00421DE0  ZONEServiceRange -- signature not recovered
-// TODO(#453): 0x00422120  ZONEPickTarget -- signature not recovered
-// TODO(#453): 0x00422190  MAPWPListBounds -- signature not recovered
 // TODO(#453): 0x00422230  MAPAdjustObjAlt -- signature not recovered
 // TODO(#453): 0x00422350  MAPMarkDirty -- signature not recovered
 // TODO(#453): 0x004224B3  MAPScreenToWorld -- signature not recovered
@@ -29,7 +40,6 @@ namespace fxe::fa::campaign {
 // TODO(#453): 0x004226EE  MAPSetFormationWP -- signature not recovered
 // TODO(#453): 0x00422828  MAPClearSelection -- signature not recovered
 // TODO(#453): 0x00422840  MAPClearHover -- signature not recovered
-// TODO(#453): 0x0042297E  MAPAddSpecial -- signature not recovered
 // TODO(#453): 0x00422A71  MAPScreen -- signature not recovered
 // TODO(#453): 0x00423ED4  MAPRebuildWPLoop -- signature not recovered
 // TODO(#453): 0x00423F30  MAPStoreLeafTmap -- signature not recovered
@@ -64,7 +74,6 @@ namespace fxe::fa::campaign {
 // TODO(#453): 0x00426277  MAPDrawTargetLink -- signature not recovered
 // TODO(#453): 0x004262DE  MAPDrawAllPaths -- signature not recovered
 // TODO(#453): 0x00426325  MAPDrawObjPath -- signature not recovered
-// TODO(#453): 0x0042648F  MAPDrawWPIcon -- signature not recovered
 // TODO(#453): 0x0042658D  MAPSetSelection -- signature not recovered
 // TODO(#453): 0x004265C1  MAPStepSelection -- signature not recovered
 // TODO(#453): 0x00426696  MAPAssignWPTarget -- signature not recovered
@@ -75,13 +84,11 @@ namespace fxe::fa::campaign {
 // TODO(#453): 0x00426C45  MAPSetWPFormationParams -- signature not recovered
 // TODO(#453): 0x00426C6D  MAPDeleteWP -- signature not recovered
 // TODO(#453): 0x00426D6D  MAPRequirePlayerPlane -- signature not recovered
-// TODO(#453): 0x00426D98  MAPHasFlyablePlane -- signature not recovered
 // TODO(#453): 0x00426DE2  MAPMakeSelPlayer -- signature not recovered
 // TODO(#453): 0x00426E37  MAPAddObject -- signature not recovered
 // TODO(#453): 0x00427195  MAPDeleteObject -- signature not recovered
 // TODO(#453): 0x004271ED  MAPWPButtons -- signature not recovered
 // TODO(#453): 0x004276A0  MAPWPFormationIndex -- signature not recovered
-// TODO(#453): 0x004276E9  MAPQuantizeAlt -- signature not recovered
 // TODO(#453): 0x00427721  MAPQuantizeToTable -- signature not recovered
 // TODO(#453): 0x00427769  MAPObjButtons -- signature not recovered
 // TODO(#453): 0x004281DD  MAPObjCampaignLocked -- signature not recovered
@@ -95,7 +102,6 @@ namespace fxe::fa::campaign {
 // TODO(#453): 0x00428A3B  MAPDrawSelInfo -- signature not recovered
 // TODO(#453): 0x00428AEF  MAPBuildWPInfo -- signature not recovered
 // TODO(#453): 0x00429245  MAPFormatWPTarget -- signature not recovered
-// TODO(#453): 0x004292D2  MAPFormatReactFlags -- signature not recovered
 // TODO(#453): 0x0042934C  MAPBuildObjInfo -- signature not recovered
 // TODO(#453): 0x00429DDE  MAPMissionMenu -- signature not recovered
 // TODO(#453): 0x0042A656  MAPRandomizeSkill -- signature not recovered
@@ -124,18 +130,14 @@ namespace fxe::fa::campaign {
 // TODO(#453): 0x00468C40  PilotListAddUnavail -- signature not recovered
 // TODO(#453): 0x00468CA0  PilotMakeCopyName -- signature not recovered
 // TODO(#453): 0x00468DF0  PilotStripCopySuffix -- signature not recovered
-// TODO(#453): 0x00468E40  PilotLoadBySortIndex -- signature not recovered
 // TODO(#453): 0x00468F00  PilotFormatRank -- signature not recovered
 // TODO(#453): 0x00468F40  PilotDiskSpaceError -- signature not recovered
 // TODO(#453): 0x00468F80  PilotSetField -- signature not recovered
 // TODO(#453): 0x0047FAAE  JOGCFetchMission -- signature not recovered
-// TODO(#453): 0x004809D0  MISSIONLoadOrdIcons -- signature not recovered
-// TODO(#453): 0x00481920  CampaignProcInvoke -- signature not recovered
 // TODO(#453): 0x00481A7B  MISSIONEnemiesAlive -- signature not recovered
 // TODO(#453): 0x00483C90  TextNextToken -- signature not recovered
 // TODO(#453): 0x00483D10  TextIsDelim -- signature not recovered
 // TODO(#453): 0x00483D30  TextNextNumber -- signature not recovered
-// TODO(#453): 0x00483D50  TextTokenToValue -- signature not recovered
 // TODO(#453): 0x00485380  CampaignAccumStats -- signature not recovered
 // TODO(#453): 0x004854A0  StatsAddPair -- signature not recovered
 // TODO(#453): 0x004856F0  StatsBucketFor -- signature not recovered

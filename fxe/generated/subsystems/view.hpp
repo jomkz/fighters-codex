@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // View / camera & replay (VIEW) -- FA.EXE
-// 5/19 functions have a recovered signature; 3/5 globals have a recovered type.
+// 6/19 functions have a recovered signature; 3/5 globals have a recovered type.
 
 namespace fxe::fa::view {
 
@@ -19,6 +19,7 @@ extern undefined1 replayActive;  // 0x005224C0  replay-active flag (set by VIEWR
 
 // --- functions -------------------------------------------------------
 undefined4 VIEWSlew(undefined4, undefined4, undefined4);  // 0x0040D7A0  __stdcall
+undefined4 VIEWUpdateByType(undefined4);  // 0x0040E240  __stdcall
 undefined4 VIEWAngleScale(undefined4);  // 0x0040E330  __cdecl
 undefined4 VIEWImmediateVisibility(void);  // 0x0040E380  __stdcall
 undefined4 VIEWInTransition(void);  // 0x0040E930  __stdcall
@@ -29,7 +30,6 @@ undefined4 VIEWChangeObj(undefined4, undefined4, undefined4);  // 0x0040F590  __
 // compile and then lie about what the original function took.
 // TODO(#453): 0x0040D7F0  VIEWApplyMode -- signature not recovered
 // TODO(#453): 0x0040D810  VIEWFromObject -- signature not recovered
-// TODO(#453): 0x0040E240  VIEWUpdateByType -- signature not recovered
 // TODO(#453): 0x0040E2C0  VIEWFitDistance -- signature not recovered
 // TODO(#453): 0x0040E3A0  VIEWInit -- signature not recovered
 // TODO(#453): 0x0040E450  VIEWFree -- signature not recovered

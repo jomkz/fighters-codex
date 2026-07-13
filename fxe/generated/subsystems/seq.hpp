@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // .SEQ scripted-cutscene / sequence player (SEQ) -- FA.EXE
-// 11/40 functions have a recovered signature; 25/25 globals have a recovered type.
+// 12/40 functions have a recovered signature; 25/25 globals have a recovered type.
 
 namespace fxe::fa::seq {
 
@@ -46,6 +46,7 @@ char * SeqSubstitute(char **, char *, char **, short);  // 0x004454D0  __cdecl
 undefined4 SeqStop(undefined4);  // 0x00445D30  __cdecl
 void SeqRect(long, long, long, long);  // 0x00445E70  __stdcall
 undefined4 SeqNextOverlap(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00446100  __cdecl
+undefined4 SeqAccessResource(undefined4, undefined4);  // 0x00446330  __stdcall
 SEQGR * SeqGRFind(char *);  // 0x00446610  __cdecl
 undefined4 SeqLinkLabel(undefined4);  // 0x00446710  __cdecl
 SEQGR * SEQblock(long, long, long, long, long, long);  // 0x004467B0  __cdecl
@@ -68,7 +69,6 @@ char SeqFadeIn(unsigned short, unsigned short);  // 0x004469F0  __cdecl
 // TODO(#453): 0x00446090  SeqExpireGraphics -- signature not recovered
 // TODO(#453): 0x00446170  SeqGraphicOrder -- signature not recovered
 // TODO(#453): 0x004461A0  SeqDrawGraphic -- signature not recovered
-// TODO(#453): 0x00446330  SeqAccessResource -- signature not recovered
 // TODO(#453): 0x00446360  SeqRedrawRegion -- signature not recovered
 // TODO(#453): 0x00446500  SeqNewGraphic -- signature not recovered
 // TODO(#453): 0x00446660  SEQbitmap -- signature not recovered

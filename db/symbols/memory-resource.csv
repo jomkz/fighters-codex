@@ -41,7 +41,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004A6990,func,@RMFind@4,RMFind,sms,confirmed,uppercase key; check 20-entry LRU resCache then linear-scan resList; refresh timerTicks; purge dead handles (flag&2 && handle+0x11&0x10),undefined4 __fastcall RMFind(undefined4)
 0x004A6AB0,func,RMCacheInsert,,re,confirmed,insert RES_LIST ptr into resCache evicting the oldest (min timerTicks) slot; stamps timerTicks [FUN_004a6ab0],
 0x004A6AE0,func,_RMAccess@8,RMAccess,sms,confirmed,,"undefined4 __stdcall RMAccess(undefined4, undefined4)"
-0x004A6B30,func,RMFindAndLoad,,re,confirmed,"core resolve+load+register; name from embedded string ""RMFindAndLoad: can't load %s"" @0x50A624; SMCallByName <type>_Load; LoadFile; IsDLL/LoadDLL for PE-packaged resources; marks handle flag|0x0010; RMLocate(name,3,h); RMSetup [FUN_004a6b30]",
+0x004A6B30,func,RMFindAndLoad,,re,confirmed,"core resolve+load+register; name from embedded string ""RMFindAndLoad: can't load %s"" @0x50A624; SMCallByName <type>_Load; LoadFile; IsDLL/LoadDLL for PE-packaged resources; marks handle flag|0x0010; RMLocate(name,3,h); RMSetup [FUN_004a6b30]","undefined4 __stdcall RMFindAndLoad(undefined4, undefined4)"
 0x004A6CC0,func,_RMAccessHandle@8,RMAccessHandle,sms,confirmed,RMFindAndLoad then return the raw handle/ptr (+0x0F) WITHOUT dereferencing,"undefined4 __stdcall RMAccessHandle(undefined4, undefined4)"
 0x004A6CE0,func,_RMFree@4,RMFree,sms,confirmed,RMFind; if flag bit0 SMCallByName <type>_Free; MMFreePtr or MMFreeHandle by flag bit1; RMUnlocate,undefined4 __stdcall RMFree(undefined4)
 0x004A6D60,func,_RMFreeAllId@4,RMFreeAllId,sms,confirmed,RMFree every resList entry whose allocId(+0D)==id; brackets with rmNotifyEnabled=0/1,undefined4 __stdcall RMFreeAllId(undefined4)

@@ -8,20 +8,18 @@
 #include "../fa_types.hpp"
 
 // COMMSC32.DLL — Cdrv comms terminal-screen service -- COMMSC32.DLL
-// 0/8 functions have a recovered signature; 0/0 globals have a recovered type.
+// 8/8 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::commsc32::comms_sc {
 
-// --- not yet recovered -----------------------------------------------
-// Emitted as TODOs, not as guessed declarations: a wrong prototype would
-// compile and then lie about what the original function took.
-// TODO(#453): 0x100011F0  commdrvw_char_screen -- signature not recovered
-// TODO(#453): 0x10001990  CdrvScrDestroy -- signature not recovered
-// TODO(#453): 0x100019B0  CdrvScrCreate -- signature not recovered
-// TODO(#453): 0x100019D0  CdrvScrResize -- signature not recovered
-// TODO(#453): 0x100019F0  CdrvScrWrite -- signature not recovered
-// TODO(#453): 0x10001A10  CdrvScrKillFocus -- signature not recovered
-// TODO(#453): 0x10001A30  CdrvScrSetFocus -- signature not recovered
-// TODO(#453): 0x10001A50  CdrvScrPaint -- signature not recovered
+// --- functions -------------------------------------------------------
+undefined4 commdrvw_char_screen(undefined4, undefined4, undefined4, undefined4);  // 0x100011F0  __stdcall
+undefined4 CdrvScrDestroy(undefined4);  // 0x10001990  __stdcall
+undefined4 CdrvScrCreate(undefined4, undefined4, undefined4);  // 0x100019B0  __stdcall
+undefined4 CdrvScrResize(undefined4);  // 0x100019D0  __stdcall
+undefined4 CdrvScrWrite(undefined4, undefined4, undefined4);  // 0x100019F0  __stdcall
+undefined4 CdrvScrKillFocus(undefined4);  // 0x10001A10  __stdcall
+undefined4 CdrvScrSetFocus(undefined4);  // 0x10001A30  __stdcall
+undefined4 CdrvScrPaint(undefined4);  // 0x10001A50  __stdcall
 
 }  // namespace fxe::commsc32::comms_sc

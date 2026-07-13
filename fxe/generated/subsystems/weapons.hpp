@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Weapons — projectiles / seekers / ECM (PROJ) -- FA.EXE
-// 29/55 functions have a recovered signature; 4/6 globals have a recovered type.
+// 35/55 functions have a recovered signature; 4/6 globals have a recovered type.
 
 namespace fxe::fa::weapons {
 
@@ -32,13 +32,19 @@ void PROJDamageProc(HIT_OBJ_DATA *);  // 0x004C1870  __cdecl
 char PROJEventProc(short, long);  // 0x004C1CC0  __cdecl
 undefined4 PROJHit(undefined4, undefined4);  // 0x004C20C0  __stdcall
 undefined4 PROJFire(undefined4, undefined4, undefined4, undefined4);  // 0x004C2170  __stdcall
+undefined4 PROJAimAngles(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C24B0  __stdcall
 undefined4 PROJFireSound(undefined4);  // 0x004C26F0  __stdcall
 undefined4 PROJInFOV(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C2860  __stdcall
+undefined4 PROJInNotch(undefined4, undefined4);  // 0x004C2E40  __stdcall
 undefined4 PROJRadarIsOn(undefined4, undefined4);  // 0x004C2EB0  __stdcall
 undefined4 PROJLock(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C2F20  __stdcall
+undefined4 PROJIRSensorOn(undefined4, undefined4);  // 0x004C31F0  __stdcall
+undefined4 PROJProximityFuze(undefined4);  // 0x004C3250  __stdcall
 undefined4 PROJHitChance(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C3380  __stdcall
+undefined4 PROJApplyPkCurve(undefined4, undefined4, undefined4, undefined4);  // 0x004C3830  __stdcall
 undefined4 PROJLaunchDevice(undefined4);  // 0x004C39A0  __fastcall
 undefined4 PROJRetargetMissilesOnDevice(undefined4, undefined4, undefined4);  // 0x004C3AF0  __stdcall
+undefined4 PROJGuideToDevice(undefined4);  // 0x004C3C40  __stdcall
 undefined4 PROJRemove(void);  // 0x004C3CA0  __stdcall
 undefined4 PROJRetargetMissiles(undefined4);  // 0x004C3DD0  __fastcall
 undefined4 PROJMakeBombEq(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C3EB0  __stdcall
@@ -61,16 +67,10 @@ undefined4 PROJSendCollateralDamages(undefined4, undefined4, undefined4, undefin
 // TODO(#453): 0x004C1C10  PROJBuildName -- signature not recovered
 // TODO(#453): 0x004C1F10  PROJIsLockableTarget -- signature not recovered
 // TODO(#453): 0x004C1F50  PROJProc -- signature not recovered
-// TODO(#453): 0x004C24B0  PROJAimAngles -- signature not recovered
 // TODO(#453): 0x004C2B50  PROJTargetSignal -- signature not recovered
-// TODO(#453): 0x004C2E40  PROJInNotch -- signature not recovered
-// TODO(#453): 0x004C31F0  PROJIRSensorOn -- signature not recovered
-// TODO(#453): 0x004C3250  PROJProximityFuze -- signature not recovered
 // TODO(#453): 0x004C3360  PROJTargetIsFastAir -- signature not recovered
-// TODO(#453): 0x004C3830  PROJApplyPkCurve -- signature not recovered
 // TODO(#453): 0x004C3890  PROJRangePk -- signature not recovered
 // TODO(#453): 0x004C3960  PROJSizePk -- signature not recovered
-// TODO(#453): 0x004C3C40  PROJGuideToDevice -- signature not recovered
 // TODO(#453): 0x004C4390  PROJScoreTarget -- signature not recovered
 // TODO(#453): 0x004C5000  PROJSetReattackTimer -- signature not recovered
 // TODO(#453): 0x004C5050  PROJAimGunSolution -- signature not recovered
