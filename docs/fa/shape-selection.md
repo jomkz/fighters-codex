@@ -120,7 +120,7 @@ the type-record base.
 | `+0x0D` | 2 | `obj_class` | class bitfield (drives variant generation) | confirmed |
 | `+0x0E` | 1 | `type_flags` | `& 0xC0` enables the `_b` slot | inferred |
 | `+0x0F` | 4 | `shape` | base shape → loaded pointer | confirmed |
-| `+0x13` | 4 | `shape_name` | filename used as the suffixing template | confirmed |
+| `+0x13` | 4 | `shadow_shape` | the **shadow** shape (`<name>_s.SH`) — the retail `.PT` files name this pointer `shadowShape` themselves | confirmed |
 | `+0x17` | 4 | `shape_a` | `_a` variant (loaded) | confirmed |
 | `+0x1B` | 4 | `shape_b` | `_b` variant (loaded) | confirmed |
 | `+0x25` | 4 | `shape_c` | `_c` variant (loaded), aircraft only | confirmed |

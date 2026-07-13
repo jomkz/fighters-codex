@@ -77,7 +77,7 @@ bool contains(const std::string& hay, const char* needle) {
     return hay.find(needle) != std::string::npos;
 }
 
-// A minimal OT-shaped BRF document: names table + the first general fields.
+// A minimal OT-shaped BRF document, DELIMITING ITS OWN RECORD as the retail files do.
 const char* kOtDoc =
     "[brent's_relocatable_format]\r\n"
     "\r\n"
@@ -86,22 +86,30 @@ const char* kOtDoc =
     "\tstring \"Storage Shed\"\r\n"
     "\tend\r\n"
     "\r\n"
-    "\tbyte 1\r\n"          // struct_type = OT
-    "\tword 336\r\n"        // type_size
-    "\tword 128\r\n"        // instance_size
-    "\tptr ot_names\r\n"    // names
-    "\tdword $100\r\n"      // ot_flags
-    "\tword $100\r\n"       // obj_class = Struct
+    ";---------------- START OF OBJ_TYPE ----------------\r\n"
+    "\tbyte 1\r\n"          // +0x00 struct_type = OT
+    "\tword 336\r\n"        // +0x01 type_size
+    "\tword 128\r\n"        // +0x03 obj_ext_size
+    "\tptr ot_names\r\n"    // +0x05 names
+    "\tdword $100\r\n"      // +0x09 type_flags
+    "\tword $100\r\n"       // +0x0D obj_class
+    ";---------------- END OF OBJ_TYPE ----------------\r\n"
     "\tend\r\n";
 
-// A struct_type-7 document long enough to spill into the JT extension:
-// the full general section as filler words, then two projectile fields.
+// A struct_type-7 document that DELIMITS ITS OWN RECORDS, exactly as the retail files do.
+// The old version padded to OT_GENERAL_COUNT -- i.e. it assumed the very schema that turned
+// out to be wrong. A real .JT says where OBJ_TYPE ends and PROJ_TYPE begins; so does this.
 std::string jt_doc() {
     std::string s = "[brent's_relocatable_format]\r\n";
-    s += "\tbyte 7\r\n";  // struct_type = JT
-    for (int i = 1; i < OT_GENERAL_COUNT; ++i) s += "\tword 0\r\n";
-    s += "\tdword $1\r\n";  // jt_flags
-    s += "\tword 2\r\n";    // warhead_count
+    s += ";---------------- START OF OBJ_TYPE ----------------\r\n";
+    s += "\tbyte 7\r\n";    // +0x00 struct_type = JT
+    s += "\tword 315\r\n";  // +0x01 type_size
+    s += "\tword 52\r\n";   // +0x03 obj_ext_size
+    s += ";---------------- END OF OBJ_TYPE ----------------\r\n";
+    s += ";---------------- START OF PROJ_TYPE ----------------\r\n";
+    s += "\tdword $1\r\n";  // +0x00 of the extension
+    s += "\tword 2\r\n";    // +0x04
+    s += ";---------------- END OF PROJ_TYPE ----------------\r\n";
     s += "\tend\r\n";
     return s;
 }
@@ -112,39 +120,51 @@ std::string jt_doc() {
 // Schema tables
 // ---------------------------------------------------------------------------
 
-TEST_CASE("ot schema tables pin the field order at their anchors") {
-    REQUIRE(OT_GENERAL_COUNT > 0);
-    CHECK(strcmp(OT_GENERAL_FIELDS[0].name, "struct_type") == 0);
-    CHECK(strcmp(OT_GENERAL_FIELDS[5].name, "obj_class") == 0);
-    CHECK(strcmp(OT_GENERAL_FIELDS[OT_GENERAL_COUNT - 1].name, "hud_name") == 0);
+TEST_CASE("brf reads each field's section and offset FROM THE FILE") {
+    // The record is self-describing: it names its own sections and each field's width. This
+    // is what replaced the positional OpenFA tables -- structure comes from the document.
+    auto jt   = bytes(jt_doc());
+    auto jdoc = brf_parse(jt.data(), jt.size());
+    REQUIRE(jdoc.fields.size() == 5u);
 
-    REQUIRE(NT_COUNT > 0);
-    CHECK(strcmp(NT_FIELDS[0].name, "npc_flags") == 0);
-    CHECK(strcmp(NT_FIELDS[NT_COUNT - 1].name, "hards") == 0);
+    CHECK(jdoc.fields[0].section == "OBJ_TYPE");
+    CHECK(jdoc.fields[0].offset  == 0x00u);   // byte
+    CHECK(jdoc.fields[1].offset  == 0x01u);   // word  -> after 1 byte
+    CHECK(jdoc.fields[2].offset  == 0x03u);   // word  -> after byte+word
 
-    REQUIRE(PT_COUNT > 0);
-    CHECK(strcmp(PT_FIELDS[0].name, "pt_flags") == 0);
-    CHECK(strcmp(PT_FIELDS[PT_COUNT - 1].name, "max_takeoff_weight") == 0);
-
-    REQUIRE(JT_COUNT > 0);
-    CHECK(strcmp(JT_FIELDS[0].name, "jt_flags") == 0);
-    CHECK(strcmp(JT_FIELDS[JT_COUNT - 1].name, "lobe2_max_heading") == 0);
-
-    REQUIRE(SEE_COUNT > 0);
-    CHECK(strcmp(SEE_FIELDS[SEE_COUNT - 1].name, "lobe2_prob_detect") == 0);
-    REQUIRE(ECM_COUNT > 0);
-    CHECK(strcmp(ECM_FIELDS[ECM_COUNT - 1].name, "unk_ecm_3") == 0);
-    REQUIRE(GAS_COUNT == 5);
-    CHECK(strcmp(GAS_FIELDS[GAS_COUNT - 1].name, "fuel_weight") == 0);
+    // The extension is a DIFFERENT record, and its offsets restart at zero.
+    CHECK(jdoc.fields[3].section == "PROJ_TYPE");
+    CHECK(jdoc.fields[3].offset  == 0x00u);
+    CHECK(jdoc.fields[4].offset  == 0x04u);   // after the dword
 }
 
-TEST_CASE("ot schema tables have no null names or notes") {
+TEST_CASE("brf_field_name only names what we actually recovered") {
+    // These come from db/types/fa_types.h -- our own reconstruction of the code that reads
+    // these records (#454/#476), keyed by byte offset.
+    REQUIRE(brf_field_name("OBJ_TYPE", 0x00) != nullptr);
+    CHECK(strcmp(brf_field_name("OBJ_TYPE", 0x00), "struct_type") == 0);
+    CHECK(strcmp(brf_field_name("OBJ_TYPE", 0x01), "type_size") == 0);
+    CHECK(strcmp(brf_field_name("OBJ_TYPE", 0x03), "obj_ext_size") == 0);
+    CHECK(strcmp(brf_field_name("OBJ_TYPE", 0x0F), "shape") == 0);
+    CHECK(strcmp(brf_field_name("OBJ_TYPE", 0x7D), "class_proc") == 0);
+
+    // An offset we have NOT recovered gets no name -- not a guessed one. This is the whole
+    // point of the rewrite: the OpenFA tables named every field, and named them wrongly.
+    CHECK(brf_field_name("OBJ_TYPE", 0x02) == nullptr);   // interior of type_size
+    CHECK(brf_field_name("OBJ_TYPE", 0x40) == nullptr);
+
+    // We have recovered NO interior of the class extensions. They alias one another in the
+    // object record, and an invented name there would be exactly the old bug.
+    CHECK(brf_field_name("PLANE_TYPE", 0x00) == nullptr);
+    CHECK(brf_field_name("PROJ_TYPE",  0x00) == nullptr);
+    CHECK(brf_field_name("NPC_TYPE",   0x00) == nullptr);
+}
+
+TEST_CASE("the flat SEE/ECM/GAS schemas have no null names or notes") {
+    // These are ours -- derived from SEE.md / ECM.md / GAS.md against real files.
     struct Table { const OtField* fields; int count; };
     const Table tables[] = {
-        {OT_GENERAL_FIELDS, OT_GENERAL_COUNT}, {NT_FIELDS, NT_COUNT},
-        {PT_FIELDS, PT_COUNT},                 {JT_FIELDS, JT_COUNT},
-        {SEE_FIELDS, SEE_COUNT},               {ECM_FIELDS, ECM_COUNT},
-        {GAS_FIELDS, GAS_COUNT},
+        {SEE_FIELDS, SEE_COUNT}, {ECM_FIELDS, ECM_COUNT}, {GAS_FIELDS, GAS_COUNT},
     };
     for (const auto& t : tables) {
         for (int i = 0; i < t.count; ++i) {
@@ -168,7 +188,7 @@ TEST_CASE("ot-shaped document round-trips byte-identically through brf") {
 
     auto jt   = bytes(jt_doc());
     auto jdoc = brf_parse(jt.data(), jt.size());
-    REQUIRE((int)jdoc.fields.size() == OT_GENERAL_COUNT + 2);
+    REQUIRE(jdoc.fields.size() == 5u);
     REQUIRE(brf_serialize(jdoc) == jt);
 }
 
@@ -181,16 +201,17 @@ TEST_CASE("brf_print_info labels an OT document and resolves name pointers") {
     auto doc  = brf_parse(data.data(), data.size());
     auto out  = capture_stdout([&] { brf_print_info(doc, "ot"); });
 
-    CHECK(contains(out, "struct_type=1"));
-    CHECK(contains(out, "struct_type"));
+    CHECK(contains(out, "--- OBJ_TYPE ---"));      // the record the FILE declares
+    CHECK(contains(out, "+0x000"));                // offsets, read from the file
+    CHECK(contains(out, "struct_type"));           // named from OUR reconstruction
+    CHECK(contains(out, "type_size"));
     CHECK(contains(out, "obj_class"));
     CHECK(contains(out, "ot_names -> \"SHED\""));   // ptr resolved to its table
     CHECK(contains(out, "Pointer Tables"));
     CHECK(contains(out, "\"Storage Shed\""));
-    // struct_type 1 must not grow vehicle/projectile extensions
-    CHECK_FALSE(contains(out, "NT/Npc Extension"));
-    CHECK_FALSE(contains(out, "PT/Plane Extension"));
-    CHECK_FALSE(contains(out, "JT/Projectile Extension"));
+    // The file declares no extension, so none is invented.
+    CHECK_FALSE(contains(out, "PLANE_TYPE"));
+    CHECK_FALSE(contains(out, "PROJ_TYPE"));
 }
 
 TEST_CASE("brf_print_info dispatches struct_type 7 into the JT extension") {
@@ -198,11 +219,15 @@ TEST_CASE("brf_print_info dispatches struct_type 7 into the JT extension") {
     auto doc  = brf_parse(data.data(), data.size());
     auto out  = capture_stdout([&] { brf_print_info(doc, "jt"); });
 
-    CHECK(contains(out, "struct_type=7"));
-    CHECK(contains(out, "JT/Projectile Extension"));
-    CHECK(contains(out, "jt_flags"));
-    CHECK(contains(out, "warhead_count"));
-    CHECK_FALSE(contains(out, "NT/Npc Extension"));
+    // The sections come from the document, not from a schema keyed on struct_type.
+    CHECK(contains(out, "--- OBJ_TYPE ---"));
+    CHECK(contains(out, "--- PROJ_TYPE ---"));
+    CHECK(contains(out, "obj_ext_size"));          // recovered name, OBJ_TYPE +0x03
+    CHECK_FALSE(contains(out, "PLANE_TYPE"));
+    // We have recovered no PROJ_TYPE interior, so its fields are shown unnamed -- never
+    // with an invented label. (The old tables called these "jt_flags"/"warhead_count".)
+    CHECK_FALSE(contains(out, "jt_flags"));
+    CHECK_FALSE(contains(out, "warhead_count"));
 }
 
 // ---------------------------------------------------------------------------
@@ -213,7 +238,7 @@ TEST_CASE("brf_print_info survives empty and schema-defying documents") {
     // Empty document: header only, nothing to label.
     BrfDoc empty;
     auto out = capture_stdout([&] { brf_print_info(empty, "ot"); });
-    CHECK(contains(out, "struct_type=0"));
+    CHECK(out.find("Pointer Tables") == std::string::npos);
 
     // First field is not a byte and a ptr dangles: struct_type stays 0,
     // the unresolved pointer prints raw instead of resolving.
@@ -226,6 +251,8 @@ TEST_CASE("brf_print_info survives empty and schema-defying documents") {
     auto doc  = brf_parse(data.data(), data.size());
     REQUIRE(doc.fields.size() == 2u);
     out = capture_stdout([&] { brf_print_info(doc, "ot"); });
-    CHECK(contains(out, "struct_type=0"));
+    // No section markers in this document, so no record is claimed and nothing is named --
+    // the fields are still printed, with their offsets and an unresolved pointer.
+    CHECK(contains(out, "(outside any record)"));
     CHECK(contains(out, "ptr no_such_table"));
 }

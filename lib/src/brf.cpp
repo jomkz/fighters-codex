@@ -68,11 +68,31 @@ BrfDoc brf_parse(const uint8_t* data, size_t size) {
     std::string current_table_name;
     std::vector<std::string> current_table_strings;
 
+    // The file names its own records: ";---- START OF PLANE_TYPE ----". Track that, and the
+    // byte offset within it, so every field carries where it lives -- read from the file
+    // rather than assumed from a table.
+    std::string current_section;
+    uint32_t    section_offset = 0;
+
     for (auto& line : lines) {
         std::string stripped = strip_leading(line);
 
-        // Empty line or comment: skip
-        if (stripped.empty() || stripped[0] == ';') continue;
+        // Empty line or comment: skip -- but a comment may DELIMIT A RECORD, which is a fact.
+        if (!stripped.empty() && stripped[0] == ';') {
+            size_t s0 = stripped.find("START OF ");
+            size_t e0 = stripped.find("END OF ");
+            if (s0 != std::string::npos) {
+                std::string n = stripped.substr(s0 + 9);
+                while (!n.empty() && (n.back() == '-' || n.back() == ' ')) n.pop_back();
+                current_section = n;
+                section_offset  = 0;
+            } else if (e0 != std::string::npos) {
+                current_section.clear();
+                section_offset = 0;
+            }
+            continue;
+        }
+        if (stripped.empty()) continue;
 
         // Magic header
         if (starts_with(stripped, "[brent's_relocatable_format]")) {
@@ -115,17 +135,31 @@ BrfDoc brf_parse(const uint8_t* data, size_t size) {
         // Data field: <type> <value> [; comment]
         auto [type, rest] = split_first(stripped);
 
-        // Strip inline comment
+        // Strip inline comment -- but KEEP it: the file names `utilProc` this way, and a
+        // name the file gives us is a fact, unlike a name imposed from outside.
+        std::string inline_comment;
         size_t semi = rest.find(';');
-        if (semi != std::string::npos) rest = rest.substr(0, semi);
+        if (semi != std::string::npos) {
+            inline_comment = rest.substr(semi + 1);
+            size_t b = inline_comment.find_first_not_of(" \t");
+            inline_comment = (b == std::string::npos) ? "" : inline_comment.substr(b);
+            while (!inline_comment.empty() &&
+                   (inline_comment.back() == ' ' || inline_comment.back() == '\t'))
+                inline_comment.pop_back();
+            rest = rest.substr(0, semi);
+        }
         // Trim trailing whitespace
         while (!rest.empty() && (rest.back() == ' ' || rest.back() == '\t')) rest.pop_back();
 
         if (type == "byte" || type == "word" || type == "dword" ||
             type == "ptr"  || type == "symbol" || type == "string") {
             BrfField f;
-            f.type  = type;
-            f.value = (type == "string") ? unquote(rest) : rest;
+            f.type    = type;
+            f.value   = (type == "string") ? unquote(rest) : rest;
+            f.section = current_section;
+            f.offset  = section_offset;
+            f.comment = inline_comment;
+            section_offset += brf_type_size(type);
             doc.fields.push_back(f);
         }
         // Other tokens (like section separators) are silently skipped
