@@ -8,29 +8,48 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 106/107 functions have a recovered signature; 0/0 globals have a recovered type.
+// 170/171 functions have a recovered signature; 1/1 globals have a recovered type.
 
 namespace fxe::fa::network {
+
+// --- globals ---------------------------------------------------------
+extern u32 querySocket;  // 0x00572568  master/query socket handle — set from the connect result in ?NET_StartQuery@@…, used for the broadcast host query, closed and reset to -1 by ?NET_MasterShutdown@@YAXXZ
 
 // --- functions -------------------------------------------------------
 char NET_SlaveInit(CN_INFO *, NET_ADDRESS *, char *, void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long), void *, void (*)(void *, NET_CONNECTED_STATE), int);  // 0x004016C0  __cdecl
 void NET_SlaveShutdown(void);  // 0x00401780  __cdecl
 char NET_RequestPlayerList(NET_ADDRESS *, void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long), void *, void (*)(void *, NET_CONNECTED_STATE));  // 0x004017B0  __cdecl
 void NET_CancelPlayerList(void);  // 0x00401850  __cdecl
+char PlayerListQueryEvents(unsigned int, long, int, socket_state *);  // 0x00401880  __cdecl
 void player_list_process_pkt(NET_PKT *, socket_state *);  // 0x004019A0  __cdecl
 undefined4 NETSlaveConnect(undefined4, undefined4);  // 0x00401A60  __cdecl
+char slave_events(unsigned int, long, int, socket_state *);  // 0x00401B20  __cdecl
 void handle_slave_connection_failed(socket_state *);  // 0x00401CD0  __cdecl
 void NETSlaveLostConn(socket_state *);  // 0x00401E30  __cdecl
 void slave_process_pkt(NET_PKT *, socket_state *);  // 0x00401EB0  __cdecl
+void state_func_slave_connecting(void);  // 0x00402320  __cdecl
 void NETArmKeepalive(socket_state *);  // 0x00402330  __cdecl
 undefined4 NETResetTimer(undefined4);  // 0x00402360  __cdecl
 undefined4 NETProcessPlayerList(NET_PLAYER_LIST *);  // 0x004024D0  __cdecl
 void NETWaitMasterScreen(void);  // 0x00405360  __cdecl
 void NETApplyMasterScreen(void);  // 0x004053A0  __cdecl
 long netDialogAppIO(long, char *);  // 0x004054F0  __cdecl
+long monoPrintfIO(long, char *);  // 0x00405580  __cdecl
+void RunTCPOptionsDialog(CN_INFO *, char *);  // 0x00405590  __cdecl
 void NETFormatIP(char *, undefined4);  // 0x00405CD0  __cdecl
 char ip2long(char *, unsigned long *);  // 0x00405D10  __cdecl
 void RunNetConfigurationScreen(long);  // 0x00405DF0  __stdcall
+void state_func_master_query(void);  // 0x0040AF40  __cdecl
+char master_events(unsigned int, long, int, socket_state *);  // 0x0040B110  __cdecl
+unsigned int UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x00441F80  __cdecl
+void UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x004420D0  __cdecl
+void UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00442200  __cdecl
+long SER_Transmitting(long);  // 0x0044BEC0  __cdecl
+long SER_PeekByte(long);  // 0x0044C080  __cdecl
+void SER_Synchronize(void);  // 0x0044C0F0  __cdecl
+void SER_Often(void);  // 0x0044C1B0  __cdecl
+void SER_Suspend(void);  // 0x0044C1E0  __cdecl
+void SER_Resume(void);  // 0x0044C200  __cdecl
 char pkt_send_can_i_play(int, char *, NET_ADDRESS *);  // 0x0045D090  __cdecl
 char pkt_send_can_i_play_player(int, int, char *, NET_ADDRESS *);  // 0x0045D120  __cdecl
 char pkt_send_sync(int);  // 0x0045D1B0  __cdecl
@@ -43,17 +62,25 @@ char pkt_send_ready(int, int);  // 0x0045D320  __cdecl
 char pkt_send_error(int, long);  // 0x0045D360  __cdecl
 char pkt_send_new_player(int, int, char *, NET_ADDRESS *);  // 0x0045D3A0  __cdecl
 char pkt_sock_send_new_player(unsigned int, int, char *, NET_ADDRESS *);  // 0x0045D440  __cdecl
+char pkt_send_lost_player(int, int, char *, NET_ADDRESS *);  // 0x0045D4E0  __cdecl
 char pkt_sock_send_lost_player(unsigned int, int, char *, NET_ADDRESS *);  // 0x0045D580  __cdecl
+void pkt_build_new_player(NET_PKT *, int, char *, NET_ADDRESS *);  // 0x0045D620  __cdecl
+void pkt_build_lost_player(NET_PKT *, int, char *, NET_ADDRESS *);  // 0x0045D690  __cdecl
 char pkt_sock_send_error(long, unsigned int);  // 0x0045D700  __cdecl
+void pkt_build_sync(NET_PKT *);  // 0x0045D740  __cdecl
 void pkt_build_sync_reply(NET_PKT *);  // 0x0045D760  __cdecl
 void pkt_build_play_game(NET_PKT *);  // 0x0045D780  __cdecl
+char pkt_send_debug(int, char *);  // 0x0045D7A0  __cdecl
 char pkt_send_player_info(int, unsigned short, NET_PLAYER_LIST *);  // 0x0045D810  __cdecl
+char pkt_sock_send_player_info(unsigned int, unsigned short, NET_PLAYER_LIST *);  // 0x0045D850  __cdecl
 void pkt_build_player_info(NET_PKT *, unsigned short, NET_PLAYER_LIST *);  // 0x0045D890  __cdecl
 char pkt_sock_send(NET_PKT *, unsigned int);  // 0x0045D940  __cdecl
 char pkt_send(NET_PKT *, int);  // 0x0045D970  __cdecl
 void pkt_set_header(int, NET_PKT *, int);  // 0x0045DA10  __cdecl
 undefined4 pkt_queue_write(undefined4, undefined4, undefined4);  // 0x0045DA30  __cdecl
 char pkt_sock_read(NET_PKT *, unsigned int);  // 0x0045DB00  __cdecl
+char dlg_list_get_new_selection(void *, NET_ADDRESS *, char *);  // 0x00464880  __cdecl
+void net_test_start_latency_test(int);  // 0x0046ACF0  __cdecl
 undefined4 MPEnqueue(undefined4, undefined4, undefined4, undefined4);  // 0x0046C0A0  __stdcall
 undefined4 MPInterpPosAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C680  __stdcall
 undefined4 MPUpdateInterval(short, entity *);  // 0x0046C780  __fastcall
@@ -73,15 +100,28 @@ undefined4 MPEncodeState15(undefined4, undefined4);  // 0x0046FBF0  __stdcall
 void MPSendSyncOnce(void);  // 0x0046FD50  __cdecl
 void MPSendScenarioEndTime(void);  // 0x0046FF20  __cdecl
 void MPMsgRemapAliases(undefined4 *, char);  // 0x00470780  __fastcall
+void MPQuickButton(long, long);  // 0x00470E80  __fastcall
+void MPPlayerChoseFort(unsigned char);  // 0x00470EF0  __fastcall
+void MPFortButton(long, long);  // 0x00470F30  __fastcall
+void MPFortButton2(long, long);  // 0x00470FA0  __fastcall
 undefined4 MPChatChecksum(void);  // 0x00471880  __cdecl
 undefined4 MPDrawStatusLine(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004718F0  __stdcall
 undefined4 MPWaitStatus(undefined4, undefined4, undefined4, undefined4);  // 0x00471A90  __stdcall
 undefined4 MPAllPeersAtStatus(undefined4);  // 0x00471B80  __fastcall
 void MPAssignPlanePlayers(short);  // 0x00471FA0  __fastcall
+int MPComparePlaneRank(int, int);  // 0x00472100  __cdecl
 undefined4 MPBuildSpawnPayload(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00472130  __stdcall
 void MPChatStore(undefined4 *);  // 0x004735D0  __fastcall
+long CN_GetBigString(char *, unsigned char *);  // 0x0047F5F0  __cdecl
 unsigned int sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x004874C0  __cdecl
+void sapserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x00487670  __cdecl
+void sapquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00487760  __cdecl
+char sapprocessadvertisement(char *, int, NET_PKT *, NET_ADDRESS *, long *);  // 0x004878C0  __cdecl
 void RunIPXOptionsDialog(CN_INFO *, char *);  // 0x00493780  __cdecl
+void connected_state_callback(void *, NET_CONNECTED_STATE);  // 0x00493EE0  __cdecl
+void players_box_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long);  // 0x004940E0  __cdecl
+void players_box_connected_state_callback(void *, NET_CONNECTED_STATE);  // 0x004941E0  __cdecl
+char MP_Dont_care(void);  // 0x00494D50  __cdecl
 char spxinit(NET_ADDRESS_LIST *);  // 0x00496F40  __cdecl
 char spxinit2(NET_PROTOCOL *, CN_INFO *);  // 0x00497000  __cdecl
 unsigned int spxlisten(void);  // 0x00497010  __cdecl
@@ -89,7 +129,9 @@ undefined4 spxopensocket(void);  // 0x004970C0  __cdecl
 unsigned int spxconnect(NET_ADDRESS *);  // 0x00497150  __cdecl
 void convert_addr_ipx2usnf(NET_ADDRESS *, sockaddr_ipx *);  // 0x004971D0  __cdecl
 void convert_addr_usnf2ipx(sockaddr_ipx *, NET_ADDRESS *);  // 0x00497210  __cdecl
+char spxaddr2str(NET_ADDRESS *, char *);  // 0x00497250  __cdecl
 char spxbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *);  // 0x00497290  __cdecl
+void spxfactory(NET_PROTOCOL *, char *, int);  // 0x004972D0  __cdecl
 void setPacketInfo(SERIAL_PACKET &, long, long);  // 0x00499F70  __cdecl
 unsigned long packetCRC(SERIAL_PACKET &);  // 0x0049A000  __cdecl
 char verifyPacketCRC(SERIAL_PACKET &);  // 0x0049A040  __cdecl
@@ -98,6 +140,7 @@ void SER_EnterCriticalCodeBackground(void);  // 0x0049A0A0  __cdecl
 void SER_LeaveCriticalCodeBackground(void);  // 0x0049A100  __cdecl
 char SER_CheckDisconnect(void);  // 0x0049A120  __cdecl
 void SER_GetOutholdingLimit(void);  // 0x0049A1B0  __cdecl
+unsigned long SER_BackgroundThread(void *);  // 0x0049A260  __stdcall
 void updateQueueHead(SERIAL_QUEUE &, long);  // 0x0049A3E0  __cdecl
 void insertQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A400  __cdecl
 void overwriteQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A460  __cdecl
@@ -105,6 +148,7 @@ void retrieveFromQueue(SERIAL_QUEUE &, long, SERIAL_PACKET_WRAPPER &);  // 0x004
 void fetchFromQueueTail(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A4D0  __cdecl
 void SER_InitializeLowLevel(void);  // 0x0049A660  __cdecl
 void SER_ShutdownLowLevel(void);  // 0x0049A6B0  __cdecl
+int fnc_toCallDuringAnswer(int);  // 0x0049A6E0  __cdecl
 long strToCom(unsigned char *);  // 0x0049A700  __cdecl
 long MOD_InitPortAndModem(CN_INFO *, long);  // 0x0049A7D0  __cdecl
 long MOD_FindModemAndInitPCMCIA(CN_INFO *, long);  // 0x0049A9B0  __cdecl
@@ -113,12 +157,35 @@ long MOD_Initialize1(CN_INFO *, long);  // 0x0049AD00  __cdecl
 long MOD_InitializeAndConnect(CN_INFO *, long, long *);  // 0x0049AF30  __cdecl
 long MOD_Initialize(CN_INFO *, long);  // 0x0049AFF0  __cdecl
 void MOD_Shutdown(void);  // 0x0049B0D0  __cdecl
+long serIO(long, char *);  // 0x0049B110  __cdecl
+void socket_set_socket(socket_state *, unsigned int);  // 0x004A62B0  __cdecl
+char tcpinit2(NET_PROTOCOL *, CN_INFO *);  // 0x004ABD40  __cdecl
+void tcp_save_settings(NET_PROTOCOL *, CN_INFO *);  // 0x004ABD60  __cdecl
+unsigned int tcplisten(void);  // 0x004ABDC0  __cdecl
+unsigned int tcpconnect(NET_ADDRESS *);  // 0x004ABF00  __cdecl
+char tcpaddr2str(NET_ADDRESS *, char *);  // 0x004ABF90  __cdecl
+void convert_addr_usnf2tcp(sockaddr_in *, NET_ADDRESS *);  // 0x004ABFE0  __cdecl
+void convert_addr_tcp2usnf(NET_ADDRESS *, sockaddr_in *);  // 0x004AC030  __cdecl
+void tcpfactory(NET_PROTOCOL *, char *, int);  // 0x004AC080  __cdecl
+char tcpbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *);  // 0x004AC0C0  __cdecl
 void SER_SendBytes(unsigned char *, long);  // 0x004AC180  __cdecl
 void SER_SendHoldingBuffer(void);  // 0x004AC1D0  __cdecl
 char SER_OkToSendPacket(void);  // 0x004AC210  __cdecl
 char SER_SendPacket(SERIAL_PACKET_WRAPPER &, char);  // 0x004AC230  __cdecl
 void SER_SendRequests(void);  // 0x004AC2E0  __cdecl
 void SER_SendStatus(void);  // 0x004AC480  __cdecl
+char NetProtocolPresent(long);  // 0x004B06C0  __cdecl
+void NET_Synchronize(void);  // 0x004B0BD0  __cdecl
+void NET_Disconnect(long);  // 0x004B0CC0  __cdecl
+long NET_Write(long, unsigned char *, long);  // 0x004B0CF0  __cdecl
+long NET_WriteAvail(long);  // 0x004B0DD0  __cdecl
+char NET_Flush(long, char);  // 0x004B0E00  __cdecl
+long NET_Read(long, unsigned char *, long);  // 0x004B0E50  __cdecl
+long NET_ReadAvail(long, long);  // 0x004B10D0  __cdecl
+long NET_PeekByte(long);  // 0x004B1150  __cdecl
+char game_event_handler(unsigned int, long, int, socket_state *);  // 0x004B1660  __cdecl
+char validate_packet(NET_PKT *);  // 0x004B1A80  __cdecl
+void state_func_query_hosts(void);  // 0x004B25F0  __cdecl
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would

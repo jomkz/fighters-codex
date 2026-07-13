@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // AI interpreter (CT) -- FA.EXE
-// 116/122 functions have a recovered signature; 8/8 globals have a recovered type.
+// 121/128 functions have a recovered signature; 8/8 globals have a recovered type.
 
 namespace fxe::fa::ai {
 
@@ -139,6 +139,11 @@ void CTSaveState(void);  // 0x00466920  __cdecl
 undefined4 CTExecProgram(undefined4);  // 0x00466970  __stdcall
 void CTStep(void);  // 0x00466A80  __cdecl
 undefined4 * CTVarPtr(short);  // 0x004670E0  __fastcall
+undefined4 MVRMoveToAlt(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC680  __stdcall
+undefined4 MVRYoyo(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC780  __stdcall
+undefined4 MVRJink(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC9E0  __stdcall
+undefined4 MVRSplitS(undefined4, undefined4, undefined4);  // 0x004ACB80  __fastcall
+undefined4 MVRImmelman(undefined4, undefined4, undefined4);  // 0x004ACCB0  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
@@ -149,5 +154,6 @@ undefined4 * CTVarPtr(short);  // 0x004670E0  __fastcall
 // TODO(#453): 0x00465440  CTEval_maxspeed -- signature not recovered
 // TODO(#453): 0x00465480  CTEval_twr -- signature not recovered
 // TODO(#453): 0x004654F0  CTEval_turnradius -- signature not recovered
+// TODO(#453): 0x004AC760  MVRInvert -- signature not recovered
 
 }  // namespace fxe::fa::ai

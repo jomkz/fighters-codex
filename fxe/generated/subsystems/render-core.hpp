@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // 3D render core / SH interpreter (GR) -- FA.EXE
-// 39/42 functions have a recovered signature (+121 that are not C functions); 0/0 globals have a recovered type.
+// 40/50 functions have a recovered signature (+124 that are not C functions); 0/0 globals have a recovered type.
 
 namespace fxe::fa::render_core {
 
@@ -28,6 +28,7 @@ void sort_objs_wrapper(void);  // 0x004CE968  __cdecl
 void rotate_vec_roll(void);  // 0x004CEB00  __cdecl
 void rotate_vec_pitch(void);  // 0x004CED44  __cdecl
 void rotate_vec_yaw(void);  // 0x004CEF8C  __cdecl
+undefined4 CodePnt(undefined4, undefined4, undefined4);  // 0x004CF258  __stdcall
 undefined4 GRAddBrentObj(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D057C  __stdcall
 void SetFlatColor(void);  // 0x004D43CC  __cdecl
 void NeedClip(void);  // 0x004D4874  __cdecl
@@ -114,9 +115,12 @@ void draw_nt(void);  // 0x004D6BB8  __cdecl
 // threaded: 0x004D2690  sh_op_18  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D2740  sh_op_84  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // asm:      0x004D2798  load_dest  -- arguments arrive in registers no C convention can name
+// threaded: 0x004D27C8  sh_op_1C_flat  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D2880  sh_op_1C  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D2910  sh_op_26  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2948  sh_op_2A_flat  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D29EC  sh_op_2A  -- a threaded-code JUMP TARGET (vector_table), not a callable function
+// threaded: 0x004D2A7C  sh_op_2C_flat  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D2B20  sh_op_2C  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D2BB0  sh_op_92  -- a threaded-code JUMP TARGET (vector_table), not a callable function
 // threaded: 0x004D2C70  sh_op_90  -- a threaded-code JUMP TARGET (vector_table), not a callable function
@@ -181,8 +185,15 @@ void draw_nt(void);  // 0x004D6BB8  __cdecl
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x004CD5C6  fast_sincos -- signature not recovered
+// TODO(#453): 0x004CD73B  fast_asin -- signature not recovered
+// TODO(#453): 0x004CD75F  asin -- signature not recovered
+// TODO(#453): 0x004CD7FF  atan2 -- signature not recovered
 // TODO(#453): 0x004CE4A8  set_render_mode -- signature not recovered
 // TODO(#453): 0x004CE7BC  load_xlate_rotate_pnt -- signature not recovered
+// TODO(#453): 0x004CE980  dmxmul -- signature not recovered
+// TODO(#453): 0x004CEA40  dmxmul2 -- signature not recovered
 // TODO(#453): 0x004D415D  thunk_FUN_004d416b -- signature not recovered
+// TODO(#453): 0x004D5E18  TransposeMatrix -- signature not recovered
 
 }  // namespace fxe::fa::render_core

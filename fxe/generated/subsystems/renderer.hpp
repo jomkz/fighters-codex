@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 112/112 functions have a recovered signature (+6 that are not C functions); 3/3 globals have a recovered type.
+// 133/151 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -16,6 +16,9 @@ namespace fxe::fa::renderer {
 extern undefined4 blitDestX;  // 0x004F6CA4  destination X of the present blit rect (GG_FlushShaken/FlushDirtyLines)
 extern undefined4 blitDestY;  // 0x004F6CA8  destination Y of the present blit rect; offset by screen shake
 extern undefined1 shakeParity;  // 0x004F6CAC  current screen-shake parity toggle (GG_FlushShaken)
+extern u32 glassesBitmap;  // 0x0050C5C4  stereo-glasses overlay bitmap handle — allocated by _G_AllocBitmap@12 in ?GLASSESInit@@YGXXZ, freed in ?GLASSESShutDown@@YGXXZ
+extern u32 overflowQuotient;  // 0x0058F0E8  divide-overflow handler scratch: the saturated quotient magnitude, computed as (mask ^ 0x70000000) - mask. Reached through the _overflow_ptr slot the raster inner loops install (renderer.md)
+extern u32 overflowSignMask;  // 0x0058F0F4  divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign
 
 // --- functions -------------------------------------------------------
 unsigned short DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *);  // 0x0045CA70  __cdecl
@@ -25,6 +28,8 @@ undefined4 GG_ShutdownMode(void);  // 0x0045DCB0  __fastcall
 undefined4 GG_GetMode(void);  // 0x0045DCE0  __fastcall
 undefined4 GG_SetPalette(undefined4, undefined4, undefined4, undefined4);  // 0x0045DE70  __stdcall
 undefined4 GG_Shake(void);  // 0x0045DEC0  __fastcall
+undefined4 GG_GetSubmodes(undefined4);  // 0x0045E100  __fastcall
+undefined4 GG_GetSubmodeName(void);  // 0x0045E110  __fastcall
 undefined4 GG_Flush(undefined4);  // 0x0045E120  __fastcall
 undefined4 flushLineStats(void);  // 0x0045E370  __fastcall
 undefined4 GG_RestoreSurfaces(void);  // 0x0045E3A0  __fastcall
@@ -43,12 +48,14 @@ undefined4 G_PopClipBox(void);  // 0x00497650  __fastcall
 undefined4 G_SetColor(undefined4);  // 0x00497680  __fastcall
 undefined4 G_Point(undefined4, undefined4);  // 0x004976D0  __fastcall
 undefined4 G_UPoint(undefined4, undefined4);  // 0x00497700  __fastcall
+undefined4 G_GetPoint(undefined4, undefined4);  // 0x00497750  __fastcall
 undefined4 G_UHline(undefined4, undefined4, undefined4);  // 0x00497770  __stdcall
 undefined4 G_Hline(undefined4, undefined4, undefined4);  // 0x00497A10  __stdcall
 undefined4 G_UVline(undefined4, undefined4, undefined4);  // 0x00497A60  __stdcall
 undefined4 G_Vline(undefined4, undefined4, undefined4);  // 0x00497B00  __stdcall
 undefined4 G_URect(undefined4, undefined4, undefined4, undefined4);  // 0x00497B60  __stdcall
 undefined4 G_Rect(undefined4, undefined4, undefined4, undefined4);  // 0x00497BF0  __stdcall
+undefined4 G_Rect2(undefined4, undefined4, undefined4, undefined4);  // 0x00497CE0  __stdcall
 undefined4 G_URect2(undefined4, undefined4, undefined4, undefined4);  // 0x00497D10  __stdcall
 undefined4 G_UBox(undefined4, undefined4, undefined4, undefined4);  // 0x00497D40  __stdcall
 undefined4 G_Box(undefined4, undefined4, undefined4, undefined4);  // 0x00497D90  __stdcall
@@ -61,8 +68,13 @@ undefined4 G_SetScaleMax(undefined4, undefined4);  // 0x00498410  __fastcall
 undefined4 G_Flush(undefined4);  // 0x00498420  __fastcall
 undefined4 G_ReverseVertices(undefined4, undefined4);  // 0x00498430  __fastcall
 undefined4 G_Flip(undefined4, undefined4);  // 0x00498480  __fastcall
+undefined4 G_PolygonFlip(undefined4, undefined4);  // 0x004984B0  __fastcall
 undefined4 G_UPolygonFlip(undefined4, undefined4);  // 0x004984F0  __fastcall
+undefined4 G_SPolygonFlip(undefined4, undefined4);  // 0x00498530  __fastcall
+undefined4 G_SUPolygonFlip(undefined4, undefined4);  // 0x00498550  __fastcall
 undefined4 G_PointFlip(undefined4, undefined4);  // 0x00498570  __fastcall
+undefined4 G_UPointFlip(undefined4, undefined4);  // 0x00498590  __fastcall
+undefined4 G_UHlineFlip(undefined4, undefined4, undefined4);  // 0x004985B0  __stdcall
 undefined4 G_ULineFlip(undefined4, undefined4, undefined4, undefined4);  // 0x004985E0  __stdcall
 undefined4 G_LineFlip(undefined4, undefined4, undefined4, undefined4);  // 0x00498610  __stdcall
 undefined4 G_CircleFlip(undefined4, undefined4, undefined4, undefined4);  // 0x00498640  __stdcall
@@ -73,18 +85,28 @@ undefined4 G_PrintOutline(undefined4, undefined4, undefined4, undefined4, undefi
 void G_Printf(int, int, undefined4, char *, ...);  // 0x00498980  __cdecl
 undefined4 G_StringWidth(undefined4);  // 0x004989F0  __fastcall
 undefined4 G_StringHeight(void);  // 0x00498A20  __fastcall
+undefined4 G_LoadDriver(undefined4);  // 0x00498A30  __fastcall
+undefined4 G_UnloadDriver(void);  // 0x00498A40  __fastcall
 long code(long, long);  // 0x00498AF0  __cdecl
+void printPoly(int, TVERTEX *);  // 0x00498B80  __cdecl
 long clipT(long, TVERTEX *);  // 0x00498B90  __cdecl
 long clipB(long, TVERTEX *);  // 0x00498CE0  __cdecl
 long clipL(long, TVERTEX *);  // 0x00498E30  __cdecl
 long clipR(long, TVERTEX *);  // 0x00498F90  __cdecl
 undefined4 G_ClipDestPoly(undefined4, undefined4);  // 0x004990F0  __cdecl
+void G_LoadVesa(void);  // 0x004991E0  __cdecl
+void G_UnloadVesa(void);  // 0x004991F0  __cdecl
 undefined4 G_SetHShake(undefined4, undefined4);  // 0x00499200  __fastcall
 undefined4 G_SetVShake(undefined4, undefined4);  // 0x00499240  __fastcall
 undefined4 G_Hline2(undefined4, undefined4, undefined4);  // 0x00499280  __stdcall
 undefined4 G_UHline2(undefined4, undefined4, undefined4);  // 0x004992B0  __stdcall
 undefined4 G_Box2(undefined4, undefined4, undefined4, undefined4);  // 0x004992E0  __stdcall
 undefined4 G_UBox2(undefined4, undefined4, undefined4, undefined4);  // 0x00499330  __stdcall
+void GLASSESSaveBitmap(void);  // 0x004AF8F0  __stdcall
+void GLASSESInterleaveBitmap(void);  // 0x004AF930  __stdcall
+void ShowPicture(char *);  // 0x004AFB40  __fastcall
+void GLASSESSpreadLines(char);  // 0x004B0130  __fastcall
+void GLASSESPrintAmount(void);  // 0x004B01E0  __stdcall
 undefined4 G_AllocBitmapBuffer(undefined4);  // 0x004B7910  __cdecl
 undefined4 G_RelocBitmap(undefined4, undefined4);  // 0x004B7930  __fastcall
 undefined4 G_AllocBitmap(undefined4, undefined4, undefined4);  // 0x004B79B0  __stdcall
@@ -103,11 +125,13 @@ undefined4 G_ColorStringHeight(undefined4);  // 0x004B8620  __fastcall
 undefined4 G_NextTab(undefined4);  // 0x004B8630  __fastcall
 undefined4 G_Scale(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004B8670  __fastcall
 undefined4 G_ScaleFlip(undefined4, undefined4);  // 0x004B8710  __fastcall
+undefined4 G_Texture(undefined4, undefined4, undefined4);  // 0x004B87C0  __fastcall
 undefined4 G_AcTexture(undefined4, undefined4, undefined4);  // 0x004B87F0  __fastcall
 undefined4 G_TextureFlip(undefined4, undefined4, undefined4);  // 0x004B8820  __fastcall
 undefined4 G_PerspectiveFlip(undefined4, undefined4, undefined4);  // 0x004B8890  __fastcall
 undefined4 G_HFlipBitmap(undefined4);  // 0x004B8920  __fastcall
 undefined4 G_DoubleBitmapY(undefined4);  // 0x004B8960  __fastcall
+int G_CompareBitmapSpan(short *, short *);  // 0x004B8BA0  __cdecl
 undefined4 G_DoubleBitmapX(undefined4);  // 0x004B8BF0  __fastcall
 double carefulDiv(float *, float, float);  // 0x004B8D90  __cdecl
 long NPM_clipTop(FVERTEX *, FVERTEX *);  // 0x004B8E10  __fastcall
@@ -140,5 +164,27 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // asm:      0x004CAE38  G__Texture  -- arguments arrive in registers no C convention can name
 // asm:      0x004CBD0B  G__Perspective  -- arguments arrive in registers no C convention can name
 // asm:      0x004CBE7C  G__ScaleBitmap  -- arguments arrive in registers no C convention can name
+
+// --- not yet recovered -----------------------------------------------
+// Emitted as TODOs, not as guessed declarations: a wrong prototype would
+// compile and then lie about what the original function took.
+// TODO(#453): 0x0041DE80  ?DestroySurface@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z -- signature not recovered
+// TODO(#453): 0x0041E010  ?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ -- signature not recovered
+// TODO(#453): 0x0041E030  ?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z -- signature not recovered
+// TODO(#453): 0x0041E050  ?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z -- signature not recovered
+// TODO(#453): 0x0045E430  GG_QuickBlt -- signature not recovered
+// TODO(#453): 0x00498A50  G_Visible -- signature not recovered
+// TODO(#453): 0x004991B0  G_CopyDriverName -- signature not recovered
+// TODO(#453): 0x004B8570  G_ColorPrintf -- signature not recovered
+// TODO(#453): 0x004BEE60  unknown_divide_error -- signature not recovered
+// TODO(#453): 0x004BEE70  divide_by_ecx_handler -- signature not recovered
+// TODO(#453): 0x004BEF50  divide_by_ebp_handler -- signature not recovered
+// TODO(#453): 0x004BF040  divide_by_bp_handler -- signature not recovered
+// TODO(#453): 0x004BF130  divide_overflow_handler_common -- signature not recovered
+// TODO(#453): 0x004BF220  sphere_overflow -- signature not recovered
+// TODO(#453): 0x004BF250  overflow_handler_reg -- signature not recovered
+// TODO(#453): 0x004BF2C0  line_overflow1 -- signature not recovered
+// TODO(#453): 0x004BF310  line_overflow2 -- signature not recovered
+// TODO(#453): 0x004BF340  access_violation_handler -- signature not recovered
 
 }  // namespace fxe::fa::renderer

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core shell / menu / dialog UI -- FA.EXE
-// 120/136 functions have a recovered signature; 0/0 globals have a recovered type.
+// 126/144 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::shell_ui {
 
@@ -38,6 +38,7 @@ void CheckItem(char, unsigned short);  // 0x0040CDE0  __fastcall
 void * MenuItemByIndex(u16);  // 0x0040CE00  __fastcall
 void EnableItem(unsigned short);  // 0x0040CE70  __fastcall
 void DisableItem(unsigned short);  // 0x0040CE80  __fastcall
+char IsItemEnabled(unsigned short);  // 0x0040CE90  __fastcall
 void MenuSaveBackground(undefined4);  // 0x0040CEA0  __fastcall
 void MenuRestoreBackground(void);  // 0x0040CF00  __cdecl
 void MenuSaveBackground2(undefined4);  // 0x0040CF40  __fastcall
@@ -89,6 +90,7 @@ void DrawText(void *);  // 0x00489AC0  __cdecl
 void DrawAction(void *);  // 0x00489B90  __cdecl
 undefined4 DialogBlitModuleBitmap(undefined4, undefined4, undefined4, undefined4);  // 0x0048A260  __stdcall
 void DialogSetupBitmap(void);  // 0x0048A2B0  __cdecl
+void DialClick(DIAL *, long, long, char *, unsigned long *, char);  // 0x0048A2F0  __cdecl
 void DrawDial(void *);  // 0x0048A4C0  __cdecl
 undefined4 PrintPageNums(undefined4, undefined4, undefined4, undefined4);  // 0x0048A7D0  __stdcall
 void DialogEnsureListFont(void);  // 0x0048A8E0  __cdecl
@@ -121,6 +123,7 @@ void DrawDial320(void *);  // 0x0048C970  __cdecl
 void Do320Button(T_HANDLE *, ACTION *);  // 0x0048CB00  __stdcall
 void DrawSwitch320(void *);  // 0x0048CD70  __cdecl
 void SliderVert320(void *);  // 0x0048CF10  __cdecl
+undefined4 ShellButtonSound(undefined4);  // 0x0048CFE0  __fastcall
 undefined4 ShellClickSound(undefined4, undefined4);  // 0x0048D030  __fastcall
 undefined4 ShellDisabledSound(undefined4);  // 0x0048D090  __fastcall
 undefined4 DisableActionButton(undefined4);  // 0x0048D0D0  __fastcall
@@ -129,10 +132,13 @@ undefined4 DialogEnableItem(undefined4, undefined4, undefined4);  // 0x0048D0F0 
 undefined4 DialogItemIsEnabled(undefined4);  // 0x0048D140  __fastcall
 undefined4 LimitEditFieldLength(undefined4);  // 0x0048D150  __fastcall
 void DialogTextStreamInit(void *, undefined4);  // 0x0048D160  __cdecl
+void DialogTextStreamMarkDone(int);  // 0x0048D1D0  __cdecl
 u8 DialogTextStreamRead(void *);  // 0x0048D1E0  __cdecl
+void DialogTextStreamSkip(void *, int);  // 0x0048D260  __cdecl
 undefined4 ChooseActivity(void);  // 0x004A08A0  __stdcall
 undefined4 DoDialogInfoBox(undefined4, undefined4);  // 0x004A26F0  __stdcall
 undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __stdcall
+undefined4 QuickDist(undefined4, undefined4);  // 0x004C6710  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
@@ -145,8 +151,10 @@ undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __
 // TODO(#453): 0x004897D0  SndPrefPreload -- signature not recovered
 // TODO(#453): 0x004897F0  ChoosePreload -- signature not recovered
 // TODO(#453): 0x00489810  MultiPreload -- signature not recovered
+// TODO(#453): 0x00489840  LoadActionFont -- signature not recovered
 // TODO(#453): 0x0048A080  DialogFlush -- signature not recovered
 // TODO(#453): 0x0048A730  DrawLight -- signature not recovered
+// TODO(#453): 0x0048ABF0  DrawCampaignList -- signature not recovered
 // TODO(#453): 0x0048CBE0  DrawYes320 -- signature not recovered
 // TODO(#453): 0x0048CC10  DrawNo320 -- signature not recovered
 // TODO(#453): 0x0048CC40  DrawCancel320 -- signature not recovered

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Flight model / physics (FM/HARD) -- FA.EXE
-// 58/58 functions have a recovered signature; 0/0 globals have a recovered type.
+// 63/63 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::flight_model {
 
@@ -36,10 +36,13 @@ undefined4 FMUpdateBay(void);  // 0x00452710  __stdcall
 undefined4 FMBayIsOpen(void);  // 0x00452760  __fastcall
 undefined4 HARDPtrs(undefined4, undefined4, undefined4);  // 0x00452770  __stdcall
 undefined4 HARDUnload(undefined4, undefined4);  // 0x004527F0  __fastcall
+void * HARDPtrsFort(long, HARDPOINT **, HARDPOINT_TYPE **);  // 0x00452870  __stdcall
+char HARDUnloadFort(long, long);  // 0x004528D0  __fastcall
 undefined4 HARDStoreWeight(undefined4);  // 0x00452940  __fastcall
 undefined4 HARDCanLoad(undefined4, undefined4);  // 0x00452980  __stdcall
 undefined4 HARDLoad(undefined4, undefined4, undefined4);  // 0x00452C20  __stdcall
 undefined4 HARDLoadAll(void);  // 0x00452D10  __stdcall
+undefined4 HARDUnloadAll(void);  // 0x00452D60  __stdcall
 undefined4 HARDBestSeekers(undefined4, undefined4, undefined4);  // 0x00452D90  __fastcall
 undefined4 HARDBestSeeker(undefined4, undefined4);  // 0x00452E60  __fastcall
 undefined4 HARDFindJammer(undefined4);  // 0x00452EA0  __fastcall
@@ -52,6 +55,7 @@ undefined4 HARDPos(undefined4, undefined4, undefined4, undefined4);  // 0x004532
 undefined4 HARDGunsOnly(void);  // 0x004533D0  __stdcall
 undefined4 HARDGunsOnlyAll(void);  // 0x00453440  __stdcall
 undefined4 HARDGunLoadPercent(undefined4);  // 0x00453490  __fastcall
+undefined4 HARDNameDebug(undefined4);  // 0x00453510  __stdcall
 undefined4 HARDUnlimited(void);  // 0x00453640  __stdcall
 undefined4 HARDPodHack(undefined4);  // 0x00453710  __fastcall
 undefined4 HARDClearUnloadedHarpoints(void);  // 0x00453800  __stdcall
@@ -60,6 +64,7 @@ char * HARDStoreName(char *);  // 0x00453890  __fastcall
 undefined4 HARDSaveHumanLoads(void);  // 0x004538C0  __stdcall
 undefined4 HARDRestoreHumanLoad(void);  // 0x004539C0  __stdcall
 undefined4 HARDTotalFuel(void);  // 0x00453A70  __stdcall
+undefined4 HARDNumLoaded(undefined4, undefined4);  // 0x00453AC0  __fastcall
 undefined4 HARDHasInternalBay(undefined4);  // 0x00453AF0  __stdcall
 undefined4 HARDRearmTest(void);  // 0x00453B90  __stdcall
 undefined4 HARDRearmHumanLoad(void);  // 0x00453C50  __stdcall
