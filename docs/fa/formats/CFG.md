@@ -17,6 +17,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
+    real_install: true
 related: [P, DAT]
 ---
 

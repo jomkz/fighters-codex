@@ -146,9 +146,18 @@ bool decode_one(VdoDecoder* dec, const uint8_t* fr, size_t sz) {
         src = dec->src.data();
         src_len = dec->src.size();
     } else if (tag == 1) {
-        // Whole-canvas RLE refresh (keyframe), no mask.
+        // Whole-canvas RLE keyframe: UnRLE straight into the canvas, no pixel blit (#491).
+        //
+        // The RLE header sits at frame+4, not frame+2. GetVDOFrame (0x4AF510) hands UnRLE
+        // `(short *)((int)puVar10 + 2)` with puVar10 = frame+2 — so the u16 at frame+2 is
+        // stepped over by the CALLER and is not part of the stream. It is the frame's own
+        // remaining-byte count (it equals FBC[n] - 4 in all 89 tag-1 frames of the retail
+        // corpus), and reading it as UnRLE's output count is what this codec did: it
+        // decoded ~frame_size bytes instead of the 64,000 the count at frame+4 actually
+        // asks for, and the picture was truncated — a black band across the bottom of
+        // every keyframe.
         std::vector<uint8_t> full;
-        if (!unrle(fr, sz, 2, full)) return false;
+        if (!unrle(fr, sz, 4, full)) return false;
         size_t n = std::min(full.size(), dec->canvas.size());
         if (n) std::memcpy(dec->canvas.data(), full.data(), n);
         return true;

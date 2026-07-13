@@ -17,15 +17,16 @@ namespace fx {
 //   0xFA  setup/config -> sub, value (u32)
 //   0xFB  play track   -> mode, track_idx, xmi (resolved filename)
 //   0xFC  shuffle/loop  -> (a state-dispatch table is consumed; no operands)
-//   0xFD  loop / jump   -> value (24-bit target)
+//   0xFD  track list    -> tracks (a COUNT-prefixed list: FD <n> <n bytes>)
 //   0xFE  conditional   -> value (32-bit game-state key)
 struct MusOp {
     uint32_t    offset    = 0;   // byte offset of the opcode within the CODE section
     uint8_t     op        = 0;
     uint8_t     sub       = 0;   // FA
-    uint8_t     mode      = 0;   // FB
+    uint8_t     mode      = 0;   // FB (and the running mode of a bare index — see mus.cpp)
     uint8_t     track_idx = 0;   // FB
-    uint32_t    value     = 0;   // FA value / FD 24-bit target / FE 32-bit key
+    uint32_t    value     = 0;   // FA value / FE 32-bit key
+    std::vector<uint8_t> tracks; // FD — the n track indices the count introduces
     std::string playlist_id;     // FF
     std::string xmi;             // FB — resolved XMI filename for track_idx
 };

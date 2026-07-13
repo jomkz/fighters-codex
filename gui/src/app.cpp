@@ -70,7 +70,7 @@ App::App() {
 App::~App() { StopIndexing(); }
 
 void App::Draw() {
-    // Host window â€” fills the OS window's client area exactly.
+    // Host window — fills the OS window's client area exactly.
     const ImGuiViewport* vp = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(vp->WorkPos);
     ImGui::SetNextWindowSize(vp->WorkSize);

@@ -13,7 +13,7 @@ using namespace fx;
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-// stb_image declarations only â€” implementation is compiled in pic.cpp
+// stb_image declarations only — implementation is compiled in pic.cpp
 #include "stb_image.h"
 
 namespace fs = std::filesystem;

@@ -220,3 +220,121 @@ TEST_CASE("plt_repack is byte-identical for every real pilot file") {
         SKIP("no PLTnnn.P pilot files in this install (created in-game)");
     WARN("round-tripped " << total << " real pilot file(s)");
 }
+
+// ---------------------------------------------------------------------------
+// The campaign tables (#491).
+//
+// These used to be recovered by scanning the block for printable strings, capped at
+// 0x0F00 — 3,840 bytes short of the store table at 0x1C60 — so a fully-equipped campaign
+// pilot decoded to no aircraft, no ordnance and no sensors at all. The round-trip suite
+// never noticed, because `fx plt` does not WRITE these fields: an unedited repack is
+// byte-identical whether or not they were ever read.
+namespace {
+
+// A pilot with a campaign: the .CAM string, one plane slot, and three store slots.
+std::vector<uint8_t> make_campaign_pilot() {
+    std::vector<uint8_t> b(0x25E0, 0);
+    b[0x00] = 0x0F;
+    copy_field(b, 0x01, "Pilot 2", 62);
+    copy_field(b, 0xA2, "2nd Lieutenant", 13);
+    copy_field(b, 0x0D7F, "EGYPT.CAM", 12);
+    copy_field(b, 0x0D8C, "Egypt 1998", 12);
+
+    // A lone 0x01 byte right before the plane name — the exact shape that made the old
+    // string scan stop one byte short of the payload.
+    b[0x0DAF] = 0x01;
+
+    auto plane = [&](int i, const char* nm, int16_t live) {
+        const size_t off = 0x0DB0 + (size_t)i * 0xBC;
+        copy_field(b, off, nm, 13);
+        b[off + 0x0E] = (uint8_t)(live & 0xFF);
+        b[off + 0x0F] = (uint8_t)((uint16_t)live >> 8);
+    };
+    auto store = [&](int i, const char* nm, int16_t qty) {
+        const size_t off = 0x1C60 + (size_t)i * 0x10;
+        copy_field(b, off, nm, 13);
+        b[off + 0x0E] = (uint8_t)(qty & 0xFF);
+        b[off + 0x0F] = (uint8_t)((uint16_t)qty >> 8);
+    };
+    plane(0, "F22.PT", 1);
+    plane(1, "F117.PT", 1);
+    plane(2, "B2.PT", 0);        // slot present but not live -> must be ignored
+    store(0, "M61.JT", -1);      // a gun: negative, and NOT a "free slot"
+    store(1, "AIM9M.JT", 300);   // > 255: a byte-wide quantity could not hold it
+    store(2, "F250.GAS", 25);
+    store(3, "AAS38.SEE", 5);
+    store(4, "ALQ167.ECM", 0x7FFF);  // unlimited
+    return b;
+}
+
+}  // namespace
+
+TEST_CASE("plt_parse reads the campaign plane and store tables") {
+    auto b = make_campaign_pilot();
+    PltInfo info{};
+    REQUIRE(plt_parse(b.data(), b.size(), &info));
+
+    CHECK(info.cam_file == "EGYPT.CAM");
+    CHECK(info.cam_name == "Egypt 1998");
+
+    // Planes: only the live slots, and the 0x01 byte before the name must not derail it.
+    REQUIRE(info.aircraft_pool.size() == 2u);
+    CHECK(info.aircraft_pool[0] == "F22.PT");
+    CHECK(info.aircraft_pool[1] == "F117.PT");
+    CHECK(info.aircraft == "F22.PT");
+
+    // Stores: read at 0x1C60 — far past the 0x0F00 the old scan gave up at.
+    REQUIRE(info.ordnance.size() == 5u);
+    CHECK(info.ordnance[0].name == "M61.JT");
+    CHECK(info.ordnance[0].quantity == -1);       // s16, not u8: a gun is not an empty slot
+    CHECK(info.ordnance[1].name == "AIM9M.JT");
+    CHECK(info.ordnance[1].quantity == 300);      // a u8 quantity would have wrapped to 44
+    CHECK(info.ordnance[4].quantity == 0x7FFF);   // unlimited
+
+    // Sensor and ECM pods are surfaced from the same table.
+    REQUIRE(info.sensors.size() == 2u);
+    CHECK(info.sensors[0] == "AAS38.SEE");
+    CHECK(info.sensors[1] == "ALQ167.ECM");
+}
+
+// Real pilot saves live loose in the install root, not in a LIB.
+TEST_CASE("every real pilot save decodes its campaign") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root)
+        SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    namespace fs = std::filesystem;
+
+    int pilots = 0, campaigns = 0;
+    for (const auto& de : fs::directory_iterator(root)) {
+        if (!de.is_regular_file()) continue;
+        std::string ext = de.path().extension().string();
+        for (char& c : ext) c = (char)std::toupper((unsigned char)c);
+        if (ext != ".P") continue;
+
+        std::ifstream f(de.path(), std::ios::binary | std::ios::ate);
+        std::vector<uint8_t> bytes((size_t)f.tellg());
+        f.seekg(0);
+        f.read((char*)bytes.data(), (std::streamsize)bytes.size());
+
+        PltInfo info{};
+        INFO(de.path().filename().string());
+        REQUIRE(plt_parse(bytes.data(), bytes.size(), &info));
+        ++pilots;
+        if (info.cam_file.empty()) continue;   // a fresh pilot has no campaign
+
+        // A pilot flying a campaign HAS aircraft and stores. Decoding one to an empty
+        // loadout — which is what the tool did for every such save — is the bug.
+        CHECK_FALSE(info.aircraft_pool.empty());
+        CHECK_FALSE(info.ordnance.empty());
+        for (const auto& o : info.ordnance) {
+            INFO(o.name);
+            CHECK(o.name.find('.') != std::string::npos);   // every store names a type file
+            CHECK(o.quantity != 0);                          // a zero-qty named slot is not a thing
+        }
+        ++campaigns;
+    }
+    if (pilots == 0)
+        SKIP("no PLTnnn.P saves in this install (the game writes them; the LIBs carry none)");
+    if (campaigns == 0) WARN("no pilot in this install has an active campaign");
+    WARN("PLT census: " << pilots << " saves, " << campaigns << " with a campaign");
+}

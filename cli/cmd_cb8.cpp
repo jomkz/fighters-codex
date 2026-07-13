@@ -27,7 +27,7 @@ static std::vector<uint8_t> read_file(const char* path) {
     return buf;
 }
 
-// PGM (P5) â€” palette index bytes written as 8-bit greyscale.
+// PGM (P5) — palette index bytes written as 8-bit greyscale.
 static bool write_pgm(const char* path, const uint8_t* pixels, uint32_t w, uint32_t h) {
     FILE* f = fopen(path, "wb");
     if (!f) return false;

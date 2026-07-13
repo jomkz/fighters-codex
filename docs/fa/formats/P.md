@@ -30,6 +30,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
+    real_install: true
 related: [BRF, M, CAM]
 ---
 
@@ -114,14 +115,46 @@ Variable-length null-terminated strings packed sequentially from 0xDAE:
 - Sensor/ECM loadout (`.SEE`, `.ECM` references)
 - Other campaign-specific strings
 
-### Ordnance inventory (0x1C60–0x1F7F) — confirmed
+### Aircraft pool (0x0DB0–0x1C5F) — confirmed
+
+**20 slots × 0xBC (188) bytes**, immediately before the store table and ending exactly where
+it begins — the two tables tile the campaign block with nothing between them.
+`_AddCampaignPlane` (`0x480C90`) walks `0x4F9968` in 0xBC steps while the `s16` at `+0x0E`
+is non-zero, and `_CampaignPlanesLeft` counts the same field; `_campaignPilot` is
+`0x4F8BB8`, so `0x4F9968` is file offset `0x0DB0`.
+
+| Field | Offset within slot | Size | Type |
+|-------|--------------------|------|------|
+| Aircraft type filename (`.PT`) | `+0x00` | 14 | char[] (null-padded) |
+| In use | `+0x0E` | 2 | s16 — **zero means the slot is empty**; this, not the name, is what the engine tests |
+| *(remainder)* | `+0x10` | 172 | per-airframe campaign state; not yet mapped |
+
+A pilot owns one slot per airframe, so the same type appears more than once (`PLT937.P`
+holds three `F22.PT`, three `F117.PT`, one `B2.PT`, four `F31E.PT`).
+
+### Store inventory (0x1C60–0x1F7F) — confirmed
 
 **50 entries × 16 bytes** = 800 bytes. `DAT_004fa818 = _campaignPilot + 0x1C60`.
+Not only weapons: drop tanks (`.GAS`), sensor pods (`.SEE`) and ECM pods (`.ECM`) are
+drawn from the same table.
 
 | Field | Offset within entry | Size | Type |
 |-------|---------------------|------|------|
-| Weapon type filename (`.JT`) | `+0x00` | 14 | char[] (null-padded) |
-| Quantity | `+0x0E` | 2 | s16 (`-1` if slot unused; `0x7FFF` = unlimited) |
+| Store type filename (`.JT`, `.GAS`, `.SEE`, `.ECM`) | `+0x00` | 14 | char[] (null-padded) |
+| Quantity | `+0x0E` | 2 | s16 — `0x7FFF` = unlimited (`_AddCampaignStore` returns early on it) |
+
+**A free slot is one with no name**, not one with a quantity of `-1`: this spec used to say
+"`-1` if slot unused", but every campaign save carries its guns (`GSH301.JT`, `M61.JT`,
+`GAU12.JT`, …) as *named* entries with a quantity of `-1`, while the genuinely unused slots
+at the end of the table are blank. Whatever `-1` means to the engine, it does not mean
+"empty" ([#491](https://github.com/jomkz/fighters-codex/issues/491)).
+
+> `lib/src/plt.cpp` used to recover both tables by scanning the campaign block for
+> printable strings, capped at `0x0F00` — 3,840 bytes short of the store table — and read
+> the quantity as a single byte after the name. A fully-equipped campaign pilot therefore
+> decoded to **no aircraft, no ordnance and no sensors at all**. The round-trip suite could
+> not see it: `fx plt` never *writes* these fields, so an unedited repack stayed
+> byte-identical. `PLT937.P` holds 11 airframes and 35 stores; `fx plt info` reported none.
 
 Managed by `_AddCampaignStore` (0x480E10): searches by name,
 increments/decrements quantity, or allocates a free slot.

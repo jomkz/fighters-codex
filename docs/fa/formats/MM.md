@@ -21,6 +21,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
+    real_install: true
 related: [T2, LAY, M, CAM, BRF]
 ---
 

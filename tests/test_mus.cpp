@@ -1,5 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 #include <fx/mus.h>
+#include <fx/ealib.h>
+#include <cctype>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <ios>
+#include <string>
 #include <cstdint>
 #include <vector>
 
@@ -12,9 +19,6 @@ namespace {
 void u32le(std::vector<uint8_t>& v, uint32_t x) {
     v.push_back(x & 0xFF); v.push_back((x >> 8) & 0xFF);
     v.push_back((x >> 16) & 0xFF); v.push_back((x >> 24) & 0xFF);
-}
-void u24le(std::vector<uint8_t>& v, uint32_t x) {
-    v.push_back(x & 0xFF); v.push_back((x >> 8) & 0xFF); v.push_back((x >> 16) & 0xFF);
 }
 const std::vector<uint8_t> kDispatch = {0x01, 0x02, 0x03, 0x02, 0x01, 0x02, 0x03, 0x02, 0x01};
 void append(std::vector<uint8_t>& v, const std::vector<uint8_t>& more) {
@@ -45,7 +49,13 @@ TEST_CASE("mus_disassemble decodes every opcode form") {
     code.push_back(0xFB); code.push_back(0x5A); code.push_back(0x01);    // FB short (idx 1)
     code.push_back(0xFC); append(code, kDispatch);          // FC + dispatch
     code.push_back(0xFE); u32le(code, 0x00C0FFEE); append(code, kDispatch); // FE + dispatch
-    code.push_back(0xFD); u24le(code, 0x123456);            // FD
+    // FD is a count-prefixed track list, not a u24 target (#491). This fixture used to
+    // build `FD <u24>` — the codec's own assumption — and so could never have caught the
+    // bug it was meant to guard.
+    code.push_back(0xFD); code.push_back(0x03);
+    code.push_back(0x0F); code.push_back(0x16); code.push_back(0x27);
+    // A bare index under the running FB mode (0x5A, from the short-form FB above).
+    code.push_back(0x11); code.push_back(0xF9);
     code.push_back(0xF9);                                    // section-end skip
     code.push_back(0x00);                                    // tail padding stop
 
@@ -53,7 +63,7 @@ TEST_CASE("mus_disassemble decodes every opcode form") {
     MusScript s = mus_disassemble(img.data(), img.size());
     REQUIRE(s.valid);
     REQUIRE_FALSE(s.stopped_early);
-    REQUIRE(s.ops.size() == 7u);
+    REQUIRE(s.ops.size() == 8u);
 
     REQUIRE(s.ops[0].op == 0xFF);
     REQUIRE(s.ops[0].playlist_id == "air");
@@ -77,7 +87,11 @@ TEST_CASE("mus_disassemble decodes every opcode form") {
     REQUIRE(s.ops[5].value == 0x00C0FFEEu);
 
     REQUIRE(s.ops[6].op == 0xFD);
-    REQUIRE(s.ops[6].value == 0x123456u);
+    REQUIRE(s.ops[6].tracks == std::vector<uint8_t>{0x0F, 0x16, 0x27});
+
+    REQUIRE(s.ops[7].op == 0xFB);            // running status: a bare index, last FB's mode
+    REQUIRE(s.ops[7].mode == 0x5A);
+    REQUIRE(s.ops[7].track_idx == 0x11);
 
     // Offsets are monotonic within the CODE section.
     for (size_t i = 1; i < s.ops.size(); i++)
@@ -105,4 +119,61 @@ TEST_CASE("mus_disassemble stops and records an unrecognised byte") {
     REQUIRE(s.stopped_early);
     REQUIRE(s.stop_byte == 0x42);
     REQUIRE(s.ops.size() == 1u);  // the FC before it
+}
+
+// ---------------------------------------------------------------------------
+// Real-asset decode census (#491).
+//
+// MUS is read-only, so there is no round-trip to hide behind: the only proof a playlist
+// was understood is that it disassembles to its end. Three of the nine shipped playlists
+// did not. FD was read as a fixed `FD <u24>` (what MUS.md said), but its operand is a
+// COUNT-PREFIXED LIST — so the reader landed mid-list and aborted on a track index it
+// mistook for a bad opcode. M_AIR additionally ends with bare indices under the last FB
+// mode (running status).
+//
+// The oracle: a playlist ends at its dispatch table and zero padding. Anything else means
+// the disassembler lost the thread.
+TEST_CASE("every real MUS playlist disassembles to the end") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root)
+        SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    namespace fs = std::filesystem;
+    auto upper = [](std::string s) {
+        for (char& c : s) c = (char)std::toupper((unsigned char)c);
+        return s;
+    };
+
+    int total = 0, with_list = 0;
+    for (const auto& de : fs::directory_iterator(root)) {
+        if (!de.is_regular_file()) continue;
+        std::string fn = upper(de.path().filename().string());
+        if (fn.size() < 4 || fn.substr(fn.size() - 4) != ".LIB") continue;
+        std::ifstream f(de.path(), std::ios::binary | std::ios::ate);
+        std::vector<uint8_t> lib((size_t)f.tellg());
+        f.seekg(0);
+        f.read((char*)lib.data(), (std::streamsize)lib.size());
+
+        for (const auto& e : ealib_read_dir(lib.data(), lib.size())) {
+            std::string name = upper(e.name);
+            if (name.size() < 4 || name.substr(name.size() - 4) != ".MUS") continue;
+            auto bytes = ealib_extract(lib.data(), lib.size(), e, true);
+            REQUIRE_FALSE(bytes.empty());
+
+            MusScript s = mus_disassemble(bytes.data(), bytes.size());
+            INFO(e.name << " stopped at byte 0x" << std::hex << (int)s.stop_byte);
+            REQUIRE(s.valid);
+            CHECK_FALSE(s.stopped_early);   // the whole point: no playlist may abort
+            CHECK(s.ops.size() > 1u);
+            for (const auto& op : s.ops)
+                if (op.op == 0xFD) {
+                    CHECK_FALSE(op.tracks.empty());   // FD carries a list, never nothing
+                    ++with_list;
+                }
+            ++total;
+        }
+    }
+    REQUIRE(total > 0);
+    REQUIRE(with_list > 0);
+    WARN("MUS census: " << total << " playlists disassembled clean, "
+                        << with_list << " FD track lists");
 }

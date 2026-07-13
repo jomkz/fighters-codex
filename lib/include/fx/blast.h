@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <cstdint>
 
-// PKWare DCL ("Blast") decompressor â€” port of Mark Adler's blast.c
+// PKWare DCL ("Blast") decompressor — port of Mark Adler's blast.c
 // Verified against PKWDCL.DLL and FA game files (BALTIC.TXT, A1.INF, SHWPILOT.TXT).
 //
 // EA wrapper variant: input begins with a 4-byte LE decompressed-size prefix,

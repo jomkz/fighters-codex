@@ -27,7 +27,15 @@ static std::string MusOperands(const fx::MusOp& e) {
     case 0xFB: snprintf(buf, sizeof(buf), "mode=0x%02X  track=%d  (%s)",
                         e.mode, (int)e.track_idx, e.xmi.c_str()); break;
     case 0xFC: break;
-    case 0xFD: snprintf(buf, sizeof(buf), "target=0x%06X", e.value); break;
+    case 0xFD: {
+        // FD is a count-prefixed track list, not a 24-bit jump target (#491).
+        int n = snprintf(buf, sizeof(buf), "tracks=[");
+        for (size_t t = 0; t < e.tracks.size() && n > 0 && (size_t)n < sizeof(buf); t++)
+            n += snprintf(buf + n, sizeof(buf) - (size_t)n, "%s%d",
+                          t ? ", " : "", (int)e.tracks[t]);
+        if (n > 0 && (size_t)n < sizeof(buf)) snprintf(buf + n, sizeof(buf) - (size_t)n, "]");
+        break;
+    }
     case 0xFE: snprintf(buf, sizeof(buf), "state=0x%08X", e.value); break;
     default:   break;
     }

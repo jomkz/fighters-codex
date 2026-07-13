@@ -20,6 +20,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
+    real_install: false
 related: [ESA, SSF]
 credits:
   - "0xB59C codec, §9 opcode grammar, and §10 rolling checksum reverse-engineered by the MIT-licensed rtptool project (github.com/bwrsandman/rtptool, © Sandy Carter); this codec is a clean-room port of those facts"

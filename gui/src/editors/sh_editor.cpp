@@ -54,7 +54,7 @@ void DrawShEditor(App& app) {
 
     if (s_shInfo.vert_count == 0) {
         ImGui::TextColored({1.0f, 0.8f, 0.0f, 1.0f},
-            "x86-only geometry â€” no OBJ export available.");
+            "x86-only geometry — no OBJ export available.");
     } else if (ImGui::Button("Export OBJ...")) {
         // Serialize before the dialog opens — the continuation runs frames
         // later, when the selection may have changed.

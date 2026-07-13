@@ -20,6 +20,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
+    real_install: true
 related: [PIC, 11K, ESA]
 credits:
   - "PKWare DCL decode based on blast.c by Mark Adler (zlib project)"

@@ -59,7 +59,7 @@ void DrawCb8Editor(App& app) {
                         s_info.width, s_info.height, s_info.frame_count);
     ImGui::Separator();
 
-    // Frame navigation â€” guard against zero-frame files (slider max must be >= min)
+    // Frame navigation — guard against zero-frame files (slider max must be >= min)
     if (s_info.frame_count > 0) {
         int frame   = (int)s_curFrame;
         bool changed = false;

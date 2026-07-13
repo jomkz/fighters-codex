@@ -35,7 +35,11 @@ static int cmd_vdo_info(int argc, char** argv) {
         return 1;
     }
     printf("File: %s (%zu bytes)\n", argv[0], vdo.size());
-    printf("Resolution: %ux%u  fps: %u  audio: %u Hz (paired .11K)\n",
+    // The header's audio field is a container constant (8000 in all 355 shipped .VDO
+    // files); it does NOT name the paired track's real rate, which is 11025 for a .11K
+    // group and 5512 for IQC's .5K. Report it for what it is rather than captioning it
+    // with an extension that, for IQC, does not even exist (#491).
+    printf("Resolution: %ux%u  fps: %u  audio: %u Hz (header field)\n",
            info.width, info.height, info.fps, info.audio_hz);
     if (argc >= 2) {
         auto fbc = read_all(argv[1]);

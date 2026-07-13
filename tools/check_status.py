@@ -404,9 +404,9 @@ def validate_schema(fm, stem):
         errs.append("codec.fixtures: required map")
     else:
         for key in fixtures:
-            _want(errs, key in ("synthetic", "real_manifest"),
+            _want(errs, key in ("synthetic", "real_manifest", "real_install"),
                   "codec.fixtures: unknown key %s" % key)
-        for key in ("synthetic", "real_manifest"):
+        for key in ("synthetic", "real_manifest", "real_install"):
             _want(errs, isinstance(fixtures.get(key), bool),
                   "codec.fixtures.%s: required bool" % key)
         if fixtures.get("synthetic") is True:
@@ -645,6 +645,26 @@ def check_docs_hygiene():
             elif not target or not exists_case_exact(ROOT / target):
                 errs.append("%s: repo file URL points at a missing or "
                             "wrong-case path: %s" % (rel, target))
+
+    # The same check over first-party SOURCE (#491). The docs were guarded and the code
+    # was not -- and the code prints: `fx ecm info` was emitting "value×256" as
+    # "valueÃ—256" for every one of the 30 .ECM files, because lib/src/ot.cpp's annotation
+    # strings had been through a cp1252 round-trip. A field's units are part of what the
+    # tool says about the format; corrupting them is a decode the user cannot read.
+    for sub, patterns in (("lib", ("*.cpp", "*.h")), ("cli", ("*.cpp",)),
+                          ("gui/src", ("*.cpp", "*.h")), ("tests", ("*.cpp", "*.h"))):
+        for pattern in patterns:
+            for path in sorted((ROOT / sub).rglob(pattern)):
+                if "vendor" in path.parts:
+                    continue
+                try:
+                    text = path.read_text(encoding="utf-8")
+                except (UnicodeDecodeError, OSError) as exc:
+                    errs.append("%s: not valid UTF-8 (%s)" % (_rel(path), exc))
+                    continue
+                for hit in find_mojibake(text):
+                    errs.append("%s: mojibake %r (cp1252 double-encoding)"
+                                % (_rel(path), hit))
     return errs
 
 
@@ -757,6 +777,24 @@ def check_claims(specs):
             errs.append("%s: fixtures.real_manifest is %s but the extract manifest "
                         "says %s" % (where, have_real, want_real))
 
+        # real_install: does a test actually DECODE real assets? (#491)
+        #
+        # real_manifest only says the extension appears in the extraction manifest -- it
+        # says nothing about any codec ever having read one of those files. Specs were
+        # claiming real-asset round-trips that no test performed, and the two flags read
+        # alike, so the claim looked checked. A test earns this flag by gating on
+        # FX_FA_ROOT: that is the only way it can touch the licensed install.
+        proves_real = any((ROOT / t).exists()
+                          and "FX_FA_ROOT" in (ROOT / t).read_text(encoding="utf-8",
+                                                                   errors="replace")
+                          for t in (codec.get("tests") or []))
+        if codec["fixtures"]["real_install"] != proves_real:
+            errs.append(
+                "%s: fixtures.real_install is %s, but %s of codec.tests reads FX_FA_ROOT "
+                "-- the flag must state what the tests DO, not what the spec hopes"
+                % (where, codec["fixtures"]["real_install"],
+                   "none" if not proves_real else "one"))
+
     # Reverse coverage: every codec/test/fuzz/GUI file must be claimed by a spec.
     sink = errs
     def unclaimed(kind, paths):
@@ -813,7 +851,8 @@ def _matrix_row(token, fm):
     fixtures = codec["fixtures"]
     fixture_cell = "/".join(
         name for name, on in (("syn", fixtures["synthetic"]),
-                              ("real", fixtures["real_manifest"])) if on) or "—"
+                              ("real", fixtures["real_manifest"]),
+                              ("**install**", fixtures.get("real_install"))) if on) or "—"
 
     def files_cell(field):
         vals = codec.get(field) or []
@@ -1791,6 +1830,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
+    real_install: false
 related: [LIB]
 """
 

@@ -95,7 +95,7 @@ void DrawAudioEditor(App& app) {
         dl->AddLine(ImVec2(x0, y0), ImVec2(x1, y1), IM_COL32(80, 180, 80, 255));
     }
 
-    // Playhead â€” colour signals state.
+    // Playhead — colour signals state.
     if (samples > 0) {
         ImU32 headCol;
         if      (s_player.IsPlaying()) headCol = IM_COL32(255, 210,  50, 220); // yellow: playing
