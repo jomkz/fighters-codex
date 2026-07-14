@@ -15,12 +15,12 @@ codec:
   rationale: "engine-code container (menu DLL) with the tree/layout encoding still unmapped (#54): fx_lib surfaces the container geometry and label strings the spec has confirmed; writing compiled menu DLLs is fighters-legacy territory"
   lib: [lib/src/mnu.cpp]
   commands: [mnu]
-  tests: [tests/test_mnu.cpp]
+  tests: [tests/test_mnu.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_mnu.cpp]
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [DLG]
 ---
 

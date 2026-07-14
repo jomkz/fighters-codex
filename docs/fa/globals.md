@@ -97,10 +97,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 1 named referenced globals
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 3 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004EB608` | `thisComputer` | sms | imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS |
+| `0x00520A1C` | `playerId` | sms | imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS |
 | `0x00572568` | `querySocket` | re | master/query socket handle — set from the connect result in ?NET_StartQuery@@…, used for the broadcast host query, closed and reset to -1 by ?NET_MasterShutdown@@YAXXZ |
 
 ### HUD / cockpit
@@ -128,10 +130,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Core shell / menu / dialog UI
 
-[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 5 named referenced globals
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 6 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004EB620` | `gameMode` | sms | imported by 3 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x00502170` | `yesString` | sms | localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous |
 | `0x00502174` | `noString` | sms | localized dialog-button label |
 | `0x00502178` | `okString` | sms | localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491) |
@@ -152,13 +155,19 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 3 named referenced globals
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 9 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004FB1A8` | `missionName` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x0050CFD1` | `ejectNextTime` | re | ejection seat: next state deadline, in _currentT ticks — EJECTAdd sets _currentT+0xC, EJECTMoveProc re-arms at +1 and parks it at 0x7FFF when the sequence ends |
 | `0x0050CFD3` | `ejectAngle` | re | ejection seat: seat attitude — passed as the ANGLE* first argument of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z, which types it, and slewed toward 0x7FF8 by _Slew@16 |
 | `0x0050CFD9` | `ejectSpeed` | re | ejection seat: seat velocity — EJECTAdd seeds it from the ejecting aircraft, EJECTMoveProc drains it by _LMultDiv256(speed, _serviceTicks) each tick and drives _Move3d with the remainder, clamping at 0 |
+| `0x0054E418` | `campaignFailures` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x0054E468` | `playerDead` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x00551660` | `campaignSucceeded` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x00552804` | `campaignFailed` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x005528E0` | `currentTime` | sms | imported by 12 shipped .MC overlays (#491); named at this VA by FA.SMS |
 
 ### Collision (COL)
 
@@ -281,14 +290,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 29 named referenced globals
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 31 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004F6FBC` | `curId` | sms | imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS |
 | `0x004F6FDC` | `_curObjStackTop` | re | PushCurObj/PopCurObj nesting stack for GetCurObj |
 | `0x004F6FE0` | `_cmdBufWritePtr` | re | command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf) |
 | `0x004FFE34` | `_objArena` | re | entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding) |
 | `0x0050CCC8` | `takeoffPattern` | re | autopilot takeoff-pattern record — field 0 holds &?APTakeoff@@YGDXZ, registered with the autopilot dispatcher by _APAdd@4 from ?STRIPAddProc@@YAJXZ |
+| `0x0050CE80` | `cg` | sms | the current-entity mirror. FA.SMS names this ONE address SIX ways -- _cg _cj _cn _co _cp _curThing -- the class-typed views of the same block, matching the OBJ/NPC/PLANE/PROJ hierarchy the .OT/.NT/.PT/.JT records declare (#454). The .MC overlays import it as _co, _cp and _cn; db keys symbols by VA, so the aliases live here rather than in rows of their own (#491) |
 | `0x0050D0B7` | `cmDispenser` | re | countermeasure dispenser state — low 7 bits are the remaining count (decremented per launch), bit 0x80 selects chaff vs flare; read by _NPCWeaponsProc and _PLANEEventProc |
 | `0x0050D0E5` | `sayLastComment` | re | wingman chatter: id of the last line spoken, compared against the new candidate so a line never repeats back-to-back (_PLANECommentProc) |
 | `0x0050D0E6` | `sayLastStress` | re | wingman chatter: snapshot of the pilot g-stress byte, compared against the current value to gate the grunt lines (_PLANECommentProc) |

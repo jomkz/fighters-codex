@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 90/100 functions have a recovered signature (+3 that are not C functions); 28/29 globals have a recovered type.
+// 93/103 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
 // --- globals ---------------------------------------------------------
+extern undefined2 curId;  // 0x004F6FBC  imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS
 extern undefined4 curObjStackTop;  // 0x004F6FDC  PushCurObj/PopCurObj nesting stack for GetCurObj
 extern undefined4 cmdBufWritePtr;  // 0x004F6FE0  command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf)
 extern undefined4 objArena;  // 0x004FFE34  entity arena base (MMAllocPtr in OBJInit; shrunk by OBJStopAdding)
@@ -43,6 +44,7 @@ extern undefined4 objArenaSize;  // 0x00553840  arena byte capacity (OBJInit par
 extern u8 wasOnGround;  // 0x00571420  previous-frame ground contact, fed to _PLANEUpdateJustLanded@8 and then refreshed from _OnTheGround@0 — the edge that makes a landing "just landed" exactly once
 
 // --- functions -------------------------------------------------------
+undefined4 OnTheGround(void);  // 0x00411910  __stdcall
 undefined4 MoveObj(void);  // 0x00436B30  __stdcall
 undefined4 MoveGoalValue(undefined4, undefined4);  // 0x004382D0  __fastcall
 undefined4 CATGUYDraw(undefined4);  // 0x00442AB0  __stdcall
@@ -102,6 +104,7 @@ void OBJDamageProc(HIT_OBJ_DATA *);  // 0x00473B40  __cdecl
 undefined4 OBJProc(undefined4);  // 0x00473BE0  __cdecl
 undefined4 Kill(void);  // 0x00473C10  __stdcall
 undefined4 GVProc(char);  // 0x00473DB0  __cdecl
+undefined4 Alive(undefined4);  // 0x004747C0  __fastcall
 undefined4 OBJGet(undefined4);  // 0x00491240  __fastcall
 undefined4 OBJInit(undefined4);  // 0x00491250  __stdcall
 undefined4 OBJShutdown(void);  // 0x004912C0  __stdcall
@@ -132,6 +135,7 @@ void SetupJT(undefined4);  // 0x004A7230  __cdecl
 undefined4 ShapeSetup(undefined4);  // 0x004AB450  __fastcall
 void RotatePattern(int);  // 0x004BD950  __fastcall
 long STRIPAddProc(void);  // 0x004BE2A0  __cdecl
+undefined4 Dist(undefined4, undefined4);  // 0x004C66CC  __stdcall
 undefined4 WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004D709A  __stdcall
 
 // --- not C functions --------------------------------------------------
@@ -155,5 +159,6 @@ undefined4 WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4)
 // TODO(#453): 0x004BD5B0  CARRIERProc -- signature not recovered
 // TODO(#453): 0x004BE640  STRIPProc -- signature not recovered
 // TODO(#455): 0x0050CCC8  takeoffPattern -- type not recovered
+// TODO(#455): 0x0050CE80  cg -- type not recovered
 
 }  // namespace fxe::fa::objects

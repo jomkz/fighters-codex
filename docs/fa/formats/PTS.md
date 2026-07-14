@@ -11,12 +11,12 @@ codec:
   rationale: "engine-code container (screen-assets DLL, same PL family as CAM/MNU): fx_lib surfaces the container geometry and the single documented icon reference; writing compiled DLLs is fighters-legacy territory"
   lib: [lib/src/pts.cpp]
   commands: [pts]
-  tests: [tests/test_pts.cpp]
+  tests: [tests/test_pts.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_pts.cpp]
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [BRF, PIC, HUD]
 ---
 

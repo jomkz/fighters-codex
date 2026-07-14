@@ -11,12 +11,12 @@ codec:
   rationale: "engine-code container (mission condition DLL, PL family like CAM/MNU/PTS): fx_lib surfaces the container geometry and embedded strings incl. the condition API imports; writing compiled DLLs is fighters-legacy territory"
   lib: [lib/src/mc.cpp]
   commands: [mc]
-  tests: [tests/test_mc.cpp]
+  tests: [tests/test_mc.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_mc.cpp]
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [CAM, M]
 ---
 
@@ -143,6 +143,35 @@ All 21 filenames:
   `"The time is now >= 10 seconds!"`, uses `_currentTime` and
   `_MSGSendChatter@24` with `RADIOBP.5K` audio; name is a classic programmer
   placeholder
+
+### What a mission condition imports — the evaluator's API
+
+Every `.MC` is a PE overlay importing from `main.dll` (the game executable), and unlike most
+overlays it holds **real x86 code**. Its import table is the condition/action vocabulary,
+decoded by `fx_lib` (`pe_imports`) and checked against `db/symbols/` for all 21 shipped files
+by `tests/test_overlays.cpp` (#491).
+
+**19 distinct imports**, and they describe a small stack machine over a *current object*:
+
+| Import | Files | Role |
+|--------|------:|------|
+| `@OBJAlias@8` | 21 | Resolve a mission-object alias — **every** `.MC` uses it |
+| `@OBJGet@4` | 12 | Fetch an object by id |
+| `_PushCurObj@4` / `_PopCurObj@0` / `_RemoveCurObj@0` | 8 / 8 / 1 | Push and pop the **current object** |
+| `_co` · `_cp` · `_cn` | 5 / 1 / 1 | The current object itself — see below |
+| `@Alive@4` · `_OnTheGround@0` · `_Dist@8` | 6 / 4 / 4 | Predicates over it |
+| `_MISSIONSuccess@0` | 15 | Complete the mission |
+| `_MSGSendChatter@24` | 14 | Radio chatter |
+| `_Kill@0` · `_GRAPHICAddExp@28` | 1 / 1 | Kill an object; spawn an explosion |
+| `_currentTime` · `_curId` · `_playerId` · `_thisComputer` | 12 / 1 / 1 / 1 | Ambient state |
+
+**`_co`, `_cp` and `_cn` are the same address.** FA.SMS names `0x50CE80` six ways — `_cg`,
+`_cj`, `_cn`, `_co`, `_cp`, `_curThing` — the **class-typed views of the current-entity
+mirror**, matching the OBJ → NPC → PLANE / PROJ hierarchy the type records declare
+([BRF](BRF.md), #454). A condition that asks about a plane reads `_cp`; one that asks about any
+object reads `_co`. They are one block, read through the class the question is about — which is
+also why an overlay import cannot be resolved by name alone (see
+[architecture.md](../architecture.md#overlay-system--win32-pe-dlls)).
 
 ## Engine Notes
 

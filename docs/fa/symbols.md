@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 171 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 172 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -89,6 +89,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00405DF0` | `RunNetConfigurationScreen` | sms | net config screen entry; calls doConfigurationScreen(1\|4) |
 | `0x0040AF40` | `state_func_master_query` | sms |  |
 | `0x0040B110` | `master_events` | sms |  |
+| `0x00418880` | `MSGSendChatter` | sms | imported by 14 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00441F80` | `UDPopensocket` | sms |  |
 | `0x004420D0` | `UDPserverbroadcast` | sms |  |
 | `0x00442200` | `UDPquery` | sms |  |
@@ -464,7 +465,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 154 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 157 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -596,6 +597,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00480D70` | `CampaignPlanesLeft` | sms |  |
 | `0x00480D90` | `UkraineCheckMaxPlanes` | sms |  |
 | `0x00480DF0` | `UkraineAddA7` | sms |  |
+| `0x00480E10` | `AddCampaignStore` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x00480F90` | `UkraineRescued` | sms |  |
 | `0x004810C0` | `KurileRescued` | sms |  |
 | `0x004810D0` | `VietnamRescued` | sms |  |
@@ -604,6 +606,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00481260` | `KurileQuit` | sms |  |
 | `0x00481270` | `VietnamQuit` | sms |  |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
+| `0x00481A70` | `MISSIONSuccess` | sms | imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483C90` | `TextNextToken` | re | whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D10` | `TextIsDelim` | re | predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -621,6 +624,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00485380` | `CampaignAccumStats` | re | fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004854A0` | `StatsAddPair` | re | add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00485EF0` | `CheckCD` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004867D0` | `MISSIONPlayerSlot` | re | resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 
 ### Collision (COL)
@@ -882,10 +886,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 30 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 32 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
 | `0x00456300` | `DecodeDSVGA8Frame` | sms | key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank |
 | `0x00456AD0` | `EDB` | sms | expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path |
 | `0x00456EC0` | `DecodeSVGA8Frame` | sms |  |
@@ -909,6 +914,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045B9C0` | `DecodeInterSVGA15NONFrame` | sms | INTER/delta NON 8bpp single; dispatch inter submode6 case1 |
 | `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
 | `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
+| `0x004A06F0` | `DoFadeout` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004AE410` | `PlayVDOFile` | sms |  |
 | `0x004AE440` | `PlayVDOString` | sms |  |
 | `0x004AED50` | `VDOSetMode` | sms |  |
@@ -919,7 +925,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 157 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 158 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1018,6 +1024,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AFB40` | `ShowPicture` | re | shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it |
 | `0x004B0130` | `GLASSESSpreadLines` | sms |  |
 | `0x004B01E0` | `GLASSESPrintAmount` | sms |  |
+| `0x004B4320` | `WRFogLayerUpdate` | sms | imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491) |
 | `0x004B7910` | `G_AllocBitmapBuffer` | re | allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004B7930` | `G_RelocBitmap` | sms |  |
 | `0x004B79B0` | `G_AllocBitmap` | sms |  |
@@ -1138,10 +1145,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 103 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 106 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00411910` | `OnTheGround` | sms | imported by 4 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00436B30` | `MoveObj` | sms |  |
 | `0x004382D0` | `MoveGoalValue` | re | resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00442640` | `CATGUYEventProc` | sms |  |
@@ -1207,6 +1215,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00473BE0` | `OBJProc` | sms |  |
 | `0x00473C10` | `Kill` | sms |  |
 | `0x00473DB0` | `GVProc` | sms | class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ |
+| `0x004747C0` | `Alive` | sms | imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x0048D780` | `PLANESayProc` | sms |  |
 | `0x0048E8D0` | `OBJSayProc` | sms |  |
 | `0x0048EC40` | `PLANECommentProc` | sms |  |
@@ -1244,6 +1253,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004BD950` | `RotatePattern` | re | transforms a landing/takeoff pattern into world space for the current object: runs the nine local (x,y,z) offsets in the pattern record through _RotatedOffset@20 against the current-object mirror _cg (0x50CE80), then copies _cg heading into the record and slews it by the record pitch/roll deltas. Reached from the carrier/strip pattern build (?STRIPAddProc@@YAJXZ, _CARRIERProc) |
 | `0x004BE2A0` | `STRIPAddProc` | sms |  |
 | `0x004BE640` | `STRIPProc` | sms |  |
+| `0x004C66CC` | `Dist` | sms | imported by 4 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x004D709A` | `WriteFile` | sms |  |
 
 ### AI interpreter (CT)

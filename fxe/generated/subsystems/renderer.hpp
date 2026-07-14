@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 133/151 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
+// 133/152 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -175,6 +175,7 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x0045E430  GG_QuickBlt -- signature not recovered
 // TODO(#453): 0x00498A50  G_Visible -- signature not recovered
 // TODO(#453): 0x004991B0  G_CopyDriverName -- signature not recovered
+// TODO(#453): 0x004B4320  WRFogLayerUpdate -- signature not recovered
 // TODO(#453): 0x004B8570  G_ColorPrintf -- signature not recovered
 // TODO(#453): 0x004BEE60  unknown_divide_error -- signature not recovered
 // TODO(#453): 0x004BEE70  divide_by_ecx_handler -- signature not recovered

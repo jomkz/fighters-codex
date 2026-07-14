@@ -26,6 +26,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00405DF0,func,?RunNetConfigurationScreen@@YGXJ@Z,RunNetConfigurationScreen,sms,confirmed,net config screen entry; calls doConfigurationScreen(1|4),void __stdcall RunNetConfigurationScreen(long)
 0x0040AF40,func,?state_func_master_query@@YAXXZ,state_func_master_query,sms,confirmed,,void __cdecl state_func_master_query(void)
 0x0040B110,func,?master_events@@YADIJHPAUsocket_state@@@Z,master_events,sms,confirmed,,"char __cdecl master_events(unsigned int, long, int, socket_state *)"
+0x00418880,func,_MSGSendChatter@24,MSGSendChatter,sms,confirmed,imported by 14 shipped .MC overlays (#491); named at this VA by FA.SMS,"undefined4 __stdcall MSGSendChatter(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x00441F80,func,?UDPopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,UDPopensocket,sms,confirmed,,"unsigned int __cdecl UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
 0x004420D0,func,?UDPserverbroadcast@@YAXIPAUNET_ADDRESS@@PADW4NET_SEND_CANCEL@@@Z,UDPserverbroadcast,sms,confirmed,,"void __cdecl UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL)"
 0x00442200,func,?UDPquery@@YAXIPAUPKT_PLAYER_AD@@PAUNET_ADDRESS@@@Z,UDPquery,sms,confirmed,,"void __cdecl UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *)"
@@ -193,6 +194,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004EB56C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB580,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EB5A0,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB608,data,_thisComputer,thisComputer,sms,confirmed,imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS,
 0x004EB8F0,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
 0x004EB918,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
 0x004EB934,data,,,waiver,confirmed,"string literal (TCP/IP options-dialog prompt) — constant text, not state",
@@ -296,6 +298,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D111,data,,,waiver,confirmed,interior of _cg current-object mirror; base named in objects.csv,
 0x005209D0,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem,
 0x005209D8,data,,,waiver,confirmed,interior of / adjacent to __pow10neg; named at its base or owned by that subsystem,
+0x00520A1C,data,_playerId,playerId,sms,confirmed,imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS,undefined2
 0x00520A2C,data,,,waiver,confirmed,interior of / adjacent to _humanChoseSide; named at its base or owned by that subsystem,
 0x00529494,data,,,waiver,confirmed,interior of / adjacent to _fortSizes; named at its base or owned by that subsystem,
 0x005382AE,data,,,waiver,confirmed,interior of / adjacent to ?frontV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,

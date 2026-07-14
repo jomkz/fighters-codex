@@ -43,6 +43,7 @@ add_executable(fx_tests
     test_mc.cpp
     test_hgr.cpp
     test_dlg.cpp
+    test_overlays.cpp
     test_xmi.cpp
     test_cb8.cpp
     test_raw.cpp

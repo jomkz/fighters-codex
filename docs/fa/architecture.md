@@ -72,21 +72,43 @@ Most overlay DLLs decompress to **4,608 bytes** — a fixed-size slot in the eng
 
 All overlay DLLs use **Phar Lap PE format** — the signature bytes are `PL\0\0`, not the standard `PE\0\0`. The CODE section is typically a data-only structure (dispatch table, bytecode script, or lookup tables) with no compiled x86 instructions; only `.BI` and `.MC` DLLs contain actual machine code.
 
-**Overlay DLL types:**
+**Overlay DLL types — and the two kinds.** An overlay either *behaves* or it *describes*, and its
+import table says which. Five formats import engine functions; five have **no import directory
+at all** (`import_rva = 0`, no `.idata` section) — their CODE section is pure data. The import
+counts below are decoded from the shipped files (`pe_imports`, `tests/test_overlays.cpp`), not
+surveyed by hand:
 
-| Extension | Count | Purpose |
-|-----------|-------|---------|
-| `.HUD`    | 46    | Cockpit layout — one per aircraft |
-| `.MNU`    | 12    | Menu screens |
-| `.DLG`    | 92    | Dialog boxes |
-| `.CAM`    | 6     | Campaign logic |
-| `.MUS`    | 9     | Music sequencer/playlist |
-| `.LAY`    | 24    | Sky and atmosphere rendering |
-| `.HGR`    | —     | Hangar screen |
-| `.FNT`    | 15    | Font glyph bitmaps |
-| `.PTS`    | —     | Aircraft icon lookup |
-| `.MC`     | 21    | Mission condition evaluator |
-| `.BI`     | 9     | AI runtime library |
+| Extension | Count | Imports | Purpose |
+|-----------|------:|--------:|---------|
+| `.DLG`    | 92    | **34**  | Dialog boxes — one import per control type ([DLG](formats/DLG.md)) |
+| `.BI`     | 9     | **55**  | AI runtime library — the `_CTEval_*` / `_CTDo_*` primitives *are* the language ([BI](formats/BI.md)) |
+| `.CAM`    | 6     | **35**  | Campaign logic ([CAM](formats/CAM.md)) |
+| `.MC`     | 21    | **19**  | Mission condition evaluator ([MC](formats/MC.md)) |
+| `.LAY`    | 24    | **2**   | Sky/atmosphere — `_T_HorizonProc`, `_WRFogLayerUpdate` ([LAY](formats/LAY.md)) |
+| `.HUD`    | 46    | none    | Cockpit layout — one per aircraft |
+| `.PTS`    | 37    | none    | Aircraft icon lookup |
+| `.MNU`    | 12    | none    | Menu screens |
+| `.MUS`    | 9     | none    | Music sequencer/playlist |
+| `.HGR`    | 2     | none    | Hangar screen |
+| `.FNT`    | 15    | none    | Font glyph bitmaps |
+
+**Resolving an import is not a string match.** FA.SMS is the executable's own name→VA table —
+the one `SMAddress` reads — and it is the only sound way to resolve an overlay import, for two
+reasons that both bite:
+
+- **`db/` holds symbols for seven binaries, and their address spaces overlap.** IP.EXE's range
+  (`0x401000-0x4BD800`) covers FA.EXE's entirely. Matching an import name against every binary
+  lets an FA.EXE overlay "resolve" against an IP.EXE symbol — the same confusion that shipped a
+  wrong signature in #477.
+- **FA.SMS names one address six ways.** `0x50CE80` is `_cg`, `_cj`, `_cn`, `_co`, `_cp` **and**
+  `_curThing` — the class-typed views of the current-entity mirror, matching the
+  OBJ→NPC→PLANE/PROJ hierarchy the [type records](formats/BRF.md) declare. The `.MC` overlays
+  import it as `_co`, `_cp` and `_cn`. `db/` keys symbols by VA and requires them globally
+  unique, so five of those six names appear in no row at all.
+
+So `tests/test_overlays.cpp` resolves each import **through FA.SMS to an address**, then asserts
+that address is claimed in `db/symbols/` **for FA.EXE**. Address-based, alias-proof, and it
+cannot cross a binary boundary.
 
 For disassembly: load the DLL in Ghidra, import the FA.SMS symbol list to auto-name engine imports, then trace from the exported entry point.
 

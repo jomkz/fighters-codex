@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // Core shell / menu / dialog UI -- FA.EXE
-// 126/144 functions have a recovered signature; 5/5 globals have a recovered type.
+// 126/144 functions have a recovered signature; 6/6 globals have a recovered type.
 
 namespace fxe::fa::shell_ui {
 
 // --- globals ---------------------------------------------------------
+extern undefined1 gameMode;  // 0x004EB620  imported by 3 shipped .CAM overlays (#491); named at this VA by FA.SMS
 extern char * yesString;  // 0x00502170  localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous
 extern char * noString;  // 0x00502174  localized dialog-button label
 extern char * okString;  // 0x00502178  localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491)
