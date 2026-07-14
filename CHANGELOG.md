@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-07-13
+
 **The codecs were wrong, and the round-trip could never have told us.** A
 byte-identical round-trip only proves the fields the round-trip *reads* — a repack that
 copies a field through without decoding it is byte-identical whether or not the decoder
@@ -840,7 +842,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.3...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.4...HEAD
+[0.8.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.4
 [0.8.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.3
 [0.8.2]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.2
 [0.8.1]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.1
