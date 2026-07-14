@@ -32,7 +32,13 @@ static int cmd_mt_info(const char* path) {
            info.source_name.c_str());
     printf("Title: %s\n", info.title.c_str());
     printf("Type: %s\n", info.mission_type.c_str());
-    printf("Sections: %zu (2=briefing, 3-5=debrief outcomes)\n", info.sections);
+    // 1=header, 2=briefing, and the rest are the debrief outcomes. 346 of the 363 shipped
+    // briefings carry 4 sections and 17 carry 5, so the debrief range is not fixed.
+    if (info.sections >= 3)
+        printf("Sections: %zu (1=header, 2=briefing, 3-%zu=debrief outcomes)\n",
+               info.sections, info.sections);
+    else
+        printf("Sections: %zu\n", info.sections);
 
     auto out = fx::txt_write(doc);
     printf("Round-trip: %s\n",

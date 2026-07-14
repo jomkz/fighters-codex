@@ -34,7 +34,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [MC](MC.md) | mission | complete | — | read-only (by design) | `fx mc` | `tests/test_mc.cpp` | syn/real | `fuzz/fuzz_mc.cpp` | — |
 | [MM](MM.md) | terrain | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx mm`<br>`fx mission` | `tests/test_mission.cpp` | syn/real/**install** | `fuzz/fuzz_mission.cpp` | `gui/src/editors/mission_editor.cpp` |
 | [MNU](MNU.md) | ui-overlay | stub | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mnu` | `tests/test_mnu.cpp` | syn/real | `fuzz/fuzz_mnu.cpp` | — |
-| [MT](MT.md) | mission | complete | — | round-trip (byte-identical) | `fx mt` | `tests/test_mt.cpp` | syn/real | `fuzz/fuzz_mt.cpp` | — |
+| [MT](MT.md) | mission | complete | — | round-trip (byte-identical) | `fx mt` | `tests/test_mt.cpp` | syn/real/**install** | `fuzz/fuzz_mt.cpp` | — |
 | [MUS](MUS.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx mus` | `tests/test_mus.cpp` | syn/real/**install** | `fuzz/fuzz_mus.cpp` | `gui/src/editors/mus_editor.cpp` |
 | [NT](NT.md) | typedef | complete | — | round-trip (byte-identical) | `fx nt` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |
 | [OT](OT.md) | typedef | complete | — | round-trip (byte-identical) | `fx ot` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |
@@ -52,6 +52,6 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [SMS](SMS.md) | system | complete | — | read-only (by design) | `fx sms` | `tests/test_sms.cpp` | real/**install** | `fuzz/fuzz_sms.cpp` | — |
 | [SSF](SSF.md) | installer | complete | — | round-trip (byte-identical) | `fx ssf`<br>`fx install` | `tests/test_ssf.cpp`<br>`tests/test_install.cpp` | syn | `fuzz/fuzz_ssf.cpp`<br>`fuzz/fuzz_install.cpp` | — |
 | [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real/**install** | `fuzz/fuzz_t2.cpp` | `gui/src/editors/terrain_preview.cpp` |
-| [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real | `fuzz/fuzz_txt.cpp` | `gui/src/editors/txt_editor.cpp` |
+| [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real/**install** | `fuzz/fuzz_txt.cpp` | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | read-only (by design) | `fx vdo` | `tests/test_vdo.cpp` | syn/real/**install** | `fuzz/fuzz_vdo.cpp` | `gui/src/editors/vdo_editor.cpp` |
 | [XMI](XMI.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx xmi` | `tests/test_xmi.cpp` | syn/real | `fuzz/fuzz_xmi.cpp` | `gui/src/editors/xmi_editor.cpp` |

@@ -1,6 +1,30 @@
 #include "fx/txt.h"
 
+#include <algorithm>
+#include <cctype>
+
 namespace fx {
+
+// The engine's directive vocabulary, read out of the executable (the text interpreter at
+// 0x47E1B0 compares each token against these, and matches case-insensitively -- it lowercases
+// the token first). Style and layout directives take a `..` form to turn them off.
+static const char* const kDirectives[] = {
+    ".title",  ".header",  ".body",
+    ".italic", "..italic", ".bold",  "..bold", ".underline", "..underline",
+    ".left",   ".right",   ".center", ".full",
+    ".indent_off", ".indent_left", ".indent_right",
+    ".page",   ".picture", ".section",
+    ".sound",  ".music",   ".music_off",
+    ".button", "..button", ".dbutton", "..dbutton",
+};
+
+bool txt_is_directive(const std::string& token) {
+    std::string t = token;
+    for (char& c : t) c = (char)std::tolower((unsigned char)c);
+    for (const char* d : kDirectives)
+        if (t == d) return true;
+    return false;
+}
 
 TxtDoc txt_read(const uint8_t* data, size_t size) {
     TxtDoc doc;
@@ -31,8 +55,10 @@ TxtDoc txt_read(const uint8_t* data, size_t size) {
             while (p < s.size() && (s[p] == ' ' || s[p] == '\t')) p++;
             size_t w = p;
             while (w < s.size() && s[w] != ' ' && s[w] != '\t') w++;
-            if (w > p && s[p] == '.')
-                line.directives.push_back(s.substr(p, w - p));
+            if (w > p && s[p] == '.') {
+                std::string tok = s.substr(p, w - p);
+                if (txt_is_directive(tok)) line.directives.push_back(tok);
+            }
             p = w;
         }
 
