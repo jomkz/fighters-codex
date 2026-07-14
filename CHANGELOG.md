@@ -7,6 +7,104 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+**The codecs were wrong, and the round-trip could never have told us.** A
+byte-identical round-trip only proves the fields the round-trip *reads* — a repack that
+copies a field through without decoding it is byte-identical whether or not the decoder
+understands it. So the proof the project leans on was weaker than it looked, and behind
+it sat a decade of quiet decode bugs: the BRF parser threw away the hardpoints of all
+229 armed objects and the flight envelope of all 145 aircraft; 263 of the 363 mission
+briefings decoded with no mission id and every field shifted one line; `.5K` audio
+played 10% slow; the HUD editor corrupted every file it saved. Every one of them
+round-tripped perfectly the whole time.
+
+This release fixes them and closes the hole they came through. Every format whose files
+ship in an install now has a **census** — a test that decodes *every shipped file* and
+asserts what the decode produced, not merely that a repack matched — and `check_status`
+makes that a **hard requirement**: a format with real assets and no census now fails the
+build. Specs with no real-asset test went from **29 to 0**.
+
+The deeper find is that FA is a **symbol-table-driven engine, and its data files import
+from it**. A BRF `symbol`, a SEQ command (`SMAddress("_SEQ" + token)` — which is why
+`fadeout` appears nowhere in the executable), a dialog's PE import table, the AI
+language's `_CTDo_*`/`_CTEval_*` primitives: these are all the same mechanism. Wherever
+a spec carried a hand-collected list of names, that list was **short** — DLG documented
+8 of its 34 controls, SEQ 9 of 13 commands, the AI compiler knew 15 of the engine's 26
+actions and so could not compile nine words the engine implements. Those vocabularies
+are now *derived* from the symbol table and mechanically checked, which also surfaced 22
+symbols the shipped data names and `db/` had never claimed.
+
+### ⚠ Source-incompatible `fx_lib` changes
+
+This is a patch release, but three BRF names changed. Consumers using them must rename:
+
+| Before | After |
+|--------|-------|
+| `struct BrfTable` | `struct BrfBlock` (a `:label` block, which may hold **numeric** fields) |
+| `BrfDoc::tables` / `find_table()` | `BrfDoc::blocks` / `find_block()` (case-insensitive, as the loader is) |
+| `brf_type_size(type)` | `brf_field_width(type, value)` — a `string` emits `len + 1` bytes, not 4 |
+
+`fa-bridge` uses none of these; its submodule bump is safe.
+
+### Fixed
+
+- **fx-lib** a BRF `:label` block is **not a string table** — it is a labelled offset into the
+  image the loader assembles, and it may hold numeric fields. The codec dropped every one, so
+  `fx` decoded **no hardpoints for any of the 229 armed objects** (the inline 24-byte-per-station
+  array) and **no flight envelope for any of the 145 aircraft**. Also: a `string` emits its
+  characters plus a NUL (not 4 bytes), `end` terminates the *file* rather than a block, and
+  labels resolve case-insensitively. The GUI's write path rebuilt every line by position,
+  dropping the inline comments the file uses to name its own fields. (#491) (#502)
+- **fx-lib** the MT identifier line's `--` is **decoration, not a cue**. 244 of the 361 briefings
+  that carry one write a bare `AB01`; one writes `-RB12`. Requiring the `--` lost the mission id
+  on **263 of 363 files** and shifted every other field up by one — the title came out as the id
+  line, the mission type as the title. The engine never parses that line at all; it renders it.
+  (#491) (#503)
+- **fx-lib** a SEQ event may be indented with **spaces**, not just a tab (and `//` is a comment
+  too) — three shipped sequences lost their closing `fadeout` entirely. (#491) (#504)
+- **fx-lib** `.5K` audio is **5512 Hz**, not 5000 — every `.5K` `fx` emitted ran 10% long (781
+  files) — and the HUD tape gauges are **i32**, not S16, so `fx hud set` corrupted every file it
+  wrote (46 HUDs). (#491) (#499)
+- **fx-lib** sparse PIC span offsets are relative to `pixels_data`, not to the file — the codec
+  painted the 64-byte header into **493 images**. (#489)
+- **fx-lib** PLT campaign stores, MUS `FD` playlists, and VDO tag-1 keyframes (#500)
+- **fx-lib** remove the OpenFA-derived type schemas; read the record's own structure (#490)
+- **db** `state_flags` bit `0x1000` is autopilot, not gear (#476) (#483)
+- **db** key frame evidence by binary — **an address alone does not name a function** (#453) (#477)
+
+### Added
+
+- **fx-lib** `pe_imports()` decodes an overlay's PE import table, and `fx dlg info` prints it. A
+  dialog names the controls it is made of: **34 distinct imports**, not the 8 documented — including
+  `_DrawListBox` (41 of the 92 dialogs), a complete `320` low-resolution control family, and six
+  `*Preload` hooks. (#491) (#505)
+- **fx-lib** the AI compiler accepts **all 26 actions the engine exports**, not 15. Nine real
+  actions (`play`, `print`, `printnum`, `rudder`, `splits`, `uhomepos`, `wm_control`,
+  `wm_formation`, `wm_vspacing`) could not be compiled at all. Arity now comes from the source
+  line — as the decompiler has always read it from the bytecode — so the table no longer gates the
+  language. AI.md carries the complete **103-primitive** vocabulary. (#491) (#508)
+- **fx-lib** `XmiDecode` reports whether an EVNT stream was decoded **to its end**. A decode that
+  gives up halfway still emits a perfectly well-formed MIDI file — just a shorter one, silently.
+  (No bug found: all 78 shipped files decode completely.) (#491) (#506)
+- **fx-lib** `txt_is_directive()` — the MT/TXT directive vocabulary is the engine's 26 names, so a
+  briefing that writes "get the `.ell` out" as prose is no longer reported as using a directive.
+  (#491) (#503)
+- **db** 22 symbols the shipped data names and `db/` had never claimed — `_GVProc` (73 `.NT`
+  records name it), the dialog label globals (`_okString` and friends, named by 72 overlays), the
+  campaign spine, the mission-condition API, and `_WRFogLayerUpdate` (imported by all 24 `.LAY`
+  overlays). Every signature derived by the repo's own tools; none invented. (#491) (#507)
+- **db** the object model, the class extensions, and 687 signatures recovered from the code
+  (#453, #454, #455, #473–#481)
+- **db** coverage measured against the binary rather than our own bookkeeping — including the
+  **490 FA.SMS-named functions that were never disassembled** (#482, #496) (#484, #497, #498)
+
+### Changed
+
+- **docs** every format spec whose files ship in an install now declares `real_install: true`, and
+  `check_status.py` **enforces `real_manifest` ⇒ `real_install`**: a format with real assets and no
+  census fails the build. This is the durable half of #491 — the gap that hid these bugs cannot
+  reopen. Six specs are exempt and say why (disc-only, install-side, or in-binary). (#491) (#509)
+- **docs** correct how the Pages custom domain is actually configured (#472)
+
 ## [0.8.3] - 2026-07-12
 
 **Patch the game to 1.02F, entirely from your own discs.** The retail discs ship
