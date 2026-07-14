@@ -26,6 +26,8 @@ related: [LIB, ESA, RGN]
 installation process. All three files reside in the Disc 1 root alongside the
 installer executable. None are packed into any LIB archive.
 
+> **No `FX_FA_ROOT` census.** `.SSF` is written by the installer rather than shipped in a `.LIB`, so it appears in no extract manifest; `tests/test_install.cpp` covers it from the install side. See [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 ## Tools
 
 ### fx

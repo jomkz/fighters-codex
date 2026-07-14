@@ -32,6 +32,8 @@ in-game on the aircraft selection screen and in the mission planner. One `.INF`
 per aircraft; not all aircraft have one. FA_3.LIB (Disc 2) carries 269 of them,
 DCL-compressed (flags=4).
 
+> **No real-asset census.** `.INF` ships in `FA_3.LIB` — **disc 2** — which is not part of an `FX_FA_ROOT` install, so there is nothing for a census to read (`real_manifest: false`). It would be earned the day the disc content is installed. See [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 ## Tools
 
 ### fx

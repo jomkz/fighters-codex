@@ -38,8 +38,22 @@ codec:
   fixtures:
     synthetic: true          # tests build their own inputs
     real_manifest: false     # extension appears in fa-extract.sha256
+    real_install: false      # a test in codec.tests DECODES real assets (FX_FA_ROOT)
 related: [LIB]               # tokens; each must be linked in the body
 ---
+
+**`real_manifest` ⇒ `real_install` is enforced.** If the extension appears in the extract
+manifest, the assets are sitting in the install — so a test must decode one. `check_status.py`
+makes that a hard error, and it is the standing lesson of
+[#491](https://github.com/jomkz/fighters-codex/issues/491): twenty-nine specs claimed a format
+was understood while nothing had ever read a shipped file of it, and *every* codec bug that
+audit found was hiding in that gap. A round-trip proves only the fields it reads; a census
+against the real corpus is what proves the rest.
+
+A spec may have `real_manifest: false` — and then no census is owed, honestly, because its
+assets are not in an `FX_FA_ROOT` install at all: disc-only (`INF`, `ESA`, `RTP`), install-side
+(`SSF`, `RGN`), or inside the executable (`EFFECT`). Say which in the spec, and say where it
+*is* covered if it is (the disc harness, `fa_disc_install`, exercises ESA and RTP).
 
 # XXX — Human Name (.XXX)
 

@@ -1,5 +1,13 @@
 #include <catch2/catch_test_macros.hpp>
 #include <fx/fbc.h>
+#include <fx/ealib.h>
+#include <cctype>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <ios>
+#include <map>
+#include <string>
 
 using namespace fx;
 
@@ -48,4 +56,78 @@ TEST_CASE("fbc_frame_offset accumulates from the 816-byte VDO header") {
     REQUIRE(fbc_frame_offset(sizes, 2) == 846);
     REQUIRE(fbc_frame_offset(sizes, 3) == 876);
     REQUIRE(fbc_frame_offset(sizes, 99) == 876); // clamped to N
+}
+
+// ---------------------------------------------------------------------------
+// The real-asset census (#491 A).
+//
+// FBC.md says the corpus was "verified against #137 with zero mismatches" -- once, by hand.
+// Nothing re-checked it since, which is the exact failure mode #491 is about: a claim that is
+// not mechanically checked drifts. The invariant is a genuine cross-format ORACLE -- the index
+// must predict the paired video's size to the byte -- so it is worth holding on to.
+// ---------------------------------------------------------------------------
+
+TEST_CASE("FBC decode census: every index predicts its video's exact size") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root)
+        SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    namespace fs = std::filesystem;
+
+    auto lower = [](std::string s) {
+        for (char& c : s) c = (char)std::tolower((unsigned char)c);
+        return s;
+    };
+
+    // Collect both halves of every pair, out of whichever LIB carries them (FA_7).
+    std::map<std::string, std::vector<uint8_t>> fbc, vdo;
+    for (const auto& de : fs::directory_iterator(root)) {
+        if (!de.is_regular_file()) continue;
+        if (lower(de.path().extension().string()) != ".lib") continue;
+        std::ifstream f(de.path(), std::ios::binary | std::ios::ate);
+        std::vector<uint8_t> lib((size_t)f.tellg());
+        f.seekg(0);
+        f.read((char*)lib.data(), (std::streamsize)lib.size());
+
+        for (const auto& e : ealib_read_dir(lib.data(), lib.size())) {
+            const std::string ext  = lower(fs::path(e.name).extension().string());
+            const std::string stem = lower(fs::path(e.name).stem().string());
+            if (ext == ".fbc") fbc[stem] = ealib_extract(lib.data(), lib.size(), e, true);
+            else if (ext == ".vdo") vdo[stem] = ealib_extract(lib.data(), lib.size(), e, true);
+        }
+    }
+    if (fbc.empty())
+        SKIP("no .FBC in this install (they live in FA_7.LIB, from disc 1)");
+
+    size_t frames_total = 0;
+    for (const auto& [stem, data] : fbc) {
+        INFO(stem << ".FBC");
+        REQUIRE_FALSE(data.empty());
+
+        bool ok = false;
+        std::vector<uint32_t> sizes = fbc_read(data.data(), data.size(), &ok);
+        REQUIRE(ok);
+        REQUIRE_FALSE(sizes.empty());
+
+        // 1. Round-trip. FBC.md claims it; no test opened a real one.
+        REQUIRE(fbc_write(sizes) == data);
+
+        // 2. Exactly one same-stem .VDO -- the pairing rule.
+        auto it = vdo.find(stem);
+        REQUIRE(it != vdo.end());
+        const std::vector<uint8_t>& v = it->second;
+
+        // 3. THE ORACLE: the index must account for every byte of the video after its
+        //    816-byte header. An off-by-one in the header size, or a frame the index
+        //    mis-sized, and this misses.
+        REQUIRE(fbc_frame_offset(sizes, sizes.size()) == v.size());
+
+        // 4. And the frame count agrees with the number the VDO states about itself.
+        REQUIRE(v.size() >= 0x12);
+        const uint16_t vdo_frames = (uint16_t)(v[0x10] | (v[0x11] << 8));
+        REQUIRE(sizes.size() == vdo_frames);
+
+        frames_total += sizes.size();
+    }
+    WARN("FBC census: " << fbc.size() << " index/video pairs, " << frames_total
+         << " frames, every index predicting its video's size to the byte");
 }

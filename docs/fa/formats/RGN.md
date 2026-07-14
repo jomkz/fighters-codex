@@ -29,6 +29,8 @@ button labels to pixel regions within the button-state sprite sheet). Both
 live in the Disc 1 root alongside the installer executable — not packed into
 any LIB archive.
 
+> **No `FX_FA_ROOT` census.** No `.RGN` file ships in any `.LIB` or in an installed game, so there is nothing for a census to read (`real_manifest: false`). See [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 ## Tools
 
 ### fx
