@@ -64,6 +64,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,void __cdecl OBJDamageProc(HIT_OBJ_DATA *)
 0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,undefined4 __cdecl OBJProc(undefined4)
 0x00473C10,func,_Kill@0,Kill,sms,confirmed,,undefined4 __stdcall Kill(void)
+0x00473DB0,func,_GVProc,GVProc,sms,confirmed,"class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ",undefined4 __cdecl GVProc(char)
 0x0048D780,func,_PLANESayProc,PLANESayProc,sms,confirmed,,
 0x0048E8D0,func,_OBJSayProc,OBJSayProc,sms,confirmed,,
 0x0048EC40,func,_PLANECommentProc,PLANECommentProc,sms,confirmed,,

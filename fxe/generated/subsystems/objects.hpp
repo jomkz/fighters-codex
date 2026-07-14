@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 89/99 functions have a recovered signature (+3 that are not C functions); 28/29 globals have a recovered type.
+// 90/100 functions have a recovered signature (+3 that are not C functions); 28/29 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -101,6 +101,7 @@ undefined4 OBJEventProc(u16, undefined4);  // 0x00473A40  __cdecl
 void OBJDamageProc(HIT_OBJ_DATA *);  // 0x00473B40  __cdecl
 undefined4 OBJProc(undefined4);  // 0x00473BE0  __cdecl
 undefined4 Kill(void);  // 0x00473C10  __stdcall
+undefined4 GVProc(char);  // 0x00473DB0  __cdecl
 undefined4 OBJGet(undefined4);  // 0x00491240  __fastcall
 undefined4 OBJInit(undefined4);  // 0x00491250  __stdcall
 undefined4 OBJShutdown(void);  // 0x004912C0  __stdcall

@@ -115,11 +115,11 @@ void DrawBrfEditor(App& app) {
     }
     ImGui::PopStyleVar();
 
-    // Pointer tables (string lists)
-    if (!s_doc.tables.empty()) {
+    // Labelled blocks (string tables, and the numeric ones: :hards, :env)
+    if (!s_doc.blocks.empty()) {
         ImGui::Separator();
-        ImGui::Text("String tables");
-        for (auto& tbl : s_doc.tables) {
+        ImGui::Text("Blocks");
+        for (auto& tbl : s_doc.blocks) {
             if (ImGui::TreeNode(tbl.name.c_str())) {
                 for (int si = 0; si < (int)tbl.strings.size(); si++) {
                     ImGui::BulletText("%s", tbl.strings[si].c_str());
@@ -130,29 +130,20 @@ void DrawBrfEditor(App& app) {
     }
 
     // Apply changes back into the doc's raw_lines so brf_serialize round-trips cleanly.
+    //
+    // This used to walk every indented line and rewrite it as `indent + type + '\t' + value`,
+    // pairing lines with fields BY POSITION. That rewrote lines nobody had touched -- turning
+    // each `    byte 1` into `    byte\t1` and dropping the file's own inline comments (the
+    // `; utilProc` that NAMES the class proc) -- so a single edit stopped the file being
+    // byte-identical. And the pairing only held because the fields the parser dropped
+    // happened to be a suffix; it would have written values onto the wrong lines the moment
+    // that stopped being true. Each field now knows exactly where its value token sits, so an
+    // edit is a splice and nothing else on the line moves.
     if (anyChanged) {
         for (int i = 0; i < (int)s_doc.fields.size(); i++) {
             if (s_bufs[i].changed) {
-                s_doc.fields[i].value = s_bufs[i].buf;
+                fx::brf_set_value(s_doc, s_doc.fields[i], s_bufs[i].buf);
                 s_bufs[i].changed = false;
-            }
-        }
-        // Sync raw_lines: find data field lines and patch them.
-        int fi = 0;
-        for (auto& line : s_doc.raw_lines) {
-            if (line.empty() || line[0] == ';' || line[0] == '[' ||
-                line[0] == ':') continue;
-            // Lines starting with whitespace are data fields
-            if (line[0] == '\t' || line[0] == ' ') {
-                if (fi < (int)s_doc.fields.size()) {
-                    // Rebuild the line preserving leading whitespace and type token.
-                    auto ws = line.find_first_not_of(" \t");
-                    std::string indent = (ws != std::string::npos)
-                                         ? line.substr(0, ws) : "\t";
-                    line = indent + s_doc.fields[fi].type +
-                           "\t" + s_doc.fields[fi].value;
-                    fi++;
-                }
             }
         }
         ed.data     = fx::brf_serialize(s_doc);

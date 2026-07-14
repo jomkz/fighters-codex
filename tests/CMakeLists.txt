@@ -60,7 +60,11 @@ target_link_libraries(fx_tests PRIVATE fx_lib fx_render fx_warnings Catch2::Catc
 # Committed synthetic fixtures (policy: tests/fixtures/README.md); loaded
 # through tests/support/fixture.h.
 target_compile_definitions(fx_tests PRIVATE
-    FX_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures")
+    FX_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
+    # The symbol database. The BRF census resolves every `symbol` in the retail data against
+    # it: the shipped records name the engine functions they call, so a name in the data that
+    # db/ does not claim is a hole in the reconstruction (#491).
+    FX_DB_DIR="${PROJECT_SOURCE_DIR}/db")
 
 include(CTest)
 include(Catch)

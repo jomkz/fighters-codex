@@ -1138,7 +1138,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 102 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 103 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1206,6 +1206,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00473B40` | `OBJDamageProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
 | `0x00473BE0` | `OBJProc` | sms |  |
 | `0x00473C10` | `Kill` | sms |  |
+| `0x00473DB0` | `GVProc` | sms | class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ |
 | `0x0048D780` | `PLANESayProc` | sms |  |
 | `0x0048E8D0` | `OBJSayProc` | sms |  |
 | `0x0048EC40` | `PLANECommentProc` | sms |  |

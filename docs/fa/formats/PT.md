@@ -22,7 +22,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [BRF, OT, JT, SH]
 ---
 
