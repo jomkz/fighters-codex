@@ -11,13 +11,13 @@ codec:
   rationale: "engine-code container (campaign DLL): fx_lib reads the section geometry and embedded config strings; writing would mean emitting compiled DLL code, which is fighters-legacy territory, not asset tooling"
   lib: [lib/src/cam.cpp]
   commands: [cam]
-  tests: [tests/test_cam.cpp]
+  tests: [tests/test_cam.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_cam.cpp]
   gui: [gui/src/editors/cam_editor.cpp]
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [P, M, MC, BRF]
 ---
 
@@ -155,6 +155,33 @@ not by the `.CAM` DLL. Most missions use a unique per-mission `.MC` (`U01.MC`,
 | VLAD.CAM | 40 (`~V01.M`–`~V40.M`) | `V` |
 
 All six live in FA_2.LIB.
+
+### What a campaign imports — the per-theatre hook set
+
+Every `.CAM` is a PE overlay that imports from `main.dll` (the game executable). Its import
+table is the campaign scripting API, decoded by `fx_lib` (`pe_imports`) and checked against
+`db/symbols/` for all 6 shipped campaigns by `tests/test_overlays.cpp` (#491).
+
+**35 distinct imports.** Fifteen are common to all six — the campaign spine:
+
+| Import | Role |
+|--------|------|
+| `_InitCampaignPilot` · `_AddCampaignPlane` · `_AddCampaignStore` | Build the campaign pilot's roster and loadout ([P](P.md)) |
+| `_CampaignPlanesLeft@0` · `_playerDead` · `_missionName` | Campaign state |
+| `_campaignSucceeded` · `_campaignFailed` · `_campaignFailures` | Outcome flags |
+| `_SeqStart` · `_SeqContinue` · `_DoFadeout@0` · `@G_Flush@4` · `_GetKeySlow` | Cutscene playback ([SEQ](SEQ.md)) |
+| `_CheckCD` | Disc check |
+
+The rest are **per-theatre hooks**, and they name the theatre outright — which is how a
+campaign's script is bound to its own content:
+
+`_UkraineQuit` · `_UkraineRescued` · `_UkraineMedals` · `_UkraineAddA7` ·
+`_UkraineCheckMaxPlanes` · `_KurileQuit` · `_KurileRescued` · `_KurileMedals` ·
+`_KurilePromotions` · `_VietnamQuit` · `_VietnamRescued` · `_VietnamMedals` ·
+`_VietnamPromotions` · `_ATFRescued` · `_ATFPromotions` · `_ATFBalticMedals` ·
+`_ATFEgyptMedals` · `_ATFVladMedals` · `_gameMode` · `_PlayCobra@4`
+
+`_PlayCobra@4` (one campaign) plays a Cobra-codec video ([VDO](VDO.md)).
 
 ## Engine Notes
 

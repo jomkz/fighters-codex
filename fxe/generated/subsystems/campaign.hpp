@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 130/152 functions have a recovered signature (+2 that are not C functions); 3/3 globals have a recovered type.
+// 132/155 functions have a recovered signature (+2 that are not C functions); 8/9 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -16,6 +16,11 @@ namespace fxe::fa::campaign {
 extern s16 ejectNextTime;  // 0x0050CFD1  ejection seat: next state deadline, in _currentT ticks — EJECTAdd sets _currentT+0xC, EJECTMoveProc re-arms at +1 and parks it at 0x7FFF when the sequence ends
 extern ANGLE ejectAngle;  // 0x0050CFD3  ejection seat: seat attitude — passed as the ANGLE* first argument of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z, which types it, and slewed toward 0x7FF8 by _Slew@16
 extern s32 ejectSpeed;  // 0x0050CFD9  ejection seat: seat velocity — EJECTAdd seeds it from the ejecting aircraft, EJECTMoveProc drains it by _LMultDiv256(speed, _serviceTicks) each tick and drives _Move3d with the remainder, clamping at 0
+extern undefined4 campaignFailures;  // 0x0054E418  imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS
+extern undefined2 playerDead;  // 0x0054E468  imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS
+extern undefined1 campaignSucceeded;  // 0x00551660  imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS
+extern undefined1 campaignFailed;  // 0x00552804  imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS
+extern undefined2 currentTime;  // 0x005528E0  imported by 12 shipped .MC overlays (#491); named at this VA by FA.SMS
 
 // --- functions -------------------------------------------------------
 undefined4 ZONEAdd(undefined4);  // 0x00421C80  __stdcall
@@ -139,6 +144,7 @@ char MyFilterProc(unsigned short *, long *, char *);  // 0x00480B70  __cdecl
 undefined4 AddCampaignPlane(undefined4, undefined4);  // 0x00480C90  __cdecl
 undefined4 CampaignPlanesLeft(void);  // 0x00480D70  __stdcall
 undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
+undefined4 MISSIONSuccess(void);  // 0x00481A70  __stdcall
 undefined4 MISSIONEnemiesAlive(void);  // 0x00481A7B  __cdecl
 void TextNextToken(char *);  // 0x00483C90  __fastcall
 undefined4 TextIsDelim(char);  // 0x00483D10  __fastcall
@@ -147,6 +153,7 @@ undefined4 TextTokenToValue(undefined4);  // 0x00483D50  __stdcall
 void CampaignAccumStats(void);  // 0x00485380  __cdecl
 void StatsAddPair(int *,int *);  // 0x004854A0  __fastcall
 undefined4 StatsBucketFor(int,u16,u16);  // 0x004856F0  __fastcall
+undefined4 CheckCD(undefined4, undefined4);  // 0x00485EF0  __cdecl
 undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 
 // --- not C functions --------------------------------------------------
@@ -164,6 +171,7 @@ undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 // TODO(#453): 0x00480C40  InitCampaignPilot -- signature not recovered
 // TODO(#453): 0x00480D90  UkraineCheckMaxPlanes -- signature not recovered
 // TODO(#453): 0x00480DF0  UkraineAddA7 -- signature not recovered
+// TODO(#453): 0x00480E10  AddCampaignStore -- signature not recovered
 // TODO(#453): 0x00480F90  UkraineRescued -- signature not recovered
 // TODO(#453): 0x004810C0  KurileRescued -- signature not recovered
 // TODO(#453): 0x004810D0  VietnamRescued -- signature not recovered
@@ -180,5 +188,6 @@ undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 // TODO(#453): 0x00484690  ATFVladMedals -- signature not recovered
 // TODO(#453): 0x004848F0  ATFPromotions -- signature not recovered
 // TODO(#453): 0x00484B70  ATFBalticMedals -- signature not recovered
+// TODO(#455): 0x004FB1A8  missionName -- type not recovered
 
 }  // namespace fxe::fa::campaign

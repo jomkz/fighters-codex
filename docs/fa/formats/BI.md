@@ -12,7 +12,7 @@ codec:
   rationale: "BI→AI→BI is byte-identical for every BI fx compiles — a fixed point of the toolchain, proven by tests/test_ai.cpp over all 9 stock scripts. The stock game BIs were built by FA's original toolchain (linked CALL_DIRECT thunks; FRAME emitted before the condition, not after) which fx's compiler does not reproduce, so an original-game BI does not round-trip byte-identically"
   lib: [lib/src/bi.cpp, lib/src/ai.cpp]
   commands: [bi]
-  tests: [tests/test_ai.cpp, tests/test_bi.cpp]
+  tests: [tests/test_ai.cpp, tests/test_bi.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_bi.cpp]
   fixtures:
     synthetic: true

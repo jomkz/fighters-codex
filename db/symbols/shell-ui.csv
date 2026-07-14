@@ -143,6 +143,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004A26F0,func,_DoDialogInfoBox@8,DoDialogInfoBox,sms,confirmed,modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10),"undefined4 __stdcall DoDialogInfoBox(undefined4, undefined4)"
 0x004A27C0,func,_DialogInfoBox@12,DialogInfoBox,sms,confirmed,generic INFO320/INFO640 message-box builder+run,"undefined4 __stdcall DialogInfoBox(undefined4, undefined4, undefined4)"
 0x004C6710,func,_QuickDist@8,QuickDist,sms,confirmed,,"undefined4 __stdcall QuickDist(undefined4, undefined4)"
+0x004EB620,data,_gameMode,gameMode,sms,confirmed,imported by 3 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined1
 0x004EC218,data,,,waiver,confirmed,interior of / adjacent to ?menuSelecting@@3DA; named at its base or owned by that subsystem,
 0x004EC21C,data,,,waiver,confirmed,interior of / adjacent to ?menuSelecting@@3DA; named at its base or owned by that subsystem,
 0x004EC260,data,,,waiver,confirmed,interior of / adjacent to ?mouseShown@@3FA; named at its base or owned by that subsystem,
@@ -190,11 +191,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004FCEF0,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem,
 0x004FCEFC,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem,
 0x004FCF0C,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem,
-0x00502170,data,_yesString,yesString,sms,confirmed,"localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous",char *
-0x00502174,data,_noString,noString,sms,confirmed,"localized dialog-button label",char *
-0x00502178,data,_okString,okString,sms,confirmed,"localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491)",char *
-0x0050217C,data,_cancelString,cancelString,sms,confirmed,"localized dialog-button label; imported by 72 of the 92 shipped .DLG overlays (#491)",char *
-0x00502184,data,_exitString,exitString,sms,confirmed,"localized dialog-button label; imported by 1 shipped .DLG overlay (#491)",char *
+0x00502170,data,_yesString,yesString,sms,confirmed,localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous,char *
+0x00502174,data,_noString,noString,sms,confirmed,localized dialog-button label,char *
+0x00502178,data,_okString,okString,sms,confirmed,localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491),char *
+0x0050217C,data,_cancelString,cancelString,sms,confirmed,localized dialog-button label; imported by 72 of the 92 shipped .DLG overlays (#491),char *
+0x00502184,data,_exitString,exitString,sms,confirmed,localized dialog-button label; imported by 1 shipped .DLG overlay (#491),char *
 0x00502794,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005027B0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005027E0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,

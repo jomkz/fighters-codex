@@ -137,6 +137,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00480D70,func,_CampaignPlanesLeft@0,CampaignPlanesLeft,sms,confirmed,,undefined4 __stdcall CampaignPlanesLeft(void)
 0x00480D90,func,_UkraineCheckMaxPlanes,UkraineCheckMaxPlanes,sms,confirmed,,
 0x00480DF0,func,_UkraineAddA7,UkraineAddA7,sms,confirmed,,
+0x00480E10,func,_AddCampaignStore,AddCampaignStore,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,
 0x00480F90,func,_UkraineRescued,UkraineRescued,sms,confirmed,,
 0x004810C0,func,_KurileRescued,KurileRescued,sms,confirmed,,
 0x004810D0,func,_VietnamRescued,VietnamRescued,sms,confirmed,,
@@ -145,6 +146,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00481260,func,_KurileQuit,KurileQuit,sms,confirmed,,
 0x00481270,func,_VietnamQuit,VietnamQuit,sms,confirmed,,
 0x00481920,func,CampaignProcInvoke,,re,confirmed,low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4,undefined4 __stdcall CampaignProcInvoke(undefined4)
+0x00481A70,func,_MISSIONSuccess@0,MISSIONSuccess,sms,confirmed,imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall MISSIONSuccess(void)
 0x00481A7B,func,MISSIONEnemiesAlive,,re,inferred,"scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __cdecl MISSIONEnemiesAlive(void)
 0x00483C90,func,TextNextToken,,re,confirmed,whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall TextNextToken(char *)
 0x00483D10,func,TextIsDelim,,re,confirmed,predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall TextIsDelim(char)
@@ -162,6 +164,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00485380,func,CampaignAccumStats,,re,confirmed,fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl CampaignAccumStats(void)
 0x004854A0,func,StatsAddPair,,re,confirmed,add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall StatsAddPair(int *,int *)"
 0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall StatsBucketFor(int,u16,u16)"
+0x00485EF0,func,_CheckCD,CheckCD,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,"undefined4 __cdecl CheckCD(undefined4, undefined4)"
 0x004867D0,func,MISSIONPlayerSlot,,re,confirmed,resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MISSIONPlayerSlot(short)
 0x00486BF0,func,,,waiver,inferred,FOREIGN: TIME game-clock update helper (QueryPerformanceCounter/__alldiv); owner = game-loop/startup,
 0x00486DC0,func,,,waiver,inferred,FOREIGN: FPS-counter print helper; owner = game-loop/startup,
@@ -389,6 +392,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004FAB68,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FAB6C,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FAB70,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
+0x004FB1A8,data,_missionName,missionName,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,
 0x004FB1C9,data,,,waiver,confirmed,interior of / adjacent to _mapName; named at its base or owned by that subsystem,
 0x004FB2BC,data,,,waiver,confirmed,interior of / adjacent to _nationStrings; named at its base or owned by that subsystem,
 0x004FB4FC,data,,,waiver,confirmed,"interior of _pilotRanks (+0x4) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
@@ -518,17 +522,22 @@ va,kind,name,display,source,confidence,notes,type
 0x0054DE28,data,,,waiver,confirmed,interior of _stats (+0x1FF0) — the 0x978-dword mission statistics array; named at its base,
 0x0054DE38,data,,,waiver,confirmed,interior of _stats (+0x2000) — the 0x978-dword mission statistics array; named at its base,
 0x0054DE40,data,,,waiver,confirmed,interior of _stats (+0x2008) — the 0x978-dword mission statistics array; named at its base,
+0x0054E418,data,_campaignFailures,campaignFailures,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined4
+0x0054E468,data,_playerDead,playerDead,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined2
 0x0054E54D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
 0x0054E56D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
+0x00551660,data,_campaignSucceeded,campaignSucceeded,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined1
 0x00551668,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
 0x00551669,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
 0x0055166A,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
 0x005516F1,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem,
 0x005516FD,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem,
+0x00552804,data,_campaignFailed,campaignFailed,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined1
 0x0055281C,data,,,waiver,confirmed,interior of / adjacent to _endScenarioKillsType; named at its base or owned by that subsystem,
 0x005528C0,data,,,waiver,confirmed,interior of / adjacent to _fortMission; named at its base or owned by that subsystem,
 0x005528D0,data,,,waiver,confirmed,interior of / adjacent to _currentT; named at its base or owned by that subsystem,
 0x005528D4,data,,,waiver,confirmed,interior of / adjacent to _currentT; named at its base or owned by that subsystem,
+0x005528E0,data,_currentTime,currentTime,sms,confirmed,imported by 12 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined2
 0x00552938,data,,,waiver,confirmed,interior of / adjacent to _currentTimeOfDay; named at its base or owned by that subsystem,
 0x0055293C,data,,,waiver,confirmed,interior of / adjacent to _currentTimeOfDay; named at its base or owned by that subsystem,
 0x005733E8,data,,,waiver,confirmed,interior of / adjacent to _tlist; named at its base or owned by that subsystem,

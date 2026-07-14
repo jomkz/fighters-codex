@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 170/171 functions have a recovered signature; 1/1 globals have a recovered type.
+// 171/172 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
 // --- globals ---------------------------------------------------------
+extern undefined2 playerId;  // 0x00520A1C  imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS
 extern u32 querySocket;  // 0x00572568  master/query socket handle — set from the connect result in ?NET_StartQuery@@…, used for the broadcast host query, closed and reset to -1 by ?NET_MasterShutdown@@YAXXZ
 
 // --- functions -------------------------------------------------------
@@ -41,6 +42,7 @@ char ip2long(char *, unsigned long *);  // 0x00405D10  __cdecl
 void RunNetConfigurationScreen(long);  // 0x00405DF0  __stdcall
 void state_func_master_query(void);  // 0x0040AF40  __cdecl
 char master_events(unsigned int, long, int, socket_state *);  // 0x0040B110  __cdecl
+undefined4 MSGSendChatter(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00418880  __stdcall
 unsigned int UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x00441F80  __cdecl
 void UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x004420D0  __cdecl
 void UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00442200  __cdecl
@@ -191,5 +193,6 @@ void state_func_query_hosts(void);  // 0x004B25F0  __cdecl
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x00472670  MPRevive -- signature not recovered
+// TODO(#455): 0x004EB608  thisComputer -- type not recovered
 
 }  // namespace fxe::fa::network

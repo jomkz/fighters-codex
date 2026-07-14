@@ -15,7 +15,7 @@ codec:
   rationale: "engine-code container (dialog DLL, PL family like CAM/MNU/MC): fx_lib validates the container and extracts the control label strings; the structural per-record decode is a larger RE task (the on-disk record layout differs from the documented in-memory layout) tracked under #54"
   lib: [lib/src/dlg.cpp]
   commands: [dlg]
-  tests: [tests/test_dlg.cpp]
+  tests: [tests/test_dlg.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_dlg.cpp]
   fixtures:
     synthetic: true

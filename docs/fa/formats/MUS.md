@@ -15,7 +15,7 @@ codec:
   rationale: "the .MUS is a compiled PE/LE DLL consumed by Miles at runtime; the sequencer bytecode has no authoring format and the FA/FB sub-opcodes are Miles-internal (#54). Music is modded by replacing the referenced XMI tracks (§ Replacing in-game music), not by re-emitting the DLL, so the disassembler is read-only (round-trip decision, #101)"
   lib: [lib/src/mus.cpp]
   commands: [mus]
-  tests: [tests/test_mus.cpp]
+  tests: [tests/test_mus.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_mus.cpp]
   gui: [gui/src/editors/mus_editor.cpp]
   fixtures:

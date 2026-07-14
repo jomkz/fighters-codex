@@ -102,6 +102,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004AFB40,func,_ShowPicture,ShowPicture,re,confirmed,"shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it",void __fastcall ShowPicture(char *)
 0x004B0130,func,?GLASSESSpreadLines@@YIXD@Z,GLASSESSpreadLines,sms,confirmed,,void __fastcall GLASSESSpreadLines(char)
 0x004B01E0,func,?GLASSESPrintAmount@@YGXXZ,GLASSESPrintAmount,sms,confirmed,,void __stdcall GLASSESPrintAmount(void)
+0x004B4320,func,WRFogLayerUpdate,WRFogLayerUpdate,sms,confirmed,"imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491)",
 0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl G_AllocBitmapBuffer(undefined4)
 0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,"undefined4 __fastcall G_RelocBitmap(undefined4, undefined4)"
 0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocBitmap(undefined4, undefined4, undefined4)"

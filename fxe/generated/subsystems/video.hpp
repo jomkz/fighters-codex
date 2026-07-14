@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 27/30 functions have a recovered signature; 0/0 globals have a recovered type.
+// 29/32 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
 // --- functions -------------------------------------------------------
+undefined4 PlayCobra(undefined4);  // 0x00421A50  __stdcall
 undefined4 DecodeDSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456300  __cdecl
 void EDB(unsigned char *, unsigned char *, FrameHeader *, GlobalData *);  // 0x00456AD0  __cdecl
 undefined4 DecodeSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456EC0  __cdecl
@@ -36,6 +37,7 @@ undefined4 DecodeSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B
 undefined4 DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B9C0  __cdecl
 undefined4 DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045BE60  __cdecl
 undefined4 DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4);  // 0x0045C500  __cdecl
+undefined4 DoFadeout(void);  // 0x004A06F0  __stdcall
 short PlayVDOFile(char *, short, char);  // 0x004AE410  __cdecl
 short PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char);  // 0x004AE440  __cdecl
 void VDOSetMode(VDO *);  // 0x004AED50  __cdecl

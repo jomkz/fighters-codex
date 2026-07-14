@@ -15,12 +15,12 @@ codec:
   rationale: "engine-code container (hangar DLL, PL family) whose slot-table sub-resource base is not yet pinned (#54): fx_lib surfaces the container geometry and the PIC asset references; slot decoding lands when the sub-resource offset is confirmed"
   lib: [lib/src/hgr.cpp]
   commands: [hgr]
-  tests: [tests/test_hgr.cpp]
+  tests: [tests/test_hgr.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_hgr.cpp]
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [PIC, MNU]
 ---
 

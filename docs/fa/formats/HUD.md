@@ -15,7 +15,7 @@ codec:
   byte_identical: true
   lib: [lib/src/hud.cpp]
   commands: [hud]
-  tests: [tests/test_hud.cpp]
+  tests: [tests/test_hud.cpp, tests/test_overlays.cpp]
   fuzz: [fuzz/fuzz_hud.cpp]
   gui: [gui/src/editors/hud_editor.cpp, gui/src/editors/overlay_preview.cpp]
   fixtures:
