@@ -265,34 +265,36 @@ struct Codegen {
 
 // ---- Instruction table ------------------------------------------------------
 
-struct InstrDef {
-    const char* name;       // lowercase identifier as it appears in AI source
-    int         num_args;   // number of expression arguments
-    bool        string_arg; // first arg is a string literal → PUSH_ADDR
+// THE ACTION VOCABULARY IS THE ENGINE'S, NOT A SURVEY OF WHAT WE HAPPENED TO SEE.
+//
+// An AI instruction compiles to a call to `_CTDo_<name>`, and the engine exports exactly 26
+// of them (FA.SMS; all 26 are claimed in db/symbols/ai.csv). This table used to hold 15 -- the
+// ones the nine stock scripts use, plus `turn` -- so nine real actions could not be compiled
+// at all: `play`, `print`, `printnum`, `rudder`, `splits`, `uhomepos`, `wm_control`,
+// `wm_formation`, `wm_vspacing`. No stock script uses them, which is exactly why the gap sat
+// there: the table was a record of the corpus, not of the language (#491).
+//
+// (`exit` and `restart` are in the list too, and are also reachable as bare keywords -- both
+// paths emit the same `_CTDo_` call.)
+//
+// Arity is NOT listed here, because it does not need to be. The old table carried a num_args
+// per instruction, which is what made an unlisted action impossible to parse. But the source
+// line already says how many arguments it passes, and the DECOMPILER has always read the count
+// straight from the bytecode. Reading it from the source instead makes the two directions
+// symmetric, and lets any action the engine exports compile -- including the nine we have
+// never seen used.
+static const char* const kActions[] = {
+    "btoh",     "circle",    "exit",      "homeangle", "homepos",  "immelman",
+    "invert",   "jink",      "maneuver",  "move",      "movetoalt", "play",
+    "print",    "printnum",  "restart",   "rudder",    "splits",   "turn",
+    "uhomepos", "wm_approach", "wm_break", "wm_control", "wm_formation",
+    "wm_hspacing", "wm_vspacing", "yoyo",
 };
 
-static const InstrDef kInstrs[] = {
-    {"move",        5, false},
-    {"movetoalt",   4, false},
-    {"homepos",     5, false},
-    {"homeangle",   5, false},
-    {"jink",        8, false},
-    {"circle",      6, false},
-    {"maneuver",    1, true},   // string arg → PUSH_ADDR
-    {"immelman",    1, false},
-    {"invert",      0, false},
-    {"yoyo",        3, false},
-    {"btoh",        0, false},
-    {"wm_break",    2, false},
-    {"wm_approach", 3, false},
-    {"wm_hspacing", 1, false},
-    {"turn",        6, false},
-};
-
-static const InstrDef* find_instr(const std::string& lower) {
-    for (const auto& d : kInstrs)
-        if (lower == d.name) return &d;
-    return nullptr;
+static bool is_action(const std::string& lower) {
+    for (const char* a : kActions)
+        if (lower == a) return true;
+    return false;
 }
 
 // ---- Parser + codegen -------------------------------------------------------
@@ -443,7 +445,7 @@ struct Parser {
             if (lower == "goto"  || lower == "exit"   || lower == "restart" ||
                 lower == "if"    || lower == "switch")
                 return true;
-            if (find_instr(lower)) return true;
+            if (is_action(lower)) return true;
         }
         return false;
     }
@@ -565,38 +567,22 @@ struct Parser {
     }
 
     // Parse one instruction call: name args... CALL_BY_NAME
-    void parse_instruction(const InstrDef& def, int src_line) {
+    //
+    // The arguments run to the end of the line, and that is where the count comes from -- the
+    // source says how many it passes, so no per-instruction arity table is needed (and with
+    // one, an action the table did not list could not be compiled at all). A string literal
+    // becomes PUSH_ADDR, anything else an expression; `maneuver "name"` is just the case where
+    // the single argument happens to be a string.
+    void parse_instruction(const std::string& name, int src_line) {
         cg.emit_frame(src_line);
 
-        if (def.num_args == 0) {
-            cg.emit_call_by_name(std::string("_CTDo_") + def.name);
-            cg.emit(0x04); // EVAL — discard return value
-            return;
-        }
-
-        // Parse all args into a temporary vector of emit lambdas.
-        // We need to push in REVERSE order (last arg first).
-        // Strategy: record the bytecode offset before each arg, emit all in order,
-        // then reverse the arg chunks in the bytecode buffer.
-        if (def.string_arg) {
-            // Single string arg: PUSH_ADDR "<string>"
-            if (lex.at(T_STRING)) { cg.emit_push_addr(lex.cur().str); lex.eat(); }
-            else { err("expected string for " + std::string(def.name)); cg.emit_push(0); }
-            cg.emit_call_by_name(std::string("_CTDo_") + def.name);
-            cg.emit(0x04);
-            return;
-        }
-
-        // Parse N args, collecting start offsets so we can reverse their order.
+        // Parse args to end of line, collecting start offsets so we can reverse their order:
+        // the last argument is pushed first.
         std::vector<uint32_t> arg_starts;
-        arg_starts.reserve(def.num_args);
-        for (int i = 0; i < def.num_args; ++i) {
-            if (lex.at(T_EOL) || lex.at(T_EOF)) {
-                err("too few arguments for instruction '" + std::string(def.name) + "'");
-                break;
-            }
+        while (!lex.at(T_EOL) && !lex.at(T_EOF)) {
             arg_starts.push_back(cg.offset());
-            parse_add(true); // arg mode: '-' not binary if next token is adjacent
+            if (lex.at(T_STRING)) { cg.emit_push_addr(lex.cur().str); lex.eat(); }
+            else parse_add(true);  // arg mode: '-' not binary if next token is adjacent
         }
 
         // Reverse the argument chunks in the bytecode so last arg is first on stack.
@@ -620,8 +606,8 @@ struct Parser {
             //  but expressions in args don't contain GOTO/IF_FALSE, so no patches to fix)
         }
 
-        cg.emit_call_by_name(std::string("_CTDo_") + def.name);
-        cg.emit(0x04); // EVAL
+        cg.emit_call_by_name("_CTDo_" + name);
+        cg.emit(0x04); // EVAL -- discard the return value
     }
 
     // Parse one statement.  emit_frame = true for top-level statements; false for
@@ -700,9 +686,8 @@ struct Parser {
         }
 
         // Instruction call
-        const InstrDef* def = find_instr(lower);
-        if (def) {
-            parse_instruction(*def, src_line);
+        if (is_action(lower)) {
+            parse_instruction(lower, src_line);
             return;
         }
 

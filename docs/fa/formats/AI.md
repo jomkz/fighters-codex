@@ -126,6 +126,38 @@ Set by the engine before each tick. All 9 files dispatch on at least
 | `do_evade` | Evade incoming threat |
 | `do_attack` | Engage target |
 
+### The complete vocabulary — from the symbol table
+
+An AI program is a tree of **conditions** (`_CTEval_<name>`) and **actions** (`_CTDo_<name>`),
+and both compile to calls the `.BI` overlay imports from the game executable. So the language
+is not a matter of opinion: it is exactly the `_CT*` symbols the engine exports, all
+103 of them, every one claimed in [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv).
+
+**Bold** = imported by at least one of the nine stock scripts (55 of 103).
+The rest are exported by the engine and used by nothing shipped — they are no less real, and
+`fx ai compile` accepts them all.
+
+**Actions (26)** — `_CTDo_*`:
+
+**`btoh`** · **`circle`** · **`exit`** · **`homeangle`** · **`homepos`** · **`immelman`** · **`invert`** · **`jink`** · **`maneuver`** · **`move`** · **`movetoalt`** · `play` · `print` · `printnum` · **`restart`** · `rudder` · `splits` · `turn` · `uhomepos` · **`wm_approach`** · **`wm_break`** · `wm_control` · `wm_formation` · **`wm_hspacing`** · `wm_vspacing` · **`yoyo`**
+
+**Conditions (77)** — `_CTEval_*`:
+
+**`alt`** · **`altdiff`** · `any` · **`b`** · `bestrange` · `bestrangediff` · **`betterspeed`** · **`bettertwr`** · **`canclimb`** · `cloudalt` · **`corner`** · **`cornerspeed`** · `cornerspeeddiff` · **`disttotgt`** · `disttowaypoint` · **`do_attack`** · **`do_evade`** · **`do_hit`** · **`do_ir_launch`** · **`do_nothing`** · **`do_radar_launch`** · **`engagep`** · **`h`** · **`hdiff`** · **`hrzdisttotgt`** · **`htotgt`** · `ir` · `maxalt` · `maxaltdiff` · `maxrange` · `maxrangediff` · `maxrudderh` · `maxrudderp` · **`maxspeed`** · `maxspeeddiff` · `minalt` · `minaltdiff` · **`minspeed`** · `minspeeddiff` · **`p`** · **`pdiff`** · `ptotgt` · `radar` · **`skill`** · **`speed`** · **`speeddiff`** · **`tgt`** · **`tgtahead`** · `tgtaspectangle` · `tgtattackinganyone` · `tgtattackingme` · `tgtclass` · **`tgtfacing`** · **`tgthumancontrol`** · `tgtir` · `tgtisaaa` · `tgtisbomber` · **`tgtisfighter`** · **`tgtisplane`** · `tgtissam` · **`tgtisship`** · **`tgtoffbeam`** · `tgtradar` · `time` · **`turnradius`** · `turnradiusdiff` · `turnrate` · `turnratediff` · `twr` · `twrdiff` · `waypointalt` · **`wingapproach`** · **`wingcombat`** · `wm_control_is` · `wm_formation_is` · **`wm_hspacing_is`** · `wm_vspacing_is`
+
+> The compiler's action table used to hold **15** — the ones the stock scripts use, plus
+> `turn`. So nine real actions (`play`, `print`, `printnum`, `rudder`, `splits`, `uhomepos`,
+> `wm_control`, `wm_formation`, `wm_vspacing`) **could not be compiled at all**: `fx ai compile`
+> answered *"unknown statement"* to a word the engine implements. The table was a record of the
+> corpus, not of the language. Arity is now read from the source line — the decompiler always
+> read it from the bytecode — so any action the engine exports compiles, and
+> `tests/test_ai.cpp` pins the accepted set to `db/` so it cannot drift again
+> ([#491](https://github.com/jomkz/fighters-codex/issues/491)).
+>
+> Conditions were always generic (any identifier becomes `_CTEval_<name>`), so all
+> 77 already worked.
+
+
 ### Conditions
 
 **Boolean attributes:**
