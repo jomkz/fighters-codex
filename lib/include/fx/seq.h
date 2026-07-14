@@ -21,7 +21,14 @@
 namespace fx {
 
 struct SeqEvent {
-    // Raw line text (everything after the leading TAB, before CRLF).
+    // The line's own leading whitespace, verbatim. The engine (SeqSkipComments, 0x445440)
+    // skips SPACES AND TABS alike before the content, so an event may be indented with
+    // either -- UDEAD.SEQ, UWON.SEQ and ULOST.SEQ indent their last event with six spaces.
+    // Requiring a TAB dropped that event on all three. Defaults to a tab, which is what a
+    // newly composed event should emit.
+    std::string indent = "\t";
+
+    // Raw line text (everything after the indent, before CRLF).
     // Stored verbatim for perfect round-trip fidelity.
     std::string raw;
 
