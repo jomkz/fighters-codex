@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -162,4 +163,95 @@ TEST_CASE("ai_decompile: all 9 stock AIs round-trip byte-identically") {
     }
     CHECK(total == 9);
     WARN("AI decompile round-trip census: " << total << " stock scripts");
+}
+
+// ---------------------------------------------------------------------------
+// The action vocabulary is the ENGINE's (#491).
+//
+// An AI instruction compiles to `_CTDo_<name>`, and the engine exports 26 of them. The
+// compiler's table used to hold 15 -- the ones the nine stock scripts use, plus `turn` -- so
+// nine real actions could not be compiled at all. The table was a record of the corpus, not
+// of the language. It is the language now, and this pins it there.
+// ---------------------------------------------------------------------------
+
+namespace {
+
+// The actions the ENGINE exports, read out of db/symbols/. This is the same set FA.SMS names
+// and the same set the .BI overlays import.
+std::set<std::string> db_actions() {
+    std::set<std::string> a;
+    for (const auto& de : std::filesystem::directory_iterator(FX_DB_DIR "/symbols")) {
+        if (de.path().extension() != ".csv") continue;
+        std::ifstream f(de.path());
+        std::string line;
+        std::getline(f, line);
+        while (std::getline(f, line)) {
+            size_t b = line.find(',');
+            if (b == std::string::npos) continue;
+            size_t c = line.find(',', b + 1);
+            if (c == std::string::npos) continue;
+            size_t d = line.find(',', c + 1);
+            std::string name = line.substr(c + 1, d - c - 1);
+            if (name.rfind("_CTDo_", 0) == 0) a.insert(name.substr(6));
+        }
+    }
+    return a;
+}
+
+// Compile one statement and report whether the compiler accepted it.
+bool compiles(const std::string& stmt) {
+    std::vector<AiCompileError> errs;
+    auto bi = ai_compile(stmt + "\nexit\n", errs);
+    return errs.empty() && !bi.empty();
+}
+
+}  // namespace
+
+TEST_CASE("the compiler accepts exactly the actions the engine exports") {
+    const std::set<std::string> engine = db_actions();
+    REQUIRE(engine.size() == 26);
+
+    // Every action the engine exports compiles -- including the nine no stock script uses.
+    for (const std::string& a : engine) {
+        INFO("action " << a);
+        // Arity comes from the source line, so a call with no arguments is well-formed for
+        // any of them; what is being asserted is that the NAME is accepted.
+        REQUIRE(compiles(a));
+    }
+
+    // The nine that could not be compiled at all before.
+    for (const char* a : { "play", "print", "printnum", "rudder", "splits",
+                           "uhomepos", "wm_control", "wm_formation", "wm_vspacing" }) {
+        INFO(a);
+        REQUIRE(engine.count(a) == 1);
+        REQUIRE(compiles(a));
+    }
+
+    // And an identifier the engine does NOT export is still an error, not a silent call into
+    // nothing. (A generic parser that accepted any identifier would emit `_CTDo_frobnicate`,
+    // which resolves to no symbol and would do nothing at all in-game.)
+    REQUIRE_FALSE(compiles("frobnicate 1 2"));
+}
+
+TEST_CASE("an action the stock scripts never use compiles and round-trips") {
+    // `splits` and `printnum` are real engine actions (_CTDo_splits, _CTDo_printnum) that no
+    // shipped .BI imports. Before, `unknown statement: 'splits'`.
+    const std::string src =
+        "splits 100 200\n"
+        "printnum alt\n"
+        "wm_vspacing 50\n"
+        "exit\n";
+    std::vector<AiCompileError> errs;
+    auto bi = ai_compile(src, errs);
+    if (!errs.empty()) INFO(errs[0].message);
+    REQUIRE(errs.empty());
+    REQUIRE_FALSE(bi.empty());
+
+    // And it survives the BI -> AI -> BI fixed point, like any other script.
+    std::string dec = ai_decompile(bi.data(), bi.size());
+    REQUIRE_FALSE(dec.empty());
+    std::vector<AiCompileError> errs2;
+    auto bi2 = ai_compile(dec, errs2);
+    REQUIRE(errs2.empty());
+    REQUIRE(bi2 == bi);
 }
