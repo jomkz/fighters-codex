@@ -190,6 +190,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004FCEF0,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem,
 0x004FCEFC,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem,
 0x004FCF0C,data,,,waiver,confirmed,interior of / adjacent to _checkRightButton; named at its base or owned by that subsystem,
+0x00502170,data,_yesString,yesString,sms,confirmed,"localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous",char *
+0x00502174,data,_noString,noString,sms,confirmed,"localized dialog-button label",char *
+0x00502178,data,_okString,okString,sms,confirmed,"localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491)",char *
+0x0050217C,data,_cancelString,cancelString,sms,confirmed,"localized dialog-button label; imported by 72 of the 92 shipped .DLG overlays (#491)",char *
+0x00502184,data,_exitString,exitString,sms,confirmed,"localized dialog-button label; imported by 1 shipped .DLG overlay (#491)",char *
 0x00502794,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005027B0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005027E0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,

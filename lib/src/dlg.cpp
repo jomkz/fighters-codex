@@ -16,4 +16,11 @@ std::vector<std::string> dlg_strings(const uint8_t* data, size_t size,
     return cam_strings(data, size, min_len);
 }
 
+// A dialog says what it is MADE OF in its import table: every .DLG imports the engine's own
+// drawing functions from main.dll (the game executable), one per control type it uses. So the
+// controls are a decoded fact, not a guess -- and every name is one we should have claimed.
+std::vector<PeImport> dlg_imports(const uint8_t* data, size_t size) {
+    return pe_imports(data, size);
+}
+
 } // namespace fx

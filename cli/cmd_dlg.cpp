@@ -37,6 +37,19 @@ static int cmd_dlg_info(const char* path) {
            info.code.size, info.code.vma);
     printf("Embedded strings: %zu\n",
            fx::dlg_strings(data.data(), data.size()).size());
+
+    // The import table names the engine functions this dialog draws itself with -- one per
+    // control type. It is the closest thing the container has to a table of contents.
+    auto imports = fx::dlg_imports(data.data(), data.size());
+    if (!imports.empty()) {
+        printf("Imports (%zu) -- the controls this dialog is made of:\n", imports.size());
+        for (const fx::PeImport& im : imports) {
+            if (im.name.empty())
+                printf("  %s : ordinal %u\n", im.module.c_str(), im.ordinal);
+            else
+                printf("  %s : %s\n", im.module.c_str(), im.name.c_str());
+        }
+    }
     return 0;
 }
 

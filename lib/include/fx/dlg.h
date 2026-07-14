@@ -25,6 +25,10 @@ struct DlgInfo {
 
 DlgInfo dlg_info(const uint8_t* data, size_t size);
 
+// The engine functions this dialog imports from main.dll -- one per control type it renders
+// (_DrawAction, _DrawListBox, ...), plus the localized label globals (_okString, ...).
+std::vector<PeImport> dlg_imports(const uint8_t* data, size_t size);
+
 // Printable-ASCII runs of at least min_len characters — the dialog's
 // embedded control label strings.
 std::vector<std::string> dlg_strings(const uint8_t* data, size_t size,

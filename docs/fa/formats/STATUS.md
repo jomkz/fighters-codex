@@ -17,7 +17,7 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [CB8](CB8.md) | video | partial | re-gameplay [#56](https://github.com/jomkz/fighters-codex/issues/56) | round-trip (by design) | `fx cb8` | `tests/test_cb8.cpp` | syn/real/**install** | `fuzz/fuzz_cb8.cpp` | `gui/src/editors/cb8_editor.cpp` |
 | [CFG](CFG.md) | system | complete | — | round-trip (byte-identical) | `fx cfg` | `tests/test_cfg.cpp` | syn/**install** | `fuzz/fuzz_cfg.cpp` | — |
 | [DAT](DAT.md) | system | complete | — | round-trip (byte-identical) | `fx dat` | `tests/test_dat.cpp` | syn/**install** | `fuzz/fuzz_dat.cpp` | — |
-| [DLG](DLG.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx dlg` | `tests/test_dlg.cpp` | syn/real | `fuzz/fuzz_dlg.cpp` | — |
+| [DLG](DLG.md) | ui-overlay | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx dlg` | `tests/test_dlg.cpp` | syn/real/**install** | `fuzz/fuzz_dlg.cpp` | — |
 | [ECM](ECM.md) | typedef | complete | — | round-trip (byte-identical) | `fx ecm` | `tests/test_brf.cpp`<br>`tests/test_ot.cpp` | syn/real/**install** | `fuzz/fuzz_brf.cpp` | `gui/src/editors/brf_editor.cpp` |
 | [EFFECT](EFFECT.md) | system | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx effect` | `tests/test_effect.cpp` | syn | `fuzz/fuzz_effect.cpp` | — |
 | [ESA](ESA.md) | installer | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | round-trip (byte-identical) | `fx esa` | `tests/test_esa.cpp` | syn | `fuzz/fuzz_esa.cpp` | — |
