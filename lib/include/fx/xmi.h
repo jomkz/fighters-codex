@@ -38,11 +38,26 @@ struct XmiFile {
 // missing; a malformed interior yields whatever sequences parsed cleanly.
 XmiFile xmi_parse(const uint8_t* data, size_t size);
 
+// How much of the EVNT stream the decode actually understood.
+//
+// The event loop bails out on anything it cannot read -- a truncated event, an unknown
+// status byte -- rather than desync. That is the right call, but it means a stream it gave up
+// on halfway produces an SMF that LOOKS fine: shorter, and silently so. Nothing distinguishes
+// "finished" from "stopped" unless the decoder says which. It says so here (#491).
+struct XmiDecode {
+    uint32_t evnt_size    = 0;      // bytes in the sequence's EVNT chunk
+    uint32_t consumed     = 0;      // bytes the event loop actually read
+    bool     end_of_track = false;  // it reached the FF 2F meta, rather than running out
+    size_t   events       = 0;      // MIDI events emitted (note-offs included)
+};
+
 // Convert one sequence to a Standard MIDI File (format 0). Returns the SMF
 // bytes, or an empty vector if seq_index is out of range or the sequence has
 // no EVNT chunk. ppqn is the SMF division written to the header; the XMI tick
 // basis maps 1:1 (default 60, matching XMI's tempo-independent tick).
+// Pass `out` to learn whether the EVNT stream was decoded to its end.
 std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
-                                size_t seq_index, uint16_t ppqn = 60);
+                                size_t seq_index, uint16_t ppqn = 60,
+                                XmiDecode* out = nullptr);
 
 } // namespace fx

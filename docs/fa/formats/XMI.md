@@ -21,7 +21,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [MUS, 11K]
 ---
 
@@ -69,7 +69,10 @@ FA format. Well-documented external format.
 Key differences from Standard MIDI:
 - Fixed 120 BPM base; tempo encoded as AIL-specific multipliers
 - Delta times use AIL's variable-length encoding (not SMF)
-- Multiple sequences in one file via the `CAT`/`XMID` structure
+- The format allows multiple sequences per file via the `CAT`/`XMID` structure. **FA never
+  uses it**: all 78 shipped files declare `INFO` = 1 and carry exactly one `FORM XMID`, whose
+  only chunks are `TIMB` and `EVNT`. The multi-sequence path is exercised by the synthetic
+  fixtures alone.
 
 ### TIMB chunk (instrument table)
 
@@ -81,8 +84,7 @@ not independently verified here (see Open Questions).
 ### EVNT chunk (event stream) — decoded and validated
 
 The event stream is Standard-MIDI status bytes with two AIL differences,
-recovered from the 78-file corpus and validated by the `fx xmi export`
-round-trip to SMF:
+recovered from the 78-file corpus:
 
 - **Delay (interval) encoding.** Between events, every byte `< 0x80`
   accumulates into the delay for the next event (a sum-of-bytes VLQ, *not*
@@ -98,6 +100,26 @@ round-trip to SMF:
   SMF-VLQ length + data). `FF 2F` ends the sequence. Status bytes are always
   explicit — running status cannot occur because data bytes (`< 0x80`) would
   be consumed as delay.
+
+## Round-Trip Notes
+
+**There is no round-trip here to lean on.** XMI→MID is a one-way translation, so the usual
+proof-by-byte-identity does not apply — and that makes the failure mode worse, not better. The
+event loop stops on anything it cannot read (a truncated event, an unknown status byte) rather
+than desync. That is the right call, but a stream it gives up on halfway still produces a
+**perfectly well-formed SMF — just a shorter one, silently**. Nothing distinguishes *finished*
+from *stopped*.
+
+So the decoder now says which (`XmiDecode`), and `tests/test_xmi.cpp` asserts it over **all 78
+shipped files** (under `FX_FA_ROOT`): each one's `INFO` count matches the sequences actually
+walked, and every `EVNT` stream is decoded **to its explicit `FF 2F` end-of-track**, consuming
+the whole chunk but for the IFF pad byte. **218,254 events** decode across the corpus. The
+emitted SMF is checked structurally too — header, one track, and a track-length field that
+agrees with the bytes after it.
+
+All 78 pass. Unlike the other formats audited under
+[#491](https://github.com/jomkz/fighters-codex/issues/491), **no decode bug was found here** —
+the codec was already right. The census is what makes that a fact rather than an assumption.
 
 ## Open Questions
 

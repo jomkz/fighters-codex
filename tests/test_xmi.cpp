@@ -1,5 +1,13 @@
 #include <catch2/catch_test_macros.hpp>
 #include <fx/xmi.h>
+#include <fx/ealib.h>
+#include <cctype>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <ios>
+#include <map>
+#include <string>
 #include <algorithm>
 #include <cstring>
 #include <string>
@@ -79,6 +87,37 @@ static SmfStats read_smf(const std::vector<uint8_t>& b) {
 
 // ---------------------------------------------------------------------------
 
+// The census leans on XmiDecode: an event loop that gives up halfway still produces a
+// perfectly well-formed SMF, just a shorter one. These are the two cases it must tell apart.
+
+TEST_CASE("XmiDecode reports a stream that ran to its end-of-track") {
+    auto xmi = make_xmi({ 0x00, 0x90, 0x3C, 0x64, 0x10, 0xFF, 0x2F, 0x00 });
+    XmiDecode st;
+    auto smf = xmi_to_smf(xmi.data(), xmi.size(), 0, 60, &st);
+    REQUIRE_FALSE(smf.empty());
+    REQUIRE(st.end_of_track);
+    REQUIRE(st.events == 2);              // the note-on and its scheduled note-off
+    REQUIRE(st.consumed == st.evnt_size);
+}
+
+TEST_CASE("XmiDecode reports a stream it gave up on") {
+    // An unknown status byte (0xF5). The loop stops rather than desync -- and the SMF it
+    // returns still looks entirely valid, which is the whole problem.
+    auto xmi = make_xmi({ 0x00, 0x90, 0x3C, 0x64, 0x10, 0xF5, 0x01, 0xFF, 0x2F, 0x00 });
+    XmiDecode st;
+    auto smf = xmi_to_smf(xmi.data(), xmi.size(), 0, 60, &st);
+    REQUIRE_FALSE(smf.empty());           // a well-formed SMF, all the same
+    REQUIRE_FALSE(st.end_of_track);       // but it never reached the end
+    REQUIRE(st.consumed < st.evnt_size);
+}
+
+TEST_CASE("XmiDecode reports a truncated event") {
+    auto xmi = make_xmi({ 0x00, 0x90, 0x3C });   // note-on cut short
+    XmiDecode st;
+    xmi_to_smf(xmi.data(), xmi.size(), 0, 60, &st);
+    REQUIRE_FALSE(st.end_of_track);
+}
+
 TEST_CASE("xmi_parse walks the IFF structure") {
     auto xmi = make_xmi({ 0xFF, 0x2F, 0x00 });
     auto f = xmi_parse(xmi.data(), xmi.size());
@@ -145,4 +184,97 @@ TEST_CASE("xmi_to_smf accumulates AIL delay bytes and passes meta through") {
 TEST_CASE("xmi_to_smf rejects an out-of-range sequence index") {
     auto xmi = make_xmi({ 0xFF, 0x2F, 0x00 });
     REQUIRE(xmi_to_smf(xmi.data(), xmi.size(), 5).empty());
+}
+
+// ---------------------------------------------------------------------------
+// The real-asset census (#491 A).
+//
+// XMI.md claimed the 78 shipped files parse and export, and no test opened one. There is no
+// round-trip here to lean on -- XMI->MID is a one-way translation -- so the ONLY check that
+// means anything is whether the decode consumed what it was given. The event loop bails out
+// on an unknown status byte rather than desync, which is right, but a stream it gave up on
+// halfway yields an SMF that looks perfectly fine: just shorter, and silently so.
+// ---------------------------------------------------------------------------
+
+TEST_CASE("XMI decode census: every shipped sequence, decoded to its end") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root)
+        SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    namespace fs = std::filesystem;
+
+    auto lower = [](std::string s) {
+        for (char& c : s) c = (char)std::tolower((unsigned char)c);
+        return s;
+    };
+
+    int files = 0, sequences = 0;
+    size_t total_events = 0;
+    std::map<std::string, int> tags;
+
+    for (const auto& de : fs::directory_iterator(root)) {
+        if (!de.is_regular_file()) continue;
+        if (lower(de.path().extension().string()) != ".lib") continue;
+        std::ifstream f(de.path(), std::ios::binary | std::ios::ate);
+        std::vector<uint8_t> lib((size_t)f.tellg());
+        f.seekg(0);
+        f.read((char*)lib.data(), (std::streamsize)lib.size());
+
+        for (const auto& e : ealib_read_dir(lib.data(), lib.size())) {
+            if (lower(fs::path(e.name).extension().string()) != ".xmi") continue;
+            auto rec = ealib_extract(lib.data(), lib.size(), e, true);
+            INFO(de.path().filename().string() << " : " << e.name);
+            REQUIRE_FALSE(rec.empty());
+
+            XmiFile x = xmi_parse(rec.data(), rec.size());
+            REQUIRE(x.valid);
+
+            // 1. The INFO chunk declares how many sequences the file holds. If the walk
+            //    found fewer FORM XMIDs than that, it silently lost one.
+            REQUIRE(x.seq_count == x.sequences.size());
+            REQUIRE(x.seq_count >= 1);
+
+            for (size_t i = 0; i < x.sequences.size(); i++) {
+                INFO("sequence " << i);
+                for (const XmiChunk& c : x.sequences[i].chunks) tags[c.tag]++;
+
+                // Every sequence carries the events it is for.
+                bool has_evnt = false;
+                for (const XmiChunk& c : x.sequences[i].chunks)
+                    if (c.tag == "EVNT") has_evnt = true;
+                REQUIRE(has_evnt);
+
+                // 2. The decode ran to the end of the stream. Not "produced some output" --
+                //    an SMF is produced either way.
+                XmiDecode st;
+                auto smf = xmi_to_smf(rec.data(), rec.size(), i, 60, &st);
+                REQUIRE_FALSE(smf.empty());
+                REQUIRE(st.end_of_track);                 // hit FF 2F, did not run out
+                REQUIRE(st.consumed <= st.evnt_size);
+                REQUIRE(st.evnt_size - st.consumed <= 1); // at most the IFF pad byte
+                REQUIRE(st.events > 0);
+                total_events += st.events;
+
+                // 3. The SMF we emitted is well-formed: header, one track, and the track
+                //    length field agrees with the bytes that follow it.
+                REQUIRE(smf.size() > 22);
+                REQUIRE(std::string((const char*)smf.data(), 4) == "MThd");
+                REQUIRE(std::string((const char*)smf.data() + 14, 4) == "MTrk");
+                const uint32_t tlen = ((uint32_t)smf[18] << 24) | ((uint32_t)smf[19] << 16) |
+                                      ((uint32_t)smf[20] << 8) | smf[21];
+                REQUIRE(tlen == smf.size() - 22);
+                // ...and it ends on end-of-track, as an SMF must.
+                REQUIRE(smf[smf.size() - 3] == 0xFF);
+                REQUIRE(smf[smf.size() - 2] == 0x2F);
+                REQUIRE(smf[smf.size() - 1] == 0x00);
+                sequences++;
+            }
+            files++;
+        }
+    }
+    REQUIRE(files > 0);
+
+    std::string chunks;
+    for (auto& [t, c] : tags) chunks += " " + t + "=" + std::to_string(c);
+    WARN("XMI census: " << files << " files, " << sequences << " sequences, "
+         << total_events << " events decoded; chunks:" << chunks);
 }
