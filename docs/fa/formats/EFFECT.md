@@ -41,6 +41,8 @@ same relationship the SH interpreter has to [SH.md](SH.md). It never transcribes
 game bytes: callers supply a buffer (a synthetic fixture, or the real table
 sliced from the executable's `.data` at integration time).
 
+> **No real-asset census, by nature.** EFFECT has no files: the effect-parameter table lives **inside the game executable**, so there is nothing in an install for a census to read. It is validated against the binary instead. See [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 ## Tools
 
 ### fx

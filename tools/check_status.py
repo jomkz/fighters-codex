@@ -795,6 +795,27 @@ def check_claims(specs):
                 % (where, codec["fixtures"]["real_install"],
                    "none" if not proves_real else "one"))
 
+        # THE RATCHET (#491, closing): if the assets EXIST in a real install, a test must
+        # read them. real_manifest says the extension is in the extraction manifest -- i.e.
+        # the files are right there -- so there is no excuse for no test touching one.
+        #
+        # This is what #491 was for. Twenty-nine specs claimed a format was understood while
+        # nothing had ever decoded a shipped file of it, and every one of the codec bugs the
+        # audit found was hiding behind exactly that gap. The flag pair now makes the gap a
+        # hard error instead of a thing you have to remember to look for: a new format cannot
+        # be added with real assets and no census, and an existing one cannot quietly lose it.
+        #
+        # A spec with real_manifest FALSE is exempt, and honestly so -- its assets are not in
+        # an FX_FA_ROOT install at all (disc-only, like INF and ESA; install-side, like SSF
+        # and RGN; or inside the executable, like EFFECT). Those are covered elsewhere or not
+        # at all, and the spec says which.
+        if have_real and not proves_real:
+            errs.append(
+                "%s: the extract manifest has real %s assets, but no test decodes one "
+                "(real_manifest is true, real_install is false). A format whose files ship "
+                "in the install must have a census -- see #491"
+                % (where, "/".join(fm["extensions"]) or fm["format"]))
+
     # Reverse coverage: every codec/test/fuzz/GUI file must be claimed by a spec.
     sink = errs
     def unclaimed(kind, paths):

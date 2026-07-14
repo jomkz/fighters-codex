@@ -49,6 +49,8 @@ to the shipped 1.02F build.
 (`\WINDOWS\SYSTEM`), not the game directory; `fx install --patch` applies only the
 app-directory records.
 
+> **No `FX_FA_ROOT` census, by nature.** The `.RTP` patch container ships on the **retail disc**, not in an installed game. It is exercised against real media by the `fa_disc_install` CTest (the 1.00F → 1.02F patch chain). See [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 ## Tools
 
 ### fx

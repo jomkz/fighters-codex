@@ -18,7 +18,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [P, PAL]
 ---
 
@@ -89,10 +89,17 @@ gradient (primary text). Index 15 is white (highlight).
 
 ### INSIGMAP.BIN (256 bytes)
 
-Flat 256-entry byte array. Entry 0 = `0x00`; all remaining 255 entries = `0x3B`
-(59 decimal). The `0x3B` fill suggests a "no insignia" sentinel — most insignia
-slots are unused, with the actual insignia assets referenced by the pilot save
-file fields at offsets `0x6E`–`0x94` ([P.md](P.md)).
+Flat 256-entry byte array. Entry 0 = `0x00`.
+
+**It is a map, not a fill.** An earlier version of this page said "all remaining 255 entries =
+`0x3B`" and inferred from that fill that "most insignia slots are unused". The fill is real but
+it is not the table: **135** of the 256 entries are `0x3B` (the no-insignia sentinel) and
+**120 are real slots**, carrying values across the range. Reading it as a constant threw away
+everything it maps. Counted, not surveyed — `tests/test_bin.cpp` asserts both numbers against
+the shipped file ([#491](https://github.com/jomkz/fighters-codex/issues/491)).
+
+The insignia assets themselves are referenced by the pilot save file fields at offsets
+`0x6E`–`0x94` ([P.md](P.md)).
 
 ## File Inventory
 

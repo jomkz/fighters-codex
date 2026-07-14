@@ -43,6 +43,8 @@ entries are raw PKWare DCL streams and `NULL` entries are stored; the four LIB
 archives are stored, so extracting them yields byte-identical LIBs that parse
 straight through [the LIB codec](LIB.md).
 
+> **No `FX_FA_ROOT` census, by nature.** `.ESA` is the installer's own archive: it exists on the **retail disc**, not in an installed game. It *is* exercised against real media — the `fa_disc_install` CTest (`-DFX_FA_DISC1=`/`-DFX_FA_DISC2=`) checks its manifest and a byte-identical repack. See [development.md](https://github.com/jomkz/fighters-codex/blob/main/docs/development.md) § Real-media install mode, and [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 ## Tools
 
 ### fx
