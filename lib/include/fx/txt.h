@@ -12,11 +12,20 @@
 
 namespace fx {
 
+// Is `token` one of the directives the engine actually knows?
+//
+// The vocabulary is a FACT read out of the executable, not a guess: the text interpreter
+// (0x47E1B0) compares each token against this exact set, and a token it does not recognise
+// is just text. So `.ell` -- which a real briefing writes as prose ("get the .ell out",
+// ~K30.MT) -- is NOT a directive, and a parser that calls every `.`-token one says it is.
+bool txt_is_directive(const std::string& token);
+
 struct TxtLine {
     std::string raw;        // line bytes without the terminator
     bool crlf = false;      // terminated by CRLF (else bare LF)
     bool terminated = true; // false only for a final line with no EOL
-    // Directive tokens on this line, in order (".section", "..button", ...).
+    // The directives on this line, in order (".section", "..button", ...). Only tokens the
+    // engine recognises: see txt_is_directive.
     std::vector<std::string> directives;
 };
 

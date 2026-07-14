@@ -17,7 +17,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [CAM, MNU, MT, P]
 ---
 
@@ -46,21 +46,24 @@ Plain text; no binary fields.
 
 ### Directive Engine
 
-The `.TXT` format uses the same directive engine as `.MT` briefing files, plus
-two UI-specific additions:
+`.TXT` and `.MT` share **one** directive engine — the text interpreter at **0x47E1B0**. There
+are no "UI-specific additions": `.button` and `.picture` are in the same vocabulary as
+`.header`, and a briefing could use them. What differs is which files use which.
+
+The vocabulary is a fact read out of the executable; the interpreter compares each token
+against exactly this set, lowercased, and **renders anything else as text**. The complete
+table is in [MT.md](MT.md#directives). The UI templates lean on:
 
 | Directive | Description |
 |-----------|-------------|
-| `.section <N>` | Begin numbered section |
-| `.header` | Switch to header render style (may be used inline: `.header <text> .body`) |
-| `.body` | Switch to body render style |
-| `.center` | Center-align subsequent text |
-| `.left` | Left-align subsequent text |
-| `.underline` | Enable underline |
-| `..underline` | Disable underline |
-| `.page` | Page break — advance to next screen without starting a new section |
-| `.button <label> ..button` | Interactive button element; label text is between the open/close tags |
-| `.picture` | Image placeholder — engine renders the current context image (e.g. nose art) |
+| `.button <label> ..button` | Interactive button; the label is between the open/close tags |
+| `.dbutton <label> ..dbutton` | The same, disabled |
+| `.picture <name>` | Image — the engine renders the current context image (e.g. nose art) |
+| `.page` | Page break — advance to the next screen without starting a new section |
+
+Because an unknown `.`-token is just text, a parser must **match the vocabulary**, not
+assume any `.`-token is a directive: a real briefing writes "get the `.ell` out" as prose
+(`~K30.MT`), and `fx` used to report that as a directive (#491).
 
 ### Campaign Description (6 files)
 
@@ -138,6 +141,6 @@ All 8 live in FA_2.LIB.
 
 **Formats:** [CAM](CAM.md) — campaign definitions paired with campaign
 description `.TXT` files; [MNU](MNU.md) — the campaign selection menu that
-renders these descriptions; [MT](MT.md) — mission briefing text using the same
-directive engine (without `.button`/`.picture`); [P](P.md) — pilot save data
+renders these descriptions; [MT](MT.md) — mission briefing text through the same
+interpreter, and the complete directive table; [P](P.md) — pilot save data
 displayed by SHWPILOT.TXT.
