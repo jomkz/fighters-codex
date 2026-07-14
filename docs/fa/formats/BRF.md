@@ -18,7 +18,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: false
-    real_install: false
+    real_install: true
 related: [OT, NT, PT, JT, SEE, ECM, GAS]
 ---
 
@@ -29,16 +29,6 @@ file extensions share the same tokenizer; the `struct_type` field
 distinguishes them. This page is the family overview — each member format has
 its own spec (see Related).
 
-The "Relocatable" in the name refers to pointer relocation. Each BRF file
-opens with a pointer table — the `:name` lines before the first `\tend` — that
-enumerates every `ptr` field in the record by symbolic name. This is a
-relocation table: in the plain-text format, `ptr` fields hold quoted filename
-strings or `NULL`; in the engine's in-memory representation they become actual
-pointers. At load time the engine walks the pointer table and resolves each
-named field to a memory address, making the loaded record independent of where
-it was placed — relocatable. The mechanism is the same concept as relocation
-entries in a linker object file, applied to game data.
-
 | Extension | struct_type | Contents |
 |-----------|-------------|----------|
 | `.OT` | 1 | Object type (generic game object) |
@@ -48,6 +38,66 @@ entries in a linker object file, applied to game data.
 | `.SEE` | 10 | Seeker type (missile guidance) |
 | `.ECM` | 9 | ECM pod definition |
 | `.GAS` | 8 | Gas / fuel tank definition |
+
+### A BRF file is a text DLL
+
+The engine loads one through **`LoadDLL` (0x41EB60) — the same entry point it uses for a
+real Win32 DLL**. `IsBrentDLL` (0x41E8F0) sniffs the magic first line; if it matches,
+`LoadBrentDLL` (0x41F240) takes over, and if it does not, the very same function goes on to
+parse PE headers and section tables. That is what "Relocatable" means here, and it is the
+whole design: a BRF file is a **hand-written object file**, with imports and relocations,
+assembled at load time instead of by a linker.
+
+`LoadBrentDLL` is a one-pass assembler with a cursor that only ever advances:
+
+| Keyword | What it emits | Bytes |
+|---------|---------------|-------|
+| `byte` / `word` / `dword` | the operand(s), little-endian | 1 / 2 / 4 each |
+| `string "text"` | the characters **plus a NUL** | `len + 1` |
+| `symbol NAME` | `SMAddress(NAME)` — the address of one of the **engine's own** symbols | 4 |
+| `ptr NAME` | a placeholder, plus a **relocation** against label `NAME` | 4 |
+| `:NAME` | nothing — it **declares a label** at the cursor | 0 |
+| `end` | terminates the **file** | — |
+
+Anything else is fatal: `ErrorExit("Unknown command '%s' in LoadBrentDLL")`.
+
+At `end` (or EOF) the loader allocates a handle of exactly `cursor - base` bytes, copies the
+image in, and walks the relocation list back-patching every `ptr` with the address of its
+label. Both the label and the `ptr` target are passed through `strlwr`, so **they resolve
+case-insensitively**.
+
+Three consequences the codec got wrong until #491, none of which a round-trip test can see
+(serialization replays the file's own lines):
+
+- **A `:label` block is not "a table of strings".** It is a labelled offset into the same
+  image, and it may hold **numeric** fields. The aircraft records rely on that: `:hards` is
+  the inline hardpoint array — 24 bytes per station, each holding a `ptr` to that station's
+  default store — and `:env` is the flight envelope. A parser that assumes every block is a
+  string table silently drops both, for all 145 shipped aircraft.
+- **A `string` is `len + 1` bytes, not 4.** Everything after one lands at the wrong offset.
+- **`end` ends the file, not a block.** It is the first keyword the loader tests, and it
+  jumps straight to the allocate-and-finish path. All 534 shipped records carry exactly one,
+  as their last token.
+
+`symbol` is an **import**: `SMAddress` resolves the name against the executable's own symbol
+table, so the shipped data names engine functions directly. Every `symbol` in the retail
+records is a **class proc** — and each one is a selector that falls through to its parent,
+which is how the class hierarchy is expressed:
+
+| Symbol | Records | Recovered as |
+|--------|---------|--------------|
+| `_OBJProc` | 161 | the base class proc |
+| `_PLANEProc` | 145 | aircraft |
+| `_PROJProc` | 135 | projectiles |
+| `_GVProc` | 73 | ground vehicles — delegates to `_OBJProc` |
+| `_STRIPProc` | 13 | airstrips |
+| `_CARRIERProc` | 5 | carriers |
+| `_CATGUYProc` | 1 | the catapult crewman |
+| `_EJECTProc` | 1 | the ejected pilot |
+
+`tests/test_brf.cpp` resolves all 534 of them against `db/symbols/` — the data naming a
+function the symbol database has not claimed is a hole in the reconstruction, and that is how
+`_GVProc` came to be claimed.
 
 ## Tools
 
@@ -80,40 +130,79 @@ further conversion needed.
 
 ## File Layout
 
-Plain text; no binary fields. (Hex values use the `$XX` prefix; fixed-point /
-relative values use the `^XXXXX` prefix.)
+Plain text; no binary fields. Hex values use the `$XX` prefix; negatives are written
+`^XXXXX` (meaning `-XXXXX`).
+
+**The record comes first, the labelled blocks after it** — the shape all 534 shipped records
+have, and the only shape that loads. (An earlier version of this page said the pointer table
+came first and that `\tend` terminated each block. It does not: `end` ends the file, so a
+file written that way would load as nothing but its strings.)
 
 ```
 [brent's_relocatable_format]
 
-:<ptr_name1>
-:<ptr_name2>
-\tend
+;---------------- START OF OBJ_TYPE ----------------
+    byte 1                  ; the record's own fields, emitted at the cursor
+    word 166                ; type_size -- this record's total size, in bytes
+    ...
+    symbol _OBJProc         ; an import: the class proc
+;---------------- END OF OBJ_TYPE ----------------
 
-<kind> <value>
-<kind> <value>
-...
-\tend
+:hards                      ; a label -- and a NUMERIC block: the inline hardpoint array
+;-------- hardpoint 0
+    word $8
+    ...
+    ptr defaultTypeName0    ; the station's default store
 
-[<section_name>]
-<kind> <value>
-...
-\tend
+:ot_names                   ; a label -- a string block, past the end of the record
+    string "A-10"
+    string "A-10 Thunderbolt"
+    string "A10.PT"
+:shape
+    string "a10.SH"
+    end
 ```
+
+Sections are **comment-delimited** (`;---- START OF PLANE_TYPE ----`); the only bracketed
+name in the file is the magic line. The record is self-describing: it declares its own
+sections, and every field declares its own width — so a field's offset is a fact read from
+the file, never a schema imposed on it.
 
 ### Tokens
 
-| Kind | Value syntax | C++ type |
-|------|-------------|---------|
-| `byte` | decimal integer | `uint8_t` |
-| `word` | decimal integer | `uint16_t` / `int16_t` |
-| `dword` | decimal integer | `uint32_t` / `int32_t` |
-| `ptr` | `"filename"` or `NULL` | `std::string` (may be empty) |
-| `symbol` | `NAME` | `std::string` |
-| `string` | `"text"` | `std::string` |
+| Kind | Value syntax | Emits |
+|------|-------------|-------|
+| `byte` | `5`, `$ff`, `^3` | 1 byte |
+| `word` | as above | 2 bytes, little-endian |
+| `dword` | as above | 4 bytes, little-endian |
+| `ptr` | a **label name** (`shape`, `hards`) | 4 bytes, relocated to that label |
+| `symbol` | an engine symbol (`_OBJProc`) | 4 bytes, `SMAddress(name)` |
+| `string` | `"text"` | `len + 1` bytes (NUL-terminated) |
 
-`\tend` terminates each block. The pointer table (`:name` lines) comes first,
-then the main field block, then optional named subsections.
+`byte`/`word`/`dword` keep consuming operands **for as long as the next token is a number**,
+so `word 1 2 3` emits three words. No shipped file uses the repeat form, but the loader
+accepts it and `fx` decodes it.
+
+`ptr` never holds a filename or `NULL` — it holds the name of a `:label`, and the filename
+it appears to carry is a `string` inside the block it points at.
+
+### The record, and the image
+
+The `word` at image offset 1 is **`type_size`: the record's own total size**. It is a prefix
+of the assembled image — the string blocks live past its end:
+
+| | Root fields | + inline `hards` | = `type_size` |
+|---|---|---|---|
+| `.OT` (170 records) | 166 | — | **166** |
+| `.JT` (135) | 166 + 149 (`PROJ_TYPE`) | — | **315** |
+| `.NT` (84) | 166 + 20 (`NPC_TYPE`) | 0–6 stations | **186 + 24n** |
+| `.PT` (145) | 166 + 20 + `PLANE_TYPE` | 1–20 stations | varies |
+
+Every record begins with `OBJ_TYPE`; each class appends its own section, and the sections
+name the hierarchy outright — `.PT` carries `OBJ_TYPE` → `NPC_TYPE` → `PLANE_TYPE`, so a
+plane *is* an NPC *is* an object. `tests/test_brf.cpp` asserts the identity above against
+every shipped record: the fields the decoder produced must tile the image exactly, and must
+sum to the size the record declares for itself.
 
 ### OT Fields (Object Type)
 
@@ -358,9 +447,25 @@ PLANE_TYPE binary layout.
 
 ## Round-Trip Notes
 
-- Parse → serialize produces byte-identical files for all OT/NT/PT files in
-  FA_2.LIB; `tests/test_brf.cpp` asserts raw-byte preservation.
-- Null pointers are written as `ptr NULL`.
+`tests/test_brf.cpp` runs a census over **every one of the 534 shipped `.OT`/`.NT`/`.PT`/`.JT`
+records** (under `FX_FA_ROOT`), asserting what the *decode produced*, not just that a repack
+matches:
+
+- parse → serialize is byte-identical (this page claimed that for years; no test performed it);
+- every field, root and block, **tiles the assembled image exactly** — no gaps, no overlap;
+- the fields sum to the **`type_size` the record declares for itself**, with the inline
+  `hards` array contiguous with the root fields, and a whole number of 24-byte stations;
+- every `ptr` **resolves** to a declared label (case-insensitively, as the loader does);
+- every `symbol` names a function claimed in `db/symbols/`.
+
+The round-trip alone proved none of this. It passed throughout the years the codec was
+dropping every field inside a `:label` block, because serialization replays the file's own
+lines — see [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
+### Notes
+
+- `ptr` holds a **label name**, never a filename and never `NULL`. (The `ptr NULL` this page
+  used to describe appears in no shipped record.)
 - Integer field sign interpretation must match the type assignments in the
   spec; wrong signedness produces visually wrong values in `info` output.
 

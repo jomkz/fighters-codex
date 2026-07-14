@@ -156,7 +156,7 @@ const int GAS_COUNT = (int)(sizeof(GAS_FIELDS) / sizeof(GAS_FIELDS[0]));
 
 static void print_value(const BrfField& f, const BrfDoc& doc) {
     if (f.type == "ptr") {
-        const BrfTable* tbl = doc.find_table(f.value);
+        const BrfBlock* tbl = doc.find_block(f.value);
         if (tbl && !tbl->strings.empty())
             printf("%s -> \"%s\"", f.value.c_str(), tbl->strings[0].c_str());
         else
@@ -211,12 +211,23 @@ void brf_print_info(const BrfDoc& doc, const char* format) {
     else if (strcmp(format, "gas") == 0) print_flat(doc, GAS_FIELDS, GAS_COUNT);
     else                                 print_sectioned(doc);
 
-    if (!doc.tables.empty()) {
-        printf("\n--- Pointer Tables ---\n");
-        for (auto& t : doc.tables) {
-            printf("  :%s\n", t.name.c_str());
-            for (auto& s : t.strings)
-                printf("    \"%s\"\n", s.c_str());
+    if (!doc.blocks.empty()) {
+        printf("\n--- Blocks (labelled offsets into the loaded image) ---\n");
+        for (auto& b : doc.blocks) {
+            printf("  :%-18s @ +0x%04X  %u bytes\n", b.name.c_str(), b.offset, b.width);
+            // A block is not necessarily a string table. `:hards` is the inline hardpoint
+            // array and `:env` is the flight envelope -- both are numeric, and both were
+            // dropped on the floor until #491.
+            for (auto& f : b.fields) {
+                if (f.type == "string") {
+                    printf("    \"%s\"\n", f.value.c_str());
+                    continue;
+                }
+                printf("    +0x%04X  %-6s ", f.image_offset, f.type.c_str());
+                print_value(f, doc);
+                if (!f.comment.empty()) printf("  ; %s", f.comment.c_str());
+                printf("\n");
+            }
         }
     }
 }

@@ -78,13 +78,16 @@ bool contains(const std::string& hay, const char* needle) {
 }
 
 // A minimal OT-shaped BRF document, DELIMITING ITS OWN RECORD as the retail files do.
+//
+// The record comes FIRST and the `:label` blocks after it, which is the shape all 534 shipped
+// records have -- and the only shape that loads. This fixture used to open with `:ot_names`,
+// following BRF.md's claim that "the pointer table comes first"; the engine tokenizer says
+// otherwise, and so does every real file. `end` finishes the FILE (it is the first keyword
+// LoadBrentDLL tests, and it jumps to the allocate-and-finish path), so a fixture that put a
+// block's `end` before the fields was describing a file the engine would load as nothing but
+// two strings.
 const char* kOtDoc =
     "[brent's_relocatable_format]\r\n"
-    "\r\n"
-    ":ot_names\r\n"
-    "\tstring \"SHED\"\r\n"
-    "\tstring \"Storage Shed\"\r\n"
-    "\tend\r\n"
     "\r\n"
     ";---------------- START OF OBJ_TYPE ----------------\r\n"
     "\tbyte 1\r\n"          // +0x00 struct_type = OT
@@ -94,6 +97,10 @@ const char* kOtDoc =
     "\tdword $100\r\n"      // +0x09 type_flags
     "\tword $100\r\n"       // +0x0D obj_class
     ";---------------- END OF OBJ_TYPE ----------------\r\n"
+    "\r\n"
+    ":ot_names\r\n"
+    "\tstring \"SHED\"\r\n"
+    "\tstring \"Storage Shed\"\r\n"
     "\tend\r\n";
 
 // A struct_type-7 document that DELIMITS ITS OWN RECORDS, exactly as the retail files do.
@@ -183,7 +190,7 @@ TEST_CASE("ot-shaped document round-trips byte-identically through brf") {
     auto data = bytes(kOtDoc);
     auto doc  = brf_parse(data.data(), data.size());
     REQUIRE(doc.fields.size() == 6u);
-    REQUIRE(doc.tables.size() == 1u);
+    REQUIRE(doc.blocks.size() == 1u);
     REQUIRE(brf_serialize(doc) == data);
 
     auto jt   = bytes(jt_doc());
@@ -206,8 +213,8 @@ TEST_CASE("brf_print_info labels an OT document and resolves name pointers") {
     CHECK(contains(out, "struct_type"));           // named from OUR reconstruction
     CHECK(contains(out, "type_size"));
     CHECK(contains(out, "obj_class"));
-    CHECK(contains(out, "ot_names -> \"SHED\""));   // ptr resolved to its table
-    CHECK(contains(out, "Pointer Tables"));
+    CHECK(contains(out, "ot_names -> \"SHED\""));   // ptr resolved to its block
+    CHECK(contains(out, "Blocks"));
     CHECK(contains(out, "\"Storage Shed\""));
     // The file declares no extension, so none is invented.
     CHECK_FALSE(contains(out, "PLANE_TYPE"));

@@ -202,24 +202,34 @@ Questions.
 
 ```
 > fx pt info F16C.PT
-File: F16C.PT  (219 fields, 20 tables)
+File: F16C.PT  (219 record fields, 20 blocks)
+Image: 2641 bytes; the record declares type_size = 660
 
---- OT/General Section (struct_type=5) ---
-  [  0] struct_type              = 5            (5)  ; 1=OT 3=NT 5=PT 7=JT
-  [  3] names                    = ot_names -> "F-16C"  ; ptr -> short, long, filename
-  [  6] shape                    = shape -> "f16.SH"  ; ptr -> .SH filename
+--- OBJ_TYPE ---
+  +0x000  byte   struct_type      5            (5)  ; 1=OT (static) 3=NT (npc/gv) 5=PT (aircraft) 7=JT (projectile)
+  +0x001  word   type_size        660          (660)  ; u16 total bytes of this type record
+  +0x005  ptr    names            ot_names -> "F-16C"  ; ptr -> short, long, filename
+  +0x00F  ptr    shape            shape -> "f16.SH"  ; ptr base shape
   ...
---- NT/Npc Extension (struct_type>=3) ---
-  [ 60] npc_flags                = 0            (0)  ; u32 bitfield; bits 18-20/25-26 control AI state
+--- NPC_TYPE ---
   ...
---- PT/Plane Extension (struct_type>=5) ---
-  [ 69] pt_flags                 = 32767        (32767)  ; $1=Jet $2=Hook $4=TwoSeat $8=Helo $10=Eject $20=VTOL $40=Carrier $80=Bay
+--- PLANE_TYPE ---
   ...
---- Pointer Tables ---
-  :ot_names
+
+--- Blocks (labelled offsets into the loaded image) ---
+  :hards              @ +0x01BC  216 bytes
+    +0x01BC  word   $8           (8)
+    ...
+  :ot_names           @ +0x0294  30 bytes
     "F-16C"
     ...
 ```
+
+Offsets are the ones the **engine's own loader** assembles (see
+[fa/formats/BRF.md](fa/formats/BRF.md)); names come from the symbol database. `Blocks` are
+labelled offsets into the same image — most hold strings, but `:hards` (the inline hardpoint
+array) and `:env` (the flight envelope) hold **numeric** fields, and both were invisible
+before #491.
 
 *See also: [fa/formats/BRF.md](fa/formats/BRF.md) · [fa/formats/OT.md](fa/formats/OT.md) · [fa/formats/NT.md](fa/formats/NT.md) · [fa/formats/PT.md](fa/formats/PT.md) · [fa/formats/JT.md](fa/formats/JT.md) · [fa/formats/SEE.md](fa/formats/SEE.md) · [fa/formats/ECM.md](fa/formats/ECM.md) · [fa/formats/GAS.md](fa/formats/GAS.md)*
 

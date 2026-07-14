@@ -49,7 +49,17 @@ static int cmd_info(int argc, char** argv, const char* /*format_hint*/) {
     }
 
     std::string fmt = ext_format(src);
-    printf("File: %s  (%zu fields, %zu tables)\n\n", src, doc.fields.size(), doc.tables.size());
+    printf("File: %s  (%zu record fields, %zu blocks)\n", src, doc.fields.size(),
+           doc.blocks.size());
+    // The image is what the loader would allocate; the record is the prefix of it the file
+    // declares as its own type_size. They differ: the string tables live past the record.
+    const uint32_t declared = brf_declared_size(doc);
+    if (declared)
+        printf("Image: %u bytes; the record declares type_size = %u\n", doc.image_size,
+               declared);
+    else
+        printf("Image: %u bytes\n", doc.image_size);
+    printf("\n");
     brf_print_info(doc, fmt.c_str());
     return 0;
 }

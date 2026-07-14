@@ -173,8 +173,8 @@ AssetIndex asset_index_build(const Workspace& ws, const IndexProgressFn& progres
                 for (const fx::MissionObj& o : mo.objects) add_edge(k, o.type_file);
             } else { // BRF entity records: pt/ot/nt/jt/see/ecm/gas
                 fx::BrfDoc doc = fx::brf_parse(rec.data(), rec.size());
-                for (const fx::BrfTable& t : doc.tables)
-                    for (const std::string& s : t.strings) add_edge(k, s);
+                for (const fx::BrfBlock& b : doc.blocks)
+                    for (const std::string& s : b.strings) add_edge(k, s);
             }
         }
     }
