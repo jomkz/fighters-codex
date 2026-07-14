@@ -20,7 +20,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [MNU]
 ---
 
@@ -39,13 +39,14 @@ selected.
 ### fx
 
 ```
-fx dlg info    <file.DLG>            # container check + CODE section geometry
+fx dlg info    <file.DLG>            # container check + CODE geometry + imports
 fx dlg strings <file.DLG> [-n MIN]   # embedded control label strings
 ```
 
 Container-level surface for now: same MZ + Phar Lap `PL` family as
-[CAM](CAM.md)/[MNU](MNU.md); all 92 shipped dialogs validate and surface
-their label strings. The structural record-table decode below is a larger
+[CAM](CAM.md)/[MNU](MNU.md). `tests/test_dlg.cpp` checks the claim against a real install:
+all 92 shipped dialogs validate, surface their label strings, and import only names that
+`db/symbols/` claims. The structural record-table decode below is a larger
 reverse-engineering task — the on-disk record layout differs from the
 in-memory layout documented here (records begin at the `draw_fn_ptr` thunk
 VA; the `type_flags`/`next_record_ptr` header fields are engine-written) —
@@ -55,19 +56,50 @@ and is tracked under #54.
 
 All multi-byte integers are little-endian.
 
-Win32 PE DLL. All DLG files import from `main.dll`. The set of imported
-drawing functions varies per dialog and reveals the control types used:
+Win32 PE DLL. **All 92 dialogs import from `main.dll` — the game executable itself.** The set
+of imports *is* the set of control types the dialog uses: it says what the dialog is made of,
+in the engine's own names.
 
-| Import | Control rendered |
-|--------|-----------------|
-| `_DrawAction` | Clickable button |
-| `_DrawRocker` | Toggle / rocker selector |
-| `_DrawEditBox` | Editable text input field |
-| `_DrawText` | Static text label |
-| `_DrawFormattedText` | Multi-line formatted text block |
-| `_DrawCampaignList` | Campaign list box |
-| `_cancelString` | Localized "Cancel" button label |
-| `_okString` | Localized "OK" button label |
+`fx dlg info` decodes the import table (`pe_imports`), and `tests/test_dlg.cpp` resolves every
+imported name against `db/symbols/` across all 92 shipped dialogs. There are **34 distinct
+imports**, not the 8 an earlier version of this table listed — the count below is the number of
+dialogs importing each, and it is a measured fact, not a survey.
+
+| Import | Dialogs | Control rendered |
+|--------|--------:|-----------------|
+| `_DrawAction` | 84 | Clickable button |
+| `_cancelString` | 72 | Localized "Cancel" label (a **global**, not a function) |
+| `_okString` | 69 | Localized "OK" label |
+| `_DrawText` | 52 | Static text label |
+| `_DrawListBox` | 41 | List box |
+| `_DrawRocker` | 24 | Toggle / rocker selector |
+| `_DrawEditBox` | 9 | Editable text input field |
+| `_DrawCheck` | 4 | Checkbox |
+| `_DrawDial` | 2 | Dial |
+| `_DrawSliderVert` | 2 | Vertical slider |
+| `_DrawSliderHoriz` | 1 | Horizontal slider |
+| `_DrawToggle` | 1 | Toggle |
+| `_DrawLight` | 1 | Indicator light |
+| `_DrawFormattedText` | 1 | Multi-line formatted text block |
+| `_DrawCampaignList` | 1 | Campaign list box |
+| `_DrawMissList` | 1 | Mission list box |
+| `_exitString` | 1 | Localized "Exit" label |
+
+**The `320` family — a low-resolution variant set.** Eleven further imports carry a `320`
+suffix, and only low-res dialogs use them: `_DrawText320`, `_DrawCheck320`, `_DrawDial320`,
+`_DrawYes320`, `_DrawNo320`, `_DrawCancel320`, `_DrawDone320`, `_DrawOK320`, `_DrawSwitch320`,
+`_SliderVert320`. They are the 320×200 counterparts of the controls above — the same dialog
+system rendered at half resolution.
+
+**`*Preload` hooks.** Six dialogs import a preload entry point rather than a control:
+`_MultiPreload` (7), `_GrafPrefPreload` (4), `_ChoosePreload` (2), `_Info2640Preload` (2),
+`_Info640Preload` (1), `_SndPrefPreload` (1), plus `_TopCenterDialog` (5). These run before the
+dialog is drawn.
+
+> `_okString`, `_cancelString` and `_exitString` are **globals**, and `db/` had never claimed
+> them, though 72 shipped overlays name one. Decoding the import table is what surfaced that —
+> the same way the BRF census surfaced `_GVProc` (#502). They are claimed now, along with their
+> table-mates `_yesString` and `_noString`.
 
 ### Dispatch Table Layout — confirmed
 

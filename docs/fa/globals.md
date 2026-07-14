@@ -126,6 +126,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00521D94` | `_hudFpmX` | re | flight-path-marker screen X; anchor for nearly all HUD symbology; extent proven in the #455 close-out |
 | `0x00521D96` | `_hudFpmY` | re | flight-path-marker screen Y |
 
+### Core shell / menu / dialog UI
+
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 5 named referenced globals
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00502170` | `yesString` | sms | localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous |
+| `0x00502174` | `noString` | sms | localized dialog-button label |
+| `0x00502178` | `okString` | sms | localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491) |
+| `0x0050217C` | `cancelString` | sms | localized dialog-button label; imported by 72 of the 92 shipped .DLG overlays (#491) |
+| `0x00502184` | `exitString` | sms | localized dialog-button label; imported by 1 shipped .DLG overlay (#491) |
+
 ### View / camera & replay (VIEW)
 
 [`view.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/view.csv) · [page](view.md) — 5 named referenced globals

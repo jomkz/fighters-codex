@@ -9,6 +9,14 @@
 #include <fx/pe.h>
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
+    // The import directory: every RVA in it comes from the file, and each one is mapped back
+    // to a file offset through the section table -- so the arithmetic is entirely
+    // attacker-controlled (#491).
+    for (const fx::PeImport& im : fx::pe_imports(data, size)) {
+        volatile size_t n = im.module.size() + im.name.size() + im.ordinal;
+        (void)n;
+    }
+
     const fx::CodeSection cs = fx::pe_code_section(data, size);
     if (!cs.data) return 0;
     volatile uint8_t sink = 0;
