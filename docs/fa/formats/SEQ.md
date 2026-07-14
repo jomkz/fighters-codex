@@ -17,7 +17,7 @@ codec:
   fixtures:
     synthetic: true
     real_manifest: true
-    real_install: false
+    real_install: true
 related: [11K, MUS]
 ---
 
@@ -51,14 +51,23 @@ SEQ files are plain ASCII — open and edit directly, no conversion step needed.
 Plain text; no binary fields.
 
 ```
-; optional comment lines
+; optional comment lines            (or //)
 [blank lines]
-<TAB><time><TAB><command>[<TAB><arg1> <arg2> ...]<CR><LF>
+<INDENT><time>[ sync]<TAB><command>[<TAB><arg1> <arg2> ...]<CR><LF>
 ```
 
-- Lines beginning with `;` are comments and are preserved verbatim on round-trip.
-- Event lines begin with a tab, then a time field, then another tab, then a command.
+- A line is a **comment** when it opens with `;` **or `//`** (`SeqSkipComments`, 0x445440).
+- An event line is **indented with spaces or a tab** — the engine skips both alike before the
+  content. 530 shipped events use a tab, and **three** (`UDEAD.SEQ`, `UWON.SEQ`, `ULOST.SEQ`)
+  indent their final `fadeout` with **six spaces**.
+
+  > `fx` used to require a tab, so it classified those three lines as comments and **dropped
+  > the event** — the fadeout vanished from the timeline. All three files still round-tripped
+  > byte-identically, because an unrecognised line is re-emitted verbatim. See
+  > [#491](https://github.com/jomkz/fighters-codex/issues/491).
+
 - Lines may use `\r\n` or `\n` — write `\r\n` on output.
+- A trailing `0x1A` (DOS EOF) is preserved verbatim; 7 shipped sequences carry one.
 
 ### Time field
 
@@ -77,19 +86,41 @@ Arguments are space-separated on the same line, after the command:
 - Quoted strings: `"NAME"` (filename references, no extension)
 - Bare numbers / floats: `256`, `.5`, `0`
 
-### Known commands
+### Commands — the symbol table *is* the vocabulary
 
-| Command | Typical args | Notes |
-|---------|-------------|-------|
-| `bitmap` | `"NAME" x y flags width` | Display image at (x,y) |
-| `palette` | `"NAME"` | Load a named palette |
-| `font` | `"NAME"` | Set current font |
-| `video` | `"NAME"` | Play video clip |
-| `sound` | `"NAME"` | Play sound (quoted, no extension; `^` prefix = looping) |
-| `fadein` | `seconds` | Fade to full brightness |
-| `fadeout` | `seconds` | Fade to black |
-| `wait` | (none) | Pause until sound/video completes |
-| `sync` | sub-command... | Execute sub-command synchronously |
+A SEQ command is an **import**. `_SeqContinue` (0x445700) builds `"_SEQ" + <command>`, resolves
+it with **`SMAddress`**, and calls whatever comes back — the same mechanism BRF's `symbol`
+keyword uses ([BRF.md](BRF.md)). That is why `fadeout` appears **nowhere in FA.EXE**: the
+string that exists is `_SEQfadeout`, in **FA.SMS**. A command that does not resolve simply
+does nothing.
+
+So the vocabulary is not a guess — it is whatever `_SEQ*` symbols the engine exports, and
+`tests/test_seq.cpp` checks every command in every shipped sequence against `db/symbols/`.
+
+| Command | Symbol | Typical args | Notes |
+|---------|--------|-------------|-------|
+| `bitmap` | `_SEQbitmap` | `"NAME" x y flags width` | Display image at (x,y) |
+| `palette` | `_SEQpalette` | `"NAME"` | Load a named palette |
+| `font` | `_SEQfont` | `"NAME"` | Set current font |
+| `video` | `_SEQvideo` | `"NAME"` | Play video clip |
+| `sound` | `_SEQsound` | `"NAME"` | Play sound (quoted, no extension; `^` prefix = looping) |
+| `fadein` | `_SEQfadein` | `seconds` | Fade to full brightness |
+| `fadeout` | `_SEQfadeout` | `seconds` | Fade to black |
+| `wait` | `_SEQwait` | (none) | Pause until sound/video completes |
+| `text` | `_SEQtext` | — | **Exported, unused by any shipped sequence** |
+| `music` | `_SEQmusic` | — | Exported, unused — see [MUS](MUS.md) |
+| `sndoff` | `_SEQsndoff` | — | Exported, unused |
+| `call` | `_SEQcall` | — | Exported, unused |
+| `run` | `_SEQrun` | — | Exported, unused |
+
+**`sync` is not a command** — it is a modifier that may precede one (`+23 sync fadeout .5`).
+An earlier version of this table listed it as a command and omitted the five above.
+
+### Includes
+
+`include "NAME"` is part of the language (`SeqParseInclude`, 0x4456B0), alongside macro
+substitution (`SeqSubstitute`, 0x4454D0). **No shipped sequence uses either**, and `fx` does
+not expand them.
 
 ### Example
 
@@ -107,6 +138,15 @@ Arguments are space-separated on the same line, after the command:
 `fx seq pack` emits files byte-identical to the originals (tabs, trailing
 spaces, CRLF); `tests/test_seq.cpp` asserts it, including comment and
 blank-line preservation. Parsed event count for KDEAD.SEQ: 4 events.
+
+`tests/test_seq.cpp` also runs a census over **all 126 shipped sequences** (under
+`FX_FA_ROOT`): each round-trips, and every one of the **533 events** decodes to a command that
+resolves as a `_SEQ*` symbol in `db/symbols/`. The round-trip on its own proved none of that —
+`seq_serialize` replays each line's own bytes, so a line it failed to understand round-tripped
+exactly as well as one it did, which is how three events sat undecoded behind a green suite.
+
+Census: `126 sequences, 533 events (3 space-indented, 166 sync, 62 relative);
+bitmap=62 fadein=90 fadeout=175 font=28 palette=28 sound=45 video=103 wait=2`
 
 ## Related
 

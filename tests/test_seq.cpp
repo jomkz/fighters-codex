@@ -1,5 +1,14 @@
 ﻿#include <catch2/catch_test_macros.hpp>
 #include <fx/seq.h>
+#include <fx/ealib.h>
+#include <cctype>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <ios>
+#include <map>
+#include <set>
+#include <string>
 #include <cstring>
 #include <vector>
 
@@ -157,4 +166,152 @@ TEST_CASE("seq serialize normalizes line endings and is idempotent") {
         if (once[i] == '\r') CHECK(once[i + 1] == '\n');
         if (once[i] == '\n') CHECK((i > 0 && once[i - 1] == '\r'));
     }
+}
+
+// ---------------------------------------------------------------------------
+// The command vocabulary is not a guess -- it is the SYMBOL TABLE (#491).
+//
+// _SeqContinue (0x445700) builds "_SEQ" + the command token and calls SMAddress on it, then
+// calls what comes back. That is why "fadeout" appears nowhere in FA.EXE: the string that
+// exists is `_SEQfadeout`, in FA.SMS. So a SEQ command is an IMPORT, exactly like a BRF
+// `symbol`, and the vocabulary is whatever `_SEQ*` symbols the engine exports.
+// ---------------------------------------------------------------------------
+
+namespace {
+
+std::set<std::string> db_seq_commands() {
+    std::set<std::string> cmds;
+    for (const auto& de : std::filesystem::directory_iterator(FX_DB_DIR "/symbols")) {
+        if (de.path().extension() != ".csv") continue;
+        std::ifstream f(de.path());
+        std::string line;
+        std::getline(f, line);  // header
+        while (std::getline(f, line)) {
+            size_t a = line.find(',');
+            if (a == std::string::npos) continue;
+            size_t b = line.find(',', a + 1);
+            if (b == std::string::npos) continue;
+            size_t c = line.find(',', b + 1);
+            std::string name = line.substr(b + 1, c - b - 1);
+            if (name.rfind("_SEQ", 0) == 0) cmds.insert(name.substr(4));
+        }
+    }
+    return cmds;
+}
+
+}  // namespace
+
+TEST_CASE("the SEQ commands are the engine's _SEQ* symbols") {
+    std::set<std::string> cmds = db_seq_commands();
+    // The eight the shipped sequences use...
+    for (const char* c : { "bitmap", "palette", "font", "video", "sound",
+                           "fadein", "fadeout", "wait" })
+        REQUIRE(cmds.count(c) == 1);
+    // ...and the five the engine exports that no shipped sequence calls. SEQ.md listed
+    // neither these nor the fact that `sync` is a MODIFIER, not a command.
+    for (const char* c : { "call", "music", "run", "sndoff", "text" })
+        REQUIRE(cmds.count(c) == 1);
+    REQUIRE(cmds.count("sync") == 0);
+}
+
+// The regression: three shipped sequences indent their last event with SPACES.
+TEST_CASE("a space-indented event is an event (UDEAD/UWON/ULOST.SEQ)") {
+    // UDEAD.SEQ, verbatim.
+    auto data = bytes("\t0\tbitmap \"UDEAD\" 0 0 0 256\r\n"
+                         "\t0 \tfadein  .5\r\n"
+                         "\t0\tsound \"^UDEAD.11K\"\r\n"
+                         "      +23 sync\tfadeout\t.5\r\n");
+    auto seq = seq_parse(data.data(), data.size());
+
+    REQUIRE(seq.is_event.size() == 4u);
+    REQUIRE(seq.is_event[3]);                      // was false: dropped as a comment
+    REQUIRE(seq.events[3].command  == "fadeout");
+    REQUIRE(seq.events[3].sync);
+    REQUIRE(seq.events[3].relative);
+    REQUIRE(seq.events[3].ticks    == 23);
+    REQUIRE(seq.events[3].indent   == "      ");   // six spaces, and they survive
+    REQUIRE(seq_serialize(seq) == data);           // byte-identical either way
+}
+
+TEST_CASE("a // line is a comment, as the engine's SeqSkipComments has it") {
+    auto data = bytes("// a comment\r\n; also a comment\r\n\t0\tfadein .5\r\n");
+    auto seq = seq_parse(data.data(), data.size());
+    REQUIRE_FALSE(seq.is_event[0]);
+    REQUIRE_FALSE(seq.is_event[1]);
+    REQUIRE(seq.is_event[2]);
+    REQUIRE(seq_serialize(seq) == data);
+}
+
+// ---------------------------------------------------------------------------
+// The real-asset census (#491 A).
+// ---------------------------------------------------------------------------
+
+TEST_CASE("SEQ decode census: every shipped sequence, against the symbol table") {
+    const char* root = std::getenv("FX_FA_ROOT");
+    if (!root || !*root)
+        SKIP("FX_FA_ROOT not set (real-asset mode runs on the benches)");
+    namespace fs = std::filesystem;
+
+    const std::set<std::string> cmds = db_seq_commands();
+    REQUIRE_FALSE(cmds.empty());
+
+    auto lower = [](std::string s) {
+        for (char& c : s) c = (char)std::tolower((unsigned char)c);
+        return s;
+    };
+
+    int files = 0, events = 0, space_indented = 0, sync = 0, relative = 0;
+    std::map<std::string, int> used;
+
+    for (const auto& de : fs::directory_iterator(root)) {
+        if (!de.is_regular_file()) continue;
+        if (lower(de.path().extension().string()) != ".lib") continue;
+        std::ifstream f(de.path(), std::ios::binary | std::ios::ate);
+        std::vector<uint8_t> lib((size_t)f.tellg());
+        f.seekg(0);
+        f.read((char*)lib.data(), (std::streamsize)lib.size());
+
+        for (const auto& e : ealib_read_dir(lib.data(), lib.size())) {
+            if (lower(fs::path(e.name).extension().string()) != ".seq") continue;
+            auto rec = ealib_extract(lib.data(), lib.size(), e, true);
+            INFO(de.path().filename().string() << " : " << e.name);
+            REQUIRE_FALSE(rec.empty());
+
+            SeqFile seq = seq_parse(rec.data(), rec.size());
+
+            // 1. The round-trip SEQ.md claimed and never tested against a real file.
+            REQUIRE(seq_serialize(seq) == rec);
+
+            for (size_t i = 0; i < seq.is_event.size(); i++) {
+                if (!seq.is_event[i]) continue;
+                const SeqEvent& ev = seq.events[i];
+                INFO("event: " << ev.raw);
+
+                // 2. Every command resolves as an import: the engine calls
+                //    SMAddress("_SEQ" + command) and jumps to whatever it gets.
+                REQUIRE(cmds.count(ev.command) == 1);
+
+                // 3. The indent is spaces or a tab -- and it is never empty, since an
+                //    unindented non-comment line would be something else entirely.
+                REQUIRE_FALSE(ev.indent.empty());
+                REQUIRE(ev.indent.find_first_not_of(" \t") == std::string::npos);
+                if (ev.indent.find(' ') != std::string::npos) space_indented++;
+
+                used[ev.command]++;
+                if (ev.sync) sync++;
+                if (ev.relative) relative++;
+                events++;
+            }
+            files++;
+        }
+    }
+    REQUIRE(files > 0);
+    REQUIRE(events > 0);
+    // The three that would have been dropped as comments.
+    REQUIRE(space_indented == 3);
+
+    std::string hist;
+    for (auto& [c, n] : used) hist += " " + c + "=" + std::to_string(n);
+    WARN("SEQ census: " << files << " sequences, " << events << " events (" << space_indented
+         << " space-indented, " << sync << " sync, " << relative << " relative);" << hist);
 }

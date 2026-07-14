@@ -92,8 +92,17 @@ SeqFile seq_parse(const uint8_t* data, size_t size) {
     for (auto& line : raw_lines) {
         result.lines.push_back(line);
 
-        // Event lines start with a TAB character
-        bool is_ev = !line.empty() && line[0] == '\t';
+        // What the engine does (SeqSkipComments, 0x445440): a line is a COMMENT when it opens
+        // with ';' or '//', and otherwise leading SPACES AND TABS are both skipped to reach
+        // the content. So an event line may be indented either way -- UDEAD/UWON/ULOST.SEQ
+        // indent their last event with six spaces, and requiring a TAB dropped it on all
+        // three. The round-trip never saw it: an unrecognised line is re-emitted verbatim.
+        const bool comment = !line.empty() &&
+                             (line[0] == ';' || (line[0] == '/' && line.size() > 1 &&
+                                                 line[1] == '/'));
+        size_t ind = 0;
+        while (ind < line.size() && (line[ind] == ' ' || line[ind] == '\t')) ++ind;
+        const bool is_ev = !comment && ind < line.size();
         result.is_event.push_back(is_ev);
 
         if (!is_ev) {
@@ -103,10 +112,10 @@ SeqFile seq_parse(const uint8_t* data, size_t size) {
             continue;
         }
 
-        // Strip the leading tab; keep the rest as raw
-        std::string body = line.substr(1);
+        std::string body = line.substr(ind);
 
         SeqEvent ev;
+        ev.indent = line.substr(0, ind);
         ev.raw = body;
 
         auto tokens = tokenize(body);
@@ -148,10 +157,13 @@ std::vector<uint8_t> seq_serialize(const SeqFile& seq) {
         const std::string& line = seq.lines[i];
 
         if (is_ev) {
-            // Re-emit with leading TAB + raw body
-            out.push_back('\t');
-            const std::string& raw = (i < seq.events.size()) ? seq.events[i].raw : line.substr(1);
-            for (char c : raw) out.push_back((uint8_t)c);
+            // Re-emit with the line's own indent -- spaces or tab, as the file wrote it.
+            if (i < seq.events.size()) {
+                for (char c : seq.events[i].indent) out.push_back((uint8_t)c);
+                for (char c : seq.events[i].raw)    out.push_back((uint8_t)c);
+            } else {
+                for (char c : line) out.push_back((uint8_t)c);
+            }
         } else {
             for (char c : line) out.push_back((uint8_t)c);
         }
