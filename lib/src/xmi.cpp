@@ -102,7 +102,8 @@ struct TimedEvent {
 };
 
 std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
-                                size_t seq_index, uint16_t ppqn) {
+                                size_t seq_index, uint16_t ppqn, XmiDecode* out) {
+    if (out) *out = XmiDecode{};
     XmiFile f = xmi_parse(data, size);
     if (seq_index >= f.sequences.size()) return {};
 
@@ -113,6 +114,7 @@ std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
 
     const uint8_t* d = data + evnt->offset;
     const size_t   n = evnt->size;
+    if (out) out->evnt_size = evnt->size;
 
     std::vector<TimedEvent> events;
     uint32_t order = 0;
@@ -167,7 +169,11 @@ std::vector<uint8_t> xmi_to_smf(const uint8_t* data, size_t size,
             break;  // unknown status — stop rather than desync
         }
     }
-    (void)saw_end;
+    if (out) {
+        out->consumed     = pos;
+        out->end_of_track = saw_end;
+        out->events       = events.size();
+    }
 
     std::stable_sort(events.begin(), events.end(),
                      [](const TimedEvent& a, const TimedEvent& b) {

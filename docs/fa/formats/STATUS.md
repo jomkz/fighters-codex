@@ -54,4 +54,4 @@ See [docs/spec-authoring.md](../../spec-authoring.md) for the vocabulary.
 | [T2](T2.md) | terrain | complete | — | round-trip (byte-identical) | `fx t2` | `tests/test_t2.cpp` | syn/real/**install** | `fuzz/fuzz_t2.cpp` | `gui/src/editors/terrain_preview.cpp` |
 | [TXT](TXT.md) | text | complete | — | round-trip (byte-identical) | `fx txt` | `tests/test_txt.cpp` | syn/real/**install** | `fuzz/fuzz_txt.cpp` | `gui/src/editors/txt_editor.cpp` |
 | [VDO](VDO.md) | video | partial | re-static [#55](https://github.com/jomkz/fighters-codex/issues/55) | read-only (by design) | `fx vdo` | `tests/test_vdo.cpp` | syn/real/**install** | `fuzz/fuzz_vdo.cpp` | `gui/src/editors/vdo_editor.cpp` |
-| [XMI](XMI.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx xmi` | `tests/test_xmi.cpp` | syn/real | `fuzz/fuzz_xmi.cpp` | `gui/src/editors/xmi_editor.cpp` |
+| [XMI](XMI.md) | audio | partial | re-static [#54](https://github.com/jomkz/fighters-codex/issues/54) | read-only (by design) | `fx xmi` | `tests/test_xmi.cpp` | syn/real/**install** | `fuzz/fuzz_xmi.cpp` | `gui/src/editors/xmi_editor.cpp` |
