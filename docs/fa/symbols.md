@@ -646,10 +646,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 164 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 183 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x0041FB60` | `FortMission` | sms | Fort (base-assault) mission builder |
 | `0x00421C80` | `ZONEAdd` | sms |  |
 | `0x00421CC0` | `ZONEForGV` | sms |  |
 | `0x00421D40` | `ZONEActive` | re | zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -753,6 +754,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0042B0F6` | `MAPGroupSetLeader` | re | make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042B19D` | `MAPGroupAdd` | re | add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042B275` | `MAPDeleteSpecial` | re | delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00441C90` | `ChooseScore` | sms | score-screen selection (end-of-mission) |
+| `0x0044D070` | `FortMission2` | sms | Fort mission builder (variant 2) |
 | `0x00467110` | `AwardMedal` | sms |  |
 | `0x00467240` | `PilotFindFreeSlot` | re | find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004674F0` | `PilotBuildPaper` | re | build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -770,10 +773,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004692D0` | `EJECTProc` | sms |  |
 | `0x00469300` | `EJECTEventProc` | sms |  |
 | `0x004694D0` | `EJECTMoveProc` | sms |  |
+| `0x0047FAA0` | `_SingleMission` | sms | single-mission entry — sets up a one-off (non-campaign) mission |
 | `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0) |
+| `0x0047FEC0` | `_CreateQuickMission` | sms | constructs a Quick mission |
+| `0x0047FF30` | `_CreateFortMission` | sms | constructs a Fort mission |
+| `0x0047FF40` | `_CreateFortMission2` | sms | constructs a Fort mission (variant 2) |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
 | `0x00480B50` | `MISSIONInit2` | sms |  |
 | `0x00480B70` | `MyFilterProc` | sms |  |
+| `0x00480BE0` | `MISSIONSetCheating` | sms | sets the mission cheating flag |
 | `0x00480C40` | `InitCampaignPilot` | sms |  |
 | `0x00480C90` | `AddCampaignPlane` | sms |  |
 | `0x00480D70` | `CampaignPlanesLeft` | sms |  |
@@ -788,8 +796,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00481260` | `KurileQuit` | sms |  |
 | `0x00481270` | `VietnamQuit` | sms |  |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
+| `0x00481940` | `CallMissionProc` | sms | dispatches into the mission's compiled .MC DLL proc (see MC.md); called from _MISSIONTextProc for the mission-logic handoff |
 | `0x00481A70` | `MISSIONSuccess` | sms | imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00481C10` | `MISSIONTextProc` | sms | the .M mission-file interpreter (#485): whitespace-tokenizes the file via TextNextToken over a global cursor (_0x55281c/_0x5528c0), dispatches a keyword switch that reads numeric fields (TextNextNumber) and constructs the live mission — _T_AddObj per placement, then _WNGAdd (wing)/_GRPAdd (group)/_HARDLoad (loadout)/MAPAddSpecial, and _OBJAlias+_WPSetWaypoints for waypoint lists. Header directives set _layerName/_missionDLLName/_mapName/_missionHours; _CallMissionProc runs the .MC DLL |
 | `0x00483C90` | `TextNextToken` | re | whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D10` | `TextIsDelim` | re | predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D30` | `TextNextNumber` | re | read next token and convert to integer (_StringToNumber); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -803,11 +813,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00484690` | `ATFVladMedals` | sms |  |
 | `0x004848F0` | `ATFPromotions` | sms |  |
 | `0x00484B70` | `ATFBalticMedals` | sms |  |
+| `0x00484D90` | `EndOfMissionStats` | sms | end-of-mission player statistics (kills/losses/score) |
+| `0x00485040` | `EndOfFortMissionStats` | sms | end-of-mission statistics for Fort (base-assault) missions |
+| `0x004851C0` | `MISSIONFortDestroyed` | sms | Fort-mission: a fort object was destroyed |
+| `0x00485260` | `MISSIONFortDestroyedByFort` | sms | Fort-mission: a fort was destroyed by another fort |
+| `0x004852F0` | `MISSIONFortStatus` | sms | Fort-mission: current fort status query |
 | `0x00485380` | `CampaignAccumStats` | re | fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004854A0` | `StatsAddPair` | re | add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00485EF0` | `CheckCD` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x00486010` | `MISSIONLoadCommonResources` | sms | loads the resources common to every mission |
+| `0x004860F0` | `MISSIONFortWin` | sms | Fort-mission win condition test |
+| `0x00486580` | `MISSIONAddScore` | sms | mission scoring accumulator (#485) |
 | `0x004867D0` | `MISSIONPlayerSlot` | re | resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00486860` | `MISSIONCheckSuccess` | sms | per-tick mission success poll; drives _MISSIONFortWin / end-of-mission |
 | `0x004869A0` | `TIMESystemTime` | sms |  |
 | `0x00486A10` | `TIMEInit` | sms |  |
 | `0x00486A90` | `TIMERestart` | sms |  |
