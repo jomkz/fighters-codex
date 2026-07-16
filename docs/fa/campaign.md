@@ -35,6 +35,45 @@ Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex
 | `0x422120` | `ZONEPickTarget` | pick a target plane for a zone |
 | `0x422190` | `MAPWPListBounds` | walk a waypoint list |
 
+## Mission runtime — the `.M` interpreter (#485)
+
+`_MISSIONTextProc@16` (`0x481C10`, 8.3 KB — the largest single function this subsystem
+owns) is the consumer of the [`.M`](formats/M.md) / [`.MT`](formats/MT.md) format specs:
+the interpreter that **executes** a mission file to populate the live mission. Until it was
+traced, those specs described a file nobody had watched run.
+
+**Tokenizer.** The file is plain whitespace-delimited text walked by a global cursor
+(`0x55281C` current, `0x5528C0` end). `TextNextToken` (`0x483C90`) skips delimiters
+(`TextIsDelim`) then copies one token; `TextNextNumber` (`0x483D30`) reads a token and runs
+it through `_StringToNumber`; `TextTokenToValue` (`0x483D50`) applies a theater-specific
+object-type remap keyed on the first character of `_mapName` (`T/U/K…`). `_MISSIONTextProc`
+calls `TextNextNumber` **106 times** — the format is overwhelmingly numeric (coordinates,
+type ids, counts).
+
+**Dispatch → live objects.** A jump-table `switch` on each section keyword drives
+construction. Header directives set the globals `_layerName`, `_missionDLLName` (the `.MC`
+DLL), `_mapName` (theater; `$`/`~` prefixes are special-cased), and `_missionHours`
+(fed to `_TIMEInit`). Each object placement calls `_T_AddObj`, then — by flags — `_WNGAdd`
+(attach to a wing), `_GRPAdd` (a group), `_HARDUnload`/`_HARDLoad` (apply a loadout), and
+`MAPAddSpecial` (a map marker). Named objects are resolved with `_OBJAlias` and given
+waypoint lists via `_WPSetWaypoints`. This is the mechanical proof of the `.M` grammar:
+"object placement and waypoints" is `T_AddObj` + `WPSetWaypoints`, exactly.
+
+**Mission-logic handoff.** `_CallMissionProc@8` (`0x481940`) dispatches into the mission's
+compiled [`.MC`](formats/MC.md) DLL proc — the per-mission condition/event logic —
+which `_MISSIONCheckSuccess@0` (`0x486860`) polls each tick.
+
+**Construction variants.** `__SingleMission@0` (one-off missions), `__CreateQuickMission@4`,
+and `__CreateFortMission@4`/`2` set up the non-campaign game modes; `_FortMission@4`
+(`0x41FB60`) / `_FortMission2@4` build the base-assault ("Fort") scenarios, whose
+`HARD*Fort*` helpers save/restore/rearm the defending loadouts.
+
+**Scoring & end-of-mission.** `_MISSIONAddScore@12` (`0x486580`) accumulates the score;
+`_EndOfMissionStats@0` (`0x484D90`) and `_EndOfFortMissionStats@0` tally kills/losses at
+mission end; the Fort scenarios track objectives through `_MISSIONFortDestroyed@4`,
+`_MISSIONFortDestroyedByFort@4`, `_MISSIONFortStatus@4`, and the `_MISSIONFortWin` test.
+(The `Score*` functions in the sound range are the **music** score, not this.)
+
 ## Open Questions
 
 ### 1. TIME/FPS utility block — resolved
