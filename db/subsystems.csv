@@ -26,3 +26,4 @@ comms-xf,CDRVXF32.DLL — Cdrv file-transfer comms driver,CDRVXF32.DLL,0x1000100
 comms-sc,COMMSC32.DLL — Cdrv comms terminal-screen service,COMMSC32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-screen.md,255
 view,View / camera & replay (VIEW),FA.EXE,0x40D7A0-0x40F6B0,complete,docs/fa/view.md,257
 msapi,Matchmaking / internet-play client (MSAPI),MSAPI.DLL,0x100011E0-0x10002AB0,complete,docs/fa/matchmaking.md,275
+cockpit-sensors,Cockpit sensors (radar / IR / RWR),FA.EXE,0x438520-0x4410C0,active,docs/fa/cockpit-sensors.md,486

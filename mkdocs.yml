@@ -191,6 +191,7 @@ nav:
           - View & Camera: fa/view.md
           - Shape Selection: fa/shape-selection.md
           - HUD: fa/hud.md
+          - Cockpit Sensors: fa/cockpit-sensors.md
       - Audio & Video:
           - Sound: fa/sound.md
           - WAIL32 (audio): fa/wail32.md

@@ -1,0 +1,19 @@
+va,kind,name,display,source,confidence,notes,type
+0x00438520,func,@CPSetMissile@4,CPSetMissile,sms,confirmed,set the currently-selected missile/weapon on the scope,undefined4 __fastcall CPSetMissile(undefined4)
+0x004385C0,func,@CPClearMissile@0,CPClearMissile,sms,confirmed,clear the selected missile,undefined4 __fastcall CPClearMissile(void)
+0x004385E0,func,@CPCopyView@0,CPCopyView,sms,confirmed,copy the cockpit view state,undefined4 __fastcall CPCopyView(void)
+0x004386C0,func,@CPToggleWindow@4,CPToggleWindow,sms,confirmed,toggle a cockpit MFD/scope window,undefined4 __fastcall CPToggleWindow(undefined4)
+0x00438B70,func,_CPInit@0,CPInit,sms,confirmed,cockpit-sensor init: allocates the radar + RWR contact buffers and resets the scopes,undefined4 __stdcall CPInit(void)
+0x00439170,func,_CPShutdown@0,CPShutdown,sms,confirmed,cockpit-sensor shutdown,undefined4 __stdcall CPShutdown(void)
+0x00439220,func,_CPDraw@8,CPDraw,sms,confirmed,render the radar/IR/RWR scopes and cockpit MFDs (the scope renderer; consumes the contact buffers CPAddItemToScopes fills),"undefined4 __stdcall CPDraw(undefined4, undefined4)"
+0x0043DDD0,func,@CPRadarRange@4,CPRadarRange,sms,confirmed,current radar range setting,undefined4 __fastcall CPRadarRange(undefined4)
+0x0043DE00,func,@CPToggleHistory@0,CPToggleHistory,sms,confirmed,toggle the radar history trail,undefined4 __fastcall CPToggleHistory(void)
+0x0043DE10,func,?UsingSuppRadar@@YADXZ,UsingSuppRadar,sms,confirmed,is the supplementary (secondary) radar in use,char __cdecl UsingSuppRadar(void)
+0x0043DE90,func,?CPSetSkill@@YAXF@Z,CPSetSkill,sms,confirmed,set the AI/radar skill level,void __cdecl CPSetSkill(short)
+0x0043DEE0,func,@CPAddItemToScopes@4,CPAddItemToScopes,sms,confirmed,"per-target visibility gate: runs the radar / IR / RWR detection tests and inserts the contact into the matching scope buffer (0x53bea8 radar+IR, 0x539e58 RWR)",undefined4 __fastcall CPAddItemToScopes(undefined4)
+0x0043E780,func,@CPRemoveItemFromScopes@4,CPRemoveItemFromScopes,sms,confirmed,remove a contact from the scopes,undefined4 __fastcall CPRemoveItemFromScopes(undefined4)
+0x0043E7E0,func,@CPBombRange@4,CPBombRange,sms,confirmed,current bomb-range/CCIP setting,undefined4 __fastcall CPBombRange(undefined4)
+0x0043E810,func,_CPUpdateRadar@0,CPUpdateRadar,sms,confirmed,per-frame radar sweep: timestamps the scan and clears the sweep accumulator,undefined4 __stdcall CPUpdateRadar(void)
+0x0043E830,func,_CPResetRWR@0,CPResetRWR,sms,confirmed,reset the RWR: zero the radar-scope and RWR contact buffers (2x 0x6d6 dwords) and re-arm the scan timers,undefined4 __stdcall CPResetRWR(void)
+0x0043E8C0,func,_CPComputeRCS@8,CPComputeRCS,sms,confirmed,"radar-cross-section + IR-signature model: sums a target's signature from base size (type +0x45), configuration (gear/bay/afterburner via the +0x16F flags), aspect (pitch +0x1F, bank +0x21), damage (+0x10), and the class extension (+0xDE). The gameplay-defining input to the weapons seeker/lock model (weapons.md)","undefined4 __stdcall CPComputeRCS(undefined4, undefined4)"
+0x00440FE0,func,?CPUpdateIRItems@@YGXXZ,CPUpdateIRItems,sms,confirmed,per-frame IR-item update: refreshes the IR-seeker contact list,void __stdcall CPUpdateIRItems(void)

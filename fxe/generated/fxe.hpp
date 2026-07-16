@@ -34,6 +34,7 @@
 #include "subsystems/comms-sc.hpp"
 #include "subsystems/view.hpp"
 #include "subsystems/msapi.hpp"
+#include "subsystems/cockpit-sensors.hpp"
 
 // Every declaration fxe has recovered so far. Including this header is what the
 // build compiles: a declaration that is not valid C++ is not a reconstruction.

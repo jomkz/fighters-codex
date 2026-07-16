@@ -34,10 +34,11 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | 3D render core / SH interpreter (GR) | `0x4CD588–0x4D6C00` | 174 named · 0 waived / 174 (100%) | 0 named · 349 waived | [doc](render-core.md) | ✓ | [#228](https://github.com/jomkz/fighters-codex/issues/228) | complete |
 | .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 41 named · 0 waived / 41 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
 | View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19 named · 0 waived / 19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
+| Cockpit sensors (radar / IR / RWR) | `0x438520–0x4410C0` | 18 named · 0 waived / 62 (29%) | 0 named · 0 waived | [doc](cockpit-sensors.md) | · | [#486](https://github.com/jomkz/fighters-codex/issues/486) | active |
 
-**FA.EXE totals:** 20/20 subsystems complete; 2523/2523 in-scope functions named; 2660/4940 referenced globals resolved.
+**FA.EXE totals:** 20/21 subsystems complete; 2541/2585 in-scope functions named; 2660/4940 referenced globals resolved.
 
-> **Unclaimed: 1050 of 3573 functions (303,262 of 866,332 code bytes, 35%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+> **Unclaimed: 1032 of 3573 functions (296,458 of 866,332 code bytes, 34%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 > **Undefined: 62,800 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **246 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
@@ -111,4 +112,5 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
-**Program totals (all binaries):** 27/27 subsystems complete; 6068/6068 in-scope functions named; 5134/8269 referenced globals resolved.
+**Program totals (all binaries):** 27/28 subsystems complete; 6086/6130 in-scope functions named; 5134/8269 referenced globals resolved.
+
