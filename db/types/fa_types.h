@@ -95,6 +95,8 @@ typedef struct SERIAL_QUEUE          SERIAL_QUEUE;
 typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address         */
 typedef struct sockaddr_in           sockaddr_in;   /* Winsock TCP/IP address        */
 typedef struct socket_state          socket_state;
+typedef struct _winsock_funcs        _winsock_funcs; /* resolved WS2_32 entry-point table */
+typedef struct fd_set                fd_set;         /* Winsock select() descriptor set   */
 typedef struct PKT_PLAYER_AD         PKT_PLAYER_AD; /* game advertisement packet (UDP/SAP query) */
 typedef struct MP_INFO               MP_INFO;       /* multiplayer session-info record (MP_Info) */
 
@@ -111,6 +113,10 @@ typedef int JOYRESULT;           /* input:   GetJoystickType / ReadDevice result
 typedef int PLAYER_ACTION;       /* network: player-action callback code             */
 typedef int NET_CONNECTED_STATE; /* network: connection-state callback code          */
 typedef int NET_SEND_CANCEL;     /* network: broadcast send/cancel selector          */
+typedef int PLAYER_STATE;        /* network: per-player session state                */
+typedef int SOCK_STATE;          /* network: socket_state connection state           */
+typedef int SOCK_TYPE;           /* network: socket transport type                   */
+typedef int ERROR_SEVERITY;      /* network: winsock error-severity level            */
 
 /* `undefinedN` -- N bytes, type not recovered. Ghidra's idiom, and the one this database
  * uses wherever the evidence proves a SIZE but not a SEMANTICS:
