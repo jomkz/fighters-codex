@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 132/155 functions have a recovered signature (+2 that are not C functions); 8/9 globals have a recovered type.
+// 138/162 functions have a recovered signature (+2 that are not C functions); 8/9 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -140,6 +140,7 @@ void PilotFieldProc(int *, int);  // 0x00469010  __cdecl
 char EJECTEventProc(short, long);  // 0x00469300  __cdecl
 void EJECTMoveProc(char);  // 0x004694D0  __cdecl
 undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
+undefined4 MISSIONInit2(void);  // 0x00480B50  __stdcall
 char MyFilterProc(unsigned short *, long *, char *);  // 0x00480B70  __cdecl
 undefined4 AddCampaignPlane(undefined4, undefined4);  // 0x00480C90  __cdecl
 undefined4 CampaignPlanesLeft(void);  // 0x00480D70  __stdcall
@@ -155,6 +156,11 @@ void StatsAddPair(int *,int *);  // 0x004854A0  __fastcall
 undefined4 StatsBucketFor(int,u16,u16);  // 0x004856F0  __fastcall
 undefined4 CheckCD(undefined4, undefined4);  // 0x00485EF0  __cdecl
 undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
+undefined4 TIMESystemTime(void);  // 0x004869A0  __stdcall
+undefined4 TIMEInit(undefined4, undefined4, undefined4);  // 0x00486A10  __stdcall
+undefined4 TIMERestart(void);  // 0x00486A90  __stdcall
+undefined4 TIMEUpdate(void);  // 0x00486AA0  __stdcall
+undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
 
 // --- not C functions --------------------------------------------------
 // Recovered, and deliberately NOT declared. A C prototype cannot express
@@ -188,6 +194,7 @@ undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
 // TODO(#453): 0x00484690  ATFVladMedals -- signature not recovered
 // TODO(#453): 0x004848F0  ATFPromotions -- signature not recovered
 // TODO(#453): 0x00484B70  ATFBalticMedals -- signature not recovered
+// TODO(#453): 0x00486E20  InstallTimerInt -- signature not recovered
 // TODO(#455): 0x004FB1A8  missionName -- type not recovered
 
 }  // namespace fxe::fa::campaign

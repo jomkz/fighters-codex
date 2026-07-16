@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Memory & resource managers (MM/RM) -- FA.EXE
-// 50/50 functions have a recovered signature; 12/12 globals have a recovered type.
+// 53/57 functions have a recovered signature; 12/12 globals have a recovered type.
 
 namespace fxe::fa::memory_resource {
 
@@ -60,6 +60,7 @@ undefined4 MMWordAt(undefined4, undefined4);  // 0x004362E0  __cdecl
 u16 MMUWordAt(undefined4, int);  // 0x004362F0  __cdecl
 undefined4 MMLongAt(undefined4, int);  // 0x00436300  __cdecl
 undefined4 MMULongAt(undefined4, undefined4);  // 0x00436310  __cdecl
+undefined4 LibOpen(undefined4, undefined4);  // 0x00479BD0  __fastcall
 undefined4 RMInit(void);  // 0x004A67F0  __stdcall
 undefined4 RMShutdown(void);  // 0x004A6820  __stdcall
 undefined4 RMType(undefined4);  // 0x004A6860  __fastcall
@@ -77,5 +78,15 @@ undefined4 RMNotify(undefined4);  // 0x004A6DB0  __fastcall
 void RMSetup(char *, undefined4);  // 0x004A6DF0  __fastcall
 undefined4 SetupBitmapAccess(undefined4, undefined4, undefined4);  // 0x004A6E20  __stdcall
 undefined4 RMLegalFilename(undefined4);  // 0x004A7240  __fastcall
+undefined4 LoadFile(undefined4, undefined4, undefined4, undefined4);  // 0x004AD3C0  __stdcall
+undefined4 LoadFile2(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AD9B0  __stdcall
+
+// --- not yet recovered -----------------------------------------------
+// Emitted as TODOs, not as guessed declarations: a wrong prototype would
+// compile and then lie about what the original function took.
+// TODO(#453): 0x0046A570  SMCallByName -- signature not recovered
+// TODO(#453): 0x00478BC0  LibStartUp -- signature not recovered
+// TODO(#453): 0x00479630  DoLoadLibFile -- signature not recovered
+// TODO(#453): 0x004798B0  SearchLib -- signature not recovered
 
 }  // namespace fxe::fa::memory_resource
