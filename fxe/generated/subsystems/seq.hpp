@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // .SEQ scripted-cutscene / sequence player (SEQ) -- FA.EXE
-// 40/40 functions have a recovered signature; 25/25 globals have a recovered type.
+// 41/41 functions have a recovered signature; 25/25 globals have a recovered type.
 
 namespace fxe::fa::seq {
 
@@ -77,6 +77,7 @@ void SEQpalette(char *, undefined4, undefined4);  // 0x00446BE0  __cdecl
 void SEQrun(void);  // 0x00446C60  __cdecl
 void SEQsound(char *);  // 0x00446C70  __cdecl
 void SEQsndoff(char *);  // 0x00446D30  __cdecl
+undefined4 FormatText(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00446D90  __stdcall
 void SEQtext(char *, int, int, int, int, int, char);  // 0x00446F10  __cdecl
 void SEQvideo(undefined4, char *, char, undefined4);  // 0x00447090  __cdecl
 void SEQwait(char *);  // 0x00447120  __cdecl

@@ -8,13 +8,14 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 36/39 functions have a recovered signature; 0/0 globals have a recovered type.
+// 41/47 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
 // --- functions -------------------------------------------------------
 void VDOInit(void);  // 0x00405490  __fastcall
 undefined4 PlayCobra(undefined4);  // 0x00421A50  __stdcall
+void DecodeFrame(MovieContext *, FrameHeader *, GlobalData *);  // 0x00442370  __cdecl
 undefined4 DecodeDSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456300  __cdecl
 void EDB(unsigned char *, unsigned char *, FrameHeader *, GlobalData *);  // 0x00456AD0  __cdecl
 undefined4 DecodeSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456EC0  __cdecl
@@ -38,6 +39,7 @@ undefined4 DecodeSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B
 undefined4 DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B9C0  __cdecl
 undefined4 DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045BE60  __cdecl
 undefined4 DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4);  // 0x0045C500  __cdecl
+unsigned short InitCobra(GlobalData *);  // 0x0046AE10  __cdecl
 undefined4 DoFadeout(void);  // 0x004A06F0  __stdcall
 short PlayVDOFile(char *, short, char);  // 0x004AE410  __cdecl
 short PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char);  // 0x004AE440  __cdecl
@@ -45,14 +47,20 @@ void VDOClearToBlack(void);  // 0x004AECD0  __cdecl
 void VDOSetMode(VDO *);  // 0x004AED50  __cdecl
 void VDOSetLineStats(unsigned short, unsigned short, unsigned char);  // 0x004AEE30  __cdecl
 char VDOfromVDOHEADER(VDO *, VDOHEADER *);  // 0x004AF320  __cdecl
+char GetVDOFrame(VDO *, long, short);  // 0x004AF510  __cdecl
 void * VDOAlloc(unsigned long);  // 0x004AF690  __cdecl
 void VDOFree(void *);  // 0x004AF6A0  __cdecl
 void VDO_320x200_to_640x480(T_BITMAP *, T_BITMAP *, unsigned long);  // 0x004AF6B0  __cdecl
 unsigned long VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long);  // 0x004AF760  __cdecl
+undefined4 DecompressVideo(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C8AA4  __stdcall
+undefined4 UnRLE(undefined4, undefined4);  // 0x004C8AFC  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x004CCC48  CopySB8 -- signature not recovered
+// TODO(#453): 0x004CCC7C  CopyDB8 -- signature not recovered
+// TODO(#453): 0x004CCF54  ExpandDB -- signature not recovered
 // TODO(#453): 0x004CCFFC  DecodeYUV15 -- signature not recovered
 // TODO(#453): 0x004CD1C0  DecodeYUV15Double1 -- signature not recovered
 // TODO(#453): 0x004CD394  DecodeYUV15Double2 -- signature not recovered

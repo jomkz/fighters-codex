@@ -1,6 +1,7 @@
 va,kind,name,display,source,confidence,notes,type
 0x00405490,func,?VDOInit@@YIXXZ,VDOInit,sms,confirmed,,void __fastcall VDOInit(void)
 0x00421A50,func,_PlayCobra@4,PlayCobra,sms,confirmed,imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS,undefined4 __stdcall PlayCobra(undefined4)
+0x00442370,func,?DecodeFrame@@YAXPAUMovieContext@@PAUFrameHeader@@PAUGlobalData@@@Z,DecodeFrame,sms,confirmed,,"void __cdecl DecodeFrame(MovieContext *, FrameHeader *, GlobalData *)"
 0x00456300,func,_DecodeDSVGA8Frame,DecodeDSVGA8Frame,sms,confirmed,key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank,"undefined4 __cdecl DecodeDSVGA8Frame(undefined4, undefined4, undefined4)"
 0x00456AD0,func,?EDB@@YAXPAE0PAUFrameHeader@@PAUGlobalData@@@Z,EDB,sms,confirmed,"expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path","void __cdecl EDB(unsigned char *, unsigned char *, FrameHeader *, GlobalData *)"
 0x00456EC0,func,_DecodeSVGA8Frame,DecodeSVGA8Frame,sms,confirmed,,"undefined4 __cdecl DecodeSVGA8Frame(undefined4, undefined4, undefined4)"
@@ -24,6 +25,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0045B9C0,func,_DecodeInterSVGA15NONFrame,DecodeInterSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp single; dispatch inter submode6 case1,"undefined4 __cdecl DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4)"
 0x0045BE60,func,_DecodeInterDSVGA15NONFrame,DecodeInterDSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0),"undefined4 __cdecl DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4)"
 0x0045C500,func,_DecodeInterDSVGA15NONSkipFrame,DecodeInterDSVGA15NONSkipFrame,sms,confirmed,INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0),"undefined4 __cdecl DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4)"
+0x0046AE10,func,?InitCobra@@YAGPAUGlobalData@@@Z,InitCobra,sms,confirmed,,unsigned short __cdecl InitCobra(GlobalData *)
 0x004A06F0,func,_DoFadeout@0,DoFadeout,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall DoFadeout(void)
 0x004AE410,func,?PlayVDOFile@@YAFPADFD@Z,PlayVDOFile,sms,confirmed,,"short __cdecl PlayVDOFile(char *, short, char)"
 0x004AE440,func,?PlayVDOString@@YAFPADFPAUT_HANDLE@@PAEJJD@Z,PlayVDOString,sms,confirmed,,"short __cdecl PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char)"
@@ -31,10 +33,16 @@ va,kind,name,display,source,confidence,notes,type
 0x004AED50,func,?VDOSetMode@@YAXPAUVDO@@@Z,VDOSetMode,sms,confirmed,,void __cdecl VDOSetMode(VDO *)
 0x004AEE30,func,?VDOSetLineStats@@YAXGGE@Z,VDOSetLineStats,sms,confirmed,,"void __cdecl VDOSetLineStats(unsigned short, unsigned short, unsigned char)"
 0x004AF320,func,?VDOfromVDOHEADER@@YADPAUVDO@@PAUVDOHEADER@@@Z,VDOfromVDOHEADER,sms,confirmed,,"char __cdecl VDOfromVDOHEADER(VDO *, VDOHEADER *)"
+0x004AF510,func,?GetVDOFrame@@YADPAUVDO@@JF@Z,GetVDOFrame,sms,confirmed,,"char __cdecl GetVDOFrame(VDO *, long, short)"
 0x004AF690,func,?VDOAlloc@@YAPAXK@Z,VDOAlloc,sms,confirmed,,void * __cdecl VDOAlloc(unsigned long)
 0x004AF6A0,func,?VDOFree@@YAXPAX@Z,VDOFree,sms,confirmed,,void __cdecl VDOFree(void *)
 0x004AF6B0,func,?VDO_320x200_to_640x480@@YAXPAUT_BITMAP@@0K@Z,VDO_320x200_to_640x480,sms,confirmed,,"void __cdecl VDO_320x200_to_640x480(T_BITMAP *, T_BITMAP *, unsigned long)"
 0x004AF760,func,?VDOCompareBitmaps@@YAKPAUT_HANDLE@@0PAEK@Z,VDOCompareBitmaps,sms,confirmed,,"unsigned long __cdecl VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long)"
+0x004C8AA4,func,_DecompressVideo@20,DecompressVideo,sms,confirmed,,"undefined4 __stdcall DecompressVideo(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004C8AFC,func,_UnRLE@8,UnRLE,sms,confirmed,,"undefined4 __stdcall UnRLE(undefined4, undefined4)"
+0x004CCC48,func,_CopySB8,CopySB8,sms,confirmed,,
+0x004CCC7C,func,_CopyDB8,CopyDB8,sms,confirmed,,
+0x004CCF54,func,_ExpandDB,ExpandDB,sms,confirmed,,
 0x004CCFFC,func,_DecodeYUV15,DecodeYUV15,sms,confirmed,,
 0x004CD1C0,func,_DecodeYUV15Double1,DecodeYUV15Double1,sms,confirmed,,
 0x004CD394,func,_DecodeYUV15Double2,DecodeYUV15Double2,sms,confirmed,,

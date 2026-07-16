@@ -75,6 +75,8 @@ typedef struct SEQTXT      SEQTXT;      /* .SEQ text node                       
  * type-check today, and interiors get filled in per-subsystem as they are recovered.
  */
 typedef struct F24_POINT3   F24_POINT3;   /* collision, sound: F24.8 3-vector        */
+typedef struct F24_POINT    F24_POINT;    /* flight-model: F24.8 2-vector (IntersectT) */
+typedef struct MovieContext MovieContext; /* video: FMV playback context (DecodeFrame) */
 typedef struct WORD_POINT3  WORD_POINT3;  /* terrain: 16-bit 3-vector                */
 typedef struct LONG_POINT   LONG_POINT;   /* terrain: 32-bit 2-vector                */
 typedef struct PLANE        PLANE;        /* sound: plane equation                   */
@@ -101,6 +103,7 @@ typedef struct T_MSG          T_MSG;          /* hud: text-message record (MPMsg
 
 /* network -- the transport types the NET_/SERIAL_ signatures name */
 typedef struct NET_PKT               NET_PKT;
+typedef struct CN_INFO_TCP           CN_INFO_TCP;   /* TCP-transport slice of CN_INFO (NetSetFactoryTCP) */
 typedef struct NET_ADDRESS_LIST      NET_ADDRESS_LIST;
 typedef struct NET_PLAYER_LIST       NET_PLAYER_LIST;
 typedef struct SERIAL_PACKET         SERIAL_PACKET;

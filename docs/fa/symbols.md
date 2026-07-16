@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 345 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 353 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -94,6 +94,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0040B080` | `NET_MasterShutdown` | sms |  |
 | `0x0040B110` | `master_events` | sms |  |
 | `0x00418880` | `MSGSendChatter` | sms | imported by 14 shipped .MC overlays (#491); named at this VA by FA.SMS |
+| `0x0041E840` | `atohb` | sms |  |
 | `0x00441F80` | `UDPopensocket` | sms |  |
 | `0x004420D0` | `UDPserverbroadcast` | sms |  |
 | `0x00442200` | `UDPquery` | sms |  |
@@ -126,6 +127,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0044CC00` | `SER_Shutdown2` | sms |  |
 | `0x0044CC70` | `SER_Shutdown3` | sms |  |
 | `0x0044CCA0` | `SER_Shutdown` | sms |  |
+| `0x0044CCC0` | `serIO` | sms |  |
 | `0x0045D090` | `pkt_send_can_i_play` | sms | client->host join request |
 | `0x0045D120` | `pkt_send_can_i_play_player` | sms | join request naming a player slot |
 | `0x0045D1B0` | `pkt_send_sync` | sms | send sync request |
@@ -266,6 +268,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0047F5D0` | `CN_GetString` | sms |  |
 | `0x0047F5F0` | `CN_GetBigString` | sms |  |
 | `0x0047F6D0` | `CN_SetFactoryDefaults` | sms |  |
+| `0x0047F740` | `CfigChecksum` | sms |  |
 | `0x0047F7A0` | `CN_ReadConfig` | sms |  |
 | `0x0047F930` | `CN_WriteConfig` | sms |  |
 | `0x004874C0` | `sapopensocket` | sms | SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild) |
@@ -320,9 +323,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049A6E0` | `fnc_toCallDuringAnswer` | sms |  |
 | `0x0049A700` | `strToCom` | sms | map "COM1".."COM8" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none |
 | `0x0049A7D0` | `MOD_InitPortAndModem` | sms | SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc |
+| `0x0049A850` | `MOD_FindModemAndInit` | sms |  |
 | `0x0049A9B0` | `MOD_FindModemAndInitPCMCIA` | sms | enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem |
 | `0x0049AC00` | `MOD_WaitForCall` | sms | answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO "Ring..." |
 | `0x0049AD00` | `MOD_Initialize1` | sms | dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail |
+| `0x0049AD70` | `MOD_DoConnect` | sms |  |
 | `0x0049AF30` | `MOD_InitializeAndConnect` | sms | MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure |
 | `0x0049AFF0` | `MOD_Initialize` | sms | top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce |
 | `0x0049B0D0` | `MOD_Shutdown` | sms | SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3 |
@@ -367,7 +372,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AC2E0` | `SER_SendRequests` | sms | scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket |
 | `0x004AC3E0` | `SER_SendDataPackets` | sms |  |
 | `0x004AC480` | `SER_SendStatus` | sms | send status/ACK packet (type0) carrying last-tx seq + per-player state |
+| `0x004B0610` | `NetSetProtocol` | sms |  |
 | `0x004B06C0` | `NetProtocolPresent` | sms |  |
+| `0x004B0700` | `NetSetFactoryTCP` | sms |  |
 | `0x004B0730` | `NET_GetLocalAddressString` | sms |  |
 | `0x004B0830` | `NET_Initialize` | sms |  |
 | `0x004B0940` | `NET_StartQuery` | sms |  |
@@ -387,6 +394,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B1350` | `NET_MakeAutoConnectAddress` | sms |  |
 | `0x004B1380` | `NET_Addr2string` | sms |  |
 | `0x004B13A0` | `net_add_player_id` | sms |  |
+| `0x004B1590` | `fill_in_mpinfo` | sms |  |
 | `0x004B1660` | `game_event_handler` | sms |  |
 | `0x004B16B0` | `net_write_output_q` | sms |  |
 | `0x004B1A80` | `validate_packet` | sms |  |
@@ -638,7 +646,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 157 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 164 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -764,6 +772,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004694D0` | `EJECTMoveProc` | sms |  |
 | `0x0047FAAE` | `JOGCFetchMission` | re | download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0) |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
+| `0x00480B50` | `MISSIONInit2` | sms |  |
 | `0x00480B70` | `MyFilterProc` | sms |  |
 | `0x00480C40` | `InitCampaignPilot` | sms |  |
 | `0x00480C90` | `AddCampaignPlane` | sms |  |
@@ -799,6 +808,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00485EF0` | `CheckCD` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004867D0` | `MISSIONPlayerSlot` | re | resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004869A0` | `TIMESystemTime` | sms |  |
+| `0x00486A10` | `TIMEInit` | sms |  |
+| `0x00486A90` | `TIMERestart` | sms |  |
+| `0x00486AA0` | `TIMEUpdate` | sms |  |
+| `0x00486C60` | `TIMESetCompression` | sms |  |
+| `0x00486E20` | `InstallTimerInt` | sms |  |
 
 ### Collision (COL)
 
@@ -885,7 +900,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Memory & resource managers (MM/RM)
 
-[`memory-resource.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/memory-resource.csv) · [page](memory-resource.md) — 50 named functions
+[`memory-resource.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/memory-resource.csv) · [page](memory-resource.md) — 57 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -922,6 +937,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004362F0` | `MMUWordAt` | sms | SMS-named; not in inventory; unsigned 16-bit read primitive; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00436300` | `MMLongAt` | sms | SMS-named; not in inventory; signed 32-bit read primitive; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00436310` | `MMULongAt` | sms | *(uint32*)(base+off) |
+| `0x0046A570` | `SMCallByName` | sms |  |
+| `0x00478BC0` | `LibStartUp` | sms |  |
+| `0x00479630` | `DoLoadLibFile` | sms |  |
+| `0x004798B0` | `SearchLib` | sms |  |
+| `0x00479BD0` | `LibOpen` | sms |  |
 | `0x004A67F0` | `RMInit` | sms | zero resList[1400] (0x19FA dwords) and resCache[20]; set rmInitialized(@0x50A618)=1 |
 | `0x004A6820` | `RMShutdown` | sms | RMFree every live resList slot; zero table; clear rmInitialized |
 | `0x004A6860` | `RMType` | sms |  |
@@ -939,10 +959,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A6DF0` | `RMSetup` | re | post-load per-type hook: SMCallByName <type>_Setup (string @0x50A654) on the freshly loaded resource [FUN_004a6df0]; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A6E20` | `SetupBitmapAccess` | sms |  |
 | `0x004A7240` | `RMLegalFilename` | sms | canonicalize a resource filename in place (IsBadStringPtr len 0xD; collapse to a single '.'); OUT-OF-RANGE claim (sits in terrain span) |
+| `0x004AD3C0` | `LoadFile` | sms |  |
+| `0x004AD9B0` | `LoadFile2` | sms |  |
 
 ### .SEQ scripted-cutscene / sequence player (SEQ)
 
-[`seq.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/seq.csv) · [page](seq.md) — 40 named functions
+[`seq.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/seq.csv) · [page](seq.md) — 41 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -983,16 +1005,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00446C60` | `SEQrun` | sms | script op - resume/run control (16-byte leaf); absent-from-inventory; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00446C70` | `SEQsound` | sms | script op - play a sound effect; absent-from-inventory; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00446D30` | `SEQsndoff` | sms | script op - stop sound(s); absent-from-inventory; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00446D90` | `FormatText` | sms |  |
 | `0x00446F10` | `SEQtext` | sms | script op - build a wrapped-text SEQGR type-4 node using FormatText; absent-from-inventory; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00447090` | `SEQvideo` | sms | script op - play an AVI/video clip (drives videoState); absent-from-inventory; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00447120` | `SEQwait` | sms | script op - wait/synchronize N ticks; absent-from-inventory; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 85 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 88 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00412780` | `SpeedOfSound` | sms |  |
+| `0x00413C70` | `TVKey` | sms |  |
+| `0x00447970` | `IntersectT` | sms |  |
 | `0x004514C0` | `FMUpdateGearPitch` | sms |  |
 | `0x00451580` | `FMUpdateGear` | sms |  |
 | `0x004515E0` | `FMUpdateWingSweep` | sms |  |
@@ -1081,12 +1107,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 39 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 47 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00405490` | `VDOInit` | sms |  |
 | `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
+| `0x00442370` | `DecodeFrame` | sms |  |
 | `0x00456300` | `DecodeDSVGA8Frame` | sms | key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank |
 | `0x00456AD0` | `EDB` | sms | expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path |
 | `0x00456EC0` | `DecodeSVGA8Frame` | sms |  |
@@ -1110,6 +1137,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045B9C0` | `DecodeInterSVGA15NONFrame` | sms | INTER/delta NON 8bpp single; dispatch inter submode6 case1 |
 | `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
 | `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
+| `0x0046AE10` | `InitCobra` | sms |  |
 | `0x004A06F0` | `DoFadeout` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004AE410` | `PlayVDOFile` | sms |  |
 | `0x004AE440` | `PlayVDOString` | sms |  |
@@ -1117,17 +1145,23 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AED50` | `VDOSetMode` | sms |  |
 | `0x004AEE30` | `VDOSetLineStats` | sms |  |
 | `0x004AF320` | `VDOfromVDOHEADER` | sms |  |
+| `0x004AF510` | `GetVDOFrame` | sms |  |
 | `0x004AF690` | `VDOAlloc` | sms |  |
 | `0x004AF6A0` | `VDOFree` | sms |  |
 | `0x004AF6B0` | `VDO_320x200_to_640x480` | sms |  |
 | `0x004AF760` | `VDOCompareBitmaps` | sms |  |
+| `0x004C8AA4` | `DecompressVideo` | sms |  |
+| `0x004C8AFC` | `UnRLE` | sms |  |
+| `0x004CCC48` | `CopySB8` | sms |  |
+| `0x004CCC7C` | `CopyDB8` | sms |  |
+| `0x004CCF54` | `ExpandDB` | sms |  |
 | `0x004CCFFC` | `DecodeYUV15` | sms |  |
 | `0x004CD1C0` | `DecodeYUV15Double1` | sms |  |
 | `0x004CD394` | `DecodeYUV15Double2` | sms |  |
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 181 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 183 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1250,6 +1284,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B0130` | `GLASSESSpreadLines` | sms |  |
 | `0x004B01E0` | `GLASSESPrintAmount` | sms |  |
 | `0x004B4320` | `WRFogLayerUpdate` | sms | imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491) |
+| `0x004B4790` | `InitTmapRemaps` | sms |  |
+| `0x004B47B0` | `SetTmapRemaps` | sms |  |
 | `0x004B7910` | `G_AllocBitmapBuffer` | re | allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004B7930` | `G_RelocBitmap` | sms |  |
 | `0x004B79B0` | `G_AllocBitmap` | sms |  |
@@ -1370,7 +1406,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 106 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 107 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1441,6 +1477,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00473C10` | `Kill` | sms |  |
 | `0x00473DB0` | `GVProc` | sms | class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ |
 | `0x004747C0` | `Alive` | sms | imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS |
+| `0x0047CEB0` | `MANAdd` | sms |  |
 | `0x0048D780` | `PLANESayProc` | sms |  |
 | `0x0048E8D0` | `OBJSayProc` | sms |  |
 | `0x0048EC40` | `PLANECommentProc` | sms |  |
@@ -1995,13 +2032,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 473 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 474 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00403700` | `usnfmain` | sms |  |
 | `0x00404C70` | `FlyingLoop` | sms |  |
 | `0x0046B560` | `MainLoop` | sms |  |
+| `0x00476120` | `WinMain` | sms |  |
 | `0x004B27C0` | `UCONFIG_DMusic` | sms |  |
 | `0x004B2820` | `UCONFIG_SetVideoOptions` | sms |  |
 | `0x004B2930` | `UCONFIG_load_EA_CFG` | sms |  |

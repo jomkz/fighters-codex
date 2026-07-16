@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 153/175 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
+// 155/177 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -127,6 +127,8 @@ void GLASSESBeforeDrawingPop(BOX *);  // 0x004B00A0  __stdcall
 void GLASSESAfterDrawingPop(BOX *, char);  // 0x004B00D0  __stdcall
 void GLASSESSpreadLines(char);  // 0x004B0130  __fastcall
 void GLASSESPrintAmount(void);  // 0x004B01E0  __stdcall
+void InitTmapRemaps(void);  // 0x004B4790  __fastcall
+undefined4 SetTmapRemaps(void);  // 0x004B47B0  __fastcall
 undefined4 G_AllocBitmapBuffer(undefined4);  // 0x004B7910  __cdecl
 undefined4 G_RelocBitmap(undefined4, undefined4);  // 0x004B7930  __fastcall
 undefined4 G_AllocBitmap(undefined4, undefined4, undefined4);  // 0x004B79B0  __stdcall
