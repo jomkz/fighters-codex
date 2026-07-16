@@ -184,6 +184,7 @@ nav:
           - Weapons: fa/weapons.md
           - Collision: fa/collision.md
           - Campaign: fa/campaign.md
+          - Airports: fa/airports.md
       - Rendering:
           - Renderer: fa/renderer.md
           - Render Core: fa/render-core.md
@@ -198,6 +199,8 @@ nav:
           - Video Decode: fa/video-decode.md
       - Comms & Multiplayer:
           - Network: fa/network.md
+          - Radio & Speech: fa/radio.md
+          - Chat: fa/chat.md
           - Matchmaking (MSAPI): fa/matchmaking.md
           - Comms — Serial (CDRVDL32): fa/comms.md
           - Comms — Modem (CDRVHF32): fa/comms-modem.md

@@ -64,6 +64,9 @@ typedef struct RES_LIST    RES_LIST;    /* resource-manager list (memory-resourc
 typedef struct T_HANDLE    T_HANDLE;    /* type/asset handle (terrain, objects)     */
 typedef struct SEQUENCE    SEQUENCE;    /* .SEQ player slot, stride 0x38 (seq.md)   */
 typedef struct PILOT       PILOT;       /* pilot save record, 0x25E0 (formats/P.md) */
+typedef struct OBJ         OBJ;         /* generic game object alias of entity (objects.md) */
+typedef struct AIRPORT     AIRPORT;     /* airport/carrier record, 0x134 (airports.md)*/
+typedef struct OBJ_ON_CARRIER OBJ_ON_CARRIER; /* carrier-deck occupancy slot (airports.md) */
 typedef struct SEQGR       SEQGR;       /* .SEQ graphic display-list node (seq.md)  */
 typedef struct SEQLBL      SEQLBL;      /* .SEQ label node                          */
 typedef struct SEQFNT      SEQFNT;      /* .SEQ font node                           */

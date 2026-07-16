@@ -311,7 +311,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 6 named referenced globals
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 14 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -319,6 +319,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004F6CA8` | `_blitDestY` | re | destination Y of the present blit rect; offset by screen shake |
 | `0x004F6CAC` | `_shakeParity` | re | current screen-shake parity toggle (GG_FlushShaken) |
 | `0x0050C5C4` | `glassesBitmap` | re | stereo-glasses overlay bitmap handle — allocated by _G_AllocBitmap@12 in ?GLASSESInit@@YGXXZ, freed in ?GLASSESShutDown@@YGXXZ |
+| `0x0050C8D8` | `_lensFlareTable` | re | WR: lens-flare disc table {offset%, radius, colour} (WRLensFlare) (#493) |
+| `0x0050C8DC` | `_lensFlareCount` | re | WR: number of lens-flare discs to draw (#493) |
+| `0x00580D90` | `_curEyeLayer` | re | WR: the LAYER struct covering the eye altitude this frame (WRUpdate) (#493) |
+| `0x00580DA4` | `_eyeAltitude` | re | WR: current eye altitude >> 8 (WRUpdate / WRSetRemaps interpolation) (#493) |
+| `0x00583DBE` | `_sunScreenY` | re | WR: projected sun screen Y for the lens flare (WRLensFlare) (#493) |
+| `0x005843C0` | `_wrHazeActive` | re | WR: nonzero when the eye is under a haze/cloud deck (drives WRSetRemaps blending) (#493) |
+| `0x005843CC` | `_wrLayerAbove` | re | WR: LAYER just above the eye (interpolation bound) (#493) |
+| `0x005843D4` | `_wrLayerBelow` | re | WR: LAYER just below the eye (interpolation bound) (#493) |
 | `0x0058F0E8` | `overflowQuotient` | re | divide-overflow handler scratch: the saturated quotient magnitude, computed as (mask ^ 0x70000000) - mask. Reached through the _overflow_ptr slot the raster inner loops install (renderer.md) |
 | `0x0058F0F4` | `overflowSignMask` | re | divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign |
 

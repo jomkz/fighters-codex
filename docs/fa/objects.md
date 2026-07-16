@@ -165,8 +165,10 @@ array `_graphics` of **`0x66` (102)-byte** entries, initialised by `_GRAPHICInit
 (`0x442c00`), stepped every frame by `_GRAPHICUpdate@0` (`0x442de0`), and drawn by
 `_GRAPHICAddYourObjs@4` (`0x4431b0`) when the object system's `0x200` "add graphics" flag
 is set. A free entry is marked by `0xffff` in the owner field (`+0x04`); the allocator
-`FUN_00443b70` linear-scans for a free slot, or when full evicts the effect with the
-lowest priority-weighted age (older + lower-class effects go first).
+`GRAPHICAlloc` (`0x443b70`) initialises a slot found by `GRAPHICFindSlot` (`0x443c60`) —
+the first free entry, or when full the live effect with the lowest priority-weighted age
+(older + lower-class effects go first, so explosions and craters outlive smoke). The spawn
+logic behind this API was read under [#493](https://github.com/jomkz/fighters-codex/issues/493).
 
 ### Spawn API
 
@@ -263,8 +265,8 @@ remaining bytes of the `0x30` record are not yet individually resolved.
 ### Adders (continuous emitters) and lifecycle
 
 `_GRAPHICMakeAdder@24` sets `flags` bit8 and fills `0x4A`–`0x50`, turning an entry into a
-periodic emitter. Each `_GRAPHICUpdate@0` tick, `FUN_00442e10` computes the entry's life
-fraction `(now − spawn_tick)·100 / (expiry_tick − spawn_tick)`; when it crosses the
+periodic emitter. Each `_GRAPHICUpdate@0` tick, `GRAPHICStep` (`0x442e10`) computes the
+entry's life fraction `(now − spawn_tick)·100 / (expiry_tick − spawn_tick)`; when it crosses the
 fuse threshold (100% for bit6, 50% for bit5) it spawns its follow-on (e.g. a burning wreck
 grows a fire + smoke adder), and while alive an adder of type 7–11 emits a `smoke` child
 every `adder_interval` ticks. Non-attached entries integrate velocity and spin; attached

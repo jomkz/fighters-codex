@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 292" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Chat: CHATKey captures the edit line and target mode and expands F-key macros from the CHATMAC slots; ChatCanReach filters the recipients by side/wing/squadron and MSGSend delivers the line through the radio path. CHATFixKeyarray keeps typing from flying the plane.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .rcs{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .gate{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .buf{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .out{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:10.5px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .rcs{fill:#1e2c3e;stroke:#6f9bd6;} .gate{fill:#322a1a;stroke:#d9b45f;} .buf{fill:#1d2c22;stroke:#6fae7f;} .out{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .rcs{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .gate{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .buf{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .out{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .rcs{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .gate{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .buf{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .out{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="el" stroke="none"/></marker></defs>
+  <text x="16" y="24" class="title">MULTIPLAYER CHAT — edit line to reachable players</text>
+  <rect x="16" y="96" width="128" height="60" rx="6" class="box"/>
+  <text x="80" y="120" text-anchor="middle" class="lbl">keystroke</text>
+  <text x="80" y="137" text-anchor="middle" class="sub">GetKey</text>
+  <rect x="192" y="84" width="152" height="84" rx="6" class="rcs"/>
+  <text x="268" y="108" text-anchor="middle" class="lbl mono">CHATKey</text>
+  <text x="268" y="126" text-anchor="middle" class="sub">edit line + target mode</text>
+  <text x="268" y="141" text-anchor="middle" class="sub">all / side / wing / sqn</text>
+  <text x="268" y="156" text-anchor="middle" class="sub">F1-F12 macros</text>
+  <rect x="192" y="196" width="152" height="52" rx="6" class="buf"/>
+  <text x="268" y="217" text-anchor="middle" class="lbl">CHATMAC slots</text>
+  <text x="268" y="234" text-anchor="middle" class="sub">12 presets</text>
+  <rect x="396" y="96" width="150" height="60" rx="6" class="gate"/>
+  <text x="471" y="120" text-anchor="middle" class="lbl mono">ChatCanReach</text>
+  <text x="471" y="138" text-anchor="middle" class="sub">side/wing/sqn filter</text>
+  <rect x="596" y="96" width="150" height="60" rx="6" class="out"/>
+  <text x="671" y="120" text-anchor="middle" class="lbl mono">MSGSend</text>
+  <text x="671" y="138" text-anchor="middle" class="sub">kind 0x24 → radio.md</text>
+  <path d="M144 126 H190" class="edge" marker-end="url(#a)"/>
+  <path d="M268 168 V194" class="edge" marker-end="url(#a)"/>
+  <path d="M344 126 H394" class="edge" marker-end="url(#a)"/>
+  <path d="M546 126 H594" class="edge" marker-end="url(#a)"/>
+  <text x="16" y="276" class="el"><tspan class="mono">CHATFixKeyarray</tspan> holds flight keys released while typing (input.md)</text>
+</svg>

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 94/104 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
+// 106/121 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -49,9 +49,21 @@ undefined4 MoveObj(void);  // 0x00436B30  __stdcall
 undefined4 MoveGoalValue(undefined4, undefined4);  // 0x004382D0  __fastcall
 undefined4 CATGUYDraw(undefined4);  // 0x00442AB0  __stdcall
 undefined4 GRAPHICInit(void);  // 0x00442C00  __stdcall
+undefined4 GRAPHICRemove(undefined4);  // 0x00442DA0  __fastcall
 undefined4 GRAPHICUpdate(void);  // 0x00442DE0  __stdcall
 undefined4 GRAPHICAddYourObjs(undefined4);  // 0x004431B0  __stdcall
 undefined4 GRAPHICAddExp(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004432D0  __stdcall
+undefined4 GRAPHICAddCrater(undefined4, undefined4, undefined4);  // 0x00443D00  __fastcall
+undefined4 GRAPHICAddHulk(undefined4, undefined4, undefined4);  // 0x00443DC0  __fastcall
+undefined4 GRAPHICAddSmoke(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00443E80  __stdcall
+undefined4 GRAPHICAddSmokeAdder(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00443F90  __stdcall
+undefined4 GRAPHICAddFire(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00444020  __stdcall
+undefined4 GRAPHICAddInvisible(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004440F0  __stdcall
+undefined4 GRAPHICMakeAdder(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00444150  __stdcall
+undefined4 GRAPHICAddDebris(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004441D0  __stdcall
+undefined4 GRAPHICAddClusterRelease(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004443D0  __stdcall
+undefined4 GRAPHICAddSpecialDebris(undefined4, undefined4, undefined4, undefined4);  // 0x00444560  __stdcall
+undefined4 GRAPHICAddDevice(undefined4, undefined4, undefined4);  // 0x004447A0  __fastcall
 undefined4 InitChain(void);  // 0x00462600  __stdcall
 undefined4 RemoveFromChains(void);  // 0x00462620  __stdcall
 void ChainRemoveCurObj(u16 *);  // 0x00462640  __fastcall
@@ -152,6 +164,11 @@ undefined4 WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4)
 // TODO(#453): 0x00442640  CATGUYEventProc -- signature not recovered
 // TODO(#453): 0x00442720  CATGUYProc -- signature not recovered
 // TODO(#453): 0x00442750  CATGUYMoveProc -- signature not recovered
+// TODO(#453): 0x00442E10  GRAPHICStep -- signature not recovered
+// TODO(#453): 0x00443120  GRAPHICViewOffset -- signature not recovered
+// TODO(#453): 0x00443B70  GRAPHICAlloc -- signature not recovered
+// TODO(#453): 0x00443C60  GRAPHICFindSlot -- signature not recovered
+// TODO(#453): 0x004443DA  GRAPHICAddClusterReleaseBody -- signature not recovered
 // TODO(#453): 0x004736F0  NPCWeaponsProc -- signature not recovered
 // TODO(#453): 0x0048D780  PLANESayProc -- signature not recovered
 // TODO(#453): 0x0048E8D0  OBJSayProc -- signature not recovered

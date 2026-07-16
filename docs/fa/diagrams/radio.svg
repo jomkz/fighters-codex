@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 292" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Radio: MSGSend queues a T_MSG and fans it out to recipients and network peers; SAYMsg dispatches audible player-bound messages to the object class SayProc, which assembles a line through the SAY phrase helpers and FinishSayLine speaks it as HUD text plus a .5K clip.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .rcs{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .gate{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .buf{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .out{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:10.5px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .rcs{fill:#1e2c3e;stroke:#6f9bd6;} .gate{fill:#322a1a;stroke:#d9b45f;} .buf{fill:#1d2c22;stroke:#6fae7f;} .out{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .rcs{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .gate{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .buf{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .out{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .rcs{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .gate{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .buf{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .out{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="el" stroke="none"/></marker></defs>
+  <text x="16" y="24" class="title">RADIO / SPEECH — one message, queued then spoken</text>
+  <rect x="16" y="96" width="128" height="60" rx="6" class="box"/>
+  <text x="80" y="120" text-anchor="middle" class="lbl">wingman AI /</text>
+  <text x="80" y="137" text-anchor="middle" class="sub">FlightKey / .MC</text>
+  <rect x="192" y="88" width="150" height="76" rx="6" class="rcs"/>
+  <text x="267" y="112" text-anchor="middle" class="lbl mono">MSGSend</text>
+  <text x="267" y="130" text-anchor="middle" class="sub">queue a T_MSG</text>
+  <text x="267" y="145" text-anchor="middle" class="sub">fan out to recipients</text>
+  <rect x="390" y="60" width="150" height="52" rx="6" class="buf"/>
+  <text x="465" y="81" text-anchor="middle" class="lbl">0x22-slot queue</text>
+  <text x="465" y="98" text-anchor="middle" class="sub mono">0x522D40</text>
+  <rect x="390" y="140" width="150" height="52" rx="6" class="box"/>
+  <text x="465" y="161" text-anchor="middle" class="lbl mono">MPMsgSend</text>
+  <text x="465" y="178" text-anchor="middle" class="sub">peers (network.md)</text>
+  <rect x="588" y="88" width="150" height="76" rx="6" class="gate"/>
+  <text x="663" y="112" text-anchor="middle" class="lbl mono">SAYMsg</text>
+  <text x="663" y="130" text-anchor="middle" class="sub">→ class SayProc</text>
+  <text x="663" y="145" text-anchor="middle" class="sub">CallUtilProc(6)</text>
+  <rect x="588" y="200" width="150" height="72" rx="6" class="out"/>
+  <text x="663" y="224" text-anchor="middle" class="lbl">FinishSayLine</text>
+  <text x="663" y="242" text-anchor="middle" class="sub">HUD text +</text>
+  <text x="663" y="257" text-anchor="middle" class="sub">.5K radio clip</text>
+  <path d="M144 126 H190" class="edge" marker-end="url(#a)"/>
+  <path d="M342 118 C366 118 366 86 388 86" class="edge" marker-end="url(#a)"/>
+  <path d="M342 134 C366 134 366 166 388 166" class="edge" marker-end="url(#a)"/>
+  <path d="M540 118 C564 118 564 122 586 122" class="edge" marker-end="url(#a)"/>
+  <path d="M663 164 V198" class="edge" marker-end="url(#a)"/>
+  <text x="16" y="250" class="el">phrase grammar: <tspan class="mono">SayContactType</tspan> · <tspan class="mono">SayClock</tspan> · <tspan class="mono">SayRange</tspan> · <tspan class="mono">SayPickLine</tspan></text>
+  <text x="16" y="268" class="el">AWACS calls weather-gated by <tspan class="mono">WRWeatherEffects</tspan> (renderer.md)</text>
+</svg>

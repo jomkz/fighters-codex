@@ -8,9 +8,26 @@ va,kind,name,display,source,confidence,notes,type
 0x00442750,func,_CATGUYMoveProc,CATGUYMoveProc,sms,confirmed,,
 0x00442AB0,func,_CATGUYDraw@4,CATGUYDraw,sms,confirmed,,undefined4 __stdcall CATGUYDraw(undefined4)
 0x00442C00,func,_GRAPHICInit@0,GRAPHICInit,sms,confirmed,init the 100-entry _graphics effect pool + per-type .SH handle table (crater/smoke/fire/exp/debris/chaff/flare/spd/mpd/lpd); see objects.md GRAPHIC effect spawning,undefined4 __stdcall GRAPHICInit(void)
+0x00442DA0,func,@GRAPHICRemove@4,GRAPHICRemove,sms,confirmed,expire every network-origin (flag 0x10000) GRAPHIC owned by _curId; mirror the removal to peers,undefined4 __fastcall GRAPHICRemove(undefined4)
 0x00442DE0,func,_GRAPHICUpdate@0,GRAPHICUpdate,sms,confirmed,"step every live GRAPHIC entry via FUN_00442e10 (motion/fuse/adder emission), then _UpdateLoopSounds",undefined4 __stdcall GRAPHICUpdate(void)
+0x00442E10,func,GRAPHICStep,,re,confirmed,"advance one GRAPHIC per frame: integrate velocity/spin (or track the owner object), clamp to ground, spawn a fire child at 100%/50% life for the burn types, run its looping sound when in range, and free it at end-of-life",
+0x00443120,func,GRAPHICViewOffset,,re,confirmed,transform a GRAPHIC world position into the owner-object view frame for the muzzle/impact attach (used by AddExp and the per-frame step),
 0x004431B0,func,_GRAPHICAddYourObjs@4,GRAPHICAddYourObjs,sms,confirmed,,undefined4 __stdcall GRAPHICAddYourObjs(undefined4)
 0x004432D0,func,_GRAPHICAddExp@28,GRAPHICAddExp,sms,confirmed,"spawn an explosion: random type-variation, chained debris/cluster-release/smoke children, MP mirror","undefined4 __stdcall GRAPHICAddExp(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00443B70,func,GRAPHICAlloc,,re,confirmed,"allocate + initialise a GRAPHIC record: type, flags, position, spawn/expiry ticks, ground-Z from T_Info; returns the entry",
+0x00443C60,func,GRAPHICFindSlot,,re,confirmed,"the pool eviction policy: return the first free slot, else evict the lowest-priority live entry (age-biased so explosions/craters outlive smoke)",
+0x00443D00,func,@GRAPHICAddCrater@12,GRAPHICAddCrater,sms,confirmed,spawn a ground crater/scar decal (skipped on non-terrain); mirror to peers,"undefined4 __fastcall GRAPHICAddCrater(undefined4, undefined4, undefined4)"
+0x00443DC0,func,@GRAPHICAddHulk@12,GRAPHICAddHulk,sms,confirmed,spawn a burnt-out static hulk marker (type 0x27+id); mirror to peers,"undefined4 __fastcall GRAPHICAddHulk(undefined4, undefined4, undefined4)"
+0x00443E80,func,_GRAPHICAddSmoke@28,GRAPHICAddSmoke,sms,confirmed,spawn a smoke puff that drifts with _windH/_windSpeed and rises; mirror to peers,"undefined4 __stdcall GRAPHICAddSmoke(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00443F90,func,_GRAPHICAddSmokeAdder@40,GRAPHICAddSmokeAdder,sms,confirmed,spawn an invisible emitter that periodically births smoke puffs (via GRAPHICMakeAdder),"undefined4 __stdcall GRAPHICAddSmokeAdder(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00444020,func,_GRAPHICAddFire@32,GRAPHICAddFire,sms,confirmed,"spawn a looping fire effect + sound, optionally mounted on an object; mirror to peers","undefined4 __stdcall GRAPHICAddFire(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004440F0,func,_GRAPHICAddInvisible@20,GRAPHICAddInvisible,sms,confirmed,spawn a position-only GRAPHIC (no visual) used as a sound/child-emitter carrier,"undefined4 __stdcall GRAPHICAddInvisible(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00444150,func,_GRAPHICMakeAdder@24,GRAPHICMakeAdder,sms,confirmed,"turn a GRAPHIC into a periodic child-spawner (adder byte +0x4a = child type, interval, rgb)","undefined4 __stdcall GRAPHICMakeAdder(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004441D0,func,_GRAPHICAddDebris@24,GRAPHICAddDebris,sms,confirmed,scatter N tumbling debris fragments from a base velocity + spread; mirror to peers,"undefined4 __stdcall GRAPHICAddDebris(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004443D0,func,_GRAPHICAddClusterRelease@24,GRAPHICAddClusterRelease,sms,confirmed,spawn a cluster-munition sub-release burst (thin wrapper over the shared body),"undefined4 __stdcall GRAPHICAddClusterRelease(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004443DA,func,GRAPHICAddClusterReleaseBody,,re,confirmed,overlapping alternate entry / body of GRAPHICAddClusterRelease,
+0x00444560,func,_GRAPHICAddSpecialDebris@16,GRAPHICAddSpecialDebris,sms,confirmed,scatter type-specific debris (wings/panels) drawn from the exploding object's own shape,"undefined4 __stdcall GRAPHICAddSpecialDebris(undefined4, undefined4, undefined4, undefined4)"
+0x004447A0,func,@GRAPHICAddDevice@12,GRAPHICAddDevice,sms,confirmed,spawn the visual for a dropped device (chaff/flare/tank) as a GRAPHIC,"undefined4 __fastcall GRAPHICAddDevice(undefined4, undefined4, undefined4)"
 0x00462600,func,_InitChain@0,InitChain,sms,confirmed,,undefined4 __stdcall InitChain(void)
 0x00462620,func,_RemoveFromChains@0,RemoveFromChains,sms,confirmed,,undefined4 __stdcall RemoveFromChains(void)
 0x00462640,func,ChainRemoveCurObj,,re,confirmed,unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall ChainRemoveCurObj(u16 *)
@@ -149,6 +166,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004F4E5C,data,,,waiver,confirmed,"string literal ""fire.SH"" — effect shape filename read by _GRAPHICInit@0",
 0x004F4E64,data,,,waiver,confirmed,"string literal ""smoke.SH"" — effect shape filename read by _GRAPHICInit@0",
 0x004F4E70,data,,,waiver,confirmed,"string literal ""crater.SH"" — effect shape filename read by _GRAPHICInit@0",
+0x004F4E7D,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #493 claims; layout not yet recovered,
+0x004F4E88,data,,,waiver,confirmed,unnamed scalar referenced by the #493 claims; role not yet recovered,
+0x004F4E94,data,,,waiver,confirmed,unnamed scalar referenced by the #493 claims; role not yet recovered,
 0x004F6D6C,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
 0x004F6D78,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
 0x004F6D80,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
@@ -278,6 +298,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0053DAFC,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DAFE,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB4E,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
+0x0053DB50,data,,,waiver,confirmed,interior of / adjacent to _graphics; named at its base or owned by that subsystem,
 0x0053DB52,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB54,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB58,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
@@ -285,6 +306,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0053DB60,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB62,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB64,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
+0x0053DB8E,data,,,waiver,confirmed,interior of / adjacent to _graphics; named at its base or owned by that subsystem,
 0x00546B94,data,_curObjSize,,re,confirmed,byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6,undefined2
 0x00546B9C,data,_curTypeSize,,re,confirmed,byte size of the current type-record mirror (from type +0x01),undefined2
 0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2",undefined2

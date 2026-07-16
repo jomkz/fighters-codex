@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 155/177 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
+// 172/205 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -127,8 +127,21 @@ void GLASSESBeforeDrawingPop(BOX *);  // 0x004B00A0  __stdcall
 void GLASSESAfterDrawingPop(BOX *, char);  // 0x004B00D0  __stdcall
 void GLASSESSpreadLines(char);  // 0x004B0130  __fastcall
 void GLASSESPrintAmount(void);  // 0x004B01E0  __stdcall
+undefined4 WRSetTint(undefined4);  // 0x004B3170  __fastcall
+undefined4 WRGetLayer(undefined4, undefined4);  // 0x004B3190  __stdcall
+undefined4 WRSetRemaps(undefined4, undefined4);  // 0x004B31F0  __stdcall
+undefined4 WRUpdate(undefined4);  // 0x004B3480  __fastcall
+undefined4 WRUpdatePalette(void);  // 0x004B3D90  __stdcall
+undefined4 WRLightUpdate(void);  // 0x004B4170  __stdcall
+undefined4 WRInit(undefined4);  // 0x004B4370  __stdcall
+undefined4 WRShutdown(void);  // 0x004B46D0  __stdcall
+undefined4 WRInt(undefined4);  // 0x004B46F0  __fastcall
+undefined4 WRForcePaletteUpdate(void);  // 0x004B4700  __stdcall
 void InitTmapRemaps(void);  // 0x004B4790  __fastcall
 undefined4 SetTmapRemaps(void);  // 0x004B47B0  __fastcall
+undefined4 WRMakeHazeList(undefined4, undefined4, undefined4);  // 0x004B48C0  __fastcall
+undefined4 WRLensFlare(void);  // 0x004B4990  __fastcall
+undefined4 WRCanSee(undefined4, undefined4);  // 0x004B4B30  __fastcall
 undefined4 G_AllocBitmapBuffer(undefined4);  // 0x004B7910  __cdecl
 undefined4 G_RelocBitmap(undefined4, undefined4);  // 0x004B7930  __fastcall
 undefined4 G_AllocBitmap(undefined4, undefined4, undefined4);  // 0x004B79B0  __stdcall
@@ -171,6 +184,10 @@ undefined4 G_UPolygon(undefined4, undefined4);  // 0x004C6ECC  __fastcall
 undefined4 G_SUPolygon(undefined4, undefined4);  // 0x004C77D0  __fastcall
 undefined4 G_Polygon(undefined4, undefined4);  // 0x004C8A38  __fastcall
 undefined4 G_SPolygon(undefined4, undefined4);  // 0x004C8A74  __fastcall
+undefined4 WRBlackenPalette(undefined4, undefined4, undefined4);  // 0x004C8E20  __stdcall
+undefined4 WRWhitenPalette(undefined4, undefined4, undefined4);  // 0x004C8E6C  __stdcall
+undefined4 WRReddenPalette(undefined4, undefined4, undefined4);  // 0x004C8EC8  __stdcall
+undefined4 WRColorPalette(undefined4, undefined4, undefined4, undefined4);  // 0x004C8F10  __stdcall
 void Horizon2d(void);  // 0x004C8FD4  __cdecl
 void NoHorizon(void);  // 0x004C9224  __cdecl
 void SolidHorizon(undefined4, undefined4);  // 0x004C924C  __cdecl
@@ -200,7 +217,18 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x00486CF0  FPSInit -- signature not recovered
 // TODO(#453): 0x00498A50  G_Visible -- signature not recovered
 // TODO(#453): 0x004991B0  G_CopyDriverName -- signature not recovered
+// TODO(#453): 0x004B3410  WRInterpFog -- signature not recovered
+// TODO(#453): 0x004B3750  WRAdvanceLayers -- signature not recovered
+// TODO(#453): 0x004B3820  WRLerpByte -- signature not recovered
+// TODO(#453): 0x004B382A  WRBlendLayer -- signature not recovered
+// TODO(#453): 0x004B3AD0  WRLerpColor -- signature not recovered
+// TODO(#453): 0x004B3B60  WRClampByte -- signature not recovered
+// TODO(#453): 0x004B3B80  WRLerpWord -- signature not recovered
+// TODO(#453): 0x004B3BE0  WRComposeLayerFlags -- signature not recovered
+// TODO(#453): 0x004B3CB0  WRBuildSkyBands -- signature not recovered
 // TODO(#453): 0x004B4320  WRFogLayerUpdate -- signature not recovered
+// TODO(#453): 0x004B4680  WRPickTintTable -- signature not recovered
+// TODO(#453): 0x004B4720  WRWeatherEffects -- signature not recovered
 // TODO(#453): 0x004B8570  G_ColorPrintf -- signature not recovered
 // TODO(#453): 0x004BEE60  unknown_divide_error -- signature not recovered
 // TODO(#453): 0x004BEE70  divide_by_ecx_handler -- signature not recovered
@@ -212,5 +240,13 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x004BF2C0  line_overflow1 -- signature not recovered
 // TODO(#453): 0x004BF310  line_overflow2 -- signature not recovered
 // TODO(#453): 0x004BF340  access_violation_handler -- signature not recovered
+// TODO(#455): 0x0050C8D8  _lensFlareTable -- type not recovered
+// TODO(#455): 0x0050C8DC  _lensFlareCount -- type not recovered
+// TODO(#455): 0x00580D90  _curEyeLayer -- type not recovered
+// TODO(#455): 0x00580DA4  _eyeAltitude -- type not recovered
+// TODO(#455): 0x00583DBE  _sunScreenY -- type not recovered
+// TODO(#455): 0x005843C0  _wrHazeActive -- type not recovered
+// TODO(#455): 0x005843CC  _wrLayerAbove -- type not recovered
+// TODO(#455): 0x005843D4  _wrLayerBelow -- type not recovered
 
 }  // namespace fxe::fa::renderer

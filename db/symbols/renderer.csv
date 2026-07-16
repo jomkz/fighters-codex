@@ -125,9 +125,33 @@ va,kind,name,display,source,confidence,notes,type
 0x004B00D0,func,?GLASSESAfterDrawingPop@@YGXPAUBOX@@D@Z,GLASSESAfterDrawingPop,sms,confirmed,,"void __stdcall GLASSESAfterDrawingPop(BOX *, char)"
 0x004B0130,func,?GLASSESSpreadLines@@YIXD@Z,GLASSESSpreadLines,sms,confirmed,,void __fastcall GLASSESSpreadLines(char)
 0x004B01E0,func,?GLASSESPrintAmount@@YGXXZ,GLASSESPrintAmount,sms,confirmed,,void __stdcall GLASSESPrintAmount(void)
+0x004B3170,func,@WRSetTint@4,WRSetTint,sms,confirmed,select the active tint-remap table (_currentTintTable) by index,undefined4 __fastcall WRSetTint(undefined4)
+0x004B3190,func,_WRGetLayer@8,WRGetLayer,sms,confirmed,find the LAYER struct (0x160-byte stride) covering a given altitude; report whether it is above the cloud deck,"undefined4 __stdcall WRGetLayer(undefined4, undefined4)"
+0x004B31F0,func,_WRSetRemaps@8,WRSetRemaps,sms,confirmed,"pick the shade+tint remap tables for an object at a distance/altitude, interpolating between the two straddling LAYERs so haze blends smoothly across the deck","undefined4 __stdcall WRSetRemaps(undefined4, undefined4)"
+0x004B3410,func,WRInterpFog,,re,confirmed,interpolate a LAYER's fog density at a distance along its vis-lo..vis-hi ramp,
+0x004B3480,func,@WRUpdate@4,WRUpdate,sms,confirmed,"per-frame atmosphere update at the eye altitude: advance the time-of-day LAYER state machine, recompute the sun angle + light source, blend the sky/horizon palette bands, and roll random palette flicker (lightning)",undefined4 __fastcall WRUpdate(undefined4)
+0x004B3750,func,WRAdvanceLayers,,re,confirmed,step the LAYER weather state toward the scheduled next state (fog rolling in/out over time),
+0x004B3820,func,WRLerpByte,,re,confirmed,byte lerp helper for the LAYER blend,
+0x004B382A,func,WRBlendLayer,,re,confirmed,blend two LAYER structs field-by-field by a 0..0x100 fraction (the fog/colour cross-fade body),
+0x004B3AD0,func,WRLerpColor,,re,confirmed,interpolate an RGB palette entry for the layer blend,
+0x004B3B60,func,WRClampByte,,re,confirmed,clamp helper for the palette blend,
+0x004B3B80,func,WRLerpWord,,re,confirmed,word lerp helper for the layer blend,
+0x004B3BE0,func,WRComposeLayerFlags,,re,confirmed,compose the effective _currentLayer flag word (night-haze etc.) for the eye altitude,
+0x004B3CB0,func,WRBuildSkyBands,,re,confirmed,build the sky-gradient colour bands from the active LAYER,
+0x004B3D90,func,_WRUpdatePalette@0,WRUpdatePalette,sms,confirmed,"rebuild the working palette each frame from the LAYER sky/ground colours + tint + global colour-add, uploading only when it changed",undefined4 __stdcall WRUpdatePalette(void)
+0x004B4170,func,_WRLightUpdate@0,WRLightUpdate,sms,confirmed,recompute the directional light + ambient from the sun position for terrain/object shading,undefined4 __stdcall WRLightUpdate(void)
 0x004B4320,func,WRFogLayerUpdate,WRFogLayerUpdate,sms,confirmed,"imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491)",
+0x004B4370,func,_WRInit@4,WRInit,sms,confirmed,"load the theater .LAY weather DLL, copy its 30-dword header, init the shade/tint tables + tmap remaps, and force a first palette update",undefined4 __stdcall WRInit(undefined4)
+0x004B4680,func,WRPickTintTable,,re,confirmed,helper: select the tint table pointer for the current effects flags,
+0x004B46D0,func,_WRShutdown@0,WRShutdown,sms,confirmed,free the LAYER header allocation and clear the WR-enabled flag,undefined4 __stdcall WRShutdown(void)
+0x004B46F0,func,@WRInt@4,WRInt,sms,confirmed,write the single-byte WR-enabled flag,undefined4 __fastcall WRInt(undefined4)
+0x004B4700,func,_WRForcePaletteUpdate@0,WRForcePaletteUpdate,sms,confirmed,invalidate _lastPalette so the next frame re-uploads the whole palette,undefined4 __stdcall WRForcePaletteUpdate(void)
+0x004B4720,func,_WRWeatherEffects,WRWeatherEffects,sms,confirmed,"the visibility model: the minimum per-LAYER visibility byte (+0x14e) across the altitude band between two objects, plus the layer's fog distance — the range weather permits seeing through",
 0x004B4790,func,?InitTmapRemaps@@YIXXZ,InitTmapRemaps,sms,confirmed,,void __fastcall InitTmapRemaps(void)
 0x004B47B0,func,@SetTmapRemaps@0,SetTmapRemaps,sms,confirmed,,undefined4 __fastcall SetTmapRemaps(void)
+0x004B48C0,func,@WRMakeHazeList@12,WRMakeHazeList,sms,confirmed,"build the (distance,colour) haze ramp list the sky renderer walks, terminated by 0x7fffffff","undefined4 __fastcall WRMakeHazeList(undefined4, undefined4, undefined4)"
+0x004B4990,func,@WRLensFlare@0,WRLensFlare,sms,confirmed,draw the sun lens-flare disc chain when the sun is on-screen and above the horizon (gamePrefs bit 0x80),undefined4 __fastcall WRLensFlare(void)
+0x004B4B30,func,@WRCanSee@8,WRCanSee,sms,confirmed,"weather-gated line-of-sight: distance <= (weather visibility x the target's detectability +0x3b), clamped to the layer floor. Called by _Targetable (so weather gates visual target acquisition), VIEWCanSeeTarget, PROJScoreTarget, and the AI (0x43a5c0)","undefined4 __fastcall WRCanSee(undefined4, undefined4)"
 0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl G_AllocBitmapBuffer(undefined4)
 0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,"undefined4 __fastcall G_RelocBitmap(undefined4, undefined4)"
 0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocBitmap(undefined4, undefined4, undefined4)"
@@ -182,6 +206,10 @@ va,kind,name,display,source,confidence,notes,type
 0x004C77D0,func,@G_SUPolygon@8,G_SUPolygon,sms,confirmed,,"undefined4 __fastcall G_SUPolygon(undefined4, undefined4)"
 0x004C8A38,func,@G_Polygon@8,G_Polygon,sms,confirmed,,"undefined4 __fastcall G_Polygon(undefined4, undefined4)"
 0x004C8A74,func,@G_SPolygon@8,G_SPolygon,sms,confirmed,,"undefined4 __fastcall G_SPolygon(undefined4, undefined4)"
+0x004C8E20,func,_WRBlackenPalette@12,WRBlackenPalette,sms,confirmed,scale a palette toward black by a 0..0x100 amount (G-LOC / blackout fade),"undefined4 __stdcall WRBlackenPalette(undefined4, undefined4, undefined4)"
+0x004C8E6C,func,_WRWhitenPalette@12,WRWhitenPalette,sms,confirmed,scale a palette toward white (flash / red-out / nuke flash),"undefined4 __stdcall WRWhitenPalette(undefined4, undefined4, undefined4)"
+0x004C8EC8,func,_WRReddenPalette@12,WRReddenPalette,sms,confirmed,scale a palette toward red (red-out under negative g),"undefined4 __stdcall WRReddenPalette(undefined4, undefined4, undefined4)"
+0x004C8F10,func,_WRColorPalette@16,WRColorPalette,sms,confirmed,blend a palette toward an arbitrary RGB by an amount (generic screen tint),"undefined4 __stdcall WRColorPalette(undefined4, undefined4, undefined4, undefined4)"
 0x004C8FD4,func,Horizon2d,,re,confirmed,scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl Horizon2d(void)
 0x004C9224,func,NoHorizon,,re,confirmed,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NoHorizon(void)
 0x004C924C,func,_SolidHorizon,SolidHorizon,re,confirmed,"solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand","void __cdecl SolidHorizon(undefined4, undefined4)"
@@ -214,6 +242,13 @@ va,kind,name,display,source,confidence,notes,type
 0x0050C5D0,data,,,waiver,confirmed,interior of / adjacent to ?glassesHDiff@@3FA; named at its base or owned by that subsystem,
 0x0050C5D4,data,,,waiver,confirmed,interior of / adjacent to ?glassesHDiff@@3FA; named at its base or owned by that subsystem,
 0x0050C5E0,data,,,waiver,confirmed,"string literal — ""h3d_off.PIC"", the resource name _ShowPicture displays when the stereo-glasses mode is switched off; constant text, not state",
+0x0050C8B8,data,,,waiver,confirmed,interior of the WR sun/lens-flare state block,
+0x0050C8D8,data,_lensFlareTable,,re,confirmed,"WR: lens-flare disc table {offset%, radius, colour} (WRLensFlare) (#493)",
+0x0050C8DC,data,_lensFlareCount,,re,confirmed,WR: number of lens-flare discs to draw (#493),
+0x0050C8E0,data,,,waiver,confirmed,interior of the WR sun/lens-flare state block,
+0x0050C8E4,data,,,waiver,confirmed,interior of the WR sun/lens-flare state block,
+0x0050C8E8,data,,,waiver,confirmed,interior of the WR sun/lens-flare state block,
+0x0050C950,data,,,waiver,confirmed,interior of / adjacent to ?palColorRate@@3FA; named at its base or owned by that subsystem,
 0x0050C992,data,,,waiver,confirmed,interior of _tabStops text tab-stop table,
 0x0050C994,data,,,waiver,confirmed,interior of _tabStops text tab-stop table,
 0x0050CE68,data,,,waiver,confirmed,Bresenham/pattern-line rasterizer state near reduceLookDown,
@@ -344,6 +379,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00556D6E,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base,
 0x00556D72,data,,,waiver,confirmed,clip-box / _tempYLR rasterizer state named at the _clipTop base,
 0x0055BBD8,data,,,waiver,confirmed,interior of _colorIndirections colour-remap table,
+0x0055BBE2,data,,,waiver,confirmed,interior of / adjacent to _colorIndirections; named at its base or owned by that subsystem,
 0x0055BC38,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base,
 0x0055BC3C,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base,
 0x0055BC4C,data,,,waiver,confirmed,edge-clip working state named at _colorIndirections/_snowLow base,
@@ -362,7 +398,30 @@ va,kind,name,display,source,confidence,notes,type
 0x0055C06C,data,,,waiver,confirmed,graphics-mode state named at the _grMode base,
 0x0055C074,data,,,waiver,confirmed,graphics-mode state named at the _grMode base,
 0x00580C60,data,,,waiver,confirmed,interior of / adjacent to ?glasses3dAmount@@3JA; named at its base or owned by that subsystem,
+0x00580D88,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
+0x00580D90,data,_curEyeLayer,,re,confirmed,WR: the LAYER struct covering the eye altitude this frame (WRUpdate) (#493),
+0x00580D98,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DA4,data,_eyeAltitude,,re,confirmed,WR: current eye altitude >> 8 (WRUpdate / WRSetRemaps interpolation) (#493),
+0x00580DA8,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DB4,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DB8,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DBC,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
 0x00580DC0,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580DCC,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DD0,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DD4,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DD8,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DDC,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
+0x00580DE0,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580DF8,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580DFC,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E00,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E04,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E08,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E0C,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E1C,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E20,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
+0x00580E24,data,,,waiver,confirmed,interior of / adjacent to _hdr; named at its base or owned by that subsystem,
 0x00581140,data,,,waiver,confirmed,interior of / adjacent to ?palBlackenDest@@3FA; named at its base or owned by that subsystem,
 0x00581144,data,,,waiver,confirmed,interior of / adjacent to ?palBlackenDest@@3FA; named at its base or owned by that subsystem,
 0x0058114A,data,,,waiver,confirmed,interior of / adjacent to ?palBlackenDest@@3FA; named at its base or owned by that subsystem,
@@ -385,10 +444,47 @@ va,kind,name,display,source,confidence,notes,type
 0x0058138A,data,,,waiver,confirmed,interior of / adjacent to ?palBlackenDest@@3FA; named at its base or owned by that subsystem,
 0x0058138E,data,,,waiver,confirmed,interior of / adjacent to ?palBlackenDest@@3FA; named at its base or owned by that subsystem,
 0x00581392,data,,,waiver,confirmed,interior of / adjacent to ?palBlackenDest@@3FA; named at its base or owned by that subsystem,
+0x005830F6,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #493 claims; layout not yet recovered,
+0x005830FA,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #493 claims; layout not yet recovered,
+0x00583254,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x0058325A,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x0058325E,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x005833B0,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x005833BA,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x005833BE,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x00583510,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x0058351A,data,,,waiver,confirmed,interior of / adjacent to ?curLayers@@3PAULAYER@@A; named at its base or owned by that subsystem,
+0x00583952,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583956,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x0058395A,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x0058395E,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x0058397E,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583982,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x005839DB,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x005839DF,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583A3B,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583A3D,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583A3E,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583A8A,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583A8C,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
 0x00583AA0,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem,
+0x00583AA8,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583AAC,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583DBE,data,_sunScreenY,,re,confirmed,WR: projected sun screen Y for the lens flare (WRLensFlare) (#493),
 0x00583DC4,data,,,waiver,confirmed,interior of _curPalette,
+0x00583E80,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00583E84,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00584004,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00584060,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00584064,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00584180,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x00584184,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x005843C0,data,_wrHazeActive,,re,confirmed,WR: nonzero when the eye is under a haze/cloud deck (drives WRSetRemaps blending) (#493),
 0x005843C4,data,,,waiver,confirmed,interior of / adjacent to _realPalette; named at its base or owned by that subsystem,
 0x005843C8,data,,,waiver,confirmed,interior of / adjacent to _realPalette; named at its base or owned by that subsystem,
+0x005843CC,data,_wrLayerAbove,,re,confirmed,WR: LAYER just above the eye (interpolation bound) (#493),
+0x005843D2,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
+0x005843D4,data,_wrLayerBelow,,re,confirmed,WR: LAYER just below the eye (interpolation bound) (#493),
 0x005843D8,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables),
 0x005843DC,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables),
 0x005843E0,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables),
