@@ -203,7 +203,7 @@ reconstruction.
 ## Related
 
 **Formats:** [LIB](LIB.md) — the four `.LIB` archives ESA carries, and the DCL
-contrast (LIB entries wrap the stream in a 6-byte EA header; ESA does not).
+contrast (LIB entries wrap the stream in a 4-byte EA header; ESA does not).
 [SSF](SSF.md) — the installer script whose `INSTALL_FILES` directives select ESA
 entries by `label`. [RGN](RGN.md) — the other Disc 1 installer-only format.
 

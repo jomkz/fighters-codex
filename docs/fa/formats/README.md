@@ -82,12 +82,12 @@ Seven file types share a plain-text assembly-like DSL that defines aircraft, wea
 |--------|------|-------------|
 | BRF | [BRF.md](BRF.md) | Overview of the text-based type definition DSL |
 | OT | [OT.md](OT.md) | Object type definitions |
-| NT | [NT.md](NT.md) | Nation and country type definitions |
-| PT | [PT.md](PT.md) | Pilot and aircraft performance type definitions |
-| JT | [JT.md](JT.md) | Jet engine and weapon type definitions |
+| NT | [NT.md](NT.md) | NPC vehicle definitions |
+| PT | [PT.md](PT.md) | Aircraft flight-model definitions |
+| JT | [JT.md](JT.md) | Weapon ordnance definitions |
 | SEE | [SEE.md](SEE.md) | Sensor and electronics type definitions |
 | ECM | [ECM.md](ECM.md) | Electronic countermeasures type definitions |
-| GAS | [GAS.md](GAS.md) | Guided armament system type definitions |
+| GAS | [GAS.md](GAS.md) | External fuel tank definitions |
 
 ## UI & Win32 Overlays
 
@@ -99,7 +99,7 @@ The FA menu system is built from Win32 PE DLLs; each dialog, menu screen, font, 
 | DLG | [DLG.md](DLG.md) | Dialog box overlay DLL |
 | MNU | [MNU.md](MNU.md) | Menu screen overlay DLL |
 | FNT | [FNT.md](FNT.md) | Bitmap font overlay DLL |
-| PTS | [PTS.md](PTS.md) | Points and scoring overlay DLL |
+| PTS | [PTS.md](PTS.md) | Aircraft screen assets overlay DLL |
 
 ## System & Config
 

@@ -106,7 +106,7 @@ falling back to end-of-file for the last entry's size.
 | 0 | raw | Uncompressed — data stored verbatim |
 | 1 | lzss | LZSS compressed (4-byte decompressed-size prefix) — decoder tracked in #54; extraction surfaces it as unsupported |
 | 3 | pxpk | Raw with a 4-byte `PXPK` inline header — decoder tracked in #54; extraction surfaces it as unsupported |
-| 4 | dcl | PKWare DCL ("Blast") with 6-byte EA prefix |
+| 4 | dcl | PKWare DCL ("Blast") with 4-byte EA prefix |
 
 ### Filename Conventions
 
@@ -284,7 +284,7 @@ writing the decoders needs samples from the wider Fighters family (ATF/USNF).
 conventions from the consumer side; every format spec in this directory
 describes content stored in these archives. [ESA](ESA.md) is the installer
 container that ships four of these `.LIB` archives (`FA_1/2/4B/4D`) stored,
-and whose `PKWA` streams are raw DCL — without the 6-byte EA wrapper the
+and whose `PKWA` streams are raw DCL — without the 4-byte EA wrapper the
 `flags=4` entries here use.
 
 **Engine:** [architecture.md](../architecture.md) — Asset System (EALIB
