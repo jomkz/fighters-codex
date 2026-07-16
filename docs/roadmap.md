@@ -96,9 +96,15 @@ ATF/USNF acquisition (#144) is external — start immediately.
 | 6 | [#57](https://github.com/jomkz/fighters-codex/issues/57) | ATF/USNF verification pass |
 | 6 | [#58](https://github.com/jomkz/fighters-codex/issues/58) | v1.0 audit, release, maintenance mode |
 
-† `fxe` (#280) has its own [milestone](https://github.com/jomkz/fighters-codex/milestones), sequenced
+† `fxe` (#280) has its own [milestone](https://github.com/jomkz/fighters-codex/milestone/10), sequenced
 out of the Phase 5 reconstruction and interleaved with Phase 4; it is a stretch program, not a 1.0 gate.
 The SH-semantics epic (#52) and the two reconstruction milestones are complete and folded in here.
+
+The residual static-RE work — the [#482](https://github.com/jomkz/fighters-codex/issues/482)
+coverage close-out, read with the disassembly open — sits in its own
+[RE Coverage milestone](https://github.com/jomkz/fighters-codex/milestone/12) and ships as the
+v0.8.x series, ahead of the `fxe` runtime (v0.9.0) so the source port generates from a database
+that covers the binary.
 
 Standalone Phase 5 prerequisite: [#120](https://github.com/jomkz/fighters-codex/issues/120)
 — migrate the RE workbench (Ghidra project + FA corpus) to Fedora.
@@ -215,7 +221,8 @@ one-way and clean.
 ## Releases
 
 Minimum one release per phase gate: v0.3.0 (P0) · v0.4.0 (P1) · v0.5.0 (P2+P3) ·
-v0.6.0 (P4) · v0.7–v0.9 (P5, as RE lands) · **v1.0.0** (P6).
+v0.6.0 (P4) · v0.7–v0.8.1 (P5) · v0.8.x (RE Coverage milestone, as the reading waves land) ·
+v0.9.0 (`fxe`) · **v1.0.0** (P6).
 
 The v0.5.x train (P5 reconstruction) shipped ahead of P4; from here the P4 validation work and the
 P5 forward programs (`fxe`, `fx_render`, residual RE) **interleave** — alternating release-to-release
