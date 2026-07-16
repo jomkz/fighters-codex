@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 178/208 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
+// 206/250 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -23,6 +23,8 @@ extern undefined1 campaignFailed;  // 0x00552804  imported by 6 shipped .CAM ove
 extern undefined2 currentTime;  // 0x005528E0  imported by 12 shipped .MC overlays (#491); named at this VA by FA.SMS
 
 // --- functions -------------------------------------------------------
+undefined4 FortMultiButton(undefined4, undefined4);  // 0x0041F830  __fastcall
+undefined4 FortMultiButtonText(undefined4, undefined4);  // 0x0041F840  __fastcall
 undefined4 FortMission(undefined4);  // 0x0041FB60  __stdcall
 undefined4 ZONEAdd(undefined4);  // 0x00421C80  __stdcall
 undefined4 ZONEForGV(void);  // 0x00421CC0  __stdcall
@@ -124,6 +126,8 @@ void MAPGroupRejoin(void);  // 0x0042B056  __cdecl
 void MAPGroupSetLeader(void);  // 0x0042B0F6  __cdecl
 void MAPGroupAdd(short);  // 0x0042B19D  __fastcall
 void MAPDeleteSpecial(void);  // 0x0042B275  __cdecl
+undefined4 FortMultiButton2(undefined4, undefined4);  // 0x0044CF00  __fastcall
+undefined4 FortMultiButtonText2(undefined4, undefined4);  // 0x0044CF10  __fastcall
 undefined4 FortMission2(undefined4);  // 0x0044D070  __stdcall
 undefined4 AwardMedal(undefined4);  // 0x00467110  __cdecl
 short PilotSave(PILOT *, short);  // 0x00467180  __fastcall
@@ -159,9 +163,20 @@ undefined4 _ContinueCampaign(void);  // 0x00480000  __stdcall
 undefined4 _BriefPaper(undefined4, undefined4, undefined4);  // 0x00480020  __stdcall
 undefined4 _BriefMap(undefined4);  // 0x00480110  __stdcall
 undefined4 _SelectPlane(undefined4);  // 0x00480150  __stdcall
+long ComputeCRC(OBJ_TYPE *);  // 0x00480230  __stdcall
+long GetAntiCheatIndex(char *);  // 0x004804C0  __stdcall
+undefined4 FindAntiCheatIndex(undefined4);  // 0x00480530  __stdcall
+undefined4 UpdateAntiCheat(undefined4, undefined4);  // 0x004805A0  __stdcall
+undefined4 PostAntiCheat(void);  // 0x00480690  __stdcall
+long PostCheatsOn(void);  // 0x00480700  __stdcall
+void _MISSIONInit1(void);  // 0x00480750  __stdcall
 undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
+void _MISSIONInit2(void);  // 0x00480A30  __stdcall
+undefined4 MISSIONInit1(void);  // 0x00480B40  __stdcall
 undefined4 MISSIONInit2(void);  // 0x00480B50  __stdcall
+undefined4 MISSIONInit3(void);  // 0x00480B60  __stdcall
 char MyFilterProc(unsigned short *, long *, char *);  // 0x00480B70  __cdecl
+undefined4 MISSIONInitMedalInfo(void);  // 0x00480B80  __stdcall
 undefined4 MISSIONSetCheating(void);  // 0x00480BE0  __stdcall
 undefined4 AddCampaignPlane(undefined4, undefined4);  // 0x00480C90  __cdecl
 undefined4 CampaignPlanesLeft(void);  // 0x00480D70  __stdcall
@@ -172,6 +187,7 @@ undefined4 CampaignMenu(undefined4);  // 0x004813F0  __fastcall
 undefined4 CallCampaignProc(undefined4);  // 0x00481440  __stdcall
 undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
 undefined4 CallMissionProc(undefined4, undefined4);  // 0x00481940  __stdcall
+undefined4 MISSIONShutdown(void);  // 0x004819F0  __stdcall
 undefined4 MISSIONSuccess(void);  // 0x00481A70  __stdcall
 undefined4 MISSIONEnemiesAlive(void);  // 0x00481A7B  __cdecl
 undefined4 MISSIONTextProc(undefined4, undefined4, undefined4, undefined4);  // 0x00481C10  __stdcall
@@ -186,19 +202,31 @@ undefined4 MISSIONFortDestroyedByFort(undefined4);  // 0x00485260  __stdcall
 undefined4 MISSIONFortStatus(undefined4);  // 0x004852F0  __stdcall
 void CampaignAccumStats(void);  // 0x00485380  __cdecl
 void StatsAddPair(int *,int *);  // 0x004854A0  __fastcall
+undefined4 WpnStats(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004854E0  __stdcall
 undefined4 StatsBucketFor(int,u16,u16);  // 0x004856F0  __fastcall
+undefined4 KillStats(undefined4, undefined4, undefined4);  // 0x00485820  __stdcall
+undefined4 LandingStats(undefined4, undefined4, undefined4);  // 0x00485A40  __stdcall
 undefined4 ConvertPilotFiles(void);  // 0x00485AE0  __stdcall
 undefined4 CheckCD(undefined4, undefined4);  // 0x00485EF0  __cdecl
 undefined4 MISSIONLoadCommonResources(void);  // 0x00486010  __stdcall
+undefined4 CanBackUp(void);  // 0x00486060  __stdcall
 char MISSIONFortWin(long);  // 0x004860F0  __stdcall
+undefined4 MISSIONEndScenario(void);  // 0x00486160  __stdcall
+undefined4 MISSIONScoreSides(void);  // 0x00486440  __stdcall
+undefined4 MISSIONScore(undefined4);  // 0x004864D0  __fastcall
+undefined4 MISSIONSortPlayers(undefined4);  // 0x00486500  __fastcall
 undefined4 MISSIONAddScore(undefined4, undefined4, undefined4);  // 0x00486580  __stdcall
 undefined4 MISSIONPlayerSlot(short);  // 0x004867D0  __fastcall
+undefined4 MISSIONPrefsChanged(void);  // 0x00486810  __stdcall
 undefined4 MISSIONCheckSuccess(void);  // 0x00486860  __stdcall
+undefined4 MISSIONSucceededForThisPlayer(void);  // 0x004868B0  __stdcall
+undefined4 MISSIONEnsureLegalName(undefined4);  // 0x00486910  __fastcall
 undefined4 TIMESystemTime(void);  // 0x004869A0  __stdcall
 undefined4 TIMEInit(undefined4, undefined4, undefined4);  // 0x00486A10  __stdcall
 undefined4 TIMERestart(void);  // 0x00486A90  __stdcall
 undefined4 TIMEUpdate(void);  // 0x00486AA0  __stdcall
 undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
+undefined4 SingleMission(void);  // 0x004A10E0  __stdcall
 undefined4 BriefScreen(undefined4, undefined4, undefined4, undefined4);  // 0x004A1DD0  __fastcall
 undefined4 AddStats(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A2A30  __stdcall
 
@@ -211,11 +239,23 @@ undefined4 AddStats(undefined4, undefined4, undefined4, undefined4, undefined4);
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x0041F800  FortDropdownInit -- signature not recovered
+// TODO(#453): 0x0041F8D0  FortTypeNameList -- signature not recovered
+// TODO(#453): 0x00420790  FortSetupApplyA -- signature not recovered
+// TODO(#453): 0x004207C0  FortSetupApplyB -- signature not recovered
+// TODO(#453): 0x00420800  FortSetupApplyC -- signature not recovered
+// TODO(#453): 0x00420830  FortMissionSetup -- signature not recovered
+// TODO(#453): 0x00420AB0  FortSetupReset -- signature not recovered
+// TODO(#453): 0x00420AD0  FortSetupCountA -- signature not recovered
+// TODO(#453): 0x00420B20  FortSetupCountB -- signature not recovered
+// TODO(#453): 0x00420BB0  FortSetupDialog -- signature not recovered
 // TODO(#453): 0x004226EE  MAPSetFormationWP -- signature not recovered
 // TODO(#453): 0x004282D0  MAPToggleObjControl -- signature not recovered
+// TODO(#453): 0x00441C60  ChooseScoreInit -- signature not recovered
 // TODO(#453): 0x00441C90  ChooseScore -- signature not recovered
 // TODO(#453): 0x004692D0  EJECTProc -- signature not recovered
 // TODO(#453): 0x004801A0  _RepairPlane -- signature not recovered
+// TODO(#453): 0x004801C0  InitAntiCheat -- signature not recovered
 // TODO(#453): 0x00480C20  LoadCampaignProc -- signature not recovered
 // TODO(#453): 0x00480C40  InitCampaignPilot -- signature not recovered
 // TODO(#453): 0x00480D90  UkraineCheckMaxPlanes -- signature not recovered
@@ -240,6 +280,8 @@ undefined4 AddStats(undefined4, undefined4, undefined4, undefined4, undefined4);
 // TODO(#453): 0x00484690  ATFVladMedals -- signature not recovered
 // TODO(#453): 0x004848F0  ATFPromotions -- signature not recovered
 // TODO(#453): 0x00484B70  ATFBalticMedals -- signature not recovered
+// TODO(#453): 0x00486530  MISSIONScoreCmp -- signature not recovered
+// TODO(#453): 0x00486980  MISSIONUpdateFpsRatio -- signature not recovered
 // TODO(#453): 0x00486E20  InstallTimerInt -- signature not recovered
 // TODO(#455): 0x004F8C7A  pilotCampaignsWon -- type not recovered
 // TODO(#455): 0x004F9937  campaignFileCopy -- type not recovered
