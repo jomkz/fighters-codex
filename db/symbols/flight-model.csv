@@ -1,6 +1,14 @@
 va,kind,name,display,source,confidence,notes,type
+0x0040F6B0,func,_DAMAGEInit2@0,DAMAGEInit2,sms,confirmed,secondary damage init,undefined4 __stdcall DAMAGEInit2(void)
+0x0040F760,func,_DAMAGEInit@0,DAMAGEInit,sms,confirmed,"damage-model init: seeds the entity damage-state fields (0xA0 hud_draw_data, 0xAA damage_hit_data, 0x6A damage_init_data)",undefined4 __stdcall DAMAGEInit(void)
+0x0040F970,func,_DAMAGEDoHit@12,DAMAGEDoHit,sms,confirmed,"hit resolution (#487): DAMAGEDoHit(entity*, short amount, int* hit_record). Branches on object class (_cg==4 aircraft, class 7 objects), reads health at entity+0x0E and the damage-flags word at entity+0xA6 (bit 0 gates aircraft damage, bit 0x80 the class-7 path), writes entity+0xAA damage_hit_data / +0xC8 cn_damage; hands a destroyed aircraft to PLANEBreakUp","undefined4 __stdcall DAMAGEDoHit(undefined4, undefined4, undefined4)"
+0x004106D0,func,_DAMAGEPorpoise@16,DAMAGEPorpoise,sms,confirmed,porpoising — the pitch instability a damaged/overstressed aircraft develops,"undefined4 __stdcall DAMAGEPorpoise(undefined4, undefined4, undefined4, undefined4)"
+0x004108B0,func,_DAMAGEUpdate@0,DAMAGEUpdate,sms,confirmed,per-frame damage update: re-reads the entity+0xA6 damage-flags and drives progressive damage effects,undefined4 __stdcall DAMAGEUpdate(void)
+0x00411350,func,_DAMAGEReport@0,DAMAGEReport,sms,confirmed,HUD damage report: formats _dam as a percentage (via _percentDamageString) and posts it with _HUDMessage,undefined4 __stdcall DAMAGEReport(void)
+0x004113C0,func,_DAMAGEAutopilotAvail@0,DAMAGEAutopilotAvail,sms,confirmed,tests whether the autopilot is still available given the current damage state (a block of damage-state globals at 0x5224dc-0x5224e3),undefined4 __stdcall DAMAGEAutopilotAvail(void)
 0x00412780,func,@SpeedOfSound@4,SpeedOfSound,sms,confirmed,,undefined4 __fastcall SpeedOfSound(undefined4)
 0x00413C70,func,?TVKey@@YIGG@Z,TVKey,sms,confirmed,,unsigned short __fastcall TVKey(unsigned short)
+0x004197D0,func,@ArmPlane@4,ArmPlane,sms,confirmed,"the interactive arming/loadout screen (#487): presents the aircraft hardpoints, drives weapon selection via dialogs, and applies the loadout through _HARDPtrs/_HARDLoad (+ _MPSetHardpoints/_MPSetFuel for MP sync); reads shell-UI state. Returns a status uint. The largest single function in the binary (11 KB)",undefined4 __fastcall ArmPlane(undefined4)
 0x00447970,func,?IntersectT@@YAJPAUF24_POINT@@JJ@Z,IntersectT,sms,confirmed,,"long __cdecl IntersectT(F24_POINT *, long, long)"
 0x004514C0,func,_FMUpdateGearPitch@0,FMUpdateGearPitch,sms,confirmed,,undefined4 __stdcall FMUpdateGearPitch(void)
 0x00451580,func,_FMUpdateGear@0,FMUpdateGear,sms,confirmed,,undefined4 __stdcall FMUpdateGear(void)
@@ -91,6 +99,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0047AF70,func,_FMSetTV@8,FMSetTV,sms,confirmed,,"undefined4 __stdcall FMSetTV(undefined4, undefined4)"
 0x0047B000,func,_FMResetTV@0,FMResetTV,sms,confirmed,,undefined4 __stdcall FMResetTV(void)
 0x0047B020,func,_FMFlight@0,FMFlight,sms,confirmed,,undefined4 __stdcall FMFlight(void)
+0x0047FA50,func,__ArmPlane@4,_ArmPlane,sms,confirmed,thunk to @ArmPlane@4,undefined4 __stdcall _ArmPlane(undefined4)
 0x004EE470,data,,,waiver,confirmed,flight-model throttle scratch near throttle100,
 0x004F013C,data,,,waiver,confirmed,interior of fortNationGroundForces campaign array,
 0x004F036C,data,,,waiver,confirmed,interior of fortNationGroundForces campaign array,

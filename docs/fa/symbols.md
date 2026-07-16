@@ -1031,12 +1031,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 88 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 97 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x0040F6B0` | `DAMAGEInit2` | sms | secondary damage init |
+| `0x0040F760` | `DAMAGEInit` | sms | damage-model init: seeds the entity damage-state fields (0xA0 hud_draw_data, 0xAA damage_hit_data, 0x6A damage_init_data) |
+| `0x0040F970` | `DAMAGEDoHit` | sms | hit resolution (#487): DAMAGEDoHit(entity*, short amount, int* hit_record). Branches on object class (_cg==4 aircraft, class 7 objects), reads health at entity+0x0E and the damage-flags word at entity+0xA6 (bit 0 gates aircraft damage, bit 0x80 the class-7 path), writes entity+0xAA damage_hit_data / +0xC8 cn_damage; hands a destroyed aircraft to PLANEBreakUp |
+| `0x004106D0` | `DAMAGEPorpoise` | sms | porpoising — the pitch instability a damaged/overstressed aircraft develops |
+| `0x004108B0` | `DAMAGEUpdate` | sms | per-frame damage update: re-reads the entity+0xA6 damage-flags and drives progressive damage effects |
+| `0x00411350` | `DAMAGEReport` | sms | HUD damage report: formats _dam as a percentage (via _percentDamageString) and posts it with _HUDMessage |
+| `0x004113C0` | `DAMAGEAutopilotAvail` | sms | tests whether the autopilot is still available given the current damage state (a block of damage-state globals at 0x5224dc-0x5224e3) |
 | `0x00412780` | `SpeedOfSound` | sms |  |
 | `0x00413C70` | `TVKey` | sms |  |
+| `0x004197D0` | `ArmPlane` | sms | the interactive arming/loadout screen (#487): presents the aircraft hardpoints, drives weapon selection via dialogs, and applies the loadout through _HARDPtrs/_HARDLoad (+ _MPSetHardpoints/_MPSetFuel for MP sync); reads shell-UI state. Returns a status uint. The largest single function in the binary (11 KB) |
 | `0x00447970` | `IntersectT` | sms |  |
 | `0x004514C0` | `FMUpdateGearPitch` | sms |  |
 | `0x00451580` | `FMUpdateGear` | sms |  |
@@ -1123,6 +1131,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0047AF70` | `FMSetTV` | sms |  |
 | `0x0047B000` | `FMResetTV` | sms |  |
 | `0x0047B020` | `FMFlight` | sms |  |
+| `0x0047FA50` | `_ArmPlane` | sms | thunk to @ArmPlane@4 |
 
 ### Video decode (FMV/Cobra)
 

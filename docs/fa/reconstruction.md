@@ -16,7 +16,7 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 |---|---|---|---|---|---|---|---|
 | Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 107 named · 0 waived / 107 (100%) | 31 named · 169 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
 | Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 183 named · 9 waived / 192 (100%) | 6 named · 168 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
-| Flight model / physics (FM/HARD) | `0x451480–0x454800` | 88 named · 4 waived / 92 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
+| Flight model / physics (FM/HARD) | `0x451480–0x454800` | 97 named · 4 waived / 101 (100%) | 0 named · 142 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
 | HUD / cockpit | `0x405E30–0x40AE50` | 42 named · 7 waived / 49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
 | Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | 55 named · 4 waived / 59 (100%) | 6 named · 49 waived | [doc](weapons.md) | ✓ | [#215](https://github.com/jomkz/fighters-codex/issues/215) | complete |
 | AI interpreter (CT) | `0x464C60–0x467110` | 128 named · 0 waived / 128 (100%) | 8 named · 30 waived | [doc](ai-interpreter.md) | ✓ | [#216](https://github.com/jomkz/fighters-codex/issues/216) | complete |
@@ -35,9 +35,9 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 41 named · 0 waived / 41 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
 | View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19 named · 0 waived / 19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
 
-**FA.EXE totals:** 20/20 subsystems complete; 2514/2514 in-scope functions named; 2660/4940 referenced globals resolved.
+**FA.EXE totals:** 20/20 subsystems complete; 2523/2523 in-scope functions named; 2660/4940 referenced globals resolved.
 
-> **Unclaimed: 1059 of 3573 functions (321,415 of 866,332 code bytes, 37%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+> **Unclaimed: 1050 of 3573 functions (303,262 of 866,332 code bytes, 35%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 > **Undefined: 62,800 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **246 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
@@ -111,4 +111,4 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
-**Program totals (all binaries):** 27/27 subsystems complete; 6059/6059 in-scope functions named; 5134/8269 referenced globals resolved.
+**Program totals (all binaries):** 27/27 subsystems complete; 6068/6068 in-scope functions named; 5134/8269 referenced globals resolved.
