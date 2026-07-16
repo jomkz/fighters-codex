@@ -1,4 +1,5 @@
 va,kind,name,display,source,confidence,notes,type
+0x0041FB60,func,_FortMission@4,FortMission,sms,confirmed,Fort (base-assault) mission builder,undefined4 __stdcall FortMission(undefined4)
 0x00421C80,func,_ZONEAdd@4,ZONEAdd,sms,confirmed,,undefined4 __stdcall ZONEAdd(undefined4)
 0x00421CC0,func,_ZONEForGV@0,ZONEForGV,sms,confirmed,,undefined4 __stdcall ZONEForGV(void)
 0x00421D40,func,ZONEActive,,re,confirmed,"zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __fastcall ZONEActive(undefined4)
@@ -107,6 +108,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0042B0F6,func,MAPGroupSetLeader,,re,confirmed,make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPGroupSetLeader(void)
 0x0042B19D,func,MAPGroupAdd,,re,confirmed,"add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MAPGroupAdd(short)
 0x0042B275,func,MAPDeleteSpecial,,re,confirmed,delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPDeleteSpecial(void)
+0x00441C90,func,_ChooseScore,ChooseScore,sms,confirmed,score-screen selection (end-of-mission),
+0x0044D070,func,_FortMission2@4,FortMission2,sms,confirmed,Fort mission builder (variant 2),undefined4 __stdcall FortMission2(undefined4)
 0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,,undefined4 __cdecl AwardMedal(undefined4)
 0x00467240,func,PilotFindFreeSlot,,re,confirmed,find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl PilotFindFreeSlot(void)
 0x004674F0,func,PilotBuildPaper,,re,confirmed,"build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","undefined4 __fastcall PilotBuildPaper(undefined4,int)"
@@ -128,11 +131,16 @@ va,kind,name,display,source,confidence,notes,type
 0x00469958,data,,,waiver,confirmed,switch jump-table interior (switchdataD_0046994c),
 0x0046A57B,func,,,waiver,inferred,FOREIGN: SM module proc-by-name resolver (_SMAddress); owner = memory-resource/overlay #223,
 0x0047A510,func,,,waiver,inferred,FOREIGN: file-exists/open helper in the LIB filesystem block (AnalyzeMM mislabels it 'MM keyword handler'); owner = memory-resource #223,
+0x0047FAA0,func,__SingleMission@0,_SingleMission,sms,confirmed,single-mission entry — sets up a one-off (non-campaign) mission,undefined4 __stdcall _SingleMission(void)
 0x0047FAAE,func,JOGCFetchMission,,re,inferred,"download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0)",!split
+0x0047FEC0,func,__CreateQuickMission@4,_CreateQuickMission,sms,confirmed,constructs a Quick mission,undefined4 __stdcall _CreateQuickMission(undefined4)
+0x0047FF30,func,__CreateFortMission@4,_CreateFortMission,sms,confirmed,constructs a Fort mission,undefined4 __stdcall _CreateFortMission(undefined4)
+0x0047FF40,func,__CreateFortMission2@4,_CreateFortMission2,sms,confirmed,constructs a Fort mission (variant 2),undefined4 __stdcall _CreateFortMission2(undefined4)
 0x004805AC,func,,,waiver,inferred,FOREIGN: anti-cheat CRC accumulator per _thisComputer; owner = network/integrity #219,
 0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport,undefined4 __stdcall MISSIONLoadOrdIcons(undefined4)
 0x00480B50,func,_MISSIONInit2@0,MISSIONInit2,sms,confirmed,,undefined4 __stdcall MISSIONInit2(void)
 0x00480B70,func,?MyFilterProc@@YADPAGPAJPAD@Z,MyFilterProc,sms,confirmed,,"char __cdecl MyFilterProc(unsigned short *, long *, char *)"
+0x00480BE0,func,_MISSIONSetCheating@0,MISSIONSetCheating,sms,confirmed,sets the mission cheating flag,undefined4 __stdcall MISSIONSetCheating(void)
 0x00480C40,func,_InitCampaignPilot,InitCampaignPilot,sms,confirmed,,
 0x00480C90,func,_AddCampaignPlane,AddCampaignPlane,sms,confirmed,,"undefined4 __cdecl AddCampaignPlane(undefined4, undefined4)"
 0x00480D70,func,_CampaignPlanesLeft@0,CampaignPlanesLeft,sms,confirmed,,undefined4 __stdcall CampaignPlanesLeft(void)
@@ -147,8 +155,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00481260,func,_KurileQuit,KurileQuit,sms,confirmed,,
 0x00481270,func,_VietnamQuit,VietnamQuit,sms,confirmed,,
 0x00481920,func,CampaignProcInvoke,,re,confirmed,low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4,undefined4 __stdcall CampaignProcInvoke(undefined4)
+0x00481940,func,_CallMissionProc@8,CallMissionProc,sms,confirmed,dispatches into the mission's compiled .MC DLL proc (see MC.md); called from _MISSIONTextProc for the mission-logic handoff,"undefined4 __stdcall CallMissionProc(undefined4, undefined4)"
 0x00481A70,func,_MISSIONSuccess@0,MISSIONSuccess,sms,confirmed,imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall MISSIONSuccess(void)
 0x00481A7B,func,MISSIONEnemiesAlive,,re,inferred,"scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __cdecl MISSIONEnemiesAlive(void)
+0x00481C10,func,_MISSIONTextProc@16,MISSIONTextProc,sms,confirmed,"the .M mission-file interpreter (#485): whitespace-tokenizes the file via TextNextToken over a global cursor (_0x55281c/_0x5528c0), dispatches a keyword switch that reads numeric fields (TextNextNumber) and constructs the live mission — _T_AddObj per placement, then _WNGAdd (wing)/_GRPAdd (group)/_HARDLoad (loadout)/MAPAddSpecial, and _OBJAlias+_WPSetWaypoints for waypoint lists. Header directives set _layerName/_missionDLLName/_mapName/_missionHours; _CallMissionProc runs the .MC DLL","undefined4 __stdcall MISSIONTextProc(undefined4, undefined4, undefined4, undefined4)"
 0x00483C90,func,TextNextToken,,re,confirmed,whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall TextNextToken(char *)
 0x00483D10,func,TextIsDelim,,re,confirmed,predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall TextIsDelim(char)
 0x00483D30,func,TextNextNumber,,re,confirmed,read next token and convert to integer (_StringToNumber); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl TextNextNumber(void)
@@ -162,11 +172,20 @@ va,kind,name,display,source,confidence,notes,type
 0x00484690,func,_ATFVladMedals,ATFVladMedals,sms,confirmed,,
 0x004848F0,func,_ATFPromotions,ATFPromotions,sms,confirmed,,
 0x00484B70,func,_ATFBalticMedals,ATFBalticMedals,sms,confirmed,,
+0x00484D90,func,_EndOfMissionStats@0,EndOfMissionStats,sms,confirmed,end-of-mission player statistics (kills/losses/score),undefined4 __stdcall EndOfMissionStats(void)
+0x00485040,func,_EndOfFortMissionStats@0,EndOfFortMissionStats,sms,confirmed,end-of-mission statistics for Fort (base-assault) missions,undefined4 __stdcall EndOfFortMissionStats(void)
+0x004851C0,func,_MISSIONFortDestroyed@4,MISSIONFortDestroyed,sms,confirmed,Fort-mission: a fort object was destroyed,undefined4 __stdcall MISSIONFortDestroyed(undefined4)
+0x00485260,func,_MISSIONFortDestroyedByFort@4,MISSIONFortDestroyedByFort,sms,confirmed,Fort-mission: a fort was destroyed by another fort,undefined4 __stdcall MISSIONFortDestroyedByFort(undefined4)
+0x004852F0,func,_MISSIONFortStatus@4,MISSIONFortStatus,sms,confirmed,Fort-mission: current fort status query,undefined4 __stdcall MISSIONFortStatus(undefined4)
 0x00485380,func,CampaignAccumStats,,re,confirmed,fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl CampaignAccumStats(void)
 0x004854A0,func,StatsAddPair,,re,confirmed,add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall StatsAddPair(int *,int *)"
 0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall StatsBucketFor(int,u16,u16)"
 0x00485EF0,func,_CheckCD,CheckCD,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,"undefined4 __cdecl CheckCD(undefined4, undefined4)"
+0x00486010,func,_MISSIONLoadCommonResources@0,MISSIONLoadCommonResources,sms,confirmed,loads the resources common to every mission,undefined4 __stdcall MISSIONLoadCommonResources(void)
+0x004860F0,func,?MISSIONFortWin@@YGDJ@Z,MISSIONFortWin,sms,confirmed,Fort-mission win condition test,char __stdcall MISSIONFortWin(long)
+0x00486580,func,_MISSIONAddScore@12,MISSIONAddScore,sms,confirmed,mission scoring accumulator (#485),"undefined4 __stdcall MISSIONAddScore(undefined4, undefined4, undefined4)"
 0x004867D0,func,MISSIONPlayerSlot,,re,confirmed,resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MISSIONPlayerSlot(short)
+0x00486860,func,_MISSIONCheckSuccess@0,MISSIONCheckSuccess,sms,confirmed,per-tick mission success poll; drives _MISSIONFortWin / end-of-mission,undefined4 __stdcall MISSIONCheckSuccess(void)
 0x004869A0,func,_TIMESystemTime@0,TIMESystemTime,sms,confirmed,,undefined4 __stdcall TIMESystemTime(void)
 0x00486A10,func,_TIMEInit@12,TIMEInit,sms,confirmed,,"undefined4 __stdcall TIMEInit(undefined4, undefined4, undefined4)"
 0x00486A90,func,_TIMERestart@0,TIMERestart,sms,confirmed,,undefined4 __stdcall TIMERestart(void)
