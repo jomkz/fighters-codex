@@ -470,11 +470,11 @@ Offsets into the **type record** for missile and projectile types — *not* into
 
 ---
 
-### `PT_TYPE` — aircraft performance type, `.JT` (census)
+### `PT_TYPE` — aircraft performance type, `.PT` (census)
 
-Performance type data loaded from `.JT` files on disk (see `architecture.md` BRF type byte `5`). At runtime the struct pointer is obtained from `@T_Load@4` / `@T_GetLeaf@12` and passed to the flight model. Key physics globals (`DAT_0050d3xx` range) in `AnalyzePhysics.txt` map to fields in this struct.
+Performance type data loaded from `.PT` files on disk (see `architecture.md` BRF type byte `5`). At runtime the struct pointer is obtained from `@T_Load@4` / `@T_GetLeaf@12` and passed to the flight model. Key physics globals (`DAT_0050d3xx` range) in `AnalyzePhysics.txt` map to fields in this struct.
 
-**Disk source:** `.JT` files (BRF struct_type `5`)
+**Disk source:** `.PT` files (BRF struct_type `5`)
 
 **Scan range:** `0x400000`–`0x540000`, offsets `0x00`–`0xC0`
 

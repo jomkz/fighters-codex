@@ -54,7 +54,7 @@ typedef struct OBJ_TYPE    OBJ_TYPE;    /* object TYPE record (defined below)   
  * not overlays of an entity allocation (see the object model note below, #454).
  * Their interiors alias one another in the extension region, so they stay opaque. */
 typedef struct PROJ_TYPE   PROJ_TYPE;   /* projectile/missile type extension        */
-typedef struct PT_TYPE     PT_TYPE;     /* aircraft performance type, .JT           */
+typedef struct PT_TYPE     PT_TYPE;     /* aircraft performance type, .PT           */
 typedef struct GV_TYPE     GV_TYPE;     /* ground-vehicle type extension            */
 typedef struct OT_TYPE     OT_TYPE;     /* ordnance type, .OT                       */
 typedef struct NT_TYPE     NT_TYPE;     /* nav target, .NT                          */

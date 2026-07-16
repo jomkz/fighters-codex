@@ -266,7 +266,8 @@ Variable-length polygon face instruction.
 [is_shadow u8]       non-zero if this face is a shadow polygon
 
 [if HAVE_FACE_NORMAL (content_flags & 0x40):]
-    [face_normal i16[3]]    face normal vector, scale by 1/32765.0 to get float
+    [face_normal i16[3]]    face normal vector; the codec skips these 6 bytes (sh.cpp:415),
+                            so the 1/32765.0 float scale is unverified — nothing in the repo reads it
     [if USE_BYTE_FACE_CENTER (layout_flags & 0x02):]
         [face_center i8[3]]
     [else:]
