@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 171/172 functions have a recovered signature; 2/3 globals have a recovered type.
+// 344/345 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -40,18 +40,45 @@ void RunTCPOptionsDialog(CN_INFO *, char *);  // 0x00405590  __cdecl
 void NETFormatIP(char *, undefined4);  // 0x00405CD0  __cdecl
 char ip2long(char *, unsigned long *);  // 0x00405D10  __cdecl
 void RunNetConfigurationScreen(long);  // 0x00405DF0  __stdcall
+char NET_MasterInit(CN_INFO *, void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long), void *, void (*)(void *, NET_CONNECTED_STATE));  // 0x0040AE50  __cdecl
 void state_func_master_query(void);  // 0x0040AF40  __cdecl
+char NET_MasterStartGame(void);  // 0x0040AFA0  __cdecl
+void NET_MasterRejectPlayer(NET_ADDRESS *, char *);  // 0x0040AFF0  __cdecl
+void NET_MasterShutdown(void);  // 0x0040B080  __cdecl
 char master_events(unsigned int, long, int, socket_state *);  // 0x0040B110  __cdecl
 undefined4 MSGSendChatter(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00418880  __stdcall
 unsigned int UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x00441F80  __cdecl
 void UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x004420D0  __cdecl
 void UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00442200  __cdecl
+void SER_EnterCriticalCodeForeground(void);  // 0x0044BAF0  __cdecl
+void SER_LeaveCriticalCodeForeground(void);  // 0x0044BB50  __cdecl
+char SER_ForegroundCheckConnection(unsigned long, long);  // 0x0044BB70  __cdecl
+char SER_ForegroundGetPacket(SERIAL_PACKET_WRAPPER &);  // 0x0044BC00  __cdecl
+char SER_ForegroundPutPacket(SERIAL_PACKET_WRAPPER &);  // 0x0044BCB0  __cdecl
+char SER_Flush(long, char);  // 0x0044BD40  __cdecl
+long SER_Write(long, unsigned char *, long);  // 0x0044BDB0  __cdecl
+long SER_WriteAvail(long);  // 0x0044BE40  __cdecl
 long SER_Transmitting(long);  // 0x0044BEC0  __cdecl
+long SER_Read(long, unsigned char *, long);  // 0x0044BFC0  __cdecl
+long SER_ReadAvail(long, long);  // 0x0044C030  __cdecl
 long SER_PeekByte(long);  // 0x0044C080  __cdecl
 void SER_Synchronize(void);  // 0x0044C0F0  __cdecl
 void SER_Often(void);  // 0x0044C1B0  __cdecl
 void SER_Suspend(void);  // 0x0044C1E0  __cdecl
 void SER_Resume(void);  // 0x0044C200  __cdecl
+void SER_ExNamesTimeout(void);  // 0x0044C220  __cdecl
+char SER_ExchangeNames(unsigned char *);  // 0x0044C260  __cdecl
+long SER_Initialize1(CN_INFO *, long);  // 0x0044C570  __cdecl
+long SER_Initialize2(CN_INFO *, long);  // 0x0044C5D0  __cdecl
+long SER_Initialize2_5(CN_INFO *, long);  // 0x0044C6E0  __cdecl
+long SER_Initialize3(CN_INFO *, long);  // 0x0044C980  __cdecl
+long SER_Initialize4(CN_INFO *, long);  // 0x0044C990  __cdecl
+long SER_Initialize5(CN_INFO *, long);  // 0x0044CA70  __cdecl
+long SER_Initialize(CN_INFO *, long);  // 0x0044CB20  __cdecl
+void SER_Shutdown1(void);  // 0x0044CBD0  __cdecl
+void SER_Shutdown2(void);  // 0x0044CC00  __cdecl
+void SER_Shutdown3(void);  // 0x0044CC70  __cdecl
+void SER_Shutdown(void);  // 0x0044CCA0  __cdecl
 char pkt_send_can_i_play(int, char *, NET_ADDRESS *);  // 0x0045D090  __cdecl
 char pkt_send_can_i_play_player(int, int, char *, NET_ADDRESS *);  // 0x0045D120  __cdecl
 char pkt_send_sync(int);  // 0x0045D1B0  __cdecl
@@ -82,8 +109,20 @@ void pkt_set_header(int, NET_PKT *, int);  // 0x0045DA10  __cdecl
 undefined4 pkt_queue_write(undefined4, undefined4, undefined4);  // 0x0045DA30  __cdecl
 char pkt_sock_read(NET_PKT *, unsigned int);  // 0x0045DB00  __cdecl
 char dlg_list_get_new_selection(void *, NET_ADDRESS *, char *);  // 0x00464880  __cdecl
+void net_test_process_pkt(NET_PKT *, int);  // 0x0046AC00  __cdecl
+char net_test_process_pkt_ack(NET_PKT *, int);  // 0x0046AC40  __cdecl
 void net_test_start_latency_test(int);  // 0x0046ACF0  __cdecl
+void MPFlushAll(char);  // 0x0046BDE0  __fastcall
+void MPCheckConnection(void);  // 0x0046BE50  __stdcall
 undefined4 MPEnqueue(undefined4, undefined4, undefined4, undefined4);  // 0x0046C0A0  __stdcall
+void MPSetSlowComm(void);  // 0x0046C150  __stdcall
+void MPConnect(void);  // 0x0046C190  __stdcall
+void MPShutdown(void);  // 0x0046C250  __stdcall
+void MPTimeSync(void);  // 0x0046C260  __stdcall
+void MPMissionInit1(void);  // 0x0046C280  __stdcall
+void MPMissionInit2(void);  // 0x0046C470  __stdcall
+void MPMissionShutdown(void);  // 0x0046C500  __stdcall
+void MPService(void);  // 0x0046C520  __stdcall
 undefined4 MPInterpPosAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C680  __stdcall
 undefined4 MPUpdateInterval(short, entity *);  // 0x0046C780  __fastcall
 undefined4 MPInterpAngleAxis(undefined4, undefined4, undefined4, undefined4);  // 0x0046C860  __stdcall
@@ -96,33 +135,112 @@ undefined4 MPDecodePos(undefined4, undefined4, undefined4);  // 0x0046EDB0  __st
 undefined4 MPGetType(undefined4);  // 0x0046EE00  __fastcall
 undefined4 MPReadPayload(undefined4, undefined4, undefined4, undefined4);  // 0x0046EE40  __stdcall
 void MPClearDeadStatus(void);  // 0x0046EE90  __cdecl
+void MPSend(void);  // 0x0046EED0  __stdcall
 short MPAbsToRelTime(short);  // 0x0046FA40  __fastcall
 undefined4 MPEncodeState14(undefined4, undefined4);  // 0x0046FA60  __stdcall
 undefined4 MPEncodeState15(undefined4, undefined4);  // 0x0046FBF0  __stdcall
 void MPSendSyncOnce(void);  // 0x0046FD50  __cdecl
+void MPRemoveCurObj(void);  // 0x0046FDB0  __stdcall
+void MPEndMission(void);  // 0x0046FE00  __stdcall
+void MPSendGameMode(void);  // 0x0046FE30  __stdcall
+void MPAddScore(long, unsigned short);  // 0x0046FE70  __stdcall
+void MPSendMissionSucceeded(void);  // 0x0046FEF0  __stdcall
 void MPSendScenarioEndTime(void);  // 0x0046FF20  __cdecl
+char MPPaused(void);  // 0x0046FF70  __stdcall
+void MPSetPaused(char);  // 0x0046FFC0  __fastcall
+void MPProjAdd(void);  // 0x00470010  __stdcall
+void MPEjectAdd(unsigned short, unsigned short);  // 0x00470150  __fastcall
+void MPManAdd(unsigned short, char *, unsigned char, F24_POINT3 *, F24_POINT3 *, long);  // 0x004701A0  __stdcall
+void MPPrepareForInterp(ANGLE *, long);  // 0x00470250  __stdcall
+void MPMsgSend(T_MSG *);  // 0x00470640  __fastcall
 void MPMsgRemapAliases(undefined4 *, char);  // 0x00470780  __fastcall
+void MPGraphicAddCrater(F24_POINT3 *, long);  // 0x004708B0  __fastcall
+void MPGraphicAddExp(long, F24_POINT3 *, unsigned short, char, char, char);  // 0x00470900  __stdcall
+void MPGraphicAddSmoke(long, F24_POINT3 *, long, long, long, unsigned short);  // 0x00470990  __stdcall
+void MPGraphicAddDebris(long, F24_POINT3 *, WORD_POINT3 *, long, char);  // 0x00470A20  __stdcall
+void MPGraphicAddClusterRelease(long, F24_POINT3 *, WORD_POINT3 *, long, char);  // 0x00470A90  __stdcall
+void MPGraphicAddSpecialDebris(F24_POINT3 *, unsigned short, char);  // 0x00470B00  __stdcall
+void MPGraphicAddHulk(F24_POINT3 *, long);  // 0x00470B70  __fastcall
+void MPLaunchDevice(unsigned short, unsigned char, long, unsigned char, WORD_POINT3 *);  // 0x00470BC0  __stdcall
+void MPGraphicAddFire(unsigned char, F24_POINT3 *, unsigned short, WORD_POINT3 *, long, long, long);  // 0x00470C30  __stdcall
+void MPGraphicAddSmokeAdder(F24_POINT3 *, unsigned short, WORD_POINT3 *, long, long, long, long, long, long);  // 0x00470CF0  __stdcall
+void MPGraphicRemove(void);  // 0x00470DC0  __stdcall
+void MPShellSendScreen(long);  // 0x00470E00  __fastcall
+void MPPlayerChoseSide(unsigned char);  // 0x00470E40  __fastcall
 void MPQuickButton(long, long);  // 0x00470E80  __fastcall
+void MPQuickButtonText(long, char *);  // 0x00470EB0  __fastcall
 void MPPlayerChoseFort(unsigned char);  // 0x00470EF0  __fastcall
 void MPFortButton(long, long);  // 0x00470F30  __fastcall
+void MPFortButtonText(long, char *);  // 0x00470F60  __fastcall
 void MPFortButton2(long, long);  // 0x00470FA0  __fastcall
+void MPFortButtonText2(long, char *);  // 0x00470FD0  __fastcall
+void MPSendAntiCheat(char *, long);  // 0x00471010  __fastcall
+void MPSendCheatsOn(char);  // 0x00471070  __fastcall
+void MPSendFrameRate(long);  // 0x004710B0  __fastcall
+void MPShowFrameRate(char);  // 0x004710F0  __fastcall
+void MPSingleFilename(char *);  // 0x00471130  __fastcall
+void MPSendPrefs(void);  // 0x00471190  __stdcall
+void MPMaybePausedMsg(void);  // 0x004711F0  __stdcall
+void MPWpnStats(long, char *, unsigned short, unsigned short, long);  // 0x00471360  __stdcall
+void MPKillStats(unsigned short, unsigned short);  // 0x00471400  __fastcall
+void MPLandingStats(unsigned short, long);  // 0x00471450  __fastcall
+void MPHUDMessage(char *);  // 0x00471490  __fastcall
+void MPStatusInit(void);  // 0x004714D0  __fastcall
+void MPStatusSet(long);  // 0x00471510  __fastcall
+void MPStatusToDrawSet(long);  // 0x00471560  __fastcall
+void MPStatusDraw(char);  // 0x004715B0  __fastcall
 undefined4 MPChatChecksum(void);  // 0x00471880  __cdecl
 undefined4 MPDrawStatusLine(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004718F0  __stdcall
+char MPEveryoneStatus(long);  // 0x004719E0  __fastcall
+char MPWaitEveryoneStatus(long, char, char, char);  // 0x00471A30  __stdcall
 undefined4 MPWaitStatus(undefined4, undefined4, undefined4, undefined4);  // 0x00471A90  __stdcall
 undefined4 MPAllPeersAtStatus(undefined4);  // 0x00471B80  __fastcall
+void MPAssignPlayers(void);  // 0x00471BD0  __stdcall
 void MPAssignPlanePlayers(short);  // 0x00471FA0  __fastcall
 int MPComparePlaneRank(int, int);  // 0x00472100  __cdecl
 undefined4 MPBuildSpawnPayload(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00472130  __stdcall
+void MPSetControl(long, unsigned short, char);  // 0x00472260  __stdcall
+void MPRequestControl(unsigned short);  // 0x004722D0  __fastcall
+void MPChangePlaneType(unsigned short, char *);  // 0x00472330  __stdcall
+void MPSetFuel(unsigned short);  // 0x004723A0  __fastcall
+void MPSetHardpoints(unsigned short);  // 0x00472400  __fastcall
+void MPSetWaypoints(unsigned short, WAYPOINT *);  // 0x00472520  __fastcall
+void MPLifeNotify(char *, char *, char);  // 0x004725B0  __stdcall
+unsigned short MPKey(unsigned short);  // 0x00472A90  __fastcall
+char MPCheckDisconnect(void);  // 0x004733E0  __stdcall
+void MPShellInitMessages(void);  // 0x004735C0  __stdcall
 void MPChatStore(undefined4 *);  // 0x004735D0  __fastcall
+void CN_NewSetLines(short, short, short);  // 0x0047F100  __cdecl
+void CN_NewPrint(char *);  // 0x0047F190  __cdecl
+void CN_ClearLines(void);  // 0x0047F370  __cdecl
+void CN_SetLines(long, long);  // 0x0047F390  __cdecl
+void CN_Print(unsigned char *);  // 0x0047F3B0  __cdecl
+long CN_GetString(char *, unsigned char *);  // 0x0047F5D0  __cdecl
 long CN_GetBigString(char *, unsigned char *);  // 0x0047F5F0  __cdecl
+void CN_SetFactoryDefaults(CN_INFO *);  // 0x0047F6D0  __cdecl
+void CN_ReadConfig(CN_INFO *, unsigned char *);  // 0x0047F7A0  __cdecl
+void CN_WriteConfig(CN_INFO *, unsigned char *);  // 0x0047F930  __cdecl
 unsigned int sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x004874C0  __cdecl
 void sapserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x00487670  __cdecl
 void sapquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00487760  __cdecl
 char sapprocessadvertisement(char *, int, NET_PKT *, NET_ADDRESS *, long *);  // 0x004878C0  __cdecl
+char SER_RemoteQueueFull(void);  // 0x004922E0  __cdecl
+void SER_UpdateRemoteQueueStatus(long);  // 0x00492300  __cdecl
+void SER_ProcessStatusPacket(SERIAL_PACKET_WRAPPER &);  // 0x00492330  __cdecl
+void SER_ProcessDataPacket(SERIAL_PACKET_WRAPPER &);  // 0x00492390  __cdecl
+void SER_ProcessResentPacket(SERIAL_PACKET_WRAPPER &);  // 0x004923B0  __cdecl
+void SER_ProcessRequestPacket(SERIAL_PACKET_WRAPPER &);  // 0x00492460  __cdecl
+void SER_WrapPacket(SERIAL_PACKET_WRAPPER &, SERIAL_PACKET &);  // 0x004924C0  __cdecl
+void SER_ProcessIncomingPacket(SERIAL_PACKET);  // 0x00492570  __cdecl
+void SER_ReadIncomingPackets(void);  // 0x00492690  __cdecl
 void RunIPXOptionsDialog(CN_INFO *, char *);  // 0x00493780  __cdecl
 void connected_state_callback(void *, NET_CONNECTED_STATE);  // 0x00493EE0  __cdecl
 void players_box_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long);  // 0x004940E0  __cdecl
 void players_box_connected_state_callback(void *, NET_CONNECTED_STATE);  // 0x004941E0  __cdecl
+long MP_Initialize(CN_INFO *, long);  // 0x00494BC0  __cdecl
+MP_INFO * MP_Info(void);  // 0x00494CB0  __cdecl
+void MP_Shutdown(void);  // 0x00494CC0  __cdecl
+void MP_SetTransmitTimeout(long);  // 0x00494D40  __cdecl
 char MP_Dont_care(void);  // 0x00494D50  __cdecl
 char spxinit(NET_ADDRESS_LIST *);  // 0x00496F40  __cdecl
 char spxinit2(NET_PROTOCOL *, CN_INFO *);  // 0x00497000  __cdecl
@@ -148,6 +266,7 @@ void insertQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A400  __cde
 void overwriteQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A460  __cdecl
 void retrieveFromQueue(SERIAL_QUEUE &, long, SERIAL_PACKET_WRAPPER &);  // 0x0049A4A0  __cdecl
 void fetchFromQueueTail(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A4D0  __cdecl
+void SER_InitializeControlStruct(void);  // 0x0049A520  __cdecl
 void SER_InitializeLowLevel(void);  // 0x0049A660  __cdecl
 void SER_ShutdownLowLevel(void);  // 0x0049A6B0  __cdecl
 int fnc_toCallDuringAnswer(int);  // 0x0049A6E0  __cdecl
@@ -160,7 +279,30 @@ long MOD_InitializeAndConnect(CN_INFO *, long, long *);  // 0x0049AF30  __cdecl
 long MOD_Initialize(CN_INFO *, long);  // 0x0049AFF0  __cdecl
 void MOD_Shutdown(void);  // 0x0049B0D0  __cdecl
 long serIO(long, char *);  // 0x0049B110  __cdecl
+char winsock_load(_winsock_funcs *, char *);  // 0x004A5990  __cdecl
+void winsock_cleanup(void);  // 0x004A5CB0  __cdecl
+char * winsock_handle_error(char *, ERROR_SEVERITY, char *, int);  // 0x004A5CE0  __cdecl
+char * winsock_process_error(int, char *, ERROR_SEVERITY, char *, int);  // 0x004A5D10  __cdecl
+char winsock_set_non_blocking(unsigned int);  // 0x004A5E00  __cdecl
+char winsock_set_buffer_sizes(unsigned int);  // 0x004A5E50  __cdecl
+void socket_flush_close(unsigned int);  // 0x004A5F90  __cdecl
+void socket_close(unsigned int);  // 0x004A5FA0  __cdecl
+void socket_close_non_player_sockets(void);  // 0x004A6110  __cdecl
+void socket_close_socket(unsigned int, unsigned short);  // 0x004A6150  __cdecl
+void socket_close_all(void);  // 0x004A61A0  __cdecl
+socket_state * socket_get_state_ptr(unsigned int);  // 0x004A6220  __cdecl
+char socket_add_state_func(unsigned int, char (*)(unsigned int, long, int, socket_state *), SOCK_STATE);  // 0x004A6260  __cdecl
+void socket_set_state(socket_state *, SOCK_STATE);  // 0x004A62A0  __cdecl
 void socket_set_socket(socket_state *, unsigned int);  // 0x004A62B0  __cdecl
+char socket_set_type(socket_state *, SOCK_TYPE);  // 0x004A62C0  __cdecl
+void socket_set_all_players_state_funcs(char (*)(unsigned int, long, int, socket_state *), SOCK_STATE, int);  // 0x004A62D0  __cdecl
+void socket_set_state_func(socket_state *, char (*)(unsigned int, long, int, socket_state *), SOCK_STATE);  // 0x004A6320  __cdecl
+void socket_build_write_fds(void);  // 0x004A6390  __cdecl
+void socket_get_fds(fd_set *, fd_set *, fd_set *);  // 0x004A6650  __cdecl
+char socket_check_duplicates(socket_state *);  // 0x004A66C0  __cdecl
+void socket_set_doa(unsigned int);  // 0x004A6760  __cdecl
+void socket_process_doa(void);  // 0x004A67B0  __cdecl
+char tcpinit(NET_ADDRESS_LIST *);  // 0x004ABBF0  __cdecl
 char tcpinit2(NET_PROTOCOL *, CN_INFO *);  // 0x004ABD40  __cdecl
 void tcp_save_settings(NET_PROTOCOL *, CN_INFO *);  // 0x004ABD60  __cdecl
 unsigned int tcplisten(void);  // 0x004ABDC0  __cdecl
@@ -175,8 +317,15 @@ void SER_SendHoldingBuffer(void);  // 0x004AC1D0  __cdecl
 char SER_OkToSendPacket(void);  // 0x004AC210  __cdecl
 char SER_SendPacket(SERIAL_PACKET_WRAPPER &, char);  // 0x004AC230  __cdecl
 void SER_SendRequests(void);  // 0x004AC2E0  __cdecl
+void SER_SendDataPackets(void);  // 0x004AC3E0  __cdecl
 void SER_SendStatus(void);  // 0x004AC480  __cdecl
 char NetProtocolPresent(long);  // 0x004B06C0  __cdecl
+void NET_GetLocalAddressString(char *);  // 0x004B0730  __cdecl
+long NET_Initialize(CN_INFO *, long);  // 0x004B0830  __cdecl
+char NET_StartQuery(CN_INFO *, void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long));  // 0x004B0940  __cdecl
+void NET_Shutdown(void);  // 0x004B0A10  __cdecl
+void NET_ShutdownQuery(void);  // 0x004B0A90  __cdecl
+void NET_Often(void);  // 0x004B0AC0  __cdecl
 void NET_Synchronize(void);  // 0x004B0BD0  __cdecl
 void NET_Disconnect(long);  // 0x004B0CC0  __cdecl
 long NET_Write(long, unsigned char *, long);  // 0x004B0CF0  __cdecl
@@ -185,9 +334,33 @@ char NET_Flush(long, char);  // 0x004B0E00  __cdecl
 long NET_Read(long, unsigned char *, long);  // 0x004B0E50  __cdecl
 long NET_ReadAvail(long, long);  // 0x004B10D0  __cdecl
 long NET_PeekByte(long);  // 0x004B1150  __cdecl
+void NET_GetLastError(char *, int);  // 0x004B1280  __cdecl
+char NET_SendMessageAll(char *);  // 0x004B12A0  __cdecl
+char NET_MakeAutoConnectAddress(CN_INFO *, NET_ADDRESS *);  // 0x004B1350  __cdecl
+char NET_Addr2string(NET_ADDRESS *, char *);  // 0x004B1380  __cdecl
+void net_add_player_id(char *, socket_state *, int);  // 0x004B13A0  __cdecl
 char game_event_handler(unsigned int, long, int, socket_state *);  // 0x004B1660  __cdecl
+void net_write_output_q(int);  // 0x004B16B0  __cdecl
 char validate_packet(NET_PKT *);  // 0x004B1A80  __cdecl
+void net_handle_fd_write(socket_state *);  // 0x004B1B10  __cdecl
+char net_all_players_ready(void);  // 0x004B1B40  __cdecl
+void net_send_all(NET_PKT *);  // 0x004B1B80  __cdecl
+char net_do_accept_connection(unsigned int, char (*)(unsigned int, long, int, socket_state *));  // 0x004B1BF0  __cdecl
+void net_set_ready(socket_state *);  // 0x004B1CA0  __cdecl
+void net_print_player_found(int, char *);  // 0x004B1CC0  __cdecl
+void net_add_self(char *, int);  // 0x004B1D00  __cdecl
+void net_print_connection_failed(socket_state *);  // 0x004B2070  __cdecl
+char net_addr_equal(NET_ADDRESS *, NET_ADDRESS *);  // 0x004B20C0  __cdecl
+void net_mung_name(char *, char *);  // 0x004B2120  __cdecl
+char net_unmung_name(char *, PKT_PLAYER_AD *);  // 0x004B2180  __cdecl
+void net_start_game(void);  // 0x004B2530  __cdecl
+void net_set_callback_host(void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long));  // 0x004B2590  __cdecl
+void net_set_callback_players(void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long));  // 0x004B25B0  __cdecl
+void net_set_callback_connected(void *, void (*)(void *, NET_CONNECTED_STATE));  // 0x004B25D0  __cdecl
 void state_func_query_hosts(void);  // 0x004B25F0  __cdecl
+void net_set_often_state(PLAYER_STATE);  // 0x004B2630  __cdecl
+PLAYER_STATE net_get_often_state(void);  // 0x004B26C0  __cdecl
+void net_free_player_list(void);  // 0x004B26D0  __cdecl
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would

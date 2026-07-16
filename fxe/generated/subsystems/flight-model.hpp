@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Flight model / physics (FM/HARD) -- FA.EXE
-// 63/63 functions have a recovered signature; 0/0 globals have a recovered type.
+// 85/85 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::flight_model {
 
@@ -76,5 +76,27 @@ undefined4 HARDRearmFortLoad(void);  // 0x00454060  __stdcall
 undefined4 ChangePlaneType(undefined4, undefined4, undefined4);  // 0x00454140  __stdcall
 long RepairTime(long);  // 0x004543A0  __fastcall
 undefined4 SelectRepairPlane(undefined4, undefined4, undefined4, undefined4);  // 0x004543C0  __stdcall
+undefined4 FMTurbulence(void);  // 0x00477590  __stdcall
+undefined4 COMinSpeed(void);  // 0x00477D10  __stdcall
+undefined4 COCornerSpeed(void);  // 0x00477D30  __stdcall
+undefined4 COMaxSpeed(void);  // 0x00477E50  __stdcall
+undefined4 COAcc(void);  // 0x00477E60  __stdcall
+undefined4 CODacc(void);  // 0x00477E80  __stdcall
+undefined4 COBv(void);  // 0x00477EA0  __stdcall
+undefined4 COBrv(void);  // 0x00477ED0  __stdcall
+undefined4 COBankRate(void);  // 0x00478090  __stdcall
+undefined4 COTurnRate(void);  // 0x004780D0  __stdcall
+undefined4 COTurnRadius(void);  // 0x00478150  __stdcall
+undefined4 COThrust(undefined4);  // 0x00478190  __fastcall
+undefined4 COTwr(void);  // 0x004781D0  __stdcall
+undefined4 COSig(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00478200  __fastcall
+undefined4 COGPullDrag(void);  // 0x004784A0  __stdcall
+undefined4 FMAircraftSetup(void);  // 0x0047A690  __stdcall
+undefined4 FMGetAcc(undefined4, undefined4, undefined4);  // 0x0047A770  __stdcall
+undefined4 FMGetNPCAcc(void);  // 0x0047AC60  __stdcall
+undefined4 FMVertMotion(void);  // 0x0047AEB0  __stdcall
+undefined4 FMSetTV(undefined4, undefined4);  // 0x0047AF70  __stdcall
+undefined4 FMResetTV(void);  // 0x0047B000  __stdcall
+undefined4 FMFlight(void);  // 0x0047B020  __stdcall
 
 }  // namespace fxe::fa::flight_model
