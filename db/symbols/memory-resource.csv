@@ -61,6 +61,15 @@ va,kind,name,display,source,confidence,notes,type
 0x004F3DC4,data,?mm_used_list@@3PAUT_HANDLE@@A,mm_used_list,sms,confirmed,head of allocated-handle intrusive list (next@+0 prev@+4),T_HANDLE *
 0x004F3DC8,data,?mm_unused_list@@3PAUT_HANDLE@@A,mm_unused_list,sms,confirmed,head of free-handle intrusive list,T_HANDLE *
 0x004F3DCC,data,mmAllocIdSp,,re,confirmed,depth/index of the alloc-id save-stack (@0x538250) for MMPushAllocId/MMPopAllocId [was DAT_004f3dcc],undefined4
+0x004F4F6C,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #492 player-shell claims; layout not yet recovered,
+0x004F7FC8,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F7FCC,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F80EC,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F8110,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F811C,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F8140,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F8170,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
+0x004F817C,data,,,waiver,confirmed,interior of / adjacent to ?hintHndl@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
 0x00503E30,data,?resList@@3PAURES_LIST@@A,resList,sms,confirmed,RES_LIST[1400] resource registry spanning 0x503E30..0x50A618 (1400*0x13=0x67E8),RES_LIST *
 0x00503E34,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
 0x00503E3D,data,,,waiver,confirmed,interior of / adjacent to ?resList@@3PAURES_LIST@@A; named at its base or owned by that subsystem,
@@ -78,9 +87,14 @@ va,kind,name,display,source,confidence,notes,type
 0x0050A644,data,,,waiver,confirmed,"RM dispatch literal ""_Load"" (SMCallByName suffix)",
 0x0050A64C,data,,,waiver,confirmed,"RM dispatch literal ""_Free""",
 0x0050A654,data,,,waiver,confirmed,"RM dispatch literal ""_Setup""",
+0x0050C578,data,,,waiver,confirmed,interior of / adjacent to ?tcp_proto@@3UNET_PROTOCOL@@A; named at its base or owned by that subsystem,
 0x00538248,data,?mm_page_size@@3KA,mm_page_size,sms,confirmed,GetSystemInfo dwPageSize; VirtualAlloc-vs-GlobalAlloc threshold (shared reader: sound),u32
 0x0053824C,data,?mmAllocId@@3EA,mmAllocId,sms,confirmed,current alloc-id tag stamped on new handles/RES_LIST rows; widely read (campaign/network/shell-ui) but MM-owned,u8
 0x00538250,data,,,waiver,confirmed,alloc-id save-stack (byte array indexed by mmAllocIdSp); accessed only as &base+index,
+0x0054736C,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #492 player-shell claims; layout not yet recovered,
+0x00547370,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #492 player-shell claims; layout not yet recovered,
+0x00547374,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #492 player-shell claims; layout not yet recovered,
+0x00547384,data,,,waiver,confirmed,interior of / adjacent to ?libAccess@@3PAULIBACCESS@@A; named at its base or owned by that subsystem,
 0x00573208,data,_brsColorProcess,brsColorProcess,sms,confirmed,bitmap color-process mode set by SetupBitmapAccess,undefined2
 0x00573238,data,,,waiver,confirmed,bitmap-access param written by SetupBitmapAccess (paired with 0x0057323C),
 0x0057323C,data,,,waiver,confirmed,bitmap-access param written by SetupBitmapAccess,

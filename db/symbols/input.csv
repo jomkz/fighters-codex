@@ -1,10 +1,43 @@
 va,kind,name,display,source,confidence,notes,type
 0x004115C0,func,_KeyAvail,KeyAvail,sms,confirmed,,
+0x00411600,func,?KEYEvent@@YAXIIJ@Z,KEYEvent,sms,confirmed,"WM_(SYS)KEYDOWN/UP hook: scan from lParam, qualifier bits (1=shift 2=ctrl 4=alt) in _qualStatus/_keyFlags, _keyarray[scan] held state, kbScanToASCII translate (hi-byte=bare ASCII code, lo-byte=keypad normalize, none=scan<<8|qual), 16-entry _kbBuffer ring; drops auto-repeats of _ignoreRepeats scans in flight","void __cdecl KEYEvent(unsigned int, unsigned int, long)"
+0x00411890,func,_KEYECS,KEYECS,sms,confirmed,enter the keyboard critical section (0x522558) if initialized,
+0x004118B0,func,_KEYLCS,KEYLCS,sms,confirmed,leave the keyboard critical section,
+0x004118D0,func,_KEYPause,KEYPause,sms,confirmed,"flush keyboard state: kbBuffer ring ptrs, _keyarray[256], qualifier bits",
+0x00411F00,func,@PutFakeKey@4,PutFakeKey,sms,confirmed,push a synthetic key code onto the 8-entry fake-key stack (0x5226b0); UI/joystick inject commands this way,undefined4 __fastcall PutFakeKey(undefined4)
+0x00411F20,func,_GetFakeKey@0,GetFakeKey,sms,confirmed,pop the fake-key stack (0 when empty); polled after GetKey by the shell screens,undefined4 __stdcall GetFakeKey(void)
+0x00412930,func,_WaitKey,WaitKey,sms,confirmed,spin (Sleep 0) until GetKey returns a key,
+0x00413D10,func,_SlewKey,SlewKey,sms,confirmed,"slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0",
+0x00414070,func,SlewObjListCollect,,re,confirmed,T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24,
+0x00414690,func,@FlightKey@4,FlightKey,sms,confirmed,"THE in-flight command table: offers the key to the stick/rudder/throttle device procs (msg 3) then dispatches ~70 commands - flight controls (a/b/f/g/h/o), sensors (r/i/m/y, Shift+R A/G, Shift+A AWACS, Shift+G GCI), targeting (Enter/t/T/;), weapons ([ ] Space Tab, keypad-Ins chaff keypad-Del flare, Shift+J/K jettison), wingman Alt+letters + Alt+1..9 break angles, Shift+digit MFD windows, Ctrl+keypad thrust vector, Shift+E eject (double-press). See input.md section",undefined4 __fastcall FlightKey(undefined4)
+0x00415E30,func,PickVisibleTarget,,re,confirmed,"filter _visibleTargetIds by Targetable, then param!=0: nearest to screen centre (boresight), param==0: next in raster order after the current target",
+0x00415F80,func,NextTargetOnScreen,,re,confirmed,"raster-order scan of on-screen target positions; returns the id following the reference position, skipping the current target",
+0x00416050,func,PickVisibleContact,,re,confirmed,"radar-contact twin of PickVisibleTarget over CPGetContact/_numContacts (/ and \ keys, realistic-avionics pref)",
+0x00416140,func,NextContactOnScreen,,re,confirmed,raster-order scan over contact screen positions; returns CPGetContact(best),
+0x00416200,func,WngAttackTarget,,re,confirmed,"order wingman vs the player target: hostile check (side byte objPtrs[id]+9 XOR player side, bit 0x80), optional WNGSetControl, MSGSend cmd 0xb with target id (0x1fffffff = engage at will); Alt+E(1,1)/Alt+R(2,1)",
+0x004162C0,func,WngAttackContact,,re,confirmed,same as WngAttackTarget but for the radar _contactId (Alt+F),
+0x00416380,func,@SetAutopilot@8,SetAutopilot,sms,confirmed,"set/clear plane-flags bit 0x1000 (autopilot); on engage WPSetupCurrent(0)+AutopilotEngage, on disengage CancelCmdBuf; clears bit 0x2000 (forced) when off","undefined4 __fastcall SetAutopilot(undefined4, undefined4)"
+0x004163F0,func,AutopilotEngage,,re,confirmed,"autopilot engage bootstrap: EnterState(0x1f) if beyond, temporarily clear target, PLANEEventProc(0x80), CallUtilProc/MoveObj/ReadCmdBuf priming",
+0x00416470,func,@ForceAutopilot@4,ForceAutopilot,sms,confirmed,engage autopilot marking it forced (bit 0x2000) - used by menus/eject/hook-catch,undefined4 __fastcall ForceAutopilot(undefined4)
+0x00416490,func,_RestoreAutopilot@0,RestoreAutopilot,sms,confirmed,disengage a forced autopilot (bit 0x2000 set) only,undefined4 __stdcall RestoreAutopilot(void)
+0x004164B0,func,_ServicePlayer@0,ServicePlayer,sms,confirmed,"per-frame player service: forced-AP when dead, stick decay under time compression, DAMAGEUpdate, target FOV re-check (pref 0x10000000), autopilot maintenance, FMFlight tick + crash dispatch (PLANECrash, crash-landed score -2), arrestor-hook catch (Collision type 0x84, HOOK_5K, state 0x16), waypoint auto-advance (WP+0x44 stride, passed bit 0x80), collision MSGSend 0x4000 + Kill, afterburner/engine sounds, trigger logic (_weaponButton/_gunButton -> PROJFire, bay-door + refire checks), brake button edges",undefined4 __stdcall ServicePlayer(void)
+0x004170C0,func,PlayerDriveVehicle,,re,confirmed,"non-plane player control: stick -> CreateMove turn (COTurnRate, reversed in reverse) + speed (COMaxSpeed, half max reverse)",
+0x00417150,func,PlayerUpdateState,,re,confirmed,"the player plane auto state machine: on ground - auto-rearm, catapult (APTakeoffType 7 -> state 7 + forced AP), takeoff roll 0x11, taxi 1, parking 0x1a-0x1e; in air - approach/landing 0x12/0x14 near airport w/ gear, else free flight 0x1f, engage 0x20; skips the ~BGUN.PT fort gun",
+0x00417530,func,PlayerAutoRearm,,re,confirmed,stationary at a friendly airport within 0x64000: HARDRearmTest/HARDRearmHumanLoad (fort variants on fort missions) + SAYRearmMessage,
+0x00417620,func,PlayerNeedsRearm,,re,confirmed,"rearm-needed test: drop-tank fuel sum + base tankage vs HARDTotalFuel, threshold 0x15e",
+0x00417690,func,PlayerPickParking,,re,confirmed,nearest of the airport 4 parking points (apt+0x62/0x74/0x86/0x98) -> states 0x1b..0x1e (1 when already 0x1a),
+0x0041769C,func,PlayerPickParkingAlt,,re,confirmed,alternate entry of PlayerPickParking (reference point in EAX); overlapping-entry pair,
+0x00417754,data,,,waiver,confirmed,interior of / adjacent to caseD_3; named at its base or owned by that subsystem,
+0x00417760,func,_InitPlayerControl@0,InitPlayerControl,sms,confirmed,"load vis240.SEE into the 57-byte view/visibility block 0x4ee348, deviceProc(0) init for stick/rudder/throttle, clear buttons + coolie state, throttle from entity+0x1f2",undefined4 __stdcall InitPlayerControl(void)
+0x00417850,func,_InputCalibrate,InputCalibrate,sms,confirmed,deviceProc(1) calibrate for one device + ensure the shell mouse is shown,
+0x00417880,func,_GetPlayerControl@0,GetPlayerControl,sms,confirmed,"per-frame control poll: ReadSticksRaw + deviceProc(2) stick/rudder/throttle + KeyStick(2,0) so Space/Tab always latch fire buttons",undefined4 __stdcall GetPlayerControl(void)
+0x004178D0,func,?KeyStick@@YAGFG@Z,KeyStick,sms,confirmed,"keyboard stick device proc: msg2 latches Space=_weaponButton Tab=_gunButton from _keyarray, arrows = full deflection +/-0x100 (shift reserved for views, alt+arrows reserved for TV); msg3 passes keys through","unsigned short __cdecl KeyStick(short, unsigned short)"
 0x00417A10,func,?PotStick@@YAGFG@Z,PotStick,sms,confirmed,,"unsigned short __cdecl PotStick(short, unsigned short)"
 0x00417C20,func,?KeyThrottle@@YAGFG@Z,KeyThrottle,sms,confirmed,,"unsigned short __cdecl KeyThrottle(short, unsigned short)"
 0x00417D10,func,?KeyRudder@@YAGFG@Z,KeyRudder,sms,confirmed,,"unsigned short __cdecl KeyRudder(short, unsigned short)"
 0x00417D80,func,?PotThrottle@@YAGFG@Z,PotThrottle,sms,confirmed,,"unsigned short __cdecl PotThrottle(short, unsigned short)"
 0x00417ED0,func,?PotRudder@@YAGFG@Z,PotRudder,sms,confirmed,,"unsigned short __cdecl PotRudder(short, unsigned short)"
+0x00417F00,func,_Slew@16,Slew,sms,confirmed,compose yaw/pitch view offsets with object attitude via rotation matrices + ArcTan -> euler view angles (padlock/slew view math),"undefined4 __stdcall Slew(undefined4, undefined4, undefined4, undefined4)"
 0x00481280,func,_GetKeySlow,GetKeySlow,sms,confirmed,,
 0x00494270,func,@ReadSticksRaw@0,ReadSticksRaw,sms,confirmed,poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10),undefined4 __fastcall ReadSticksRaw(void)
 0x004942D0,func,_InitJoysticks@0,InitJoysticks,sms,confirmed,joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions,undefined4 __stdcall InitJoysticks(void)
@@ -37,6 +70,50 @@ va,kind,name,display,source,confidence,notes,type
 0x0049C260,func,?RunModemAdvSetupDialog@@YGXPAUCN_INFO@@PAJ1@Z,RunModemAdvSetupDialog,sms,confirmed,,"void __stdcall RunModemAdvSetupDialog(CN_INFO *, long *, long *)"
 0x0049C780,func,?RunModemConfigurationScreen@@YGXXZ,RunModemConfigurationScreen,sms,confirmed,large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui,void __stdcall RunModemConfigurationScreen(void)
 0x004EBCE4,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
+0x004ECE0C,data,,,waiver,confirmed,interior of / adjacent to ?ignoreRepeats@@3PAIA; named at its base or owned by that subsystem,
+0x004ECE40,data,fakeKeyCount,,re,confirmed,depth of the 8-entry synthetic-key stack (PutFakeKey/GetFakeKey) (#492),
+0x004EE348,data,visConfig,,re,confirmed,the 57-byte view/visibility block loaded from vis240.SEE by InitPlayerControl; handed to PROJInFOV (#492),
+0x004EE34C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE384,data,slewSpeed,,re,confirmed,"slew step per keypress; keypad-0 doubles, keypad-. halves (min 0x100) (#492)",
+0x004EE388,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE398,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE3A8,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE3BC,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE3D0,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE3E4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE3F4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE418,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE438,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE458,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE47C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE498,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE4A8,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE4C4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE4D4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE4E4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE4FC,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE50C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE524,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE53C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE554,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE56C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE580,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE598,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE5A8,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE5B8,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE5D4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE5E4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE5F4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE60C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE620,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE634,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE664,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE688,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE698,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE6A4,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE6BC,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE6D0,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
+0x004EE6E8,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
 0x004EE6F4,data,,,waiver,confirmed,"string literal — joystick-calibration prompt passed to _DialogInfoBox@12, which walks it as char* (?PotThrottle@@YAGFG@Z); constant text, not state",
 0x004F8448,data,,,waiver,confirmed,interior of / adjacent to _fmtReduceButtonH; named at its base or owned by that subsystem,
 0x004FFE9C,data,,,waiver,confirmed,interior of / adjacent to ?wingSay@@3PAUSAY@@A; named at its base or owned by that subsystem,
@@ -84,9 +161,21 @@ va,kind,name,display,source,confidence,notes,type
 0x00502158,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
 0x00502160,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
 0x00502168,data,,,waiver,confirmed,interior of / adjacent to _mouseButtons; named at its base or owned by that subsystem,
+0x0050D2F1,data,,,waiver,confirmed,interior of the current-object (_cg) mirror block; field offsets documented in objects.md,
+0x0050D2F5,data,,,waiver,confirmed,interior of the current-object (_cg) mirror block; field offsets documented in objects.md,
+0x005224D3,data,,,waiver,confirmed,interior of / adjacent to _dam; named at its base or owned by that subsystem,
+0x005224D6,data,,,waiver,confirmed,interior of / adjacent to _dam; named at its base or owned by that subsystem,
+0x005224DE,data,,,waiver,confirmed,interior of / adjacent to _dam; named at its base or owned by that subsystem,
+0x005224DF,data,,,waiver,confirmed,interior of / adjacent to _dam; named at its base or owned by that subsystem,
+0x005224E0,data,,,waiver,confirmed,interior of / adjacent to _dam; named at its base or owned by that subsystem,
+0x0052259C,data,,,waiver,confirmed,"interior of _keyarray (held-key state, indexed by scan code)",
+0x005225A7,data,,,waiver,confirmed,"interior of _keyarray (held-key state, indexed by scan code)",
+0x005225D1,data,,,waiver,confirmed,"interior of _keyarray (held-key state, indexed by scan code)",
 0x005225E7,data,,,waiver,confirmed,"interior of _keyarray (+0x4F) — scan-code 0x4F (End) key state, read as rudder-left by ?KeyRudder@@YAGFG@Z; named at its base",
 0x005225E9,data,,,waiver,confirmed,"interior of _keyarray (+0x51) — scan-code 0x51 (PgDn) key state, read as rudder-right by ?KeyRudder@@YAGFG@Z; named at its base",
 0x00522C18,data,_lastThrottle,lastThrottle,re,confirmed,"analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one",s32
+0x00522C1C,data,slewListEnd,,re,confirmed,end pointer for the SlewObjListCollect id list (#492),
+0x00522C24,data,slewListCursor,,re,confirmed,write cursor for the SlewObjListCollect id list (#492),
 0x0054B824,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem,
 0x00554ABC,data,,,waiver,confirmed,interior of / adjacent to _buttonPresses; named at its base or owned by that subsystem,
 0x00554AC0,data,,,waiver,confirmed,"interior of _buttonPresses (+8) — element [2], the pending select-next-missile press count drained by ?PotStick@@YAGFG@Z; named at its base",

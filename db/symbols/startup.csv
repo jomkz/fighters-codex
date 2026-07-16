@@ -1,5 +1,13 @@
 va,kind,name,display,source,confidence,notes,type
 0x00403700,func,?usnfmain@@YAXXZ,usnfmain,sms,confirmed,,void __cdecl usnfmain(void)
+0x00404C14,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C1C,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C28,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C38,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C3E,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C47,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C4A,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
+0x00404C4F,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
 0x00404C70,func,?FlyingLoop@@YAXXZ,FlyingLoop,sms,confirmed,,void __cdecl FlyingLoop(void)
 0x0046B560,func,?MainLoop@@YAGPAUGlobalData@@@Z,MainLoop,sms,confirmed,,unsigned short __cdecl MainLoop(GlobalData *)
 0x00476120,func,_WinMain@16,WinMain,sms,confirmed,,"undefined4 __stdcall WinMain(undefined4, undefined4, undefined4, undefined4)"
@@ -648,8 +656,33 @@ va,kind,name,display,source,confidence,notes,type
 0x004EA15C,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EA160,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
 0x004EA162,data,,,waiver,confirmed,interior of / adjacent to _IID_IDirectDrawClipper; named at its base or owned by that subsystem,
+0x004EB666,data,,,waiver,confirmed,interior of / adjacent to _mainV; named at its base or owned by that subsystem,
+0x004EB66A,data,,,waiver,confirmed,interior of / adjacent to _mainV; named at its base or owned by that subsystem,
+0x004EB740,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB74C,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB760,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB77C,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB788,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB7A4,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB7B0,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB7B8,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB7D4,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB7DC,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB834,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB848,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB860,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB878,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB890,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB8A8,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB8C0,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EB8CC,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
 0x004EEAB8,data,,,waiver,confirmed,interior of / adjacent to _items; named at its base or owned by that subsystem,
 0x004F44D4,data,,,waiver,confirmed,interior of / adjacent to ?ifmShow@@3GA; named at its base or owned by that subsystem,
+0x004F8C19,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
+0x004F8C37,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
+0x0050C839,data,,,waiver,confirmed,interior of / adjacent to ?glassesHDiff@@3FA; named at its base or owned by that subsystem,
+0x0050C844,data,,,waiver,confirmed,interior of / adjacent to ?glassesHDiff@@3FA; named at its base or owned by that subsystem,
+0x0050C84C,data,,,waiver,confirmed,interior of / adjacent to ?glassesHDiff@@3FA; named at its base or owned by that subsystem,
 0x0051E750,data,__umaskval,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x0051E754,data,,,waiver,confirmed,interior of / adjacent to __umaskval; named at its base or owned by that subsystem,
 0x0051E758,data,__winver,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
@@ -803,6 +836,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00520674,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
 0x00520678,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
 0x0052069C,data,,,waiver,confirmed,interior of / adjacent to __tzname; named at its base or owned by that subsystem,
+0x00520AC8,data,,,waiver,confirmed,interior of / adjacent to ?programName@@3PADA; named at its base or owned by that subsystem,
+0x00520AE4,data,,,waiver,confirmed,interior of / adjacent to ?ifmPalette@@3PAUT_RGB@@A; named at its base or owned by that subsystem,
+0x00520F0C,data,,,waiver,confirmed,interior of / adjacent to ?lastHumanChoseSide@@3PAJA; named at its base or owned by that subsystem,
+0x00556872,data,,,waiver,confirmed,interior of / adjacent to ?cnConnect@@3UCN_INFO_CONNECT@@A; named at its base or owned by that subsystem,
 0x00591A5C,data,,,waiver,confirmed,interior of / adjacent to ?dbaseLow@@3PAEA; named at its base or owned by that subsystem,
 0x00591A60,data,?_pnhHeap@@3P6AHI@ZA,,sms,confirmed,MSVC CRT global (xrefs=1),undefined4
 0x00591A68,data,,,waiver,confirmed,interior of / adjacent to ?_pnhHeap@@3P6AHI@ZA; named at its base or owned by that subsystem,

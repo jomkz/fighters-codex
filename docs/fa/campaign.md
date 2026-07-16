@@ -21,6 +21,75 @@ clusters (the mission-map editor `0x421C70–0x42B800` plus pilot/campaign/missi
   `_campaignState` (active → dead/fail → planning); mission load runs through
   `_CallMissionProc` + `_MISSIONInit2`, and scoring accumulates via `_MISSIONAddScore`.
 
+## The pilot record, engine-side (#492)
+
+The [`.P`](formats/P.md) spec maps the file from the byte side; the #492 read recovered
+how the engine populates it. `_campaignPilot` — the live in-memory record — sits at
+`0x4F8BB8`, which resolves every "campaign state" global into a **pilot-record field**:
+confirmed
+
+| offset | field | writer |
+|---|---|---|
+| `+0x00` | format version byte `0x0F` | `PilotFormatRank` (new pilot); `PilotScreen` validates it + the 0x25E0 size |
+| `+0x01` / `+0x41` | name / callsign | `EditPilot` (`MISSIONEnsureLegalName`d) |
+| `+0x61` | personal insignia | `CallsignChoose`: `^<CALLSIGN>.5K` when that [.5K](formats/11K.md) exists |
+| `+0x95` | photo PIC name | the photo picker (`MakePicList("LEFT"…)` pairs LEFT/RIGHT facings) |
+| `+0xA2` | rank string | from `_pilotRanks` |
+| `+0xC2` | campaigns-won list | appended (", "-joined) by `CallCampaignProc` cmd 5 on victory |
+| `+0x5AF` | service-record lines | the dossier's free-text block (≤10 lines) |
+| `+0xD7F` | active campaign file | `InitCampaignPilot` |
+| `+0xDAC` | status word | 0 available · 1 on campaign ("%s, mission %d") · 2 MIA · 3 KIA · 4 retired |
+| `+0xDB0` | plane roster | 0xBC-byte per-plane slots: damage array copy at `+0x30`, **repair %** at `+0x2E` (`dam×100/max + type+0x1B4`, clamp 100); a bail zeroes the slot |
+| `+0x1C60` | campaign stores pool | 50 × 16-byte `{type, count@+0xE}`; `LoadCampaignStores` returns/deducts vs the plane hardpoints, −1 = unlimited |
+| `+0x1F80` | stats counters | missions flown, failures, wingman missions/losses, bails (`CallCampaignProc` cmd 3) — the block `fx plt dump` reads |
+
+Saves go to `PLT%03d.P` (`PilotFindFreeSlot` probes from a random slot; that is why the
+filename numbers look random). `PILOT.BKP` is the **retry snapshot**: written before each
+campaign mission (cmd 1), restored on "try this mission again" after a death/failure.
+`ConvertPilotFiles` migrates 0x15B4-byte legacy (pre-FA) records field-by-field into the
+0x25E0 layout — and renames any other wrong-size `.P` file to `.POO`. confirmed
+
+**Pilot screens.** `PilotScreen` (`0x468020`) serves three modes off one body — SHWPILOT
+(select), CONTPLT (continue campaign), VIEWPLT (view roster) — with name-sorted
+available/unavailable rosters, photo + nose-art + tail-art PIC lists, and the dossier
+"paper" (`PilotBuildPaper`: `SHWPILOT.TXT` template lines interleaved with record fields,
+then the `AddStats` block, rendered by the shell's
+[format engine](shell-ui.md#the-textformat-engine-492)). confirmed
+
+## The campaign driver (#492)
+
+`_CallCampaignProc(cmd)` (`0x481440`) is the state machine the roadmap doc used to name
+without describing. The campaign logic itself is a loaded resource proc (`LoadCampaignProc`
+→ `_campaignProc`, invoked via `CampaignProcInvoke` with the campaign's state byte in the
+high bits); the driver wraps it: confirmed
+
+| cmd | phase | what the driver does around the proc |
+|---|---|---|
+| 0 | init | invoke(0), clear the backup flag |
+| 1 | mission start | write `PILOT.BKP`, invoke, `SeqEnd` (disk-error path → `CampaignDiskError`) |
+| 3 | post-mission | bail test (`AlmostHome` / `AtFriendlyAP`) — a bail zeroes the plane's roster slot; a home landing banks damage → **repair %** and returns stores to the pool; bumps the missions/failures/bails/wingman counters |
+| 4 | debrief | dead → "You have died / MIA — try again?" (restore `PILOT.BKP`, state 4) else failed → same offer; declining saves + `CampaignOff`, state `0x11` |
+| 5 | campaign end | victory appends the campaign to the pilot's campaigns-won field, save + off |
+| 6/8 | query | invoke and return the proc's result |
+| 7 | bail notify | invoke only |
+
+`CampaignMenu` exposes 1 = replay (restore `PILOT.BKP`) and 2 = `AbortCampaign` from the
+menu bar. The quit-mission guard (`ConfirmQuitMission`, shared body of the per-theater
+`KurileQuit`/`VietnamQuit` thunks) evaluates mission success via `CallMissionProc` and
+warns "If you quit before reaching home…" / "You have not yet fulfilled the mission…".
+confirmed
+
+**Briefing flow.** The shell sequences screens through small trampolines with skip flags
+(`_doScreens`, `_doBriefPaper`, `_doBriefMap`, `_doSelectPlane` — a windowed test harness
+left in the shipping binary): `_StartCampaign` = `CampaignSelect` (the `.CAM` chooser,
+descriptions from `<name>.TXT` sections) + `PilotScreen`; `_BriefPaper` shows
+`BriefScreen` on the mission's [`.MT`](formats/MT.md) text (one of four random
+BRIEFSCR/DEBSCR backgrounds; multiplayer ready-status sync; Jane's Online stats hooks);
+`_BriefMap` is `MAPScreen`; `_SelectPlane`/`_RepairPlane` run `SelectRepairPlane`;
+`_CreateProMission` opens the map editor; `_AircraftReference` and `_ViewPilots` jump to
+the reference and roster screens. Cancelling a campaign brief runs `AbortCampaign`.
+confirmed
+
 ![Campaign flow: the .CAM state machine drives mission selection; each mission loads, plays, and scores back into the pilot record.](diagrams/campaign.svg)
 
 ## Functions
@@ -34,6 +103,13 @@ Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex
 | `0x421D40` | `ZONEActive` | scripted-threat active-window test |
 | `0x422120` | `ZONEPickTarget` | pick a target plane for a zone |
 | `0x422190` | `MAPWPListBounds` | walk a waypoint list |
+| `0x481440` | `CallCampaignProc` | the campaign driver (cmd table above) |
+| `0x468020` | `PilotScreen` | the pilot roster screen (3 modes) |
+| `0x4674F0` | `PilotBuildPaper` | compose + print the pilot dossier |
+| `0x480EA0` | `LoadCampaignStores` | sync the campaign stores pool with the plane |
+| `0x4A1DD0` | `BriefScreen` | briefing/debrief screen over `.MT` |
+| `0x4A2A30` | `AddStats` | compose the marked-up debrief stats text |
+| `0x485AE0` | `ConvertPilotFiles` | legacy pilot-file migration (0x15B4 → 0x25E0) |
 
 ## Mission runtime — the `.M` interpreter (#485)
 

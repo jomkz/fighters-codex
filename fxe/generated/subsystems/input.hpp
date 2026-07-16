@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 33/35 functions have a recovered signature; 1/1 globals have a recovered type.
+// 45/67 functions have a recovered signature; 1/6 globals have a recovered type.
 
 namespace fxe::fa::input {
 
@@ -16,11 +16,23 @@ namespace fxe::fa::input {
 extern s32 lastThrottle;  // 0x00522C18  analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one
 
 // --- functions -------------------------------------------------------
+void KEYEvent(unsigned int, unsigned int, long);  // 0x00411600  __cdecl
+undefined4 PutFakeKey(undefined4);  // 0x00411F00  __fastcall
+undefined4 GetFakeKey(void);  // 0x00411F20  __stdcall
+undefined4 FlightKey(undefined4);  // 0x00414690  __fastcall
+undefined4 SetAutopilot(undefined4, undefined4);  // 0x00416380  __fastcall
+undefined4 ForceAutopilot(undefined4);  // 0x00416470  __fastcall
+undefined4 RestoreAutopilot(void);  // 0x00416490  __stdcall
+undefined4 ServicePlayer(void);  // 0x004164B0  __stdcall
+undefined4 InitPlayerControl(void);  // 0x00417760  __stdcall
+undefined4 GetPlayerControl(void);  // 0x00417880  __stdcall
+unsigned short KeyStick(short, unsigned short);  // 0x004178D0  __cdecl
 unsigned short PotStick(short, unsigned short);  // 0x00417A10  __cdecl
 unsigned short KeyThrottle(short, unsigned short);  // 0x00417C20  __cdecl
 unsigned short KeyRudder(short, unsigned short);  // 0x00417D10  __cdecl
 unsigned short PotThrottle(short, unsigned short);  // 0x00417D80  __cdecl
 unsigned short PotRudder(short, unsigned short);  // 0x00417ED0  __cdecl
+undefined4 Slew(undefined4, undefined4, undefined4, undefined4);  // 0x00417F00  __stdcall
 undefined4 ReadSticksRaw(void);  // 0x00494270  __fastcall
 undefined4 InitJoysticks(void);  // 0x004942D0  __stdcall
 JOYRESULT GetJoystickType(unsigned long);  // 0x00494430  __cdecl
@@ -54,6 +66,31 @@ void RunModemConfigurationScreen(void);  // 0x0049C780  __stdcall
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004115C0  KeyAvail -- signature not recovered
+// TODO(#453): 0x00411890  KEYECS -- signature not recovered
+// TODO(#453): 0x004118B0  KEYLCS -- signature not recovered
+// TODO(#453): 0x004118D0  KEYPause -- signature not recovered
+// TODO(#453): 0x00412930  WaitKey -- signature not recovered
+// TODO(#453): 0x00413D10  SlewKey -- signature not recovered
+// TODO(#453): 0x00414070  SlewObjListCollect -- signature not recovered
+// TODO(#453): 0x00415E30  PickVisibleTarget -- signature not recovered
+// TODO(#453): 0x00415F80  NextTargetOnScreen -- signature not recovered
+// TODO(#453): 0x00416050  PickVisibleContact -- signature not recovered
+// TODO(#453): 0x00416140  NextContactOnScreen -- signature not recovered
+// TODO(#453): 0x00416200  WngAttackTarget -- signature not recovered
+// TODO(#453): 0x004162C0  WngAttackContact -- signature not recovered
+// TODO(#453): 0x004163F0  AutopilotEngage -- signature not recovered
+// TODO(#453): 0x004170C0  PlayerDriveVehicle -- signature not recovered
+// TODO(#453): 0x00417150  PlayerUpdateState -- signature not recovered
+// TODO(#453): 0x00417530  PlayerAutoRearm -- signature not recovered
+// TODO(#453): 0x00417620  PlayerNeedsRearm -- signature not recovered
+// TODO(#453): 0x00417690  PlayerPickParking -- signature not recovered
+// TODO(#453): 0x0041769C  PlayerPickParkingAlt -- signature not recovered
+// TODO(#453): 0x00417850  InputCalibrate -- signature not recovered
 // TODO(#453): 0x00481280  GetKeySlow -- signature not recovered
+// TODO(#455): 0x004ECE40  fakeKeyCount -- type not recovered
+// TODO(#455): 0x004EE348  visConfig -- type not recovered
+// TODO(#455): 0x004EE384  slewSpeed -- type not recovered
+// TODO(#455): 0x00522C1C  slewListEnd -- type not recovered
+// TODO(#455): 0x00522C24  slewListCursor -- type not recovered
 
 }  // namespace fxe::fa::input

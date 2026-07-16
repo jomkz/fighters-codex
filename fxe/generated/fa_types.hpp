@@ -63,6 +63,7 @@ typedef struct NET_PROTOCOL NET_PROTOCOL;
 typedef struct RES_LIST    RES_LIST;    /* resource-manager list (memory-resource)  */
 typedef struct T_HANDLE    T_HANDLE;    /* type/asset handle (terrain, objects)     */
 typedef struct SEQUENCE    SEQUENCE;    /* .SEQ player slot, stride 0x38 (seq.md)   */
+typedef struct PILOT       PILOT;       /* pilot save record, 0x25E0 (formats/P.md) */
 typedef struct SEQGR       SEQGR;       /* .SEQ graphic display-list node (seq.md)  */
 typedef struct SEQLBL      SEQLBL;      /* .SEQ label node                          */
 typedef struct SEQFNT      SEQFNT;      /* .SEQ font node                           */
