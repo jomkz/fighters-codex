@@ -77,6 +77,8 @@ typedef struct LEAF_LIST    LEAF_LIST;    /* terrain: quadtree leaf list        
 typedef struct MODSPEC      MODSPEC;      /* sound: module / track spec              */
 typedef struct ACTION       ACTION;       /* shell-ui: menu action                   */
 typedef struct VDO          VDO;          /* video: VDO player context               */
+typedef struct VDOHEADER    VDOHEADER;    /* video: VDO stream header (VDOfromVDOHEADER) */
+typedef struct CONFIG       CONFIG;       /* startup: EA.CFG settings record (UCONFIG_*) */
 typedef struct ANGLE          ANGLE;          /* objects: attitude vector (MPPrepareForInterp) */
 typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station          */
 typedef struct HARDPOINT_TYPE HARDPOINT_TYPE; /* flight-model: store-station type     */

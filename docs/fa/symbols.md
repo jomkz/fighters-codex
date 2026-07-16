@@ -1081,10 +1081,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 32 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 39 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00405490` | `VDOInit` | sms |  |
 | `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
 | `0x00456300` | `DecodeDSVGA8Frame` | sms | key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank |
 | `0x00456AD0` | `EDB` | sms | expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path |
@@ -1112,7 +1113,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A06F0` | `DoFadeout` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004AE410` | `PlayVDOFile` | sms |  |
 | `0x004AE440` | `PlayVDOString` | sms |  |
+| `0x004AECD0` | `VDOClearToBlack` | sms |  |
 | `0x004AED50` | `VDOSetMode` | sms |  |
+| `0x004AEE30` | `VDOSetLineStats` | sms |  |
+| `0x004AF320` | `VDOfromVDOHEADER` | sms |  |
+| `0x004AF690` | `VDOAlloc` | sms |  |
+| `0x004AF6A0` | `VDOFree` | sms |  |
+| `0x004AF6B0` | `VDO_320x200_to_640x480` | sms |  |
 | `0x004AF760` | `VDOCompareBitmaps` | sms |  |
 | `0x004CCFFC` | `DecodeYUV15` | sms |  |
 | `0x004CD1C0` | `DecodeYUV15Double1` | sms |  |
@@ -1120,7 +1127,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 158 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 181 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1128,6 +1135,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0041E010` | `?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ` | sms |  |
 | `0x0041E030` | `?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z` | sms |  |
 | `0x0041E050` | `?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
+| `0x00447A40` | `G_TileInit` | sms |  |
+| `0x00447A73` | `G_TileShutDown` | sms |  |
+| `0x00447AA5` | `G_Tile` | sms |  |
 | `0x0045CA70` | `DrawAcrossBankInter` | sms |  |
 | `0x0045CDA0` | `DrawAcrossBank` | sms |  |
 | `0x0045DBD0` | `GG_InitMode` | sms |  |
@@ -1145,6 +1155,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045E410` | `GG_WaitRetrace` | sms |  |
 | `0x0045E430` | `GG_QuickBlt` | sms |  |
 | `0x0045E440` | `GG_VideoModesAvailable` | sms |  |
+| `0x0046A640` | `G_InitCircles` | sms |  |
+| `0x0046A690` | `G_ShutdownCircles` | sms |  |
+| `0x0046A6C0` | `G_Circle` | sms |  |
+| `0x00479E10` | `G_FindFirstFile` | sms |  |
+| `0x00479EA0` | `G_FindNextFile` | sms |  |
+| `0x00479F20` | `G_FindClose` | sms |  |
+| `0x00486CF0` | `FPSInit` | sms |  |
+| `0x00486D10` | `FPSUpdate` | sms |  |
+| `0x00486DA0` | `FPSPrint` | sms |  |
+| `0x00486DF0` | `FPSPrint2` | sms |  |
+| `0x00486E10` | `FPSReturn` | sms |  |
 | `0x00497330` | `G_FlipY` | sms |  |
 | `0x00497340` | `G_Init` | sms |  |
 | `0x004973F0` | `G_Shutdown` | sms |  |
@@ -1214,9 +1235,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004992B0` | `G_UHline2` | sms |  |
 | `0x004992E0` | `G_Box2` | sms |  |
 | `0x00499330` | `G_UBox2` | sms |  |
+| `0x004AF800` | `GLASSESInit` | sms |  |
+| `0x004AF850` | `GLASSESShutDown` | sms |  |
+| `0x004AF880` | `GLASSESHDiff` | sms |  |
+| `0x004AF8B0` | `GLASSESAdjust3dAmount` | sms |  |
 | `0x004AF8F0` | `GLASSESSaveBitmap` | sms |  |
 | `0x004AF930` | `GLASSESInterleaveBitmap` | sms |  |
+| `0x004AFA00` | `GLASSESSaveBitmapBox` | sms |  |
+| `0x004AFA40` | `GLASSESInterleaveBitmapBox` | sms |  |
 | `0x004AFB40` | `ShowPicture` | re | shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it |
+| `0x004AFC60` | `GLASSESBlitWithOffsets` | sms |  |
+| `0x004B00A0` | `GLASSESBeforeDrawingPop` | sms |  |
+| `0x004B00D0` | `GLASSESAfterDrawingPop` | sms |  |
 | `0x004B0130` | `GLASSESSpreadLines` | sms |  |
 | `0x004B01E0` | `GLASSESPrintAmount` | sms |  |
 | `0x004B4320` | `WRFogLayerUpdate` | sms | imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491) |
@@ -1965,10 +1995,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 465 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 473 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00403700` | `usnfmain` | sms |  |
+| `0x00404C70` | `FlyingLoop` | sms |  |
+| `0x0046B560` | `MainLoop` | sms |  |
+| `0x004B27C0` | `UCONFIG_DMusic` | sms |  |
+| `0x004B2820` | `UCONFIG_SetVideoOptions` | sms |  |
+| `0x004B2930` | `UCONFIG_load_EA_CFG` | sms |  |
+| `0x004B2980` | `UCONFIG_save_EA_CFG` | sms |  |
+| `0x004B2BD0` | `UCONFIG_Initialize` | sms |  |
 | `0x004D6F5C` | `timeGetTime` | sms | IAT import thunk (jmp [__imp__…]) |
 | `0x004D6F62` | `joyGetPos` | sms | IAT import thunk (jmp [__imp__…]) |
 | `0x004D6F68` | `joyGetDevCapsA` | sms | IAT import thunk (jmp [__imp__…]) |
