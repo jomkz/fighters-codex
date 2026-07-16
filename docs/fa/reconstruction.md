@@ -112,4 +112,3 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
 **Program totals (all binaries):** 27/27 subsystems complete; 6059/6059 in-scope functions named; 5134/8269 referenced globals resolved.
-
