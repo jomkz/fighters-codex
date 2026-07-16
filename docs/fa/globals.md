@@ -130,16 +130,53 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Core shell / menu / dialog UI
 
-[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 6 named referenced globals
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 43 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004EB620` | `gameMode` | sms | imported by 3 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x004EEA34` | `namesItems` | re | GetNames: the NAMES record array (alias of _items) (#492) |
+| `0x004F6DB8` | `info2SavedIndex` | re | reference screen: remembered selection (category 1 only) (#492) |
+| `0x004F6DBC` | `info2ForceClear` | re | clear-pane flag (ar_nopic case) (#492) |
+| `0x004F6DC0` | `info2PicX` | re | photo blit x (#492) |
+| `0x004F6DC2` | `info2PicY` | re | photo blit y (#492) |
+| `0x004F6DC8` | `info2DragX` | re | 3-D drag anchor x (#492) |
+| `0x004F6DCC` | `info2DragY` | re | 3-D drag anchor y (#492) |
 | `0x00502170` | `yesString` | sms | localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous |
 | `0x00502174` | `noString` | sms | localized dialog-button label |
 | `0x00502178` | `okString` | sms | localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491) |
 | `0x0050217C` | `cancelString` | sms | localized dialog-button label; imported by 72 of the 92 shipped .DLG overlays (#491) |
 | `0x00502184` | `exitString` | sms | localized dialog-button label; imported by 1 shipped .DLG overlay (#491) |
+| `0x0052912C` | `namesCapacity` | re | GetNames: allocated NAMES record capacity (grows by 400) (#492) |
+| `0x00529160` | `namesCount` | re | GetNames: NAMES records in _items (#492) |
+| `0x00546B08` | `info2LastYaw` | re | INFO2 dirty-check: last drawn yaw (#492) |
+| `0x00546B0A` | `info2LastPitch` | re | INFO2 dirty-check: last drawn pitch (#492) |
+| `0x00546B0C` | `info2LastRoll` | re | INFO2 dirty-check: last drawn roll (#492) |
+| `0x00546B10` | `info2Palette` | re | palette.PAL contents for the photo pages (#492) |
+| `0x00546B14` | `info2LastPhoto` | re | INFO2 dirty-check: last drawn photo index (#492) |
+| `0x00546B18` | `info2PhotoIndex` | re | current photo page index (#492) |
+| `0x00546B1C` | `info2LightYaw` | re | 3-D view light heading (#492) |
+| `0x00546B20` | `info2BaseDist` | re | ObjRadius*15 base view distance (#492) |
+| `0x00546B24` | `info2PhotoPages` | re | number of <type>_N photo pages found (#492) |
+| `0x00546B28` | `info2LastType` | re | INFO2 dirty-check: last drawn type record (#492) |
+| `0x00546B2C` | `info2TypeRec` | re | selected type record (RMAccess of _items[n]) (#492) |
+| `0x00546B30` | `info2TextPage` | re | current .INF text page (#492) |
+| `0x00546B34` | `info2ViewMode` | re | view mode: 0 text, 1 3-D, 2 photos, 3-6 art, 7-9 video (#492) |
+| `0x00546B38` | `info2FadePending` | re | first-draw flag: fade in instead of flush (#492) |
+| `0x00546B3C` | `info2Zoom` | re | 3-D view distance (0x800..0x6400) (#492) |
+| `0x00546B40` | `info2TypeName` | re | selected type filename (#492) |
+| `0x00546B50` | `info2LastTextPage` | re | INFO2 dirty-check: last drawn text page (#492) |
+| `0x00546B58` | `info2PaletteCopy` | re | screen palette copy for change detection (Info2SyncPalette) (#492) |
+| `0x00546B60` | `info2Yaw` | re | 3-D view yaw (lo16) / pitch (hi16) (#492) |
+| `0x00546B64` | `info2Roll` | re | 3-D view roll (#492) |
+| `0x00546B68` | `info2Background` | re | the ar background PIC handle (#492) |
+| `0x00546B6C` | `info2LastMode` | re | INFO2 dirty-check: last drawn view mode (#492) |
+| `0x00546B70` | `info2Category` | re | active GetNames category mask (#492) |
+| `0x00546B74` | `info2Index` | re | selected _items index (#492) |
+| `0x00546B78` | `info2Dirty` | re | needs-redraw flag (#492) |
+| `0x00546B7C` | `info2GlassesOn` | re | 3-D glasses active for the 3-D view (#492) |
+| `0x00546B80` | `info2LastZoom` | re | INFO2 dirty-check: last drawn zoom (#492) |
+| `0x00572008` | `singleMissionName` | re | the picked single-mission filename (SingleFilename) (#492) |
 
 ### View / camera & replay (VIEW)
 
@@ -155,10 +192,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 9 named referenced globals
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 14 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004F8C7A` | `pilotCampaignsWon` | re | _campaignPilot+0xC2: ", "-joined completed-campaigns list (P.md) (#492) |
+| `0x004F9937` | `campaignFileCopy` | re | _campaignPilot+0xD7F: active campaign .CAM filename (P.md) (#492) |
+| `0x004F9944` | `campaignDisplayName` | re | _campaignPilot+0xD8C: campaign display name (P.md) (#492) |
+| `0x004FA818` | `campaignStores` | re | _campaignPilot+0x1C60: 50 x 16-byte ordnance pool (P.md) (#492) |
+| `0x004FAB38` | `pilotMissionsFlown` | re | _campaignPilot+0x1F80 (P.md stats block) (#492) |
 | `0x004FB1A8` | `missionName` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x0050CFD1` | `ejectNextTime` | re | ejection seat: next state deadline, in _currentT ticks — EJECTAdd sets _currentT+0xC, EJECTMoveProc re-arms at +1 and parks it at 0x7FFF when the sequence ends |
 | `0x0050CFD3` | `ejectAngle` | re | ejection seat: seat attitude — passed as the ANGLE* first argument of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z, which types it, and slewed toward 0x7FF8 by _Slew@16 |
@@ -343,11 +385,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 1 named referenced globals
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 6 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004ECE40` | `fakeKeyCount` | re | depth of the 8-entry synthetic-key stack (PutFakeKey/GetFakeKey) (#492) |
+| `0x004EE348` | `visConfig` | re | the 57-byte view/visibility block loaded from vis240.SEE by InitPlayerControl; handed to PROJInFOV (#492) |
+| `0x004EE384` | `slewSpeed` | re | slew step per keypress; keypad-0 doubles, keypad-. halves (min 0x100) (#492) |
 | `0x00522C18` | `lastThrottle` | re | analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one |
+| `0x00522C1C` | `slewListEnd` | re | end pointer for the SlewObjListCollect id list (#492) |
+| `0x00522C24` | `slewListCursor` | re | write cursor for the SlewObjListCollect id list (#492) |
 
 ### Weapons — projectiles / seekers / ECM (PROJ)
 

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 156/181 functions have a recovered signature (+2 that are not C functions); 8/9 globals have a recovered type.
+// 178/208 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -126,11 +126,17 @@ void MAPGroupAdd(short);  // 0x0042B19D  __fastcall
 void MAPDeleteSpecial(void);  // 0x0042B275  __cdecl
 undefined4 FortMission2(undefined4);  // 0x0044D070  __stdcall
 undefined4 AwardMedal(undefined4);  // 0x00467110  __cdecl
+short PilotSave(PILOT *, short);  // 0x00467180  __fastcall
 undefined4 PilotFindFreeSlot(void);  // 0x00467240  __cdecl
+void PilotPhoto(PILOT *);  // 0x004672C0  __fastcall
+void CallsignChoose(PILOT *, long);  // 0x00467310  __stdcall
 undefined4 PilotBuildPaper(undefined4,int);  // 0x004674F0  __fastcall
 void PilotPaperAddLine(undefined4 *,undefined4 *);  // 0x00467860  __fastcall
 void PilotPaperEndLine(undefined4 *,undefined4 *);  // 0x00467880  __fastcall
+char EditPilot(char *, PILOT *, char *, long);  // 0x004678B0  __stdcall
 undefined4 PilotListAddAvail(char *);  // 0x00467E30  __fastcall
+char PilotFindFile(short);  // 0x00467F30  __fastcall
+undefined4 PilotScreen(undefined4);  // 0x00468020  __fastcall
 void PilotListAddUnavail(char *);  // 0x00468C40  __fastcall
 void PilotMakeCopyName(char *);  // 0x00468CA0  __fastcall
 void PilotStripCopySuffix(char *,char *);  // 0x00468DF0  __fastcall
@@ -145,12 +151,25 @@ undefined4 _SingleMission(void);  // 0x0047FAA0  __stdcall
 undefined4 _CreateQuickMission(undefined4);  // 0x0047FEC0  __stdcall
 undefined4 _CreateFortMission(undefined4);  // 0x0047FF30  __stdcall
 undefined4 _CreateFortMission2(undefined4);  // 0x0047FF40  __stdcall
+undefined4 _CreateProMission(void);  // 0x0047FF50  __stdcall
+undefined4 _AircraftReference(void);  // 0x0047FFC0  __stdcall
+undefined4 _ViewPilots(void);  // 0x0047FFD0  __stdcall
+undefined4 _StartCampaign(void);  // 0x0047FFE0  __stdcall
+undefined4 _ContinueCampaign(void);  // 0x00480000  __stdcall
+undefined4 _BriefPaper(undefined4, undefined4, undefined4);  // 0x00480020  __stdcall
+undefined4 _BriefMap(undefined4);  // 0x00480110  __stdcall
+undefined4 _SelectPlane(undefined4);  // 0x00480150  __stdcall
 undefined4 MISSIONLoadOrdIcons(undefined4);  // 0x004809D0  __stdcall
 undefined4 MISSIONInit2(void);  // 0x00480B50  __stdcall
 char MyFilterProc(unsigned short *, long *, char *);  // 0x00480B70  __cdecl
 undefined4 MISSIONSetCheating(void);  // 0x00480BE0  __stdcall
 undefined4 AddCampaignPlane(undefined4, undefined4);  // 0x00480C90  __cdecl
 undefined4 CampaignPlanesLeft(void);  // 0x00480D70  __stdcall
+undefined4 LoadCampaignStores(undefined4);  // 0x00480EA0  __fastcall
+void CampaignDiskError(void);  // 0x004812B0  __cdecl
+char AbortCampaign(void);  // 0x004813C0  __fastcall
+undefined4 CampaignMenu(undefined4);  // 0x004813F0  __fastcall
+undefined4 CallCampaignProc(undefined4);  // 0x00481440  __stdcall
 undefined4 CampaignProcInvoke(undefined4);  // 0x00481920  __stdcall
 undefined4 CallMissionProc(undefined4, undefined4);  // 0x00481940  __stdcall
 undefined4 MISSIONSuccess(void);  // 0x00481A70  __stdcall
@@ -168,6 +187,7 @@ undefined4 MISSIONFortStatus(undefined4);  // 0x004852F0  __stdcall
 void CampaignAccumStats(void);  // 0x00485380  __cdecl
 void StatsAddPair(int *,int *);  // 0x004854A0  __fastcall
 undefined4 StatsBucketFor(int,u16,u16);  // 0x004856F0  __fastcall
+undefined4 ConvertPilotFiles(void);  // 0x00485AE0  __stdcall
 undefined4 CheckCD(undefined4, undefined4);  // 0x00485EF0  __cdecl
 undefined4 MISSIONLoadCommonResources(void);  // 0x00486010  __stdcall
 char MISSIONFortWin(long);  // 0x004860F0  __stdcall
@@ -179,6 +199,8 @@ undefined4 TIMEInit(undefined4, undefined4, undefined4);  // 0x00486A10  __stdca
 undefined4 TIMERestart(void);  // 0x00486A90  __stdcall
 undefined4 TIMEUpdate(void);  // 0x00486AA0  __stdcall
 undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
+undefined4 BriefScreen(undefined4, undefined4, undefined4, undefined4);  // 0x004A1DD0  __fastcall
+undefined4 AddStats(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A2A30  __stdcall
 
 // --- not C functions --------------------------------------------------
 // Recovered, and deliberately NOT declared. A C prototype cannot express
@@ -193,6 +215,8 @@ undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
 // TODO(#453): 0x004282D0  MAPToggleObjControl -- signature not recovered
 // TODO(#453): 0x00441C90  ChooseScore -- signature not recovered
 // TODO(#453): 0x004692D0  EJECTProc -- signature not recovered
+// TODO(#453): 0x004801A0  _RepairPlane -- signature not recovered
+// TODO(#453): 0x00480C20  LoadCampaignProc -- signature not recovered
 // TODO(#453): 0x00480C40  InitCampaignPilot -- signature not recovered
 // TODO(#453): 0x00480D90  UkraineCheckMaxPlanes -- signature not recovered
 // TODO(#453): 0x00480DF0  UkraineAddA7 -- signature not recovered
@@ -202,8 +226,11 @@ undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
 // TODO(#453): 0x004810D0  VietnamRescued -- signature not recovered
 // TODO(#453): 0x004810E0  ATFRescued -- signature not recovered
 // TODO(#453): 0x00481190  UkraineQuit -- signature not recovered
+// TODO(#453): 0x004811A0  ConfirmQuitMission -- signature not recovered
 // TODO(#453): 0x00481260  KurileQuit -- signature not recovered
 // TODO(#453): 0x00481270  VietnamQuit -- signature not recovered
+// TODO(#453): 0x00481320  CampaignSave -- signature not recovered
+// TODO(#453): 0x00481370  CampaignOff -- signature not recovered
 // TODO(#453): 0x00483E00  UkraineMedals -- signature not recovered
 // TODO(#453): 0x00484050  KurileMedals -- signature not recovered
 // TODO(#453): 0x004842B0  KurilePromotions -- signature not recovered
@@ -214,6 +241,11 @@ undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
 // TODO(#453): 0x004848F0  ATFPromotions -- signature not recovered
 // TODO(#453): 0x00484B70  ATFBalticMedals -- signature not recovered
 // TODO(#453): 0x00486E20  InstallTimerInt -- signature not recovered
+// TODO(#455): 0x004F8C7A  pilotCampaignsWon -- type not recovered
+// TODO(#455): 0x004F9937  campaignFileCopy -- type not recovered
+// TODO(#455): 0x004F9944  campaignDisplayName -- type not recovered
+// TODO(#455): 0x004FA818  campaignStores -- type not recovered
+// TODO(#455): 0x004FAB38  pilotMissionsFlown -- type not recovered
 // TODO(#455): 0x004FB1A8  missionName -- type not recovered
 
 }  // namespace fxe::fa::campaign

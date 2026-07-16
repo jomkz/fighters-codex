@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core shell / menu / dialog UI -- FA.EXE
-// 126/144 functions have a recovered signature; 6/6 globals have a recovered type.
+// 155/195 functions have a recovered signature; 6/43 globals have a recovered type.
 
 namespace fxe::fa::shell_ui {
 
@@ -22,6 +22,7 @@ extern char * exitString;  // 0x00502184  localized dialog-button label; importe
 
 // --- functions -------------------------------------------------------
 void MouseLoadPtr(void);  // 0x0040B8A0  __stdcall
+void ShellSetup(void);  // 0x0040BA10  __stdcall
 void MaybeCampaignMenu(char *, long, long, char);  // 0x0040BC20  __stdcall
 void MaybeCampaignMenu2(char *, long, long, char);  // 0x0040BD00  __stdcall
 void MenuStartUp(char *, long, long, char, long);  // 0x0040BD30  __stdcall
@@ -32,6 +33,8 @@ void MenuLoadFont(void);  // 0x0040C160  __cdecl
 void MenuRemoveItem(long);  // 0x0040C1A0  __cdecl
 void MenuLinkTerminate(void);  // 0x0040C1D0  __cdecl
 void MenuCreateRemaps(void);  // 0x0040C1F0  __stdcall
+void ShellOff(void);  // 0x0040C290  __stdcall
+void MenuShutDown(char);  // 0x0040C310  __stdcall
 void MenuDrawBar(char);  // 0x0040C410  __fastcall
 unsigned short MenuUpdate(void);  // 0x0040C4F0  __stdcall
 short MenuCurrentIndex(void);  // 0x0040C5A0  __cdecl
@@ -62,10 +65,28 @@ void ShellShowMouse(void);  // 0x0040D640  __stdcall
 void ShellHideMouse(void);  // 0x0040D6B0  __stdcall
 void ShellMousePos(void);  // 0x0040D6E0  __stdcall
 char MouseInBox(BOX *);  // 0x0040D790  __fastcall
+undefined4 NamesShutdown(void);  // 0x0041C820  __stdcall
+undefined4 GetNames(undefined4);  // 0x0041C840  __fastcall
+undefined4 FreeNames(void);  // 0x0041D720  __stdcall
 undefined4 QuickMultiButton(undefined4, undefined4);  // 0x0042E680  __fastcall
 undefined4 QuickMultiButtonText(undefined4, undefined4);  // 0x0042E690  __fastcall
 undefined4 QuickMission(undefined4);  // 0x0042E9A0  __stdcall
+void INFO2Draw(void);  // 0x0045FEC0  __fastcall
+void INFO2SetType(long);  // 0x00460FB0  __fastcall
+void RemapInsignia(T_BITMAP *);  // 0x00467990  __fastcall
+undefined4 MakePicList(undefined4, undefined4, undefined4, undefined4);  // 0x004679C0  __stdcall
+void FindPic(char *, char *, long, long);  // 0x00467C30  __stdcall
+char * PageText(long);  // 0x0047D190  __fastcall
+void FormatInit(void);  // 0x0047D1D0  __cdecl
+char * FindSectionHeader(char *, char *, long);  // 0x0047D200  __stdcall
+undefined4 FindSection(undefined4, undefined4);  // 0x0047D2C0  __fastcall
+long PrepareText(char *, long, long, long, long, long, long, long, long, char);  // 0x0047D440  __stdcall
+void PrintText(long);  // 0x0047EF30  __fastcall
+void FreeTextStuff(void);  // 0x0047EFF0  __stdcall
+void EndText(void);  // 0x0047F050  __stdcall
 char InTextButton(long, long);  // 0x0047F0B0  __fastcall
+long _GetString(char *, char *, char *, long, long, long);  // 0x0047F500  __cdecl
+void ClipString(long, long, long, char *);  // 0x0047F610  __cdecl
 void RunDisconnectScreen(void);  // 0x0047FA30  __stdcall
 undefined4 WaitTicks(undefined4);  // 0x00487A3A  __fastcall
 undefined4 DialogSetup(undefined4, undefined4, undefined4);  // 0x00487A63  __stdcall
@@ -143,7 +164,15 @@ void DialogTextStreamInit(void *, undefined4);  // 0x0048D160  __cdecl
 void DialogTextStreamMarkDone(int);  // 0x0048D1D0  __cdecl
 u8 DialogTextStreamRead(void *);  // 0x0048D1E0  __cdecl
 void DialogTextStreamSkip(void *, int);  // 0x0048D260  __cdecl
+undefined4 MakeNamesForList(void);  // 0x004A0560  __stdcall
+undefined4 ScreenDirty(void);  // 0x004A0610  __stdcall
+undefined4 DialogDrawBkgd(undefined4);  // 0x004A0810  __fastcall
+undefined4 MainMenu(undefined4);  // 0x004A0860  __fastcall
 undefined4 ChooseActivity(void);  // 0x004A08A0  __stdcall
+undefined4 SingleFilename(undefined4);  // 0x004A10B0  __stdcall
+undefined4 CampaignSelect(void);  // 0x004A18A0  __stdcall
+undefined4 DialogPickFiles(undefined4, undefined4);  // 0x004A1C80  __stdcall
+undefined4 GraphicPrefs(void);  // 0x004A2220  __stdcall
 undefined4 DoDialogInfoBox(undefined4, undefined4);  // 0x004A26F0  __stdcall
 undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __stdcall
 undefined4 QuickDist(undefined4, undefined4);  // 0x004C6710  __stdcall
@@ -151,6 +180,27 @@ undefined4 QuickDist(undefined4, undefined4);  // 0x004C6710  __stdcall
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x0041D580  NamesSort -- signature not recovered
+// TODO(#453): 0x0041D640  NamesCompare -- signature not recovered
+// TODO(#453): 0x0041D670  NamesDedupe -- signature not recovered
+// TODO(#453): 0x0041D6F0  NamesShrink -- signature not recovered
+// TODO(#453): 0x00460CB0  Info2MediaName -- signature not recovered
+// TODO(#453): 0x00460F20  Info2SyncPalette -- signature not recovered
+// TODO(#453): 0x00460F60  Info2Frame -- signature not recovered
+// TODO(#453): 0x00460FBB  Info2SetTypeBody -- signature not recovered
+// TODO(#453): 0x004613B0  Info2VideoName -- signature not recovered
+// TODO(#453): 0x00461710  INFO2Screen -- signature not recovered
+// TODO(#453): 0x004625B0  Info2PlayVideo -- signature not recovered
+// TODO(#453): 0x004625F0  Info2Click -- signature not recovered
+// TODO(#453): 0x00474800  FlightMenu -- signature not recovered
+// TODO(#453): 0x0047D3A0  FormatArgNumber -- signature not recovered
+// TODO(#453): 0x0047D3C0  FormatArgWord -- signature not recovered
+// TODO(#453): 0x0047D420  FormatFindSpace -- signature not recovered
+// TODO(#453): 0x0047D6C0  FormatLoadFont -- signature not recovered
+// TODO(#453): 0x0047D700  FormatToken -- signature not recovered
+// TODO(#453): 0x0047E1B0  FormatDirective -- signature not recovered
+// TODO(#453): 0x0047EEF0  FontGlyphSize -- signature not recovered
+// TODO(#453): 0x0047F61B  ClipStringBody -- signature not recovered
 // TODO(#453): 0x00488170  DialogBeginDraw -- signature not recovered
 // TODO(#453): 0x00488180  DialogEndDraw -- signature not recovered
 // TODO(#453): 0x00489760  Info2640Preload -- signature not recovered
@@ -169,5 +219,43 @@ undefined4 QuickDist(undefined4, undefined4);  // 0x004C6710  __stdcall
 // TODO(#453): 0x0048CC70  DrawDone320 -- signature not recovered
 // TODO(#453): 0x0048CCA0  DrawOK320 -- signature not recovered
 // TODO(#453): 0x0048CD40  DrawLight320 -- signature not recovered
+// TODO(#453): 0x004A1810  SortIndexByString -- signature not recovered
+// TODO(#455): 0x004EEA34  namesItems -- type not recovered
+// TODO(#455): 0x004F6DB8  info2SavedIndex -- type not recovered
+// TODO(#455): 0x004F6DBC  info2ForceClear -- type not recovered
+// TODO(#455): 0x004F6DC0  info2PicX -- type not recovered
+// TODO(#455): 0x004F6DC2  info2PicY -- type not recovered
+// TODO(#455): 0x004F6DC8  info2DragX -- type not recovered
+// TODO(#455): 0x004F6DCC  info2DragY -- type not recovered
+// TODO(#455): 0x0052912C  namesCapacity -- type not recovered
+// TODO(#455): 0x00529160  namesCount -- type not recovered
+// TODO(#455): 0x00546B08  info2LastYaw -- type not recovered
+// TODO(#455): 0x00546B0A  info2LastPitch -- type not recovered
+// TODO(#455): 0x00546B0C  info2LastRoll -- type not recovered
+// TODO(#455): 0x00546B10  info2Palette -- type not recovered
+// TODO(#455): 0x00546B14  info2LastPhoto -- type not recovered
+// TODO(#455): 0x00546B18  info2PhotoIndex -- type not recovered
+// TODO(#455): 0x00546B1C  info2LightYaw -- type not recovered
+// TODO(#455): 0x00546B20  info2BaseDist -- type not recovered
+// TODO(#455): 0x00546B24  info2PhotoPages -- type not recovered
+// TODO(#455): 0x00546B28  info2LastType -- type not recovered
+// TODO(#455): 0x00546B2C  info2TypeRec -- type not recovered
+// TODO(#455): 0x00546B30  info2TextPage -- type not recovered
+// TODO(#455): 0x00546B34  info2ViewMode -- type not recovered
+// TODO(#455): 0x00546B38  info2FadePending -- type not recovered
+// TODO(#455): 0x00546B3C  info2Zoom -- type not recovered
+// TODO(#455): 0x00546B40  info2TypeName -- type not recovered
+// TODO(#455): 0x00546B50  info2LastTextPage -- type not recovered
+// TODO(#455): 0x00546B58  info2PaletteCopy -- type not recovered
+// TODO(#455): 0x00546B60  info2Yaw -- type not recovered
+// TODO(#455): 0x00546B64  info2Roll -- type not recovered
+// TODO(#455): 0x00546B68  info2Background -- type not recovered
+// TODO(#455): 0x00546B6C  info2LastMode -- type not recovered
+// TODO(#455): 0x00546B70  info2Category -- type not recovered
+// TODO(#455): 0x00546B74  info2Index -- type not recovered
+// TODO(#455): 0x00546B78  info2Dirty -- type not recovered
+// TODO(#455): 0x00546B7C  info2GlassesOn -- type not recovered
+// TODO(#455): 0x00546B80  info2LastZoom -- type not recovered
+// TODO(#455): 0x00572008  singleMissionName -- type not recovered
 
 }  // namespace fxe::fa::shell_ui

@@ -127,7 +127,9 @@ is non-zero, and `_CampaignPlanesLeft` counts the same field; `_campaignPilot` i
 |-------|--------------------|------|------|
 | Aircraft type filename (`.PT`) | `+0x00` | 14 | char[] (null-padded) |
 | In use | `+0x0E` | 2 | s16 — **zero means the slot is empty**; this, not the name, is what the engine tests |
-| *(remainder)* | `+0x10` | 172 | per-airframe campaign state; not yet mapped |
+| *(unmapped)* | `+0x10` | 30 | per-airframe campaign state; not yet mapped |
+| Repair state | `+0x2E` | 2 | s16 — percent under repair: `_CallCampaignProc` cmd 3 writes `dam×100/damMax + PT+0x1B4`, clamped to 100, after a home landing (#492) |
+| Damage array copy | `+0x30` | 139 | the plane's live `_dam` per-system damage block, banked on a home landing and restored on the next sortie; a bail (`!AlmostHome && !AtFriendlyAP`) zeroes the whole slot instead (#492) |
 
 A pilot owns one slot per airframe, so the same type appears more than once (`PLT937.P`
 holds three `F22.PT`, three `F117.PT`, one `B2.PT`, four `F31E.PT`).
@@ -238,8 +240,8 @@ Confirmed engine functions (FA.SMS + `DumpAllFunctions.txt`):
 | VA | Symbol/Name | Description |
 |----|-------------|-------------|
 | `0x467180` | `PilotSave(PILOT*, short)` | Write pilot save — takes a `PILOT*` and a short slot index; serialises the full struct to `PLTnnn.P` |
-| `0x4674f0` | `FUN_004674f0` | Pilot card display — renders pilot dossier text; accesses `+0xC2`, `+0x5AF`, `+0xD8C`, `+0xDAC`, `+0x1F88` (formats missions-failed count into display buffer) |
-| `0x467860` | `FUN_00467860` | String copy helper — copies until `\x01` byte (styled text terminator) |
+| `0x4674f0` | `PilotBuildPaper` | Pilot dossier ("paper") builder — interleaves `SHWPILOT.TXT` template lines with record fields (`+0xC2`, `+0x5AF`, `+0xD8C`, `+0xDAC`, `+0x1F88`) and renders through the shell format engine (#492) |
+| `0x467860` | `PilotPaperAddLine` | Template line copy — copies until a control byte (styled-text terminator) |
 | `0x480E10` | `_AddCampaignStore` | Adds or increments an ordnance entry in the ordnance inventory table at `+0x1C60` |
 | `0x481320` | `_CampaignSave` | Saves `_campaignPilot` to disk (copies to RM, then `_SaveFile` with full 0x25E0 bytes) |
 | `0x484D90` | `_EndOfMissionStats@0` | Computes per-mission damage %, landing, protection, and player/wm state into temp globals |

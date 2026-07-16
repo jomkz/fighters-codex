@@ -58,7 +58,9 @@ then switches to body).
 
 ### Directives
 
-The **complete vocabulary**, read out of the executable — the text interpreter (0x47E1B0)
+The **complete vocabulary**, read out of the executable — the text interpreter
+(`FormatDirective`, `0x47E1B0`; the engine around it is documented in
+[shell-ui.md § The text/format engine](../shell-ui.md#the-textformat-engine-492))
 compares each token against exactly these, lowercased. A token it does not recognise is
 **rendered as text**, which is why a briefing can write "get the `.ell` out" as prose
 (`~K30.MT`) without it meaning anything.

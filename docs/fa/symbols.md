@@ -469,11 +469,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Core shell / menu / dialog UI
 
-[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 144 named functions
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 195 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x0040B8A0` | `MouseLoadPtr` | sms | load per-screen mouse pointer bitmap (PLANE.C etc.); reads _curScreen/_menuResolution |
+| `0x0040BA10` | `ShellSetup` | sms | shell chrome setup: palette save copies, mouse pointer PIC (MOUSE320/MOUSEPTR), SHADV32/64 + corner drop-shadow PICs by _menuResolution, steel pattern + palette for the in-flight menu (curScreen 0x10), MenuCreateRemaps |
 | `0x0040BC20` | `MaybeCampaignMenu` | sms | conditionally overlay the campaign action bar (MAINMENU.MNU) on a screen |
 | `0x0040BD00` | `MaybeCampaignMenu2` | sms | tail variant of MaybeCampaignMenu |
 | `0x0040BD30` | `MenuStartUp` | sms | build+show a menu bar from a .MNU name; calls ShellSetup, clears _menuSelecting |
@@ -484,6 +485,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0040C1A0` | `MenuRemoveItem` | sms | remove a menu item by packed G-index |
 | `0x0040C1D0` | `MenuLinkTerminate` | re | walk _firstMenu linked list to the tail and null-terminate it; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0040C1F0` | `MenuCreateRemaps` | sms | build 5 shadow palette-remaps (menuShadow1..5 at 0x5221f0/0x5220f0/0x521ef0/0x521df0/0x521ff0, %=60/66/74/84/96) via FUN_0040d4e0; install slots 0x114-0x118 via FUN_0040bf40 |
+| `0x0040C290` | `ShellOff` | sms | release shell chrome: hide mouse, restore + free the saved palettes, free the pointer save |
+| `0x0040C310` | `MenuShutDown` | sms | tear down the menu bar: restore the saved menu-bar background (optional flush), free bar/steel/brush handles, restore submenu backgrounds, free the _firstMenu list |
 | `0x0040C410` | `MenuDrawBar` | sms | save region under bar (menuBarSave) then draw the top menu bar from _firstMenu list |
 | `0x0040C4F0` | `MenuUpdate` | sms | per-frame menu poll: ShellMousePos, hover/hit-test, returns selected G-index; skips mouse poll while _dialogOn |
 | `0x0040C5A0` | `MenuCurrentIndex` | re | close open sub-item/menu highlights, then compute the packed (menu<<8 \| item) index of the current selection; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -514,10 +517,49 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0040D6B0` | `ShellHideMouse` | sms | hide software mouse cursor |
 | `0x0040D6E0` | `ShellMousePos` | sms | sample mouse: writes _shellMousePos, _shellButtons, _shellEvent |
 | `0x0040D790` | `MouseInBox` | sms | hit-test _shellMousePos against a BOX; used by menu bar/item hover |
+| `0x0041C820` | `NamesShutdown` | sms | free the NAMES list (_items) and zero the count |
+| `0x0041C840` | `GetNames` | sms | build the NAMES list from a category mask: globs types\*.PT/.NT/.OT/.JT, mission\*.M, *.T2, *.2D, *.P, *.COM (sound-driver COMs excluded); 0x30-byte records {u32 class flags, filename, title[30]}; titles from mission header (file+4) or type record; type flags: class byte, +9 bit 0x4000 user-flyable, +0xba, year at +0x37 drives the reference era filters (e.g. 1955-1976) |
+| `0x0041D580` | `NamesSort` | re | quicksort of the 0x30-byte NAMES records by title (stricmp at +0x11) via Swapmem |
+| `0x0041D640` | `NamesCompare` | re | NAMES record compare: stricmp of the titles at +0x11 |
+| `0x0041D670` | `NamesDedupe` | re | compact adjacent NAMES records with equal filenames (+4) after the sort |
+| `0x0041D6F0` | `NamesShrink` | re | shrink-realloc _items to _numItems records |
+| `0x0041D720` | `FreeNames` | sms | free _items |
 | `0x0042E680` | `QuickMultiButton` | sms | quick-mission wizard: store button value into DAT_00537360[i]/DAT_00537260[i]; just past collision's range |
 | `0x0042E690` | `QuickMultiButtonText` | sms | set a quick-mission wizard button's label |
 | `0x0042E9A0` | `QuickMission` | sms | quick-mission creator loop (drives the 24 QUICKB*.DLG wizard steps) |
+| `0x0045FEC0` | `INFO2Draw` | sms | draw the Jane's reference content pane (dirty-checked): mode 0 .INF text page via PrepareText/PrintText, mode 1 the 3-D shape view (display list w/ horizon proc + v_air/v_land/v_sea backdrop, palette from the shape PIC, rotate/zoom, carriers substitute x<name>.SH, optional GLASSES stereo pair offset by _glassesXDiff), modes 2+ photo PIC pages with PAGE x OF y overlay |
+| `0x00460CB0` | `Info2MediaName` | re | build the media PIC name for a view mode: 2 -> <type>_<n>, 3..6 -> <type>_p/_c/_e/_f, 7/8/9 -> ar_vidp/ar_vidh/ar_vidm stills (ar_novid when the video button is disabled), fallback ar_nopic.PIC |
+| `0x00460F20` | `Info2SyncPalette` | re | when _curPalette changed, resync the reference screen palette copy + MenuCreateRemaps |
+| `0x00460F60` | `Info2Frame` | re | draw one L-shaped frame border pair around the content pane |
+| `0x00460FB0` | `INFO2SetType` | sms | select reference item n: free the per-screen pools (id 9), load the type record from _items[n], view distance = ObjRadius*15 (min 0x6400), count photo pages by probing <type>_0..8 via LibFileExists, enable the 22 media dialog buttons (Fly needs class 5 + flag 0x800000, or ASTOVL) |
+| `0x00460FBB` | `Info2SetTypeBody` | re | body of INFO2SetType (overlapping alternate entry) |
+| `0x004613B0` | `Info2VideoName` | re | build the video (Cobra) file name for view modes 7/8/9 |
+| `0x00461710` | `INFO2Screen` | sms | the Jane's reference screen loop: ar_menu/ar_dlg + day1.LAY weather + palette.PAL, menu = category filters (GetNames masks) + prefs/3-D-glasses items, dialog 1-10 = view mode, 0xb prev/next type, keys +/- zoom, arrows rotate 5 deg (0x38e), PgUp/PgDn page, Ins/Del cycle type, Space play video, mouse drag rotates/zooms; Fly button -> _missionName ~a<type>.M (else ~info.M) + _selectedTypeName, returns 1 to launch |
+| `0x004625B0` | `Info2PlayVideo` | re | play the current reference video via Info2VideoName + PlayCobra + DoFadeout |
+| `0x004625F0` | `Info2Click` | re | ShellClickSound(0x140,1) - the reference screen click |
+| `0x00467990` | `RemapInsignia` | sms | remap a T_BITMAP pixels through _insigniaRemap (squadron-insignia palette fix) |
+| `0x004679C0` | `MakePicList` | sms | enumerate <prefix>NN.PIC with matching width/height into a 500-name list (insignia-remapping each); the LEFT prefix also collects RIGHT twins (pilot photo facing pairs) |
+| `0x00467C30` | `FindPic` | sms | locate the current name in a MakePicList list and step prev/next (photo/nose-art/tail-art cycling) |
+| `0x00474800` | `FlightMenu` | sms | the in-flight menu (FMENUD): pauses via _timeCompression=0x7fff; items map to control devices (stick 0-6/rudder 7-8/throttle 9-10 + InputCalibrate), time compression (-1,0..3 = shift counts), gamePrefs/gameMultiPrefs bits, F1-F10+F12 views (VIEWBuild 0x3b00-0x4400,0x5800), cockpit windows, envelope realism (_envelopeType 0-2), difficulty field (prefs low 3 bits), 3-D glasses, MP AI-skill dialogs, IFM show masks, free-flight APTeleport; WriteConfig + MISSIONPrefsChanged on exit |
+| `0x0047D190` | `PageText` | sms | return the first printable char of page n from the current text context page table |
+| `0x0047D1D0` | `FormatInit` | sms | zero the text-context stack (0x44-byte contexts at _fmtText) and the 14-slot font handle cache |
+| `0x0047D200` | `FindSectionHeader` | sms | scan text for the 8-char tag "[section" with matching number argument |
+| `0x0047D2C0` | `FindSection` | sms | find [section n] in a text buffer, returning the char after the tag |
+| `0x0047D3A0` | `FormatArgNumber` | re | parse a numeric tag argument: FormatArgWord + atoi |
+| `0x0047D3C0` | `FormatArgWord` | re | extract one whitespace-delimited tag argument (cut at space/tab/CR), reporting chars consumed |
+| `0x0047D420` | `FormatFindSpace` | re | find the next space/tab (NULL at end of string) |
+| `0x0047D440` | `PrepareText` | sms | paginate marked-up text into a new context: push _textNum, style 0-5 selects font + margin chars, optional [section n] start, builds 0x18-byte page records by measuring via FormatToken, optional background save bitmap when multi-page; returns page count |
+| `0x0047D6C0` | `FormatLoadFont` | re | load font n from the TITLEFONT.PIC-rooted font name table (cached handles) |
+| `0x0047D700` | `FormatToken` | re | the per-token engine: read one whitespace token, dot-directives dispatch to FormatDirective (0x47e1b0), plain words are measured/word-wrapped/rendered |
+| `0x0047E1B0` | `FormatDirective` | re | the dot-directive interpreter (the vocabulary in formats/MT.md is read from THIS dispatch): .section/.page/.title/.header/.body/.italic/.bold/.underline/.left/.right/.center/.full/.indent_*/.picture/.sound/.music(_off)/.button/.dbutton with ..-prefixed off forms; unknown tokens render as text |
+| `0x0047EEF0` | `FontGlyphSize` | re | glyph metrics from a font PIC: table at +0x2a, 6-byte records, width +2 height +4 |
+| `0x0047EF30` | `PrintText` | sms | print one prepared page: restore background, load the page record cursor/state, run FormatToken in print mode to page end |
+| `0x0047EFF0` | `FreeTextStuff` | sms | pop a text context: free page table + background bitmap, MusicOff if a [music] tag started one |
+| `0x0047F050` | `EndText` | sms | pop all text contexts and free the cached font handles |
 | `0x0047F0B0` | `InTextButton` | sms | hit-test mouse against the _buttonBoxes[_lastButton] MNU text-button array; in campaign seed range |
+| `0x0047F500` | `_GetString` | sms | modal string-entry dialog: edit item 3 preloaded, prompt printed at dialog+offset; OK copies back (bounded) |
+| `0x0047F610` | `ClipString` | sms | print a string clipped to a pixel width with an ellipsis suffix |
+| `0x0047F61B` | `ClipStringBody` | re | body of ClipString (overlapping alternate entry) |
 | `0x0047FA30` | `RunDisconnectScreen` | sms | multiplayer disconnect confirmation screen (DDIAG.DLG) |
 | `0x00487A3A` | `WaitTicks` | sms | busy-wait N ticks (TIMESystemTime); dialog animation delay |
 | `0x00487A63` | `DialogSetup` | sms | push a DIALOG frame (_curDialog = &_dialogStruct + ++_dialogNum*0x29); ChoosePreload header, link records |
@@ -613,7 +655,16 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0048D1D0` | `DialogTextStreamMarkDone` | re | text-stream vtable slot 2: sets the one-shot notify flag at +0x24 that DialogTextStreamRead tests and clears, firing event 0x29 to the owning control |
 | `0x0048D1E0` | `DialogTextStreamRead` | re | text-stream read callback: FUN_00486f20 decode into 0x1000 buffer; sets state 0x29/0x74; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0048D260` | `DialogTextStreamSkip` | re | text-stream vtable slot 4: advances the cursor by n bytes, calling DialogTextStreamRead to refill the buffer whenever the remaining count runs short |
+| `0x004A0560` | `MakeNamesForList` | sms | concatenate all NAMES titles into one NUL-separated buffer for a DLG list widget |
+| `0x004A0610` | `ScreenDirty` | sms | invalidate every scanline (_lineStats = 0xFF) to force a full redraw |
+| `0x004A0810` | `DialogDrawBkgd` | sms | blit <name>.PIC full-screen as a dialog backdrop |
+| `0x004A0860` | `MainMenu` | sms | shell menu-bar service: Alt+F4 -> exit item 0x101/MaybeExitToDOS; menu group 2 -> CampaignMenu |
 | `0x004A08A0` | `ChooseActivity` | sms | TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection |
+| `0x004A10B0` | `SingleFilename` | sms | store the picked single-mission filename to 0x572008 |
+| `0x004A1810` | `SortIndexByString` | re | selection-sort an index array by stricmp of the indexed strings (campaign titles) |
+| `0x004A18A0` | `CampaignSelect` | sms | the campaign chooser: glob *.CAM + mission\*.CAM, each campaign's <name>.TXT description loaded and its [section 1]/[section 2] title/body collected into a paged [page]-joined document; returns the pick (0xffff = cancel) |
+| `0x004A1C80` | `DialogPickFiles` | sms | generic file picker over GetNames(mask): captions Choose an object/mission/map by mask bit (0x8000 mission, 0x4000 map), list via MakeNamesForList, picked 0x30-byte record copied to _itemPicked |
+| `0x004A2220` | `GraphicPrefs` | sms | graphics preferences dialog (GRAF320/GRAFPREF): detail radio pairs (0x4eb6bc/0x4eb6b2), graphics flag words 0x4eb6be (default 0xdf99) / 0x4eb6b4 (default 0xfffa), FPU warning before enabling flag 0x10000 when _fpuType==0 |
 | `0x004A26F0` | `DoDialogInfoBox` | sms | modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10) |
 | `0x004A27C0` | `DialogInfoBox` | sms | generic INFO320/INFO640 message-box builder+run |
 | `0x004C6710` | `QuickDist` | sms |  |
@@ -646,7 +697,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 183 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 210 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -757,11 +808,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00441C90` | `ChooseScore` | sms | score-screen selection (end-of-mission) |
 | `0x0044D070` | `FortMission2` | sms | Fort mission builder (variant 2) |
 | `0x00467110` | `AwardMedal` | sms |  |
+| `0x00467180` | `PilotSave` | sms | write a PILOT record to PLT%03d.P (slot -1 = PilotFindFreeSlot), 0x25e0 bytes via RM cache + SaveFile, insert into the sorted roster, set _pilotName |
 | `0x00467240` | `PilotFindFreeSlot` | re | find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004672C0` | `PilotPhoto` | sms | blit the pilot photo PIC (name at PILOT+0x95) at (0x44,0x69) + MenuCreateRemaps |
+| `0x00467310` | `CallsignChoose` | sms | callsign picker dialog: stores PILOT+0x41; derives the personal insignia ^<CALLSIGN>.5K (uppercase A-Z only, max 7 after ^) into PILOT+0x61 when that 5K exists; rebuilds the paper |
 | `0x004674F0` | `PilotBuildPaper` | re | build the pilot logbook 'paper' text (mission count, Available/MIA/KIA/Retired status via _AddStats) and blit photo (_PilotPhoto). AnalyzePLT 'pilot card display'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00467860` | `PilotPaperAddLine` | re | append one label/value line pair into the pilot-paper text buffer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00467880` | `PilotPaperEndLine` | re | append the final/terminating line to the pilot-paper buffer; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004678B0` | `EditPilot` | sms | modal edit of one pilot string field; MISSIONEnsureLegalName on name+callsign; rebuild paper |
 | `0x00467E30` | `PilotListAddAvail` | re | load a pilot file (_RMAccess 0x810c) and insert it sorted into _sortedPilots (_totalPilots++); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00467F30` | `PilotFindFile` | sms | does any PLT*.P with status 0 (available) resp. 1 (on campaign) exist |
+| `0x00468020` | `PilotScreen` | sms | the pilot roster screen, 3 modes: 0 SHWPILOT select, 1 CONTPLT continue-campaign, 2 VIEWPLT view; validates PLT###.P (9-char name, version byte 0x0f, size 0x25e0) into avail/unavail rosters; photo list MakePicList(PILOT,164,134) + nose/tail-art lists; [button] strip via PrepareText; insignia remap fixups |
 | `0x00468C40` | `PilotListAddUnavail` | re | load a pilot into the unavailable list _unAvailNames (_unAvailPilots++); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468CA0` | `PilotMakeCopyName` | re | generate a unique 'NAME Copy N' pilot name, scanning both pilot lists; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00468DF0` | `PilotStripCopySuffix` | re | strip a trailing ' Copy' from a pilot name (_strstr s_Copy); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -778,23 +835,41 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0047FEC0` | `_CreateQuickMission` | sms | constructs a Quick mission |
 | `0x0047FF30` | `_CreateFortMission` | sms | constructs a Fort mission |
 | `0x0047FF40` | `_CreateFortMission2` | sms | constructs a Fort mission (variant 2) |
+| `0x0047FF50` | `_CreateProMission` | sms | Pro Mission Creator entry: MAPScreen when screens enabled, else fixed ~fake.M (error if missing) |
+| `0x0047FFC0` | `_AircraftReference` | sms | shell trampoline to INFO2Screen |
+| `0x0047FFD0` | `_ViewPilots` | sms | shell trampoline to PilotScreen (view mode) |
+| `0x0047FFE0` | `_StartCampaign` | sms | CampaignSelect then PilotScreen; false when either cancels |
+| `0x00480000` | `_ContinueCampaign` | sms | PilotScreen in continue-campaign mode |
+| `0x00480020` | `_BriefPaper` | sms | briefing/debrief paper step: BriefScreen on <mission>.MT (honors _doScreens/_doBriefPaper skip flags; free-flight skips); cancel aborts the campaign; Jane's Online host deletes the temp mission+MT after |
+| `0x00480110` | `_BriefMap` | sms | briefing map step: MAPScreen when enabled; returns next-screen code 0xd/0xb |
+| `0x00480150` | `_SelectPlane` | sms | plane-select step via SelectRepairPlane (pilot-aware); next-screen code 0xe when skipped |
+| `0x004801A0` | `_RepairPlane` | sms | repair-plane step via SelectRepairPlane(repair mode) when a pilot is loaded |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
 | `0x00480B50` | `MISSIONInit2` | sms |  |
 | `0x00480B70` | `MyFilterProc` | sms |  |
 | `0x00480BE0` | `MISSIONSetCheating` | sms | sets the mission cheating flag |
+| `0x00480C20` | `LoadCampaignProc` | sms | load the campaign proc resource -> _campaignProc |
 | `0x00480C40` | `InitCampaignPilot` | sms |  |
 | `0x00480C90` | `AddCampaignPlane` | sms |  |
 | `0x00480D70` | `CampaignPlanesLeft` | sms |  |
 | `0x00480D90` | `UkraineCheckMaxPlanes` | sms |  |
 | `0x00480DF0` | `UkraineAddA7` | sms |  |
 | `0x00480E10` | `AddCampaignStore` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x00480EA0` | `LoadCampaignStores` | sms | sync the campaign 50-slot stores pool (16-byte records at PILOT+0x1c60: type + count at +0xe) with the player plane hardpoints: param 0 returns stores to the pool, 1 deducts (clamped 0); -1 count = unlimited |
 | `0x00480F90` | `UkraineRescued` | sms |  |
 | `0x004810C0` | `KurileRescued` | sms |  |
 | `0x004810D0` | `VietnamRescued` | sms |  |
 | `0x004810E0` | `ATFRescued` | sms |  |
 | `0x00481190` | `UkraineQuit` | sms |  |
+| `0x004811A0` | `ConfirmQuitMission` | re | quit-mission confirmation (shared body of the KurileQuit/VietnamQuit thunks): AlmostHome + CallMissionProc success test -> "If you quit before reaching home..." / "You have not yet fulfilled the mission..." yes/no |
 | `0x00481260` | `KurileQuit` | sms |  |
 | `0x00481270` | `VietnamQuit` | sms |  |
+| `0x004812B0` | `CampaignDiskError` | sms | disk-full/read-only/cannot-write dialogs, then campaign state 0x11 + CampaignOff |
+| `0x00481320` | `CampaignSave` | sms | write _campaignPilot (0x25e0, base 0x4f8bb8) to the RM cache + the pilot file; disk error path on failure |
+| `0x00481370` | `CampaignOff` | sms | free the campaign proc + clear campaign/pilot/mission name globals and _campaignPlane |
+| `0x004813C0` | `AbortCampaign` | sms | confirm (when mid-mission), then CampaignOff + state 0x11 |
+| `0x004813F0` | `CampaignMenu` | sms | campaign menu-bar commands: 1 = restore PILOT.BKP + state 4 (replay mission), 2 = AbortCampaign |
+| `0x00481440` | `CallCampaignProc` | sms | the campaign driver: cmd 0 init, 1 = save PILOT.BKP + invoke + SeqEnd (mission start), 3 = post-mission (playerBailed test, bail zeroes the 0xbc-byte plane-roster slot at +0xdb0, home landing stores damage into the slot + repair% = dam*100/max + type+0x1b4 clamp 100, LoadCampaignStores return, stats: missions/failures/bails/wingman at +0x1f80..), 4 = debrief (dead/MIA/failed -> retry restores PILOT.BKP else save+off), 5 = end (victory appends to the campaigns-won field +0xc2), 6/8 = query, 7 = bail notify |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
 | `0x00481940` | `CallMissionProc` | sms | dispatches into the mission's compiled .MC DLL proc (see MC.md); called from _MISSIONTextProc for the mission-logic handoff |
 | `0x00481A70` | `MISSIONSuccess` | sms | imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS |
@@ -821,6 +896,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00485380` | `CampaignAccumStats` | re | fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004854A0` | `StatsAddPair` | re | add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00485AE0` | `ConvertPilotFiles` | sms | pilot-file migration: 0x15b4 legacy records (pre-FA) converted field-by-field to the 0x25e0 layout and rewritten; other wrong-size files renamed to .POO |
 | `0x00485EF0` | `CheckCD` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x00486010` | `MISSIONLoadCommonResources` | sms | loads the resources common to every mission |
 | `0x004860F0` | `MISSIONFortWin` | sms | Fort-mission win condition test |
@@ -833,6 +909,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00486AA0` | `TIMEUpdate` | sms |  |
 | `0x00486C60` | `TIMESetCompression` | sms |  |
 | `0x00486E20` | `InstallTimerInt` | sms |  |
+| `0x004A1DD0` | `BriefScreen` | sms | briefing/debrief screen: loads <mission>.MT (fallback [section 1..3] skeleton), AddStats for debrief (+ Jane's Online JOGC stats), one of 4 random backgrounds (BRIEFSCR/SC3/SCU/SCV, DEB* for debrief), CHATKey passthrough, mouse wheel-areas -> PgUp/PgDn, MP ready-status sync (0xd brief/0xe debrief/0x1a ready), campaignState 0x13 while briefing |
+| `0x004A2A30` | `AddStats` | sms | compose the marked-up debrief/logbook stats text: CAMPAIGN/MISSION AVERAGES/PLAYER WINGMAN/AIRBASE/MISSION sections, kills/losses/damage/landing grade/elapsed time lines, [center]/[bold]/[underline] tags |
 
 ### Collision (COL)
 
@@ -1683,16 +1761,48 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 35 named functions
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 67 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004115C0` | `KeyAvail` | sms |  |
+| `0x00411600` | `KEYEvent` | sms | WM_(SYS)KEYDOWN/UP hook: scan from lParam, qualifier bits (1=shift 2=ctrl 4=alt) in _qualStatus/_keyFlags, _keyarray[scan] held state, kbScanToASCII translate (hi-byte=bare ASCII code, lo-byte=keypad normalize, none=scan<<8\|qual), 16-entry _kbBuffer ring; drops auto-repeats of _ignoreRepeats scans in flight |
+| `0x00411890` | `KEYECS` | sms | enter the keyboard critical section (0x522558) if initialized |
+| `0x004118B0` | `KEYLCS` | sms | leave the keyboard critical section |
+| `0x004118D0` | `KEYPause` | sms | flush keyboard state: kbBuffer ring ptrs, _keyarray[256], qualifier bits |
+| `0x00411F00` | `PutFakeKey` | sms | push a synthetic key code onto the 8-entry fake-key stack (0x5226b0); UI/joystick inject commands this way |
+| `0x00411F20` | `GetFakeKey` | sms | pop the fake-key stack (0 when empty); polled after GetKey by the shell screens |
+| `0x00412930` | `WaitKey` | sms | spin (Sleep 0) until GetKey returns a key |
+| `0x00413D10` | `SlewKey` | sms | slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0 |
+| `0x00414070` | `SlewObjListCollect` | re | T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24 |
+| `0x00414690` | `FlightKey` | sms | THE in-flight command table: offers the key to the stick/rudder/throttle device procs (msg 3) then dispatches ~70 commands - flight controls (a/b/f/g/h/o), sensors (r/i/m/y, Shift+R A/G, Shift+A AWACS, Shift+G GCI), targeting (Enter/t/T/;), weapons ([ ] Space Tab, keypad-Ins chaff keypad-Del flare, Shift+J/K jettison), wingman Alt+letters + Alt+1..9 break angles, Shift+digit MFD windows, Ctrl+keypad thrust vector, Shift+E eject (double-press). See input.md section |
+| `0x00415E30` | `PickVisibleTarget` | re | filter _visibleTargetIds by Targetable, then param!=0: nearest to screen centre (boresight), param==0: next in raster order after the current target |
+| `0x00415F80` | `NextTargetOnScreen` | re | raster-order scan of on-screen target positions; returns the id following the reference position, skipping the current target |
+| `0x00416050` | `PickVisibleContact` | re | radar-contact twin of PickVisibleTarget over CPGetContact/_numContacts (/ and \ keys, realistic-avionics pref) |
+| `0x00416140` | `NextContactOnScreen` | re | raster-order scan over contact screen positions; returns CPGetContact(best) |
+| `0x00416200` | `WngAttackTarget` | re | order wingman vs the player target: hostile check (side byte objPtrs[id]+9 XOR player side, bit 0x80), optional WNGSetControl, MSGSend cmd 0xb with target id (0x1fffffff = engage at will); Alt+E(1,1)/Alt+R(2,1) |
+| `0x004162C0` | `WngAttackContact` | re | same as WngAttackTarget but for the radar _contactId (Alt+F) |
+| `0x00416380` | `SetAutopilot` | sms | set/clear plane-flags bit 0x1000 (autopilot); on engage WPSetupCurrent(0)+AutopilotEngage, on disengage CancelCmdBuf; clears bit 0x2000 (forced) when off |
+| `0x004163F0` | `AutopilotEngage` | re | autopilot engage bootstrap: EnterState(0x1f) if beyond, temporarily clear target, PLANEEventProc(0x80), CallUtilProc/MoveObj/ReadCmdBuf priming |
+| `0x00416470` | `ForceAutopilot` | sms | engage autopilot marking it forced (bit 0x2000) - used by menus/eject/hook-catch |
+| `0x00416490` | `RestoreAutopilot` | sms | disengage a forced autopilot (bit 0x2000 set) only |
+| `0x004164B0` | `ServicePlayer` | sms | per-frame player service: forced-AP when dead, stick decay under time compression, DAMAGEUpdate, target FOV re-check (pref 0x10000000), autopilot maintenance, FMFlight tick + crash dispatch (PLANECrash, crash-landed score -2), arrestor-hook catch (Collision type 0x84, HOOK_5K, state 0x16), waypoint auto-advance (WP+0x44 stride, passed bit 0x80), collision MSGSend 0x4000 + Kill, afterburner/engine sounds, trigger logic (_weaponButton/_gunButton -> PROJFire, bay-door + refire checks), brake button edges |
+| `0x004170C0` | `PlayerDriveVehicle` | re | non-plane player control: stick -> CreateMove turn (COTurnRate, reversed in reverse) + speed (COMaxSpeed, half max reverse) |
+| `0x00417150` | `PlayerUpdateState` | re | the player plane auto state machine: on ground - auto-rearm, catapult (APTakeoffType 7 -> state 7 + forced AP), takeoff roll 0x11, taxi 1, parking 0x1a-0x1e; in air - approach/landing 0x12/0x14 near airport w/ gear, else free flight 0x1f, engage 0x20; skips the ~BGUN.PT fort gun |
+| `0x00417530` | `PlayerAutoRearm` | re | stationary at a friendly airport within 0x64000: HARDRearmTest/HARDRearmHumanLoad (fort variants on fort missions) + SAYRearmMessage |
+| `0x00417620` | `PlayerNeedsRearm` | re | rearm-needed test: drop-tank fuel sum + base tankage vs HARDTotalFuel, threshold 0x15e |
+| `0x00417690` | `PlayerPickParking` | re | nearest of the airport 4 parking points (apt+0x62/0x74/0x86/0x98) -> states 0x1b..0x1e (1 when already 0x1a) |
+| `0x0041769C` | `PlayerPickParkingAlt` | re | alternate entry of PlayerPickParking (reference point in EAX); overlapping-entry pair |
+| `0x00417760` | `InitPlayerControl` | sms | load vis240.SEE into the 57-byte view/visibility block 0x4ee348, deviceProc(0) init for stick/rudder/throttle, clear buttons + coolie state, throttle from entity+0x1f2 |
+| `0x00417850` | `InputCalibrate` | sms | deviceProc(1) calibrate for one device + ensure the shell mouse is shown |
+| `0x00417880` | `GetPlayerControl` | sms | per-frame control poll: ReadSticksRaw + deviceProc(2) stick/rudder/throttle + KeyStick(2,0) so Space/Tab always latch fire buttons |
+| `0x004178D0` | `KeyStick` | sms | keyboard stick device proc: msg2 latches Space=_weaponButton Tab=_gunButton from _keyarray, arrows = full deflection +/-0x100 (shift reserved for views, alt+arrows reserved for TV); msg3 passes keys through |
 | `0x00417A10` | `PotStick` | sms |  |
 | `0x00417C20` | `KeyThrottle` | sms |  |
 | `0x00417D10` | `KeyRudder` | sms |  |
 | `0x00417D80` | `PotThrottle` | sms |  |
 | `0x00417ED0` | `PotRudder` | sms |  |
+| `0x00417F00` | `Slew` | sms | compose yaw/pitch view offsets with object attitude via rotation matrices + ArcTan -> euler view angles (padlock/slew view math) |
 | `0x00481280` | `GetKeySlow` | sms |  |
 | `0x00494270` | `ReadSticksRaw` | sms | poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10) |
 | `0x004942D0` | `InitJoysticks` | sms | joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions |
