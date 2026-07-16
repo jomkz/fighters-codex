@@ -131,6 +131,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0047FAAE,func,JOGCFetchMission,,re,inferred,"download a mission file from the JOGC online server (_getMSdatafile/_getMSdatafilesize, _SaveFile), then run single mission. BORDERLINE: online path may belong to network #219; not a C function (#479): mid-function split of __SingleMission@0 (0x0047FAA0)",!split
 0x004805AC,func,,,waiver,inferred,FOREIGN: anti-cheat CRC accumulator per _thisComputer; owner = network/integrity #219,
 0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport,undefined4 __stdcall MISSIONLoadOrdIcons(undefined4)
+0x00480B50,func,_MISSIONInit2@0,MISSIONInit2,sms,confirmed,,undefined4 __stdcall MISSIONInit2(void)
 0x00480B70,func,?MyFilterProc@@YADPAGPAJPAD@Z,MyFilterProc,sms,confirmed,,"char __cdecl MyFilterProc(unsigned short *, long *, char *)"
 0x00480C40,func,_InitCampaignPilot,InitCampaignPilot,sms,confirmed,,
 0x00480C90,func,_AddCampaignPlane,AddCampaignPlane,sms,confirmed,,"undefined4 __cdecl AddCampaignPlane(undefined4, undefined4)"
@@ -166,8 +167,14 @@ va,kind,name,display,source,confidence,notes,type
 0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall StatsBucketFor(int,u16,u16)"
 0x00485EF0,func,_CheckCD,CheckCD,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,"undefined4 __cdecl CheckCD(undefined4, undefined4)"
 0x004867D0,func,MISSIONPlayerSlot,,re,confirmed,resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MISSIONPlayerSlot(short)
+0x004869A0,func,_TIMESystemTime@0,TIMESystemTime,sms,confirmed,,undefined4 __stdcall TIMESystemTime(void)
+0x00486A10,func,_TIMEInit@12,TIMEInit,sms,confirmed,,"undefined4 __stdcall TIMEInit(undefined4, undefined4, undefined4)"
+0x00486A90,func,_TIMERestart@0,TIMERestart,sms,confirmed,,undefined4 __stdcall TIMERestart(void)
+0x00486AA0,func,_TIMEUpdate@0,TIMEUpdate,sms,confirmed,,undefined4 __stdcall TIMEUpdate(void)
 0x00486BF0,func,,,waiver,inferred,FOREIGN: TIME game-clock update helper (QueryPerformanceCounter/__alldiv); owner = game-loop/startup,
+0x00486C60,func,@TIMESetCompression@4,TIMESetCompression,sms,confirmed,,undefined4 __fastcall TIMESetCompression(undefined4)
 0x00486DC0,func,,,waiver,inferred,FOREIGN: FPS-counter print helper; owner = game-loop/startup,
+0x00486E20,func,_InstallTimerInt,InstallTimerInt,sms,confirmed,,
 0x004F0000,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
 0x004F0398,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
 0x004F03A0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,

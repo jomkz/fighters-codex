@@ -126,6 +126,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004B0130,func,?GLASSESSpreadLines@@YIXD@Z,GLASSESSpreadLines,sms,confirmed,,void __fastcall GLASSESSpreadLines(char)
 0x004B01E0,func,?GLASSESPrintAmount@@YGXXZ,GLASSESPrintAmount,sms,confirmed,,void __stdcall GLASSESPrintAmount(void)
 0x004B4320,func,WRFogLayerUpdate,WRFogLayerUpdate,sms,confirmed,"imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491)",
+0x004B4790,func,?InitTmapRemaps@@YIXXZ,InitTmapRemaps,sms,confirmed,,void __fastcall InitTmapRemaps(void)
+0x004B47B0,func,@SetTmapRemaps@0,SetTmapRemaps,sms,confirmed,,undefined4 __fastcall SetTmapRemaps(void)
 0x004B7910,func,G_AllocBitmapBuffer,,re,inferred,allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl G_AllocBitmapBuffer(undefined4)
 0x004B7930,func,@G_RelocBitmap@8,G_RelocBitmap,sms,confirmed,,"undefined4 __fastcall G_RelocBitmap(undefined4, undefined4)"
 0x004B79B0,func,_G_AllocBitmap@12,G_AllocBitmap,sms,confirmed,,"undefined4 __stdcall G_AllocBitmap(undefined4, undefined4, undefined4)"

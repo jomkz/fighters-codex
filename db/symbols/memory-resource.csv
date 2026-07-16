@@ -32,6 +32,11 @@ va,kind,name,display,source,confidence,notes,type
 0x004362F0,func,_MMUWordAt,MMUWordAt,sms,confirmed,SMS-named; not in inventory; unsigned 16-bit read primitive; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"u16 __cdecl MMUWordAt(undefined4, int)"
 0x00436300,func,_MMLongAt,MMLongAt,sms,confirmed,SMS-named; not in inventory; signed 32-bit read primitive; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __cdecl MMLongAt(undefined4, int)"
 0x00436310,func,_MMULongAt,MMULongAt,sms,confirmed,*(uint32*)(base+off),"undefined4 __cdecl MMULongAt(undefined4, undefined4)"
+0x0046A570,func,_SMCallByName,SMCallByName,sms,confirmed,,
+0x00478BC0,func,_LibStartUp,LibStartUp,sms,confirmed,,
+0x00479630,func,_DoLoadLibFile,DoLoadLibFile,sms,confirmed,,
+0x004798B0,func,_SearchLib,SearchLib,sms,confirmed,,
+0x00479BD0,func,@LibOpen@8,LibOpen,sms,confirmed,,"undefined4 __fastcall LibOpen(undefined4, undefined4)"
 0x004A67F0,func,_RMInit@0,RMInit,sms,confirmed,zero resList[1400] (0x19FA dwords) and resCache[20]; set rmInitialized(@0x50A618)=1,undefined4 __stdcall RMInit(void)
 0x004A6820,func,_RMShutdown@0,RMShutdown,sms,confirmed,RMFree every live resList slot; zero table; clear rmInitialized,undefined4 __stdcall RMShutdown(void)
 0x004A6860,func,@RMType@4,RMType,sms,confirmed,,undefined4 __fastcall RMType(undefined4)
@@ -49,6 +54,8 @@ va,kind,name,display,source,confidence,notes,type
 0x004A6DF0,func,RMSetup,,re,confirmed,post-load per-type hook: SMCallByName <type>_Setup (string @0x50A654) on the freshly loaded resource [FUN_004a6df0]; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall RMSetup(char *, undefined4)"
 0x004A6E20,func,_SetupBitmapAccess@12,SetupBitmapAccess,sms,confirmed,,"undefined4 __stdcall SetupBitmapAccess(undefined4, undefined4, undefined4)"
 0x004A7240,func,@RMLegalFilename@4,RMLegalFilename,sms,confirmed,canonicalize a resource filename in place (IsBadStringPtr len 0xD; collapse to a single '.'); OUT-OF-RANGE claim (sits in terrain span),undefined4 __fastcall RMLegalFilename(undefined4)
+0x004AD3C0,func,_LoadFile@16,LoadFile,sms,confirmed,,"undefined4 __stdcall LoadFile(undefined4, undefined4, undefined4, undefined4)"
+0x004AD9B0,func,_LoadFile2@20,LoadFile2,sms,confirmed,,"undefined4 __stdcall LoadFile2(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004F3DBC,data,?mm_initialized@@3DA,mm_initialized,sms,confirmed,MM one-time init guard (bool); set by MMInit cleared by MMShutdown,char
 0x004F3DC0,data,?mm_handles@@3PAUT_HANDLE@@A,mm_handles,sms,confirmed,base of T_HANDLE[count] pool (operator_new'd in MMInit),T_HANDLE *
 0x004F3DC4,data,?mm_used_list@@3PAUT_HANDLE@@A,mm_used_list,sms,confirmed,head of allocated-handle intrusive list (next@+0 prev@+4),T_HANDLE *

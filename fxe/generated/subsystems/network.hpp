@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 344/345 functions have a recovered signature; 2/3 globals have a recovered type.
+// 352/353 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -47,6 +47,7 @@ void NET_MasterRejectPlayer(NET_ADDRESS *, char *);  // 0x0040AFF0  __cdecl
 void NET_MasterShutdown(void);  // 0x0040B080  __cdecl
 char master_events(unsigned int, long, int, socket_state *);  // 0x0040B110  __cdecl
 undefined4 MSGSendChatter(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00418880  __stdcall
+char atohb(char *, unsigned char *, int);  // 0x0041E840  __cdecl
 unsigned int UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x00441F80  __cdecl
 void UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x004420D0  __cdecl
 void UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00442200  __cdecl
@@ -79,6 +80,7 @@ void SER_Shutdown1(void);  // 0x0044CBD0  __cdecl
 void SER_Shutdown2(void);  // 0x0044CC00  __cdecl
 void SER_Shutdown3(void);  // 0x0044CC70  __cdecl
 void SER_Shutdown(void);  // 0x0044CCA0  __cdecl
+void serIO(long);  // 0x0044CCC0  __cdecl
 char pkt_send_can_i_play(int, char *, NET_ADDRESS *);  // 0x0045D090  __cdecl
 char pkt_send_can_i_play_player(int, int, char *, NET_ADDRESS *);  // 0x0045D120  __cdecl
 char pkt_send_sync(int);  // 0x0045D1B0  __cdecl
@@ -218,6 +220,7 @@ void CN_Print(unsigned char *);  // 0x0047F3B0  __cdecl
 long CN_GetString(char *, unsigned char *);  // 0x0047F5D0  __cdecl
 long CN_GetBigString(char *, unsigned char *);  // 0x0047F5F0  __cdecl
 void CN_SetFactoryDefaults(CN_INFO *);  // 0x0047F6D0  __cdecl
+long CfigChecksum(CN_INFO *);  // 0x0047F740  __cdecl
 void CN_ReadConfig(CN_INFO *, unsigned char *);  // 0x0047F7A0  __cdecl
 void CN_WriteConfig(CN_INFO *, unsigned char *);  // 0x0047F930  __cdecl
 unsigned int sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x004874C0  __cdecl
@@ -272,9 +275,11 @@ void SER_ShutdownLowLevel(void);  // 0x0049A6B0  __cdecl
 int fnc_toCallDuringAnswer(int);  // 0x0049A6E0  __cdecl
 long strToCom(unsigned char *);  // 0x0049A700  __cdecl
 long MOD_InitPortAndModem(CN_INFO *, long);  // 0x0049A7D0  __cdecl
+long MOD_FindModemAndInit(CN_INFO *, long);  // 0x0049A850  __cdecl
 long MOD_FindModemAndInitPCMCIA(CN_INFO *, long);  // 0x0049A9B0  __cdecl
 long MOD_WaitForCall(void);  // 0x0049AC00  __cdecl
 long MOD_Initialize1(CN_INFO *, long);  // 0x0049AD00  __cdecl
+long MOD_DoConnect(CN_INFO *, long, long *);  // 0x0049AD70  __cdecl
 long MOD_InitializeAndConnect(CN_INFO *, long, long *);  // 0x0049AF30  __cdecl
 long MOD_Initialize(CN_INFO *, long);  // 0x0049AFF0  __cdecl
 void MOD_Shutdown(void);  // 0x0049B0D0  __cdecl
@@ -319,7 +324,9 @@ char SER_SendPacket(SERIAL_PACKET_WRAPPER &, char);  // 0x004AC230  __cdecl
 void SER_SendRequests(void);  // 0x004AC2E0  __cdecl
 void SER_SendDataPackets(void);  // 0x004AC3E0  __cdecl
 void SER_SendStatus(void);  // 0x004AC480  __cdecl
+char NetSetProtocol(char *, long);  // 0x004B0610  __cdecl
 char NetProtocolPresent(long);  // 0x004B06C0  __cdecl
+void NetSetFactoryTCP(CN_INFO_TCP *);  // 0x004B0700  __cdecl
 void NET_GetLocalAddressString(char *);  // 0x004B0730  __cdecl
 long NET_Initialize(CN_INFO *, long);  // 0x004B0830  __cdecl
 char NET_StartQuery(CN_INFO *, void *, void (*)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long));  // 0x004B0940  __cdecl
@@ -339,6 +346,7 @@ char NET_SendMessageAll(char *);  // 0x004B12A0  __cdecl
 char NET_MakeAutoConnectAddress(CN_INFO *, NET_ADDRESS *);  // 0x004B1350  __cdecl
 char NET_Addr2string(NET_ADDRESS *, char *);  // 0x004B1380  __cdecl
 void net_add_player_id(char *, socket_state *, int);  // 0x004B13A0  __cdecl
+void fill_in_mpinfo(void);  // 0x004B1590  __cdecl
 char game_event_handler(unsigned int, long, int, socket_state *);  // 0x004B1660  __cdecl
 void net_write_output_q(int);  // 0x004B16B0  __cdecl
 char validate_packet(NET_PKT *);  // 0x004B1A80  __cdecl

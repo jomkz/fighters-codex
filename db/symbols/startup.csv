@@ -2,6 +2,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00403700,func,?usnfmain@@YAXXZ,usnfmain,sms,confirmed,,void __cdecl usnfmain(void)
 0x00404C70,func,?FlyingLoop@@YAXXZ,FlyingLoop,sms,confirmed,,void __cdecl FlyingLoop(void)
 0x0046B560,func,?MainLoop@@YAGPAUGlobalData@@@Z,MainLoop,sms,confirmed,,unsigned short __cdecl MainLoop(GlobalData *)
+0x00476120,func,_WinMain@16,WinMain,sms,confirmed,,"undefined4 __stdcall WinMain(undefined4, undefined4, undefined4, undefined4)"
 0x004B27C0,func,?UCONFIG_DMusic@@YADXZ,UCONFIG_DMusic,sms,confirmed,,char __cdecl UCONFIG_DMusic(void)
 0x004B2820,func,?UCONFIG_SetVideoOptions@@YGXXZ,UCONFIG_SetVideoOptions,sms,confirmed,,void __stdcall UCONFIG_SetVideoOptions(void)
 0x004B2930,func,?UCONFIG_load_EA_CFG@@YGPAUCONFIG@@XZ,UCONFIG_load_EA_CFG,sms,confirmed,,CONFIG * __stdcall UCONFIG_load_EA_CFG(void)

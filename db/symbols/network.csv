@@ -31,6 +31,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0040B080,func,?NET_MasterShutdown@@YAXXZ,NET_MasterShutdown,sms,confirmed,,void __cdecl NET_MasterShutdown(void)
 0x0040B110,func,?master_events@@YADIJHPAUsocket_state@@@Z,master_events,sms,confirmed,,"char __cdecl master_events(unsigned int, long, int, socket_state *)"
 0x00418880,func,_MSGSendChatter@24,MSGSendChatter,sms,confirmed,imported by 14 shipped .MC overlays (#491); named at this VA by FA.SMS,"undefined4 __stdcall MSGSendChatter(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x0041E840,func,?atohb@@YADPADPAEH@Z,atohb,sms,confirmed,,"char __cdecl atohb(char *, unsigned char *, int)"
 0x00441F80,func,?UDPopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,UDPopensocket,sms,confirmed,,"unsigned int __cdecl UDPopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
 0x004420D0,func,?UDPserverbroadcast@@YAXIPAUNET_ADDRESS@@PADW4NET_SEND_CANCEL@@@Z,UDPserverbroadcast,sms,confirmed,,"void __cdecl UDPserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL)"
 0x00442200,func,?UDPquery@@YAXIPAUPKT_PLAYER_AD@@PAUNET_ADDRESS@@@Z,UDPquery,sms,confirmed,,"void __cdecl UDPquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *)"
@@ -63,6 +64,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0044CC00,func,?SER_Shutdown2@@YAXXZ,SER_Shutdown2,sms,confirmed,,void __cdecl SER_Shutdown2(void)
 0x0044CC70,func,?SER_Shutdown3@@YAXXZ,SER_Shutdown3,sms,confirmed,,void __cdecl SER_Shutdown3(void)
 0x0044CCA0,func,?SER_Shutdown@@YAXXZ,SER_Shutdown,sms,confirmed,,void __cdecl SER_Shutdown(void)
+0x0044CCC0,func,?serIO@@YAXJ@Z,serIO,sms,confirmed,,void __cdecl serIO(long)
 0x0045D090,func,?pkt_send_can_i_play@@YADHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play,sms,confirmed,client->host join request,"char __cdecl pkt_send_can_i_play(int, char *, NET_ADDRESS *)"
 0x0045D120,func,?pkt_send_can_i_play_player@@YADHHPADPAUNET_ADDRESS@@@Z,pkt_send_can_i_play_player,sms,confirmed,join request naming a player slot,"char __cdecl pkt_send_can_i_play_player(int, int, char *, NET_ADDRESS *)"
 0x0045D1B0,func,?pkt_send_sync@@YADH@Z,pkt_send_sync,sms,confirmed,send sync request,char __cdecl pkt_send_sync(int)
@@ -213,6 +215,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0047F5D0,func,?CN_GetString@@YAJPADPAE@Z,CN_GetString,sms,confirmed,,"long __cdecl CN_GetString(char *, unsigned char *)"
 0x0047F5F0,func,?CN_GetBigString@@YAJPADPAE@Z,CN_GetBigString,sms,confirmed,,"long __cdecl CN_GetBigString(char *, unsigned char *)"
 0x0047F6D0,func,?CN_SetFactoryDefaults@@YAXPAUCN_INFO@@@Z,CN_SetFactoryDefaults,sms,confirmed,,void __cdecl CN_SetFactoryDefaults(CN_INFO *)
+0x0047F740,func,?CfigChecksum@@YAJPAUCN_INFO@@@Z,CfigChecksum,sms,confirmed,,long __cdecl CfigChecksum(CN_INFO *)
 0x0047F7A0,func,?CN_ReadConfig@@YAXPAUCN_INFO@@PAE@Z,CN_ReadConfig,sms,confirmed,,"void __cdecl CN_ReadConfig(CN_INFO *, unsigned char *)"
 0x0047F930,func,?CN_WriteConfig@@YAXPAUCN_INFO@@PAE@Z,CN_WriteConfig,sms,confirmed,,"void __cdecl CN_WriteConfig(CN_INFO *, unsigned char *)"
 0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),"unsigned int __cdecl sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
@@ -269,9 +272,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0049A6E0,func,?fnc_toCallDuringAnswer@@YAHH@Z,fnc_toCallDuringAnswer,sms,confirmed,,int __cdecl fnc_toCallDuringAnswer(int)
 0x0049A700,func,?strToCom@@YAJPAE@Z,strToCom,sms,confirmed,"map ""COM1""..""COM8"" (strcmpi vs DAT_005015d8..5015a0) -> 0..7; -1 if none",long __cdecl strToCom(unsigned char *)
 0x0049A7D0,func,?MOD_InitPortAndModem@@YAJPAUCN_INFO@@J@Z,MOD_InitPortAndModem,sms,confirmed,SER_Initialize1/2 then ModemAttention/SetPortCharacteristics/ModemInit on port handle DAT_00570dcc,"long __cdecl MOD_InitPortAndModem(CN_INFO *, long)"
+0x0049A850,func,?MOD_FindModemAndInit@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInit,sms,confirmed,,"long __cdecl MOD_FindModemAndInit(CN_INFO *, long)"
 0x0049A9B0,func,?MOD_FindModemAndInitPCMCIA@@YAJPAUCN_INFO@@J@Z,MOD_FindModemAndInitPCMCIA,sms,confirmed,enumerate Enum\PCMCIA for Class=modem PORTNAME=COMx; strToCom; MOD_InitPortAndModem,"long __cdecl MOD_FindModemAndInitPCMCIA(CN_INFO *, long)"
 0x0049AC00,func,?MOD_WaitForCall@@YAJXZ,MOD_WaitForCall,sms,confirmed,"answer mode: ModemAnswerMode + poll IsRing / RX buffer for RING; ModemWaitForCall; appIO ""Ring...""",long __cdecl MOD_WaitForCall(void)
 0x0049AD00,func,?MOD_Initialize1@@YAJPAUCN_INFO@@J@Z,MOD_Initialize1,sms,confirmed,dispatch: explicit COM (CN_INFO+0xbc!=8 -> +0x64) else auto FindModemAndInit then PCMCIA; serIO(0x19) on fail,"long __cdecl MOD_Initialize1(CN_INFO *, long)"
+0x0049AD70,func,?MOD_DoConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_DoConnect,sms,confirmed,,"long __cdecl MOD_DoConnect(CN_INFO *, long, long *)"
 0x0049AF30,func,?MOD_InitializeAndConnect@@YAJPAUCN_INFO@@JPAJ@Z,MOD_InitializeAndConnect,sms,confirmed,MOD_Initialize1 -> MOD_DoConnect -> SER_Initialize2_5/3/4/5 handshake; SER_Shutdown on any failure,"long __cdecl MOD_InitializeAndConnect(CN_INFO *, long, long *)"
 0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce,"long __cdecl MOD_Initialize(CN_INFO *, long)"
 0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3,void __cdecl MOD_Shutdown(void)
@@ -316,7 +321,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004AC2E0,func,?SER_SendRequests@@YAXXZ,SER_SendRequests,sms,confirmed,scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket,void __cdecl SER_SendRequests(void)
 0x004AC3E0,func,?SER_SendDataPackets@@YAXXZ,SER_SendDataPackets,sms,confirmed,,void __cdecl SER_SendDataPackets(void)
 0x004AC480,func,?SER_SendStatus@@YAXXZ,SER_SendStatus,sms,confirmed,send status/ACK packet (type0) carrying last-tx seq + per-player state,void __cdecl SER_SendStatus(void)
+0x004B0610,func,?NetSetProtocol@@YADPADJ@Z,NetSetProtocol,sms,confirmed,,"char __cdecl NetSetProtocol(char *, long)"
 0x004B06C0,func,?NetProtocolPresent@@YADJ@Z,NetProtocolPresent,sms,confirmed,,char __cdecl NetProtocolPresent(long)
+0x004B0700,func,?NetSetFactoryTCP@@YAXPAUCN_INFO_TCP@@@Z,NetSetFactoryTCP,sms,confirmed,,void __cdecl NetSetFactoryTCP(CN_INFO_TCP *)
 0x004B0730,func,?NET_GetLocalAddressString@@YAXPAD@Z,NET_GetLocalAddressString,sms,confirmed,,void __cdecl NET_GetLocalAddressString(char *)
 0x004B0830,func,?NET_Initialize@@YAJPAUCN_INFO@@J@Z,NET_Initialize,sms,confirmed,,"long __cdecl NET_Initialize(CN_INFO *, long)"
 0x004B0940,func,?NET_StartQuery@@YADPAUCN_INFO@@PAXP6AX1W4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z@Z,NET_StartQuery,sms,confirmed,,"char __cdecl NET_StartQuery(CN_INFO *, void *, void (__cdecl *)(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long))"
@@ -336,6 +343,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004B1350,func,?NET_MakeAutoConnectAddress@@YADPAUCN_INFO@@PAUNET_ADDRESS@@@Z,NET_MakeAutoConnectAddress,sms,confirmed,,"char __cdecl NET_MakeAutoConnectAddress(CN_INFO *, NET_ADDRESS *)"
 0x004B1380,func,?NET_Addr2string@@YADPAUNET_ADDRESS@@PAD@Z,NET_Addr2string,sms,confirmed,,"char __cdecl NET_Addr2string(NET_ADDRESS *, char *)"
 0x004B13A0,func,?net_add_player_id@@YAXPADPAUsocket_state@@H@Z,net_add_player_id,sms,confirmed,,"void __cdecl net_add_player_id(char *, socket_state *, int)"
+0x004B1590,func,?fill_in_mpinfo@@YAXXZ,fill_in_mpinfo,sms,confirmed,,void __cdecl fill_in_mpinfo(void)
 0x004B1660,func,?game_event_handler@@YADIJHPAUsocket_state@@@Z,game_event_handler,sms,confirmed,,"char __cdecl game_event_handler(unsigned int, long, int, socket_state *)"
 0x004B16B0,func,?net_write_output_q@@YAXH@Z,net_write_output_q,sms,confirmed,,void __cdecl net_write_output_q(int)
 0x004B1A80,func,?validate_packet@@YADPAUNET_PKT@@@Z,validate_packet,sms,confirmed,,char __cdecl validate_packet(NET_PKT *)

@@ -1,4 +1,7 @@
 va,kind,name,display,source,confidence,notes,type
+0x00412780,func,@SpeedOfSound@4,SpeedOfSound,sms,confirmed,,undefined4 __fastcall SpeedOfSound(undefined4)
+0x00413C70,func,?TVKey@@YIGG@Z,TVKey,sms,confirmed,,unsigned short __fastcall TVKey(unsigned short)
+0x00447970,func,?IntersectT@@YAJPAUF24_POINT@@JJ@Z,IntersectT,sms,confirmed,,"long __cdecl IntersectT(F24_POINT *, long, long)"
 0x004514C0,func,_FMUpdateGearPitch@0,FMUpdateGearPitch,sms,confirmed,,undefined4 __stdcall FMUpdateGearPitch(void)
 0x00451580,func,_FMUpdateGear@0,FMUpdateGear,sms,confirmed,,undefined4 __stdcall FMUpdateGear(void)
 0x004515E0,func,_FMUpdateWingSweep@0,FMUpdateWingSweep,sms,confirmed,,undefined4 __stdcall FMUpdateWingSweep(void)
