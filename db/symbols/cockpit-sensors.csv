@@ -3,17 +3,60 @@ va,kind,name,display,source,confidence,notes,type
 0x004385C0,func,@CPClearMissile@0,CPClearMissile,sms,confirmed,clear the selected missile,undefined4 __fastcall CPClearMissile(void)
 0x004385E0,func,@CPCopyView@0,CPCopyView,sms,confirmed,copy the cockpit view state,undefined4 __fastcall CPCopyView(void)
 0x004386C0,func,@CPToggleWindow@4,CPToggleWindow,sms,confirmed,toggle a cockpit MFD/scope window,undefined4 __fastcall CPToggleWindow(undefined4)
+0x00438870,func,?WPCInit@@YAHJ@Z,WPCInit,sms,confirmed,compute the on-screen positions/sizes of the cockpit MFD windows (the 0x539d38 layout table) from the screen resolution (0x55c06a/0x55c06c) and the scale shifts (0x538808/0x538800); param selects a layout variant,int __cdecl WPCInit(long)
+0x0043887B,func,WPCInitBody,,re,confirmed,overlapping alternate entry of WPCInit,
 0x00438B70,func,_CPInit@0,CPInit,sms,confirmed,cockpit-sensor init: allocates the radar + RWR contact buffers and resets the scopes,undefined4 __stdcall CPInit(void)
 0x00439170,func,_CPShutdown@0,CPShutdown,sms,confirmed,cockpit-sensor shutdown,undefined4 __stdcall CPShutdown(void)
 0x00439220,func,_CPDraw@8,CPDraw,sms,confirmed,render the radar/IR/RWR scopes and cockpit MFDs (the scope renderer; consumes the contact buffers CPAddItemToScopes fills),"undefined4 __stdcall CPDraw(undefined4, undefined4)"
+0x00439E40,func,CPScopeProject,,re,confirmed,project a contact's world position into scope coordinates for the radar/RWR renderers,
+0x0043A0B0,func,CPDrawScopeButton,,re,confirmed,draw a small labelled indicator/button in a scope corner (highlighted when selected),
+0x0043A190,func,CPDrawWindow,,re,confirmed,"the cockpit MFD window dispatcher: switch on _windowTypes[i] to render each scope — 1 -> CPDrawWindow1, 2/3 -> radar B-scope (front/other view), 4/0xb -> target MFD, 5/6/7/8/9 -> the other MFDs, 10 -> the RWR (CPDrawRWR); blit to screen/brush by the return code",
+0x0043A364,func,CPWindowDirty,,re,confirmed,MFD helper: has a scope window changed since last draw,
+0x0043A400,func,CPDrawEmptyWindow,,re,confirmed,draw an empty/framed cockpit MFD window,
+0x0043A5C0,func,CPDrawRadarScope,,re,confirmed,"the radar B-scope / target-designation MFD renderer (front/other/target views): walks the radar contact buffer, draws each contact, resolves the designated target and the selected-weapon lock, and is weather-gated via WRCanSee (renderer.md). The subsystem's largest scope renderer",
+0x0043BB50,func,CPScopeBlank,,re,confirmed,blank/prep a scope drawing surface,
+0x0043BBA0,func,CPDrawWindow8,,re,confirmed,cockpit MFD window-type 8 renderer,
+0x0043BF60,func,CPDrawWindow6,,re,confirmed,cockpit MFD window-type 6 renderer,
+0x0043C2F0,func,CPDrawWindow7,,re,confirmed,cockpit MFD window-type 7 renderer,
+0x0043C5B0,func,CPScopeHelperA,,re,confirmed,scope-renderer helper (shared drawing primitive),
+0x0043C610,func,CPScopeHelperB,,re,confirmed,scope-renderer helper (shared drawing primitive),
+0x0043C6B0,func,CPDrawTID,,re,confirmed,a large cockpit MFD renderer (tactical/threat information display): draws the contact list with range rings and symbols,
+0x0043CEC0,func,CPScopeHelperC,,re,confirmed,scope-renderer helper,
+0x0043CF10,func,CPScopeHelperD,,re,confirmed,scope-renderer helper,
+0x0043CFB0,func,CPScopeHelperE,,re,confirmed,scope-renderer helper,
+0x0043D0E0,func,CPScopeHelperF,,re,confirmed,scope-renderer helper,
+0x0043D290,func,CPScopeHelperG,,re,confirmed,scope-renderer helper,
+0x0043D460,func,CPScopeHelperH,,re,confirmed,scope-renderer helper,
+0x0043D690,func,CPDrawWindow1,,re,confirmed,cockpit MFD window-type 1 renderer (thunk into the body),
+0x0043D69B,func,CPDrawWindow1Body,,re,confirmed,cockpit MFD window-type 1 renderer body,
+0x0043DB40,func,CPScopeHelperI,,re,confirmed,scope-renderer helper,
+0x0043DCC0,func,CPScopeHelperJ,,re,confirmed,scope-renderer helper,
 0x0043DDD0,func,@CPRadarRange@4,CPRadarRange,sms,confirmed,current radar range setting,undefined4 __fastcall CPRadarRange(undefined4)
 0x0043DE00,func,@CPToggleHistory@0,CPToggleHistory,sms,confirmed,toggle the radar history trail,undefined4 __fastcall CPToggleHistory(void)
 0x0043DE10,func,?UsingSuppRadar@@YADXZ,UsingSuppRadar,sms,confirmed,is the supplementary (secondary) radar in use,char __cdecl UsingSuppRadar(void)
 0x0043DE90,func,?CPSetSkill@@YAXF@Z,CPSetSkill,sms,confirmed,set the AI/radar skill level,void __cdecl CPSetSkill(short)
 0x0043DEE0,func,@CPAddItemToScopes@4,CPAddItemToScopes,sms,confirmed,"per-target visibility gate: runs the radar / IR / RWR detection tests and inserts the contact into the matching scope buffer (0x53bea8 radar+IR, 0x539e58 RWR)",undefined4 __fastcall CPAddItemToScopes(undefined4)
+0x0043DF70,func,CPRadarSees,,re,confirmed,"radar detection predicate: target alive (+1 bit0) and radar-detectable (type +9 bit 0x20), passes the mode-specific look-down/altitude filter (_radarMode 0x5387d8; modes gate ground-clutter, RCS at type +0x3b sets max range), lies in the scan-bounds box (0x5387e0 up / 0x539d78 down), is inside the radar-beam FOV (PROJInFOV), and is not terrain-blocked. Chaff (GRAPHIC type 0xc/0xd) always shows",
+0x0043DF7B,func,CPRadarSeesBody,,re,confirmed,overlapping alternate entry of CPRadarSees,
+0x0043E220,func,CPSuppRadarSees,,re,confirmed,"supplemental (AWACS/GCI datalink) detection predicate: only when UsingSuppRadar; a wider bounds box (0x539e50 / 0x5387a0), inserted into the radar scope as a datalink contact (mode 1)",
+0x0043E330,func,CPRwrSees,,re,confirmed,"RWR detection predicate — is this emitter illuminating the player: for a SAM/AAA site (class 6) the emitter must be on (type +0xa6 bit1), not in a non-emitting state (+0xb4 != 4), not in the exclusion-name list, and within 0x76ac00; for a plane (class 2/4) it must be radar-capable and have the radar-locking-me flag (+0xde bit 0x400)",
+0x0043E450,func,CPScopeInsert,,re,confirmed,"insert-or-update a detected object into a scope contact buffer (radar/IR at 0x53bea8, RWR at 0x539e58), deduping by object id and refreshing its record",
+0x0043E700,func,CPScopeFindContact,,re,confirmed,find an existing contact record for an object id in a scope buffer,
 0x0043E780,func,@CPRemoveItemFromScopes@4,CPRemoveItemFromScopes,sms,confirmed,remove a contact from the scopes,undefined4 __fastcall CPRemoveItemFromScopes(undefined4)
+0x0043E7B0,func,CPScopeClearEntry,,re,confirmed,clear one scope contact-buffer entry,
 0x0043E7E0,func,@CPBombRange@4,CPBombRange,sms,confirmed,current bomb-range/CCIP setting,undefined4 __fastcall CPBombRange(undefined4)
 0x0043E810,func,_CPUpdateRadar@0,CPUpdateRadar,sms,confirmed,per-frame radar sweep: timestamps the scan and clears the sweep accumulator,undefined4 __stdcall CPUpdateRadar(void)
 0x0043E830,func,_CPResetRWR@0,CPResetRWR,sms,confirmed,reset the RWR: zero the radar-scope and RWR contact buffers (2x 0x6d6 dwords) and re-arm the scan timers,undefined4 __stdcall CPResetRWR(void)
 0x0043E8C0,func,_CPComputeRCS@8,CPComputeRCS,sms,confirmed,"radar-cross-section + IR-signature model: sums a target's signature from base size (type +0x45), configuration (gear/bay/afterburner via the +0x16F flags), aspect (pitch +0x1F, bank +0x21), damage (+0x10), and the class extension (+0xDE). The gameplay-defining input to the weapons seeker/lock model (weapons.md)","undefined4 __stdcall CPComputeRCS(undefined4, undefined4)"
+0x0043EA40,func,CPDrawRWR,,re,confirmed,"the RWR threat-display renderer: refreshes every 0x40 ticks, draws the threat ring + the RCS diamond from _frontRCS/_sideRCS, and each RWR contact coloured by lock state — a track lock is red (0x2b) and a search lock yellow (0x2c) until _currentT passes _trackLockEndT/_searchLockEndT (the RWR spike timing)",
+0x0043F0E0,func,CPScopeForEach,,re,confirmed,walk a scope contact buffer applying a predicate/callback (thunk),
+0x0043F0EA,func,CPScopeForEachBody,,re,confirmed,"body of CPScopeForEach: iterate the contact buffer, dropping entries the predicate rejects",
+0x0043F280,func,CPScopeAge,,re,confirmed,age out stale scope contacts past their timeout,
+0x0043F300,func,CPContactVisible,,re,confirmed,is a scope contact currently drawable (on-scope + not expired),
+0x0043F360,func,CPScopeSymbol,,re,confirmed,pick + draw the symbol/colour for one scope contact by its class/threat state,
+0x0043F510,func,CPDrawWindow5,,re,confirmed,cockpit MFD window-type 5 renderer (thunk),
+0x0043F51A,func,CPDrawWindow5Body,,re,confirmed,cockpit MFD window-type 5 renderer body,
+0x00440BF0,func,CPScopeRangeRing,,re,confirmed,draw the range rings / scale marks on a scope,
+0x00440D00,func,CPScopeSelectContact,,re,confirmed,update the selected/designated contact highlight on a scope,
+0x00440E10,func,@CPNextTarget@4,CPNextTarget,sms,confirmed,cycle the radar-scope target: scan the radar contact buffer (0x53bea8) for the next (or previous) radar-detectable contact past/before the current target range — the t / T keys (input.md FlightKey),undefined4 __fastcall CPNextTarget(undefined4)
 0x00440FE0,func,?CPUpdateIRItems@@YGXXZ,CPUpdateIRItems,sms,confirmed,per-frame IR-item update: refreshes the IR-seeker contact list,void __stdcall CPUpdateIRItems(void)

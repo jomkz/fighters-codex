@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Cockpit sensors (radar / IR / RWR) -- FA.EXE
-// 18/18 functions have a recovered signature; 0/0 globals have a recovered type.
+// 20/61 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::cockpit_sensors {
 
@@ -17,6 +17,7 @@ undefined4 CPSetMissile(undefined4);  // 0x00438520  __fastcall
 undefined4 CPClearMissile(void);  // 0x004385C0  __fastcall
 undefined4 CPCopyView(void);  // 0x004385E0  __fastcall
 undefined4 CPToggleWindow(undefined4);  // 0x004386C0  __fastcall
+int WPCInit(long);  // 0x00438870  __cdecl
 undefined4 CPInit(void);  // 0x00438B70  __stdcall
 undefined4 CPShutdown(void);  // 0x00439170  __stdcall
 undefined4 CPDraw(undefined4, undefined4);  // 0x00439220  __stdcall
@@ -30,6 +31,52 @@ undefined4 CPBombRange(undefined4);  // 0x0043E7E0  __fastcall
 undefined4 CPUpdateRadar(void);  // 0x0043E810  __stdcall
 undefined4 CPResetRWR(void);  // 0x0043E830  __stdcall
 undefined4 CPComputeRCS(undefined4, undefined4);  // 0x0043E8C0  __stdcall
+undefined4 CPNextTarget(undefined4);  // 0x00440E10  __fastcall
 void CPUpdateIRItems(void);  // 0x00440FE0  __stdcall
+
+// --- not yet recovered -----------------------------------------------
+// Emitted as TODOs, not as guessed declarations: a wrong prototype would
+// compile and then lie about what the original function took.
+// TODO(#453): 0x0043887B  WPCInitBody -- signature not recovered
+// TODO(#453): 0x00439E40  CPScopeProject -- signature not recovered
+// TODO(#453): 0x0043A0B0  CPDrawScopeButton -- signature not recovered
+// TODO(#453): 0x0043A190  CPDrawWindow -- signature not recovered
+// TODO(#453): 0x0043A364  CPWindowDirty -- signature not recovered
+// TODO(#453): 0x0043A400  CPDrawEmptyWindow -- signature not recovered
+// TODO(#453): 0x0043A5C0  CPDrawRadarScope -- signature not recovered
+// TODO(#453): 0x0043BB50  CPScopeBlank -- signature not recovered
+// TODO(#453): 0x0043BBA0  CPDrawWindow8 -- signature not recovered
+// TODO(#453): 0x0043BF60  CPDrawWindow6 -- signature not recovered
+// TODO(#453): 0x0043C2F0  CPDrawWindow7 -- signature not recovered
+// TODO(#453): 0x0043C5B0  CPScopeHelperA -- signature not recovered
+// TODO(#453): 0x0043C610  CPScopeHelperB -- signature not recovered
+// TODO(#453): 0x0043C6B0  CPDrawTID -- signature not recovered
+// TODO(#453): 0x0043CEC0  CPScopeHelperC -- signature not recovered
+// TODO(#453): 0x0043CF10  CPScopeHelperD -- signature not recovered
+// TODO(#453): 0x0043CFB0  CPScopeHelperE -- signature not recovered
+// TODO(#453): 0x0043D0E0  CPScopeHelperF -- signature not recovered
+// TODO(#453): 0x0043D290  CPScopeHelperG -- signature not recovered
+// TODO(#453): 0x0043D460  CPScopeHelperH -- signature not recovered
+// TODO(#453): 0x0043D690  CPDrawWindow1 -- signature not recovered
+// TODO(#453): 0x0043D69B  CPDrawWindow1Body -- signature not recovered
+// TODO(#453): 0x0043DB40  CPScopeHelperI -- signature not recovered
+// TODO(#453): 0x0043DCC0  CPScopeHelperJ -- signature not recovered
+// TODO(#453): 0x0043DF70  CPRadarSees -- signature not recovered
+// TODO(#453): 0x0043DF7B  CPRadarSeesBody -- signature not recovered
+// TODO(#453): 0x0043E220  CPSuppRadarSees -- signature not recovered
+// TODO(#453): 0x0043E330  CPRwrSees -- signature not recovered
+// TODO(#453): 0x0043E450  CPScopeInsert -- signature not recovered
+// TODO(#453): 0x0043E700  CPScopeFindContact -- signature not recovered
+// TODO(#453): 0x0043E7B0  CPScopeClearEntry -- signature not recovered
+// TODO(#453): 0x0043EA40  CPDrawRWR -- signature not recovered
+// TODO(#453): 0x0043F0E0  CPScopeForEach -- signature not recovered
+// TODO(#453): 0x0043F0EA  CPScopeForEachBody -- signature not recovered
+// TODO(#453): 0x0043F280  CPScopeAge -- signature not recovered
+// TODO(#453): 0x0043F300  CPContactVisible -- signature not recovered
+// TODO(#453): 0x0043F360  CPScopeSymbol -- signature not recovered
+// TODO(#453): 0x0043F510  CPDrawWindow5 -- signature not recovered
+// TODO(#453): 0x0043F51A  CPDrawWindow5Body -- signature not recovered
+// TODO(#453): 0x00440BF0  CPScopeRangeRing -- signature not recovered
+// TODO(#453): 0x00440D00  CPScopeSelectContact -- signature not recovered
 
 }  // namespace fxe::fa::cockpit_sensors

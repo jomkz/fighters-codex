@@ -34,14 +34,14 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | 3D render core / SH interpreter (GR) | `0x4CD588–0x4D6C00` | 174 named · 0 waived / 174 (100%) | 0 named · 349 waived | [doc](render-core.md) | ✓ | [#228](https://github.com/jomkz/fighters-codex/issues/228) | complete |
 | .SEQ scripted-cutscene / sequence player (SEQ) | `0x444F70–0x446D90`<br>`0x446F10–0x4471E0` | 41 named · 0 waived / 41 (100%) | 25 named · 37 waived | [doc](seq.md) | ✓ | [#240](https://github.com/jomkz/fighters-codex/issues/240) | complete |
 | View / camera & replay (VIEW) | `0x40D7A0–0x40F6B0` | 19 named · 0 waived / 19 (100%) | 5 named · 24 waived | [doc](view.md) | ✓ | [#257](https://github.com/jomkz/fighters-codex/issues/257) | complete |
-| Cockpit sensors (radar / IR / RWR) | `0x438520–0x4410C0` | 18 named · 0 waived / 62 (29%) | 0 named · 0 waived | [doc](cockpit-sensors.md) | · | [#486](https://github.com/jomkz/fighters-codex/issues/486) | active |
+| Cockpit sensors (radar / IR / RWR) | `0x438520–0x4410C0` | 61 named · 0 waived / 62 (98%) | 0 named · 0 waived | [doc](cockpit-sensors.md) | · | [#486](https://github.com/jomkz/fighters-codex/issues/486) | active |
 | Radio / speech — orders & AWACS chatter (MSG/SAY) | `0x418070–0x418A66`<br>`0x48D2B0–0x48EC3F`<br>`0x490F30–0x491239` | 39 named · 0 waived / 40 (97%) | 0 named · 0 waived | [doc](radio.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
 | Multiplayer chat (CHAT) | `0x413120–0x413C68` | 9 named · 0 waived / 9 (100%) | 0 named · 0 waived | [doc](chat.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
 | Airports / carriers — parking, approach, deck (AP) | `0x4BA7E0–0x4BAD40`<br>`0x4BD2D0–0x4BD510`<br>`0x4BE6A0–0x4BEE60` | 24 named · 0 waived / 24 (100%) | 0 named · 0 waived | [doc](airports.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
 
-**FA.EXE totals:** 20/24 subsystems complete; 2810/2855 in-scope functions named; 4040/8266 referenced globals resolved.
+**FA.EXE totals:** 20/24 subsystems complete; 2853/2855 in-scope functions named; 4040/8266 referenced globals resolved.
 
-> **Unclaimed: 763 of 3573 functions (206,582 of 866,332 code bytes, 23%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+> **Unclaimed: 720 of 3573 functions (182,590 of 866,332 code bytes, 21%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 > **Undefined: 62,800 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **246 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
@@ -115,5 +115,5 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
-**Program totals (all binaries):** 27/31 subsystems complete; 6355/6400 in-scope functions named; 6514/11595 referenced globals resolved.
+**Program totals (all binaries):** 27/31 subsystems complete; 6398/6400 in-scope functions named; 6514/11595 referenced globals resolved.
 
