@@ -128,14 +128,23 @@ Example: `&AFTB2.11K` in the archive extracts to `_AFTB2.11K` on disk.
 
 ### EA Compression Wrapper (flags=4)
 
-Compressed entries prepend a 6-byte header to a standard PKWare DCL stream:
+Compressed entries prepend a **4-byte** header — the decompressed size — to a standard
+PKWare DCL stream:
 
 | Offset | Size | Type | Description |
 |--------|------|------|-------------|
-| `+0x00` | 4 | u32 | Decompressed size |
-| `+0x04` | 1 | u8  | litmode: 0x00 = binary (only mode used in FA) |
-| `+0x05` | 1 | u8  | dictbits: 4=1024-byte window, 5=2048, 6=4096 |
-| `+0x06` | — |     | PKWare DCL bitstream (LSB-first) |
+| `+0x00` | 4 | u32 | Decompressed size (the entire EA wrapper) |
+
+The bytes that follow are the DCL stream **itself**, whose own first two bytes are
+`litmode`/`dictbits` — they are *not* wrapper fields. `blast_decompress_ea`
+(`lib/src/blast.cpp:158`) skips the 4-byte prefix and hands `in + 4` to
+`blast_decompress`, which reads them:
+
+| Offset (from `+0x04`) | Size | Type | Description |
+|--------|------|------|-------------|
+| `+0x00` | 1 | u8  | litmode: 0x00 = binary (only mode used in FA) |
+| `+0x01` | 1 | u8  | dictbits: 4=1024-byte window, 5=2048, 6=4096 |
+| `+0x02` | — |     | PKWare DCL bitstream (LSB-first) |
 
 The decompressed-size field is written correctly by the game's tooling, but a
 crafted archive can claim anything up to 4 GiB. `fx_lib` treats claims above
