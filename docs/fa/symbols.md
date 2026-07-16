@@ -989,7 +989,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 63 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 85 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1056,6 +1056,28 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00454140` | `ChangePlaneType` | sms |  |
 | `0x004543A0` | `RepairTime` | sms |  |
 | `0x004543C0` | `SelectRepairPlane` | sms |  |
+| `0x00477590` | `FMTurbulence` | sms |  |
+| `0x00477D10` | `COMinSpeed` | sms |  |
+| `0x00477D30` | `COCornerSpeed` | sms |  |
+| `0x00477E50` | `COMaxSpeed` | sms |  |
+| `0x00477E60` | `COAcc` | sms |  |
+| `0x00477E80` | `CODacc` | sms |  |
+| `0x00477EA0` | `COBv` | sms |  |
+| `0x00477ED0` | `COBrv` | sms |  |
+| `0x00478090` | `COBankRate` | sms |  |
+| `0x004780D0` | `COTurnRate` | sms |  |
+| `0x00478150` | `COTurnRadius` | sms |  |
+| `0x00478190` | `COThrust` | sms |  |
+| `0x004781D0` | `COTwr` | sms |  |
+| `0x00478200` | `COSig` | sms |  |
+| `0x004784A0` | `COGPullDrag` | sms |  |
+| `0x0047A690` | `FMAircraftSetup` | sms |  |
+| `0x0047A770` | `FMGetAcc` | sms |  |
+| `0x0047AC60` | `FMGetNPCAcc` | sms |  |
+| `0x0047AEB0` | `FMVertMotion` | sms |  |
+| `0x0047AF70` | `FMSetTV` | sms |  |
+| `0x0047B000` | `FMResetTV` | sms |  |
+| `0x0047B020` | `FMFlight` | sms |  |
 
 ### Video decode (FMV/Cobra)
 
