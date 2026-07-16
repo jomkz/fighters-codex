@@ -181,11 +181,14 @@ SMS symbol is confirmed present:
 |----|----------|------|
 | `0x4440f0` | `_GRAPHICAddInvisible@20` | Adds an entity to the invisible (non-rendering) sprite list; allocates a 0x2B-type node via `FUN_00443b70` and populates a 4-byte position + 2-byte type field |
 
-The `_explode` function (`0x401000`) manages explosion particles: it reads a decompress callback
-pointer at `entity+0x28`, decodes up to 0x800 bytes of particle data from `entity+0x2234`, extracts
-counts at `+0x2234`/`+0x2235`/`+0x2236`, and populates lookup tables at `entity+0x30f4`, `+0x3104`,
-`+0x3114`, and `+0x30b4` from ROM tables at `0x4eb0c0`–`0x4eb110`. The particle colour/size tables
-are 0x40 entries, consistent with 8-bit indexed palettes.
+> **Correction (#488).** `_explode` (`0x401000`) is **not** a renderer function: it is the
+> PKWARE DCL (Data Compression Library) decompressor — the same "explode" algorithm `fx_lib`
+> reimplements in [`lib/src/blast.cpp`](https://github.com/jomkz/fighters-codex/blob/main/lib/src/blast.cpp),
+> used to unpack `.LIB` archive members. Its "callback pointer / decode up to 0x800 bytes /
+> lookup tables from `0x4eb0c0`–`0x4eb110`" are Blast's output callback and its Huffman/length
+> decode tables, not particle state, and the struct it walks is the Blast state, not an entity.
+> The earlier reading of `entity+0x2234` here is the contamination #488 traces into
+> `structs.md`'s census and `network.md`'s CN_INFO table.
 
 Additional billboard symbols seen in surrounding code:
 

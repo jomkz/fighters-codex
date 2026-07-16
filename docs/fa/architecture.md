@@ -271,7 +271,7 @@ PCM files use filename prefixes: `&` for looping ambient, `^` for one-shot voice
 
 1. `_timerTicks` (hardware interrupt counter) gated by `_frameTicks` to enforce fixed timestep.
 2. `_TIMEUpdate` — advances `_currentTime`, `_currentTicks`, and `_timeCompression`.
-3. `_OBJUpdate` — iterates `_objPtrs` array, calls each entity's `utilProc` dispatcher.
+3. `_ServiceObjects` (`0x462A50`) — iterates the `_objPtrs` array, mirrors each object into `_cg`, and calls its class proc (resolved by `GetObjProc`).
 4. `_MISSIONCheckSuccess@0` (`0x486860`) — polls active `.MC` DLL each tick.
 5. `_NetworkFrame` / `?MPReceive@@YGDXZ` — if multiplayer, synchronizes entity state.
 6. `render_3d` → `T_DefaultHorizon` → HUD overlay composite.
@@ -286,13 +286,13 @@ See [objects.md](objects.md) for the object/entity system (service chain, the `_
 
 ## Physics & Flight Model
 
-**Core flight tick:** `_FMFlight@0` at `0x47B020`. Called once per frame per PT entity via `_OBJUpdate`. Reads the PT_TYPE struct (aerodynamics constants from the `.PT` BRF file) and the entity runtime struct, then integrates:
+**Core flight tick:** `_FMFlight@0` at `0x47B020`. Called once per frame per PT entity via the object service chain (`_ServiceObjects`). Reads the PT_TYPE struct (aerodynamics constants from the `.PT` BRF file) and the entity runtime struct, then integrates:
 
 - **Lift/drag/thrust**: from PT fields — `one_g_stall_speed` (word at +0x50), thrust/weight ratio, induced drag coefficient.
 - **Stall logic**: `_oneGStallSpeed__3JA` symbol; stall onset at computed speed, with 25-knot hysteresis on recovery.
 - **Fuel consumption**: `@FMFuelConsumption@4` (`0x451E50`) reads PT fields for fuel flow at current throttle/altitude.
 
-**Collision:** `_Collision@56` — 14-parameter function covering missile–aircraft, missile–terrain, and aircraft–terrain cases. Terrain height query is `_GetGround@0` (`0x47AF70`), which reads T2 tile elevation bands. See [formats/T2.md](formats/T2.md) for the tile record layout.
+**Collision:** `_Collision@56` — 14-parameter function covering missile–aircraft, missile–terrain, and aircraft–terrain cases. Terrain height query is `_GetGround@0` (`0x47AF20`), which reads T2 tile elevation bands. See [formats/T2.md](formats/T2.md) for the tile record layout.
 
 **`_PROJProc` dispatch:** `_PROJProc` at `0x4C1F50` is confirmed (**2026-05-19** via `dumpAtForced`). It is a vtable-style dispatcher: `case 1` = init/startup; `case 2` = `_PROJMoveProc` (movement/physics, `0x4C11B0`); `case 3` = `_PROJEventProc`; `case 4` = `_PROJDamageProc`. Both `_PROJProc` and `_PROJMoveProc` have no auto-created Ghidra function (vtable-only call pattern) — `dumpAtForced` is required to decompile them. The physics gap PROJ_TYPE+0x50–+0x6E is accessed through `_PROJMoveProc`.
 

@@ -128,7 +128,7 @@ not listed are reserved: not "empty", but *not proven*.
 | `0x11` | 12 | `pos_x/y/z` | world position, F24.8 | confirmed |
 | `0x1D` | 2 | `heading` | some code reads `0x1D` as a dword (heading+pitch together) | confirmed |
 | `0x1F` | 2 | `pitch` | | confirmed |
-| `0x21` | 2 | `goal_angle` | | inferred |
+| `0x21` | 2 | `bank` | third of the `heading`/`pitch`/`bank` orientation triple (`0x1D`/`0x1F`/`0x21`); the earlier `goal_angle` was a retracted access-note guess (`fa_types.h`, physics.md) | confirmed |
 | `0x23` | 2 | `goal_heading` | | inferred |
 | `0x25` | 2 | `goal_altitude` | | inferred |
 | `0x34` | 4 | `speed` | F24.8 | confirmed |

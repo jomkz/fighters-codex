@@ -181,11 +181,13 @@ object-update loop's `utilProc` pointer, not via a direct call chain that Ghidra
 trace statically. The architecture.md table maps `_PROJProc` as the `utilProc`
 symbol for `.JT` projectile files.
 
-### Dispatch — `0x4C1F50` and `PROJMoveProc` — `0x4C11B0`
+### Dispatch — `_PROJProc` (`0x4C1F50`) and `PROJMoveProc` (`0x4C11B0`)
 
-Both addresses returned **NOT FOUND** in the Ghidra analysis; neither contains a
-decompilable function at those exact VAs. They are likely thunks or mid-function entry
-points in the PROJ update path. The closest named functions in the vicinity are:
+Both are FA.SMS-named, confirmed functions, not thunks (this section's earlier "NOT FOUND"
+claim was wrong — #488): `_PROJProc` (`0x4C1F50`, 22 bytes) is the class-proc selector, and
+`?PROJMoveProc@@YAXD@Z` (`0x4C11B0`, 1150 bytes) is the per-frame guidance/detonation proc that
+[weapons.md](weapons.md#per-frame-guidance-and-detonation) documents in full. Both carry rows in
+`db/symbols/weapons.csv`. The other named functions in the PROJ update path:
 
 | VA | Name | Notes |
 |----|------|-------|
