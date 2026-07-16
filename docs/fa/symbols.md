@@ -697,11 +697,23 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 210 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 252 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x0041F800` | `FortDropdownInit` | re | open the Fort-mission type dropdown (NamesShutdown + rebuild the fort-type name list) |
+| `0x0041F830` | `FortMultiButton` | sms | set the selected radio-button index in a Fort-mission multiplayer setup group |
+| `0x0041F840` | `FortMultiButtonText` | sms | set a Fort-setup radio group by matching the given label against the fort-type name list |
+| `0x0041F8D0` | `FortTypeNameList` | re | build (or fetch cached) the fort-type name list from the fort .M definitions |
 | `0x0041FB60` | `FortMission` | sms | Fort (base-assault) mission builder |
+| `0x00420790` | `FortSetupApplyA` | re | Fort setup helper: apply a picked option to the fort configuration |
+| `0x004207C0` | `FortSetupApplyB` | re | Fort setup helper: apply a picked option to the fort configuration |
+| `0x00420800` | `FortSetupApplyC` | re | Fort setup helper: apply a picked option to the fort configuration |
+| `0x00420830` | `FortMissionSetup` | re | Fort ("base assault") mission setup: seed the RNG, set fort size/parameters, and configure the object-side filters from _gameMultiPrefs (sides 0x30000) |
+| `0x00420AB0` | `FortSetupReset` | re | reset the fort-setup working state |
+| `0x00420AD0` | `FortSetupCountA` | re | Fort setup helper: count/enumerate a fort option set |
+| `0x00420B20` | `FortSetupCountB` | re | Fort setup helper: count/enumerate a fort option set |
+| `0x00420BB0` | `FortSetupDialog` | re | the Fort-mission multiplayer setup dialog: fort type / sides / size selection driving FortMissionSetup |
 | `0x00421C80` | `ZONEAdd` | sms |  |
 | `0x00421CC0` | `ZONEForGV` | sms |  |
 | `0x00421D40` | `ZONEActive` | re | zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -805,7 +817,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0042B0F6` | `MAPGroupSetLeader` | re | make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042B19D` | `MAPGroupAdd` | re | add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0042B275` | `MAPDeleteSpecial` | re | delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00441C60` | `ChooseScoreInit` | sms | seed the combat-score display: latch the .MC proc(1) result into the scoreboard state and reset the combat-score timer |
 | `0x00441C90` | `ChooseScore` | sms | score-screen selection (end-of-mission) |
+| `0x0044CF00` | `FortMultiButton2` | sms | second Fort-setup radio-group button setter |
+| `0x0044CF10` | `FortMultiButtonText2` | sms | second Fort-setup radio group text matcher |
 | `0x0044D070` | `FortMission2` | sms | Fort mission builder (variant 2) |
 | `0x00467110` | `AwardMedal` | sms |  |
 | `0x00467180` | `PilotSave` | sms | write a PILOT record to PLT%03d.P (slot -1 = PilotFindFreeSlot), 0x25e0 bytes via RM cache + SaveFile, insert into the sorted roster, set _pilotName |
@@ -844,9 +859,21 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00480110` | `_BriefMap` | sms | briefing map step: MAPScreen when enabled; returns next-screen code 0xd/0xb |
 | `0x00480150` | `_SelectPlane` | sms | plane-select step via SelectRepairPlane (pilot-aware); next-screen code 0xe when skipped |
 | `0x004801A0` | `_RepairPlane` | sms | repair-plane step via SelectRepairPlane(repair mode) when a pilot is loaded |
+| `0x004801C0` | `InitAntiCheat` | sms | multiplayer anti-cheat: clear the FILE_CRC verification table (_localAntiCheat, stride 0x11) and per-computer cheat/frame-rate state |
+| `0x00480230` | `ComputeCRC` | sms | CRC-32 (via _crc_table) over a class-specific prefix of an OBJ_TYPE record (0xa6 plane / 0xba GV / 0x1bc ordnance / 0x13b …), zeroing the variable tail fields first so only the tuning bytes count; fort missions exempt class-5 ordnance. Detects a modified .PT/.OT (souped-up plane) |
+| `0x004804C0` | `GetAntiCheatIndex` | sms | find (or -1) the anti-cheat table slot for a type filename |
+| `0x00480530` | `FindAntiCheatIndex` | sms | find the anti-cheat slot for a filename, returning the free slot count when absent (insert position) |
+| `0x004805A0` | `UpdateAntiCheat` | sms | record this station's CRC for a type file into the shared table and set its presence bit (MP only) |
+| `0x00480690` | `PostAntiCheat` | sms | broadcast every local CRC (MPSendAntiCheat) + the local cheats-on flag at mission start; arm the frame-rate/cheat-info display windows |
+| `0x00480700` | `PostCheatsOn` | sms | broadcast whether the local player has cheats enabled; re-show the cheat banner on change |
+| `0x00480750` | `MISSIONInit1Impl` | sms | THE mission bring-up: seed the RNG (Rand16 ^ system-time ^ waitCounter), zero all 8-slot per-player score arrays (kills/deaths/damage/revives/killRatio/scores + human/AI splits), reset scenario end-conditions (endScenarioKills/Time, revive rules), randomise wind, then init every sim subsystem in order — T_Init, OBJInit(300000), COLInit, CTInit, MSGInit, SAYInit, WNGInit, GRPInit, APInit, PLANEInit, ROInit, PROJInit, ZONEInit, GRAPHICInit — and clear the _stats block |
 | `0x004809D0` | `MISSIONLoadOrdIcons` | re | load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport |
+| `0x00480A30` | `MISSIONInit2Impl` | sms | post-load pass (after _MISSIONTextProc built the objects): assign sides (MAPSetSide), find humans, resolve aliases (OBJAliasAll/ForMulti), set the mission clock, load the .MC event proc (host only), SAYInit2 + ChooseScoreInit, load ordnance icons, first MISSIONCheckSuccess |
+| `0x00480B40` | `MISSIONInit1` | sms | C-linkage entry wrapping _MISSIONInit1 (the mission bring-up), for the .MC/shell callers |
 | `0x00480B50` | `MISSIONInit2` | sms |  |
+| `0x00480B60` | `MISSIONInit3` | sms | third init phase: reset the SAY home/succeeded/failed flags and seed them from MISSIONSucceededForThisPlayer |
 | `0x00480B70` | `MyFilterProc` | sms |  |
+| `0x00480B80` | `MISSIONInitMedalInfo` | sms | set _playerHasWingmen from the player's wing size (medal eligibility) and refresh the cheating state |
 | `0x00480BE0` | `MISSIONSetCheating` | sms | sets the mission cheating flag |
 | `0x00480C20` | `LoadCampaignProc` | sms | load the campaign proc resource -> _campaignProc |
 | `0x00480C40` | `InitCampaignPilot` | sms |  |
@@ -872,6 +899,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00481440` | `CallCampaignProc` | sms | the campaign driver: cmd 0 init, 1 = save PILOT.BKP + invoke + SeqEnd (mission start), 3 = post-mission (playerBailed test, bail zeroes the 0xbc-byte plane-roster slot at +0xdb0, home landing stores damage into the slot + repair% = dam*100/max + type+0x1b4 clamp 100, LoadCampaignStores return, stats: missions/failures/bails/wingman at +0x1f80..), 4 = debrief (dead/MIA/failed -> retry restores PILOT.BKP else save+off), 5 = end (victory appends to the campaigns-won field +0xc2), 6/8 = query, 7 = bail notify |
 | `0x00481920` | `CampaignProcInvoke` | re | low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4 |
 | `0x00481940` | `CallMissionProc` | sms | dispatches into the mission's compiled .MC DLL proc (see MC.md); called from _MISSIONTextProc for the mission-logic handoff |
+| `0x004819F0` | `MISSIONShutdown` | sms | tear the mission down once (guard flag): WRShutdown, T_Shutdown(+DB), OBJShutdown, VIEWFree, HUDShutdown, CTShutdown, MPMissionShutdown, sound off, SAYShutdown, StreamersShutdown, free the mission RM/MM alloc id 1 |
 | `0x00481A70` | `MISSIONSuccess` | sms | imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00481C10` | `MISSIONTextProc` | sms | the .M mission-file interpreter (#485): whitespace-tokenizes the file via TextNextToken over a global cursor (_0x55281c/_0x5528c0), dispatches a keyword switch that reads numeric fields (TextNextNumber) and constructs the live mission — _T_AddObj per placement, then _WNGAdd (wing)/_GRPAdd (group)/_HARDLoad (loadout)/MAPAddSpecial, and _OBJAlias+_WPSetWaypoints for waypoint lists. Header directives set _layerName/_missionDLLName/_mapName/_missionHours; _CallMissionProc runs the .MC DLL |
@@ -895,20 +923,34 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004852F0` | `MISSIONFortStatus` | sms | Fort-mission: current fort status query |
 | `0x00485380` | `CampaignAccumStats` | re | fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004854A0` | `StatsAddPair` | re | add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004854E0` | `WpnStats` | sms | per-weapon stats accumulator: bump the shots/hits/kills/misses counters in the StatsBucketFor bucket by event type (0 fire, 1 hit+damage, 2 kill, 3 miss); Jane's Online counts only human-target events; mirror to peers (MPWpnStats) |
 | `0x004856F0` | `StatsBucketFor` | re | resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00485820` | `KillStats` | sms | tally one kill into the right category (13 buckets x player/wingman at 0x54ddx8) from the victim class/type-flag bits — friendly kill, plane, fort-gun, heli, ship, ground vehicle, SAM, AAA, structure, etc.; mirror to peers (MPKillStats) |
+| `0x00485A40` | `LandingStats` | sms | tally a landing for the player/wingman and add its quality score (good = +50/+100); mirror to peers (MPLandingStats) |
 | `0x00485AE0` | `ConvertPilotFiles` | sms | pilot-file migration: 0x15b4 legacy records (pre-FA) converted field-by-field to the 0x25e0 layout and rewritten; other wrong-size files renamed to .POO |
 | `0x00485EF0` | `CheckCD` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x00486010` | `MISSIONLoadCommonResources` | sms | loads the resources common to every mission |
+| `0x00486060` | `CanBackUp` | sms | can the briefing sequence step back a screen — screen-code + doBriefMap/doSelectPlane/doBriefPaper gating (host always can) |
 | `0x004860F0` | `MISSIONFortWin` | sms | Fort-mission win condition test |
+| `0x00486160` | `MISSIONEndScenario` | sms | the end-of-scenario test (multiplayer): time limit, four kill-goal modes (team total / either side reaches N / any single player / enemy team), Fort win via MISSIONFortWin (0x80 friendly, 0x800000 enemy), and the Jane's Online all-dead / out-of-revives condition; calls SetScenarioEndTime(2) when met |
+| `0x00486440` | `MISSIONScoreSides` | sms | sum friendly vs enemy team scores (each MISSIONScore, capped at 0x3e700) |
+| `0x004864D0` | `MISSIONScore` | sms | one player's score by the _scoreBy metric: 0 = kills, 1 = kill/death ratio, 2 = damage |
+| `0x00486500` | `MISSIONSortPlayers` | sms | qsort the player index array by score (descending, id tiebreak) for the scoreboard |
+| `0x00486530` | `MISSIONScoreCmp` | re | qsort comparator for MISSIONSortPlayers: compare two players by MISSIONScore, id as tiebreak |
 | `0x00486580` | `MISSIONAddScore` | sms | mission scoring accumulator (#485) |
 | `0x004867D0` | `MISSIONPlayerSlot` | re | resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00486810` | `MISSIONPrefsChanged` | sms | apply changed game prefs to the live player plane: unlimited weapons (HARDUnlimited), guns-only (HARDGunsOnlyAll), refresh cheating flags |
 | `0x00486860` | `MISSIONCheckSuccess` | sms | per-tick mission success poll; drives _MISSIONFortWin / end-of-mission |
+| `0x004868B0` | `MISSIONSucceededForThisPlayer` | sms | _missionSucceeded from the local player's side perspective (negated when this station flies the opposing side) |
+| `0x00486910` | `MISSIONEnsureLegalName` | sms | strip in-string "." / "^" control markers from a pilot name/callsign so they cannot smuggle sound/insignia directives |
+| `0x00486980` | `MISSIONUpdateFpsRatio` | re | store the FPS ratio DAT_5528f0 = frames/ticks (mission timing readout helper) |
 | `0x004869A0` | `TIMESystemTime` | sms |  |
 | `0x00486A10` | `TIMEInit` | sms |  |
 | `0x00486A90` | `TIMERestart` | sms |  |
 | `0x00486AA0` | `TIMEUpdate` | sms |  |
 | `0x00486C60` | `TIMESetCompression` | sms |  |
 | `0x00486E20` | `InstallTimerInt` | sms |  |
+| `0x004A10E0` | `SingleMission` | sms | the single-mission browser: glob the .M files, read each mission's title from [section 1] of its .MT (falling back to the filename), sort (SortIndexByString), present the SNGLMISS dialog picker with MP filename sync, and on OK write _missionName (uppercased) + return 1 to launch |
 | `0x004A1DD0` | `BriefScreen` | sms | briefing/debrief screen: loads <mission>.MT (fallback [section 1..3] skeleton), AddStats for debrief (+ Jane's Online JOGC stats), one of 4 random backgrounds (BRIEFSCR/SC3/SCU/SCV, DEB* for debrief), CHATKey passthrough, mouse wheel-areas -> PgUp/PgDn, MP ready-status sync (0xd brief/0xe debrief/0x1a ready), campaignState 0x13 while briefing |
 | `0x004A2A30` | `AddStats` | sms | compose the marked-up debrief/logbook stats text: CAMPAIGN/MISSION AVERAGES/PLAYER WINGMAN/AIRBASE/MISSION sections, kills/losses/damage/landing grade/elapsed time lines, [center]/[bold]/[underline] tags |
 

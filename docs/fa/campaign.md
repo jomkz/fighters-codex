@@ -110,6 +110,12 @@ Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex
 | `0x4A1DD0` | `BriefScreen` | briefing/debrief screen over `.MT` |
 | `0x4A2A30` | `AddStats` | compose the marked-up debrief stats text |
 | `0x485AE0` | `ConvertPilotFiles` | legacy pilot-file migration (0x15B4 → 0x25E0) |
+| `0x480750` | `MISSIONInit1Impl` | mission bring-up (RNG, score reset, subsystem init order) |
+| `0x480A30` | `MISSIONInit2Impl` | post-load: sides, humans, aliases, `.MC` proc |
+| `0x480230` | `ComputeCRC` | anti-cheat CRC-32 over an `OBJ_TYPE` record |
+| `0x4A10E0` | `SingleMission` | single-mission browser + launcher |
+| `0x486160` | `MISSIONEndScenario` | multiplayer end-condition test |
+| `0x485820` | `KillStats` | tally a kill into its category bucket |
 
 ## Mission runtime — the `.M` interpreter (#485)
 
@@ -144,11 +150,57 @@ and `__CreateFortMission@4`/`2` set up the non-campaign game modes; `_FortMissio
 (`0x41FB60`) / `_FortMission2@4` build the base-assault ("Fort") scenarios, whose
 `HARD*Fort*` helpers save/restore/rearm the defending loadouts.
 
-**Scoring & end-of-mission.** `_MISSIONAddScore@12` (`0x486580`) accumulates the score;
-`_EndOfMissionStats@0` (`0x484D90`) and `_EndOfFortMissionStats@0` tally kills/losses at
-mission end; the Fort scenarios track objectives through `_MISSIONFortDestroyed@4`,
-`_MISSIONFortDestroyedByFort@4`, `_MISSIONFortStatus@4`, and the `_MISSIONFortWin` test.
-(The `Score*` functions in the sound range are the **music** score, not this.)
+## Mission lifecycle — init, anti-cheat, shutdown (#485)
+
+Every mission — campaign, single, quick, or fort — is bracketed by the same bring-up and
+tear-down. **`MISSIONInit1`** (`0x480750`) seeds the RNG (`Rand16 ^ system-time ^
+waitCounter`), zeros the eight-slot-per-player score arrays (`_playerKills`/`Deaths`/
+`Damage`/`Revives`/`KillRatio`/`Scores`, plus the human-vs-AI splits), resets the scenario
+end-conditions, randomises the wind, and then initialises **every sim subsystem in a fixed
+order** — `T_Init`, `OBJInit(300000)`, `COLInit`, `CTInit`, `MSGInit`, `SAYInit`, `WNGInit`,
+`GRPInit`, `APInit`, `PLANEInit`, `ROInit`, `PROJInit`, `ZONEInit`, `GRAPHICInit`. That call
+list is the authoritative dependency order for the reconstruction's mission boot. confirmed
+
+`MISSIONTextProc` then builds the objects, and **`MISSIONInit2`** (`0x480A30`) runs the
+post-load pass: assign sides (`MAPSetSide`), find the human stations, resolve name aliases
+(`OBJAliasAll`/`OBJAliasForMulti`), set the mission clock, load the `.MC` event proc on the
+host, and take the first `MISSIONCheckSuccess`. `MISSIONInit3` seeds the radio home/succeeded
+flags, and `MISSIONInitMedalInfo` records whether the player has wingmen (medal
+eligibility). `MISSIONShutdown` (`0x4819F0`, guarded so it runs once) unwinds the same
+subsystems and frees the mission's RM/MM allocation id. confirmed
+
+**Anti-cheat.** In multiplayer the mission verifies that no station has edited its aircraft
+or weapon data. `ComputeCRC` (`0x480230`) runs a CRC-32 (`_crc_table`) over a *class-specific
+prefix* of each `OBJ_TYPE` record — `0xA6` bytes for a plane, `0xBA` for a ground vehicle,
+`0x1BC` for ordnance, `0x13B` for a projectile — after zeroing the record's variable tail so
+only the performance-tuning bytes count. Each station shares its per-file CRCs
+(`UpdateAntiCheat` → `PostAntiCheat` → `MPSendAntiCheat`) into a shared `FILE_CRC` table, so a
+souped-up `.PT`/`.OT` is detectable; `PostCheatsOn` broadcasts whether a player has the cheat
+menu enabled. Fort missions exempt the ordnance class (defenders carry fixed loadouts).
+confirmed
+
+## Scoring, stats & end-of-mission (#485)
+
+`_MISSIONAddScore@12` (`0x486580`) accumulates the running score. The **stats accumulators**
+bin each event: `WpnStats` (shots / hits / kills / misses per weapon, into the
+`StatsBucketFor` bucket), `KillStats` (one kill into the right one of 13 categories —
+friendly-fire, plane, fort-gun, helicopter, ship, ground vehicle, SAM, AAA, structure, …,
+split player vs wingman, keyed on the victim's class and type-flag bits), and `LandingStats`
+(landing count + a quality bonus). Each mirrors to peers via its `MP*` twin, and Jane's
+Online games count only human-target events. `_EndOfMissionStats@0` (`0x484D90`) and
+`_EndOfFortMissionStats@0` roll these into the pilot record at mission end. confirmed
+
+The **scoreboard** ranks players by `MISSIONScore` (`0x4864D0`) under the `_scoreBy` metric
+(kills / kill-ratio / damage); `MISSIONSortPlayers` qsorts them and `MISSIONScoreSides` sums
+the friendly-vs-enemy team totals (capped at `0x3E700`). **`MISSIONEndScenario`** (`0x486160`)
+is the multiplayer end-condition test: a time limit, four kill-goal modes (team total /
+either side reaches N / any single player / the enemy team), the Fort win via
+`MISSIONFortWin` (`0x80` friendly, `0x800000` enemy), and the Jane's Online all-dead /
+out-of-revives condition — arming `SetScenarioEndTime` when any fires. The Fort scenarios
+track objectives through `_MISSIONFortDestroyed@4`, `_MISSIONFortDestroyedByFort@4`,
+`_MISSIONFortStatus@4`, and the multiplayer **Fort-setup dialog** (`FortMissionSetup`
+`0x420830`, the `FortMultiButton*` radio groups, and the fort-type name list). (The `Score*`
+functions in the sound range are the **music** score, not this.) confirmed
 
 ## Open Questions
 

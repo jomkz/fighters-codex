@@ -1,5 +1,17 @@
 va,kind,name,display,source,confidence,notes,type
+0x0041F800,func,FortDropdownInit,,re,confirmed,open the Fort-mission type dropdown (NamesShutdown + rebuild the fort-type name list),
+0x0041F830,func,@FortMultiButton@8,FortMultiButton,sms,confirmed,set the selected radio-button index in a Fort-mission multiplayer setup group,"undefined4 __fastcall FortMultiButton(undefined4, undefined4)"
+0x0041F840,func,@FortMultiButtonText@8,FortMultiButtonText,sms,confirmed,set a Fort-setup radio group by matching the given label against the fort-type name list,"undefined4 __fastcall FortMultiButtonText(undefined4, undefined4)"
+0x0041F8D0,func,FortTypeNameList,,re,confirmed,build (or fetch cached) the fort-type name list from the fort .M definitions,
 0x0041FB60,func,_FortMission@4,FortMission,sms,confirmed,Fort (base-assault) mission builder,undefined4 __stdcall FortMission(undefined4)
+0x00420790,func,FortSetupApplyA,,re,confirmed,Fort setup helper: apply a picked option to the fort configuration,
+0x004207C0,func,FortSetupApplyB,,re,confirmed,Fort setup helper: apply a picked option to the fort configuration,
+0x00420800,func,FortSetupApplyC,,re,confirmed,Fort setup helper: apply a picked option to the fort configuration,
+0x00420830,func,FortMissionSetup,,re,confirmed,"Fort (""base assault"") mission setup: seed the RNG, set fort size/parameters, and configure the object-side filters from _gameMultiPrefs (sides 0x30000)",
+0x00420AB0,func,FortSetupReset,,re,confirmed,reset the fort-setup working state,
+0x00420AD0,func,FortSetupCountA,,re,confirmed,Fort setup helper: count/enumerate a fort option set,
+0x00420B20,func,FortSetupCountB,,re,confirmed,Fort setup helper: count/enumerate a fort option set,
+0x00420BB0,func,FortSetupDialog,,re,confirmed,the Fort-mission multiplayer setup dialog: fort type / sides / size selection driving FortMissionSetup,
 0x00421C80,func,_ZONEAdd@4,ZONEAdd,sms,confirmed,,undefined4 __stdcall ZONEAdd(undefined4)
 0x00421CC0,func,_ZONEForGV@0,ZONEForGV,sms,confirmed,,undefined4 __stdcall ZONEForGV(void)
 0x00421D40,func,ZONEActive,,re,confirmed,"zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __fastcall ZONEActive(undefined4)
@@ -108,7 +120,10 @@ va,kind,name,display,source,confidence,notes,type
 0x0042B0F6,func,MAPGroupSetLeader,,re,confirmed,make the selected object its group's leader (_groupIds[slot]=sel); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPGroupSetLeader(void)
 0x0042B19D,func,MAPGroupAdd,,re,confirmed,"add an object to group slot N (_GRPAdd, _GRPHumansFirst); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MAPGroupAdd(short)
 0x0042B275,func,MAPDeleteSpecial,,re,confirmed,delete the selected special marker (_MMFreePtr on _specials[sel]); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPDeleteSpecial(void)
+0x00441C60,func,_ChooseScoreInit,ChooseScoreInit,sms,confirmed,seed the combat-score display: latch the .MC proc(1) result into the scoreboard state and reset the combat-score timer,
 0x00441C90,func,_ChooseScore,ChooseScore,sms,confirmed,score-screen selection (end-of-mission),
+0x0044CF00,func,@FortMultiButton2@8,FortMultiButton2,sms,confirmed,second Fort-setup radio-group button setter,"undefined4 __fastcall FortMultiButton2(undefined4, undefined4)"
+0x0044CF10,func,@FortMultiButtonText2@8,FortMultiButtonText2,sms,confirmed,second Fort-setup radio group text matcher,"undefined4 __fastcall FortMultiButtonText2(undefined4, undefined4)"
 0x0044D070,func,_FortMission2@4,FortMission2,sms,confirmed,Fort mission builder (variant 2),undefined4 __stdcall FortMission2(undefined4)
 0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,,undefined4 __cdecl AwardMedal(undefined4)
 0x00467180,func,?PilotSave@@YIFPAUPILOT@@F@Z,PilotSave,sms,confirmed,"write a PILOT record to PLT%03d.P (slot -1 = PilotFindFreeSlot), 0x25e0 bytes via RM cache + SaveFile, insert into the sorted roster, set _pilotName","short __fastcall PilotSave(PILOT *, short)"
@@ -151,10 +166,22 @@ va,kind,name,display,source,confidence,notes,type
 0x00480110,func,__BriefMap@4,_BriefMap,sms,confirmed,briefing map step: MAPScreen when enabled; returns next-screen code 0xd/0xb,undefined4 __stdcall _BriefMap(undefined4)
 0x00480150,func,__SelectPlane@4,_SelectPlane,sms,confirmed,plane-select step via SelectRepairPlane (pilot-aware); next-screen code 0xe when skipped,undefined4 __stdcall _SelectPlane(undefined4)
 0x004801A0,func,__RepairPlane,_RepairPlane,sms,confirmed,repair-plane step via SelectRepairPlane(repair mode) when a pilot is loaded,
+0x004801C0,func,_InitAntiCheat,InitAntiCheat,sms,confirmed,"multiplayer anti-cheat: clear the FILE_CRC verification table (_localAntiCheat, stride 0x11) and per-computer cheat/frame-rate state",
+0x00480230,func,?ComputeCRC@@YGJPAUOBJ_TYPE@@@Z,ComputeCRC,sms,confirmed,"CRC-32 (via _crc_table) over a class-specific prefix of an OBJ_TYPE record (0xa6 plane / 0xba GV / 0x1bc ordnance / 0x13b …), zeroing the variable tail fields first so only the tuning bytes count; fort missions exempt class-5 ordnance. Detects a modified .PT/.OT (souped-up plane)",long __stdcall ComputeCRC(OBJ_TYPE *)
+0x004804C0,func,?GetAntiCheatIndex@@YGJPAD@Z,GetAntiCheatIndex,sms,confirmed,find (or -1) the anti-cheat table slot for a type filename,long __stdcall GetAntiCheatIndex(char *)
+0x00480530,func,_FindAntiCheatIndex@4,FindAntiCheatIndex,sms,confirmed,"find the anti-cheat slot for a filename, returning the free slot count when absent (insert position)",undefined4 __stdcall FindAntiCheatIndex(undefined4)
+0x004805A0,func,_UpdateAntiCheat@8,UpdateAntiCheat,sms,confirmed,record this station's CRC for a type file into the shared table and set its presence bit (MP only),"undefined4 __stdcall UpdateAntiCheat(undefined4, undefined4)"
 0x004805AC,func,,,waiver,inferred,FOREIGN: anti-cheat CRC accumulator per _thisComputer; owner = network/integrity #219,
+0x00480690,func,_PostAntiCheat@0,PostAntiCheat,sms,confirmed,broadcast every local CRC (MPSendAntiCheat) + the local cheats-on flag at mission start; arm the frame-rate/cheat-info display windows,undefined4 __stdcall PostAntiCheat(void)
+0x00480700,func,?PostCheatsOn@@YGJXZ,PostCheatsOn,sms,confirmed,broadcast whether the local player has cheats enabled; re-show the cheat banner on change,long __stdcall PostCheatsOn(void)
+0x00480750,func,?_MISSIONInit1@@YGXXZ,MISSIONInit1Impl,sms,confirmed,"THE mission bring-up: seed the RNG (Rand16 ^ system-time ^ waitCounter), zero all 8-slot per-player score arrays (kills/deaths/damage/revives/killRatio/scores + human/AI splits), reset scenario end-conditions (endScenarioKills/Time, revive rules), randomise wind, then init every sim subsystem in order — T_Init, OBJInit(300000), COLInit, CTInit, MSGInit, SAYInit, WNGInit, GRPInit, APInit, PLANEInit, ROInit, PROJInit, ZONEInit, GRAPHICInit — and clear the _stats block",void __stdcall _MISSIONInit1(void)
 0x004809D0,func,MISSIONLoadOrdIcons,,re,inferred,load ordnance HUD icon PICs (ord_air3.PIC ...) during MISSIONInit2 when no player plane / at home airport,undefined4 __stdcall MISSIONLoadOrdIcons(undefined4)
+0x00480A30,func,?_MISSIONInit2@@YGXXZ,MISSIONInit2Impl,sms,confirmed,"post-load pass (after _MISSIONTextProc built the objects): assign sides (MAPSetSide), find humans, resolve aliases (OBJAliasAll/ForMulti), set the mission clock, load the .MC event proc (host only), SAYInit2 + ChooseScoreInit, load ordnance icons, first MISSIONCheckSuccess",void __stdcall _MISSIONInit2(void)
+0x00480B40,func,_MISSIONInit1@0,MISSIONInit1,sms,confirmed,"C-linkage entry wrapping _MISSIONInit1 (the mission bring-up), for the .MC/shell callers",undefined4 __stdcall MISSIONInit1(void)
 0x00480B50,func,_MISSIONInit2@0,MISSIONInit2,sms,confirmed,,undefined4 __stdcall MISSIONInit2(void)
+0x00480B60,func,_MISSIONInit3@0,MISSIONInit3,sms,confirmed,third init phase: reset the SAY home/succeeded/failed flags and seed them from MISSIONSucceededForThisPlayer,undefined4 __stdcall MISSIONInit3(void)
 0x00480B70,func,?MyFilterProc@@YADPAGPAJPAD@Z,MyFilterProc,sms,confirmed,,"char __cdecl MyFilterProc(unsigned short *, long *, char *)"
+0x00480B80,func,_MISSIONInitMedalInfo@0,MISSIONInitMedalInfo,sms,confirmed,set _playerHasWingmen from the player's wing size (medal eligibility) and refresh the cheating state,undefined4 __stdcall MISSIONInitMedalInfo(void)
 0x00480BE0,func,_MISSIONSetCheating@0,MISSIONSetCheating,sms,confirmed,sets the mission cheating flag,undefined4 __stdcall MISSIONSetCheating(void)
 0x00480C20,func,_LoadCampaignProc,LoadCampaignProc,sms,confirmed,load the campaign proc resource -> _campaignProc,
 0x00480C40,func,_InitCampaignPilot,InitCampaignPilot,sms,confirmed,,
@@ -180,6 +207,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00481440,func,_CallCampaignProc@4,CallCampaignProc,sms,confirmed,"the campaign driver: cmd 0 init, 1 = save PILOT.BKP + invoke + SeqEnd (mission start), 3 = post-mission (playerBailed test, bail zeroes the 0xbc-byte plane-roster slot at +0xdb0, home landing stores damage into the slot + repair% = dam*100/max + type+0x1b4 clamp 100, LoadCampaignStores return, stats: missions/failures/bails/wingman at +0x1f80..), 4 = debrief (dead/MIA/failed -> retry restores PILOT.BKP else save+off), 5 = end (victory appends to the campaigns-won field +0xc2), 6/8 = query, 7 = bail notify",undefined4 __stdcall CallCampaignProc(undefined4)
 0x00481920,func,CampaignProcInvoke,,re,confirmed,low-level campaign-DLL call: latch __campaignFailures=DAT_004fab40 then (*_campaignProc)(cmd). Inner worker of _CallCampaignProc@4,undefined4 __stdcall CampaignProcInvoke(undefined4)
 0x00481940,func,_CallMissionProc@8,CallMissionProc,sms,confirmed,dispatches into the mission's compiled .MC DLL proc (see MC.md); called from _MISSIONTextProc for the mission-logic handoff,"undefined4 __stdcall CallMissionProc(undefined4, undefined4)"
+0x004819F0,func,_MISSIONShutdown@0,MISSIONShutdown,sms,confirmed,"tear the mission down once (guard flag): WRShutdown, T_Shutdown(+DB), OBJShutdown, VIEWFree, HUDShutdown, CTShutdown, MPMissionShutdown, sound off, SAYShutdown, StreamersShutdown, free the mission RM/MM alloc id 1",undefined4 __stdcall MISSIONShutdown(void)
 0x00481A70,func,_MISSIONSuccess@0,MISSIONSuccess,sms,confirmed,imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall MISSIONSuccess(void)
 0x00481A7B,func,MISSIONEnemiesAlive,,re,inferred,"scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __cdecl MISSIONEnemiesAlive(void)
 0x00481C10,func,_MISSIONTextProc@16,MISSIONTextProc,sms,confirmed,"the .M mission-file interpreter (#485): whitespace-tokenizes the file via TextNextToken over a global cursor (_0x55281c/_0x5528c0), dispatches a keyword switch that reads numeric fields (TextNextNumber) and constructs the live mission — _T_AddObj per placement, then _WNGAdd (wing)/_GRPAdd (group)/_HARDLoad (loadout)/MAPAddSpecial, and _OBJAlias+_WPSetWaypoints for waypoint lists. Header directives set _layerName/_missionDLLName/_mapName/_missionHours; _CallMissionProc runs the .MC DLL","undefined4 __stdcall MISSIONTextProc(undefined4, undefined4, undefined4, undefined4)"
@@ -203,14 +231,27 @@ va,kind,name,display,source,confidence,notes,type
 0x004852F0,func,_MISSIONFortStatus@4,MISSIONFortStatus,sms,confirmed,Fort-mission: current fort status query,undefined4 __stdcall MISSIONFortStatus(undefined4)
 0x00485380,func,CampaignAccumStats,,re,confirmed,fold end-of-mission stats into campaign running totals (DAT_004fab44.. += DAT_0054ddc4..) via StatsAddPair. AnalyzePLT 'stats flush'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl CampaignAccumStats(void)
 0x004854A0,func,StatsAddPair,,re,confirmed,add a fired/hit counter pair (accumulator). AnalyzePLT 'weapon accuracy accumulator'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall StatsAddPair(int *,int *)"
+0x004854E0,func,_WpnStats@28,WpnStats,sms,confirmed,"per-weapon stats accumulator: bump the shots/hits/kills/misses counters in the StatsBucketFor bucket by event type (0 fire, 1 hit+damage, 2 kill, 3 miss); Jane's Online counts only human-target events; mirror to peers (MPWpnStats)","undefined4 __stdcall WpnStats(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004856F0,func,StatsBucketFor,,re,confirmed,resolve the per-player weapon-stat bucket for a shooter/target id (_playerId/_playerWMId). AnalyzePLT 'weapon accuracy dispatch'; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall StatsBucketFor(int,u16,u16)"
+0x00485820,func,_KillStats@12,KillStats,sms,confirmed,"tally one kill into the right category (13 buckets x player/wingman at 0x54ddx8) from the victim class/type-flag bits — friendly kill, plane, fort-gun, heli, ship, ground vehicle, SAM, AAA, structure, etc.; mirror to peers (MPKillStats)","undefined4 __stdcall KillStats(undefined4, undefined4, undefined4)"
+0x00485A40,func,_LandingStats@12,LandingStats,sms,confirmed,tally a landing for the player/wingman and add its quality score (good = +50/+100); mirror to peers (MPLandingStats),"undefined4 __stdcall LandingStats(undefined4, undefined4, undefined4)"
 0x00485AE0,func,_ConvertPilotFiles@0,ConvertPilotFiles,sms,confirmed,pilot-file migration: 0x15b4 legacy records (pre-FA) converted field-by-field to the 0x25e0 layout and rewritten; other wrong-size files renamed to .POO,undefined4 __stdcall ConvertPilotFiles(void)
 0x00485EF0,func,_CheckCD,CheckCD,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,"undefined4 __cdecl CheckCD(undefined4, undefined4)"
 0x00486010,func,_MISSIONLoadCommonResources@0,MISSIONLoadCommonResources,sms,confirmed,loads the resources common to every mission,undefined4 __stdcall MISSIONLoadCommonResources(void)
+0x00486060,func,_CanBackUp@0,CanBackUp,sms,confirmed,can the briefing sequence step back a screen — screen-code + doBriefMap/doSelectPlane/doBriefPaper gating (host always can),undefined4 __stdcall CanBackUp(void)
 0x004860F0,func,?MISSIONFortWin@@YGDJ@Z,MISSIONFortWin,sms,confirmed,Fort-mission win condition test,char __stdcall MISSIONFortWin(long)
+0x00486160,func,_MISSIONEndScenario@0,MISSIONEndScenario,sms,confirmed,"the end-of-scenario test (multiplayer): time limit, four kill-goal modes (team total / either side reaches N / any single player / enemy team), Fort win via MISSIONFortWin (0x80 friendly, 0x800000 enemy), and the Jane's Online all-dead / out-of-revives condition; calls SetScenarioEndTime(2) when met",undefined4 __stdcall MISSIONEndScenario(void)
+0x00486440,func,_MISSIONScoreSides@0,MISSIONScoreSides,sms,confirmed,"sum friendly vs enemy team scores (each MISSIONScore, capped at 0x3e700)",undefined4 __stdcall MISSIONScoreSides(void)
+0x004864D0,func,@MISSIONScore@4,MISSIONScore,sms,confirmed,"one player's score by the _scoreBy metric: 0 = kills, 1 = kill/death ratio, 2 = damage",undefined4 __fastcall MISSIONScore(undefined4)
+0x00486500,func,@MISSIONSortPlayers@4,MISSIONSortPlayers,sms,confirmed,"qsort the player index array by score (descending, id tiebreak) for the scoreboard",undefined4 __fastcall MISSIONSortPlayers(undefined4)
+0x00486530,func,MISSIONScoreCmp,,re,confirmed,"qsort comparator for MISSIONSortPlayers: compare two players by MISSIONScore, id as tiebreak",
 0x00486580,func,_MISSIONAddScore@12,MISSIONAddScore,sms,confirmed,mission scoring accumulator (#485),"undefined4 __stdcall MISSIONAddScore(undefined4, undefined4, undefined4)"
 0x004867D0,func,MISSIONPlayerSlot,,re,confirmed,resolve the player-score array slot index for a computer/object id (used by _MISSIONAddScore); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MISSIONPlayerSlot(short)
+0x00486810,func,_MISSIONPrefsChanged@0,MISSIONPrefsChanged,sms,confirmed,"apply changed game prefs to the live player plane: unlimited weapons (HARDUnlimited), guns-only (HARDGunsOnlyAll), refresh cheating flags",undefined4 __stdcall MISSIONPrefsChanged(void)
 0x00486860,func,_MISSIONCheckSuccess@0,MISSIONCheckSuccess,sms,confirmed,per-tick mission success poll; drives _MISSIONFortWin / end-of-mission,undefined4 __stdcall MISSIONCheckSuccess(void)
+0x004868B0,func,_MISSIONSucceededForThisPlayer@0,MISSIONSucceededForThisPlayer,sms,confirmed,_missionSucceeded from the local player's side perspective (negated when this station flies the opposing side),undefined4 __stdcall MISSIONSucceededForThisPlayer(void)
+0x00486910,func,@MISSIONEnsureLegalName@4,MISSIONEnsureLegalName,sms,confirmed,"strip in-string ""."" / ""^"" control markers from a pilot name/callsign so they cannot smuggle sound/insignia directives",undefined4 __fastcall MISSIONEnsureLegalName(undefined4)
+0x00486980,func,MISSIONUpdateFpsRatio,,re,confirmed,store the FPS ratio DAT_5528f0 = frames/ticks (mission timing readout helper),
 0x004869A0,func,_TIMESystemTime@0,TIMESystemTime,sms,confirmed,,undefined4 __stdcall TIMESystemTime(void)
 0x00486A10,func,_TIMEInit@12,TIMEInit,sms,confirmed,,"undefined4 __stdcall TIMEInit(undefined4, undefined4, undefined4)"
 0x00486A90,func,_TIMERestart@0,TIMERestart,sms,confirmed,,undefined4 __stdcall TIMERestart(void)
@@ -219,14 +260,67 @@ va,kind,name,display,source,confidence,notes,type
 0x00486C60,func,@TIMESetCompression@4,TIMESetCompression,sms,confirmed,,undefined4 __fastcall TIMESetCompression(undefined4)
 0x00486DC0,func,,,waiver,inferred,FOREIGN: FPS-counter print helper; owner = game-loop/startup,
 0x00486E20,func,_InstallTimerInt,InstallTimerInt,sms,confirmed,,
+0x004A10E0,func,_SingleMission@0,SingleMission,sms,confirmed,"the single-mission browser: glob the .M files, read each mission's title from [section 1] of its .MT (falling back to the filename), sort (SortIndexByString), present the SNGLMISS dialog picker with MP filename sync, and on OK write _missionName (uppercased) + return 1 to launch",undefined4 __stdcall SingleMission(void)
 0x004A1DD0,func,@BriefScreen@16,BriefScreen,sms,confirmed,"briefing/debrief screen: loads <mission>.MT (fallback [section 1..3] skeleton), AddStats for debrief (+ Jane's Online JOGC stats), one of 4 random backgrounds (BRIEFSCR/SC3/SCU/SCV, DEB* for debrief), CHATKey passthrough, mouse wheel-areas -> PgUp/PgDn, MP ready-status sync (0xd brief/0xe debrief/0x1a ready), campaignState 0x13 while briefing","undefined4 __fastcall BriefScreen(undefined4, undefined4, undefined4, undefined4)"
 0x004A2A30,func,_AddStats@20,AddStats,sms,confirmed,"compose the marked-up debrief/logbook stats text: CAMPAIGN/MISSION AVERAGES/PLAYER WINGMAN/AIRBASE/MISSION sections, kills/losses/damage/landing grade/elapsed time lines, [center]/[bold]/[underline] tags","undefined4 __stdcall AddStats(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004EB758,data,,,waiver,confirmed,interior of / adjacent to ?smallFont@@3PAUFONT@@A; named at its base or owned by that subsystem,
+0x004EE9D0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF098,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
 0x004EF09C,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
+0x004EF0A0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF308,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF330,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF340,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF350,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF420,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF438,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF450,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF468,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF480,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF498,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF4B0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF4C8,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF4E0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF500,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF538,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF560,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF598,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF5D0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF5F0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF680,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF738,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF7D0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF858,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF8E0,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EF970,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFA10,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFA98,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFB38,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFB58,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFBE8,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFC10,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFC38,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFC60,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFC78,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFCA8,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFD08,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
+0x004EFD50,data,,,waiver,confirmed,"interior of the mission string-pointer / fort-type name tables (constant text lists, not state)",
 0x004F0000,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
 0x004F00E8,data,,,waiver,confirmed,unnamed scalar referenced by the #492 player-shell claims; role not yet recovered,
 0x004F0110,data,,,waiver,confirmed,unnamed scalar referenced by the #492 player-shell claims; role not yet recovered,
 0x004F0130,data,,,waiver,confirmed,unnamed scalar referenced by the #492 player-shell claims; role not yet recovered,
+0x004F0148,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F0170,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F0180,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F0190,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F01A4,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F01B8,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F01CC,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F01E0,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F01F4,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F0208,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #485 claims; layout not yet recovered,
+0x004F0210,data,,,waiver,confirmed,unnamed scalar referenced by the #485 claims; role not yet recovered,
+0x004F0231,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #485 claims; layout not yet recovered,
 0x004F0398,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
 0x004F03A0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
 0x004F04E0,data,,,waiver,confirmed,interior of / adjacent to ?fortNationGroundForces@@3PAGA; named at its base or owned by that subsystem,
@@ -516,6 +610,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004FB1A8,data,_missionName,missionName,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,
 0x004FB1C9,data,,,waiver,confirmed,interior of / adjacent to _mapName; named at its base or owned by that subsystem,
 0x004FB211,data,,,waiver,confirmed,interior of / adjacent to _campaignName; named at its base or owned by that subsystem,
+0x004FB258,data,,,waiver,confirmed,interior of / adjacent to _selectedTypeName; named at its base or owned by that subsystem,
 0x004FB2BC,data,,,waiver,confirmed,interior of / adjacent to _nationStrings; named at its base or owned by that subsystem,
 0x004FB4FC,data,,,waiver,confirmed,"interior of _pilotRanks (+0x4) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
 0x004FB500,data,,,waiver,confirmed,"interior of _pilotRanks (+0x8) — rank-name pointer table (""1st Lieutenant"", ""Captain"", ""Major"", ""Lt. Colonel""); named at its base",
@@ -699,7 +794,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004FC92C,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem,
 0x004FC940,data,,,waiver,confirmed,interior of / adjacent to ?noTimerSleep@@3JA; named at its base or owned by that subsystem,
 0x00502424,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x0050263C,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x00502648,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x0050264C,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x00502658,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
 0x00502678,data,,,waiver,confirmed,interior of / adjacent to ?numberStrings@@3PAPADA; named at its base or owned by that subsystem,
+0x00502848,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
+0x00502858,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005028C0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005028C8,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005028D4,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
@@ -715,6 +816,7 @@ va,kind,name,display,source,confidence,notes,type
 0x005224CE,data,,,waiver,confirmed,interior of / adjacent to _dam; named at its base or owned by that subsystem,
 0x005224F0,data,,,waiver,confirmed,"interior of _dam (+0x28) — damage flag, cleared by _DAMAGEInit and tested by _DAMAGEDoHit; named at its base",
 0x00529134,data,,,waiver,confirmed,interior of / adjacent to _itemPicked; named at its base or owned by that subsystem,
+0x005292B8,data,,,waiver,confirmed,interior of / adjacent to _janesOnlineName; named at its base or owned by that subsystem,
 0x00529324,data,,,waiver,confirmed,interior of / adjacent to _fortCount; named at its base or owned by that subsystem,
 0x00529328,data,,,waiver,confirmed,interior of / adjacent to _fortCount; named at its base or owned by that subsystem,
 0x00529350,data,,,waiver,confirmed,interior of / adjacent to _fortCount; named at its base or owned by that subsystem,
@@ -741,8 +843,12 @@ va,kind,name,display,source,confidence,notes,type
 0x00529628,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
 0x0052962C,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
 0x00529630,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
+0x00529634,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
+0x00529638,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
 0x0052963C,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
 0x00529640,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
+0x00529644,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
+0x00529648,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
 0x00529650,data,,,waiver,confirmed,interior of / adjacent to ?fortAwacsDamage@@3DA; named at its base or owned by that subsystem,
 0x0052968C,data,,,waiver,confirmed,interior of / adjacent to _fortTypeNamesFull; named at its base or owned by that subsystem,
 0x005296C8,data,,,waiver,confirmed,interior of / adjacent to _fortTypeNamesFull; named at its base or owned by that subsystem,
@@ -875,7 +981,10 @@ va,kind,name,display,source,confidence,notes,type
 0x005469B4,data,,,waiver,confirmed,interior of / adjacent to _wingIds; named at its base or owned by that subsystem,
 0x0054B82C,data,,,waiver,confirmed,"interior of the text-format context stack (_fmtText, 0x44-byte contexts) / font cache; shell-ui.md section",
 0x0054BDAC,data,,,waiver,confirmed,interior of / adjacent to ?stats_playerState@@3JA; named at its base or owned by that subsystem,
+0x0054BDBC,data,,,waiver,confirmed,interior of / adjacent to _playerDamageAI; named at its base or owned by that subsystem,
+0x0054BDE4,data,,,waiver,confirmed,interior of / adjacent to ?playerScores@@3PAJA; named at its base or owned by that subsystem,
 0x0054BE1C,data,,,waiver,confirmed,interior of / adjacent to ?statsFortSuppDestroyedHitPoints@@3PAJA; named at its base or owned by that subsystem,
+0x0054BE3C,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDC4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDD0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDD4,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
@@ -886,24 +995,43 @@ va,kind,name,display,source,confidence,notes,type
 0x0054DDE8,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDEC,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
 0x0054DDF0,data,,,waiver,confirmed,interior of / adjacent to _stats; named at its base or owned by that subsystem,
+0x0054DDF8,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
 0x0054DE00,data,,,waiver,confirmed,interior of _stats (+0x1FC8) — the 0x978-dword mission statistics array; named at its base,
+0x0054DE08,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
+0x0054DE10,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
+0x0054DE18,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
+0x0054DE20,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
 0x0054DE28,data,,,waiver,confirmed,interior of _stats (+0x1FF0) — the 0x978-dword mission statistics array; named at its base,
+0x0054DE30,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
 0x0054DE38,data,,,waiver,confirmed,interior of _stats (+0x2000) — the 0x978-dword mission statistics array; named at its base,
 0x0054DE40,data,,,waiver,confirmed,interior of _stats (+0x2008) — the 0x978-dword mission statistics array; named at its base,
+0x0054DE48,data,,,waiver,confirmed,interior of the mission kill-category / landing stats counter block (KillStats/LandingStats); category bases named where identified,
 0x0054E418,data,_campaignFailures,campaignFailures,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined4
+0x0054E424,data,,,waiver,confirmed,interior of / adjacent to _playerRevives; named at its base or owned by that subsystem,
 0x0054E44C,data,,,waiver,confirmed,interior of / adjacent to ?statsFortSuppDestroyed@@3PAJA; named at its base or owned by that subsystem,
 0x0054E468,data,_playerDead,playerDead,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined2
 0x0054E474,data,,,waiver,confirmed,interior of / adjacent to _playerKills; named at its base or owned by that subsystem,
+0x0054E4A4,data,,,waiver,confirmed,interior of / adjacent to _playerKillsHuman; named at its base or owned by that subsystem,
+0x0054E4C4,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
+0x0054E514,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
 0x0054E54D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
+0x0054E551,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
 0x0054E56D,data,,,waiver,confirmed,interior of / adjacent to _globalAntiCheat; named at its base or owned by that subsystem,
+0x0054E571,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
 0x00551644,data,,,waiver,confirmed,interior of / adjacent to ?statsFortKills@@3PAJA; named at its base or owned by that subsystem,
 0x00551660,data,_campaignSucceeded,campaignSucceeded,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined1
 0x00551668,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
 0x00551669,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
 0x0055166A,data,,,waiver,confirmed,interior of / adjacent to _campaignSucceeded; named at its base or owned by that subsystem,
+0x0055167C,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
+0x005516A4,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
 0x005516C4,data,,,waiver,confirmed,interior of / adjacent to ?statsFortAircraftUsed@@3PAJA; named at its base or owned by that subsystem,
 0x005516F1,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem,
 0x005516FD,data,,,waiver,confirmed,interior of / adjacent to ?localAntiCheat@@3PAUFILE_CRC@@A; named at its base or owned by that subsystem,
+0x00551701,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
+0x00551702,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
+0x00551703,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
+0x0055170E,data,,,waiver,confirmed,"interior of the multiplayer anti-cheat FILE_CRC tables (_localAntiCheat/_globalAntiCheat, per-computer CRC + presence bits)",
 0x00552804,data,_campaignFailed,campaignFailed,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined1
 0x00552808,data,,,waiver,confirmed,interior of / adjacent to _campaignFailed; named at its base or owned by that subsystem,
 0x0055281C,data,,,waiver,confirmed,interior of / adjacent to _endScenarioKillsType; named at its base or owned by that subsystem,
