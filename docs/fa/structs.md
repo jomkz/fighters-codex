@@ -392,7 +392,7 @@ categories 1–2 and carry the standing rationale here rather than a repeated pe
 | `0x9E` | 2 | `eject_data` | `@PilotScreen@4`, `@EJECTAdd@4` | Written by `@EJECTAdd@4`. **confirmed** |
 | `0xA0` | 4 | `hud_draw_data` | `_HUDDraw@4`, `FUN_00406a5e`, `_DAMAGEInit@0` | Read by `_HUDDraw@4`. **confirmed** |
 | `0xA4` | 4 | `unk_A4` | `FUN_0040d390`, `FUN_00425358`, `FUN_0042d050` | 93× accesses. **inferred** |
-| `0xA6` | 2 | `unk_A6` | `FUN_00406a5e`, `FUN_0040903b`, `FUN_00409f30` | 93× accesses. **inferred** |
+| `0xA6` | 2 | `damage_flags` | `_DAMAGEDoHit@12`, `_DAMAGEUpdate@0`, `FUN_00406a5e` | Damage-state flag bits: `_DAMAGEDoHit`/`_DAMAGEUpdate` gate on bit `0x1` (aircraft, `_cg==4`) and bit `0x80` (class-7 objects). **confirmed** (#487) |
 | `0xA8` | 4 | `unk_A8` | `FUN_00420bb0`, `FUN_0042d050`, `_MoveObj@0` | 90× accesses. **inferred** |
 | `0xAA` | 2 | `damage_hit_data` | `_DAMAGEInit@0`, `_DAMAGEDoHit@12`, `FUN_00417530` | Written by `_DAMAGEDoHit@12`. **confirmed** |
 | `0xAC` | 4 | `unk_AC` | `_HUDInit@0`, `FUN_0040d810`, `FUN_0040e3a0` | 41× accesses. **inferred** |

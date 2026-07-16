@@ -8,13 +8,21 @@
 #include "../fa_types.hpp"
 
 // Flight model / physics (FM/HARD) -- FA.EXE
-// 88/88 functions have a recovered signature; 0/0 globals have a recovered type.
+// 97/97 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::flight_model {
 
 // --- functions -------------------------------------------------------
+undefined4 DAMAGEInit2(void);  // 0x0040F6B0  __stdcall
+undefined4 DAMAGEInit(void);  // 0x0040F760  __stdcall
+undefined4 DAMAGEDoHit(undefined4, undefined4, undefined4);  // 0x0040F970  __stdcall
+undefined4 DAMAGEPorpoise(undefined4, undefined4, undefined4, undefined4);  // 0x004106D0  __stdcall
+undefined4 DAMAGEUpdate(void);  // 0x004108B0  __stdcall
+undefined4 DAMAGEReport(void);  // 0x00411350  __stdcall
+undefined4 DAMAGEAutopilotAvail(void);  // 0x004113C0  __stdcall
 undefined4 SpeedOfSound(undefined4);  // 0x00412780  __fastcall
 unsigned short TVKey(unsigned short);  // 0x00413C70  __fastcall
+undefined4 ArmPlane(undefined4);  // 0x004197D0  __fastcall
 long IntersectT(F24_POINT *, long, long);  // 0x00447970  __cdecl
 undefined4 FMUpdateGearPitch(void);  // 0x004514C0  __stdcall
 undefined4 FMUpdateGear(void);  // 0x00451580  __stdcall
@@ -101,5 +109,6 @@ undefined4 FMVertMotion(void);  // 0x0047AEB0  __stdcall
 undefined4 FMSetTV(undefined4, undefined4);  // 0x0047AF70  __stdcall
 undefined4 FMResetTV(void);  // 0x0047B000  __stdcall
 undefined4 FMFlight(void);  // 0x0047B020  __stdcall
+undefined4 _ArmPlane(undefined4);  // 0x0047FA50  __stdcall
 
 }  // namespace fxe::fa::flight_model

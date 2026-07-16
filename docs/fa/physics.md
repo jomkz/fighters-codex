@@ -525,6 +525,45 @@ Representative subset; the full record is in
 | `0x454140` | `ChangePlaneType` | swap the aircraft to a different type record |
 | `0x4543C0` | `SelectRepairPlane` | pick/repair an aircraft in the campaign rearm flow |
 
+## 7. Arming and the damage model (#487)
+
+The two ends of the combat state machine — applying a loadout, and resolving what a hit does
+to the aircraft.
+
+### `@ArmPlane@4` — `0x4197D0` (11 KB — the largest single function in the binary)
+
+The interactive **arming / loadout screen**. It presents the aircraft's hardpoints, drives
+weapon selection through the dialog widgets (`DialogSelectItem` / `DialogGetValue`, drawn with
+`G_ColorPrint` / `G_URect`), and commits the chosen loadout through the hardpoint API
+(`HARDPtrs` / `HARDLoad`), mirroring it to other players in multiplayer via `MPSetHardpoints`
+and `MPSetFuel`. It reads store records off disk with `GetFiles` / `RMAccess`. (Its size is
+mostly the screen layout and per-station option handling.)
+
+### `_DAMAGEDoHit@12` — `0x40F970` — hit resolution
+
+`DAMAGEDoHit(entity *victim, short amount, int *hit_record)` is where a confirmed hit becomes
+damage. It branches on the victim's object class — `_cg == 4` for the player/AI **aircraft**
+path, class `7` for other object types — reads the current health at `entity+0x0E`, tests the
+**`damage_flags` word at `entity+0xA6`** (bit `0x1` gates the aircraft path, bit `0x80` the
+class-7 path — see [structs.md](structs.md#1-entity--the-object-record-common-region)), and
+writes the hit into `damage_hit_data` (`+0xAA`) and the net-sync `cn_damage` (`+0xC8`). A
+destroyed aircraft is handed to `PLANEBreakUp` (`0x49D730`) for the wreck-shape swap documented
+in [shape-selection.md](shape-selection.md).
+
+### The rest of the `DAMAGE*` cluster
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x40F760` | `DAMAGEInit` | seed the damage-state fields (`hud_draw_data` `+0xA0`, `damage_hit_data` `+0xAA`, `damage_init_data` `+0x6A`) |
+| `0x40F6B0` | `DAMAGEInit2` | secondary init |
+| `0x4108B0` | `DAMAGEUpdate` | per-frame progression: re-reads `damage_flags` (`+0xA6`) and applies ongoing damage effects |
+| `0x4106D0` | `DAMAGEPorpoise` | the pitch instability a damaged / overstressed airframe develops |
+| `0x411350` | `DAMAGEReport` | HUD message: `_dam` as a percentage (`_percentDamageString`) via `HUDMessage` |
+| `0x4113C0` | `DAMAGEAutopilotAvail` | is the autopilot still usable given the damage-state globals at `0x5224DC–0x5224E3` |
+
+**Field recovered:** reading these promoted `entity+0xA6` from `unk_A6` to **`damage_flags`** —
+the damage system is its writer/reader, exactly the evidence #487 predicted.
+
 ## Open Questions
 
 ### 1. Fuel-flow scaling constant — resolved
