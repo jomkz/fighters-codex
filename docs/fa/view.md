@@ -65,7 +65,9 @@ blend-back, not a mission recording, and there is no on-disk replay format to sp
 padlock / fly-by / external) is not fully pinned. A short trace of the callers that write
 `_mainV[0x5A]` would settle it.
 
-*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262)).*
+*Status: open question — the view-mode enumeration is not fully pinned. The re-static pass that
+raised it ([#262](https://github.com/jomkz/fighters-codex/issues/262)) is closed; this residual is
+not currently tracked by an open issue.*
 
 ## Related
 

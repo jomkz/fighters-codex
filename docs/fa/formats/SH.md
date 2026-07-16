@@ -137,7 +137,7 @@ see [Engine Notes](#engine-notes).
 where nonzero it equals `radius * 2^(scale-8)` exactly in 93/134 files, with
 authoring drift in the rest (ratios 1.4–4.8). It is zero in 1141/1275 shapes —
 every aircraft and weapon — and nonzero only for ground/naval scenery (ships,
-runways, cities, rocks, SAM sites). No the game executable code reads it: it is authoring
+runways, cities, rocks, SAM sites). No game-executable code reads it: it is authoring
 residue — see [Engine Notes](#engine-notes) for the tracing evidence.
 
 **Scale table** (`world_coord_feet = raw_i16 * scale_factor`):

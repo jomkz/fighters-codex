@@ -85,9 +85,10 @@ tail-continue the other) with an object-field or face-plane dot-product sign onl
 order — painter's-algorithm sorting in bytecode. Layouts and the static-walk consequences are in
 [SH.md → Fragment calls and draw-order selectors](formats/SH.md#fragment-calls-and-draw-order-selectors-traced).
 
-*Status: open — re-static ([#262](https://github.com/jomkz/fighters-codex/issues/262); `sh_op_78`,
-`sh_op_80`, the ShortEOF/Unmask call structure, and the `0x6C`/`0x06`-family selectors
-characterized; the remaining larger handlers' fine state effects continue).*
+*Status: `sh_op_78`, `sh_op_80`, the ShortEOF/Unmask call structure, and the `0x6C`/`0x06`-family
+selectors are characterized ([#262](https://github.com/jomkz/fighters-codex/issues/262), closed).
+The remaining larger handlers' fine state effects are an open question, not currently tracked by an
+open issue.*
 
 ## Related
 

@@ -55,9 +55,10 @@ Three layers, each documented at its own depth:
 2. **The executable.** The engine is documented as named subsystems — the
    [game loop](game-loop.md) dispatches [objects](objects.md), [physics](physics.md),
    the [AI interpreter](ai-interpreter.md), [weapons](weapons.md), the
-   [renderer](renderer.md), the [HUD](hud.md), and the rest. Every function and every
-   referenced global in the executable has been named; each subsystem page gives you
-   the recovered symbols, struct layouts, and a flow diagram.
+   [renderer](renderer.md), the [HUD](hud.md), and the rest. Each subsystem page gives you
+   the recovered symbols, struct layouts, and a flow diagram; the
+   [reconstruction matrix](reconstruction.md) tracks exactly how much of each binary is
+   databased (a real, honest fraction — not "everything").
 3. **The overlay binaries.** Audio ([WAIL32](wail32.md)), the serial/modem comms stack
    ([comms](comms.md)), and the other companion binaries the game ships get the same
    treatment.
