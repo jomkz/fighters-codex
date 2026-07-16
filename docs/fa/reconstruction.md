@@ -105,13 +105,11 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 | Subsystem | Range(s) | Funcs (named · waived / in-range) | Ref. globals | Doc | Diagram | Issue | Status |
 |---|---|---|---|---|---|---|---|
-| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002AB0` | 25 named · 0 waived / 25 (100%) | 12 named · 23 waived | [doc](matchmaking.md) | ✓ | [#275](https://github.com/jomkz/fighters-codex/issues/275) | complete |
+| Matchmaking / internet-play client (MSAPI) | `0x100011E0–0x10002AB0` | 25 named · 773 waived / 798 (100%) | 12 named · 23 waived | [doc](matchmaking.md) | ✓ | [#275](https://github.com/jomkz/fighters-codex/issues/275) | complete |
 
-**MSAPI.DLL totals:** 1/1 subsystems complete; 25/25 in-scope functions named; 35/36 referenced globals resolved.
-
-> **Unclaimed: 773 of 798 functions (68,877 of 75,025 code bytes, 91%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+**MSAPI.DLL totals:** 1/1 subsystems complete; 798/798 in-scope functions named; 35/36 referenced globals resolved.
 
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
-**Program totals (all binaries):** 27/27 subsystems complete; 5229/5229 in-scope functions named; 5134/8269 referenced globals resolved.
+**Program totals (all binaries):** 27/27 subsystems complete; 6002/6002 in-scope functions named; 5134/8269 referenced globals resolved.
 
