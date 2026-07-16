@@ -9,9 +9,10 @@ both of which were documented while the model that feeds them was not (#486).
 > **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md)
 > symbols applied; the `CP*` functions are recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/cockpit-sensors.csv)
-> and applied to the Ghidra project. This subsystem is **active** — the named entry points and the
-> RCS model are traced; the `FUN_`-only scope-scan and detection-test helpers are not yet.
-> Confidence markers follow [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
+> and applied to the Ghidra project. This subsystem is **active** — the RCS model, the three
+> detection predicates, the RWR timing, and the scope renderers are traced (#486); a few
+> per-MFD-type layout attributions remain. Confidence markers follow
+> [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ![Cockpit sensor model: every object is scored by CPComputeRCS into a radar and IR signature, gated by CPAddItemToScopes into the contact buffers, which CPDraw renders to the scopes and the weapons seeker consumes.](diagrams/cockpit-sensors.svg)
 
@@ -39,8 +40,43 @@ accumulator; `?CPUpdateIRItems` (`0x440FE0`) refreshes the IR-seeker contact lis
 `_CPResetRWR@0` (`0x43E830`) zeroes both buffers and re-arms the scan timers.
 
 **4. Presentation — `_CPDraw@8` (`0x439220`).** Renders the radar/IR/RWR scopes and the cockpit
-MFDs from the contact buffers. (Its 15.9 KB of static layout data make it as much a HUD concern as
-a sensor one — see Open Questions.)
+MFDs from the contact buffers, through the window dispatcher below.
+
+## Detection predicates (#486)
+
+`CPAddItemToScopes` runs exactly three independent predicates per candidate object, and files
+each pass through the shared `CPScopeInsert` (dedup-and-update by object id): confirmed
+
+- **`CPRadarSees`** (`0x43DF70`) — the player's own radar. The target must be alive and
+  radar-detectable (type field `+9` bit `0x20`), pass the **mode-specific look-down filter**
+  (`_radarMode` at `0x5387D8` — its value selects ground-clutter handling and the scan-bounds
+  box, `0x5387E0` look-up vs `0x539D78` look-down), lie inside the **radar-beam FOV**
+  (`PROJInFOV`), and not be **terrain-blocked** (`COLTerrainBlocking`). Detection range is set
+  by the target's **RCS** at type `+0x3B` (`RCS × 0x30000` vs range for the wide mode), so the
+  same `CPComputeRCS` signature that draws the return also gates whether it is seen. Chaff
+  (a `GRAPHIC` of type `0xC`/`0xD`) always paints.
+- **`CPSuppRadarSees`** (`0x43E220`) — the AWACS/GCI **datalink**, active only when
+  `UsingSuppRadar`. A wider bounds box, filed into the same radar scope as a datalink contact.
+- **`CPRwrSees`** (`0x43E330`) — the RWR, i.e. *what is illuminating you*. A SAM/AAA site
+  (class 6) registers when its emitter is on (type `+0xA6` bit 1), it is not in a non-emitting
+  state, its emitter name is not excluded, and it is within `0x76AC00`; a hostile plane
+  (class 2/4) registers when it is radar-capable and carries the **radar-locking-me** flag
+  (`entity+0xDE` bit `0x400`). This is why the RWR shows threats the plain radar scope does not.
+
+## Scopes & the RWR display (#486)
+
+`CPDraw` renders each cockpit MFD through **`CPDrawWindow`** (`0x43A190`), a dispatcher that
+switches on `_windowTypes[i]`: the radar B-scope / target-designation views route to
+**`CPDrawRadarScope`** (`0x43A5C0`, the largest renderer — it walks the radar buffer, resolves
+the designated target and the selected-weapon lock, and is itself **weather-gated** through
+`WRCanSee`, see [renderer.md](renderer.md#weather-atmosphere-and-visibility-493)), and window
+type 10 routes to **`CPDrawRWR`** (`0x43EA40`). The RWR display refreshes every `0x40` ticks and
+draws the threat ring plus the aircraft's own **RCS diamond** from `_frontRCS`/`_sideRCS`; each
+contact is coloured by lock state — a **track lock** is red (`0x2B`) and a **search lock**
+yellow (`0x2C`) until `_currentT` passes `_trackLockEndT` / `_searchLockEndT`. That pair of
+timers is the **RWR spike timing**: the launch/lock warning holds for the interval the emitter
+keeps painting you. `WPCInit` (`0x438870`) lays out the MFD window rectangles from the screen
+resolution, and `CPNextTarget` (`0x440E10`) cycles the radar buffer for the `t`/`T` keys. confirmed
 
 ## Functions
 
@@ -61,24 +97,36 @@ Full record: [`db/symbols/cockpit-sensors.csv`](https://github.com/jomkz/fighter
 | `0x43DE10` | `UsingSuppRadar` | is the supplementary radar in use |
 | `0x43DE90` | `CPSetSkill` | radar/AI skill level |
 | `0x438520` | `CPSetMissile` | set the selected missile on the scope |
+| `0x43DF70` | `CPRadarSees` | radar detection predicate (look-down / FOV / terrain / RCS range) |
+| `0x43E330` | `CPRwrSees` | RWR detection predicate (is this emitter illuminating me) |
+| `0x43A190` | `CPDrawWindow` | cockpit MFD window dispatcher (per `_windowTypes[i]`) |
+| `0x43A5C0` | `CPDrawRadarScope` | radar B-scope / target-designation MFD (weather-gated) |
+| `0x43EA40` | `CPDrawRWR` | RWR threat display + track/search lock spike timing |
+| `0x440E10` | `CPNextTarget` | cycle the radar contact buffer (`t`/`T` keys) |
 
 ## Open Questions
 
-### 1. `CPDraw` home — sensor or HUD?
+### 1. `CPDraw` home — sensor or HUD? (resolved: stays)
 
-`_CPDraw@8` (`0x439220`) and its ~15.9 KB of static layout tables render the scopes, which is
-symbology work like [hud.md](hud.md). It sits in this subsystem today because it is the consumer of
-the contact buffers, but it may re-home to `hud` once the HUD symbology pass reaches it.
+`_CPDraw@8` (`0x439220`) and the `CPDrawWindow`/`CPDraw*Scope` family render the MFDs, which is
+symbology work like [hud.md](hud.md). But the read (#486) shows the renderers are inseparable
+from the contact buffers and the detection state they walk — `CPDrawRadarScope` resolves the
+designated target and the selected-weapon lock, `CPDrawRWR` reads the lock timers — so the draw
+side belongs with the sensor model that produces it, not with the flat HUD symbology. It stays
+in this subsystem.
 
-*Status: open — provisional placement; re-home decision deferred to the HUD pass ([#486](https://github.com/jomkz/fighters-codex/issues/486)).*
+*Status: resolved — re-static (#486; the scope renderers are sensor-coupled, kept here).*
 
-### 2. The detection-test helpers are still `FUN_`
+### 2. Detection thresholds & RWR spike timing — resolved
 
-`CPAddItemToScopes` calls three unnamed detection predicates (radar / IR / RWR visibility) and a
-shared insert routine. Their exact thresholds — how the RCS score becomes a detect/no-detect, and
-how RWR spike timing works — are not yet read.
+The three predicates and the RWR timing are now read (see § Detection predicates and
+§ Scopes): radar detection is a look-down-mode + beam-FOV + terrain-blocking + RCS-range test,
+the RWR shows emitters carrying the radar-locking-me flag, and the spike timing is the
+`_trackLockEndT` / `_searchLockEndT` pair (red track lock `0x2B`, yellow search lock `0x2C`).
+The remaining `CPScopeHelper*` primitives are named but their individual MFD layouts (which
+window type is the HSI, the TID, etc.) are only partially attributed.
 
-*Status: open — re-static ([#486](https://github.com/jomkz/fighters-codex/issues/486)).*
+*Status: resolved — re-static (#486; per-MFD-type layout attribution is a follow-up).*
 
 ## Related
 
