@@ -7,6 +7,52 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+**The reconstruction stops measuring itself and starts covering the binary.** #482's
+step-back audit found that a game executable reported "complete" was really **49%
+unclaimed** — the coverage check only looked *inside the address ranges we had declared*,
+so it certified whatever we chose to claim and stayed silent about the rest. This release
+makes that number honest and begins reading the code behind it.
+
+First, the databased half was squared with reality. The **documented-but-un-databased**
+functions — named in the game's own symbol table, described in prose, but sitting outside
+every declared range — were back-filled (271 functions), and **MSAPI.DLL** got IP.EXE's
+treatment: its 773 unclaimed functions are statically-linked MFC/CRT framework, not
+matchmaking code, so they are waived at the license boundary rather than counted as
+understood. The reconstruction matrix now reports a real fraction per binary, not
+"everything."
+
+Then the **reading waves** started — reading the previously-undocumented functions with
+the disassembly open, not guessing from names. Three subsystems this release: the **`.M`
+mission interpreter** (`MISSIONTextProc` — the consumer of the `.M`/`.MT` specs, which
+until now described a program nobody had watched run); the **arming and damage model**
+(`ArmPlane` + the `DAMAGE*` cluster — whose reading promoted `entity+0xA6` from `unk_A6`
+to `damage_flags`, the first of many entity fields these writers will confirm); and a new
+**cockpit-sensors** subsystem for the radar / IR / RWR model (`CPComputeRCS` — the
+signature math the weapons seeker logic consumes, previously undocumented on the input
+side). Work is now tracked in a dedicated **RE Coverage milestone** (v0.8.x), ahead of the
+`fxe` runtime (v0.9.0).
+
+No `fx_lib` changes — this release is entirely reconstruction database and documentation.
+
+### Added
+- **cockpit-sensors** — new subsystem for the radar/IR/RWR model: `CPComputeRCS`
+  (radar-cross-section + IR signature), the scope pipeline, and a flow diagram (#486, #520)
+- **mission** — trace the `.M` interpreter (`MISSIONTextProc`) and the mission runtime;
+  document the tokenizer, object-construction dispatch, `.MC` handoff, and scoring (#485, #517)
+- **combat** — trace `ArmPlane` (the loadout screen) and the `DAMAGE` model; promote
+  `entity+0xA6` → `damage_flags` (#487, #519)
+- **db** — back-fill the documented functions #482 surfaced outside their subsystems'
+  ranges (271 functions, `flight-model`/`network`/`renderer`/`startup`/`video`/`campaign`)
+  (#495, #512, #515)
+
+### Changed
+- **db** — waive MSAPI.DLL's statically-linked MFC/CRT framework at the license boundary
+  (773 functions), resolving the 97%-unclaimed tautology the same way as IP.EXE (#494, #514)
+- **docs** — correct the errors the #482 documentation audit found across the subsystem
+  docs and format specs (the `_explode`/`_OBJUpdate` mislabels, the 4-vs-6-byte EA prefix,
+  the `PT_TYPE` `.JT`→`.PT` tag, and more) (#488, #513, #516)
+- **roadmap** — record the RE Coverage (v0.8.x) / `fxe` (v0.9.0) milestone split (#518)
+
 ## [0.8.4] - 2026-07-13
 
 **The codecs were wrong, and the round-trip could never have told us.** A
