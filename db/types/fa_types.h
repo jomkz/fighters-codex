@@ -77,11 +77,15 @@ typedef struct LEAF_LIST    LEAF_LIST;    /* terrain: quadtree leaf list        
 typedef struct MODSPEC      MODSPEC;      /* sound: module / track spec              */
 typedef struct ACTION       ACTION;       /* shell-ui: menu action                   */
 typedef struct VDO          VDO;          /* video: VDO player context               */
+typedef struct VDOHEADER    VDOHEADER;    /* video: VDO stream header (VDOfromVDOHEADER) */
+typedef struct CONFIG       CONFIG;       /* startup: EA.CFG settings record (UCONFIG_*) */
 typedef struct ANGLE          ANGLE;          /* objects: attitude vector (MPPrepareForInterp) */
 typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station          */
 typedef struct HARDPOINT_TYPE HARDPOINT_TYPE; /* flight-model: store-station type     */
 typedef struct DIAL           DIAL;           /* shell-ui: dial/knob widget           */
 typedef struct ModemStrings   ModemStrings;   /* input: modem init/dial string set    */
+typedef struct WAYPOINT       WAYPOINT;       /* campaign: nav waypoint (MPSetWaypoints) */
+typedef struct T_MSG          T_MSG;          /* hud: text-message record (MPMsgSend)   */
 
 /* network -- the transport types the NET_/SERIAL_ signatures name */
 typedef struct NET_PKT               NET_PKT;
@@ -93,7 +97,10 @@ typedef struct SERIAL_QUEUE          SERIAL_QUEUE;
 typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address         */
 typedef struct sockaddr_in           sockaddr_in;   /* Winsock TCP/IP address        */
 typedef struct socket_state          socket_state;
+typedef struct _winsock_funcs        _winsock_funcs; /* resolved WS2_32 entry-point table */
+typedef struct fd_set                fd_set;         /* Winsock select() descriptor set   */
 typedef struct PKT_PLAYER_AD         PKT_PLAYER_AD; /* game advertisement packet (UDP/SAP query) */
+typedef struct MP_INFO               MP_INFO;       /* multiplayer session-info record (MP_Info) */
 
 /* MSVC CRT internals, named in the startup subsystem's exception-handling signatures */
 typedef struct _iobuf                _iobuf;  /* the CRT FILE struct, by its real name */
@@ -108,6 +115,10 @@ typedef int JOYRESULT;           /* input:   GetJoystickType / ReadDevice result
 typedef int PLAYER_ACTION;       /* network: player-action callback code             */
 typedef int NET_CONNECTED_STATE; /* network: connection-state callback code          */
 typedef int NET_SEND_CANCEL;     /* network: broadcast send/cancel selector          */
+typedef int PLAYER_STATE;        /* network: per-player session state                */
+typedef int SOCK_STATE;          /* network: socket_state connection state           */
+typedef int SOCK_TYPE;           /* network: socket transport type                   */
+typedef int ERROR_SEVERITY;      /* network: winsock error-severity level            */
 
 /* `undefinedN` -- N bytes, type not recovered. Ghidra's idiom, and the one this database
  * uses wherever the evidence proves a SIZE but not a SEMANTICS:

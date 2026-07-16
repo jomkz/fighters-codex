@@ -66,6 +66,28 @@ va,kind,name,display,source,confidence,notes,type
 0x00454140,func,_ChangePlaneType@12,ChangePlaneType,sms,confirmed,,"undefined4 __stdcall ChangePlaneType(undefined4, undefined4, undefined4)"
 0x004543A0,func,?RepairTime@@YIJJ@Z,RepairTime,sms,confirmed,,long __fastcall RepairTime(long)
 0x004543C0,func,_SelectRepairPlane@16,SelectRepairPlane,sms,confirmed,,"undefined4 __stdcall SelectRepairPlane(undefined4, undefined4, undefined4, undefined4)"
+0x00477590,func,_FMTurbulence@0,FMTurbulence,sms,confirmed,,undefined4 __stdcall FMTurbulence(void)
+0x00477D10,func,_COMinSpeed@0,COMinSpeed,sms,confirmed,,undefined4 __stdcall COMinSpeed(void)
+0x00477D30,func,_COCornerSpeed@0,COCornerSpeed,sms,confirmed,,undefined4 __stdcall COCornerSpeed(void)
+0x00477E50,func,_COMaxSpeed@0,COMaxSpeed,sms,confirmed,,undefined4 __stdcall COMaxSpeed(void)
+0x00477E60,func,_COAcc@0,COAcc,sms,confirmed,,undefined4 __stdcall COAcc(void)
+0x00477E80,func,_CODacc@0,CODacc,sms,confirmed,,undefined4 __stdcall CODacc(void)
+0x00477EA0,func,_COBv@0,COBv,sms,confirmed,,undefined4 __stdcall COBv(void)
+0x00477ED0,func,_COBrv@0,COBrv,sms,confirmed,,undefined4 __stdcall COBrv(void)
+0x00478090,func,_COBankRate@0,COBankRate,sms,confirmed,,undefined4 __stdcall COBankRate(void)
+0x004780D0,func,_COTurnRate@0,COTurnRate,sms,confirmed,,undefined4 __stdcall COTurnRate(void)
+0x00478150,func,_COTurnRadius@0,COTurnRadius,sms,confirmed,,undefined4 __stdcall COTurnRadius(void)
+0x00478190,func,@COThrust@4,COThrust,sms,confirmed,,undefined4 __fastcall COThrust(undefined4)
+0x004781D0,func,_COTwr@0,COTwr,sms,confirmed,,undefined4 __stdcall COTwr(void)
+0x00478200,func,@COSig@20,COSig,sms,confirmed,,"undefined4 __fastcall COSig(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004784A0,func,_COGPullDrag@0,COGPullDrag,sms,confirmed,,undefined4 __stdcall COGPullDrag(void)
+0x0047A690,func,_FMAircraftSetup@0,FMAircraftSetup,sms,confirmed,,undefined4 __stdcall FMAircraftSetup(void)
+0x0047A770,func,_FMGetAcc@12,FMGetAcc,sms,confirmed,,"undefined4 __stdcall FMGetAcc(undefined4, undefined4, undefined4)"
+0x0047AC60,func,_FMGetNPCAcc@0,FMGetNPCAcc,sms,confirmed,,undefined4 __stdcall FMGetNPCAcc(void)
+0x0047AEB0,func,_FMVertMotion@0,FMVertMotion,sms,confirmed,,undefined4 __stdcall FMVertMotion(void)
+0x0047AF70,func,_FMSetTV@8,FMSetTV,sms,confirmed,,"undefined4 __stdcall FMSetTV(undefined4, undefined4)"
+0x0047B000,func,_FMResetTV@0,FMResetTV,sms,confirmed,,undefined4 __stdcall FMResetTV(void)
+0x0047B020,func,_FMFlight@0,FMFlight,sms,confirmed,,undefined4 __stdcall FMFlight(void)
 0x004EE470,data,,,waiver,confirmed,flight-model throttle scratch near throttle100,
 0x004F013C,data,,,waiver,confirmed,interior of fortNationGroundForces campaign array,
 0x004F036C,data,,,waiver,confirmed,interior of fortNationGroundForces campaign array,

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 133/152 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
+// 153/175 functions have a recovered signature (+6 that are not C functions); 6/6 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -21,6 +21,7 @@ extern u32 overflowQuotient;  // 0x0058F0E8  divide-overflow handler scratch: th
 extern u32 overflowSignMask;  // 0x0058F0F4  divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign
 
 // --- functions -------------------------------------------------------
+undefined4 G_Tile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00447AA5  __fastcall
 unsigned short DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *);  // 0x0045CA70  __cdecl
 unsigned short DrawAcrossBank(short, short, short, short, unsigned long, GlobalData *, unsigned short);  // 0x0045CDA0  __cdecl
 undefined4 GG_InitMode(void);  // 0x0045DBD0  __fastcall
@@ -35,6 +36,16 @@ undefined4 flushLineStats(void);  // 0x0045E370  __fastcall
 undefined4 GG_RestoreSurfaces(void);  // 0x0045E3A0  __fastcall
 undefined4 GG_WaitRetrace(void);  // 0x0045E410  __fastcall
 undefined4 GG_VideoModesAvailable(void);  // 0x0045E440  __stdcall
+undefined4 G_InitCircles(void);  // 0x0046A640  __stdcall
+undefined4 G_ShutdownCircles(void);  // 0x0046A690  __stdcall
+undefined4 G_Circle(undefined4, undefined4, undefined4, undefined4);  // 0x0046A6C0  __stdcall
+undefined4 G_FindFirstFile(undefined4, undefined4);  // 0x00479E10  __stdcall
+undefined4 G_FindNextFile(undefined4, undefined4);  // 0x00479EA0  __stdcall
+undefined4 G_FindClose(undefined4);  // 0x00479F20  __stdcall
+undefined4 FPSUpdate(void);  // 0x00486D10  __stdcall
+undefined4 FPSPrint(undefined4);  // 0x00486DA0  __fastcall
+void FPSPrint2(char *, long);  // 0x00486DF0  __fastcall
+long FPSReturn(void);  // 0x00486E10  __cdecl
 undefined4 G_FlipY(undefined4);  // 0x00497330  __fastcall
 undefined4 G_Init(void);  // 0x00497340  __fastcall
 undefined4 G_Shutdown(void);  // 0x004973F0  __fastcall
@@ -102,9 +113,18 @@ undefined4 G_Hline2(undefined4, undefined4, undefined4);  // 0x00499280  __stdca
 undefined4 G_UHline2(undefined4, undefined4, undefined4);  // 0x004992B0  __stdcall
 undefined4 G_Box2(undefined4, undefined4, undefined4, undefined4);  // 0x004992E0  __stdcall
 undefined4 G_UBox2(undefined4, undefined4, undefined4, undefined4);  // 0x00499330  __stdcall
+void GLASSESInit(void);  // 0x004AF800  __stdcall
+void GLASSESShutDown(void);  // 0x004AF850  __stdcall
+short GLASSESHDiff(short);  // 0x004AF880  __fastcall
+void GLASSESAdjust3dAmount(long);  // 0x004AF8B0  __fastcall
 void GLASSESSaveBitmap(void);  // 0x004AF8F0  __stdcall
 void GLASSESInterleaveBitmap(void);  // 0x004AF930  __stdcall
+void GLASSESSaveBitmapBox(long, long, long, long);  // 0x004AFA00  __stdcall
+void GLASSESInterleaveBitmapBox(long, long, long, long);  // 0x004AFA40  __stdcall
 void ShowPicture(char *);  // 0x004AFB40  __fastcall
+void GLASSESBlitWithOffsets(long, T_BITMAP *, long, long, T_BITMAP *, long, long, long, long, long);  // 0x004AFC60  __stdcall
+void GLASSESBeforeDrawingPop(BOX *);  // 0x004B00A0  __stdcall
+void GLASSESAfterDrawingPop(BOX *, char);  // 0x004B00D0  __stdcall
 void GLASSESSpreadLines(char);  // 0x004B0130  __fastcall
 void GLASSESPrintAmount(void);  // 0x004B01E0  __stdcall
 undefined4 G_AllocBitmapBuffer(undefined4);  // 0x004B7910  __cdecl
@@ -172,7 +192,10 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x0041E010  ?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ -- signature not recovered
 // TODO(#453): 0x0041E030  ?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z -- signature not recovered
 // TODO(#453): 0x0041E050  ?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z -- signature not recovered
+// TODO(#453): 0x00447A40  G_TileInit -- signature not recovered
+// TODO(#453): 0x00447A73  G_TileShutDown -- signature not recovered
 // TODO(#453): 0x0045E430  GG_QuickBlt -- signature not recovered
+// TODO(#453): 0x00486CF0  FPSInit -- signature not recovered
 // TODO(#453): 0x00498A50  G_Visible -- signature not recovered
 // TODO(#453): 0x004991B0  G_CopyDriverName -- signature not recovered
 // TODO(#453): 0x004B4320  WRFogLayerUpdate -- signature not recovered

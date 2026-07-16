@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 395/461 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
+// 403/469 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -55,6 +55,14 @@ extern undefined4 _nstream;  // 0x00592C40  MSVC CRT global (xrefs=6)
 extern undefined4 _acmdln;  // 0x00592C4C  MSVC CRT global (xrefs=5)
 
 // --- functions -------------------------------------------------------
+void usnfmain(void);  // 0x00403700  __cdecl
+void FlyingLoop(void);  // 0x00404C70  __cdecl
+unsigned short MainLoop(GlobalData *);  // 0x0046B560  __cdecl
+char UCONFIG_DMusic(void);  // 0x004B27C0  __cdecl
+void UCONFIG_SetVideoOptions(void);  // 0x004B2820  __stdcall
+CONFIG * UCONFIG_load_EA_CFG(void);  // 0x004B2930  __stdcall
+char UCONFIG_save_EA_CFG(void);  // 0x004B2980  __stdcall
+void UCONFIG_Initialize(void);  // 0x004B2BD0  __stdcall
 undefined4 timeGetTime(void);  // 0x004D6F5C  __stdcall
 undefined4 joyGetPos(undefined4, undefined4);  // 0x004D6F62  __stdcall
 undefined4 joyGetDevCapsA(undefined4, undefined4, undefined4);  // 0x004D6F68  __stdcall

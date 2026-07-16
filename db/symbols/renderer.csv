@@ -3,6 +3,9 @@ va,kind,name,display,source,confidence,notes,type
 0x0041E010,func,?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ,,sms,confirmed,,
 0x0041E030,func,?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z,,sms,confirmed,,
 0x0041E050,func,?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z,,sms,confirmed,,
+0x00447A40,func,_G_TileInit,G_TileInit,sms,confirmed,,
+0x00447A73,func,_G_TileShutDown,G_TileShutDown,sms,confirmed,,
+0x00447AA5,func,@G_Tile@32,G_Tile,sms,confirmed,,"undefined4 __fastcall G_Tile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x0045CA70,func,?DrawAcrossBankInter@@YAGFFFFKPAUGlobalData@@GPAE@Z,DrawAcrossBankInter,sms,confirmed,,"unsigned short __cdecl DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *)"
 0x0045CDA0,func,?DrawAcrossBank@@YAGFFFFKPAUGlobalData@@G@Z,DrawAcrossBank,sms,confirmed,,"unsigned short __cdecl DrawAcrossBank(short, short, short, short, unsigned long, GlobalData *, unsigned short)"
 0x0045DBD0,func,@GG_InitMode@0,GG_InitMode,sms,confirmed,,undefined4 __fastcall GG_InitMode(void)
@@ -24,6 +27,17 @@ va,kind,name,display,source,confidence,notes,type
 0x0045E410,func,@GG_WaitRetrace@0,GG_WaitRetrace,sms,confirmed,,undefined4 __fastcall GG_WaitRetrace(void)
 0x0045E430,func,_GG_QuickBlt,GG_QuickBlt,sms,confirmed,,
 0x0045E440,func,_GG_VideoModesAvailable@0,GG_VideoModesAvailable,sms,confirmed,,undefined4 __stdcall GG_VideoModesAvailable(void)
+0x0046A640,func,_G_InitCircles@0,G_InitCircles,sms,confirmed,,undefined4 __stdcall G_InitCircles(void)
+0x0046A690,func,_G_ShutdownCircles@0,G_ShutdownCircles,sms,confirmed,,undefined4 __stdcall G_ShutdownCircles(void)
+0x0046A6C0,func,_G_Circle@16,G_Circle,sms,confirmed,,"undefined4 __stdcall G_Circle(undefined4, undefined4, undefined4, undefined4)"
+0x00479E10,func,_G_FindFirstFile@8,G_FindFirstFile,sms,confirmed,,"undefined4 __stdcall G_FindFirstFile(undefined4, undefined4)"
+0x00479EA0,func,_G_FindNextFile@8,G_FindNextFile,sms,confirmed,,"undefined4 __stdcall G_FindNextFile(undefined4, undefined4)"
+0x00479F20,func,_G_FindClose@4,G_FindClose,sms,confirmed,,undefined4 __stdcall G_FindClose(undefined4)
+0x00486CF0,func,_FPSInit,FPSInit,sms,confirmed,,
+0x00486D10,func,_FPSUpdate@0,FPSUpdate,sms,confirmed,,undefined4 __stdcall FPSUpdate(void)
+0x00486DA0,func,@FPSPrint@4,FPSPrint,sms,confirmed,,undefined4 __fastcall FPSPrint(undefined4)
+0x00486DF0,func,?FPSPrint2@@YIXPADJ@Z,FPSPrint2,sms,confirmed,,"void __fastcall FPSPrint2(char *, long)"
+0x00486E10,func,?FPSReturn@@YAJXZ,FPSReturn,sms,confirmed,,long __cdecl FPSReturn(void)
 0x00497330,func,@G_FlipY@4,G_FlipY,sms,confirmed,,undefined4 __fastcall G_FlipY(undefined4)
 0x00497340,func,@G_Init@0,G_Init,sms,confirmed,,undefined4 __fastcall G_Init(void)
 0x004973F0,func,@G_Shutdown@0,G_Shutdown,sms,confirmed,,undefined4 __fastcall G_Shutdown(void)
@@ -97,9 +111,18 @@ va,kind,name,display,source,confidence,notes,type
 0x004992B0,func,_G_UHline2@12,G_UHline2,sms,confirmed,,"undefined4 __stdcall G_UHline2(undefined4, undefined4, undefined4)"
 0x004992E0,func,_G_Box2@16,G_Box2,sms,confirmed,,"undefined4 __stdcall G_Box2(undefined4, undefined4, undefined4, undefined4)"
 0x00499330,func,_G_UBox2@16,G_UBox2,sms,confirmed,,"undefined4 __stdcall G_UBox2(undefined4, undefined4, undefined4, undefined4)"
+0x004AF800,func,?GLASSESInit@@YGXXZ,GLASSESInit,sms,confirmed,,void __stdcall GLASSESInit(void)
+0x004AF850,func,?GLASSESShutDown@@YGXXZ,GLASSESShutDown,sms,confirmed,,void __stdcall GLASSESShutDown(void)
+0x004AF880,func,?GLASSESHDiff@@YIFF@Z,GLASSESHDiff,sms,confirmed,,short __fastcall GLASSESHDiff(short)
+0x004AF8B0,func,?GLASSESAdjust3dAmount@@YIXJ@Z,GLASSESAdjust3dAmount,sms,confirmed,,void __fastcall GLASSESAdjust3dAmount(long)
 0x004AF8F0,func,?GLASSESSaveBitmap@@YGXXZ,GLASSESSaveBitmap,sms,confirmed,,void __stdcall GLASSESSaveBitmap(void)
 0x004AF930,func,?GLASSESInterleaveBitmap@@YGXXZ,GLASSESInterleaveBitmap,sms,confirmed,,void __stdcall GLASSESInterleaveBitmap(void)
+0x004AFA00,func,?GLASSESSaveBitmapBox@@YGXJJJJ@Z,GLASSESSaveBitmapBox,sms,confirmed,,"void __stdcall GLASSESSaveBitmapBox(long, long, long, long)"
+0x004AFA40,func,?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z,GLASSESInterleaveBitmapBox,sms,confirmed,,"void __stdcall GLASSESInterleaveBitmapBox(long, long, long, long)"
 0x004AFB40,func,_ShowPicture,ShowPicture,re,confirmed,"shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it",void __fastcall ShowPicture(char *)
+0x004AFC60,func,?GLASSESBlitWithOffsets@@YGXJPAUT_BITMAP@@JJ0JJJJJ@Z,GLASSESBlitWithOffsets,sms,confirmed,,"void __stdcall GLASSESBlitWithOffsets(long, T_BITMAP *, long, long, T_BITMAP *, long, long, long, long, long)"
+0x004B00A0,func,?GLASSESBeforeDrawingPop@@YGXPAUBOX@@@Z,GLASSESBeforeDrawingPop,sms,confirmed,,void __stdcall GLASSESBeforeDrawingPop(BOX *)
+0x004B00D0,func,?GLASSESAfterDrawingPop@@YGXPAUBOX@@D@Z,GLASSESAfterDrawingPop,sms,confirmed,,"void __stdcall GLASSESAfterDrawingPop(BOX *, char)"
 0x004B0130,func,?GLASSESSpreadLines@@YIXD@Z,GLASSESSpreadLines,sms,confirmed,,void __fastcall GLASSESSpreadLines(char)
 0x004B01E0,func,?GLASSESPrintAmount@@YGXXZ,GLASSESPrintAmount,sms,confirmed,,void __stdcall GLASSESPrintAmount(void)
 0x004B4320,func,WRFogLayerUpdate,WRFogLayerUpdate,sms,confirmed,"imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491)",

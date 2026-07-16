@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 172 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 345 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -87,18 +87,45 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00405CD0` | `NETFormatIP` | re | format IP address as '%d.%d.%d.%d' via Sprintf (s__d__d__d__d_004EBCFC). Body @0x405CD0; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00405D10` | `ip2long` | sms | parse dotted-quad string -> packed u32 (strchr('.')+atoi x4) |
 | `0x00405DF0` | `RunNetConfigurationScreen` | sms | net config screen entry; calls doConfigurationScreen(1\|4) |
+| `0x0040AE50` | `NET_MasterInit` | sms |  |
 | `0x0040AF40` | `state_func_master_query` | sms |  |
+| `0x0040AFA0` | `NET_MasterStartGame` | sms |  |
+| `0x0040AFF0` | `NET_MasterRejectPlayer` | sms |  |
+| `0x0040B080` | `NET_MasterShutdown` | sms |  |
 | `0x0040B110` | `master_events` | sms |  |
 | `0x00418880` | `MSGSendChatter` | sms | imported by 14 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00441F80` | `UDPopensocket` | sms |  |
 | `0x004420D0` | `UDPserverbroadcast` | sms |  |
 | `0x00442200` | `UDPquery` | sms |  |
+| `0x0044BAF0` | `SER_EnterCriticalCodeForeground` | sms |  |
+| `0x0044BB50` | `SER_LeaveCriticalCodeForeground` | sms |  |
+| `0x0044BB70` | `SER_ForegroundCheckConnection` | sms |  |
+| `0x0044BC00` | `SER_ForegroundGetPacket` | sms |  |
+| `0x0044BCB0` | `SER_ForegroundPutPacket` | sms |  |
+| `0x0044BD40` | `SER_Flush` | sms |  |
+| `0x0044BDB0` | `SER_Write` | sms |  |
+| `0x0044BE40` | `SER_WriteAvail` | sms |  |
 | `0x0044BEC0` | `SER_Transmitting` | sms |  |
+| `0x0044BFC0` | `SER_Read` | sms |  |
+| `0x0044C030` | `SER_ReadAvail` | sms |  |
 | `0x0044C080` | `SER_PeekByte` | sms |  |
 | `0x0044C0F0` | `SER_Synchronize` | sms |  |
 | `0x0044C1B0` | `SER_Often` | sms |  |
 | `0x0044C1E0` | `SER_Suspend` | sms |  |
 | `0x0044C200` | `SER_Resume` | sms |  |
+| `0x0044C220` | `SER_ExNamesTimeout` | sms |  |
+| `0x0044C260` | `SER_ExchangeNames` | sms |  |
+| `0x0044C570` | `SER_Initialize1` | sms |  |
+| `0x0044C5D0` | `SER_Initialize2` | sms |  |
+| `0x0044C6E0` | `SER_Initialize2_5` | sms |  |
+| `0x0044C980` | `SER_Initialize3` | sms |  |
+| `0x0044C990` | `SER_Initialize4` | sms |  |
+| `0x0044CA70` | `SER_Initialize5` | sms |  |
+| `0x0044CB20` | `SER_Initialize` | sms |  |
+| `0x0044CBD0` | `SER_Shutdown1` | sms |  |
+| `0x0044CC00` | `SER_Shutdown2` | sms |  |
+| `0x0044CC70` | `SER_Shutdown3` | sms |  |
+| `0x0044CCA0` | `SER_Shutdown` | sms |  |
 | `0x0045D090` | `pkt_send_can_i_play` | sms | client->host join request |
 | `0x0045D120` | `pkt_send_can_i_play_player` | sms | join request naming a player slot |
 | `0x0045D1B0` | `pkt_send_sync` | sms | send sync request |
@@ -129,8 +156,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DA30` | `pkt_queue_write` | re | append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30 |
 | `0x0045DB00` | `pkt_sock_read` | sms | read one NET_PKT from a socket |
 | `0x00464880` | `dlg_list_get_new_selection` | sms |  |
+| `0x0046AC00` | `net_test_process_pkt` | sms |  |
+| `0x0046AC40` | `net_test_process_pkt_ack` | sms |  |
 | `0x0046ACF0` | `net_test_start_latency_test` | sms |  |
+| `0x0046BDE0` | `MPFlushAll` | sms |  |
+| `0x0046BE50` | `MPCheckConnection` | sms |  |
 | `0x0046C0A0` | `MPEnqueue` | re | core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper') |
+| `0x0046C150` | `MPSetSlowComm` | sms |  |
+| `0x0046C190` | `MPConnect` | sms |  |
+| `0x0046C250` | `MPShutdown` | sms |  |
+| `0x0046C260` | `MPTimeSync` | sms |  |
+| `0x0046C280` | `MPMissionInit1` | sms |  |
+| `0x0046C470` | `MPMissionInit2` | sms |  |
+| `0x0046C500` | `MPMissionShutdown` | sms |  |
+| `0x0046C520` | `MPService` | sms |  |
 | `0x0046C680` | `MPInterpPosAxis` | re | interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680 |
 | `0x0046C780` | `MPUpdateInterval` | re | per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046C860` | `MPInterpAngleAxis` | re | interpolate one angle axis (uses MPWrapAngle). Body @0x46C860 |
@@ -143,34 +182,113 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0046EE00` | `MPGetType` | re | peek/pull next packet type byte from peer (MP_PeekByte/MP_Read); -0x100 on EOF. Body @0x46EE00 (docs cite as FUN_0046EE00); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046EE40` | `MPReadPayload` | re | read param_3 bytes iff fully available (MP_ReadAvail then MP_Read). Body @0x46EE40 |
 | `0x0046EE90` | `MPClearDeadStatus` | re | zero _mpStatus[peer] for peers no longer in MP_Info connected_mask. Body @0x46EE90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0046EED0` | `MPSend` | sms |  |
 | `0x0046FA40` | `MPAbsToRelTime` | re | encode absolute time to relative packet timestamp (-currentT; skips sentinels). Body @0x46FA40; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046FA60` | `MPEncodeState14` | re | encode packet 0x14: quantized pos delta (auto-exponent) + BAM angle delta /0xB6, writes alias +0x74. Body @0x46FA60 |
 | `0x0046FBF0` | `MPEncodeState15` | re | encode packet 0x15: small position-only delta (>>0xC). Body @0x46FBF0 |
 | `0x0046FD50` | `MPSendSyncOnce` | re | broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0046FDB0` | `MPRemoveCurObj` | sms |  |
+| `0x0046FE00` | `MPEndMission` | sms |  |
+| `0x0046FE30` | `MPSendGameMode` | sms |  |
+| `0x0046FE70` | `MPAddScore` | sms |  |
+| `0x0046FEF0` | `MPSendMissionSucceeded` | sms |  |
 | `0x0046FF20` | `MPSendScenarioEndTime` | re | broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0046FF70` | `MPPaused` | sms |  |
+| `0x0046FFC0` | `MPSetPaused` | sms |  |
+| `0x00470010` | `MPProjAdd` | sms |  |
+| `0x00470150` | `MPEjectAdd` | sms |  |
+| `0x004701A0` | `MPManAdd` | sms |  |
+| `0x00470250` | `MPPrepareForInterp` | sms |  |
+| `0x00470640` | `MPMsgSend` | sms |  |
 | `0x00470780` | `MPMsgRemapAliases` | re | remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004708B0` | `MPGraphicAddCrater` | sms |  |
+| `0x00470900` | `MPGraphicAddExp` | sms |  |
+| `0x00470990` | `MPGraphicAddSmoke` | sms |  |
+| `0x00470A20` | `MPGraphicAddDebris` | sms |  |
+| `0x00470A90` | `MPGraphicAddClusterRelease` | sms |  |
+| `0x00470B00` | `MPGraphicAddSpecialDebris` | sms |  |
+| `0x00470B70` | `MPGraphicAddHulk` | sms |  |
+| `0x00470BC0` | `MPLaunchDevice` | sms |  |
+| `0x00470C30` | `MPGraphicAddFire` | sms |  |
+| `0x00470CF0` | `MPGraphicAddSmokeAdder` | sms |  |
+| `0x00470DC0` | `MPGraphicRemove` | sms |  |
+| `0x00470E00` | `MPShellSendScreen` | sms |  |
+| `0x00470E40` | `MPPlayerChoseSide` | sms |  |
 | `0x00470E80` | `MPQuickButton` | sms |  |
+| `0x00470EB0` | `MPQuickButtonText` | sms |  |
 | `0x00470EF0` | `MPPlayerChoseFort` | sms |  |
 | `0x00470F30` | `MPFortButton` | sms |  |
+| `0x00470F60` | `MPFortButtonText` | sms |  |
 | `0x00470FA0` | `MPFortButton2` | sms |  |
+| `0x00470FD0` | `MPFortButtonText2` | sms |  |
+| `0x00471010` | `MPSendAntiCheat` | sms |  |
+| `0x00471070` | `MPSendCheatsOn` | sms |  |
+| `0x004710B0` | `MPSendFrameRate` | sms |  |
+| `0x004710F0` | `MPShowFrameRate` | sms |  |
+| `0x00471130` | `MPSingleFilename` | sms |  |
+| `0x00471190` | `MPSendPrefs` | sms |  |
+| `0x004711F0` | `MPMaybePausedMsg` | sms |  |
+| `0x00471360` | `MPWpnStats` | sms |  |
+| `0x00471400` | `MPKillStats` | sms |  |
+| `0x00471450` | `MPLandingStats` | sms |  |
+| `0x00471490` | `MPHUDMessage` | sms |  |
+| `0x004714D0` | `MPStatusInit` | sms |  |
+| `0x00471510` | `MPStatusSet` | sms |  |
+| `0x00471560` | `MPStatusToDrawSet` | sms |  |
+| `0x004715B0` | `MPStatusDraw` | sms |  |
 | `0x00471880` | `MPChatChecksum` | re | checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004718F0` | `MPDrawStatusLine` | re | truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0 |
+| `0x004719E0` | `MPEveryoneStatus` | sms |  |
+| `0x00471A30` | `MPWaitEveryoneStatus` | sms |  |
 | `0x00471A90` | `MPWaitStatus` | re | modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status) |
 | `0x00471B80` | `MPAllPeersAtStatus` | re | test whether every connected peer's _mpStatus == param_1. Body @0x471B80; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00471BD0` | `MPAssignPlayers` | sms |  |
 | `0x00471FA0` | `MPAssignPlanePlayers` | re | per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00472100` | `MPComparePlaneRank` | re | qsort comparator ordering the multiplayer wing-assignment candidates by the 4-byte rank at +3 of each 7-byte record; ?MPAssignPlayers@@YGXXZ passes it to _qsort twice over the table at 0x547180 |
 | `0x00472130` | `MPBuildSpawnPayload` | re | apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130 |
+| `0x00472260` | `MPSetControl` | sms |  |
+| `0x004722D0` | `MPRequestControl` | sms |  |
+| `0x00472330` | `MPChangePlaneType` | sms |  |
+| `0x004723A0` | `MPSetFuel` | sms |  |
+| `0x00472400` | `MPSetHardpoints` | sms |  |
+| `0x00472520` | `MPSetWaypoints` | sms |  |
+| `0x004725B0` | `MPLifeNotify` | sms |  |
 | `0x00472670` | `MPRevive` | re | apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670 |
+| `0x00472A90` | `MPKey` | sms |  |
+| `0x004733E0` | `MPCheckDisconnect` | sms |  |
+| `0x004735C0` | `MPShellInitMessages` | sms |  |
 | `0x004735D0` | `MPChatStore` | re | append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0047F100` | `CN_NewSetLines` | sms |  |
+| `0x0047F190` | `CN_NewPrint` | sms |  |
+| `0x0047F370` | `CN_ClearLines` | sms |  |
+| `0x0047F390` | `CN_SetLines` | sms |  |
+| `0x0047F3B0` | `CN_Print` | sms |  |
+| `0x0047F5D0` | `CN_GetString` | sms |  |
 | `0x0047F5F0` | `CN_GetBigString` | sms |  |
+| `0x0047F6D0` | `CN_SetFactoryDefaults` | sms |  |
+| `0x0047F7A0` | `CN_ReadConfig` | sms |  |
+| `0x0047F930` | `CN_WriteConfig` | sms |  |
 | `0x004874C0` | `sapopensocket` | sms | SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild) |
 | `0x00487670` | `sapserverbroadcast` | sms |  |
 | `0x00487760` | `sapquery` | sms |  |
 | `0x004878C0` | `sapprocessadvertisement` | sms |  |
+| `0x004922E0` | `SER_RemoteQueueFull` | sms |  |
+| `0x00492300` | `SER_UpdateRemoteQueueStatus` | sms |  |
+| `0x00492330` | `SER_ProcessStatusPacket` | sms |  |
+| `0x00492390` | `SER_ProcessDataPacket` | sms |  |
+| `0x004923B0` | `SER_ProcessResentPacket` | sms |  |
+| `0x00492460` | `SER_ProcessRequestPacket` | sms |  |
+| `0x004924C0` | `SER_WrapPacket` | sms |  |
+| `0x00492570` | `SER_ProcessIncomingPacket` | sms |  |
+| `0x00492690` | `SER_ReadIncomingPackets` | sms |  |
 | `0x00493780` | `RunIPXOptionsDialog` | sms | IPX/SPX network options dialog (switch over frame types); label-only in a clean rebuild |
 | `0x00493EE0` | `connected_state_callback` | sms |  |
 | `0x004940E0` | `players_box_add` | sms |  |
 | `0x004941E0` | `players_box_connected_state_callback` | sms |  |
+| `0x00494BC0` | `MP_Initialize` | sms |  |
+| `0x00494CB0` | `MP_Info` | sms |  |
+| `0x00494CC0` | `MP_Shutdown` | sms |  |
+| `0x00494D40` | `MP_SetTransmitTimeout` | sms |  |
 | `0x00494D50` | `MP_Dont_care` | sms |  |
 | `0x00496F40` | `spxinit` | sms | SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST |
 | `0x00497000` | `spxinit2` | sms | SPX secondary init from NET_PROTOCOL/CN_INFO |
@@ -196,6 +314,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049A460` | `overwriteQueue` | sms | overwrite slot by wrapper seq without count bump (history record) |
 | `0x0049A4A0` | `retrieveFromQueue` | sms | copy out slot at (idx%cap)*0x30 |
 | `0x0049A4D0` | `fetchFromQueueTail` | sms | pop tail slot then zero it; advance tail; returns wrap count |
+| `0x0049A520` | `SER_InitializeControlStruct` | sms |  |
 | `0x0049A660` | `SER_InitializeLowLevel` | sms | init control struct + 3 queues: InQueue(1024)/OutQueue(64)/HistoryQueue(256) with their packet buffers |
 | `0x0049A6B0` | `SER_ShutdownLowLevel` | sms | mark link inactive (DAT_00570cc5=0); set player-drop mask; clear connected flag |
 | `0x0049A6E0` | `fnc_toCallDuringAnswer` | sms |  |
@@ -208,7 +327,30 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049AFF0` | `MOD_Initialize` | sms | top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce |
 | `0x0049B0D0` | `MOD_Shutdown` | sms | SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3 |
 | `0x0049B110` | `serIO` | sms |  |
+| `0x004A5990` | `winsock_load` | sms |  |
+| `0x004A5CB0` | `winsock_cleanup` | sms |  |
+| `0x004A5CE0` | `winsock_handle_error` | sms |  |
+| `0x004A5D10` | `winsock_process_error` | sms |  |
+| `0x004A5E00` | `winsock_set_non_blocking` | sms |  |
+| `0x004A5E50` | `winsock_set_buffer_sizes` | sms |  |
+| `0x004A5F90` | `socket_flush_close` | sms |  |
+| `0x004A5FA0` | `socket_close` | sms |  |
+| `0x004A6110` | `socket_close_non_player_sockets` | sms |  |
+| `0x004A6150` | `socket_close_socket` | sms |  |
+| `0x004A61A0` | `socket_close_all` | sms |  |
+| `0x004A6220` | `socket_get_state_ptr` | sms |  |
+| `0x004A6260` | `socket_add_state_func` | sms |  |
+| `0x004A62A0` | `socket_set_state` | sms |  |
 | `0x004A62B0` | `socket_set_socket` | sms |  |
+| `0x004A62C0` | `socket_set_type` | sms |  |
+| `0x004A62D0` | `socket_set_all_players_state_funcs` | sms |  |
+| `0x004A6320` | `socket_set_state_func` | sms |  |
+| `0x004A6390` | `socket_build_write_fds` | sms |  |
+| `0x004A6650` | `socket_get_fds` | sms |  |
+| `0x004A66C0` | `socket_check_duplicates` | sms |  |
+| `0x004A6760` | `socket_set_doa` | sms |  |
+| `0x004A67B0` | `socket_process_doa` | sms |  |
+| `0x004ABBF0` | `tcpinit` | sms |  |
 | `0x004ABD40` | `tcpinit2` | sms |  |
 | `0x004ABD60` | `tcp_save_settings` | sms |  |
 | `0x004ABDC0` | `tcplisten` | sms |  |
@@ -223,8 +365,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AC210` | `SER_OkToSendPacket` | sms | budget check (>0x17=23 bytes free); set pending flag DAT_00570edc |
 | `0x004AC230` | `SER_SendPacket` | sms | per-type window check; stamp ack byte; assignPacketCRC; SER_SendBytes 0x18 bytes; bump per-type tx counters |
 | `0x004AC2E0` | `SER_SendRequests` | sms | scan InQueue for gaps; send retransmit-request (type 3) via setPacketInfo+SER_SendPacket |
+| `0x004AC3E0` | `SER_SendDataPackets` | sms |  |
 | `0x004AC480` | `SER_SendStatus` | sms | send status/ACK packet (type0) carrying last-tx seq + per-player state |
 | `0x004B06C0` | `NetProtocolPresent` | sms |  |
+| `0x004B0730` | `NET_GetLocalAddressString` | sms |  |
+| `0x004B0830` | `NET_Initialize` | sms |  |
+| `0x004B0940` | `NET_StartQuery` | sms |  |
+| `0x004B0A10` | `NET_Shutdown` | sms |  |
+| `0x004B0A90` | `NET_ShutdownQuery` | sms |  |
+| `0x004B0AC0` | `NET_Often` | sms |  |
 | `0x004B0BD0` | `NET_Synchronize` | sms |  |
 | `0x004B0CC0` | `NET_Disconnect` | sms |  |
 | `0x004B0CF0` | `NET_Write` | sms |  |
@@ -233,9 +382,33 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B0E50` | `NET_Read` | sms |  |
 | `0x004B10D0` | `NET_ReadAvail` | sms |  |
 | `0x004B1150` | `NET_PeekByte` | sms |  |
+| `0x004B1280` | `NET_GetLastError` | sms |  |
+| `0x004B12A0` | `NET_SendMessageAll` | sms |  |
+| `0x004B1350` | `NET_MakeAutoConnectAddress` | sms |  |
+| `0x004B1380` | `NET_Addr2string` | sms |  |
+| `0x004B13A0` | `net_add_player_id` | sms |  |
 | `0x004B1660` | `game_event_handler` | sms |  |
+| `0x004B16B0` | `net_write_output_q` | sms |  |
 | `0x004B1A80` | `validate_packet` | sms |  |
+| `0x004B1B10` | `net_handle_fd_write` | sms |  |
+| `0x004B1B40` | `net_all_players_ready` | sms |  |
+| `0x004B1B80` | `net_send_all` | sms |  |
+| `0x004B1BF0` | `net_do_accept_connection` | sms |  |
+| `0x004B1CA0` | `net_set_ready` | sms |  |
+| `0x004B1CC0` | `net_print_player_found` | sms |  |
+| `0x004B1D00` | `net_add_self` | sms |  |
+| `0x004B2070` | `net_print_connection_failed` | sms |  |
+| `0x004B20C0` | `net_addr_equal` | sms |  |
+| `0x004B2120` | `net_mung_name` | sms |  |
+| `0x004B2180` | `net_unmung_name` | sms |  |
+| `0x004B2530` | `net_start_game` | sms |  |
+| `0x004B2590` | `net_set_callback_host` | sms |  |
+| `0x004B25B0` | `net_set_callback_players` | sms |  |
+| `0x004B25D0` | `net_set_callback_connected` | sms |  |
 | `0x004B25F0` | `state_func_query_hosts` | sms |  |
+| `0x004B2630` | `net_set_often_state` | sms |  |
+| `0x004B26C0` | `net_get_often_state` | sms |  |
+| `0x004B26D0` | `net_free_player_list` | sms |  |
 
 ### HUD / cockpit
 
@@ -816,7 +989,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 63 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 85 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -883,13 +1056,36 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00454140` | `ChangePlaneType` | sms |  |
 | `0x004543A0` | `RepairTime` | sms |  |
 | `0x004543C0` | `SelectRepairPlane` | sms |  |
+| `0x00477590` | `FMTurbulence` | sms |  |
+| `0x00477D10` | `COMinSpeed` | sms |  |
+| `0x00477D30` | `COCornerSpeed` | sms |  |
+| `0x00477E50` | `COMaxSpeed` | sms |  |
+| `0x00477E60` | `COAcc` | sms |  |
+| `0x00477E80` | `CODacc` | sms |  |
+| `0x00477EA0` | `COBv` | sms |  |
+| `0x00477ED0` | `COBrv` | sms |  |
+| `0x00478090` | `COBankRate` | sms |  |
+| `0x004780D0` | `COTurnRate` | sms |  |
+| `0x00478150` | `COTurnRadius` | sms |  |
+| `0x00478190` | `COThrust` | sms |  |
+| `0x004781D0` | `COTwr` | sms |  |
+| `0x00478200` | `COSig` | sms |  |
+| `0x004784A0` | `COGPullDrag` | sms |  |
+| `0x0047A690` | `FMAircraftSetup` | sms |  |
+| `0x0047A770` | `FMGetAcc` | sms |  |
+| `0x0047AC60` | `FMGetNPCAcc` | sms |  |
+| `0x0047AEB0` | `FMVertMotion` | sms |  |
+| `0x0047AF70` | `FMSetTV` | sms |  |
+| `0x0047B000` | `FMResetTV` | sms |  |
+| `0x0047B020` | `FMFlight` | sms |  |
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 32 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 39 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00405490` | `VDOInit` | sms |  |
 | `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
 | `0x00456300` | `DecodeDSVGA8Frame` | sms | key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank |
 | `0x00456AD0` | `EDB` | sms | expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path |
@@ -917,7 +1113,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A06F0` | `DoFadeout` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004AE410` | `PlayVDOFile` | sms |  |
 | `0x004AE440` | `PlayVDOString` | sms |  |
+| `0x004AECD0` | `VDOClearToBlack` | sms |  |
 | `0x004AED50` | `VDOSetMode` | sms |  |
+| `0x004AEE30` | `VDOSetLineStats` | sms |  |
+| `0x004AF320` | `VDOfromVDOHEADER` | sms |  |
+| `0x004AF690` | `VDOAlloc` | sms |  |
+| `0x004AF6A0` | `VDOFree` | sms |  |
+| `0x004AF6B0` | `VDO_320x200_to_640x480` | sms |  |
 | `0x004AF760` | `VDOCompareBitmaps` | sms |  |
 | `0x004CCFFC` | `DecodeYUV15` | sms |  |
 | `0x004CD1C0` | `DecodeYUV15Double1` | sms |  |
@@ -925,7 +1127,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 158 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 181 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -933,6 +1135,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0041E010` | `?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ` | sms |  |
 | `0x0041E030` | `?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z` | sms |  |
 | `0x0041E050` | `?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
+| `0x00447A40` | `G_TileInit` | sms |  |
+| `0x00447A73` | `G_TileShutDown` | sms |  |
+| `0x00447AA5` | `G_Tile` | sms |  |
 | `0x0045CA70` | `DrawAcrossBankInter` | sms |  |
 | `0x0045CDA0` | `DrawAcrossBank` | sms |  |
 | `0x0045DBD0` | `GG_InitMode` | sms |  |
@@ -950,6 +1155,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045E410` | `GG_WaitRetrace` | sms |  |
 | `0x0045E430` | `GG_QuickBlt` | sms |  |
 | `0x0045E440` | `GG_VideoModesAvailable` | sms |  |
+| `0x0046A640` | `G_InitCircles` | sms |  |
+| `0x0046A690` | `G_ShutdownCircles` | sms |  |
+| `0x0046A6C0` | `G_Circle` | sms |  |
+| `0x00479E10` | `G_FindFirstFile` | sms |  |
+| `0x00479EA0` | `G_FindNextFile` | sms |  |
+| `0x00479F20` | `G_FindClose` | sms |  |
+| `0x00486CF0` | `FPSInit` | sms |  |
+| `0x00486D10` | `FPSUpdate` | sms |  |
+| `0x00486DA0` | `FPSPrint` | sms |  |
+| `0x00486DF0` | `FPSPrint2` | sms |  |
+| `0x00486E10` | `FPSReturn` | sms |  |
 | `0x00497330` | `G_FlipY` | sms |  |
 | `0x00497340` | `G_Init` | sms |  |
 | `0x004973F0` | `G_Shutdown` | sms |  |
@@ -1019,9 +1235,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004992B0` | `G_UHline2` | sms |  |
 | `0x004992E0` | `G_Box2` | sms |  |
 | `0x00499330` | `G_UBox2` | sms |  |
+| `0x004AF800` | `GLASSESInit` | sms |  |
+| `0x004AF850` | `GLASSESShutDown` | sms |  |
+| `0x004AF880` | `GLASSESHDiff` | sms |  |
+| `0x004AF8B0` | `GLASSESAdjust3dAmount` | sms |  |
 | `0x004AF8F0` | `GLASSESSaveBitmap` | sms |  |
 | `0x004AF930` | `GLASSESInterleaveBitmap` | sms |  |
+| `0x004AFA00` | `GLASSESSaveBitmapBox` | sms |  |
+| `0x004AFA40` | `GLASSESInterleaveBitmapBox` | sms |  |
 | `0x004AFB40` | `ShowPicture` | re | shows a full-screen picture and restores the display: saves _curPalette, snapshots the screen into a scratch bitmap (_G_AllocBitmap@12 + _G_BlitToBrush@16), blits the PIC named by the argument centred (_RMAccess@8 / _G_Blit@36), holds it for 0x80 ticks (_WaitTicks@4), then restores palette and screen and frees the scratch. Defined by the disassembly of ?GLASSESInterleaveBitmapBox@@YGXJJJJ@Z, which falls through into it |
+| `0x004AFC60` | `GLASSESBlitWithOffsets` | sms |  |
+| `0x004B00A0` | `GLASSESBeforeDrawingPop` | sms |  |
+| `0x004B00D0` | `GLASSESAfterDrawingPop` | sms |  |
 | `0x004B0130` | `GLASSESSpreadLines` | sms |  |
 | `0x004B01E0` | `GLASSESPrintAmount` | sms |  |
 | `0x004B4320` | `WRFogLayerUpdate` | sms | imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491) |
@@ -1770,10 +1995,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 465 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 473 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00403700` | `usnfmain` | sms |  |
+| `0x00404C70` | `FlyingLoop` | sms |  |
+| `0x0046B560` | `MainLoop` | sms |  |
+| `0x004B27C0` | `UCONFIG_DMusic` | sms |  |
+| `0x004B2820` | `UCONFIG_SetVideoOptions` | sms |  |
+| `0x004B2930` | `UCONFIG_load_EA_CFG` | sms |  |
+| `0x004B2980` | `UCONFIG_save_EA_CFG` | sms |  |
+| `0x004B2BD0` | `UCONFIG_Initialize` | sms |  |
 | `0x004D6F5C` | `timeGetTime` | sms | IAT import thunk (jmp [__imp__…]) |
 | `0x004D6F62` | `joyGetPos` | sms | IAT import thunk (jmp [__imp__…]) |
 | `0x004D6F68` | `joyGetDevCapsA` | sms | IAT import thunk (jmp [__imp__…]) |

@@ -8,11 +8,12 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 29/32 functions have a recovered signature; 0/0 globals have a recovered type.
+// 36/39 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
 // --- functions -------------------------------------------------------
+void VDOInit(void);  // 0x00405490  __fastcall
 undefined4 PlayCobra(undefined4);  // 0x00421A50  __stdcall
 undefined4 DecodeDSVGA8Frame(undefined4, undefined4, undefined4);  // 0x00456300  __cdecl
 void EDB(unsigned char *, unsigned char *, FrameHeader *, GlobalData *);  // 0x00456AD0  __cdecl
@@ -40,7 +41,13 @@ undefined4 DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4);  
 undefined4 DoFadeout(void);  // 0x004A06F0  __stdcall
 short PlayVDOFile(char *, short, char);  // 0x004AE410  __cdecl
 short PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char);  // 0x004AE440  __cdecl
+void VDOClearToBlack(void);  // 0x004AECD0  __cdecl
 void VDOSetMode(VDO *);  // 0x004AED50  __cdecl
+void VDOSetLineStats(unsigned short, unsigned short, unsigned char);  // 0x004AEE30  __cdecl
+char VDOfromVDOHEADER(VDO *, VDOHEADER *);  // 0x004AF320  __cdecl
+void * VDOAlloc(unsigned long);  // 0x004AF690  __cdecl
+void VDOFree(void *);  // 0x004AF6A0  __cdecl
+void VDO_320x200_to_640x480(T_BITMAP *, T_BITMAP *, unsigned long);  // 0x004AF6B0  __cdecl
 unsigned long VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long);  // 0x004AF760  __cdecl
 
 // --- not yet recovered -----------------------------------------------

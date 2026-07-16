@@ -1,4 +1,12 @@
 va,kind,name,display,source,confidence,notes,type
+0x00403700,func,?usnfmain@@YAXXZ,usnfmain,sms,confirmed,,void __cdecl usnfmain(void)
+0x00404C70,func,?FlyingLoop@@YAXXZ,FlyingLoop,sms,confirmed,,void __cdecl FlyingLoop(void)
+0x0046B560,func,?MainLoop@@YAGPAUGlobalData@@@Z,MainLoop,sms,confirmed,,unsigned short __cdecl MainLoop(GlobalData *)
+0x004B27C0,func,?UCONFIG_DMusic@@YADXZ,UCONFIG_DMusic,sms,confirmed,,char __cdecl UCONFIG_DMusic(void)
+0x004B2820,func,?UCONFIG_SetVideoOptions@@YGXXZ,UCONFIG_SetVideoOptions,sms,confirmed,,void __stdcall UCONFIG_SetVideoOptions(void)
+0x004B2930,func,?UCONFIG_load_EA_CFG@@YGPAUCONFIG@@XZ,UCONFIG_load_EA_CFG,sms,confirmed,,CONFIG * __stdcall UCONFIG_load_EA_CFG(void)
+0x004B2980,func,?UCONFIG_save_EA_CFG@@YGDXZ,UCONFIG_save_EA_CFG,sms,confirmed,,char __stdcall UCONFIG_save_EA_CFG(void)
+0x004B2BD0,func,?UCONFIG_Initialize@@YGXXZ,UCONFIG_Initialize,sms,confirmed,,void __stdcall UCONFIG_Initialize(void)
 0x004D6F5C,func,_timeGetTime@0,timeGetTime,sms,confirmed,IAT import thunk (jmp [__imp__…]),undefined4 __stdcall timeGetTime(void)
 0x004D6F62,func,_joyGetPos@8,joyGetPos,sms,confirmed,IAT import thunk (jmp [__imp__…]),"undefined4 __stdcall joyGetPos(undefined4, undefined4)"
 0x004D6F68,func,_joyGetDevCapsA@12,joyGetDevCapsA,sms,confirmed,IAT import thunk (jmp [__imp__…]),"undefined4 __stdcall joyGetDevCapsA(undefined4, undefined4, undefined4)"
