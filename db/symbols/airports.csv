@@ -1,0 +1,25 @@
+va,kind,name,display,source,confidence,notes,type
+0x004BA7E0,func,_APInit@0,APInit,sms,confirmed,clear the airport registry (0x27-max 0x134-byte AIRPORT records at _airports) and the carrier-deck occupancy table (0x58e870),undefined4 __stdcall APInit(void)
+0x004BA800,func,@APAdd@4,APAdd,sms,confirmed,register (or update by object id +0xe6) an AIRPORT record; up to 0x28 airports,undefined4 __fastcall APAdd(undefined4)
+0x004BA870,func,@APDelete@4,APDelete,sms,confirmed,"remove an AIRPORT by object id, compacting the registry",undefined4 __fastcall APDelete(undefined4)
+0x004BA8E0,func,_APNearest@20,APNearest,sms,confirmed,"nearest airport to a point, filtered by side (friendly-only), landable class flag +9 bit 0x8000, optional same-side / landing-type-valid tests; retries dropping the alive requirement","undefined4 __stdcall APNearest(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004BAA10,func,@APTakeoffType@8,APTakeoffType,sms,confirmed,"classify a plane+airport into a takeoff state: 10 vertical (VTOL), 7 catapult, 0xd carrier-deck taxi, 0x11 runway takeoff — from the plane class bits +0xba and the airport capability bytes +0xe8..+0xec (consumed by PlayerUpdateState, #492)","undefined4 __fastcall APTakeoffType(undefined4, undefined4)"
+0x004BAAC0,func,@APLandingType@8,APLandingType,sms,confirmed,"landing-state twin of APTakeoffType: 0x18 vertical/carrier, 0x16 arrested, 0x17 runway","undefined4 __fastcall APLandingType(undefined4, undefined4)"
+0x004BAB20,func,APOnCatapult,,re,confirmed,"is the player on the catapult spot (on ground, within 0x7d00 of the airport catapult point)",
+0x004BAC70,func,_APStripFree@0,APStripFree,sms,confirmed,is the runway clear of other taxiing/taking-off planes controlled by the same airport (traffic sequencing); calls each plane's class proc(8),undefined4 __stdcall APStripFree(void)
+0x004BAC83,func,APStripFreeBody,,re,confirmed,overlapping alternate entry of APStripFree (bounded plane-list scan),
+0x004BD2D0,func,@APFind@4,APFind,sms,confirmed,look up an AIRPORT record by object id,undefined4 __fastcall APFind(undefined4)
+0x004BD310,func,_APClearParks@0,APClearParks,sms,confirmed,clear all parking-spot assignments across every airport and reset parked planes to state 0x1f,undefined4 __stdcall APClearParks(void)
+0x004BD3D0,func,_APGetPark@0,APGetPark,sms,confirmed,"the parking-spot index _curId currently holds at its home airport, or -1",undefined4 __stdcall APGetPark(void)
+0x004BD420,func,_APAssignPark@0,APAssignPark,sms,confirmed,assign _curId the first free parking spot at its airport (unassigning any it held elsewhere first),undefined4 __stdcall APAssignPark(void)
+0x004BD490,func,_APUnassignPark@0,APUnassignPark,sms,confirmed,release every parking spot held by _curId across all airports,undefined4 __stdcall APUnassignPark(void)
+0x004BE6A0,func,_APApproachPath@20,APApproachPath,sms,confirmed,"compute the glideslope steering to the home airport: cross-track + vertical offsets rotated into the runway heading, plus a range-scaled throttle/gear cue","undefined4 __stdcall APApproachPath(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004BE6AB,func,APApproachPathBody,,re,confirmed,overlapping alternate entry of APApproachPath,
+0x004BE8E0,func,_APTeleport,APTeleport,sms,confirmed,"free-flight teleport of the player to the nearest airport: 0 = on the runway, 1 = short final w/ hook, 2 = 10k airborne, 3 = 40k airborne (FMInitPlane each)",
+0x004BEAB0,func,?APSetOffset@@YGXPAUOBJ@@PAUAIRPORT@@PAUOBJ_ON_CARRIER@@@Z,APSetOffset,sms,confirmed,record a plane's position relative to a carrier deck (rotated offset + heading delta) into an OBJ_ON_CARRIER slot so it rides the moving ship,"void __stdcall APSetOffset(OBJ *, AIRPORT *, OBJ_ON_CARRIER *)"
+0x004BEB00,func,@APAddToCarrier@4,APAddToCarrier,sms,confirmed,add _curId to the carrier-deck occupancy table with its relative offset,undefined4 __fastcall APAddToCarrier(undefined4)
+0x004BEB60,func,@APRemoveFromCarrier@0,APRemoveFromCarrier,sms,confirmed,remove _curId from the carrier-deck table,undefined4 __fastcall APRemoveFromCarrier(void)
+0x004BEB90,func,@APCheckCarrier@0,APCheckCarrier,sms,confirmed,"per-frame: if the player is parked on a carrier deck attach it (so it rides the ship), else detach; ServicePlayer calls this (#492)",undefined4 __fastcall APCheckCarrier(void)
+0x004BEC60,func,APOnDeck,,re,confirmed,is a point within a carrier's bounding box and above the deck (a downward Collision probe of class 4),
+0x004BED70,func,_APHomeAirport@0,APHomeAirport,sms,confirmed,"pick the player's home/destination airport — the last waypoint if a flight plan exists, else the nearest landable friendly field",undefined4 __stdcall APHomeAirport(void)
+0x004BEE30,func,@APObjOnShip@4,APObjOnShip,sms,confirmed,"if object N is riding a carrier deck, return that carrier's object id",undefined4 __fastcall APObjOnShip(undefined4)

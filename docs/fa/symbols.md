@@ -1267,7 +1267,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 183 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 211 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1389,9 +1389,33 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B00D0` | `GLASSESAfterDrawingPop` | sms |  |
 | `0x004B0130` | `GLASSESSpreadLines` | sms |  |
 | `0x004B01E0` | `GLASSESPrintAmount` | sms |  |
+| `0x004B3170` | `WRSetTint` | sms | select the active tint-remap table (_currentTintTable) by index |
+| `0x004B3190` | `WRGetLayer` | sms | find the LAYER struct (0x160-byte stride) covering a given altitude; report whether it is above the cloud deck |
+| `0x004B31F0` | `WRSetRemaps` | sms | pick the shade+tint remap tables for an object at a distance/altitude, interpolating between the two straddling LAYERs so haze blends smoothly across the deck |
+| `0x004B3410` | `WRInterpFog` | re | interpolate a LAYER's fog density at a distance along its vis-lo..vis-hi ramp |
+| `0x004B3480` | `WRUpdate` | sms | per-frame atmosphere update at the eye altitude: advance the time-of-day LAYER state machine, recompute the sun angle + light source, blend the sky/horizon palette bands, and roll random palette flicker (lightning) |
+| `0x004B3750` | `WRAdvanceLayers` | re | step the LAYER weather state toward the scheduled next state (fog rolling in/out over time) |
+| `0x004B3820` | `WRLerpByte` | re | byte lerp helper for the LAYER blend |
+| `0x004B382A` | `WRBlendLayer` | re | blend two LAYER structs field-by-field by a 0..0x100 fraction (the fog/colour cross-fade body) |
+| `0x004B3AD0` | `WRLerpColor` | re | interpolate an RGB palette entry for the layer blend |
+| `0x004B3B60` | `WRClampByte` | re | clamp helper for the palette blend |
+| `0x004B3B80` | `WRLerpWord` | re | word lerp helper for the layer blend |
+| `0x004B3BE0` | `WRComposeLayerFlags` | re | compose the effective _currentLayer flag word (night-haze etc.) for the eye altitude |
+| `0x004B3CB0` | `WRBuildSkyBands` | re | build the sky-gradient colour bands from the active LAYER |
+| `0x004B3D90` | `WRUpdatePalette` | sms | rebuild the working palette each frame from the LAYER sky/ground colours + tint + global colour-add, uploading only when it changed |
+| `0x004B4170` | `WRLightUpdate` | sms | recompute the directional light + ambient from the sun position for terrain/object shading |
 | `0x004B4320` | `WRFogLayerUpdate` | sms | imported by all 24 shipped .LAY overlays, which spell it _WRFogLayerUpdate as FA.SMS does (#491) |
+| `0x004B4370` | `WRInit` | sms | load the theater .LAY weather DLL, copy its 30-dword header, init the shade/tint tables + tmap remaps, and force a first palette update |
+| `0x004B4680` | `WRPickTintTable` | re | helper: select the tint table pointer for the current effects flags |
+| `0x004B46D0` | `WRShutdown` | sms | free the LAYER header allocation and clear the WR-enabled flag |
+| `0x004B46F0` | `WRInt` | sms | write the single-byte WR-enabled flag |
+| `0x004B4700` | `WRForcePaletteUpdate` | sms | invalidate _lastPalette so the next frame re-uploads the whole palette |
+| `0x004B4720` | `WRWeatherEffects` | sms | the visibility model: the minimum per-LAYER visibility byte (+0x14e) across the altitude band between two objects, plus the layer's fog distance — the range weather permits seeing through |
 | `0x004B4790` | `InitTmapRemaps` | sms |  |
 | `0x004B47B0` | `SetTmapRemaps` | sms |  |
+| `0x004B48C0` | `WRMakeHazeList` | sms | build the (distance,colour) haze ramp list the sky renderer walks, terminated by 0x7fffffff |
+| `0x004B4990` | `WRLensFlare` | sms | draw the sun lens-flare disc chain when the sun is on-screen and above the horizon (gamePrefs bit 0x80) |
+| `0x004B4B30` | `WRCanSee` | sms | weather-gated line-of-sight: distance <= (weather visibility x the target's detectability +0x3b), clamped to the layer floor. Called by _Targetable (so weather gates visual target acquisition), VIEWCanSeeTarget, PROJScoreTarget, and the AI (0x43a5c0) |
 | `0x004B7910` | `G_AllocBitmapBuffer` | re | allocate a 0x112-byte bitmap buffer via the class allocator and clear its trailing flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004B7930` | `G_RelocBitmap` | sms |  |
 | `0x004B79B0` | `G_AllocBitmap` | sms |  |
@@ -1445,6 +1469,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004C77D0` | `G_SUPolygon` | sms |  |
 | `0x004C8A38` | `G_Polygon` | sms |  |
 | `0x004C8A74` | `G_SPolygon` | sms |  |
+| `0x004C8E20` | `WRBlackenPalette` | sms | scale a palette toward black by a 0..0x100 amount (G-LOC / blackout fade) |
+| `0x004C8E6C` | `WRWhitenPalette` | sms | scale a palette toward white (flash / red-out / nuke flash) |
+| `0x004C8EC8` | `WRReddenPalette` | sms | scale a palette toward red (red-out under negative g) |
+| `0x004C8F10` | `WRColorPalette` | sms | blend a palette toward an arbitrary RGB by an amount (generic screen tint) |
 | `0x004C8FD4` | `Horizon2d` | re | scanline fill for the solid horizon band — orders the span endpoints (hhigh/hxlow/hxhigh/hlow) and fills the sky/ground colour band into the raster surface; terminal step of _SolidHorizon (renderer.md §10); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004C9224` | `NoHorizon` | re | off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004C924C` | `SolidHorizon` | re | solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
@@ -1512,7 +1540,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 107 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 124 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1524,9 +1552,26 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00442750` | `CATGUYMoveProc` | sms |  |
 | `0x00442AB0` | `CATGUYDraw` | sms |  |
 | `0x00442C00` | `GRAPHICInit` | sms | init the 100-entry _graphics effect pool + per-type .SH handle table (crater/smoke/fire/exp/debris/chaff/flare/spd/mpd/lpd); see objects.md GRAPHIC effect spawning |
+| `0x00442DA0` | `GRAPHICRemove` | sms | expire every network-origin (flag 0x10000) GRAPHIC owned by _curId; mirror the removal to peers |
 | `0x00442DE0` | `GRAPHICUpdate` | sms | step every live GRAPHIC entry via FUN_00442e10 (motion/fuse/adder emission), then _UpdateLoopSounds |
+| `0x00442E10` | `GRAPHICStep` | re | advance one GRAPHIC per frame: integrate velocity/spin (or track the owner object), clamp to ground, spawn a fire child at 100%/50% life for the burn types, run its looping sound when in range, and free it at end-of-life |
+| `0x00443120` | `GRAPHICViewOffset` | re | transform a GRAPHIC world position into the owner-object view frame for the muzzle/impact attach (used by AddExp and the per-frame step) |
 | `0x004431B0` | `GRAPHICAddYourObjs` | sms |  |
 | `0x004432D0` | `GRAPHICAddExp` | sms | spawn an explosion: random type-variation, chained debris/cluster-release/smoke children, MP mirror |
+| `0x00443B70` | `GRAPHICAlloc` | re | allocate + initialise a GRAPHIC record: type, flags, position, spawn/expiry ticks, ground-Z from T_Info; returns the entry |
+| `0x00443C60` | `GRAPHICFindSlot` | re | the pool eviction policy: return the first free slot, else evict the lowest-priority live entry (age-biased so explosions/craters outlive smoke) |
+| `0x00443D00` | `GRAPHICAddCrater` | sms | spawn a ground crater/scar decal (skipped on non-terrain); mirror to peers |
+| `0x00443DC0` | `GRAPHICAddHulk` | sms | spawn a burnt-out static hulk marker (type 0x27+id); mirror to peers |
+| `0x00443E80` | `GRAPHICAddSmoke` | sms | spawn a smoke puff that drifts with _windH/_windSpeed and rises; mirror to peers |
+| `0x00443F90` | `GRAPHICAddSmokeAdder` | sms | spawn an invisible emitter that periodically births smoke puffs (via GRAPHICMakeAdder) |
+| `0x00444020` | `GRAPHICAddFire` | sms | spawn a looping fire effect + sound, optionally mounted on an object; mirror to peers |
+| `0x004440F0` | `GRAPHICAddInvisible` | sms | spawn a position-only GRAPHIC (no visual) used as a sound/child-emitter carrier |
+| `0x00444150` | `GRAPHICMakeAdder` | sms | turn a GRAPHIC into a periodic child-spawner (adder byte +0x4a = child type, interval, rgb) |
+| `0x004441D0` | `GRAPHICAddDebris` | sms | scatter N tumbling debris fragments from a base velocity + spread; mirror to peers |
+| `0x004443D0` | `GRAPHICAddClusterRelease` | sms | spawn a cluster-munition sub-release burst (thin wrapper over the shared body) |
+| `0x004443DA` | `GRAPHICAddClusterReleaseBody` | re | overlapping alternate entry / body of GRAPHICAddClusterRelease |
+| `0x00444560` | `GRAPHICAddSpecialDebris` | sms | scatter type-specific debris (wings/panels) drawn from the exploding object's own shape |
+| `0x004447A0` | `GRAPHICAddDevice` | sms | spawn the visual for a dropped device (chaff/flare/tank) as a GRAPHIC |
 | `0x00462600` | `InitChain` | sms |  |
 | `0x00462620` | `RemoveFromChains` | sms |  |
 | `0x00462640` | `ChainRemoveCurObj` | re | unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |

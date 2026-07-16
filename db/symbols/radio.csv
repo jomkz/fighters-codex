@@ -1,0 +1,40 @@
+va,kind,name,display,source,confidence,notes,type
+0x00418070,func,_MSGInit@0,MSGInit,sms,confirmed,"clear the 0x22-slot message queue at 0x522d40 (stride 0xd5; +6 = fire-time, 0xffff = empty) and the hide-stack",undefined4 __stdcall MSGInit(void)
+0x004180A0,func,_MSGSend@32,MSGSend,sms,confirmed,"THE radio/order primitive: queue a T_MSG {flags,rand,fromId,toId,fireT=_currentT+delay,param,kind,payload[<=200],len} for one or a broadcast set of recipients. Recipient 0x8000/8001/8002 fan out via WNGPart/WNGWingmen to leader/wing; 0x8003+thisComputer routes to a human. AI recipients get ImmediateService; non-local recipients are mirrored by MPMsgSend. If the message is TO the player and audible (radio not silenced, kind in the spoken set) it also calls SAYMsg. Kinds are the SayProc opcodes (attack/break/contact/splash/…)","undefined4 __stdcall MSGSend(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004185A0,func,_MSGReceive@8,MSGReceive,sms,confirmed,pull the first due message (fireT<=_currentT) matching a recipient mask into the receive buffer at 0x522c60; SAYMsg it if audible; compacts the queue; 0x800b = any-AI wildcard,"undefined4 __stdcall MSGReceive(undefined4, undefined4)"
+0x004186E0,func,_MSGHide@0,MSGHide,sms,confirmed,push the suppress-audio flag (0x522c58) and set it — used to bracket a burst of orders so only the net effect is spoken,undefined4 __stdcall MSGHide(void)
+0x00418710,func,_MSGPop@0,MSGPop,sms,confirmed,pop the suppress-audio flag saved by MSGHide,undefined4 __stdcall MSGPop(void)
+0x00418730,func,_MSGMultiCanGet@0,MSGMultiCanGet,sms,confirmed,"is there a free slot, and pick the oldest pending broadcast(0x400) message to expire, so the multiplayer relay always has room",undefined4 __stdcall MSGMultiCanGet(void)
+0x0041873E,func,MSGMultiPurge,,re,confirmed,alternate entry / helper of MSGMultiCanGet: find a matching slot then expire the oldest 0x400 broadcast,
+0x004187F0,func,@MSGMultiGet@4,MSGMultiGet,sms,confirmed,copy an incoming network message into a free queue slot; ImmediateService the recipient if it is a live local AI,undefined4 __fastcall MSGMultiGet(undefined4)
+0x004189E0,func,_MSGRemoveCurObj@0,MSGRemoveCurObj,sms,confirmed,expire every queued message addressed to _curId (object death cleanup),undefined4 __stdcall MSGRemoveCurObj(void)
+0x00418A10,func,@MSGRemoveSecondaries@4,MSGRemoveSecondaries,sms,confirmed,"expire queued secondary (non-primary, +0x1d set) messages from a given sender",undefined4 __fastcall MSGRemoveSecondaries(undefined4)
+0x0048D2B0,func,_SAYInit@0,SAYInit,sms,confirmed,"reset the SAY chatter cooldown + per-topic ""last said"" timestamps",undefined4 __stdcall SAYInit(void)
+0x0048D2F0,func,_SAYInit2@0,SAYInit2,sms,confirmed,second-stage SAY reset: seed home/succeeded/failed flags from MISSIONSucceededForThisPlayer,undefined4 __stdcall SAYInit2(void)
+0x0048D340,func,_SAYShutdown@0,SAYShutdown,sms,confirmed,SAY teardown (no-op),undefined4 __stdcall SAYShutdown(void)
+0x0048D350,func,@SAYMsg@4,SAYMsg,sms,confirmed,"render one queued T_MSG: push its sender as cur-obj, then dispatch to the object class SayProc via CallUtilProc(6) (PLANESayProc etc.) or SAYDefaultSayProc",undefined4 __fastcall SAYMsg(undefined4)
+0x0048D3C0,func,_SAYDefaultSayProc,SAYDefaultSayProc,sms,confirmed,"the fallback SayProc: emit the literal $-prefixed payload string, then FinishSayLine",
+0x0048D410,func,SayLineReset,,re,confirmed,"clear the two SAY line accumulators (text at 0x552ff0, sound-name list at 0x553050)",
+0x0048D420,func,SayLineAppend,,re,confirmed,"append a {text,sound} pair to the SAY line accumulators (comma-separating stacked sound names)",
+0x0048D470,func,FinishSayLine,,re,confirmed,"finish a spoken line: prefix the speaker callsign (or ""CO-PILOT""/""VOICE""), HUDMessage the text, play the queued sound names at radio volume, arm the chatter cooldown",
+0x0048D5E0,func,SayScaleTime,,re,confirmed,scale a chatter-cooldown duration by the current time compression,
+0x0048D600,func,SayResetSoundHandle,,re,confirmed,reset the looping-say sound handle (0x4ff058),
+0x0048D610,func,SayPlaySoundList,,re,confirmed,play a comma-separated list of .5K sound files as one radio transmission (default extension .5K),
+0x0048D6E0,func,SayObjName,,re,confirmed,"format an object's spoken name: its assigned callsign, or ""<colour> <n>"" for a wing member, or the type name",
+0x0048D7B8,func,PlaneSayBreak,,re,confirmed,"overlapping alternate entry into PLANESayProc case 5 (the ""Break""/""Approach"" direction line)",
+0x0048E140,func,SayFatigueLow,,re,confirmed,fatigue gate: is the speaker's fatigue byte (+1) below a threshold,
+0x0048E150,func,SayPickLine,,re,confirmed,"choose one of N alternative lines for a topic — random when no sender, else the sender id modulo N so a given plane is consistent — and append it",
+0x0048E190,func,SayContactType,,re,confirmed,"build the ""N bandit(s)"" contact-type phrase: MiG-17/19/21 special-cased by type-name prefix, else generic bandit + the aspect word chosen from the target facing bits",
+0x0048E350,func,SayClock,,re,confirmed,"append a clock-position phrase (""your 3 o'clock"", ""high""/""low"") from a bearing + elevation",
+0x0048E3F0,func,SayNumberWord,,re,confirmed,append a spelled number-word sound (from _numberSay) + its text,
+0x0048E430,func,SayRange,,re,confirmed,"append a spoken range in miles (""2 miles"" / ""%d.MILE"")",
+0x0048E4E0,func,SaySpellNumber,,re,confirmed,spell an integer digit-by-digit as _NUM sound files + text,
+0x0048E5F0,func,SayWaypointCall,,re,confirmed,"build the ""Proceed to waypoint N, bearing X, descend to angels Y"" AWACS steer call",
+0x0048E740,func,SayContactCall,,re,confirmed,"build the full ""Contact, [multiple/pair of] bandits, <clock>, <range>, please advise"" AWACS contact call, weather-gated via WRWeatherEffects",
+0x0048E920,func,@SAYRearmMessage@8,SAYRearmMessage,sms,confirmed,"""Plane Re-Armed and Re-Fueled"" radio line","undefined4 __fastcall SAYRearmMessage(undefined4, undefined4)"
+0x0048E950,func,SayFlushLine,,re,confirmed,"flush the accumulated SAY line to a network MSGSend(kind 0x24) so remote players hear it, then arm the cooldown",
+0x0048EA10,func,@SAYSuppRadarMessage@12,SAYSuppRadarMessage,sms,confirmed,AWACS/GCI supplemental-radar link on/off/broken radio lines (temporarily forces radio-on to guarantee the message is heard),"undefined4 __fastcall SAYSuppRadarMessage(undefined4, undefined4, undefined4)"
+0x0048EB20,func,@SAYLowFuelMessage@8,SAYLowFuelMessage,sms,confirmed,"the fuel-state ladder: Joker/Bingo/""running on fumes""/""out of gas"" lines, each fired once via plane-flags latch bits (0x50cfef 0x8000..0x400000)","undefined4 __fastcall SAYLowFuelMessage(undefined4, undefined4)"
+0x00490F30,func,@SAYTranslate@4,SAYTranslate,sms,confirmed,"when the player flies a MiG (side 0x14/0x15), swap an English distress .5K for its Russian equivalent (AARRRGH/EJECT variants); otherwise pass the filename through",undefined4 __fastcall SAYTranslate(undefined4)
+0x00491130,func,_SAYFortAircraft,SAYFortAircraft,sms,confirmed,HUD list of the fort mission's aircraft types + counts (Shift+I report),
+0x004911F0,func,_SAYFortStatus,SAYFortStatus,sms,confirmed,HUD list of each fort's % destroyed (Shift+F report),

@@ -315,7 +315,34 @@ were found in the dark zone `0x4B4200`–`0x4BEDFF` (see section 10).
 
 `_WRInit@4` additionally sets up the `_fillTypes` dispatch table (14 entries at `0x60e99`–`0x60ea?`),
 mapping fill-type indices to scanline fill kernel addresses, and loads cloud/sky PIC wildcards via
-`FUN_004b4680` (a `strchr(name, '*')` + `_Rand_4` + `_Sprintf` pattern for wildcard PIC selection).
+`WRPickTintTable` (`0x4b4680`, a `strchr(name, '*')` + `_Rand_4` + `_Sprintf` pattern for wildcard
+PIC selection).
+
+### Weather: atmosphere and visibility (#493)
+
+The [#493](https://github.com/jomkz/fighters-codex/issues/493) reading wave named the rest of the
+WR helpers and confirmed the loop. `WRUpdate` (`0x4b3480`) is the per-frame driver: it advances the
+time-of-day LAYER state machine (`WRAdvanceLayers` rolls fog in and out on a schedule; the
+`WRBlendLayer`/`WRLerp*` helpers cross-fade two LAYER structs field-by-field), recomputes the sun
+angle and light source, rebuilds the sky/horizon colour bands, and — for stormy layers — rolls a
+random palette flicker (lightning). `WRSetTint` selects the active tint table; `WRSetRemaps`
+(`0x4b31f0`) picks the shade+tint remap for an object by interpolating between the two LAYERs
+straddling its altitude so haze blends across the cloud deck; `WRLightUpdate` derives the
+directional light and ambient from the sun for terrain/object shading.
+
+**Weather gates target acquisition.** `WRWeatherEffects` returns the minimum visibility across the
+altitude band between two objects, and `WRCanSee` (§6) turns that into a max detection range
+(`visibility × the target's detectability at type +0x3b`). Its callers settle the open question the
+issue raised: `_Targetable@16` (the master "can this be a target" test that
+[FlightKey](input.md#flightkey--the-in-flight-command-table) selection and the visible-target scan
+use), `VIEWCanSeeTarget`, `PROJScoreTarget`, and the AI acquisition path (`0x43a5c0`) all call it —
+so **weather visibility directly gates whether a target can be visually acquired**, by the player
+and the AI alike.
+
+**Palette-tint helpers.** `WRBlackenPalette`/`WRWhitenPalette`/`WRReddenPalette`/`WRColorPalette`
+(`0x4c8e20`–`0x4c8f10`) scale a palette toward black, white, red, or an arbitrary RGB by a
+`0..0x100` amount — the full-screen flash family behind G-LOC blackout, negative-g red-out, and the
+weapon/nuke flashes.
 
 ---
 

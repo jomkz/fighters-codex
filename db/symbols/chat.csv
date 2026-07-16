@@ -1,0 +1,10 @@
+va,kind,name,display,source,confidence,notes,type
+0x00413120,func,_CHATInit@0,CHATInit,sms,confirmed,"multiplayer chat init: reset the edit state, MSGInit + HUD/shell message rings, then load the CHATMAC macro file (0x4ee2a0) into the 12 macro slots — each line is [\recipient\]text[\soundfile], parsed into parallel arrays: destination (0x522940), sound (0x522720 stride 0x29), text (0x522970 stride 0x33)",undefined4 __stdcall CHATInit(void)
+0x00413151,func,CHATLoadMacros,,re,confirmed,overlapping alternate entry of CHATInit that reloads only the macro tables (skips the ring re-init),
+0x004133C0,func,@CHATKey@4,CHATKey,sms,confirmed,"the multiplayer chat key handler (returns 0 if it consumed the key): `` `/~ ``/Alt+Enter open an edit line targeting all/side/wing/squadron (mode 0-4, filtered by CanChat); Tab/Shift+Tab cycle mode; F1-F12 fire a macro (send its text/sound to the mode's recipients); Enter sends the typed line to every matching player via MSGSend(kind 0x24); printable keys append; Esc cancels",undefined4 __fastcall CHATKey(undefined4)
+0x004138C0,func,CanChatMode,,re,confirmed,is the current chat mode usable now (side/wing require sides chosen; screen 0x10 in-flight vs pre-mission),
+0x00413920,func,ChatMyWing,,re,confirmed,"the player's own wing id (for wing-chat targeting), or 0 when not flying",
+0x00413960,func,ChatCanReach,,re,confirmed,does chat mode M let this computer reach player P — same-side/same-wing/same-squadron tests over _objControlledBy / _humanChoseSide,
+0x00413B60,func,_CHATGetEditLine@0,CHATGetEditLine,sms,confirmed,"format the in-progress edit line (""SEND TO ALL: text_"") with a blinking cursor for the HUD overlay",undefined4 __stdcall CHATGetEditLine(void)
+0x00413BF0,func,_CHATEndMission@0,CHATEndMission,sms,confirmed,end-of-mission chat reset: clear editing + re-init the message rings,undefined4 __stdcall CHATEndMission(void)
+0x00413C20,func,_CHATFixKeyarray@0,CHATFixKeyarray,sms,confirmed,"while a chat line is being edited, force the flight-control keys in _keyarray to released so typing does not fly the plane (called from KEYEvent)",undefined4 __stdcall CHATFixKeyarray(void)
