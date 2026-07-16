@@ -82,6 +82,8 @@ typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station    
 typedef struct HARDPOINT_TYPE HARDPOINT_TYPE; /* flight-model: store-station type     */
 typedef struct DIAL           DIAL;           /* shell-ui: dial/knob widget           */
 typedef struct ModemStrings   ModemStrings;   /* input: modem init/dial string set    */
+typedef struct WAYPOINT       WAYPOINT;       /* campaign: nav waypoint (MPSetWaypoints) */
+typedef struct T_MSG          T_MSG;          /* hud: text-message record (MPMsgSend)   */
 
 /* network -- the transport types the NET_/SERIAL_ signatures name */
 typedef struct NET_PKT               NET_PKT;
@@ -94,6 +96,7 @@ typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address    
 typedef struct sockaddr_in           sockaddr_in;   /* Winsock TCP/IP address        */
 typedef struct socket_state          socket_state;
 typedef struct PKT_PLAYER_AD         PKT_PLAYER_AD; /* game advertisement packet (UDP/SAP query) */
+typedef struct MP_INFO               MP_INFO;       /* multiplayer session-info record (MP_Info) */
 
 /* MSVC CRT internals, named in the startup subsystem's exception-handling signatures */
 typedef struct _iobuf                _iobuf;  /* the CRT FILE struct, by its real name */

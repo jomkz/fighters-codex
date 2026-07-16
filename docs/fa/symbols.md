@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 172 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 243 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -130,7 +130,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DB00` | `pkt_sock_read` | sms | read one NET_PKT from a socket |
 | `0x00464880` | `dlg_list_get_new_selection` | sms |  |
 | `0x0046ACF0` | `net_test_start_latency_test` | sms |  |
+| `0x0046BDE0` | `MPFlushAll` | sms |  |
+| `0x0046BE50` | `MPCheckConnection` | sms |  |
 | `0x0046C0A0` | `MPEnqueue` | re | core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper') |
+| `0x0046C150` | `MPSetSlowComm` | sms |  |
+| `0x0046C190` | `MPConnect` | sms |  |
+| `0x0046C250` | `MPShutdown` | sms |  |
+| `0x0046C260` | `MPTimeSync` | sms |  |
+| `0x0046C280` | `MPMissionInit1` | sms |  |
+| `0x0046C470` | `MPMissionInit2` | sms |  |
+| `0x0046C500` | `MPMissionShutdown` | sms |  |
+| `0x0046C520` | `MPService` | sms |  |
 | `0x0046C680` | `MPInterpPosAxis` | re | interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680 |
 | `0x0046C780` | `MPUpdateInterval` | re | per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046C860` | `MPInterpAngleAxis` | re | interpolate one angle axis (uses MPWrapAngle). Body @0x46C860 |
@@ -143,24 +153,81 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0046EE00` | `MPGetType` | re | peek/pull next packet type byte from peer (MP_PeekByte/MP_Read); -0x100 on EOF. Body @0x46EE00 (docs cite as FUN_0046EE00); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046EE40` | `MPReadPayload` | re | read param_3 bytes iff fully available (MP_ReadAvail then MP_Read). Body @0x46EE40 |
 | `0x0046EE90` | `MPClearDeadStatus` | re | zero _mpStatus[peer] for peers no longer in MP_Info connected_mask. Body @0x46EE90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0046EED0` | `MPSend` | sms |  |
 | `0x0046FA40` | `MPAbsToRelTime` | re | encode absolute time to relative packet timestamp (-currentT; skips sentinels). Body @0x46FA40; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0046FA60` | `MPEncodeState14` | re | encode packet 0x14: quantized pos delta (auto-exponent) + BAM angle delta /0xB6, writes alias +0x74. Body @0x46FA60 |
 | `0x0046FBF0` | `MPEncodeState15` | re | encode packet 0x15: small position-only delta (>>0xC). Body @0x46FBF0 |
 | `0x0046FD50` | `MPSendSyncOnce` | re | broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0046FDB0` | `MPRemoveCurObj` | sms |  |
+| `0x0046FE00` | `MPEndMission` | sms |  |
+| `0x0046FE30` | `MPSendGameMode` | sms |  |
+| `0x0046FE70` | `MPAddScore` | sms |  |
+| `0x0046FEF0` | `MPSendMissionSucceeded` | sms |  |
 | `0x0046FF20` | `MPSendScenarioEndTime` | re | broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0046FF70` | `MPPaused` | sms |  |
+| `0x0046FFC0` | `MPSetPaused` | sms |  |
+| `0x00470010` | `MPProjAdd` | sms |  |
+| `0x00470150` | `MPEjectAdd` | sms |  |
+| `0x004701A0` | `MPManAdd` | sms |  |
+| `0x00470250` | `MPPrepareForInterp` | sms |  |
+| `0x00470640` | `MPMsgSend` | sms |  |
 | `0x00470780` | `MPMsgRemapAliases` | re | remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004708B0` | `MPGraphicAddCrater` | sms |  |
+| `0x00470900` | `MPGraphicAddExp` | sms |  |
+| `0x00470990` | `MPGraphicAddSmoke` | sms |  |
+| `0x00470A20` | `MPGraphicAddDebris` | sms |  |
+| `0x00470A90` | `MPGraphicAddClusterRelease` | sms |  |
+| `0x00470B00` | `MPGraphicAddSpecialDebris` | sms |  |
+| `0x00470B70` | `MPGraphicAddHulk` | sms |  |
+| `0x00470BC0` | `MPLaunchDevice` | sms |  |
+| `0x00470C30` | `MPGraphicAddFire` | sms |  |
+| `0x00470CF0` | `MPGraphicAddSmokeAdder` | sms |  |
+| `0x00470DC0` | `MPGraphicRemove` | sms |  |
+| `0x00470E00` | `MPShellSendScreen` | sms |  |
+| `0x00470E40` | `MPPlayerChoseSide` | sms |  |
 | `0x00470E80` | `MPQuickButton` | sms |  |
+| `0x00470EB0` | `MPQuickButtonText` | sms |  |
 | `0x00470EF0` | `MPPlayerChoseFort` | sms |  |
 | `0x00470F30` | `MPFortButton` | sms |  |
+| `0x00470F60` | `MPFortButtonText` | sms |  |
 | `0x00470FA0` | `MPFortButton2` | sms |  |
+| `0x00470FD0` | `MPFortButtonText2` | sms |  |
+| `0x00471010` | `MPSendAntiCheat` | sms |  |
+| `0x00471070` | `MPSendCheatsOn` | sms |  |
+| `0x004710B0` | `MPSendFrameRate` | sms |  |
+| `0x004710F0` | `MPShowFrameRate` | sms |  |
+| `0x00471130` | `MPSingleFilename` | sms |  |
+| `0x00471190` | `MPSendPrefs` | sms |  |
+| `0x004711F0` | `MPMaybePausedMsg` | sms |  |
+| `0x00471360` | `MPWpnStats` | sms |  |
+| `0x00471400` | `MPKillStats` | sms |  |
+| `0x00471450` | `MPLandingStats` | sms |  |
+| `0x00471490` | `MPHUDMessage` | sms |  |
+| `0x004714D0` | `MPStatusInit` | sms |  |
+| `0x00471510` | `MPStatusSet` | sms |  |
+| `0x00471560` | `MPStatusToDrawSet` | sms |  |
+| `0x004715B0` | `MPStatusDraw` | sms |  |
 | `0x00471880` | `MPChatChecksum` | re | checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004718F0` | `MPDrawStatusLine` | re | truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0 |
+| `0x004719E0` | `MPEveryoneStatus` | sms |  |
+| `0x00471A30` | `MPWaitEveryoneStatus` | sms |  |
 | `0x00471A90` | `MPWaitStatus` | re | modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status) |
 | `0x00471B80` | `MPAllPeersAtStatus` | re | test whether every connected peer's _mpStatus == param_1. Body @0x471B80; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00471BD0` | `MPAssignPlayers` | sms |  |
 | `0x00471FA0` | `MPAssignPlanePlayers` | re | per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00472100` | `MPComparePlaneRank` | re | qsort comparator ordering the multiplayer wing-assignment candidates by the 4-byte rank at +3 of each 7-byte record; ?MPAssignPlayers@@YGXXZ passes it to _qsort twice over the table at 0x547180 |
 | `0x00472130` | `MPBuildSpawnPayload` | re | apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130 |
+| `0x00472260` | `MPSetControl` | sms |  |
+| `0x004722D0` | `MPRequestControl` | sms |  |
+| `0x00472330` | `MPChangePlaneType` | sms |  |
+| `0x004723A0` | `MPSetFuel` | sms |  |
+| `0x00472400` | `MPSetHardpoints` | sms |  |
+| `0x00472520` | `MPSetWaypoints` | sms |  |
+| `0x004725B0` | `MPLifeNotify` | sms |  |
 | `0x00472670` | `MPRevive` | re | apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670 |
+| `0x00472A90` | `MPKey` | sms |  |
+| `0x004733E0` | `MPCheckDisconnect` | sms |  |
+| `0x004735C0` | `MPShellInitMessages` | sms |  |
 | `0x004735D0` | `MPChatStore` | re | append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x0047F5F0` | `CN_GetBigString` | sms |  |
 | `0x004874C0` | `sapopensocket` | sms | SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild) |
@@ -171,6 +238,10 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00493EE0` | `connected_state_callback` | sms |  |
 | `0x004940E0` | `players_box_add` | sms |  |
 | `0x004941E0` | `players_box_connected_state_callback` | sms |  |
+| `0x00494BC0` | `MP_Initialize` | sms |  |
+| `0x00494CB0` | `MP_Info` | sms |  |
+| `0x00494CC0` | `MP_Shutdown` | sms |  |
+| `0x00494D40` | `MP_SetTransmitTimeout` | sms |  |
 | `0x00494D50` | `MP_Dont_care` | sms |  |
 | `0x00496F40` | `spxinit` | sms | SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST |
 | `0x00497000` | `spxinit2` | sms | SPX secondary init from NET_PROTOCOL/CN_INFO |

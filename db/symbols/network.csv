@@ -68,8 +68,18 @@ va,kind,name,display,source,confidence,notes,type
 0x00464880,func,?dlg_list_get_new_selection@@YADPAXPAUNET_ADDRESS@@PAD@Z,dlg_list_get_new_selection,sms,confirmed,,"char __cdecl dlg_list_get_new_selection(void *, NET_ADDRESS *, char *)"
 0x0046ACF0,func,?net_test_start_latency_test@@YAXH@Z,net_test_start_latency_test,sms,confirmed,,void __cdecl net_test_start_latency_test(int)
 0x0046BD90,func,,,waiver,confirmed,FOREIGN Cobra input poll (see Part 1 exclusions) — NOT network,
+0x0046BDE0,func,?MPFlushAll@@YIXD@Z,MPFlushAll,sms,confirmed,,void __fastcall MPFlushAll(char)
+0x0046BE50,func,?MPCheckConnection@@YGXXZ,MPCheckConnection,sms,confirmed,,void __stdcall MPCheckConnection(void)
 0x0046C0A0,func,MPEnqueue,,re,confirmed,"core outbound primitive: enqueue param_3 bytes to peers matching param_1 (peer id / -1 all-others / -2 all) via MP_WriteAvail/MP_Write, gated by MP_Info connected_mask +0x158; stamps DAT_00546E30 last-send. Body @0x46C0A0 (docs: 'packet enqueue helper')","undefined4 __stdcall MPEnqueue(undefined4, undefined4, undefined4, undefined4)"
+0x0046C150,func,?MPSetSlowComm@@YGXXZ,MPSetSlowComm,sms,confirmed,,void __stdcall MPSetSlowComm(void)
+0x0046C190,func,?MPConnect@@YGXXZ,MPConnect,sms,confirmed,,void __stdcall MPConnect(void)
+0x0046C250,func,?MPShutdown@@YGXXZ,MPShutdown,sms,confirmed,,void __stdcall MPShutdown(void)
+0x0046C260,func,?MPTimeSync@@YGXXZ,MPTimeSync,sms,confirmed,,void __stdcall MPTimeSync(void)
+0x0046C280,func,?MPMissionInit1@@YGXXZ,MPMissionInit1,sms,confirmed,,void __stdcall MPMissionInit1(void)
 0x0046C28C,func,,,waiver,confirmed,Ghidra split tail of ?MPMissionInit1@@YGXXZ (0x46C280),
+0x0046C470,func,?MPMissionInit2@@YGXXZ,MPMissionInit2,sms,confirmed,,void __stdcall MPMissionInit2(void)
+0x0046C500,func,?MPMissionShutdown@@YGXXZ,MPMissionShutdown,sms,confirmed,,void __stdcall MPMissionShutdown(void)
+0x0046C520,func,?MPService@@YGXXZ,MPService,sms,confirmed,,void __stdcall MPService(void)
 0x0046C680,func,MPInterpPosAxis,,re,inferred,interpolate one position axis from packet tick delta (uses MPUpdateInterval). Body @0x46C680,"undefined4 __stdcall MPInterpPosAxis(undefined4, undefined4, undefined4, undefined4)"
 0x0046C780,func,MPUpdateInterval,,re,confirmed,"per-entity net update interval (LOD): class _cg==6/==4, distance from last-sent (+0x8C/8E/90 vs +0x1D/1F/21), _slowComm, CloseToAnything. Body @0x46C780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","undefined4 __fastcall MPUpdateInterval(short, entity *)"
 0x0046C860,func,MPInterpAngleAxis,,re,inferred,interpolate one angle axis (uses MPWrapAngle). Body @0x46C860,"undefined4 __stdcall MPInterpAngleAxis(undefined4, undefined4, undefined4, undefined4)"
@@ -83,31 +93,88 @@ va,kind,name,display,source,confidence,notes,type
 0x0046EE00,func,MPGetType,,re,confirmed,peek/pull next packet type byte from peer (MP_PeekByte/MP_Read); -0x100 on EOF. Body @0x46EE00 (docs cite as FUN_0046EE00); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MPGetType(undefined4)
 0x0046EE40,func,MPReadPayload,,re,inferred,read param_3 bytes iff fully available (MP_ReadAvail then MP_Read). Body @0x46EE40,"undefined4 __stdcall MPReadPayload(undefined4, undefined4, undefined4, undefined4)"
 0x0046EE90,func,MPClearDeadStatus,,re,confirmed,zero _mpStatus[peer] for peers no longer in MP_Info connected_mask. Body @0x46EE90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MPClearDeadStatus(void)
+0x0046EED0,func,?MPSend@@YGXXZ,MPSend,sms,confirmed,,void __stdcall MPSend(void)
 0x0046EEDF,func,,,waiver,confirmed,Ghidra split tail of ?MPSend@@YGXXZ (0x46EED0) — the per-object encode/enqueue body,
 0x0046FA40,func,MPAbsToRelTime,,re,confirmed,encode absolute time to relative packet timestamp (-currentT; skips sentinels). Body @0x46FA40; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,short __fastcall MPAbsToRelTime(short)
 0x0046FA60,func,MPEncodeState14,,re,inferred,"encode packet 0x14: quantized pos delta (auto-exponent) + BAM angle delta /0xB6, writes alias +0x74. Body @0x46FA60","undefined4 __stdcall MPEncodeState14(undefined4, undefined4)"
 0x0046FBF0,func,MPEncodeState15,,re,inferred,encode packet 0x15: small position-only delta (>>0xC). Body @0x46FBF0,"undefined4 __stdcall MPEncodeState15(undefined4, undefined4)"
 0x0046FD50,func,MPSendSyncOnce,,re,confirmed,broadcast one 0x10 sync byte once per session (guard DAT_004F78C8) via MPEnqueue(-1). Body @0x46FD50; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MPSendSyncOnce(void)
+0x0046FDB0,func,?MPRemoveCurObj@@YGXXZ,MPRemoveCurObj,sms,confirmed,,void __stdcall MPRemoveCurObj(void)
+0x0046FE00,func,?MPEndMission@@YGXXZ,MPEndMission,sms,confirmed,,void __stdcall MPEndMission(void)
+0x0046FE30,func,?MPSendGameMode@@YGXXZ,MPSendGameMode,sms,confirmed,,void __stdcall MPSendGameMode(void)
+0x0046FE70,func,?MPAddScore@@YGXJG@Z,MPAddScore,sms,confirmed,,"void __stdcall MPAddScore(long, unsigned short)"
+0x0046FEF0,func,?MPSendMissionSucceeded@@YGXXZ,MPSendMissionSucceeded,sms,confirmed,,void __stdcall MPSendMissionSucceeded(void)
 0x0046FF20,func,MPSendScenarioEndTime,,re,confirmed,broadcast packet 0x50 (_endScenarioSetTime - _currentTime) via MPEnqueue(-1). Body @0x46FF20; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MPSendScenarioEndTime(void)
+0x0046FF70,func,?MPPaused@@YGDXZ,MPPaused,sms,confirmed,,char __stdcall MPPaused(void)
+0x0046FFC0,func,?MPSetPaused@@YIXD@Z,MPSetPaused,sms,confirmed,,void __fastcall MPSetPaused(char)
+0x00470010,func,?MPProjAdd@@YGXXZ,MPProjAdd,sms,confirmed,,void __stdcall MPProjAdd(void)
 0x0047001C,func,,,waiver,confirmed,Ghidra split tail of ?MPProjAdd@@YGXXZ (0x470010),
+0x00470150,func,?MPEjectAdd@@YIXGG@Z,MPEjectAdd,sms,confirmed,,"void __fastcall MPEjectAdd(unsigned short, unsigned short)"
+0x004701A0,func,?MPManAdd@@YGXGPADEPAUF24_POINT3@@1J@Z,MPManAdd,sms,confirmed,,"void __stdcall MPManAdd(unsigned short, char *, unsigned char, F24_POINT3 *, F24_POINT3 *, long)"
 0x004701AC,func,,,waiver,confirmed,Ghidra split tail of ?MPManAdd@@YGXGPADEPAUF24_POINT3@@1J@Z (0x4701A0),
+0x00470250,func,?MPPrepareForInterp@@YGXPAUANGLE@@J@Z,MPPrepareForInterp,sms,confirmed,,"void __stdcall MPPrepareForInterp(ANGLE *, long)"
 0x0047025C,func,,,waiver,confirmed,Ghidra split tail of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z (0x470250),
+0x00470640,func,?MPMsgSend@@YIXPAUT_MSG@@@Z,MPMsgSend,sms,confirmed,,void __fastcall MPMsgSend(T_MSG *)
 0x00470780,func,MPMsgRemapAliases,,re,confirmed,"remap object ids embedded in a T_MSG to/from net aliases (+8=0x4000/-0x8000/-1, sub-type +10) via MPResolveAlias. Body @0x470780; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand","void __fastcall MPMsgRemapAliases(undefined4 *, char)"
+0x004708B0,func,?MPGraphicAddCrater@@YIXPAUF24_POINT3@@J@Z,MPGraphicAddCrater,sms,confirmed,,"void __fastcall MPGraphicAddCrater(F24_POINT3 *, long)"
+0x00470900,func,?MPGraphicAddExp@@YGXJPAUF24_POINT3@@GDDD@Z,MPGraphicAddExp,sms,confirmed,,"void __stdcall MPGraphicAddExp(long, F24_POINT3 *, unsigned short, char, char, char)"
+0x00470990,func,?MPGraphicAddSmoke@@YGXJPAUF24_POINT3@@JJJG@Z,MPGraphicAddSmoke,sms,confirmed,,"void __stdcall MPGraphicAddSmoke(long, F24_POINT3 *, long, long, long, unsigned short)"
+0x00470A20,func,?MPGraphicAddDebris@@YGXJPAUF24_POINT3@@PAUWORD_POINT3@@JD@Z,MPGraphicAddDebris,sms,confirmed,,"void __stdcall MPGraphicAddDebris(long, F24_POINT3 *, WORD_POINT3 *, long, char)"
+0x00470A90,func,?MPGraphicAddClusterRelease@@YGXJPAUF24_POINT3@@PAUWORD_POINT3@@JD@Z,MPGraphicAddClusterRelease,sms,confirmed,,"void __stdcall MPGraphicAddClusterRelease(long, F24_POINT3 *, WORD_POINT3 *, long, char)"
+0x00470B00,func,?MPGraphicAddSpecialDebris@@YGXPAUF24_POINT3@@GD@Z,MPGraphicAddSpecialDebris,sms,confirmed,,"void __stdcall MPGraphicAddSpecialDebris(F24_POINT3 *, unsigned short, char)"
+0x00470B70,func,?MPGraphicAddHulk@@YIXPAUF24_POINT3@@J@Z,MPGraphicAddHulk,sms,confirmed,,"void __fastcall MPGraphicAddHulk(F24_POINT3 *, long)"
+0x00470BC0,func,?MPLaunchDevice@@YGXGEJEPAUWORD_POINT3@@@Z,MPLaunchDevice,sms,confirmed,,"void __stdcall MPLaunchDevice(unsigned short, unsigned char, long, unsigned char, WORD_POINT3 *)"
+0x00470C30,func,?MPGraphicAddFire@@YGXEPAUF24_POINT3@@GPAUWORD_POINT3@@JJJ@Z,MPGraphicAddFire,sms,confirmed,,"void __stdcall MPGraphicAddFire(unsigned char, F24_POINT3 *, unsigned short, WORD_POINT3 *, long, long, long)"
+0x00470CF0,func,?MPGraphicAddSmokeAdder@@YGXPAUF24_POINT3@@GPAUWORD_POINT3@@JJJJJJ@Z,MPGraphicAddSmokeAdder,sms,confirmed,,"void __stdcall MPGraphicAddSmokeAdder(F24_POINT3 *, unsigned short, WORD_POINT3 *, long, long, long, long, long, long)"
+0x00470DC0,func,?MPGraphicRemove@@YGXXZ,MPGraphicRemove,sms,confirmed,,void __stdcall MPGraphicRemove(void)
+0x00470E00,func,?MPShellSendScreen@@YIXJ@Z,MPShellSendScreen,sms,confirmed,,void __fastcall MPShellSendScreen(long)
+0x00470E40,func,?MPPlayerChoseSide@@YIXE@Z,MPPlayerChoseSide,sms,confirmed,,void __fastcall MPPlayerChoseSide(unsigned char)
 0x00470E80,func,?MPQuickButton@@YIXJJ@Z,MPQuickButton,sms,confirmed,,"void __fastcall MPQuickButton(long, long)"
+0x00470EB0,func,?MPQuickButtonText@@YIXJPAD@Z,MPQuickButtonText,sms,confirmed,,"void __fastcall MPQuickButtonText(long, char *)"
 0x00470EF0,func,?MPPlayerChoseFort@@YIXE@Z,MPPlayerChoseFort,sms,confirmed,,void __fastcall MPPlayerChoseFort(unsigned char)
 0x00470F30,func,?MPFortButton@@YIXJJ@Z,MPFortButton,sms,confirmed,,"void __fastcall MPFortButton(long, long)"
+0x00470F60,func,?MPFortButtonText@@YIXJPAD@Z,MPFortButtonText,sms,confirmed,,"void __fastcall MPFortButtonText(long, char *)"
 0x00470FA0,func,?MPFortButton2@@YIXJJ@Z,MPFortButton2,sms,confirmed,,"void __fastcall MPFortButton2(long, long)"
+0x00470FD0,func,?MPFortButtonText2@@YIXJPAD@Z,MPFortButtonText2,sms,confirmed,,"void __fastcall MPFortButtonText2(long, char *)"
+0x00471010,func,?MPSendAntiCheat@@YIXPADJ@Z,MPSendAntiCheat,sms,confirmed,,"void __fastcall MPSendAntiCheat(char *, long)"
+0x00471070,func,?MPSendCheatsOn@@YIXD@Z,MPSendCheatsOn,sms,confirmed,,void __fastcall MPSendCheatsOn(char)
+0x004710B0,func,?MPSendFrameRate@@YIXJ@Z,MPSendFrameRate,sms,confirmed,,void __fastcall MPSendFrameRate(long)
+0x004710F0,func,?MPShowFrameRate@@YIXD@Z,MPShowFrameRate,sms,confirmed,,void __fastcall MPShowFrameRate(char)
+0x00471130,func,?MPSingleFilename@@YIXPAD@Z,MPSingleFilename,sms,confirmed,,void __fastcall MPSingleFilename(char *)
+0x00471190,func,?MPSendPrefs@@YGXXZ,MPSendPrefs,sms,confirmed,,void __stdcall MPSendPrefs(void)
+0x004711F0,func,?MPMaybePausedMsg@@YGXXZ,MPMaybePausedMsg,sms,confirmed,,void __stdcall MPMaybePausedMsg(void)
+0x00471360,func,?MPWpnStats@@YGXJPADGGJ@Z,MPWpnStats,sms,confirmed,,"void __stdcall MPWpnStats(long, char *, unsigned short, unsigned short, long)"
+0x00471400,func,?MPKillStats@@YIXGG@Z,MPKillStats,sms,confirmed,,"void __fastcall MPKillStats(unsigned short, unsigned short)"
+0x00471450,func,?MPLandingStats@@YIXGJ@Z,MPLandingStats,sms,confirmed,,"void __fastcall MPLandingStats(unsigned short, long)"
+0x00471490,func,?MPHUDMessage@@YIXPAD@Z,MPHUDMessage,sms,confirmed,,void __fastcall MPHUDMessage(char *)
+0x004714D0,func,?MPStatusInit@@YIXXZ,MPStatusInit,sms,confirmed,,void __fastcall MPStatusInit(void)
+0x00471510,func,?MPStatusSet@@YIXJ@Z,MPStatusSet,sms,confirmed,,void __fastcall MPStatusSet(long)
+0x00471560,func,?MPStatusToDrawSet@@YIXJ@Z,MPStatusToDrawSet,sms,confirmed,,void __fastcall MPStatusToDrawSet(long)
+0x004715B0,func,?MPStatusDraw@@YIXD@Z,MPStatusDraw,sms,confirmed,,void __fastcall MPStatusDraw(char)
 0x004715BC,func,,,waiver,confirmed,Ghidra split tail of ?MPStatusDraw@@YIXD@Z (0x4715B0),
 0x00471880,func,MPChatChecksum,,re,confirmed,checksum of CHAT edit-line + all chat lines (DAT_00546EA0 stride 0x79 x DAT_00546DD4) for change/anti-cheat detection. Body @0x471880; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl MPChatChecksum(void)
 0x004718F0,func,MPDrawStatusLine,,re,inferred,truncate string to width + G_ColorPrint (MP status/chat draw helper). Body @0x4718F0,"undefined4 __stdcall MPDrawStatusLine(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004719E0,func,?MPEveryoneStatus@@YIDJ@Z,MPEveryoneStatus,sms,confirmed,,char __fastcall MPEveryoneStatus(long)
+0x00471A30,func,?MPWaitEveryoneStatus@@YGDJDDD@Z,MPWaitEveryoneStatus,sms,confirmed,,"char __stdcall MPWaitEveryoneStatus(long, char, char, char)"
 0x00471A90,func,MPWaitStatus,,re,confirmed,"modal loop: poll MPReceive/MPCheckDisconnect until all peers reach status (or key/mouse abort); master uses MPStatusToDrawSet, slave MPStatusSet. Body @0x471A90 (docs: wait-for-everyone-status)","undefined4 __stdcall MPWaitStatus(undefined4, undefined4, undefined4, undefined4)"
 0x00471B80,func,MPAllPeersAtStatus,,re,confirmed,test whether every connected peer's _mpStatus == param_1. Body @0x471B80; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall MPAllPeersAtStatus(undefined4)
+0x00471BD0,func,?MPAssignPlayers@@YGXXZ,MPAssignPlayers,sms,confirmed,,void __stdcall MPAssignPlayers(void)
 0x00471BDF,func,,,waiver,confirmed,Ghidra split tail of ?MPAssignPlayers@@YGXXZ (0x471BD0),
 0x00471FA0,func,MPAssignPlanePlayers,,re,confirmed,"per-plane helper in MPAssignPlayers: for obj class 4 w/ flag, iterate DAT_00547324 player table. Body @0x471FA0; called from MPAssignPlayers; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MPAssignPlanePlayers(short)
 0x00472100,func,MPComparePlaneRank,MPComparePlaneRank,re,confirmed,qsort comparator ordering the multiplayer wing-assignment candidates by the 4-byte rank at +3 of each 7-byte record; ?MPAssignPlayers@@YGXXZ passes it to _qsort twice over the table at 0x547180,"int __cdecl MPComparePlaneRank(int, int)"
 0x00472130,func,MPBuildSpawnPayload,,re,inferred,apply spawn position offset (+0x3E800/+0x1F400) and build up-to-500-byte payload; called from MPAssignPlayers. Body @0x472130,"undefined4 __stdcall MPBuildSpawnPayload(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00472260,func,?MPSetControl@@YGXJGD@Z,MPSetControl,sms,confirmed,,"void __stdcall MPSetControl(long, unsigned short, char)"
+0x004722D0,func,?MPRequestControl@@YIXG@Z,MPRequestControl,sms,confirmed,,void __fastcall MPRequestControl(unsigned short)
+0x00472330,func,?MPChangePlaneType@@YGXGPAD@Z,MPChangePlaneType,sms,confirmed,,"void __stdcall MPChangePlaneType(unsigned short, char *)"
+0x004723A0,func,?MPSetFuel@@YIXG@Z,MPSetFuel,sms,confirmed,,void __fastcall MPSetFuel(unsigned short)
+0x00472400,func,?MPSetHardpoints@@YIXG@Z,MPSetHardpoints,sms,confirmed,,void __fastcall MPSetHardpoints(unsigned short)
+0x00472520,func,?MPSetWaypoints@@YIXGPAUWAYPOINT@@@Z,MPSetWaypoints,sms,confirmed,,"void __fastcall MPSetWaypoints(unsigned short, WAYPOINT *)"
+0x004725B0,func,?MPLifeNotify@@YGXPAD0D@Z,MPLifeNotify,sms,confirmed,,"void __stdcall MPLifeNotify(char *, char *, char)"
 0x00472670,func,MPRevive,,re,inferred,apply player revive/respawn; entry (12B) into body FUN_0047267C. Called from MPReceive packet 0x30 (docs: 'increments _playerRevives[peer]') and MPKey. Body @0x472670,
 0x0047267C,func,,,waiver,confirmed,Ghidra split tail of the 0x472670 (MPRevive) function; decompile failed,
+0x00472A90,func,?MPKey@@YIGG@Z,MPKey,sms,confirmed,,unsigned short __fastcall MPKey(unsigned short)
+0x004733E0,func,?MPCheckDisconnect@@YGDXZ,MPCheckDisconnect,sms,confirmed,,char __stdcall MPCheckDisconnect(void)
+0x004735C0,func,?MPShellInitMessages@@YGXXZ,MPShellInitMessages,sms,confirmed,,void __stdcall MPShellInitMessages(void)
 0x004735D0,func,MPChatStore,,re,confirmed,"append incoming chat/SAY message to on-screen buffer DAT_00546EA0 (6 lines x 0x79, count DAT_00546DD4); shifts when full. Body @0x4735D0; called from MPReceive 0x1A / MPKey; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __fastcall MPChatStore(undefined4 *)
 0x0047F5F0,func,?CN_GetBigString@@YAJPADPAE@Z,CN_GetBigString,sms,confirmed,,"long __cdecl CN_GetBigString(char *, unsigned char *)"
 0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),"unsigned int __cdecl sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
@@ -120,6 +187,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00493EE0,func,?connected_state_callback@@YAXPAXW4NET_CONNECTED_STATE@@@Z,connected_state_callback,sms,confirmed,,"void __cdecl connected_state_callback(void *, NET_CONNECTED_STATE)"
 0x004940E0,func,?players_box_add@@YAXPAXW4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z,players_box_add,sms,confirmed,,"void __cdecl players_box_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long)"
 0x004941E0,func,?players_box_connected_state_callback@@YAXPAXW4NET_CONNECTED_STATE@@@Z,players_box_connected_state_callback,sms,confirmed,,"void __cdecl players_box_connected_state_callback(void *, NET_CONNECTED_STATE)"
+0x00494BC0,func,?MP_Initialize@@YAJPAUCN_INFO@@J@Z,MP_Initialize,sms,confirmed,,"long __cdecl MP_Initialize(CN_INFO *, long)"
+0x00494CB0,func,?MP_Info@@YAPAUMP_INFO@@XZ,MP_Info,sms,confirmed,,MP_INFO * __cdecl MP_Info(void)
+0x00494CC0,func,?MP_Shutdown@@YAXXZ,MP_Shutdown,sms,confirmed,,void __cdecl MP_Shutdown(void)
+0x00494D40,func,?MP_SetTransmitTimeout@@YAXJ@Z,MP_SetTransmitTimeout,sms,confirmed,,void __cdecl MP_SetTransmitTimeout(long)
 0x00494D50,func,?MP_Dont_care@@YADXZ,MP_Dont_care,sms,confirmed,,char __cdecl MP_Dont_care(void)
 0x00496F40,func,?spxinit@@YADPAUNET_ADDRESS_LIST@@@Z,spxinit,sms,confirmed,SPX transport init - enumerate IPX adapters into a NET_ADDRESS_LIST,char __cdecl spxinit(NET_ADDRESS_LIST *)
 0x00497000,func,?spxinit2@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@@Z,spxinit2,sms,confirmed,SPX secondary init from NET_PROTOCOL/CN_INFO,"char __cdecl spxinit2(NET_PROTOCOL *, CN_INFO *)"
