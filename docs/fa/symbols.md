@@ -1378,14 +1378,30 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 211 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 236 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x0041D740` | `?CreateSingleton@CDirDraw@@SAHXZ` | sms |  |
+| `0x0041D800` | `?DeleteSingleton@CDirDraw@@SAXXZ` | sms |  |
+| `0x0041D910` | `?Create@CDirDraw@@QAEHPAX@Z` | sms |  |
+| `0x0041D9F0` | `?SetDisplayMode@CDirDraw@@QAEHKKK@Z` | sms |  |
+| `0x0041DA20` | `?SetDisplayModeFromMain@CDirDraw@@QAEHKKK@Z` | sms |  |
+| `0x0041DCE0` | `?CreateSurface@CDirDraw@@IAEPAVCDirDrawSurface@@PAU_DDSURFACEDESC@@@Z` | sms |  |
+| `0x0041DDA0` | `?CreatePrimarySurface@CDirDraw@@QAEPAVCDirDrawSurface@@W4T_MODE@@@Z` | sms |  |
+| `0x0041DE20` | `?CreateSecondarySurface@CDirDraw@@QAEPAVCDirDrawSurface@@GG@Z` | sms |  |
 | `0x0041DE80` | `?DestroySurface@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
+| `0x0041DEB0` | `?Destroy@CDirDraw@@QAEXXZ` | sms |  |
+| `0x0041DF50` | `?SetCooperativeLevel@CDirDraw@@QAEHK@Z` | sms |  |
+| `0x0041DFF0` | `?GetDriverCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ` | sms |  |
 | `0x0041E010` | `?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ` | sms |  |
 | `0x0041E030` | `?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z` | sms |  |
 | `0x0041E050` | `?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
+| `0x0041E060` | `?WaitForVerticalBlank@CDirDraw@@QAEXK@Z` | sms |  |
+| `0x0041E090` | `?EnumDisplayModes@CDirDraw@@QAEKXZ` | sms |  |
+| `0x0041E300` | `?ShowDDError@CDirDraw@@SAXJ@Z` | sms |  |
+| `0x0041E310` | `?ddECS@CDirDraw@@SAXXZ` | sms |  |
+| `0x0041E330` | `?ddLCS@CDirDraw@@SAXXZ` | sms |  |
 | `0x00447A40` | `G_TileInit` | sms |  |
 | `0x00447A73` | `G_TileShutDown` | sms |  |
 | `0x00447AA5` | `G_Tile` | sms |  |
@@ -1409,6 +1425,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0046A640` | `G_InitCircles` | sms |  |
 | `0x0046A690` | `G_ShutdownCircles` | sms |  |
 | `0x0046A6C0` | `G_Circle` | sms |  |
+| `0x00478520` | `?Create@CDirDrawSurface@@QAEHPAUIDirectDraw@@PAU_DDSURFACEDESC@@@Z` | sms |  |
+| `0x00478740` | `?SetEntries@CDirDrawSurface@@QAEHPAUT_RGB@@JJD@Z` | sms |  |
+| `0x00478830` | `?Restore@CDirDrawSurface@@QAEHXZ` | sms |  |
+| `0x004788A0` | `?Lock@CDirDrawSurface@@QAEPAU_DDSURFACEDESC@@PAUtagRECT@@H@Z` | sms |  |
+| `0x00478900` | `?Unlock@CDirDrawSurface@@QAEHXZ` | sms |  |
+| `0x00478940` | `?Blit@CDirDrawSurface@@QAEJPAUtagRECT@@PAUIDirectDrawSurface@@0K@Z` | sms |  |
+| `0x004789E0` | `?InitSurfaceDesc@CDirDrawSurface@@SAXPAU_DDSURFACEDESC@@@Z` | sms |  |
+| `0x00478A00` | `?Destroy@CDirDrawSurface@@QAEXXZ` | sms |  |
+| `0x00478AE0` | `?Clear@CDirDrawSurface@@QAEJXZ` | sms |  |
 | `0x00479E10` | `G_FindFirstFile` | sms |  |
 | `0x00479EA0` | `G_FindNextFile` | sms |  |
 | `0x00479F20` | `G_FindClose` | sms |  |

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 172/205 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
+// 172/230 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -207,13 +207,38 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x0041D740  ?CreateSingleton@CDirDraw@@SAHXZ -- signature not recovered
+// TODO(#453): 0x0041D800  ?DeleteSingleton@CDirDraw@@SAXXZ -- signature not recovered
+// TODO(#453): 0x0041D910  ?Create@CDirDraw@@QAEHPAX@Z -- signature not recovered
+// TODO(#453): 0x0041D9F0  ?SetDisplayMode@CDirDraw@@QAEHKKK@Z -- signature not recovered
+// TODO(#453): 0x0041DA20  ?SetDisplayModeFromMain@CDirDraw@@QAEHKKK@Z -- signature not recovered
+// TODO(#453): 0x0041DCE0  ?CreateSurface@CDirDraw@@IAEPAVCDirDrawSurface@@PAU_DDSURFACEDESC@@@Z -- signature not recovered
+// TODO(#453): 0x0041DDA0  ?CreatePrimarySurface@CDirDraw@@QAEPAVCDirDrawSurface@@W4T_MODE@@@Z -- signature not recovered
+// TODO(#453): 0x0041DE20  ?CreateSecondarySurface@CDirDraw@@QAEPAVCDirDrawSurface@@GG@Z -- signature not recovered
 // TODO(#453): 0x0041DE80  ?DestroySurface@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z -- signature not recovered
+// TODO(#453): 0x0041DEB0  ?Destroy@CDirDraw@@QAEXXZ -- signature not recovered
+// TODO(#453): 0x0041DF50  ?SetCooperativeLevel@CDirDraw@@QAEHK@Z -- signature not recovered
+// TODO(#453): 0x0041DFF0  ?GetDriverCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ -- signature not recovered
 // TODO(#453): 0x0041E010  ?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ -- signature not recovered
 // TODO(#453): 0x0041E030  ?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z -- signature not recovered
 // TODO(#453): 0x0041E050  ?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z -- signature not recovered
+// TODO(#453): 0x0041E060  ?WaitForVerticalBlank@CDirDraw@@QAEXK@Z -- signature not recovered
+// TODO(#453): 0x0041E090  ?EnumDisplayModes@CDirDraw@@QAEKXZ -- signature not recovered
+// TODO(#453): 0x0041E300  ?ShowDDError@CDirDraw@@SAXJ@Z -- signature not recovered
+// TODO(#453): 0x0041E310  ?ddECS@CDirDraw@@SAXXZ -- signature not recovered
+// TODO(#453): 0x0041E330  ?ddLCS@CDirDraw@@SAXXZ -- signature not recovered
 // TODO(#453): 0x00447A40  G_TileInit -- signature not recovered
 // TODO(#453): 0x00447A73  G_TileShutDown -- signature not recovered
 // TODO(#453): 0x0045E430  GG_QuickBlt -- signature not recovered
+// TODO(#453): 0x00478520  ?Create@CDirDrawSurface@@QAEHPAUIDirectDraw@@PAU_DDSURFACEDESC@@@Z -- signature not recovered
+// TODO(#453): 0x00478740  ?SetEntries@CDirDrawSurface@@QAEHPAUT_RGB@@JJD@Z -- signature not recovered
+// TODO(#453): 0x00478830  ?Restore@CDirDrawSurface@@QAEHXZ -- signature not recovered
+// TODO(#453): 0x004788A0  ?Lock@CDirDrawSurface@@QAEPAU_DDSURFACEDESC@@PAUtagRECT@@H@Z -- signature not recovered
+// TODO(#453): 0x00478900  ?Unlock@CDirDrawSurface@@QAEHXZ -- signature not recovered
+// TODO(#453): 0x00478940  ?Blit@CDirDrawSurface@@QAEJPAUtagRECT@@PAUIDirectDrawSurface@@0K@Z -- signature not recovered
+// TODO(#453): 0x004789E0  ?InitSurfaceDesc@CDirDrawSurface@@SAXPAU_DDSURFACEDESC@@@Z -- signature not recovered
+// TODO(#453): 0x00478A00  ?Destroy@CDirDrawSurface@@QAEXXZ -- signature not recovered
+// TODO(#453): 0x00478AE0  ?Clear@CDirDrawSurface@@QAEJXZ -- signature not recovered
 // TODO(#453): 0x00486CF0  FPSInit -- signature not recovered
 // TODO(#453): 0x00498A50  G_Visible -- signature not recovered
 // TODO(#453): 0x004991B0  G_CopyDriverName -- signature not recovered
