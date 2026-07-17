@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 352/360 functions have a recovered signature; 2/3 globals have a recovered type.
+// 359/360 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -110,7 +110,14 @@ char pkt_send(NET_PKT *, int);  // 0x0045D970  __cdecl
 void pkt_set_header(int, NET_PKT *, int);  // 0x0045DA10  __cdecl
 undefined4 pkt_queue_write(undefined4, undefined4, undefined4);  // 0x0045DA30  __cdecl
 char pkt_sock_read(NET_PKT *, unsigned int);  // 0x0045DB00  __cdecl
+void * dlg_list_init(unsigned short);  // 0x00464660  __cdecl
+void dlg_list_shutdown(void *);  // 0x004646B0  __cdecl
+void dlg_list_often(void *);  // 0x00464710  __cdecl
+void dlg_list_clear(void *);  // 0x004647D0  __cdecl
+DLG_SELECTION dlg_list_get_selection(void *, NET_ADDRESS *, char *);  // 0x00464800  __cdecl
 char dlg_list_get_new_selection(void *, NET_ADDRESS *, char *);  // 0x00464880  __cdecl
+void dlg_list_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long);  // 0x004648B0  __cdecl
+void dlg_list_update(void *);  // 0x004649F0  __cdecl
 void net_test_process_pkt(NET_PKT *, int);  // 0x0046AC00  __cdecl
 char net_test_process_pkt_ack(NET_PKT *, int);  // 0x0046AC40  __cdecl
 void net_test_start_latency_test(int);  // 0x0046ACF0  __cdecl
@@ -373,13 +380,6 @@ void net_free_player_list(void);  // 0x004B26D0  __cdecl
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
-// TODO(#453): 0x00464660  dlg_list_init -- signature not recovered
-// TODO(#453): 0x004646B0  dlg_list_shutdown -- signature not recovered
-// TODO(#453): 0x00464710  dlg_list_often -- signature not recovered
-// TODO(#453): 0x004647D0  dlg_list_clear -- signature not recovered
-// TODO(#453): 0x00464800  dlg_list_get_selection -- signature not recovered
-// TODO(#453): 0x004648B0  dlg_list_add -- signature not recovered
-// TODO(#453): 0x004649F0  dlg_list_update -- signature not recovered
 // TODO(#453): 0x00472670  MPRevive -- signature not recovered
 // TODO(#455): 0x004EB608  thisComputer -- type not recovered
 

@@ -94,14 +94,14 @@ va,kind,name,display,source,confidence,notes,type
 0x0045DA10,func,?pkt_set_header@@YAXHPAUNET_PKT@@H@Z,pkt_set_header,sms,confirmed,fill NET_PKT header (type/len),"void __cdecl pkt_set_header(int, NET_PKT *, int)"
 0x0045DA30,func,pkt_queue_write,,re,inferred,"append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30","undefined4 __cdecl pkt_queue_write(undefined4, undefined4, undefined4)"
 0x0045DB00,func,?pkt_sock_read@@YADPAUNET_PKT@@I@Z,pkt_sock_read,sms,confirmed,read one NET_PKT from a socket,"char __cdecl pkt_sock_read(NET_PKT *, unsigned int)"
-0x00464660,func,?dlg_list_init@@YAPAXG@Z,dlg_list_init,sms,confirmed,,
-0x004646B0,func,?dlg_list_shutdown@@YAXPAX@Z,dlg_list_shutdown,sms,confirmed,,
-0x00464710,func,?dlg_list_often@@YAXPAX@Z,dlg_list_often,sms,confirmed,,
-0x004647D0,func,?dlg_list_clear@@YAXPAX@Z,dlg_list_clear,sms,confirmed,,
-0x00464800,func,?dlg_list_get_selection@@YA?AW4DLG_SELECTION@@PAXPAUNET_ADDRESS@@PAD@Z,dlg_list_get_selection,sms,confirmed,,
+0x00464660,func,?dlg_list_init@@YAPAXG@Z,dlg_list_init,sms,confirmed,,void * __cdecl dlg_list_init(unsigned short)
+0x004646B0,func,?dlg_list_shutdown@@YAXPAX@Z,dlg_list_shutdown,sms,confirmed,,void __cdecl dlg_list_shutdown(void *)
+0x00464710,func,?dlg_list_often@@YAXPAX@Z,dlg_list_often,sms,confirmed,,void __cdecl dlg_list_often(void *)
+0x004647D0,func,?dlg_list_clear@@YAXPAX@Z,dlg_list_clear,sms,confirmed,,void __cdecl dlg_list_clear(void *)
+0x00464800,func,?dlg_list_get_selection@@YA?AW4DLG_SELECTION@@PAXPAUNET_ADDRESS@@PAD@Z,dlg_list_get_selection,sms,confirmed,,"DLG_SELECTION __cdecl dlg_list_get_selection(void *, NET_ADDRESS *, char *)"
 0x00464880,func,?dlg_list_get_new_selection@@YADPAXPAUNET_ADDRESS@@PAD@Z,dlg_list_get_new_selection,sms,confirmed,,"char __cdecl dlg_list_get_new_selection(void *, NET_ADDRESS *, char *)"
-0x004648B0,func,?dlg_list_add@@YAXPAXW4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z,dlg_list_add,sms,confirmed,,
-0x004649F0,func,?dlg_list_update@@YAXPAX@Z,dlg_list_update,sms,confirmed,,
+0x004648B0,func,?dlg_list_add@@YAXPAXW4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z,dlg_list_add,sms,confirmed,,"void __cdecl dlg_list_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long)"
+0x004649F0,func,?dlg_list_update@@YAXPAX@Z,dlg_list_update,sms,confirmed,,void __cdecl dlg_list_update(void *)
 0x0046AC00,func,?net_test_process_pkt@@YAXPAUNET_PKT@@H@Z,net_test_process_pkt,sms,confirmed,,"void __cdecl net_test_process_pkt(NET_PKT *, int)"
 0x0046AC40,func,?net_test_process_pkt_ack@@YADPAUNET_PKT@@H@Z,net_test_process_pkt_ack,sms,confirmed,,"char __cdecl net_test_process_pkt_ack(NET_PKT *, int)"
 0x0046ACF0,func,?net_test_start_latency_test@@YAXH@Z,net_test_start_latency_test,sms,confirmed,,void __cdecl net_test_start_latency_test(int)
