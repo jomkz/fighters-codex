@@ -7,6 +7,47 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.6] - 2026-07-16
+
+**The reading waves finish — the last of the game executable's undocumented behaviour is
+read, not guessed.** v0.8.5 made the coverage number honest (a game executable reported
+"complete" was really 49% unclaimed) and began reading the code behind it; this release
+clears the remaining named gaps. Every function in the four target subsystems is now
+traced with the disassembly open, and all five RE Coverage reading-wave issues
+(#485/#486/#487/#492/#493) are closed. The unclaimed-function count falls from **1032 to
+719**.
+
+Four subsystems were read end to end. The **player-facing shell** — the in-flight
+**command table** (`FlightKey`: every key the player presses mapped to the engine action
+it fires), the Jane's reference (`INFO2`) screens, and the pilot/campaign/briefing screens
+that `campaign.md` had named without describing. **Five small independent systems**, two of
+them entirely new territory: the **radio/speech** model (`MSGSend`'s order queue and the
+`SAY` phrase grammar behind AWACS and wingman chatter — which resolves the `OBJSayProc`
+dispatch slot the object docs left dangling), multiplayer **chat**, the **airport/carrier**
+model (parking, approach, the deck attachment that rides a moving ship), and the effects
+and weather producers that other subsystems already documented as consumers. The **mission
+runtime** — the lifecycle around the `.M` interpreter: `MISSIONInit1`'s subsystem-boot
+order, the CRC-32 anti-cheat, the scoring and stats, and the `SingleMission`/Fort game
+modes. And the **cockpit-sensor** model finished: the three detection predicates behind
+`CPAddItemToScopes` (radar look-down/FOV/terrain gating, the AWACS datalink, and the RWR's
+"what is illuminating you"), the RWR spike timing, and the scope renderers — which also
+confirmed that weather visibility (`WRCanSee`) gates target acquisition for the player and
+the AI alike. `cockpit-sensors` is now a `complete` subsystem.
+
+No `fx_lib` changes — this release is entirely reconstruction database and documentation.
+
+### Added
+- **shell** — the player-facing shell: the `FlightKey` in-flight command table, the `INFO2`
+  Jane's reference screens, the shell text/format engine, and the pilot/campaign/briefing
+  screens (#492, #522)
+- **systems** — five small unread systems as new subsystems and folded coverage: radio/speech
+  (`MSG`/`SAY`), chat (`CHAT`), airports/carriers (`AP`), effects (`GRAPHIC` spawn) and weather
+  (`WR`) — confirming `WRCanSee` gates target acquisition (#493, #523)
+- **mission** — the mission-runtime tail: the `MISSIONInit` lifecycle and subsystem-boot order,
+  the CRC-32 anti-cheat, scoring/stats, `SingleMission`, and the Fort setup (#485, #524)
+- **cockpit-sensors** — the detection thresholds, RWR spike timing, and scope renderers;
+  the subsystem is promoted to `complete` (#486, #525, #526)
+
 ## [0.8.5] - 2026-07-16
 
 **The reconstruction stops measuring itself and starts covering the binary.** #482's
@@ -890,7 +931,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.5...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.6...HEAD
+[0.8.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.6
 [0.8.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.5
 [0.8.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.4
 [0.8.3]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.3
