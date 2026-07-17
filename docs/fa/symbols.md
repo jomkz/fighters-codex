@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 360 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 363 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -107,6 +107,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0044BDB0` | `SER_Write` | sms |  |
 | `0x0044BE40` | `SER_WriteAvail` | sms |  |
 | `0x0044BEC0` | `SER_Transmitting` | sms |  |
+| `0x0044BF00` | `_SER_Read` | sms |  |
 | `0x0044BFC0` | `SER_Read` | sms |  |
 | `0x0044C030` | `SER_ReadAvail` | sms |  |
 | `0x0044C080` | `SER_PeekByte` | sms |  |
@@ -396,11 +397,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B0E50` | `NET_Read` | sms |  |
 | `0x004B10D0` | `NET_ReadAvail` | sms |  |
 | `0x004B1150` | `NET_PeekByte` | sms |  |
+| `0x004B1240` | `NETIsAddrLocal` | sms |  |
 | `0x004B1280` | `NET_GetLastError` | sms |  |
 | `0x004B12A0` | `NET_SendMessageAll` | sms |  |
 | `0x004B1350` | `NET_MakeAutoConnectAddress` | sms |  |
 | `0x004B1380` | `NET_Addr2string` | sms |  |
 | `0x004B13A0` | `net_add_player_id` | sms |  |
+| `0x004B1540` | `NETProcessEvent` | sms |  |
 | `0x004B1590` | `fill_in_mpinfo` | sms |  |
 | `0x004B1660` | `game_event_handler` | sms |  |
 | `0x004B16B0` | `net_write_output_q` | sms |  |
@@ -1726,7 +1729,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 124 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 141 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1813,6 +1816,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00473BE0` | `OBJProc` | sms |  |
 | `0x00473C10` | `Kill` | sms |  |
 | `0x00473DB0` | `GVProc` | sms | class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ |
+| `0x00473DE0` | `GVDoCurrentWaypoint` | sms |  |
+| `0x00473F50` | `GVEventProc` | sms |  |
 | `0x004747C0` | `Alive` | sms | imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x0047CEB0` | `MANAdd` | sms |  |
 | `0x0048D780` | `PLANESayProc` | sms |  |
@@ -1836,10 +1841,25 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004917F0` | `OBJTempAlias` | sms |  |
 | `0x00491810` | `OBJSetControl` | sms |  |
 | `0x004918D0` | `OBJHumanName` | sms |  |
+| `0x0049D510` | `PLANEInit` | sms |  |
+| `0x0049D520` | `PLANERemove` | sms |  |
+| `0x0049D580` | `PLANEDoCurrentWaypoint` | sms |  |
+| `0x0049D6E0` | `PLANESetEjectTime` | sms |  |
+| `0x0049D730` | `PLANEBreakUp` | sms |  |
 | `0x0049D860` | `PLANEBlow` | sms |  |
+| `0x0049D890` | `PLANECrash` | sms |  |
+| `0x0049DF40` | `PLANEEventProc` | sms |  |
 | `0x0049F840` | `PLANEMoveProc` | sms |  |
+| `0x0049FA10` | `PLANECheckEject` | sms |  |
 | `0x0049FA50` | `PLANEAddProc` | sms |  |
+| `0x0049FAA0` | `PLANEList` | sms |  |
 | `0x0049FB10` | `PLANEProc` | sms |  |
+| `0x0049FB70` | `PLANECheckFuel` | sms |  |
+| `0x0049FCD0` | `PLANESetThrottle` | sms |  |
+| `0x0049FD40` | `PLANEUpdateJustLanded` | sms |  |
+| `0x004A0310` | `PLANEHackForPlayerWing` | sms |  |
+| `0x004A04F0` | `PLANETurnOffGunSound` | sms |  |
+| `0x004A0510` | `PLANESetFeetWet` | sms |  |
 | `0x004A6B10` | `ResolveTypeRecord` | re | resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A6EB0` | `SetupOT` | sms |  |
 | `0x004A71C0` | `LoadShapeVariantPair` | re | load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B); not a C function (#479): mid-function split of _SetupOT (0x004A6EB0) |
@@ -2406,14 +2426,21 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 474 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 481 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00403700` | `usnfmain` | sms |  |
 | `0x00404C70` | `FlyingLoop` | sms |  |
+| `0x00436320` | `StartGameThread` | sms |  |
 | `0x0046B560` | `MainLoop` | sms |  |
 | `0x00476120` | `WinMain` | sms |  |
+| `0x00476180` | `MainWndproc` | sms |  |
+| `0x004764B0` | `InitApplication` | sms |  |
+| `0x00476660` | `CreateGameThread` | sms |  |
+| `0x00476700` | `EndGame` | sms |  |
+| `0x004767F0` | `DisplayCopyright` | sms |  |
+| `0x00492740` | `doConfigurationScreen` | sms |  |
 | `0x004B27C0` | `UCONFIG_DMusic` | sms |  |
 | `0x004B2820` | `UCONFIG_SetVideoOptions` | sms |  |
 | `0x004B2930` | `UCONFIG_load_EA_CFG` | sms |  |
