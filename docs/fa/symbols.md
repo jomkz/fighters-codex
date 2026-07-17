@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 353 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 360 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -157,7 +157,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045DA10` | `pkt_set_header` | sms | fill NET_PKT header (type/len) |
 | `0x0045DA30` | `pkt_queue_write` | re | append payload to a socket's output ring (state+0x2C86 head,+0x2C8E cap,+0x2C92 count,+0x2C96 busy); flush via net_write_output_q when full; socket_build_write_fds. Body @0x45DA30 |
 | `0x0045DB00` | `pkt_sock_read` | sms | read one NET_PKT from a socket |
+| `0x00464660` | `dlg_list_init` | sms |  |
+| `0x004646B0` | `dlg_list_shutdown` | sms |  |
+| `0x00464710` | `dlg_list_often` | sms |  |
+| `0x004647D0` | `dlg_list_clear` | sms |  |
+| `0x00464800` | `dlg_list_get_selection` | sms |  |
 | `0x00464880` | `dlg_list_get_new_selection` | sms |  |
+| `0x004648B0` | `dlg_list_add` | sms |  |
+| `0x004649F0` | `dlg_list_update` | sms |  |
 | `0x0046AC00` | `net_test_process_pkt` | sms |  |
 | `0x0046AC40` | `net_test_process_pkt_ack` | sms |  |
 | `0x0046ACF0` | `net_test_start_latency_test` | sms |  |
@@ -1324,12 +1331,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 47 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 66 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00405490` | `VDOInit` | sms |  |
+| `0x004219B0` | `StopCobraSound` | sms |  |
+| `0x004219D0` | `StartCobraSound` | sms |  |
 | `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
+| `0x00442360` | `InitMovieContext` | sms |  |
 | `0x00442370` | `DecodeFrame` | sms |  |
 | `0x00456300` | `DecodeDSVGA8Frame` | sms | key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank |
 | `0x00456AD0` | `EDB` | sms | expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path |
@@ -1355,13 +1365,28 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
 | `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
 | `0x0046AE10` | `InitCobra` | sms |  |
+| `0x0046B0F0` | `CleanCobra` | sms |  |
+| `0x0046B120` | `InitVideo` | sms |  |
+| `0x0046B4B0` | `CleanVideo` | sms |  |
+| `0x0046B4E0` | `SetupCobra` | sms |  |
+| `0x0046B530` | `CleanupCobra` | sms |  |
 | `0x004A06F0` | `DoFadeout` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
 | `0x004AE410` | `PlayVDOFile` | sms |  |
 | `0x004AE440` | `PlayVDOString` | sms |  |
 | `0x004AECD0` | `VDOClearToBlack` | sms |  |
 | `0x004AED50` | `VDOSetMode` | sms |  |
 | `0x004AEE30` | `VDOSetLineStats` | sms |  |
+| `0x004AEE80` | `BuildVDOList` | sms |  |
+| `0x004AF070` | `StartVDOAudio` | sms |  |
+| `0x004AF100` | `NewVDOLinkNode` | sms |  |
+| `0x004AF1B0` | `FreeVDOLinkNode` | sms |  |
+| `0x004AF1E0` | `OpenVDOFile` | sms |  |
+| `0x004AF200` | `ReadVDOHeader` | sms |  |
+| `0x004AF230` | `ReadFrameSizesFile` | sms |  |
+| `0x004AF2D0` | `ReadVDOPalette` | sms |  |
 | `0x004AF320` | `VDOfromVDOHEADER` | sms |  |
+| `0x004AF3A0` | `AllocVDO` | sms |  |
+| `0x004AF4B0` | `DeallocVDO` | sms |  |
 | `0x004AF510` | `GetVDOFrame` | sms |  |
 | `0x004AF690` | `VDOAlloc` | sms |  |
 | `0x004AF6A0` | `VDOFree` | sms |  |
@@ -1369,6 +1394,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AF760` | `VDOCompareBitmaps` | sms |  |
 | `0x004C8AA4` | `DecompressVideo` | sms |  |
 | `0x004C8AFC` | `UnRLE` | sms |  |
+| `0x004C8CD8` | `DecompressVideoImage` | sms |  |
 | `0x004CCC48` | `CopySB8` | sms |  |
 | `0x004CCC7C` | `CopyDB8` | sms |  |
 | `0x004CCF54` | `ExpandDB` | sms |  |
@@ -1942,11 +1968,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 67 named functions
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 72 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004114F0` | `ResetKeyboard` | sms |  |
+| `0x00411540` | `ShutdownKeyboard` | sms |  |
+| `0x00411560` | `GetKey2` | sms |  |
 | `0x004115C0` | `KeyAvail` | sms |  |
+| `0x004115F0` | `GetKeyFlags` | sms |  |
 | `0x00411600` | `KEYEvent` | sms | WM_(SYS)KEYDOWN/UP hook: scan from lParam, qualifier bits (1=shift 2=ctrl 4=alt) in _qualStatus/_keyFlags, _keyarray[scan] held state, kbScanToASCII translate (hi-byte=bare ASCII code, lo-byte=keypad normalize, none=scan<<8\|qual), 16-entry _kbBuffer ring; drops auto-repeats of _ignoreRepeats scans in flight |
 | `0x00411890` | `KEYECS` | sms | enter the keyboard critical section (0x522558) if initialized |
 | `0x004118B0` | `KEYLCS` | sms | leave the keyboard critical section |
@@ -1954,6 +1984,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00411F00` | `PutFakeKey` | sms | push a synthetic key code onto the 8-entry fake-key stack (0x5226b0); UI/joystick inject commands this way |
 | `0x00411F20` | `GetFakeKey` | sms | pop the fake-key stack (0 when empty); polled after GetKey by the shell screens |
 | `0x00412930` | `WaitKey` | sms | spin (Sleep 0) until GetKey returns a key |
+| `0x00412960` | `GetKey` | sms |  |
 | `0x00413D10` | `SlewKey` | sms | slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0 |
 | `0x00414070` | `SlewObjListCollect` | re | T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24 |
 | `0x00414690` | `FlightKey` | sms | THE in-flight command table: offers the key to the stick/rudder/throttle device procs (msg 3) then dispatches ~70 commands - flight controls (a/b/f/g/h/o), sensors (r/i/m/y, Shift+R A/G, Shift+A AWACS, Shift+G GCI), targeting (Enter/t/T/;), weapons ([ ] Space Tab, keypad-Ins chaff keypad-Del flare, Shift+J/K jettison), wingman Alt+letters + Alt+1..9 break angles, Shift+digit MFD windows, Ctrl+keypad thrust vector, Shift+E eject (double-press). See input.md section |
