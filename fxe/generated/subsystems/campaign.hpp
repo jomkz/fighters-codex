@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 206/250 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
+// 230/274 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -26,21 +26,34 @@ extern undefined2 currentTime;  // 0x005528E0  imported by 12 shipped .MC overla
 undefined4 FortMultiButton(undefined4, undefined4);  // 0x0041F830  __fastcall
 undefined4 FortMultiButtonText(undefined4, undefined4);  // 0x0041F840  __fastcall
 undefined4 FortMission(undefined4);  // 0x0041FB60  __stdcall
+undefined4 ZONEInit(void);  // 0x00421C70  __stdcall
 undefined4 ZONEAdd(undefined4);  // 0x00421C80  __stdcall
 undefined4 ZONEForGV(void);  // 0x00421CC0  __stdcall
 undefined4 ZONEActive(undefined4);  // 0x00421D40  __fastcall
+undefined4 ZONEUpdate(void);  // 0x00421DD0  __stdcall
 undefined4 ZONEPickTarget(undefined4);  // 0x00422120  __stdcall
 undefined4 MAPWPListBounds(undefined4, undefined4, undefined4);  // 0x00422190  __stdcall
+undefined4 MAPObjAlts(undefined4);  // 0x004221D0  __fastcall
 void MAPAdjustObjAlt(char,char);  // 0x00422230  __fastcall
+undefined4 MAPSetSide(undefined4);  // 0x00422300  __fastcall
+undefined4 MAPMaybeSetControl(undefined4, undefined4);  // 0x00422320  __fastcall
 void MAPMarkDirty(void);  // 0x00422350  __cdecl
+void MAPWorldToScreen(F24_POINT3 *, WORD_POINT *);  // 0x00422380  __fastcall
+void MAPDrawGrid(void);  // 0x004223BE  __stdcall
 void MAPScreenToWorld(short *,F24_POINT3 *);  // 0x004224B3  __fastcall
+void MAPDrawBG(void);  // 0x004224EE  __stdcall
 void MAPLoadBG(void);  // 0x0042256A  __cdecl
 void MAPRefreshBG(void);  // 0x004225D4  __cdecl
 void MAPFreeBG(void);  // 0x00422667  __cdecl
+undefined4 MAPUpdateWPPtrs(undefined4, undefined4);  // 0x0042267F  __fastcall
 void MAPSetObjWP(entity *,undefined4);  // 0x004226CB  __fastcall
+undefined4 MAPSetNewWP(undefined4, undefined4);  // 0x004226F0  __fastcall
+undefined4 MAPMaybeClearSelWP(undefined4, undefined4);  // 0x004227AD  __fastcall
 void MAPClearSelection(void);  // 0x00422828  __cdecl
 void MAPClearHover(void);  // 0x00422840  __cdecl
+void MAPDrawSpecials(void);  // 0x00422851  __stdcall
 undefined4 MAPAddSpecial(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0042297E  __stdcall
+short MAPOnSpecial(WORD_POINT *);  // 0x00422A0D  __fastcall
 undefined4 MAPScreen(void);  // 0x00422A71  __cdecl
 void MAPRebuildWPLoop(u16,undefined4);  // 0x00423ED4  __fastcall
 void MAPStoreLeafTmap(void);  // 0x00423F30  __cdecl
@@ -226,6 +239,17 @@ undefined4 TIMEInit(undefined4, undefined4, undefined4);  // 0x00486A10  __stdca
 undefined4 TIMERestart(void);  // 0x00486A90  __stdcall
 undefined4 TIMEUpdate(void);  // 0x00486AA0  __stdcall
 undefined4 TIMESetCompression(undefined4);  // 0x00486C60  __fastcall
+undefined4 WPSetWaypoints(undefined4, undefined4);  // 0x00499380  __stdcall
+undefined4 WPSetupCurrent(undefined4);  // 0x004993C0  __stdcall
+undefined4 WPGoalObjEvent(undefined4, undefined4);  // 0x00499640  __stdcall
+undefined4 WPMaybeAdvance(void);  // 0x00499680  __stdcall
+undefined4 WPChange(undefined4, undefined4, undefined4);  // 0x00499840  __stdcall
+undefined4 WPPos(undefined4, undefined4);  // 0x004999B0  __stdcall
+undefined4 WPObj(undefined4);  // 0x00499A50  __stdcall
+undefined4 WPTarget(undefined4);  // 0x00499AA0  __stdcall
+undefined4 WPDoingWaypoints(void);  // 0x00499AD0  __fastcall
+undefined4 WPDirString(undefined4);  // 0x00499AF0  __fastcall
+undefined4 WPOptimizeWaypoints(void);  // 0x00499C50  __stdcall
 undefined4 SingleMission(void);  // 0x004A10E0  __stdcall
 undefined4 BriefScreen(undefined4, undefined4, undefined4, undefined4);  // 0x004A1DD0  __fastcall
 undefined4 AddStats(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A2A30  __stdcall
