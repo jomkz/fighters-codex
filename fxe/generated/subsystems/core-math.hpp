@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core math & runtime utility library -- FA.EXE
-// 32/34 functions have a recovered signature; 0/0 globals have a recovered type.
+// 39/41 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::core_math {
 
@@ -45,6 +45,13 @@ undefined4 StringIsNumber(undefined4);  // 0x00412B00  __fastcall
 undefined4 StringToNumber(undefined4);  // 0x00412B50  __fastcall
 undefined4 NearestObj(undefined4, undefined4, undefined4, undefined4);  // 0x00412CB0  __stdcall
 undefined4 LimitAngle(undefined4, undefined4, undefined4);  // 0x00412DA0  __stdcall
+undefined4 MultDiv32(undefined4, undefined4, undefined4);  // 0x0044A0A0  __stdcall
+undefined4 Percent(undefined4);  // 0x004561A0  __fastcall
+undefined4 InitRand(undefined4);  // 0x004561C0  __fastcall
+undefined4 Rand32(undefined4);  // 0x004561D0  __fastcall
+undefined4 Rand16(void);  // 0x004562D0  __stdcall
+undefined4 Rand8(void);  // 0x004562E0  __stdcall
+undefined4 Rand(undefined4);  // 0x004562F0  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would

@@ -47,6 +47,9 @@ these sit in the `0x476xxx` WinMain region — **outside** the CRT range
 | `0x476700` | `EndGame` (`?EndGame@@YAXXZ`) | shut the game down |
 | `0x4767F0` | `DisplayCopyright` (`?DisplayCopyright@@YAXPAX@Z`) | show the copyright / splash |
 | `0x492740` | `doConfigurationScreen` (`?doConfigurationScreen@@YAXJP6AXPAUCN_INFO@@PAD@Z@Z`) | pre-launch configuration screen (callback over `CN_INFO`) |
+| `0x44A120` | `ErrorExit` | fatal-error exit (with `ErrorExitNoMem`/`InstallErrorExit`) |
+| `0x44A370` | `GameCleanup` | shut the game down on exit |
+| `0x41EB60` | `LoadDLL` | load a plugin DLL (`IsDLL`/`FindSection`/`VAToPtrInFile` parse its PE) |
 
 ## Open Questions
 

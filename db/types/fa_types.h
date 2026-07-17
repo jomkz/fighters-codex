@@ -87,6 +87,8 @@ typedef struct VDO          VDO;          /* video: VDO player context          
 typedef struct VDOHEADER    VDOHEADER;    /* video: VDO stream header (VDOfromVDOHEADER) */
 typedef struct VDOLinkedList VDOLinkedList; /* video: list of .VDO frame nodes (BuildVDOList) */
 typedef struct CONFIG       CONFIG;       /* startup: EA.CFG settings record (UCONFIG_*) */
+typedef struct _IMAGE_DOS_HEADER _IMAGE_DOS_HEADER; /* startup: Win32 PE/DOS header (DLL loader) */
+typedef struct SECTION_INFO SECTION_INFO; /* startup: PE section descriptor (FindSection)   */
 typedef struct ANGLE          ANGLE;          /* objects: attitude vector (MPPrepareForInterp) */
 typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station          */
 typedef struct HARDPOINT_TYPE HARDPOINT_TYPE; /* flight-model: store-station type     */

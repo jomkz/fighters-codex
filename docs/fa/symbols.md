@@ -1016,7 +1016,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Sound / music (incl. WAIL32)
 
-[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 50 named functions
+[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 52 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1069,6 +1069,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00435BC0` | `SndLostFocus` | sms |  |
 | `0x00435C20` | `SndGotFocus` | sms |  |
 | `0x00435C30` | `SoundName` | sms |  |
+| `0x0046B4C0` | `InitAudio` | sms |  |
+| `0x0046B4D0` | `CleanAudio` | sms |  |
 | `0x0047A670` | `ShutdownGraphicsSystem` | sms |  |
 
 ### Memory & resource managers (MM/RM)
@@ -1729,7 +1731,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 141 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 143 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1810,6 +1812,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00464520` | `PreferredProtectId` | sms |  |
 | `0x00464550` | `CloseToAnything` | sms |  |
 | `0x00464640` | `SetScenarioEndTime` | sms |  |
+| `0x00469960` | `EJECTRemove` | sms |  |
+| `0x00469970` | `EJECTAdd` | sms |  |
 | `0x004736F0` | `NPCWeaponsProc` | sms |  |
 | `0x00473A40` | `OBJEventProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00473B40` | `OBJDamageProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
@@ -2426,13 +2430,21 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 481 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 489 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00403700` | `usnfmain` | sms |  |
 | `0x00404C70` | `FlyingLoop` | sms |  |
+| `0x0041E910` | `IsDLL` | sms |  |
+| `0x0041E990` | `VAToPtrInFile` | sms |  |
+| `0x0041EA80` | `FindSection` | sms |  |
+| `0x0041EB60` | `LoadDLL` | sms |  |
 | `0x00436320` | `StartGameThread` | sms |  |
+| `0x0044A110` | `InstallErrorExit` | sms |  |
+| `0x0044A120` | `ErrorExit` | sms |  |
+| `0x0044A370` | `GameCleanup` | sms |  |
+| `0x0044A420` | `ErrorExitNoMem` | sms |  |
 | `0x0046B560` | `MainLoop` | sms |  |
 | `0x00476120` | `WinMain` | sms |  |
 | `0x00476180` | `MainWndproc` | sms |  |
