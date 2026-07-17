@@ -1,5 +1,9 @@
 va,kind,name,display,source,confidence,notes,type
+0x004114F0,func,_ResetKeyboard,ResetKeyboard,sms,confirmed,,
+0x00411540,func,_ShutdownKeyboard,ShutdownKeyboard,sms,confirmed,,
+0x00411560,func,_GetKey2,GetKey2,sms,confirmed,,
 0x004115C0,func,_KeyAvail,KeyAvail,sms,confirmed,,
+0x004115F0,func,_GetKeyFlags,GetKeyFlags,sms,confirmed,,
 0x00411600,func,?KEYEvent@@YAXIIJ@Z,KEYEvent,sms,confirmed,"WM_(SYS)KEYDOWN/UP hook: scan from lParam, qualifier bits (1=shift 2=ctrl 4=alt) in _qualStatus/_keyFlags, _keyarray[scan] held state, kbScanToASCII translate (hi-byte=bare ASCII code, lo-byte=keypad normalize, none=scan<<8|qual), 16-entry _kbBuffer ring; drops auto-repeats of _ignoreRepeats scans in flight","void __cdecl KEYEvent(unsigned int, unsigned int, long)"
 0x00411890,func,_KEYECS,KEYECS,sms,confirmed,enter the keyboard critical section (0x522558) if initialized,
 0x004118B0,func,_KEYLCS,KEYLCS,sms,confirmed,leave the keyboard critical section,
@@ -7,6 +11,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00411F00,func,@PutFakeKey@4,PutFakeKey,sms,confirmed,push a synthetic key code onto the 8-entry fake-key stack (0x5226b0); UI/joystick inject commands this way,undefined4 __fastcall PutFakeKey(undefined4)
 0x00411F20,func,_GetFakeKey@0,GetFakeKey,sms,confirmed,pop the fake-key stack (0 when empty); polled after GetKey by the shell screens,undefined4 __stdcall GetFakeKey(void)
 0x00412930,func,_WaitKey,WaitKey,sms,confirmed,spin (Sleep 0) until GetKey returns a key,
+0x00412960,func,_GetKey,GetKey,sms,confirmed,,
 0x00413D10,func,_SlewKey,SlewKey,sms,confirmed,"slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0",
 0x00414070,func,SlewObjListCollect,,re,confirmed,T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24,
 0x00414690,func,@FlightKey@4,FlightKey,sms,confirmed,"THE in-flight command table: offers the key to the stick/rudder/throttle device procs (msg 3) then dispatches ~70 commands - flight controls (a/b/f/g/h/o), sensors (r/i/m/y, Shift+R A/G, Shift+A AWACS, Shift+G GCI), targeting (Enter/t/T/;), weapons ([ ] Space Tab, keypad-Ins chaff keypad-Del flare, Shift+J/K jettison), wingman Alt+letters + Alt+1..9 break angles, Shift+digit MFD windows, Ctrl+keypad thrust vector, Shift+E eject (double-press). See input.md section",undefined4 __fastcall FlightKey(undefined4)

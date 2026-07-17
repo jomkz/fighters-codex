@@ -202,6 +202,11 @@ Full record: [`db/symbols/input.csv`](https://github.com/jomkz/fighters-codex/bl
 | VA | Symbol | Role |
 |----|--------|------|
 | `0x411600` | `KEYEvent` | the Windows keyboard hook: qualifiers, `_keyarray`, the code ring |
+| `0x412960` | `GetKey` | pop the next code from the ring (with `GetFakeKey` as the synthetic second source) |
+| `0x411560` | `GetKey2` | low-level ring dequeue that `GetKey` wraps |
+| `0x4115F0` | `GetKeyFlags` | return the current qualifier bits (shift/ctrl/alt) |
+| `0x4114F0` | `ResetKeyboard` | clear the ring, `_keyarray`, and qualifier state |
+| `0x411540` | `ShutdownKeyboard` | tear down the keyboard hook |
 | `0x414690` | `FlightKey` | the in-flight command table (above) |
 | `0x413D10` | `SlewKey` | slew-mode keypad commands |
 | `0x4164B0` | `ServicePlayer` | the per-frame player service |

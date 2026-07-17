@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 45/67 functions have a recovered signature; 1/6 globals have a recovered type.
+// 45/72 functions have a recovered signature; 1/6 globals have a recovered type.
 
 namespace fxe::fa::input {
 
@@ -65,11 +65,16 @@ void RunModemConfigurationScreen(void);  // 0x0049C780  __stdcall
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x004114F0  ResetKeyboard -- signature not recovered
+// TODO(#453): 0x00411540  ShutdownKeyboard -- signature not recovered
+// TODO(#453): 0x00411560  GetKey2 -- signature not recovered
 // TODO(#453): 0x004115C0  KeyAvail -- signature not recovered
+// TODO(#453): 0x004115F0  GetKeyFlags -- signature not recovered
 // TODO(#453): 0x00411890  KEYECS -- signature not recovered
 // TODO(#453): 0x004118B0  KEYLCS -- signature not recovered
 // TODO(#453): 0x004118D0  KEYPause -- signature not recovered
 // TODO(#453): 0x00412930  WaitKey -- signature not recovered
+// TODO(#453): 0x00412960  GetKey -- signature not recovered
 // TODO(#453): 0x00413D10  SlewKey -- signature not recovered
 // TODO(#453): 0x00414070  SlewObjListCollect -- signature not recovered
 // TODO(#453): 0x00415E30  PickVisibleTarget -- signature not recovered
