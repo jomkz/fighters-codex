@@ -552,6 +552,9 @@ Full record: [`db/symbols/network.csv`](https://github.com/jomkz/fighters-codex/
 | `0x496F40` | `spxinit` | SPX/IPX transport init — enumerate adapters |
 | `0x4970C0` | `spxopensocket` | open an SPX socket (`socket(6)` + IPX ioctl) |
 | `0x497150` | `spxconnect` | SPX connect to a `NET_ADDRESS` peer |
+| `0x4B1240` | `NETIsAddrLocal` | test whether a `NET_ADDRESS` is one of this host's |
+| `0x4B1540` | `NETProcessEvent` | dispatch a transport event (msg/wParam/lParam) |
+| `0x44BF00` | `_SER_Read` | read from the serial-link transport |
 
 ### IPX/SPX transport
 

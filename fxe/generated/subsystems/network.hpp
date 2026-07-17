@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 359/360 functions have a recovered signature; 2/3 globals have a recovered type.
+// 362/363 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -60,6 +60,7 @@ char SER_Flush(long, char);  // 0x0044BD40  __cdecl
 long SER_Write(long, unsigned char *, long);  // 0x0044BDB0  __cdecl
 long SER_WriteAvail(long);  // 0x0044BE40  __cdecl
 long SER_Transmitting(long);  // 0x0044BEC0  __cdecl
+long _SER_Read(long, unsigned char *, long);  // 0x0044BF00  __cdecl
 long SER_Read(long, unsigned char *, long);  // 0x0044BFC0  __cdecl
 long SER_ReadAvail(long, long);  // 0x0044C030  __cdecl
 long SER_PeekByte(long);  // 0x0044C080  __cdecl
@@ -348,11 +349,13 @@ char NET_Flush(long, char);  // 0x004B0E00  __cdecl
 long NET_Read(long, unsigned char *, long);  // 0x004B0E50  __cdecl
 long NET_ReadAvail(long, long);  // 0x004B10D0  __cdecl
 long NET_PeekByte(long);  // 0x004B1150  __cdecl
+char NETIsAddrLocal(NET_ADDRESS *);  // 0x004B1240  __cdecl
 void NET_GetLastError(char *, int);  // 0x004B1280  __cdecl
 char NET_SendMessageAll(char *);  // 0x004B12A0  __cdecl
 char NET_MakeAutoConnectAddress(CN_INFO *, NET_ADDRESS *);  // 0x004B1350  __cdecl
 char NET_Addr2string(NET_ADDRESS *, char *);  // 0x004B1380  __cdecl
 void net_add_player_id(char *, socket_state *, int);  // 0x004B13A0  __cdecl
+void NETProcessEvent(void *, unsigned int, unsigned int, long);  // 0x004B1540  __cdecl
 void fill_in_mpinfo(void);  // 0x004B1590  __cdecl
 char game_event_handler(unsigned int, long, int, socket_state *);  // 0x004B1660  __cdecl
 void net_write_output_q(int);  // 0x004B16B0  __cdecl
