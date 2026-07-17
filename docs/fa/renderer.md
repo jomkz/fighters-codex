@@ -254,6 +254,50 @@ the `tileExpand__3JA` flag (set by `_tileExpand__3JA = (DAT_00573394 < 2)` in `T
 
 ## 7. DirectDraw Surface Management
 
+### The `CDirDraw` device and `CDirDrawSurface`
+
+The two C++ classes the `GG_*` layer wraps. `CDirDraw` is a process-wide singleton
+(`_m_singleton_CDirDraw__1PAV1_A`) that owns the `IDirectDraw` object, the display mode, and
+the primary/secondary surfaces; `CDirDrawSurface` wraps one `IDirectDrawSurface`. Both carry
+their FA.SMS names; the roles below are read from the mangled signatures and the call sites in
+`GG_InitMode`/`G_AllocSurfaceBitmap`.
+
+| VA | Method | Role |
+|----|--------|------|
+| `0x41d740` | `CDirDraw::CreateSingleton` | construct the process-wide device singleton |
+| `0x41d800` | `CDirDraw::DeleteSingleton` | destroy the singleton |
+| `0x41d910` | `CDirDraw::Create` | create the `IDirectDraw` object from the window handle |
+| `0x41d9f0` | `CDirDraw::SetDisplayMode` | set width/height/bpp on the device |
+| `0x41da20` | `CDirDraw::SetDisplayModeFromMain` | full mode bring-up (675 B): set the mode and (re)create the primary + back surfaces |
+| `0x41dce0` | `CDirDraw::CreateSurface` | protected factory: a `CDirDrawSurface` from a `DDSURFACEDESC` |
+| `0x41dda0` | `CDirDraw::CreatePrimarySurface` | create the visible primary surface for a `T_MODE` |
+| `0x41de20` | `CDirDraw::CreateSecondarySurface` | create an offscreen W×H surface (the 3D render-target path) |
+| `0x41de80` | `CDirDraw::DestroySurface` | release a surface owned by the device |
+| `0x41deb0` | `CDirDraw::Destroy` | release the device and its surfaces |
+| `0x41df50` | `CDirDraw::SetCooperativeLevel` | `SetCooperativeLevel` (exclusive / full-screen) |
+| `0x41dff0` | `CDirDraw::GetDriverCaps` | return the hardware `DDCAPS` |
+| `0x41e010` | `CDirDraw::GetHELCaps` | return the emulation-layer `DDCAPS` |
+| `0x41e030` | `CDirDraw::Lock` | lock a surface, returning its `DDSURFACEDESC` |
+| `0x41e050` | `CDirDraw::Unlock` | unlock a surface |
+| `0x41e060` | `CDirDraw::WaitForVerticalBlank` | block until the vertical blank |
+| `0x41e090` | `CDirDraw::EnumDisplayModes` | enumerate the available display modes |
+| `0x41e300` | `CDirDraw::ShowDDError` | report a DirectDraw failure (stub in retail) |
+| `0x41e310` | `CDirDraw::ddECS` | enter the DirectDraw critical section |
+| `0x41e330` | `CDirDraw::ddLCS` | leave the DirectDraw critical section (the `_ddLCS` the `GG_Flush` SEH funnels release) |
+| `0x478520` | `CDirDrawSurface::Create` | wrap/create an `IDirectDrawSurface` from a desc |
+| `0x478740` | `CDirDrawSurface::SetEntries` | upload palette entries (`T_RGB[]`) to the surface's palette |
+| `0x478830` | `CDirDrawSurface::Restore` | restore a lost surface's video memory |
+| `0x4788a0` | `CDirDrawSurface::Lock` | lock, returning the `DDSURFACEDESC` (pixel pointer + pitch) |
+| `0x478900` | `CDirDrawSurface::Unlock` | unlock |
+| `0x478940` | `CDirDrawSurface::Blit` | blit a source rect to a destination rect |
+| `0x4789e0` | `CDirDrawSurface::InitSurfaceDesc` | zero and size a `DDSURFACEDESC` |
+| `0x478a00` | `CDirDrawSurface::Destroy` | release the underlying interface |
+| `0x478ae0` | `CDirDrawSurface::Clear` | colour-fill the surface via a `Blt` fill |
+
+Three 5-byte duplicate-name entries (`0x41e2f0`, `0x41e360`, `0x478ad0`) are compiler jmp
+thunks / COMDAT folds of the `Destroy`/`ddLCS` bodies above and are waived in the symbol DB.
+
+
 | VA | SMS name | Role |
 |----|----------|------|
 | `0x4b7a80` | `_G_AllocSurfaceBitmap@8` | Allocates a W×H bitmap with a DirectDraw secondary surface; calls `CDirDraw::CreateSecondarySurface`, locks it via `CDirDrawSurface::Lock`, clears to zero, builds a row-pointer table, and returns an MM handle |

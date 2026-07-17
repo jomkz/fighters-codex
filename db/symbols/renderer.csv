@@ -1,8 +1,26 @@
 va,kind,name,display,source,confidence,notes,type
+0x0041D740,func,?CreateSingleton@CDirDraw@@SAHXZ,,sms,confirmed,,
+0x0041D800,func,?DeleteSingleton@CDirDraw@@SAXXZ,,sms,confirmed,,
+0x0041D910,func,?Create@CDirDraw@@QAEHPAX@Z,,sms,confirmed,,
+0x0041D9F0,func,?SetDisplayMode@CDirDraw@@QAEHKKK@Z,,sms,confirmed,,
+0x0041DA20,func,?SetDisplayModeFromMain@CDirDraw@@QAEHKKK@Z,,sms,confirmed,,
+0x0041DCE0,func,?CreateSurface@CDirDraw@@IAEPAVCDirDrawSurface@@PAU_DDSURFACEDESC@@@Z,,sms,confirmed,,
+0x0041DDA0,func,?CreatePrimarySurface@CDirDraw@@QAEPAVCDirDrawSurface@@W4T_MODE@@@Z,,sms,confirmed,,
+0x0041DE20,func,?CreateSecondarySurface@CDirDraw@@QAEPAVCDirDrawSurface@@GG@Z,,sms,confirmed,,
 0x0041DE80,func,?DestroySurface@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z,,sms,confirmed,,
+0x0041DEB0,func,?Destroy@CDirDraw@@QAEXXZ,,sms,confirmed,,
+0x0041DF50,func,?SetCooperativeLevel@CDirDraw@@QAEHK@Z,,sms,confirmed,,
+0x0041DFF0,func,?GetDriverCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ,,sms,confirmed,,
 0x0041E010,func,?GetHELCaps@CDirDraw@@QAEPBU_DDCAPS@@XZ,,sms,confirmed,,
 0x0041E030,func,?Lock@CDirDraw@@QAEPAU_DDSURFACEDESC@@PAVCDirDrawSurface@@PAUtagRECT@@H@Z,,sms,confirmed,,
 0x0041E050,func,?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z,,sms,confirmed,,
+0x0041E060,func,?WaitForVerticalBlank@CDirDraw@@QAEXK@Z,,sms,confirmed,,
+0x0041E090,func,?EnumDisplayModes@CDirDraw@@QAEKXZ,,sms,confirmed,,
+0x0041E2F0,func,,,waiver,confirmed,5-byte duplicate-name entry — jmp thunk / COMDAT fold of the 0x0041DEB0 ?Destroy@CDirDraw@@QAEXXZ body,
+0x0041E300,func,?ShowDDError@CDirDraw@@SAXJ@Z,,sms,confirmed,,
+0x0041E310,func,?ddECS@CDirDraw@@SAXXZ,,sms,confirmed,,
+0x0041E330,func,?ddLCS@CDirDraw@@SAXXZ,,sms,confirmed,,
+0x0041E360,func,,,waiver,confirmed,5-byte duplicate-name entry — jmp thunk / COMDAT fold of the 0x0041E330 ?ddLCS@CDirDraw@@SAXXZ body,
 0x00447A40,func,_G_TileInit,G_TileInit,sms,confirmed,,
 0x00447A73,func,_G_TileShutDown,G_TileShutDown,sms,confirmed,,
 0x00447AA5,func,@G_Tile@32,G_Tile,sms,confirmed,,"undefined4 __fastcall G_Tile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
@@ -30,6 +48,16 @@ va,kind,name,display,source,confidence,notes,type
 0x0046A640,func,_G_InitCircles@0,G_InitCircles,sms,confirmed,,undefined4 __stdcall G_InitCircles(void)
 0x0046A690,func,_G_ShutdownCircles@0,G_ShutdownCircles,sms,confirmed,,undefined4 __stdcall G_ShutdownCircles(void)
 0x0046A6C0,func,_G_Circle@16,G_Circle,sms,confirmed,,"undefined4 __stdcall G_Circle(undefined4, undefined4, undefined4, undefined4)"
+0x00478520,func,?Create@CDirDrawSurface@@QAEHPAUIDirectDraw@@PAU_DDSURFACEDESC@@@Z,,sms,confirmed,,
+0x00478740,func,?SetEntries@CDirDrawSurface@@QAEHPAUT_RGB@@JJD@Z,,sms,confirmed,,
+0x00478830,func,?Restore@CDirDrawSurface@@QAEHXZ,,sms,confirmed,,
+0x004788A0,func,?Lock@CDirDrawSurface@@QAEPAU_DDSURFACEDESC@@PAUtagRECT@@H@Z,,sms,confirmed,,
+0x00478900,func,?Unlock@CDirDrawSurface@@QAEHXZ,,sms,confirmed,,
+0x00478940,func,?Blit@CDirDrawSurface@@QAEJPAUtagRECT@@PAUIDirectDrawSurface@@0K@Z,,sms,confirmed,,
+0x004789E0,func,?InitSurfaceDesc@CDirDrawSurface@@SAXPAU_DDSURFACEDESC@@@Z,,sms,confirmed,,
+0x00478A00,func,?Destroy@CDirDrawSurface@@QAEXXZ,,sms,confirmed,,
+0x00478AD0,func,,,waiver,confirmed,5-byte duplicate-name entry — jmp thunk / COMDAT fold of the 0x00478A00 ?Destroy@CDirDrawSurface@@QAEXXZ body,
+0x00478AE0,func,?Clear@CDirDrawSurface@@QAEJXZ,,sms,confirmed,,
 0x00479E10,func,_G_FindFirstFile@8,G_FindFirstFile,sms,confirmed,,"undefined4 __stdcall G_FindFirstFile(undefined4, undefined4)"
 0x00479EA0,func,_G_FindNextFile@8,G_FindNextFile,sms,confirmed,,"undefined4 __stdcall G_FindNextFile(undefined4, undefined4)"
 0x00479F20,func,_G_FindClose@4,G_FindClose,sms,confirmed,,undefined4 __stdcall G_FindClose(undefined4)
