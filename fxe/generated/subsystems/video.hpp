@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 41/47 functions have a recovered signature; 0/0 globals have a recovered type.
+// 41/66 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
@@ -58,6 +58,25 @@ undefined4 UnRLE(undefined4, undefined4);  // 0x004C8AFC  __stdcall
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x004219B0  StopCobraSound -- signature not recovered
+// TODO(#453): 0x004219D0  StartCobraSound -- signature not recovered
+// TODO(#453): 0x00442360  InitMovieContext -- signature not recovered
+// TODO(#453): 0x0046B0F0  CleanCobra -- signature not recovered
+// TODO(#453): 0x0046B120  InitVideo -- signature not recovered
+// TODO(#453): 0x0046B4B0  CleanVideo -- signature not recovered
+// TODO(#453): 0x0046B4E0  SetupCobra -- signature not recovered
+// TODO(#453): 0x0046B530  CleanupCobra -- signature not recovered
+// TODO(#453): 0x004AEE80  BuildVDOList -- signature not recovered
+// TODO(#453): 0x004AF070  StartVDOAudio -- signature not recovered
+// TODO(#453): 0x004AF100  NewVDOLinkNode -- signature not recovered
+// TODO(#453): 0x004AF1B0  FreeVDOLinkNode -- signature not recovered
+// TODO(#453): 0x004AF1E0  OpenVDOFile -- signature not recovered
+// TODO(#453): 0x004AF200  ReadVDOHeader -- signature not recovered
+// TODO(#453): 0x004AF230  ReadFrameSizesFile -- signature not recovered
+// TODO(#453): 0x004AF2D0  ReadVDOPalette -- signature not recovered
+// TODO(#453): 0x004AF3A0  AllocVDO -- signature not recovered
+// TODO(#453): 0x004AF4B0  DeallocVDO -- signature not recovered
+// TODO(#453): 0x004C8CD8  DecompressVideoImage -- signature not recovered
 // TODO(#453): 0x004CCC48  CopySB8 -- signature not recovered
 // TODO(#453): 0x004CCC7C  CopyDB8 -- signature not recovered
 // TODO(#453): 0x004CCF54  ExpandDB -- signature not recovered

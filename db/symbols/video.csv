@@ -1,6 +1,9 @@
 va,kind,name,display,source,confidence,notes,type
 0x00405490,func,?VDOInit@@YIXXZ,VDOInit,sms,confirmed,,void __fastcall VDOInit(void)
+0x004219B0,func,_StopCobraSound@0,StopCobraSound,sms,confirmed,,
+0x004219D0,func,_StartCobraSound@0,StartCobraSound,sms,confirmed,,
 0x00421A50,func,_PlayCobra@4,PlayCobra,sms,confirmed,imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS,undefined4 __stdcall PlayCobra(undefined4)
+0x00442360,func,?InitMovieContext@@YAXPAUMovieContext@@JJ@Z,InitMovieContext,sms,confirmed,,
 0x00442370,func,?DecodeFrame@@YAXPAUMovieContext@@PAUFrameHeader@@PAUGlobalData@@@Z,DecodeFrame,sms,confirmed,,"void __cdecl DecodeFrame(MovieContext *, FrameHeader *, GlobalData *)"
 0x00456300,func,_DecodeDSVGA8Frame,DecodeDSVGA8Frame,sms,confirmed,key/intra frame -> 8bpp paletted SVGA output with 2x pixel doubling (Double); ExpandDB/ExpandSB books + DrawAcrossBank,"undefined4 __cdecl DecodeDSVGA8Frame(undefined4, undefined4, undefined4)"
 0x00456AD0,func,?EDB@@YAXPAE0PAUFrameHeader@@PAUGlobalData@@@Z,EDB,sms,confirmed,"expand-book: 512 iters, reads 2 index bytes -> 8 out bytes; neighbor (idx+-1) squared-RGB-distance<=8 smoothing against frame color table at FrameHeader+0x18; builds interpolated 2x2 index pattern for 8bpp dither path","void __cdecl EDB(unsigned char *, unsigned char *, FrameHeader *, GlobalData *)"
@@ -26,13 +29,28 @@ va,kind,name,display,source,confidence,notes,type
 0x0045BE60,func,_DecodeInterDSVGA15NONFrame,DecodeInterDSVGA15NONFrame,sms,confirmed,INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0),"undefined4 __cdecl DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4)"
 0x0045C500,func,_DecodeInterDSVGA15NONSkipFrame,DecodeInterDSVGA15NONSkipFrame,sms,confirmed,INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0),"undefined4 __cdecl DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4)"
 0x0046AE10,func,?InitCobra@@YAGPAUGlobalData@@@Z,InitCobra,sms,confirmed,,unsigned short __cdecl InitCobra(GlobalData *)
+0x0046B0F0,func,?CleanCobra@@YAGPAUGlobalData@@@Z,CleanCobra,sms,confirmed,,
+0x0046B120,func,?InitVideo@@YAGPAUGlobalData@@@Z,InitVideo,sms,confirmed,,
+0x0046B4B0,func,?CleanVideo@@YAGPAUGlobalData@@@Z,CleanVideo,sms,confirmed,,
+0x0046B4E0,func,?SetupCobra@@YAGPAUGlobalData@@@Z,SetupCobra,sms,confirmed,,
+0x0046B530,func,?CleanupCobra@@YAGPAUGlobalData@@@Z,CleanupCobra,sms,confirmed,,
 0x004A06F0,func,_DoFadeout@0,DoFadeout,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall DoFadeout(void)
 0x004AE410,func,?PlayVDOFile@@YAFPADFD@Z,PlayVDOFile,sms,confirmed,,"short __cdecl PlayVDOFile(char *, short, char)"
 0x004AE440,func,?PlayVDOString@@YAFPADFPAUT_HANDLE@@PAEJJD@Z,PlayVDOString,sms,confirmed,,"short __cdecl PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char)"
 0x004AECD0,func,?VDOClearToBlack@@YAXXZ,VDOClearToBlack,sms,confirmed,,void __cdecl VDOClearToBlack(void)
 0x004AED50,func,?VDOSetMode@@YAXPAUVDO@@@Z,VDOSetMode,sms,confirmed,,void __cdecl VDOSetMode(VDO *)
 0x004AEE30,func,?VDOSetLineStats@@YAXGGE@Z,VDOSetLineStats,sms,confirmed,,"void __cdecl VDOSetLineStats(unsigned short, unsigned short, unsigned char)"
+0x004AEE80,func,?BuildVDOList@@YAPAUVDOLinkedList@@PAD@Z,BuildVDOList,sms,confirmed,,
+0x004AF070,func,?StartVDOAudio@@YADPAD@Z,StartVDOAudio,sms,confirmed,,
+0x004AF100,func,?NewVDOLinkNode@@YAPAUVDOLinkedList@@PAD0@Z,NewVDOLinkNode,sms,confirmed,,
+0x004AF1B0,func,?FreeVDOLinkNode@@YAXPAUVDOLinkedList@@@Z,FreeVDOLinkNode,sms,confirmed,,
+0x004AF1E0,func,?OpenVDOFile@@YAFPAD@Z,OpenVDOFile,sms,confirmed,,
+0x004AF200,func,?ReadVDOHeader@@YADFPAUVDOHEADER@@@Z,ReadVDOHeader,sms,confirmed,,
+0x004AF230,func,?ReadFrameSizesFile@@YAPAKPAD@Z,ReadFrameSizesFile,sms,confirmed,,
+0x004AF2D0,func,?ReadVDOPalette@@YADFPAUVDOHEADER@@QAUT_RGB@@@Z,ReadVDOPalette,sms,confirmed,,
 0x004AF320,func,?VDOfromVDOHEADER@@YADPAUVDO@@PAUVDOHEADER@@@Z,VDOfromVDOHEADER,sms,confirmed,,"char __cdecl VDOfromVDOHEADER(VDO *, VDOHEADER *)"
+0x004AF3A0,func,?AllocVDO@@YADPAUVDO@@@Z,AllocVDO,sms,confirmed,,
+0x004AF4B0,func,?DeallocVDO@@YAXPAUVDO@@PAUVDOLinkedList@@@Z,DeallocVDO,sms,confirmed,,
 0x004AF510,func,?GetVDOFrame@@YADPAUVDO@@JF@Z,GetVDOFrame,sms,confirmed,,"char __cdecl GetVDOFrame(VDO *, long, short)"
 0x004AF690,func,?VDOAlloc@@YAPAXK@Z,VDOAlloc,sms,confirmed,,void * __cdecl VDOAlloc(unsigned long)
 0x004AF6A0,func,?VDOFree@@YAXPAX@Z,VDOFree,sms,confirmed,,void __cdecl VDOFree(void *)
@@ -40,6 +58,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004AF760,func,?VDOCompareBitmaps@@YAKPAUT_HANDLE@@0PAEK@Z,VDOCompareBitmaps,sms,confirmed,,"unsigned long __cdecl VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long)"
 0x004C8AA4,func,_DecompressVideo@20,DecompressVideo,sms,confirmed,,"undefined4 __stdcall DecompressVideo(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C8AFC,func,_UnRLE@8,UnRLE,sms,confirmed,,"undefined4 __stdcall UnRLE(undefined4, undefined4)"
+0x004C8CD8,func,_DecompressVideoImage@20,DecompressVideoImage,sms,confirmed,,
 0x004CCC48,func,_CopySB8,CopySB8,sms,confirmed,,
 0x004CCC7C,func,_CopyDB8,CopyDB8,sms,confirmed,,
 0x004CCF54,func,_ExpandDB,ExpandDB,sms,confirmed,,

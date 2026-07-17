@@ -42,6 +42,37 @@ track, not interleaved in this cluster.
 
 ![Cobra decode: per-frame codebook (DBook/24Book/EDB) decoded to RGB via ClampU8, rendered at 8/15/16/24 bpp with optional 2x doubling.](diagrams/video-decode.svg)
 
+## VDO container & Cobra lifecycle
+
+Around the frame decoders sit two support layers the game already names. The **Cobra
+lifecycle** brings the movie framework up and down against the `GlobalData` block —
+`InitVideo`/`SetupCobra` on entry, `CleanVideo`/`CleanCobra`/`CleanupCobra` on teardown —
+and `StartCobraSound`/`StopCobraSound` gate its audio. The **`.VDO` container layer** is
+the 320×200 8bpp path (the shipped `.VDO` corpus, distinct from the `DecodeFrame` CB8
+dispatcher): a `VDOLinkedList` of nodes read from disk, then decoded frame by frame.
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x46B120` | `InitVideo` | bring the video/Cobra framework up (`GlobalData`) |
+| `0x46B4E0` | `SetupCobra` | configure the Cobra player |
+| `0x46B0F0` | `CleanCobra` | release Cobra decode state |
+| `0x46B4B0` | `CleanVideo` | tear the video framework down |
+| `0x46B530` | `CleanupCobra` | final Cobra teardown |
+| `0x4219D0` | `StartCobraSound` | start the movie's audio track |
+| `0x4219B0` | `StopCobraSound` | stop the movie's audio track |
+| `0x442360` | `InitMovieContext` | zero/size a `MovieContext` |
+| `0x4AEE80` | `BuildVDOList` | build the `VDOLinkedList` for a `.VDO` file |
+| `0x4AF100` | `NewVDOLinkNode` | append a node to the list |
+| `0x4AF1B0` | `FreeVDOLinkNode` | free one list node |
+| `0x4AF1E0` | `OpenVDOFile` | open the `.VDO` file |
+| `0x4AF200` | `ReadVDOHeader` | read the `VDOHEADER` |
+| `0x4AF230` | `ReadFrameSizesFile` | read the per-frame size table |
+| `0x4AF2D0` | `ReadVDOPalette` | read the movie palette into `T_RGB[]` |
+| `0x4AF3A0` | `AllocVDO` | allocate the `VDO` playback buffers |
+| `0x4AF4B0` | `DeallocVDO` | free them |
+| `0x4AF070` | `StartVDOAudio` | start the `.11K` audio track |
+| `0x4C8CD8` | `DecompressVideoImage` | decompress one `.VDO` image (the 8bpp path) |
+
 ## Functions
 
 Full record: [`db/symbols/video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv).
