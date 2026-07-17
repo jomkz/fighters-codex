@@ -432,9 +432,15 @@ symbols. The equivalent functions are:
 | `dlg_list_init` | `0x464660` | `?dlg_list_init@@YAPAXG@Z` — player list dialog init |
 | `dlg_list_add` | `0x4648B0` | `?dlg_list_add@@YAXPAXW4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z` — add player to lobby list |
 | `dlg_list_get_selection` | `0x464800` | `?dlg_list_get_selection@@YA?AW4DLG_SELECTION@@PAXPAUNET_ADDRESS@@PAD@Z` — get selected player |
+| `dlg_list_shutdown` | `0x4646B0` | `?dlg_list_shutdown@@YAXPAX@Z` — free the player-list dialog |
+| `dlg_list_often` | `0x464710` | `?dlg_list_often@@YAXPAX@Z` — periodic refresh tick of the list |
+| `dlg_list_clear` | `0x4647D0` | `?dlg_list_clear@@YAXPAX@Z` — remove all entries |
+| `dlg_list_update` | `0x4649F0` | `?dlg_list_update@@YAXPAX@Z` — rebuild/redraw the list rows |
 
 The `PLAYER_ACTION` and `NET_CONNECTED_STATE` enums are used in callback signatures
-throughout the session management layer.
+throughout the session management layer. The `dlg_list_*` family is the multiplayer
+lobby's player-list widget (`dlg_list_add`/`_get_selection`/`_get_new_selection` carry
+`NET_ADDRESS` + `PLAYER_ACTION`), driven each frame by `dlg_list_often`.
 
 ---
 

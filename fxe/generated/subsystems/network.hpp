@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 352/353 functions have a recovered signature; 2/3 globals have a recovered type.
+// 352/360 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -373,6 +373,13 @@ void net_free_player_list(void);  // 0x004B26D0  __cdecl
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x00464660  dlg_list_init -- signature not recovered
+// TODO(#453): 0x004646B0  dlg_list_shutdown -- signature not recovered
+// TODO(#453): 0x00464710  dlg_list_often -- signature not recovered
+// TODO(#453): 0x004647D0  dlg_list_clear -- signature not recovered
+// TODO(#453): 0x00464800  dlg_list_get_selection -- signature not recovered
+// TODO(#453): 0x004648B0  dlg_list_add -- signature not recovered
+// TODO(#453): 0x004649F0  dlg_list_update -- signature not recovered
 // TODO(#453): 0x00472670  MPRevive -- signature not recovered
 // TODO(#455): 0x004EB608  thisComputer -- type not recovered
 
