@@ -77,6 +77,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00464520,func,_PreferredProtectId@0,PreferredProtectId,sms,confirmed,,undefined4 __stdcall PreferredProtectId(void)
 0x00464550,func,@CloseToAnything@4,CloseToAnything,sms,confirmed,,undefined4 __fastcall CloseToAnything(undefined4)
 0x00464640,func,@SetScenarioEndTime@4,SetScenarioEndTime,sms,confirmed,,undefined4 __fastcall SetScenarioEndTime(undefined4)
+0x00469960,func,_EJECTRemove@0,EJECTRemove,sms,confirmed,,undefined4 __stdcall EJECTRemove(void)
+0x00469970,func,@EJECTAdd@4,EJECTAdd,sms,confirmed,,undefined4 __fastcall EJECTAdd(undefined4)
 0x004736F0,func,_NPCWeaponsProc,NPCWeaponsProc,sms,confirmed,,
 0x00473A40,func,_OBJEventProc,OBJEventProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __cdecl OBJEventProc(u16, undefined4)"
 0x00473B40,func,?OBJDamageProc@@YAXPAUHIT_OBJ_DATA@@@Z,OBJDamageProc,sms,confirmed,label-only in FA.SMS import; ApplySymbols materializes the function,void __cdecl OBJDamageProc(HIT_OBJ_DATA *)

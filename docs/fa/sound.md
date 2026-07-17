@@ -57,6 +57,8 @@ Full record: [`db/symbols/sound.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x432CA0` | `ScoreUpdate` | per-frame MUS bytecode interpreter |
 | `0x4329E0` | `MusicOn` | start XMIDI playback |
 | `0x432F80` | `ShellMusicUpdate` | pick menu/brief/debrief music |
+| `0x46B4C0` | `InitAudio` | bring the audio system up (called from game init) |
+| `0x46B4D0` | `CleanAudio` | tear the audio system down |
 
 ## Open Questions
 

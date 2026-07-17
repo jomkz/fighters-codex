@@ -52,6 +52,9 @@ Full record: [`db/symbols/core-math.csv`](https://github.com/jomkz/fighters-code
 | `0x412B50` | `StringToNumber` | parse a numeric string |
 | `0x412CB0` | `NearestObj` | nearest object of a set |
 | `0x412DA0` | `LimitAngle` | wrap an angle into range |
+| `0x4562F0` | `Rand` | pseudo-random helper (`Rand8`/`Rand16`/`Rand32` widths, `InitRand` seeds) |
+| `0x4561A0` | `Percent` | percentage / ratio helper |
+| `0x44A0A0` | `MultDiv32` | 32-bit multiply-then-divide (overflow-safe scale) |
 
 ## Open Questions
 

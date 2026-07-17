@@ -354,6 +354,8 @@ carry their own event dispatchers and per-class helpers.
 | `0x004A0510` | `_PLANESetFeetWet@0` | set over-water ("feet wet") state |
 | `0x00473DE0` | `GVDoCurrentWaypoint` | advance a ground vehicle along its waypoint |
 | `0x00473F50` | `_GVEventProc` | ground-vehicle main event proc |
+| `0x00469970` | `@EJECTAdd@4` | spawn an ejection-seat object (paired `_EJECTRemove`) |
+| `0x00469960` | `_EJECTRemove@0` | remove the ejection-seat object |
 
 ## Open questions
 

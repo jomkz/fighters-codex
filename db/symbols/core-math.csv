@@ -33,3 +33,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00412B50,func,@StringToNumber@4,StringToNumber,sms,confirmed,,undefined4 __fastcall StringToNumber(undefined4)
 0x00412CB0,func,_NearestObj@16,NearestObj,sms,confirmed,,"undefined4 __stdcall NearestObj(undefined4, undefined4, undefined4, undefined4)"
 0x00412DA0,func,_LimitAngle@12,LimitAngle,sms,confirmed,,"undefined4 __stdcall LimitAngle(undefined4, undefined4, undefined4)"
+0x0044A0A0,func,_MultDiv32@12,MultDiv32,sms,confirmed,,"undefined4 __stdcall MultDiv32(undefined4, undefined4, undefined4)"
+0x004561A0,func,@Percent@4,Percent,sms,confirmed,,undefined4 __fastcall Percent(undefined4)
+0x004561C0,func,@InitRand@4,InitRand,sms,confirmed,,undefined4 __fastcall InitRand(undefined4)
+0x004561D0,func,@Rand32@4,Rand32,sms,confirmed,,undefined4 __fastcall Rand32(undefined4)
+0x004562D0,func,_Rand16@0,Rand16,sms,confirmed,,undefined4 __stdcall Rand16(void)
+0x004562E0,func,_Rand8@0,Rand8,sms,confirmed,,undefined4 __stdcall Rand8(void)
+0x004562F0,func,@Rand@4,Rand,sms,confirmed,,undefined4 __fastcall Rand(undefined4)

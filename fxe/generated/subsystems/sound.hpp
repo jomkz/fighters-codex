@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Sound / music (incl. WAIL32) -- FA.EXE
-// 49/50 functions have a recovered signature; 5/5 globals have a recovered type.
+// 51/52 functions have a recovered signature; 5/5 globals have a recovered type.
 
 namespace fxe::fa::sound {
 
@@ -69,6 +69,8 @@ short SoundStatus(void);  // 0x00435B80  __cdecl
 void SndLostFocus(void);  // 0x00435BC0  __cdecl
 void SndGotFocus(void);  // 0x00435C20  __cdecl
 char * SoundName(short);  // 0x00435C30  __fastcall
+unsigned short InitAudio(GlobalData *);  // 0x0046B4C0  __cdecl
+unsigned short CleanAudio(GlobalData *);  // 0x0046B4D0  __cdecl
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 411/477 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
+// 418/485 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -57,7 +57,14 @@ extern undefined4 _acmdln;  // 0x00592C4C  MSVC CRT global (xrefs=5)
 // --- functions -------------------------------------------------------
 void usnfmain(void);  // 0x00403700  __cdecl
 void FlyingLoop(void);  // 0x00404C70  __cdecl
+undefined4 IsDLL(undefined4);  // 0x0041E910  __stdcall
+void * VAToPtrInFile(_IMAGE_DOS_HEADER *, long, SECTION_INFO **);  // 0x0041E990  __stdcall
+void FindSection(_IMAGE_DOS_HEADER *, char *, SECTION_INFO *);  // 0x0041EA80  __stdcall
+undefined4 LoadDLL(undefined4, undefined4, undefined4, undefined4);  // 0x0041EB60  __stdcall
 unsigned long StartGameThread(unsigned long *);  // 0x00436320  __cdecl
+undefined4 InstallErrorExit(void);  // 0x0044A110  __stdcall
+undefined4 GameCleanup(void);  // 0x0044A370  __stdcall
+undefined4 ErrorExitNoMem(void);  // 0x0044A420  __stdcall
 unsigned short MainLoop(GlobalData *);  // 0x0046B560  __cdecl
 undefined4 WinMain(undefined4, undefined4, undefined4, undefined4);  // 0x00476120  __stdcall
 long MainWndproc(void *, unsigned int, unsigned int, long);  // 0x00476180  __stdcall
@@ -478,6 +485,7 @@ undefined4 HeapSize(undefined4, undefined4, undefined4);  // 0x004E8B66  __stdca
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x0044A120  ErrorExit -- signature not recovered
 // TODO(#453): 0x004D72FE  _closeMS -- signature not recovered
 // TODO(#453): 0x004D74A0  _cexit -- signature not recovered
 // TODO(#453): 0x004D7A20  _tolower -- signature not recovered
