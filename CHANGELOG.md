@@ -7,6 +7,49 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+**The #482 grind — closing the gap between "named" and "documented."** v0.8.5 exposed that a
+game executable reported *complete* was really 49% unclaimed; the reading waves then read the
+big named subsystems. This release attacks what those left behind: the **step-3 check that
+`#482` had always lacked**, and the long tail of functions the binary names but no subsystem
+had claimed.
+
+The gate first. The unclaimed-function ratchet could not tell a **named** FA.SMS function — the
+main loop, `@ArmPlane@4`, a `CDirDraw` method: code the binary itself gives us the name of, and
+therefore the real reconstruction debt — from an anonymous compiler static. Both hid inside one
+aggregate, so `#482` had no closing condition. A third ratchet column, **`named_unclaimed`**, now
+counts exactly the named-but-undocumented functions; `#482` closes when it reaches zero. The
+column started at **333**.
+
+Then the grind, each cluster claimed into the subsystem that *already owned it*: the **`CDirDraw`
+/ `CDirDrawSurface` DirectDraw device layer** (renderer), the **`.VDO` container and Cobra
+lifecycle** (video), the **`dlg_list_*` lobby widget** (network), the **keyboard ring accessors**
+(input), the **theater map screen and waypoint editor** (campaign), the **`PLANE*`/`GV*` object
+procs** (objects), and the **Win32 application bootstrap** (`MainWndproc`/`StartGameThread`/…,
+startup). A new **`core-math`** subsystem was created for the game's own libc-like runtime library
+(fixed-point geometry, distance/bounds, string and RNG helpers) that no subsystem had owned. The
+vendored **libjpeg** and **lzwlib** units — statically-linked third-party code — are recorded as
+waivers, honestly excluded from the first-party reconstruction count. All told, the unclaimed
+functions fall from **719 to 544**, and the named debt from **333 to 158** — over half of `#482`'s
+real work, cleared.
+
+The lesson, banked for the remaining tail: caller-graph attribution is unreliable (it mis-homes
+`CleanAudio` to video because video calls it), so a function is claimed only when its *name* is
+dispositive; the generic-verb remainder awaits a body-by-body read.
+
+No `fx_lib` changes — this release is entirely reconstruction database, tooling, and documentation.
+
+### Added
+- **db** — the `#482` step-3 gate: a `named_unclaimed` ratchet column that isolates the
+  named-but-undocumented debt from anonymous statics, giving `#482` a real closing condition (#528)
+- **renderer** — the `CDirDraw`/`CDirDrawSurface` DirectDraw device layer (#529)
+- **video/network/input** — the `.VDO` container + Cobra lifecycle, the `dlg_list_*` lobby widget,
+  and the keyboard ring accessors, each into the subsystem that already documented it (#530)
+- **campaign** — the theater map screen and `WP*` waypoint editor (#531)
+- **objects/startup/network** — the `PLANE*`/`GV*` object procs, the Win32 application bootstrap,
+  and three transport leaves; the vendored **libjpeg** + **lzwlib** units recorded as waivers (#532)
+- **core-math** — a new subsystem for the fixed-point math / geometry / string / RNG runtime
+  library, with its own page and diagram (#533, #534)
+
 ## [0.8.6] - 2026-07-16
 
 **The reading waves finish — the last of the game executable's undocumented behaviour is
