@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.7] - 2026-07-17
+
 **The #482 grind — closing the gap between "named" and "documented."** v0.8.5 exposed that a
 game executable reported *complete* was really 49% unclaimed; the reading waves then read the
 big named subsystems. This release attacks what those left behind: the **step-3 check that
@@ -974,7 +976,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.6...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.7...HEAD
+[0.8.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.7
 [0.8.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.6
 [0.8.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.5
 [0.8.4]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.4
