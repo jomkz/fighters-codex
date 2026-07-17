@@ -1514,6 +1514,8 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
         # here, from the BINARY, or the totals are a tautology (#482).
         db_vas = {(_va2(r["va"])) for sub2 in bsubs for r in symbols.get(sub2["slug"], [])}
         unclaimed = [va for va in inv["functions"] if _va2(va) not in db_vas]
+        named_unclaimed = [va for va in unclaimed
+                           if _is_named_symbol(inv["functions"][va]["name"])]
         ubytes = sum(int(inv["functions"][va].get("size", 0) or 0) for va in unclaimed)
         tbytes = sum(int(f.get("size", 0) or 0) for f in inv["functions"].values())
         lines += [
@@ -1527,10 +1529,12 @@ def generate_recon_matrix(manifest, symbols, inventories, claims_by_binary):
             pct = (100 * ubytes // tbytes) if tbytes else 0
             lines += [
                 "> **Unclaimed: %d of %d functions (%s of %s code bytes, %d%%) are in the "
-                "binary but in no subsystem** — so nothing above measures them. See "
+                "binary but in no subsystem** — so nothing above measures them. **%d of "
+                "them already carry a recovered name** (the binary tells us what they are; "
+                "they are the debt #482 closes to zero). See "
                 "[#482](https://github.com/jomkz/fighters-codex/issues/482)."
                 % (len(unclaimed), len(inv["functions"]), "{:,}".format(ubytes),
-                   "{:,}".format(tbytes), pct),
+                   "{:,}".format(tbytes), pct, len(named_unclaimed)),
                 "",
             ]
         # A function that was never defined cannot be counted as unclaimed either (#496).
@@ -1644,6 +1648,17 @@ def registry_currency(path, tag, block, errs):
 
 
 
+def _is_named_symbol(name):
+    """True when an inventory function carries a RECOVERED name, not a Ghidra placeholder.
+
+    `FUN_xxxxxxxx` is an auto-named function body; `thunk_FUN_xxxxxxxx` is an auto-named
+    thunk that jumps to one. Every other name came from the FA.SMS symbol import (or our
+    own ApplySymbols) and is therefore a real, documentable symbol. This is the same
+    convention check_coverage() uses (`startswith("FUN_")` == unnamed), widened to reject
+    thunks-to-unnamed so a `thunk_FUN_` cannot masquerade as recovered code (#482)."""
+    return not (name.startswith("FUN_") or name.startswith("thunk_FUN_"))
+
+
 def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     """Every function in the BINARY must be accounted for — not just the ones we claimed.
 
@@ -1668,7 +1683,16 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     labels, never functions) and never disassembled. It is not a function, so a check that
     iterates functions cannot report it missing: 490 FA.SMS-named functions, `_PLANEProc`
     among them, sat outside every count. `undefined_bytes` closes that: executable bytes in
-    NO function body, from unaccounted.csv. Both columns ratchet, and both only go down.
+    NO function body, from unaccounted.csv.
+
+    UNCLAIMED-IN-AGGREGATE IS STILL NOT THE #482 CLOSE CONDITION. `unclaimed_functions`
+    counts a NAMED FA.SMS function (`@ArmPlane@4`, `usnfmain`) and an anonymous static
+    (`FUN_00401180`) alike, so the named debt -- the code the binary already tells us the
+    name of, which is what "reconstruct FA.EXE" actually means -- hides inside the same
+    total and cannot be watched to zero. `named_unclaimed` is that third column: unclaimed
+    functions whose inventory name is a recovered symbol (see `_is_named_symbol`). #482 is
+    the check John called "the real fix"; it closes when THIS column reaches 0. All three
+    columns ratchet, and all three only go down.
     """
     errs = []
     base_path = db_dir / "coverage-baseline.csv"
@@ -1677,6 +1701,7 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
         with open(base_path, newline="", encoding="utf-8") as fh:
             for r in csv.DictReader(fh):
                 baseline[r["binary"]] = (int(r["unclaimed_functions"]),
+                                         int(r["named_unclaimed"]),
                                          int(r["undefined_bytes"]))
 
     slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
@@ -1693,22 +1718,30 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     for binary, inv in sorted(inventories.items()):
         known = in_db.get(binary, set())
         unclaimed = [va for va in inv["functions"] if _va(va) not in known]
+        named = [va for va in unclaimed
+                 if _is_named_symbol(inv["functions"][va]["name"])]
         undef = sum(u["undefined"] for u in inv.get("unaccounted", []))
-        actual[binary] = (len(unclaimed), undef)
+        actual[binary] = (len(unclaimed), len(named), undef)
         want = baseline.get(binary)
         if want is None:
             errs.append("db/coverage-baseline.csv: no baseline for %s (%d functions unclaimed, "
-                        "%d undefined bytes) -- add one" % (binary, len(unclaimed), undef))
+                        "%d of them named, %d undefined bytes) -- add one"
+                        % (binary, len(unclaimed), len(named), undef))
             continue
         if len(unclaimed) > want[0]:
             errs.append("%s: %d functions are in the binary but absent from db/symbols/ "
                         "(baseline allows %d). Unclaimed code may not grow -- add the rows, "
                         "or waive them explicitly." % (binary, len(unclaimed), want[0]))
-        if undef > want[1]:
+        if len(named) > want[1]:
+            errs.append("%s: %d NAMED functions are in the binary but absent from db/symbols/ "
+                        "(baseline allows %d). A function the binary already names is the #482 "
+                        "debt -- add its db/symbols row (or waive it). Named-unclaimed may not "
+                        "grow." % (binary, len(named), want[1]))
+        if undef > want[2]:
             errs.append("%s: %d executable bytes are in no function at all (baseline allows "
                         "%d). Undefined code may not grow -- add db/symbols rows (ApplySymbols "
                         "disassembles and creates the function) (#496)."
-                        % (binary, undef, want[1]))
+                        % (binary, undef, want[2]))
     return errs, actual
 
 
@@ -1749,10 +1782,10 @@ def check_reconstruction(db_dir=DB_DIR):
     if inventories:
         cerrs, unclaimed = check_binary_coverage(manifest, symbols, inventories, db_dir)
         errs += cerrs
-        for b, (n, undef) in sorted(unclaimed.items()):
+        for b, (n, named, undef) in sorted(unclaimed.items()):
             if n:
-                print("note: %s -- %d functions in the binary are not in db/symbols/ (#482)"
-                      % (b, n))
+                print("note: %s -- %d functions in the binary are not in db/symbols/ "
+                      "(%d of them named) (#482)" % (b, n, named))
             if undef:
                 print("note: %s -- %s executable bytes are in no function at all (#496)"
                       % (b, "{:,}".format(undef)))
@@ -2178,18 +2211,40 @@ def _recon_self_test(expect, tmpdir=None):
 
         m1 = [{"slug": "obj", "binary": "FA.EXE", "ranges": [(0x462600, 0x462700)]}]
         write("coverage-baseline.csv",
-              "binary,unclaimed_functions,total_functions,undefined_bytes\n"
-              "FA.EXE,0,1,70\n")
+              "binary,unclaimed_functions,named_unclaimed,total_functions,undefined_bytes\n"
+              "FA.EXE,0,0,1,70\n")
         e_ok, act = check_binary_coverage(m1, {"obj": [{"va": 0x462600}]},
                                           {"FA.EXE": inv_u}, base)
-        expect(e_ok == [] and act["FA.EXE"] == (0, 70), "recon: undefined ratchet at baseline")
+        expect(e_ok == [] and act["FA.EXE"] == (0, 0, 70),
+               "recon: undefined ratchet at baseline")
         write("coverage-baseline.csv",
-              "binary,unclaimed_functions,total_functions,undefined_bytes\n"
-              "FA.EXE,0,1,69\n")
+              "binary,unclaimed_functions,named_unclaimed,total_functions,undefined_bytes\n"
+              "FA.EXE,0,0,1,69\n")
         e_grow, _ = check_binary_coverage(m1, {"obj": [{"va": 0x462600}]},
                                           {"FA.EXE": inv_u}, base)
         expect(any("in no function at all" in x for x in e_grow),
                "recon: undefined ratchet fails when the debt grows")
+
+        # --- Named-unclaimed ratchet (#482, step 3) -----------------------------
+        # A function the binary already NAMES that has no db/symbols row is the #482
+        # debt; an anonymous FUN_/thunk_FUN_ is not. The ratchet must tell them apart:
+        # with NO symbols, InitChain (named) counts, a leftover FUN_ does not.
+        inv_named = dict(inv_u, functions={0x462600: {"name": "InitChain", "size": "10"},
+                                           0x462640: {"name": "FUN_00462640", "size": "5"},
+                                           0x462680: {"name": "thunk_FUN_00462640", "size": "5"}})
+        write("coverage-baseline.csv",
+              "binary,unclaimed_functions,named_unclaimed,total_functions,undefined_bytes\n"
+              "FA.EXE,3,1,3,70\n")
+        e_n_ok, act_n = check_binary_coverage(m1, {}, {"FA.EXE": inv_named}, base)
+        expect(e_n_ok == [] and act_n["FA.EXE"] == (3, 1, 70),
+               "recon: named-unclaimed counts recovered names, not FUN_/thunk_FUN_")
+        write("coverage-baseline.csv",
+              "binary,unclaimed_functions,named_unclaimed,total_functions,undefined_bytes\n"
+              "FA.EXE,3,0,3,70\n")
+        e_n_grow, _ = check_binary_coverage(m1, {}, {"FA.EXE": inv_named}, base)
+        expect(any("NAMED functions" in x for x in e_n_grow),
+               "recon: named-unclaimed ratchet fails when the named debt grows")
+
         for f in ("globals.csv", "ranges.csv", "unaccounted.csv"):
             (base / "inventory" / "FA.EXE" / f).unlink()
         (base / "coverage-baseline.csv").unlink()

@@ -41,7 +41,7 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 **FA.EXE totals:** 21/24 subsystems complete; 2854/2855 in-scope functions named; 4228/8266 referenced globals resolved.
 
-> **Unclaimed: 719 of 3573 functions (178,240 of 866,332 code bytes, 20%) are in the binary but in no subsystem** — so nothing above measures them. See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+> **Unclaimed: 719 of 3573 functions (178,240 of 866,332 code bytes, 20%) are in the binary but in no subsystem** — so nothing above measures them. **333 of them already carry a recovered name** (the binary tells us what they are; they are the debt #482 closes to zero). See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 > **Undefined: 62,800 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **246 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
