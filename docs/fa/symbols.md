@@ -704,7 +704,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 252 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 276 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -721,23 +721,36 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00420AD0` | `FortSetupCountA` | re | Fort setup helper: count/enumerate a fort option set |
 | `0x00420B20` | `FortSetupCountB` | re | Fort setup helper: count/enumerate a fort option set |
 | `0x00420BB0` | `FortSetupDialog` | re | the Fort-mission multiplayer setup dialog: fort type / sides / size selection driving FortMissionSetup |
+| `0x00421C70` | `ZONEInit` | sms |  |
 | `0x00421C80` | `ZONEAdd` | sms |  |
 | `0x00421CC0` | `ZONEForGV` | sms |  |
 | `0x00421D40` | `ZONEActive` | re | zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00421DD0` | `ZONEUpdate` | sms |  |
 | `0x00421DE0` | `ZONEServiceRange` | re | per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent; not a C function (#479): mid-function split of _ZONEUpdate@0 (0x00421DD0) |
 | `0x00422120` | `ZONEPickTarget` | re | resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6) |
 | `0x00422190` | `MAPWPListBounds` | re | walk a waypoint list: find head via flag bit0(&1), count entries to tail via bit1(&2); stride 0x44 |
+| `0x004221D0` | `MAPObjAlts` | sms |  |
 | `0x00422230` | `MAPAdjustObjAlt` | re | raise current object altitude (DAT_0050ce95) to terrain via _T_Info; helper of @MAPObjAlts@4; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00422300` | `MAPSetSide` | sms |  |
+| `0x00422320` | `MAPMaybeSetControl` | sms |  |
 | `0x00422350` | `MAPMarkDirty` | re | clear DAT_00536720 hover, set DAT_00536518 redraw flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00422380` | `MAPWorldToScreen` | sms |  |
+| `0x004223BE` | `MAPDrawGrid` | sms |  |
 | `0x004224B3` | `MAPScreenToWorld` | re | inverse of _MAPWorldToScreen: screen point * _mapScale + _worldCenter; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004224EE` | `MAPDrawBG` | sms |  |
 | `0x0042256A` | `MAPLoadBG` | re | load theater map background bitmap via _RMAccessHandle into DAT_004f0564 (alloc-id 7); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004225D4` | `MAPRefreshBG` | re | reload map BG if theater name (_th+0x54) changed; recomputes map extents DAT_00536418.._00536430; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00422667` | `MAPFreeBG` | re | free the map background handle DAT_004f0564; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x0042267F` | `MAPUpdateWPPtrs` | sms |  |
 | `0x004226CB` | `MAPSetObjWP` | re | set an object's active waypoint pointer (+0xe4); helper of @MAPUpdateWPPtrs@8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004226EE` | `MAPSetFormationWP` | re | set new WP for an object plus its wing (_WNGPart) and group (_GRPPart) members |
+| `0x004226F0` | `MAPSetNewWP` | sms |  |
+| `0x004227AD` | `MAPMaybeClearSelWP` | sms |  |
 | `0x00422828` | `MAPClearSelection` | re | clear map selection state: DAT_00536500 obj / _00536514 wp / _00536530 special / _005363e8 mode; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00422840` | `MAPClearHover` | re | 17-byte map-state setter (clears hover/redraw); role low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00422851` | `MAPDrawSpecials` | sms |  |
 | `0x0042297E` | `MAPAddSpecial` | re | allocate a 0x3a-byte 'special' map marker into the _specials/DAT_0053665c table |
+| `0x00422A0D` | `MAPOnSpecial` | sms |  |
 | `0x00422A71` | `MAPScreen` | re | mission-map/planning screen main loop (_curScreen==3); CAM.md 'FUN_00422a71'. Loads mc_menu/mc_dlg, drives waypoint/plane edit, save-mission, slew view; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00423ED4` | `MAPRebuildWPLoop` | re | recompute a waypoint loop back-pointer after edit (uses MAPWPListBounds + MAPWPOwnerIndex); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00423F30` | `MAPStoreLeafTmap` | re | write selected tmap id+rotation into _tlist at current leaf coords; _T_SortTmapList; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -957,6 +970,17 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00486AA0` | `TIMEUpdate` | sms |  |
 | `0x00486C60` | `TIMESetCompression` | sms |  |
 | `0x00486E20` | `InstallTimerInt` | sms |  |
+| `0x00499380` | `WPSetWaypoints` | sms |  |
+| `0x004993C0` | `WPSetupCurrent` | sms |  |
+| `0x00499640` | `WPGoalObjEvent` | sms |  |
+| `0x00499680` | `WPMaybeAdvance` | sms |  |
+| `0x00499840` | `WPChange` | sms |  |
+| `0x004999B0` | `WPPos` | sms |  |
+| `0x00499A50` | `WPObj` | sms |  |
+| `0x00499AA0` | `WPTarget` | sms |  |
+| `0x00499AD0` | `WPDoingWaypoints` | sms |  |
+| `0x00499AF0` | `WPDirString` | sms |  |
+| `0x00499C50` | `WPOptimizeWaypoints` | sms |  |
 | `0x004A10E0` | `SingleMission` | sms | the single-mission browser: glob the .M files, read each mission's title from [section 1] of its .MT (falling back to the filename), sort (SortIndexByString), present the SNGLMISS dialog picker with MP filename sync, and on OK write _missionName (uppercased) + return 1 to launch |
 | `0x004A1DD0` | `BriefScreen` | sms | briefing/debrief screen: loads <mission>.MT (fallback [section 1..3] skeleton), AddStats for debrief (+ Jane's Online JOGC stats), one of 4 random backgrounds (BRIEFSCR/SC3/SCU/SCV, DEB* for debrief), CHATKey passthrough, mouse wheel-areas -> PgUp/PgDn, MP ready-status sync (0xd brief/0xe debrief/0x1a ready), campaignState 0x13 while briefing |
 | `0x004A2A30` | `AddStats` | sms | compose the marked-up debrief/logbook stats text: CAMPAIGN/MISSION AVERAGES/PLAYER WINGMAN/AIRBASE/MISSION sections, kills/losses/damage/landing grade/elapsed time lines, [center]/[bold]/[underline] tags |

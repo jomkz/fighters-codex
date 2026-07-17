@@ -12,24 +12,37 @@ va,kind,name,display,source,confidence,notes,type
 0x00420AD0,func,FortSetupCountA,,re,confirmed,Fort setup helper: count/enumerate a fort option set,
 0x00420B20,func,FortSetupCountB,,re,confirmed,Fort setup helper: count/enumerate a fort option set,
 0x00420BB0,func,FortSetupDialog,,re,confirmed,the Fort-mission multiplayer setup dialog: fort type / sides / size selection driving FortMissionSetup,
+0x00421C70,func,_ZONEInit@0,ZONEInit,sms,confirmed,,undefined4 __stdcall ZONEInit(void)
 0x00421C80,func,_ZONEAdd@4,ZONEAdd,sms,confirmed,,undefined4 __stdcall ZONEAdd(undefined4)
 0x00421CC0,func,_ZONEForGV@0,ZONEForGV,sms,confirmed,,undefined4 __stdcall ZONEForGV(void)
 0x00421D40,func,ZONEActive,,re,confirmed,"zone active-window test: currentTime within [start,end] (param[7],param[8]); gate for ZONEUpdate; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __fastcall ZONEActive(undefined4)
+0x00421DD0,func,_ZONEUpdate@0,ZONEUpdate,sms,confirmed,,undefined4 __stdcall ZONEUpdate(void)
 0x00421DE0,func,ZONEServiceRange,,re,inferred,per-zone service worker (variant of _ZONEUpdate@0 over a range); fires _PROJAdd/_PROJHit/_GRAPHICAddExp on schedule using _Rand/_Percent; not a C function (#479): mid-function split of _ZONEUpdate@0 (0x00421DD0),!split
 0x00422100,data,,,waiver,confirmed,MAPScreen switch jump-table (computed access),
 0x00422120,func,ZONEPickTarget,,re,inferred,resolve a target plane index for a zone from _planes/_numPlanes (base &DAT_005713a6),undefined4 __stdcall ZONEPickTarget(undefined4)
 0x00422190,func,MAPWPListBounds,,re,confirmed,"walk a waypoint list: find head via flag bit0(&1), count entries to tail via bit1(&2); stride 0x44","undefined4 __stdcall MAPWPListBounds(undefined4, undefined4, undefined4)"
+0x004221D0,func,@MAPObjAlts@4,MAPObjAlts,sms,confirmed,,undefined4 __fastcall MAPObjAlts(undefined4)
 0x00422230,func,MAPAdjustObjAlt,,re,confirmed,raise current object altitude (DAT_0050ce95) to terrain via _T_Info; helper of @MAPObjAlts@4; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall MAPAdjustObjAlt(char,char)"
+0x00422300,func,@MAPSetSide@4,MAPSetSide,sms,confirmed,,undefined4 __fastcall MAPSetSide(undefined4)
+0x00422320,func,@MAPMaybeSetControl@8,MAPMaybeSetControl,sms,confirmed,,"undefined4 __fastcall MAPMaybeSetControl(undefined4, undefined4)"
 0x00422350,func,MAPMarkDirty,,re,confirmed,"clear DAT_00536720 hover, set DAT_00536518 redraw flag; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl MAPMarkDirty(void)
+0x00422380,func,?MAPWorldToScreen@@YIXPAUF24_POINT3@@PAUWORD_POINT@@@Z,MAPWorldToScreen,sms,confirmed,,"void __fastcall MAPWorldToScreen(F24_POINT3 *, WORD_POINT *)"
+0x004223BE,func,?MAPDrawGrid@@YGXXZ,MAPDrawGrid,sms,confirmed,,void __stdcall MAPDrawGrid(void)
 0x004224B3,func,MAPScreenToWorld,,re,confirmed,inverse of _MAPWorldToScreen: screen point * _mapScale + _worldCenter; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall MAPScreenToWorld(short *,F24_POINT3 *)"
+0x004224EE,func,?MAPDrawBG@@YGXXZ,MAPDrawBG,sms,confirmed,,void __stdcall MAPDrawBG(void)
 0x0042256A,func,MAPLoadBG,,re,confirmed,load theater map background bitmap via _RMAccessHandle into DAT_004f0564 (alloc-id 7); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPLoadBG(void)
 0x004225D4,func,MAPRefreshBG,,re,confirmed,reload map BG if theater name (_th+0x54) changed; recomputes map extents DAT_00536418.._00536430; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPRefreshBG(void)
 0x00422667,func,MAPFreeBG,,re,confirmed,free the map background handle DAT_004f0564; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPFreeBG(void)
+0x0042267F,func,@MAPUpdateWPPtrs@8,MAPUpdateWPPtrs,sms,confirmed,,"undefined4 __fastcall MAPUpdateWPPtrs(undefined4, undefined4)"
 0x004226CB,func,MAPSetObjWP,,re,confirmed,set an object's active waypoint pointer (+0xe4); helper of @MAPUpdateWPPtrs@8; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall MAPSetObjWP(entity *,undefined4)"
 0x004226EE,func,MAPSetFormationWP,,re,inferred,set new WP for an object plus its wing (_WNGPart) and group (_GRPPart) members,
+0x004226F0,func,@MAPSetNewWP@8,MAPSetNewWP,sms,confirmed,,"undefined4 __fastcall MAPSetNewWP(undefined4, undefined4)"
+0x004227AD,func,@MAPMaybeClearSelWP@8,MAPMaybeClearSelWP,sms,confirmed,,"undefined4 __fastcall MAPMaybeClearSelWP(undefined4, undefined4)"
 0x00422828,func,MAPClearSelection,,re,confirmed,clear map selection state: DAT_00536500 obj / _00536514 wp / _00536530 special / _005363e8 mode; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl MAPClearSelection(void)
 0x00422840,func,MAPClearHover,,re,confirmed,"17-byte map-state setter (clears hover/redraw); role low-confidence, revisit; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",void __cdecl MAPClearHover(void)
+0x00422851,func,?MAPDrawSpecials@@YGXXZ,MAPDrawSpecials,sms,confirmed,,void __stdcall MAPDrawSpecials(void)
 0x0042297E,func,MAPAddSpecial,,re,inferred,allocate a 0x3a-byte 'special' map marker into the _specials/DAT_0053665c table,"undefined4 __stdcall MAPAddSpecial(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00422A0D,func,?MAPOnSpecial@@YIFPAUWORD_POINT@@@Z,MAPOnSpecial,sms,confirmed,,short __fastcall MAPOnSpecial(WORD_POINT *)
 0x00422A71,func,MAPScreen,,re,inferred,"mission-map/planning screen main loop (_curScreen==3); CAM.md 'FUN_00422a71'. Loads mc_menu/mc_dlg, drives waypoint/plane edit, save-mission, slew view; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand",undefined4 __cdecl MAPScreen(void)
 0x00423EA3,data,,,waiver,confirmed,interior of / adjacent to ?MAPOnSpecial@@YIFPAUWORD_POINT@@@Z; named at its base or owned by that subsystem,
 0x00423ED4,func,MAPRebuildWPLoop,,re,confirmed,recompute a waypoint loop back-pointer after edit (uses MAPWPListBounds + MAPWPOwnerIndex); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"void __fastcall MAPRebuildWPLoop(u16,undefined4)"
@@ -260,6 +273,17 @@ va,kind,name,display,source,confidence,notes,type
 0x00486C60,func,@TIMESetCompression@4,TIMESetCompression,sms,confirmed,,undefined4 __fastcall TIMESetCompression(undefined4)
 0x00486DC0,func,,,waiver,inferred,FOREIGN: FPS-counter print helper; owner = game-loop/startup,
 0x00486E20,func,_InstallTimerInt,InstallTimerInt,sms,confirmed,,
+0x00499380,func,_WPSetWaypoints@8,WPSetWaypoints,sms,confirmed,,"undefined4 __stdcall WPSetWaypoints(undefined4, undefined4)"
+0x004993C0,func,_WPSetupCurrent@4,WPSetupCurrent,sms,confirmed,,undefined4 __stdcall WPSetupCurrent(undefined4)
+0x00499640,func,_WPGoalObjEvent@8,WPGoalObjEvent,sms,confirmed,,"undefined4 __stdcall WPGoalObjEvent(undefined4, undefined4)"
+0x00499680,func,_WPMaybeAdvance@0,WPMaybeAdvance,sms,confirmed,,undefined4 __stdcall WPMaybeAdvance(void)
+0x00499840,func,_WPChange@12,WPChange,sms,confirmed,,"undefined4 __stdcall WPChange(undefined4, undefined4, undefined4)"
+0x004999B0,func,_WPPos@8,WPPos,sms,confirmed,,"undefined4 __stdcall WPPos(undefined4, undefined4)"
+0x00499A50,func,_WPObj@4,WPObj,sms,confirmed,,undefined4 __stdcall WPObj(undefined4)
+0x00499AA0,func,_WPTarget@4,WPTarget,sms,confirmed,,undefined4 __stdcall WPTarget(undefined4)
+0x00499AD0,func,@WPDoingWaypoints@0,WPDoingWaypoints,sms,confirmed,,undefined4 __fastcall WPDoingWaypoints(void)
+0x00499AF0,func,@WPDirString@4,WPDirString,sms,confirmed,,undefined4 __fastcall WPDirString(undefined4)
+0x00499C50,func,_WPOptimizeWaypoints@0,WPOptimizeWaypoints,sms,confirmed,,undefined4 __stdcall WPOptimizeWaypoints(void)
 0x004A10E0,func,_SingleMission@0,SingleMission,sms,confirmed,"the single-mission browser: glob the .M files, read each mission's title from [section 1] of its .MT (falling back to the filename), sort (SortIndexByString), present the SNGLMISS dialog picker with MP filename sync, and on OK write _missionName (uppercased) + return 1 to launch",undefined4 __stdcall SingleMission(void)
 0x004A1DD0,func,@BriefScreen@16,BriefScreen,sms,confirmed,"briefing/debrief screen: loads <mission>.MT (fallback [section 1..3] skeleton), AddStats for debrief (+ Jane's Online JOGC stats), one of 4 random backgrounds (BRIEFSCR/SC3/SCU/SCV, DEB* for debrief), CHATKey passthrough, mouse wheel-areas -> PgUp/PgDn, MP ready-status sync (0xd brief/0xe debrief/0x1a ready), campaignState 0x13 while briefing","undefined4 __fastcall BriefScreen(undefined4, undefined4, undefined4, undefined4)"
 0x004A2A30,func,_AddStats@20,AddStats,sms,confirmed,"compose the marked-up debrief/logbook stats text: CAMPAIGN/MISSION AVERAGES/PLAYER WINGMAN/AIRBASE/MISSION sections, kills/losses/damage/landing grade/elapsed time lines, [center]/[bold]/[underline] tags","undefined4 __stdcall AddStats(undefined4, undefined4, undefined4, undefined4, undefined4)"

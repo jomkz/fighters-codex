@@ -92,6 +92,43 @@ confirmed
 
 ![Campaign flow: the .CAM state machine drives mission selection; each mission loads, plays, and scores back into the pilot record.](diagrams/campaign.svg)
 
+## The theater map screen & waypoint editor
+
+The mission-planning map and its waypoint list, both fully named by FA.SMS. The **map
+screen** projects the world onto the theater bitmap (`MAPWorldToScreen`, inverse of
+`MAPScreenToWorld`), draws the grid/background/special markers, and edits object placement
+and side (`MAPObjAlts`/`MAPSetSide`/`MAPMaybeSetControl`, `MAPOnSpecial` hit-testing a
+`WORD_POINT`). The **waypoint manager** (`WP*`) owns the current route: set/optimize the
+list, advance through it, and query the active waypoint's position/object/target.
+`ZONEInit`/`ZONEUpdate` bracket the scripted-threat zones (see `ZONEActive` above).
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x422380` | `MAPWorldToScreen` | project a `F24_POINT3` to a map `WORD_POINT` |
+| `0x4223BE` | `MAPDrawGrid` | draw the map lat/long grid |
+| `0x4224EE` | `MAPDrawBG` | draw the theater background |
+| `0x422851` | `MAPDrawSpecials` | draw special markers (bases, threats) |
+| `0x422A0D` | `MAPOnSpecial` | hit-test a click against the specials |
+| `0x4221D0` | `MAPObjAlts` | raise placed objects to terrain altitude |
+| `0x422300` | `MAPSetSide` | set the selected object's side |
+| `0x422320` | `MAPMaybeSetControl` | toggle player control of the selection |
+| `0x42267F` | `MAPUpdateWPPtrs` | refresh the waypoint back-pointers |
+| `0x4226F0` | `MAPSetNewWP` | drop a new waypoint |
+| `0x4227AD` | `MAPMaybeClearSelWP` | clear the selected waypoint |
+| `0x499380` | `WPSetWaypoints` | install a waypoint list |
+| `0x4993C0` | `WPSetupCurrent` | initialise the current-waypoint cursor |
+| `0x499680` | `WPMaybeAdvance` | advance to the next waypoint when reached |
+| `0x499840` | `WPChange` | change the active waypoint |
+| `0x4999B0` | `WPPos` | current waypoint position |
+| `0x499A50` | `WPObj` | current waypoint object |
+| `0x499AA0` | `WPTarget` | current waypoint target |
+| `0x499AD0` | `WPDoingWaypoints` | are waypoints active |
+| `0x499AF0` | `WPDirString` | heading-to-waypoint text |
+| `0x499C50` | `WPOptimizeWaypoints` | drop redundant waypoints |
+| `0x499640` | `WPGoalObjEvent` | goal-object event on a waypoint |
+| `0x421C70` | `ZONEInit` | init the scripted-threat zones |
+| `0x421DD0` | `ZONEUpdate` | per-frame zone service |
+
 ## Functions
 
 Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv).
