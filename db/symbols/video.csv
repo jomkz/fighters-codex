@@ -34,6 +34,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0046B4B0,func,?CleanVideo@@YAGPAUGlobalData@@@Z,CleanVideo,sms,confirmed,,unsigned short __cdecl CleanVideo(GlobalData *)
 0x0046B4E0,func,?SetupCobra@@YAGPAUGlobalData@@@Z,SetupCobra,sms,confirmed,,unsigned short __cdecl SetupCobra(GlobalData *)
 0x0046B530,func,?CleanupCobra@@YAGPAUGlobalData@@@Z,CleanupCobra,sms,confirmed,,unsigned short __cdecl CleanupCobra(GlobalData *)
+0x00476060,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jdiv_round_up@@YAJJJ@Z,
+0x00476070,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jround_up@@YAJJJ@Z,
+0x00476090,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jcopy_sample_rows@@YAXPAPAEH0HHI@Z,
+0x004760E0,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jcopy_block_row@@YAXPAY0EA@F0I@Z,
+0x00476100,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jzero_far@@YAXPAXI@Z,
 0x004A06F0,func,_DoFadeout@0,DoFadeout,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall DoFadeout(void)
 0x004AE410,func,?PlayVDOFile@@YAFPADFD@Z,PlayVDOFile,sms,confirmed,,"short __cdecl PlayVDOFile(char *, short, char)"
 0x004AE440,func,?PlayVDOString@@YAFPADFPAUT_HANDLE@@PAEJJD@Z,PlayVDOString,sms,confirmed,,"short __cdecl PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char)"

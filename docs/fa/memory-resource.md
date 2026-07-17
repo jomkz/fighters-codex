@@ -78,8 +78,12 @@ Full record: [`db/symbols/memory-resource.csv`](https://github.com/jomkz/fighter
 
 The LIB name-index layer (`LoadFile` `0x4AD3C0`, `LibStartUp` `0x478BC0`, `SearchLib`
 `0x4798B0`, `DoLoadLibFile` `0x479630`, `LibFileExists` `0x47A130`) is documented in
-prose above; those functions live in the executable's `lzwlib` unit and are not part of
-this subsystem's symbol database.
+prose above; those functions live in the executable's **`lzwlib`** unit — a vendored
+third-party archive codec, not first-party game code. The `lzwlib` handle-I/O leaves
+(`LibShutDown`/`LibUpdate`/`LibRead`/`LibClose`/`LibFileSize`/`LibSeek`/`LibFileExists`,
+`0x4792D0`–`0x47A130`) are therefore carried in the DB as **waivers** (`source=waiver`),
+which clears them from the `#482` unclaimed ratchet without counting vendored code as
+reconstruction.
 
 ## Open Questions
 

@@ -330,6 +330,31 @@ Recovered object-system state (full list, with per-symbol confidence, in the
 | `0x004431B0` | `GRAPHICAddYourObjs` | draw live effects when the object `0x200` flag is set |
 | `0x004432D0` | `GRAPHICAddExp` | spawn an explosion (+ chained debris / smoke) |
 
+### Aircraft (`PLANE*`) & ground-vehicle (`GV*`) object procs
+
+The aircraft class (`.PT`, `_PLANEProc`) and ground-vehicle class (`.NT`, `_GVProc`)
+carry their own event dispatchers and per-class helpers.
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x0049D510` | `_PLANEInit@0` | init the plane-object subsystem |
+| `0x0049D520` | `@PLANERemove@4` | remove a plane object |
+| `0x0049D580` | `PLANEDoCurrentWaypoint` | advance the plane along its current waypoint |
+| `0x0049D6E0` | `_PLANESetEjectTime@4` | set the pilot eject time |
+| `0x0049D730` | `PLANEBreakUp` | break the aircraft into wreckage pieces |
+| `0x0049D890` | `_PLANECrash@4` | crash handling |
+| `0x0049DF40` | `_PLANEEventProc` | plane-object main event proc (class dispatcher; parallels `_PLANEProc`) |
+| `0x0049FA10` | `_PLANECheckEject@0` | test/handle pilot ejection |
+| `0x0049FAA0` | `_PLANEList@8` | plane-list helper |
+| `0x0049FB70` | `_PLANECheckFuel@0` | fuel check |
+| `0x0049FCD0` | `@PLANESetThrottle@8` | set throttle |
+| `0x0049FD40` | `@PLANEUpdateJustLanded@8` | just-landed state update |
+| `0x004A0310` | `_PLANEHackForPlayerWing@0` | player-wing special-case |
+| `0x004A04F0` | `_PLANETurnOffGunSound@0` | silence the gun sound |
+| `0x004A0510` | `_PLANESetFeetWet@0` | set over-water ("feet wet") state |
+| `0x00473DE0` | `GVDoCurrentWaypoint` | advance a ground vehicle along its waypoint |
+| `0x00473F50` | `_GVEventProc` | ground-vehicle main event proc |
+
 ## Open questions
 
 ### 1. `service_key` (`+0x68`) time base — resolved

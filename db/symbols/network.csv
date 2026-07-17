@@ -44,6 +44,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0044BDB0,func,?SER_Write@@YAJJPAEJ@Z,SER_Write,sms,confirmed,,"long __cdecl SER_Write(long, unsigned char *, long)"
 0x0044BE40,func,?SER_WriteAvail@@YAJJ@Z,SER_WriteAvail,sms,confirmed,,long __cdecl SER_WriteAvail(long)
 0x0044BEC0,func,?SER_Transmitting@@YAJJ@Z,SER_Transmitting,sms,confirmed,,long __cdecl SER_Transmitting(long)
+0x0044BF00,func,?_SER_Read@@YAJJPAEJ@Z,_SER_Read,sms,confirmed,,"long __cdecl _SER_Read(long, unsigned char *, long)"
 0x0044BFC0,func,?SER_Read@@YAJJPAEJ@Z,SER_Read,sms,confirmed,,"long __cdecl SER_Read(long, unsigned char *, long)"
 0x0044C030,func,?SER_ReadAvail@@YAJJJ@Z,SER_ReadAvail,sms,confirmed,,"long __cdecl SER_ReadAvail(long, long)"
 0x0044C080,func,?SER_PeekByte@@YAJJ@Z,SER_PeekByte,sms,confirmed,,long __cdecl SER_PeekByte(long)
@@ -345,11 +346,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004B0E50,func,?NET_Read@@YAJJPAEJ@Z,NET_Read,sms,confirmed,,"long __cdecl NET_Read(long, unsigned char *, long)"
 0x004B10D0,func,?NET_ReadAvail@@YAJJJ@Z,NET_ReadAvail,sms,confirmed,,"long __cdecl NET_ReadAvail(long, long)"
 0x004B1150,func,?NET_PeekByte@@YAJJ@Z,NET_PeekByte,sms,confirmed,,long __cdecl NET_PeekByte(long)
+0x004B1240,func,?NETIsAddrLocal@@YADPAUNET_ADDRESS@@@Z,NETIsAddrLocal,sms,confirmed,,char __cdecl NETIsAddrLocal(NET_ADDRESS *)
 0x004B1280,func,?NET_GetLastError@@YAXPADH@Z,NET_GetLastError,sms,confirmed,,"void __cdecl NET_GetLastError(char *, int)"
 0x004B12A0,func,?NET_SendMessageAll@@YADPAD@Z,NET_SendMessageAll,sms,confirmed,,char __cdecl NET_SendMessageAll(char *)
 0x004B1350,func,?NET_MakeAutoConnectAddress@@YADPAUCN_INFO@@PAUNET_ADDRESS@@@Z,NET_MakeAutoConnectAddress,sms,confirmed,,"char __cdecl NET_MakeAutoConnectAddress(CN_INFO *, NET_ADDRESS *)"
 0x004B1380,func,?NET_Addr2string@@YADPAUNET_ADDRESS@@PAD@Z,NET_Addr2string,sms,confirmed,,"char __cdecl NET_Addr2string(NET_ADDRESS *, char *)"
 0x004B13A0,func,?net_add_player_id@@YAXPADPAUsocket_state@@H@Z,net_add_player_id,sms,confirmed,,"void __cdecl net_add_player_id(char *, socket_state *, int)"
+0x004B1540,func,?NETProcessEvent@@YAXPAXIIJ@Z,NETProcessEvent,sms,confirmed,,"void __cdecl NETProcessEvent(void *, unsigned int, unsigned int, long)"
 0x004B1590,func,?fill_in_mpinfo@@YAXXZ,fill_in_mpinfo,sms,confirmed,,void __cdecl fill_in_mpinfo(void)
 0x004B1660,func,?game_event_handler@@YADIJHPAUsocket_state@@@Z,game_event_handler,sms,confirmed,,"char __cdecl game_event_handler(unsigned int, long, int, socket_state *)"
 0x004B16B0,func,?net_write_output_q@@YAXH@Z,net_write_output_q,sms,confirmed,,void __cdecl net_write_output_q(int)

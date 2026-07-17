@@ -85,6 +85,16 @@ Full record: [`db/symbols/video.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x456AD0` | `EDB` | expand-book: interpolated 2×2 dither pattern |
 | `0x4575E0` | `ClampU8` | saturate a channel to `[0,255]` (YUV→RGB leaf) |
 
+### Vendored libjpeg
+
+Five IJG **libjpeg** support leaves (`jdiv_round_up`/`jround_up`/`jcopy_sample_rows`/
+`jcopy_block_row`/`jzero_far`, `0x476060`–`0x476100`) are statically linked into the
+executable — the game's still-image JPEG path, not the Cobra/VDO codec. As vendored
+third-party code they are carried in the DB as **waivers** (`source=waiver`): they clear
+the `#482` unclaimed ratchet without being counted as first-party reconstruction. (Their
+FA.SMS neighbours are the `jdpostct` block that carries the misapplied `PilotSetField`
+label — see shell-ui.md § Open Questions.)
+
 ## Open Questions
 
 ### 1. VDO.md corrections — resolved

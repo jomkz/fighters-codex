@@ -34,9 +34,16 @@ va,kind,name,display,source,confidence,notes,type
 0x00436310,func,_MMULongAt,MMULongAt,sms,confirmed,*(uint32*)(base+off),"undefined4 __cdecl MMULongAt(undefined4, undefined4)"
 0x0046A570,func,_SMCallByName,SMCallByName,sms,confirmed,,
 0x00478BC0,func,_LibStartUp,LibStartUp,sms,confirmed,,
+0x004792D0,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibShutDown,
+0x00479350,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibUpdate,
 0x00479630,func,_DoLoadLibFile,DoLoadLibFile,sms,confirmed,,
 0x004798B0,func,_SearchLib,SearchLib,sms,confirmed,,
 0x00479BD0,func,@LibOpen@8,LibOpen,sms,confirmed,,"undefined4 __fastcall LibOpen(undefined4, undefined4)"
+0x00479C80,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibRead,
+0x00479D20,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibClose,
+0x00479D40,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibFileSize,
+0x0047A090,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibSeek@8,
+0x0047A130,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): @LibFileExists@4,
 0x004A67F0,func,_RMInit@0,RMInit,sms,confirmed,zero resList[1400] (0x19FA dwords) and resCache[20]; set rmInitialized(@0x50A618)=1,undefined4 __stdcall RMInit(void)
 0x004A6820,func,_RMShutdown@0,RMShutdown,sms,confirmed,RMFree every live resList slot; zero table; clear rmInitialized,undefined4 __stdcall RMShutdown(void)
 0x004A6860,func,@RMType@4,RMType,sms,confirmed,,undefined4 __fastcall RMType(undefined4)
