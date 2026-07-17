@@ -1,0 +1,35 @@
+va,kind,name,display,source,confidence,notes,type
+0x00411950,func,@TurnTowardAngle@12,TurnTowardAngle,sms,confirmed,,"undefined4 __fastcall TurnTowardAngle(undefined4, undefined4, undefined4)"
+0x004119A0,func,_MatchF24@12,MatchF24,sms,confirmed,,"undefined4 __stdcall MatchF24(undefined4, undefined4, undefined4)"
+0x00411A20,func,_LibraryStartup,LibraryStartup,sms,confirmed,,
+0x00411A30,func,_LibraryShutdown,LibraryShutdown,sms,confirmed,,
+0x00411A40,func,_Angles@16,Angles,sms,confirmed,,"undefined4 __stdcall Angles(undefined4, undefined4, undefined4, undefined4)"
+0x00411AF0,func,_AngleOffNose@4,AngleOffNose,sms,confirmed,,undefined4 __stdcall AngleOffNose(undefined4)
+0x00411B60,func,_AnglesOffNose@16,AnglesOffNose,sms,confirmed,,"undefined4 __stdcall AnglesOffNose(undefined4, undefined4, undefined4, undefined4)"
+0x00411BD0,func,_Clock@16,Clock,sms,confirmed,,"undefined4 __stdcall Clock(undefined4, undefined4, undefined4, undefined4)"
+0x00411C60,func,@Checksum@8,Checksum,sms,confirmed,,"undefined4 __fastcall Checksum(undefined4, undefined4)"
+0x00411CB0,func,_Octant@8,Octant,sms,confirmed,,"undefined4 __stdcall Octant(undefined4, undefined4)"
+0x00411D10,func,_RotatedOffset@20,RotatedOffset,sms,confirmed,,"undefined4 __stdcall RotatedOffset(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00411D40,func,_RotatedOffsetF24@20,RotatedOffsetF24,sms,confirmed,,"undefined4 __stdcall RotatedOffsetF24(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00411DE0,func,@FeetToNM@8,FeetToNM,sms,confirmed,,"undefined4 __fastcall FeetToNM(undefined4, undefined4)"
+0x00411E00,func,_InBounds@8,InBounds,sms,confirmed,,"undefined4 __stdcall InBounds(undefined4, undefined4)"
+0x00411E40,func,_InBounds3@8,InBounds3,sms,confirmed,,"undefined4 __stdcall InBounds3(undefined4, undefined4)"
+0x00411E90,func,_BoundsAnd@8,BoundsAnd,sms,confirmed,,"undefined4 __stdcall BoundsAnd(undefined4, undefined4)"
+0x00411F50,func,_SpeedToXYZ@12,SpeedToXYZ,sms,confirmed,,"undefined4 __stdcall SpeedToXYZ(undefined4, undefined4, undefined4)"
+0x00411FC0,func,_DistToObj@8,DistToObj,sms,confirmed,,"undefined4 __stdcall DistToObj(undefined4, undefined4)"
+0x00411FF0,func,@Vertical@4,Vertical,sms,confirmed,,undefined4 __fastcall Vertical(undefined4)
+0x00412030,func,@NextString@8,NextString,sms,confirmed,,"undefined4 __fastcall NextString(undefined4, undefined4)"
+0x00412060,func,_MaybeExitToDOS@0,MaybeExitToDOS,sms,confirmed,,undefined4 __stdcall MaybeExitToDOS(void)
+0x004120C0,func,_Move3d@16,Move3d,sms,confirmed,,"undefined4 __stdcall Move3d(undefined4, undefined4, undefined4, undefined4)"
+0x00412150,func,@Strend@4,Strend,sms,confirmed,,undefined4 __fastcall Strend(undefined4)
+0x00412170,func,_PointInBox@8,PointInBox,sms,confirmed,,"undefined4 __stdcall PointInBox(undefined4, undefined4)"
+0x004121D0,func,_Strncpy@12,Strncpy,sms,confirmed,,"undefined4 __stdcall Strncpy(undefined4, undefined4, undefined4)"
+0x00412200,func,_DistToLine@12,DistToLine,sms,confirmed,,"undefined4 __stdcall DistToLine(undefined4, undefined4, undefined4)"
+0x00412340,func,@SortObjs@8,SortObjs,sms,confirmed,,"undefined4 __fastcall SortObjs(undefined4, undefined4)"
+0x00412480,func,_InterpAngle@16,InterpAngle,sms,confirmed,,"undefined4 __stdcall InterpAngle(undefined4, undefined4, undefined4, undefined4)"
+0x004129B0,func,_GetRotatedOffsetF24@12,GetRotatedOffsetF24,sms,confirmed,,"undefined4 __stdcall GetRotatedOffsetF24(undefined4, undefined4, undefined4)"
+0x00412A10,func,@ObjRadius@4,ObjRadius,sms,confirmed,,undefined4 __fastcall ObjRadius(undefined4)
+0x00412B00,func,@StringIsNumber@4,StringIsNumber,sms,confirmed,,undefined4 __fastcall StringIsNumber(undefined4)
+0x00412B50,func,@StringToNumber@4,StringToNumber,sms,confirmed,,undefined4 __fastcall StringToNumber(undefined4)
+0x00412CB0,func,_NearestObj@16,NearestObj,sms,confirmed,,"undefined4 __stdcall NearestObj(undefined4, undefined4, undefined4, undefined4)"
+0x00412DA0,func,_LimitAngle@12,LimitAngle,sms,confirmed,,"undefined4 __stdcall LimitAngle(undefined4, undefined4, undefined4)"

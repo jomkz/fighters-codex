@@ -38,6 +38,7 @@
 #include "subsystems/radio.hpp"
 #include "subsystems/chat.hpp"
 #include "subsystems/airports.hpp"
+#include "subsystems/core-math.hpp"
 
 // Every declaration fxe has recovered so far. Including this header is what the
 // build compiles: a declaration that is not valid C++ is not a reconstruction.

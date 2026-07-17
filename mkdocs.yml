@@ -171,6 +171,7 @@ nav:
   - Engine:
       - fa/architecture.md
       - Game Loop: fa/game-loop.md
+      - Core Math: fa/core-math.md
       - Startup & Shell:
           - Startup: fa/startup.md
           - Shell UI: fa/shell-ui.md

@@ -38,10 +38,11 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | Radio / speech — orders & AWACS chatter (MSG/SAY) | `0x418070–0x418A66`<br>`0x48D2B0–0x48EC3F`<br>`0x490F30–0x491239` | 39 named · 0 waived / 40 (97%) | 0 named · 0 waived | [doc](radio.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
 | Multiplayer chat (CHAT) | `0x413120–0x413C68` | 9 named · 0 waived / 9 (100%) | 0 named · 0 waived | [doc](chat.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
 | Airports / carriers — parking, approach, deck (AP) | `0x4BA7E0–0x4BAD40`<br>`0x4BD2D0–0x4BD510`<br>`0x4BE6A0–0x4BEE60` | 24 named · 0 waived / 24 (100%) | 0 named · 0 waived | [doc](airports.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
+| Core math & runtime utility library | `0x411950–0x412DE2` | 34 named · 0 waived / 43 (79%) | 0 named · 0 waived | [doc](core-math.md) | · | [#482](https://github.com/jomkz/fighters-codex/issues/482) | active |
 
-**FA.EXE totals:** 21/24 subsystems complete; 2976/2977 in-scope functions named; 4228/8266 referenced globals resolved.
+**FA.EXE totals:** 21/25 subsystems complete; 3010/3020 in-scope functions named; 4228/8266 referenced globals resolved.
 
-> **Unclaimed: 597 of 3573 functions (148,712 of 866,332 code bytes, 17%) are in the binary but in no subsystem** — so nothing above measures them. **211 of them already carry a recovered name** (the binary tells us what they are; they are the debt #482 closes to zero). See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+> **Unclaimed: 563 of 3573 functions (145,598 of 866,332 code bytes, 16%) are in the binary but in no subsystem** — so nothing above measures them. **177 of them already carry a recovered name** (the binary tells us what they are; they are the debt #482 closes to zero). See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 > **Undefined: 62,800 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **246 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
@@ -115,5 +116,5 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
-**Program totals (all binaries):** 28/31 subsystems complete; 6521/6522 in-scope functions named; 6702/11595 referenced globals resolved.
+**Program totals (all binaries):** 28/32 subsystems complete; 6555/6565 in-scope functions named; 6702/11595 referenced globals resolved.
 
