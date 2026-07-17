@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="-apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="Core math and runtime utility library: fixed-point geometry (angles, rotation, distance, bounds), F24 fixed-point helpers, string utilities and a misc runtime group, called throughout the flight model, AI, HUD and campaign map.">
+  <style>
+    :root { color-scheme: light dark; }
+    .box{fill:#f4f6f8;stroke:#5b6b7a;stroke-width:1.5;} .geo{fill:#e8f0fb;stroke:#3d6aa8;stroke-width:1.5;}
+    .str{fill:#fdf4e3;stroke:#b8892f;stroke-width:1.5;} .msc{fill:#eaf4ec;stroke:#3f7d4f;stroke-width:1.5;} .out{fill:#fbecea;stroke:#b25548;stroke-width:1.5;}
+    .lbl{fill:#22303c;font-size:13.5px;} .sub{fill:#4a5a67;font-size:11px;} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+    .title{fill:#33424e;font-size:12px;font-weight:600;letter-spacing:.05em;} .edge{fill:none;stroke:#5b6b7a;stroke-width:1.6;} .el{fill:#4a5a67;font-size:10.5px;}
+    @media (prefers-color-scheme: dark){
+      .box{fill:#232a31;stroke:#7f8f9d;} .geo{fill:#1e2c3e;stroke:#6f9bd6;} .str{fill:#322a1a;stroke:#d9b45f;} .msc{fill:#1d2c22;stroke:#6fae7f;} .out{fill:#33221f;stroke:#d98a7c;}
+      .lbl{fill:#dce4ea;} .sub{fill:#a6b3bd;} .title{fill:#c7d2da;} .edge{stroke:#8a99a5;} .el{fill:#a6b3bd;}
+    }
+    :root[data-theme="dark"] .box{fill:#232a31;stroke:#7f8f9d;} :root[data-theme="dark"] .geo{fill:#1e2c3e;stroke:#6f9bd6;}
+    :root[data-theme="dark"] .str{fill:#322a1a;stroke:#d9b45f;} :root[data-theme="dark"] .msc{fill:#1d2c22;stroke:#6fae7f;} :root[data-theme="dark"] .out{fill:#33221f;stroke:#d98a7c;}
+    :root[data-theme="dark"] .lbl{fill:#dce4ea;} :root[data-theme="dark"] .sub{fill:#a6b3bd;} :root[data-theme="dark"] .title{fill:#c7d2da;} :root[data-theme="dark"] .edge{stroke:#8a99a5;} :root[data-theme="dark"] .el{fill:#a6b3bd;}
+    :root[data-theme="light"] .box{fill:#f4f6f8;stroke:#5b6b7a;} :root[data-theme="light"] .geo{fill:#e8f0fb;stroke:#3d6aa8;}
+    :root[data-theme="light"] .str{fill:#fdf4e3;stroke:#b8892f;} :root[data-theme="light"] .msc{fill:#eaf4ec;stroke:#3f7d4f;} :root[data-theme="light"] .out{fill:#fbecea;stroke:#b25548;}
+    :root[data-theme="light"] .lbl{fill:#22303c;} :root[data-theme="light"] .sub{fill:#4a5a67;} :root[data-theme="light"] .title{fill:#33424e;} :root[data-theme="light"] .edge{stroke:#5b6b7a;} :root[data-theme="light"] .el{fill:#4a5a67;}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="el" stroke="none"/></marker></defs>
+  <text x="16" y="24" class="title">CORE MATH &amp; RUNTIME UTILITY LIBRARY — 0x411950–0x412DE2</text>
+  <rect x="16" y="60" width="176" height="92" rx="6" class="geo"/>
+  <text x="104" y="84" text-anchor="middle" class="lbl">geometry / angles</text>
+  <text x="104" y="103" text-anchor="middle" class="sub mono">Angles · Octant · Clock</text>
+  <text x="104" y="119" text-anchor="middle" class="sub mono">RotatedOffset · Move3d</text>
+  <text x="104" y="135" text-anchor="middle" class="sub mono">InterpAngle · LimitAngle</text>
+  <rect x="16" y="168" width="176" height="88" rx="6" class="geo"/>
+  <text x="104" y="192" text-anchor="middle" class="lbl">distance / bounds</text>
+  <text x="104" y="211" text-anchor="middle" class="sub mono">DistToLine · DistToObj</text>
+  <text x="104" y="227" text-anchor="middle" class="sub mono">InBounds · PointInBox</text>
+  <text x="104" y="243" text-anchor="middle" class="sub mono">NearestObj · SortObjs</text>
+  <rect x="236" y="72" width="164" height="68" rx="6" class="str"/>
+  <text x="318" y="96" text-anchor="middle" class="lbl">string helpers</text>
+  <text x="318" y="115" text-anchor="middle" class="sub mono">Strend · Strncpy</text>
+  <text x="318" y="131" text-anchor="middle" class="sub mono">StringToNumber</text>
+  <rect x="236" y="176" width="164" height="72" rx="6" class="msc"/>
+  <text x="318" y="200" text-anchor="middle" class="lbl">misc runtime</text>
+  <text x="318" y="219" text-anchor="middle" class="sub mono">Checksum · MatchF24</text>
+  <text x="318" y="235" text-anchor="middle" class="sub mono">FeetToNM · Library*</text>
+  <rect x="452" y="120" width="140" height="72" rx="6" class="box"/>
+  <text x="522" y="150" text-anchor="middle" class="lbl">F24.8 fixed-point</text>
+  <text x="522" y="169" text-anchor="middle" class="sub">the vocabulary all</text>
+  <text x="522" y="184" text-anchor="middle" class="sub">of the above share</text>
+  <rect x="628" y="120" width="120" height="72" rx="6" class="out"/>
+  <text x="688" y="144" text-anchor="middle" class="lbl">callers</text>
+  <text x="688" y="163" text-anchor="middle" class="sub">flight-model, AI,</text>
+  <text x="688" y="178" text-anchor="middle" class="sub">HUD, campaign map</text>
+  <path d="M192 130 H450" class="edge" marker-end="url(#a)"/>
+  <path d="M192 210 H450 V184" class="edge" marker-end="url(#a)"/>
+  <path d="M400 106 H451 V132" class="edge" marker-end="url(#a)"/>
+  <path d="M400 212 H451 V180" class="edge" marker-end="url(#a)"/>
+  <path d="M592 156 H626" class="edge" marker-end="url(#a)"/>
+  <text x="16" y="288" class="el">A shared leaf library: no state of its own, called throughout the reconstruction.</text>
+</svg>
