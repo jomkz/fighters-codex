@@ -277,6 +277,22 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00573208` | `brsColorProcess` | sms | bitmap color-process mode set by SetupBitmapAccess |
 | `0x00573248` | `resCache` | re | 20-slot x 8-byte LRU find-cache {RES_LIST* ; timerTicks} spanning 0x573248..0x5732E8 [was DAT_00573248]; extent proven by the init loop, which clears 0x28 dwords = 160 bytes = the 20 x 8-byte slots |
 
+### Cockpit sensors (radar / IR / RWR)
+
+[`cockpit-sensors.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/cockpit-sensors.csv) · [page](cockpit-sensors.md) — 9 named referenced globals
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x005387D8` | `_radarMode` | re | cockpit sensors: current radar mode (0=off, 2/3 air scan variants, 4 air-to-ground/wide) — the value the detection predicates branch on (#486) |
+| `0x005387F0` | `_rwrLaunchWarn` | re | cockpit sensors: RWR missile-launch warning flag (#486) |
+| `0x00538800` | `_scopeYScale` | re | cockpit sensors: MFD vertical scale shift (from screen resolution, WPCInit) (#486) |
+| `0x00538808` | `_scopeXScale` | re | cockpit sensors: MFD horizontal scale shift (WPCInit) (#486) |
+| `0x00539E4C` | `_rwrNextRefresh` | re | cockpit sensors: next tick the RWR display re-renders (CPDrawRWR, +0x40) (#486) |
+| `0x00539E58` | `_rwrScopeBuf` | re | cockpit sensors: the RWR contact buffer filed by CPScopeInsert and drawn by CPDrawRWR (#486) |
+| `0x0053BEA8` | `_radarScopeBuf` | re | cockpit sensors: the radar+IR contact buffer (0x23-dword records) filed by CPScopeInsert and walked by CPDrawRadarScope (#486) |
+| `0x0053DA08` | `_radarEmitter` | re | cockpit sensors: the active radar/seeker emitter object driving the scope this frame (#486) |
+| `0x0053DA10` | `_rwrNextScan` | re | cockpit sensors: next tick the RWR re-scans its contact buffer (+0x300) (#486) |
+
 ### .SEQ scripted-cutscene / sequence player (SEQ)
 
 [`seq.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/seq.csv) · [page](seq.md) — 25 named referenced globals

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Cockpit sensors (radar / IR / RWR) -- FA.EXE
-// 20/61 functions have a recovered signature; 0/0 globals have a recovered type.
+// 20/62 functions have a recovered signature; 0/9 globals have a recovered type.
 
 namespace fxe::fa::cockpit_sensors {
 
@@ -76,7 +76,17 @@ void CPUpdateIRItems(void);  // 0x00440FE0  __stdcall
 // TODO(#453): 0x0043F360  CPScopeSymbol -- signature not recovered
 // TODO(#453): 0x0043F510  CPDrawWindow5 -- signature not recovered
 // TODO(#453): 0x0043F51A  CPDrawWindow5Body -- signature not recovered
+// TODO(#453): 0x0043FAF0  CPDrawGroundRadar -- signature not recovered
 // TODO(#453): 0x00440BF0  CPScopeRangeRing -- signature not recovered
 // TODO(#453): 0x00440D00  CPScopeSelectContact -- signature not recovered
+// TODO(#455): 0x005387D8  _radarMode -- type not recovered
+// TODO(#455): 0x005387F0  _rwrLaunchWarn -- type not recovered
+// TODO(#455): 0x00538800  _scopeYScale -- type not recovered
+// TODO(#455): 0x00538808  _scopeXScale -- type not recovered
+// TODO(#455): 0x00539E4C  _rwrNextRefresh -- type not recovered
+// TODO(#455): 0x00539E58  _rwrScopeBuf -- type not recovered
+// TODO(#455): 0x0053BEA8  _radarScopeBuf -- type not recovered
+// TODO(#455): 0x0053DA08  _radarEmitter -- type not recovered
+// TODO(#455): 0x0053DA10  _rwrNextScan -- type not recovered
 
 }  // namespace fxe::fa::cockpit_sensors

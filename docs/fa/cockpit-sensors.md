@@ -9,9 +9,10 @@ both of which were documented while the model that feeds them was not (#486).
 > **Provenance:** Ghidra static analysis of the game executable with [FA.SMS](formats/SMS.md)
 > symbols applied; the `CP*` functions are recorded in the
 > [symbol database](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/cockpit-sensors.csv)
-> and applied to the Ghidra project. This subsystem is **active** — the RCS model, the three
-> detection predicates, the RWR timing, and the scope renderers are traced (#486); a few
-> per-MFD-type layout attributions remain. Confidence markers follow
+> and applied to the Ghidra project. This subsystem is **complete** — the RCS model, the three
+> detection predicates, the RWR timing, and the scope renderers are traced (#486) and every
+> function in its range is claimed; a few per-MFD-type layout attributions of the
+> `CPScopeHelper*` primitives remain as a follow-up. Confidence markers follow
 > [spec-authoring.md](../spec-authoring.md): confirmed · inferred · unknown.
 
 ![Cockpit sensor model: every object is scored by CPComputeRCS into a radar and IR signature, gated by CPAddItemToScopes into the contact buffers, which CPDraw renders to the scopes and the weapons seeker consumes.](diagrams/cockpit-sensors.svg)

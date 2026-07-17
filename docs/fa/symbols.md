@@ -1101,6 +1101,75 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AD3C0` | `LoadFile` | sms |  |
 | `0x004AD9B0` | `LoadFile2` | sms |  |
 
+### Cockpit sensors (radar / IR / RWR)
+
+[`cockpit-sensors.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/cockpit-sensors.csv) · [page](cockpit-sensors.md) — 62 named functions
+
+| VA | Symbol | Src | Role |
+|----|--------|-----|------|
+| `0x00438520` | `CPSetMissile` | sms | set the currently-selected missile/weapon on the scope |
+| `0x004385C0` | `CPClearMissile` | sms | clear the selected missile |
+| `0x004385E0` | `CPCopyView` | sms | copy the cockpit view state |
+| `0x004386C0` | `CPToggleWindow` | sms | toggle a cockpit MFD/scope window |
+| `0x00438870` | `WPCInit` | sms | compute the on-screen positions/sizes of the cockpit MFD windows (the 0x539d38 layout table) from the screen resolution (0x55c06a/0x55c06c) and the scale shifts (0x538808/0x538800); param selects a layout variant |
+| `0x0043887B` | `WPCInitBody` | re | overlapping alternate entry of WPCInit |
+| `0x00438B70` | `CPInit` | sms | cockpit-sensor init: allocates the radar + RWR contact buffers and resets the scopes |
+| `0x00439170` | `CPShutdown` | sms | cockpit-sensor shutdown |
+| `0x00439220` | `CPDraw` | sms | render the radar/IR/RWR scopes and cockpit MFDs (the scope renderer; consumes the contact buffers CPAddItemToScopes fills) |
+| `0x00439E40` | `CPScopeProject` | re | project a contact's world position into scope coordinates for the radar/RWR renderers |
+| `0x0043A0B0` | `CPDrawScopeButton` | re | draw a small labelled indicator/button in a scope corner (highlighted when selected) |
+| `0x0043A190` | `CPDrawWindow` | re | the cockpit MFD window dispatcher: switch on _windowTypes[i] to render each scope — 1 -> CPDrawWindow1, 2/3 -> radar B-scope (front/other view), 4/0xb -> target MFD, 5/6/7/8/9 -> the other MFDs, 10 -> the RWR (CPDrawRWR); blit to screen/brush by the return code |
+| `0x0043A364` | `CPWindowDirty` | re | MFD helper: has a scope window changed since last draw |
+| `0x0043A400` | `CPDrawEmptyWindow` | re | draw an empty/framed cockpit MFD window |
+| `0x0043A5C0` | `CPDrawRadarScope` | re | the radar B-scope / target-designation MFD renderer (front/other/target views): walks the radar contact buffer, draws each contact, resolves the designated target and the selected-weapon lock, and is weather-gated via WRCanSee (renderer.md). The subsystem's largest scope renderer |
+| `0x0043BB50` | `CPScopeBlank` | re | blank/prep a scope drawing surface |
+| `0x0043BBA0` | `CPDrawWindow8` | re | cockpit MFD window-type 8 renderer |
+| `0x0043BF60` | `CPDrawWindow6` | re | cockpit MFD window-type 6 renderer |
+| `0x0043C2F0` | `CPDrawWindow7` | re | cockpit MFD window-type 7 renderer |
+| `0x0043C5B0` | `CPScopeHelperA` | re | scope-renderer helper (shared drawing primitive) |
+| `0x0043C610` | `CPScopeHelperB` | re | scope-renderer helper (shared drawing primitive) |
+| `0x0043C6B0` | `CPDrawTID` | re | a large cockpit MFD renderer (tactical/threat information display): draws the contact list with range rings and symbols |
+| `0x0043CEC0` | `CPScopeHelperC` | re | scope-renderer helper |
+| `0x0043CF10` | `CPScopeHelperD` | re | scope-renderer helper |
+| `0x0043CFB0` | `CPScopeHelperE` | re | scope-renderer helper |
+| `0x0043D0E0` | `CPScopeHelperF` | re | scope-renderer helper |
+| `0x0043D290` | `CPScopeHelperG` | re | scope-renderer helper |
+| `0x0043D460` | `CPScopeHelperH` | re | scope-renderer helper |
+| `0x0043D690` | `CPDrawWindow1` | re | cockpit MFD window-type 1 renderer (thunk into the body) |
+| `0x0043D69B` | `CPDrawWindow1Body` | re | cockpit MFD window-type 1 renderer body |
+| `0x0043DB40` | `CPScopeHelperI` | re | scope-renderer helper |
+| `0x0043DCC0` | `CPScopeHelperJ` | re | scope-renderer helper |
+| `0x0043DDD0` | `CPRadarRange` | sms | current radar range setting |
+| `0x0043DE00` | `CPToggleHistory` | sms | toggle the radar history trail |
+| `0x0043DE10` | `UsingSuppRadar` | sms | is the supplementary (secondary) radar in use |
+| `0x0043DE90` | `CPSetSkill` | sms | set the AI/radar skill level |
+| `0x0043DEE0` | `CPAddItemToScopes` | sms | per-target visibility gate: runs the radar / IR / RWR detection tests and inserts the contact into the matching scope buffer (0x53bea8 radar+IR, 0x539e58 RWR) |
+| `0x0043DF70` | `CPRadarSees` | re | radar detection predicate: target alive (+1 bit0) and radar-detectable (type +9 bit 0x20), passes the mode-specific look-down/altitude filter (_radarMode 0x5387d8; modes gate ground-clutter, RCS at type +0x3b sets max range), lies in the scan-bounds box (0x5387e0 up / 0x539d78 down), is inside the radar-beam FOV (PROJInFOV), and is not terrain-blocked. Chaff (GRAPHIC type 0xc/0xd) always shows |
+| `0x0043DF7B` | `CPRadarSeesBody` | re | overlapping alternate entry of CPRadarSees |
+| `0x0043E220` | `CPSuppRadarSees` | re | supplemental (AWACS/GCI datalink) detection predicate: only when UsingSuppRadar; a wider bounds box (0x539e50 / 0x5387a0), inserted into the radar scope as a datalink contact (mode 1) |
+| `0x0043E330` | `CPRwrSees` | re | RWR detection predicate — is this emitter illuminating the player: for a SAM/AAA site (class 6) the emitter must be on (type +0xa6 bit1), not in a non-emitting state (+0xb4 != 4), not in the exclusion-name list, and within 0x76ac00; for a plane (class 2/4) it must be radar-capable and have the radar-locking-me flag (+0xde bit 0x400) |
+| `0x0043E450` | `CPScopeInsert` | re | insert-or-update a detected object into a scope contact buffer (radar/IR at 0x53bea8, RWR at 0x539e58), deduping by object id and refreshing its record |
+| `0x0043E700` | `CPScopeFindContact` | re | find an existing contact record for an object id in a scope buffer |
+| `0x0043E780` | `CPRemoveItemFromScopes` | sms | remove a contact from the scopes |
+| `0x0043E7B0` | `CPScopeClearEntry` | re | clear one scope contact-buffer entry |
+| `0x0043E7E0` | `CPBombRange` | sms | current bomb-range/CCIP setting |
+| `0x0043E810` | `CPUpdateRadar` | sms | per-frame radar sweep: timestamps the scan and clears the sweep accumulator |
+| `0x0043E830` | `CPResetRWR` | sms | reset the RWR: zero the radar-scope and RWR contact buffers (2x 0x6d6 dwords) and re-arm the scan timers |
+| `0x0043E8C0` | `CPComputeRCS` | sms | radar-cross-section + IR-signature model: sums a target's signature from base size (type +0x45), configuration (gear/bay/afterburner via the +0x16F flags), aspect (pitch +0x1F, bank +0x21), damage (+0x10), and the class extension (+0xDE). The gameplay-defining input to the weapons seeker/lock model (weapons.md) |
+| `0x0043EA40` | `CPDrawRWR` | re | the RWR threat-display renderer: refreshes every 0x40 ticks, draws the threat ring + the RCS diamond from _frontRCS/_sideRCS, and each RWR contact coloured by lock state — a track lock is red (0x2b) and a search lock yellow (0x2c) until _currentT passes _trackLockEndT/_searchLockEndT (the RWR spike timing) |
+| `0x0043F0E0` | `CPScopeForEach` | re | walk a scope contact buffer applying a predicate/callback (thunk) |
+| `0x0043F0EA` | `CPScopeForEachBody` | re | body of CPScopeForEach: iterate the contact buffer, dropping entries the predicate rejects |
+| `0x0043F280` | `CPScopeAge` | re | age out stale scope contacts past their timeout |
+| `0x0043F300` | `CPContactVisible` | re | is a scope contact currently drawable (on-scope + not expired) |
+| `0x0043F360` | `CPScopeSymbol` | re | pick + draw the symbol/colour for one scope contact by its class/threat state |
+| `0x0043F510` | `CPDrawWindow5` | re | cockpit MFD window-type 5 renderer (thunk) |
+| `0x0043F51A` | `CPDrawWindow5Body` | re | cockpit MFD window-type 5 renderer body |
+| `0x0043FAF0` | `CPDrawGroundRadar` | re | cockpit MFD case-9 renderer: the air-to-ground / ground-map radar scope — sets _radarMode=4 when A/G radar is on (0x50cf5e bit 0x100000), picks the best air-ground seeker (HARDBestSeekers 3), and draws the contact list via CPScopeRangeRing/CPScopeSelectContact. Was masked by an IP.EXE cross-binary waiver (#477) |
+| `0x00440BF0` | `CPScopeRangeRing` | re | draw the range rings / scale marks on a scope |
+| `0x00440D00` | `CPScopeSelectContact` | re | update the selected/designated contact highlight on a scope |
+| `0x00440E10` | `CPNextTarget` | sms | cycle the radar-scope target: scan the radar contact buffer (0x53bea8) for the next (or previous) radar-detectable contact past/before the current target range — the t / T keys (input.md FlightKey) |
+| `0x00440FE0` | `CPUpdateIRItems` | sms | per-frame IR-item update: refreshes the IR-seeker contact list |
+
 ### .SEQ scripted-cutscene / sequence player (SEQ)
 
 [`seq.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/seq.csv) · [page](seq.md) — 41 named functions
