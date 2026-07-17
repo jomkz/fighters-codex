@@ -26,7 +26,7 @@ comms-xf,CDRVXF32.DLL — Cdrv file-transfer comms driver,CDRVXF32.DLL,0x1000100
 comms-sc,COMMSC32.DLL — Cdrv comms terminal-screen service,COMMSC32.DLL,0x10001000-0x10010000,complete,docs/fa/comms-screen.md,255
 view,View / camera & replay (VIEW),FA.EXE,0x40D7A0-0x40F6B0,complete,docs/fa/view.md,257
 msapi,Matchmaking / internet-play client (MSAPI),MSAPI.DLL,0x100011E0-0x10002AB0,complete,docs/fa/matchmaking.md,275
-cockpit-sensors,Cockpit sensors (radar / IR / RWR),FA.EXE,0x438520-0x4410C0,active,docs/fa/cockpit-sensors.md,486
+cockpit-sensors,Cockpit sensors (radar / IR / RWR),FA.EXE,0x438520-0x4410C0,complete,docs/fa/cockpit-sensors.md,486
 radio,Radio / speech — orders & AWACS chatter (MSG/SAY),FA.EXE,0x418070-0x418A66;0x48D2B0-0x48EC3F;0x490F30-0x491239,active,docs/fa/radio.md,493
 chat,Multiplayer chat (CHAT),FA.EXE,0x413120-0x413C68,active,docs/fa/chat.md,493
 airports,"Airports / carriers — parking, approach, deck (AP)",FA.EXE,0x4BA7E0-0x4BAD40;0x4BD2D0-0x4BD510;0x4BE6A0-0x4BEE60,active,docs/fa/airports.md,493
