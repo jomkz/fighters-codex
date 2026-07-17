@@ -96,6 +96,7 @@ typedef struct MODSPEC      MODSPEC;      /* sound: module / track spec         
 typedef struct ACTION       ACTION;       /* shell-ui: menu action                   */
 typedef struct VDO          VDO;          /* video: VDO player context               */
 typedef struct VDOHEADER    VDOHEADER;    /* video: VDO stream header (VDOfromVDOHEADER) */
+typedef struct VDOLinkedList VDOLinkedList; /* video: list of .VDO frame nodes (BuildVDOList) */
 typedef struct CONFIG       CONFIG;       /* startup: EA.CFG settings record (UCONFIG_*) */
 typedef struct ANGLE          ANGLE;          /* objects: attitude vector (MPPrepareForInterp) */
 typedef struct HARDPOINT      HARDPOINT;      /* flight-model: store station          */
@@ -133,6 +134,7 @@ typedef struct _s_FuncInfo           _s_FuncInfo;
 typedef int JOYRESULT;           /* input:   GetJoystickType / ReadDevice result     */
 typedef int PLAYER_ACTION;       /* network: player-action callback code             */
 typedef int NET_CONNECTED_STATE; /* network: connection-state callback code          */
+typedef int DLG_SELECTION;       /* network: player-list dialog selection result     */
 typedef int NET_SEND_CANCEL;     /* network: broadcast send/cancel selector          */
 typedef int PLAYER_STATE;        /* network: per-player session state                */
 typedef int SOCK_STATE;          /* network: socket_state connection state           */
