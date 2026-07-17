@@ -9,8 +9,15 @@ va,kind,name,display,source,confidence,notes,type
 0x00404C4A,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
 0x00404C4F,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
 0x00404C70,func,?FlyingLoop@@YAXXZ,FlyingLoop,sms,confirmed,,void __cdecl FlyingLoop(void)
+0x00436320,func,?StartGameThread@@YAKPAK@Z,StartGameThread,sms,confirmed,,unsigned long __cdecl StartGameThread(unsigned long *)
 0x0046B560,func,?MainLoop@@YAGPAUGlobalData@@@Z,MainLoop,sms,confirmed,,unsigned short __cdecl MainLoop(GlobalData *)
 0x00476120,func,_WinMain@16,WinMain,sms,confirmed,,"undefined4 __stdcall WinMain(undefined4, undefined4, undefined4, undefined4)"
+0x00476180,func,?MainWndproc@@YGJPAXIIJ@Z,MainWndproc,sms,confirmed,,"long __stdcall MainWndproc(void *, unsigned int, unsigned int, long)"
+0x004764B0,func,?InitApplication@@YAHPAX@Z,InitApplication,sms,confirmed,,int __cdecl InitApplication(void *)
+0x00476660,func,?CreateGameThread@@YAHXZ,CreateGameThread,sms,confirmed,,int __cdecl CreateGameThread(void)
+0x00476700,func,?EndGame@@YAXXZ,EndGame,sms,confirmed,,void __cdecl EndGame(void)
+0x004767F0,func,?DisplayCopyright@@YAXPAX@Z,DisplayCopyright,sms,confirmed,,void __cdecl DisplayCopyright(void *)
+0x00492740,func,?doConfigurationScreen@@YAXJP6AXPAUCN_INFO@@PAD@Z@Z,doConfigurationScreen,sms,confirmed,,"void __cdecl doConfigurationScreen(long, void (__cdecl *)(CN_INFO *, char *))"
 0x004B27C0,func,?UCONFIG_DMusic@@YADXZ,UCONFIG_DMusic,sms,confirmed,,char __cdecl UCONFIG_DMusic(void)
 0x004B2820,func,?UCONFIG_SetVideoOptions@@YGXXZ,UCONFIG_SetVideoOptions,sms,confirmed,,void __stdcall UCONFIG_SetVideoOptions(void)
 0x004B2930,func,?UCONFIG_load_EA_CFG@@YGPAUCONFIG@@XZ,UCONFIG_load_EA_CFG,sms,confirmed,,CONFIG * __stdcall UCONFIG_load_EA_CFG(void)

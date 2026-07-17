@@ -31,6 +31,23 @@ Full record: [`db/symbols/startup.csv`](https://github.com/jomkz/fighters-codex/
 | `0x4D715A` | `_DirectDrawCreate@12` | DDRAW import thunk |
 | `0x4D7220` | `_ser_rs232_getpacket@12` | serial-comms driver import thunk |
 
+### Win32 application bootstrap
+
+The Win32 shell around `_WinMain@16` (`0x476120`): window-class registration, the main
+window procedure, the game thread, and the pre-launch screens. Like `_WinMain` itself,
+these sit in the `0x476xxx` WinMain region — **outside** the CRT range
+(`0x4D715A`–`0x4E8A2F`) — and are claimed by explicit VA rows.
+
+| VA | Symbol | Role |
+|----|--------|------|
+| `0x436320` | `StartGameThread` (`?StartGameThread@@YAKPAK@Z`) | thread proc that runs the game (`DWORD` return, thread-param) |
+| `0x476180` | `MainWndproc` (`?MainWndproc@@YGJPAXIIJ@Z`) | main window procedure (`WndProc`: hwnd, msg, wParam, lParam) |
+| `0x4764B0` | `InitApplication` (`?InitApplication@@YAHPAX@Z`) | register the window class / application init |
+| `0x476660` | `CreateGameThread` (`?CreateGameThread@@YAHXZ`) | create the game thread |
+| `0x476700` | `EndGame` (`?EndGame@@YAXXZ`) | shut the game down |
+| `0x4767F0` | `DisplayCopyright` (`?DisplayCopyright@@YAXPAX@Z`) | show the copyright / splash |
+| `0x492740` | `doConfigurationScreen` (`?doConfigurationScreen@@YAXJP6AXPAUCN_INFO@@PAD@Z@Z`) | pre-launch configuration screen (callback over `CN_INFO`) |
+
 ## Open Questions
 
 ### 1. Import-thunk attribution
