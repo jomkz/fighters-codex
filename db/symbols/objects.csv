@@ -83,6 +83,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00473BE0,func,_OBJProc,OBJProc,sms,confirmed,,undefined4 __cdecl OBJProc(undefined4)
 0x00473C10,func,_Kill@0,Kill,sms,confirmed,,undefined4 __stdcall Kill(void)
 0x00473DB0,func,_GVProc,GVProc,sms,confirmed,"class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ",undefined4 __cdecl GVProc(char)
+0x00473DE0,func,?GVDoCurrentWaypoint@@YADXZ,GVDoCurrentWaypoint,sms,confirmed,,char __cdecl GVDoCurrentWaypoint(void)
+0x00473F50,func,_GVEventProc,GVEventProc,sms,confirmed,,
 0x004747C0,func,@Alive@4,Alive,sms,confirmed,imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined4 __fastcall Alive(undefined4)
 0x0047CEB0,func,_MANAdd@24,MANAdd,sms,confirmed,,"undefined4 __stdcall MANAdd(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x0048D780,func,_PLANESayProc,PLANESayProc,sms,confirmed,,
@@ -106,10 +108,25 @@ va,kind,name,display,source,confidence,notes,type
 0x004917F0,func,_OBJTempAlias@0,OBJTempAlias,sms,confirmed,,undefined4 __stdcall OBJTempAlias(void)
 0x00491810,func,_OBJSetControl@16,OBJSetControl,sms,confirmed,,"undefined4 __stdcall OBJSetControl(undefined4, undefined4, undefined4, undefined4)"
 0x004918D0,func,_OBJHumanName@0,OBJHumanName,sms,confirmed,,undefined4 __stdcall OBJHumanName(void)
+0x0049D510,func,_PLANEInit@0,PLANEInit,sms,confirmed,,undefined4 __stdcall PLANEInit(void)
+0x0049D520,func,@PLANERemove@4,PLANERemove,sms,confirmed,,undefined4 __fastcall PLANERemove(undefined4)
+0x0049D580,func,?PLANEDoCurrentWaypoint@@YADXZ,PLANEDoCurrentWaypoint,sms,confirmed,,char __cdecl PLANEDoCurrentWaypoint(void)
+0x0049D6E0,func,_PLANESetEjectTime@4,PLANESetEjectTime,sms,confirmed,,undefined4 __stdcall PLANESetEjectTime(undefined4)
+0x0049D730,func,?PLANEBreakUp@@YGXXZ,PLANEBreakUp,sms,confirmed,,void __stdcall PLANEBreakUp(void)
 0x0049D860,func,?PLANEBlow@@YAXXZ,PLANEBlow,sms,confirmed,,void __cdecl PLANEBlow(void)
+0x0049D890,func,_PLANECrash@4,PLANECrash,sms,confirmed,,undefined4 __stdcall PLANECrash(undefined4)
+0x0049DF40,func,_PLANEEventProc,PLANEEventProc,sms,confirmed,,
 0x0049F840,func,?PLANEMoveProc@@YAXD@Z,PLANEMoveProc,sms,confirmed,,void __cdecl PLANEMoveProc(char)
+0x0049FA10,func,_PLANECheckEject@0,PLANECheckEject,sms,confirmed,,undefined4 __stdcall PLANECheckEject(void)
 0x0049FA50,func,?PLANEAddProc@@YAJXZ,PLANEAddProc,sms,confirmed,,long __cdecl PLANEAddProc(void)
+0x0049FAA0,func,_PLANEList@8,PLANEList,sms,confirmed,,"undefined4 __stdcall PLANEList(undefined4, undefined4)"
 0x0049FB10,func,_PLANEProc,PLANEProc,sms,confirmed,,
+0x0049FB70,func,_PLANECheckFuel@0,PLANECheckFuel,sms,confirmed,,undefined4 __stdcall PLANECheckFuel(void)
+0x0049FCD0,func,@PLANESetThrottle@8,PLANESetThrottle,sms,confirmed,,"undefined4 __fastcall PLANESetThrottle(undefined4, undefined4)"
+0x0049FD40,func,@PLANEUpdateJustLanded@8,PLANEUpdateJustLanded,sms,confirmed,,"undefined4 __fastcall PLANEUpdateJustLanded(undefined4, undefined4)"
+0x004A0310,func,_PLANEHackForPlayerWing@0,PLANEHackForPlayerWing,sms,confirmed,,undefined4 __stdcall PLANEHackForPlayerWing(void)
+0x004A04F0,func,_PLANETurnOffGunSound@0,PLANETurnOffGunSound,sms,confirmed,,undefined4 __stdcall PLANETurnOffGunSound(void)
+0x004A0510,func,_PLANESetFeetWet@0,PLANESetFeetWet,sms,confirmed,,undefined4 __stdcall PLANESetFeetWet(void)
 0x004A6B10,func,ResolveTypeRecord,,re,confirmed,resolve the OT/NT/PT/JT type record from the MM handle at wrapper +0x0F (MMAccessE when +0x0E bit1 set); SetupOT's first step; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall ResolveTypeRecord(undefined4)
 0x004A6EB0,func,_SetupOT,SetupOT,sms,confirmed,,undefined4 __cdecl SetupOT(undefined4)
 0x004A71C0,func,LoadShapeVariantPair,,re,confirmed,load the _a slot; aircraft (obj_class & 0xC000) also load the _b slot (+0x1B); not a C function (#479): mid-function split of _SetupOT (0x004A6EB0),!split

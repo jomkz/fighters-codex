@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 106/121 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
+// 121/138 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -116,6 +116,7 @@ void OBJDamageProc(HIT_OBJ_DATA *);  // 0x00473B40  __cdecl
 undefined4 OBJProc(undefined4);  // 0x00473BE0  __cdecl
 undefined4 Kill(void);  // 0x00473C10  __stdcall
 undefined4 GVProc(char);  // 0x00473DB0  __cdecl
+char GVDoCurrentWaypoint(void);  // 0x00473DE0  __cdecl
 undefined4 Alive(undefined4);  // 0x004747C0  __fastcall
 undefined4 MANAdd(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0047CEB0  __stdcall
 undefined4 OBJGet(undefined4);  // 0x00491240  __fastcall
@@ -136,9 +137,23 @@ undefined4 OBJNextAliasForMulti(void);  // 0x004917D0  __stdcall
 undefined4 OBJTempAlias(void);  // 0x004917F0  __stdcall
 undefined4 OBJSetControl(undefined4, undefined4, undefined4, undefined4);  // 0x00491810  __stdcall
 undefined4 OBJHumanName(void);  // 0x004918D0  __stdcall
+undefined4 PLANEInit(void);  // 0x0049D510  __stdcall
+undefined4 PLANERemove(undefined4);  // 0x0049D520  __fastcall
+char PLANEDoCurrentWaypoint(void);  // 0x0049D580  __cdecl
+undefined4 PLANESetEjectTime(undefined4);  // 0x0049D6E0  __stdcall
+void PLANEBreakUp(void);  // 0x0049D730  __stdcall
 void PLANEBlow(void);  // 0x0049D860  __cdecl
+undefined4 PLANECrash(undefined4);  // 0x0049D890  __stdcall
 void PLANEMoveProc(char);  // 0x0049F840  __cdecl
+undefined4 PLANECheckEject(void);  // 0x0049FA10  __stdcall
 long PLANEAddProc(void);  // 0x0049FA50  __cdecl
+undefined4 PLANEList(undefined4, undefined4);  // 0x0049FAA0  __stdcall
+undefined4 PLANECheckFuel(void);  // 0x0049FB70  __stdcall
+undefined4 PLANESetThrottle(undefined4, undefined4);  // 0x0049FCD0  __fastcall
+undefined4 PLANEUpdateJustLanded(undefined4, undefined4);  // 0x0049FD40  __fastcall
+undefined4 PLANEHackForPlayerWing(void);  // 0x004A0310  __stdcall
+undefined4 PLANETurnOffGunSound(void);  // 0x004A04F0  __stdcall
+undefined4 PLANESetFeetWet(void);  // 0x004A0510  __stdcall
 undefined4 ResolveTypeRecord(undefined4);  // 0x004A6B10  __fastcall
 undefined4 SetupOT(undefined4);  // 0x004A6EB0  __cdecl
 undefined4 LoadShapeSlot(undefined4);  // 0x004A71E0  __stdcall
@@ -170,9 +185,11 @@ undefined4 WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4)
 // TODO(#453): 0x00443C60  GRAPHICFindSlot -- signature not recovered
 // TODO(#453): 0x004443DA  GRAPHICAddClusterReleaseBody -- signature not recovered
 // TODO(#453): 0x004736F0  NPCWeaponsProc -- signature not recovered
+// TODO(#453): 0x00473F50  GVEventProc -- signature not recovered
 // TODO(#453): 0x0048D780  PLANESayProc -- signature not recovered
 // TODO(#453): 0x0048E8D0  OBJSayProc -- signature not recovered
 // TODO(#453): 0x0048EC40  PLANECommentProc -- signature not recovered
+// TODO(#453): 0x0049DF40  PLANEEventProc -- signature not recovered
 // TODO(#453): 0x0049FB10  PLANEProc -- signature not recovered
 // TODO(#453): 0x004BD5B0  CARRIERProc -- signature not recovered
 // TODO(#453): 0x004BE640  STRIPProc -- signature not recovered
