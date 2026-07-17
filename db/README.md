@@ -166,6 +166,26 @@ was written because its absence manufactured functions out of thin air:
 **A wrong function is worse than an undefined gap**: the gap is honest debt the ratchet can see,
 while the fiction inflates the denominator and then reports coverage against it.
 
+### The binary-level ratchet — `coverage-baseline.csv`
+
+Per-subsystem coverage only looks inside the ranges a subsystem declares, so it can only ever
+report 100% of what was declared — a tautology that let 49% of FA.EXE go unmeasured
+([#482](https://github.com/jomkz/fighters-codex/issues/482)). `coverage-baseline.csv` anchors the
+count to the **binary** instead, one row per binary with three ratcheted columns that may only
+shrink (`check_binary_coverage` fails if any grows):
+
+| Column | What it counts | Closes at |
+|---|---|---|
+| `unclaimed_functions` | `functions.csv` entries with no `db/symbols` row — named FA.SMS code *and* anonymous `FUN_` statics alike | — (aggregate signal) |
+| `named_unclaimed` | the subset of the above whose inventory name is a **recovered** symbol (not `FUN_`/`thunk_FUN_`) — the code the binary already tells us the name of | **0 ⇒ #482 done** |
+| `undefined_bytes` | executable bytes in **no** function body at all (from `unaccounted.csv`; [#496](https://github.com/jomkz/fighters-codex/issues/496)) | 0 |
+
+`named_unclaimed` is the one that matters: "reconstruct FA.EXE" means documenting the functions the
+binary *names*, and lumping them in with anonymous statics (`unclaimed_functions`) hid that debt
+inside a larger total. It is the check [#482](https://github.com/jomkz/fighters-codex/issues/482)
+calls "the real fix". Retiring an entry is the same one-line move as everywhere else: add its
+`db/symbols` row (named or waived) and re-export, then lower the baseline to match.
+
 ## Definition of done (per subsystem, enforced at `status=complete`)
 
 1. **Functions:** every `inventory/functions.csv` entry inside the subsystem's ranges
