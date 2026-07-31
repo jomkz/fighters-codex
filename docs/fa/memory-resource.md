@@ -75,6 +75,35 @@ Full record: [`db/symbols/memory-resource.csv`](https://github.com/jomkz/fighter
 | `0x4A6B30` | `RMFindAndLoad` | resolve + load + register a resource by name |
 | `0x4A6AB0` | `RMCacheInsert` | insert into the LRU resource cache (evict oldest) |
 | `0x4A6DF0` | `RMSetup` | post-load per-type hook (`SMCallByName <type>_Setup`) |
+| `0x4797E0` | `CompareHints` | comparator for the `SearchLib` hint table |
+| `0x479960` | `FindNext` | next directory entry (LIB-search unit) |
+| `0x479A60` | `FindFirst` | begin a directory scan |
+| `0x479B20` | `FindClose` | end a directory scan |
+| `0x479B50` | `MatchPattern` | wildcard filename match |
+| `0x479DA0` | `GetDiskFree` | free space on a drive |
+| `0x479F50` | `GetDosFileTime` | DOS timestamp of a file |
+| `0x4ACDC0` | `DiskInit` | bring up the disk-I/O layer (precedes `LoadFile`) |
+| `0x4ACDF0` | `GetHandle16` | 16-bit handle for a file pointer |
+| `0x4ACE50` | `Open` | open a file |
+| `0x4ACF30` | `Create` | create a file |
+| `0x4ACFA0` | `Close` | close a file handle |
+| `0x4AD0C0` | `Read` | read from a handle |
+| `0x4AD140` | `Write` | write to a handle |
+| `0x4AD1C0` | `UGetFileSize` | size of an open file |
+| `0x4AD220` | `Delete` | delete a file |
+| `0x4AD250` | `Rename` | rename a file |
+| `0x4AD270` | `GetCurrentPath` | current working directory |
+| `0x4AD2E0` | `SaveFile` | write a whole buffer to a named file |
+| `0x4AD380` | `ClearCachedFilenames` | drop the filename cache |
+| `0x4AD3A0` | `GetExecutablePath` | directory of the game executable |
+| `0x4ADAC0` | `ConcatDirAndFile` | path join for `LoadFile`/`LoadFile2` |
+| `0x412FC0` | `cdpath` | find + cache the FA CD drive (`_CDPATH`) |
+| `0x4A5540` | `GetFiles` | collect 8.3 filenames matching a pattern |
+| `0x4A6E50` | `LoadPIC` | RM-cached PIC load (`RMFind`/`G_LoadBitmap`/`RMLocate`) |
+| `0x4C60F0` | `DecodeFile` | LZSS ring decoder over `_lzwBuff` (lzwlib unit's named entry) |
+| `0x46A370` | `SMInit` | load the FA.SMS symbol map; build the name→VA table |
+| `0x46A4C0` | `SMShutdown` | free the symbol map |
+| `0x46A4E0` | `SMAddress` | binary-search name → address (backs `SMCallByName`) |
 
 The LIB name-index layer (`LoadFile` `0x4AD3C0`, `LibStartUp` `0x478BC0`, `SearchLib`
 `0x4798B0`, `DoLoadLibFile` `0x479630`, `LibFileExists` `0x47A130`) is documented in
