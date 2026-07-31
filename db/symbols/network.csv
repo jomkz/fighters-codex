@@ -226,6 +226,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0047F740,func,?CfigChecksum@@YAJPAUCN_INFO@@@Z,CfigChecksum,sms,confirmed,,long __cdecl CfigChecksum(CN_INFO *)
 0x0047F7A0,func,?CN_ReadConfig@@YAXPAUCN_INFO@@PAE@Z,CN_ReadConfig,sms,confirmed,,"void __cdecl CN_ReadConfig(CN_INFO *, unsigned char *)"
 0x0047F930,func,?CN_WriteConfig@@YAXPAUCN_INFO@@PAE@Z,CN_WriteConfig,sms,confirmed,,"void __cdecl CN_WriteConfig(CN_INFO *, unsigned char *)"
+0x0047F990,func,?RunSimpleConnect@@YGXJPAD@Z,RunSimpleConnect,sms,confirmed,CN_ReadConfig(NET.DAT) + MP_Initialize with dialog feedback,"void __stdcall RunSimpleConnect(long, char *)"
 0x004874C0,func,?sapopensocket@@YAIPAUNET_PROTOCOL@@PAUCN_INFO@@JPAD@Z,sapopensocket,sms,confirmed,SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild),"unsigned int __cdecl sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *)"
 0x00487670,func,?sapserverbroadcast@@YAXIPAUNET_ADDRESS@@PADW4NET_SEND_CANCEL@@@Z,sapserverbroadcast,sms,confirmed,,"void __cdecl sapserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL)"
 0x00487760,func,?sapquery@@YAXIPAUPKT_PLAYER_AD@@PAUNET_ADDRESS@@@Z,sapquery,sms,confirmed,,"void __cdecl sapquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *)"
@@ -292,6 +293,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0049AFF0,func,?MOD_Initialize@@YAJPAUCN_INFO@@J@Z,MOD_Initialize,sms,confirmed,top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce,"long __cdecl MOD_Initialize(CN_INFO *, long)"
 0x0049B0D0,func,?MOD_Shutdown@@YAXXZ,MOD_Shutdown,sms,confirmed,SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3,void __cdecl MOD_Shutdown(void)
 0x0049B110,func,?serIO@@YAJJPAD@Z,serIO,sms,confirmed,,"long __cdecl serIO(long, char *)"
+0x004A45E0,func,_AddJanesStatsJOGC@20,AddJanesStatsJOGC,sms,confirmed,build the Janes Online Gaming Community post-mission stats report (MP_Info + playerDamage rankings),"undefined4 __stdcall AddJanesStatsJOGC(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004A55F0,func,_EveryoneHasChosenSides@0,EveryoneHasChosenSides,sms,confirmed,all _humanChoseSide entries set,undefined4 __stdcall EveryoneHasChosenSides(void)
+0x004A5620,func,@ChooseSidesDialog@4,ChooseSidesDialog,sms,confirmed,MP side-selection dialog over MPWaitEveryoneStatus/MPPlayerChoseSide,undefined4 __fastcall ChooseSidesDialog(undefined4)
+0x004A5760,func,?FixChosenSides@@YGDXZ,FixChosenSides,sms,confirmed,rebalance when a side exceeds 5 players,char __stdcall FixChosenSides(void)
+0x004A5810,func,@ChooseSidesDialog2@4,ChooseSidesDialog2,sms,confirmed,variant that verifies both sides are non-empty,undefined4 __fastcall ChooseSidesDialog2(undefined4)
 0x004A5990,func,?winsock_load@@YADPAU_winsock_funcs@@PAD@Z,winsock_load,sms,confirmed,,"char __cdecl winsock_load(_winsock_funcs *, char *)"
 0x004A5CB0,func,?winsock_cleanup@@YAXXZ,winsock_cleanup,sms,confirmed,,void __cdecl winsock_cleanup(void)
 0x004A5CE0,func,?winsock_handle_error@@YAPADPADW4ERROR_SEVERITY@@0H@Z,winsock_handle_error,sms,confirmed,,"char * __cdecl winsock_handle_error(char *, ERROR_SEVERITY, char *, int)"

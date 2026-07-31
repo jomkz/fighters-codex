@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core shell / menu / dialog UI -- FA.EXE
-// 155/195 functions have a recovered signature; 6/43 globals have a recovered type.
+// 159/199 functions have a recovered signature; 6/43 globals have a recovered type.
 
 namespace fxe::fa::shell_ui {
 
@@ -21,6 +21,7 @@ extern char * cancelString;  // 0x0050217C  localized dialog-button label; impor
 extern char * exitString;  // 0x00502184  localized dialog-button label; imported by 1 shipped .DLG overlay (#491)
 
 // --- functions -------------------------------------------------------
+void IFMSetTime(char);  // 0x004053D0  __cdecl
 void MouseLoadPtr(void);  // 0x0040B8A0  __stdcall
 void ShellSetup(void);  // 0x0040BA10  __stdcall
 void MaybeCampaignMenu(char *, long, long, char);  // 0x0040BC20  __stdcall
@@ -166,6 +167,8 @@ u8 DialogTextStreamRead(void *);  // 0x0048D1E0  __cdecl
 void DialogTextStreamSkip(void *, int);  // 0x0048D260  __cdecl
 undefined4 MakeNamesForList(void);  // 0x004A0560  __stdcall
 undefined4 ScreenDirty(void);  // 0x004A0610  __stdcall
+undefined4 DialogFadeout(void);  // 0x004A0640  __stdcall
+undefined4 DialogFadein(void);  // 0x004A0710  __stdcall
 undefined4 DialogDrawBkgd(undefined4);  // 0x004A0810  __fastcall
 undefined4 MainMenu(undefined4);  // 0x004A0860  __fastcall
 undefined4 ChooseActivity(void);  // 0x004A08A0  __stdcall
@@ -173,6 +176,7 @@ undefined4 SingleFilename(undefined4);  // 0x004A10B0  __stdcall
 undefined4 CampaignSelect(void);  // 0x004A18A0  __stdcall
 undefined4 DialogPickFiles(undefined4, undefined4);  // 0x004A1C80  __stdcall
 undefined4 GraphicPrefs(void);  // 0x004A2220  __stdcall
+undefined4 SoundPrefs(void);  // 0x004A2480  __stdcall
 undefined4 DoDialogInfoBox(undefined4, undefined4);  // 0x004A26F0  __stdcall
 undefined4 DialogInfoBox(undefined4, undefined4, undefined4);  // 0x004A27C0  __stdcall
 undefined4 QuickDist(undefined4, undefined4);  // 0x004C6710  __stdcall

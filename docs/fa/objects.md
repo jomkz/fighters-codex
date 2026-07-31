@@ -338,6 +338,11 @@ Recovered object-system state (full list, with per-symbol confidence, in the
 | `0x004A0010` | `StreamersInit` | reset the streamer pool |
 | `0x004A0250` | `StreamersUpdate` | per-frame streamer advance |
 | `0x004A02D0` | `StreamersShutdown` | free streamers at mission teardown |
+| `0x00414510` | `MessagesToPlayer` | drain message queues into the player entity's class procs |
+| `0x0044B9B0` | `ROInit` | pre-allocated reusable-object pool init |
+| `0x0044BA20` | `ROGet` | grab a free pooled object |
+| `0x0044BAA0` | `RORemoveCurObj` | return the current object to the pool |
+| `0x0047D0F0` | `MANRunAway` | spawn `runner.NT` flee maneuvers via `MANAdd` |
 
 ### Aircraft (`PLANE*`) & ground-vehicle (`GV*`) object procs
 

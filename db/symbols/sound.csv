@@ -1,4 +1,5 @@
 va,kind,name,display,source,confidence,notes,type
+0x00412A90,func,@ButtonSound@4,ButtonSound,sms,confirmed,play _BUTTON1/_BUTTON2.11K via SingleSound (sound owns Single/BasicSound),undefined4 __fastcall ButtonSound(undefined4)
 0x004328B0,func,?InitMusic@@YIXXZ,InitMusic,sms,confirmed,,void __fastcall InitMusic(void)
 0x00432920,func,?ShutDownMidi@@YIXXZ,ShutDownMidi,sms,confirmed,,void __fastcall ShutDownMidi(void)
 0x004329A0,func,?DMusicOn@@YIXPADF@Z,DMusicOn,sms,confirmed,,"void __fastcall DMusicOn(char *, short)"

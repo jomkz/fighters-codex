@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 230/274 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
+// 233/277 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
@@ -203,6 +203,8 @@ undefined4 CallMissionProc(undefined4, undefined4);  // 0x00481940  __stdcall
 undefined4 MISSIONShutdown(void);  // 0x004819F0  __stdcall
 undefined4 MISSIONSuccess(void);  // 0x00481A70  __stdcall
 undefined4 MISSIONEnemiesAlive(void);  // 0x00481A7B  __cdecl
+undefined4 AlmostHome(void);  // 0x00481B80  __stdcall
+long ConvertOldPreferredTargetId(unsigned short);  // 0x00481BD0  __fastcall
 undefined4 MISSIONTextProc(undefined4, undefined4, undefined4, undefined4);  // 0x00481C10  __stdcall
 void TextNextToken(char *);  // 0x00483C90  __fastcall
 undefined4 TextIsDelim(char);  // 0x00483D10  __fastcall
@@ -253,6 +255,7 @@ undefined4 WPOptimizeWaypoints(void);  // 0x00499C50  __stdcall
 undefined4 SingleMission(void);  // 0x004A10E0  __stdcall
 undefined4 BriefScreen(undefined4, undefined4, undefined4, undefined4);  // 0x004A1DD0  __fastcall
 undefined4 AddStats(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A2A30  __stdcall
+undefined4 CanReplay(void);  // 0x004A5970  __stdcall
 
 // --- not C functions --------------------------------------------------
 // Recovered, and deliberately NOT declared. A C prototype cannot express

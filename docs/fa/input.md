@@ -225,6 +225,7 @@ Full record: [`db/symbols/input.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x4143F0` | `SetPlayerContact` | set the player's selected sensor contact |
 | `0x414410` | `ContactNearestTo` | nearest sensor contact to a point |
 | `0x4144B0` | `GetContactPositions` | collect sensor-contact positions |
+| `0x492280` | `ShowSlewObj` | draw the marker box around `_slewId` (Slew unit) |
 
 ## Open Questions
 

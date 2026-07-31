@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core math & runtime utility library -- FA.EXE
-// 54/59 functions have a recovered signature; 0/0 globals have a recovered type.
+// 59/64 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::core_math {
 
@@ -39,6 +39,10 @@ undefined4 Strncpy(undefined4, undefined4, undefined4);  // 0x004121D0  __stdcal
 undefined4 DistToLine(undefined4, undefined4, undefined4);  // 0x00412200  __stdcall
 undefined4 SortObjs(undefined4, undefined4);  // 0x00412340  __fastcall
 undefined4 InterpAngle(undefined4, undefined4, undefined4, undefined4);  // 0x00412480  __stdcall
+undefined4 SampleInit(undefined4, undefined4);  // 0x004124E0  __fastcall
+undefined4 SampleShutdown(undefined4);  // 0x00412550  __fastcall
+undefined4 SampleUpdate(undefined4, undefined4);  // 0x00412570  __fastcall
+undefined4 SampleGet(undefined4, undefined4, undefined4);  // 0x004125C0  __stdcall
 undefined4 GetRotatedOffsetF24(undefined4, undefined4, undefined4);  // 0x004129B0  __stdcall
 undefined4 ObjRadius(undefined4);  // 0x00412A10  __fastcall
 undefined4 StringIsNumber(undefined4);  // 0x00412B00  __fastcall
@@ -53,6 +57,7 @@ undefined4 Rand32(undefined4);  // 0x004561D0  __fastcall
 undefined4 Rand16(void);  // 0x004562D0  __stdcall
 undefined4 Rand8(void);  // 0x004562E0  __stdcall
 undefined4 Rand(undefined4);  // 0x004562F0  __fastcall
+undefined4 CPUSpeed(undefined4, undefined4, undefined4, undefined4);  // 0x004B3010  __stdcall
 undefined4 Swapmem(undefined4, undefined4, undefined4);  // 0x004C64B8  __stdcall
 undefined4 DoWordToString(undefined4, undefined4, undefined4, undefined4);  // 0x004C6524  __stdcall
 undefined4 LMultDiv256(undefined4, undefined4);  // 0x004C65EC  __fastcall

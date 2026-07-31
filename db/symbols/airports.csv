@@ -1,4 +1,6 @@
 va,kind,name,display,source,confidence,notes,type
+0x00481150,func,?AtFriendlyAP@@YGDXZ,AtFriendlyAP,sms,confirmed,on the ground within 0xA5000 of the nearest airport (APNearest),char __stdcall AtFriendlyAP(void)
+0x0048F6A0,func,_APCommentProc,APCommentProc,sms,confirmed,"tower/LSO chatter proc: clear-for-takeoff, cat calls, ball calls, wind, welcome-back",
 0x004BA7E0,func,_APInit@0,APInit,sms,confirmed,clear the airport registry (0x27-max 0x134-byte AIRPORT records at _airports) and the carrier-deck occupancy table (0x58e870),undefined4 __stdcall APInit(void)
 0x004BA800,func,@APAdd@4,APAdd,sms,confirmed,register (or update by object id +0xe6) an AIRPORT record; up to 0x28 airports,undefined4 __fastcall APAdd(undefined4)
 0x004BA870,func,@APDelete@4,APDelete,sms,confirmed,"remove an AIRPORT by object id, compacting the registry",undefined4 __fastcall APDelete(undefined4)

@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 371 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 377 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -279,6 +279,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0047F740` | `CfigChecksum` | sms |  |
 | `0x0047F7A0` | `CN_ReadConfig` | sms |  |
 | `0x0047F930` | `CN_WriteConfig` | sms |  |
+| `0x0047F990` | `RunSimpleConnect` | sms | CN_ReadConfig(NET.DAT) + MP_Initialize with dialog feedback |
 | `0x004874C0` | `sapopensocket` | sms | SAP open socket - IPX Service Advertising Protocol; name-dispatched (label-only in a clean rebuild) |
 | `0x00487670` | `sapserverbroadcast` | sms |  |
 | `0x00487760` | `sapquery` | sms |  |
@@ -343,6 +344,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049AFF0` | `MOD_Initialize` | sms | top-level modem entry: capture appIO (CN_INFO+0xdac); MOD_InitializeAndConnect; set connection type DAT_00500304=2; carrier-detect debounce |
 | `0x0049B0D0` | `MOD_Shutdown` | sms | SER_Shutdown1 + Sleep + ModemHangup/AnswerMode + SER_Shutdown2/3 |
 | `0x0049B110` | `serIO` | sms |  |
+| `0x004A45E0` | `AddJanesStatsJOGC` | sms | build the Janes Online Gaming Community post-mission stats report (MP_Info + playerDamage rankings) |
+| `0x004A55F0` | `EveryoneHasChosenSides` | sms | all _humanChoseSide entries set |
+| `0x004A5620` | `ChooseSidesDialog` | sms | MP side-selection dialog over MPWaitEveryoneStatus/MPPlayerChoseSide |
+| `0x004A5760` | `FixChosenSides` | sms | rebalance when a side exceeds 5 players |
+| `0x004A5810` | `ChooseSidesDialog2` | sms | variant that verifies both sides are non-empty |
 | `0x004A5990` | `winsock_load` | sms |  |
 | `0x004A5CB0` | `winsock_cleanup` | sms |  |
 | `0x004A5CE0` | `winsock_handle_error` | sms |  |
@@ -487,10 +493,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Core shell / menu / dialog UI
 
-[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 195 named functions
+[`shell-ui.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/shell-ui.csv) · [page](shell-ui.md) — 199 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004053D0` | `IFMSetTime` | sms | in-flight-menu open/close: pause time compression + dim palette + VIEWSnapshot (IFM family per FlightMenu) |
 | `0x0040B8A0` | `MouseLoadPtr` | sms | load per-screen mouse pointer bitmap (PLANE.C etc.); reads _curScreen/_menuResolution |
 | `0x0040BA10` | `ShellSetup` | sms | shell chrome setup: palette save copies, mouse pointer PIC (MOUSE320/MOUSEPTR), SHADV32/64 + corner drop-shadow PICs by _menuResolution, steel pattern + palette for the in-flight menu (curScreen 0x10), MenuCreateRemaps |
 | `0x0040BC20` | `MaybeCampaignMenu` | sms | conditionally overlay the campaign action bar (MAINMENU.MNU) on a screen |
@@ -675,6 +682,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0048D260` | `DialogTextStreamSkip` | re | text-stream vtable slot 4: advances the cursor by n bytes, calling DialogTextStreamRead to refill the buffer whenever the remaining count runs short |
 | `0x004A0560` | `MakeNamesForList` | sms | concatenate all NAMES titles into one NUL-separated buffer for a DLG list widget |
 | `0x004A0610` | `ScreenDirty` | sms | invalidate every scanline (_lineStats = 0xFF) to force a full redraw |
+| `0x004A0640` | `DialogFadeout` | sms | palette fade for the Dialog family (shell-ui owns DialogSetup/Show/Update) |
+| `0x004A0710` | `DialogFadein` | sms |  |
 | `0x004A0810` | `DialogDrawBkgd` | sms | blit <name>.PIC full-screen as a dialog backdrop |
 | `0x004A0860` | `MainMenu` | sms | shell menu-bar service: Alt+F4 -> exit item 0x101/MaybeExitToDOS; menu group 2 -> CampaignMenu |
 | `0x004A08A0` | `ChooseActivity` | sms | TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection |
@@ -683,6 +692,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A18A0` | `CampaignSelect` | sms | the campaign chooser: glob *.CAM + mission\*.CAM, each campaign's <name>.TXT description loaded and its [section 1]/[section 2] title/body collected into a paged [page]-joined document; returns the pick (0xffff = cancel) |
 | `0x004A1C80` | `DialogPickFiles` | sms | generic file picker over GetNames(mask): captions Choose an object/mission/map by mask bit (0x8000 mission, 0x4000 map), list via MakeNamesForList, picked 0x30-byte record copied to _itemPicked |
 | `0x004A2220` | `GraphicPrefs` | sms | graphics preferences dialog (GRAF320/GRAFPREF): detail radio pairs (0x4eb6bc/0x4eb6b2), graphics flag words 0x4eb6be (default 0xdf99) / 0x4eb6b4 (default 0xfffa), FPU warning before enabling flag 0x10000 when _fpuType==0 |
+| `0x004A2480` | `SoundPrefs` | sms | the SNDPREF/SOUND320 sound-preferences dialog proc |
 | `0x004A26F0` | `DoDialogInfoBox` | sms | modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10) |
 | `0x004A27C0` | `DialogInfoBox` | sms | generic INFO320/INFO640 message-box builder+run |
 | `0x004C6710` | `QuickDist` | sms |  |
@@ -715,7 +725,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 276 named functions
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 279 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -933,6 +943,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004819F0` | `MISSIONShutdown` | sms | tear the mission down once (guard flag): WRShutdown, T_Shutdown(+DB), OBJShutdown, VIEWFree, HUDShutdown, CTShutdown, MPMissionShutdown, sound off, SAYShutdown, StreamersShutdown, free the mission RM/MM alloc id 1 |
 | `0x00481A70` | `MISSIONSuccess` | sms | imported by 15 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x00481A7B` | `MISSIONEnemiesAlive` | re | scan objects for a live enemy during the first 300 ticks (_Alive, _currentTime<300); mission start-grace test used near _AlmostHome; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x00481B80` | `AlmostHome` | sms | within 0xA50000 of APHomeAirport and below 0x4E2000 alt (RTB gating) |
+| `0x00481BD0` | `ConvertOldPreferredTargetId` | sms | widen an old 16-bit save target id to the 32-bit form (save compat) |
 | `0x00481C10` | `MISSIONTextProc` | sms | the .M mission-file interpreter (#485): whitespace-tokenizes the file via TextNextToken over a global cursor (_0x55281c/_0x5528c0), dispatches a keyword switch that reads numeric fields (TextNextNumber) and constructs the live mission — _T_AddObj per placement, then _WNGAdd (wing)/_GRPAdd (group)/_HARDLoad (loadout)/MAPAddSpecial, and _OBJAlias+_WPSetWaypoints for waypoint lists. Header directives set _layerName/_missionDLLName/_mapName/_missionHours; _CallMissionProc runs the .MC DLL |
 | `0x00483C90` | `TextNextToken` | re | whitespace-delimited token scanner over the parse cursor DAT_0055281c..DAT_005528c0. MC.md: MISSIONTextProc tokenizer FUN_00483c90; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D10` | `TextIsDelim` | re | predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -995,6 +1007,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A10E0` | `SingleMission` | sms | the single-mission browser: glob the .M files, read each mission's title from [section 1] of its .MT (falling back to the filename), sort (SortIndexByString), present the SNGLMISS dialog picker with MP filename sync, and on OK write _missionName (uppercased) + return 1 to launch |
 | `0x004A1DD0` | `BriefScreen` | sms | briefing/debrief screen: loads <mission>.MT (fallback [section 1..3] skeleton), AddStats for debrief (+ Jane's Online JOGC stats), one of 4 random backgrounds (BRIEFSCR/SC3/SCU/SCV, DEB* for debrief), CHATKey passthrough, mouse wheel-areas -> PgUp/PgDn, MP ready-status sync (0xd brief/0xe debrief/0x1a ready), campaignState 0x13 while briefing |
 | `0x004A2A30` | `AddStats` | sms | compose the marked-up debrief/logbook stats text: CAMPAIGN/MISSION AVERAGES/PLAYER WINGMAN/AIRBASE/MISSION sections, kills/losses/damage/landing grade/elapsed time lines, [center]/[bold]/[underline] tags |
+| `0x004A5970` | `CanReplay` | sms | mission replay available: a mission is loaded and not multiplayer |
 
 ### Collision (COL)
 
@@ -1024,10 +1037,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Sound / music (incl. WAIL32)
 
-[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 52 named functions
+[`sound.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/sound.csv) · [page](sound.md) — 53 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00412A90` | `ButtonSound` | sms | play _BUTTON1/_BUTTON2.11K via SingleSound (sound owns Single/BasicSound) |
 | `0x004328B0` | `InitMusic` | sms |  |
 | `0x00432920` | `ShutDownMidi` | sms |  |
 | `0x004329A0` | `DMusicOn` | sms |  |
@@ -1417,12 +1431,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 81 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 82 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00405490` | `VDOInit` | sms |  |
 | `0x004054B0` | `ZeroFrame` | sms | VDO frame clear; directly follows VDOInit@0x405490 |
+| `0x004127B0` | `ScreenDump` | sms | screenshot writer: mhwa/nh header + _curPalette + _cb framebuffer to screen%d.raw |
 | `0x004219B0` | `StopCobraSound` | sms |  |
 | `0x004219D0` | `StartCobraSound` | sms |  |
 | `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
@@ -1505,10 +1520,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 245 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 251 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x004129A0` | `PrintShapeName` | sms | empty release stub (single ret) of a shape-name debug print |
+| `0x00412A30` | `SetHShake` | sms | player-gated public entry over G_SetHShake (renderer owns G_SetHShake/GG_Shake) |
+| `0x00412A60` | `SetVShake` | sms |  |
 | `0x0041D740` | `?CreateSingleton@CDirDraw@@SAHXZ` | sms |  |
 | `0x0041D800` | `?DeleteSingleton@CDirDraw@@SAXXZ` | sms |  |
 | `0x0041D910` | `?Create@CDirDraw@@QAEHPAX@Z` | sms |  |
@@ -1565,6 +1583,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00479E10` | `G_FindFirstFile` | sms |  |
 | `0x00479EA0` | `G_FindNextFile` | sms |  |
 | `0x00479F20` | `G_FindClose` | sms |  |
+| `0x0047A5A0` | `InitGraphicsMode` | sms | G_Init + derive _xscale/_xshift/_yscale/_yshift from the mode dims |
+| `0x0047A610` | `InitGraphicsSystem` | sms | CDirDraw singleton bring-up (Create + SetCooperativeLevel); the #529 device layer |
 | `0x00486CF0` | `FPSInit` | sms |  |
 | `0x00486D10` | `FPSUpdate` | sms |  |
 | `0x00486DA0` | `FPSPrint` | sms |  |
@@ -1741,6 +1761,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004C9224` | `NoHorizon` | re | off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004C924C` | `SolidHorizon` | re | solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004C942C` | `GouraudHorizon` | re | Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10) |
+| `0x004C95C8` | `ScreenMove` | sms | offset a screen point along the view's _unitRight/_unitUp basis (RENDER_TILE unit) |
 | `0x004C9A88` | `AC_interpolate_linear_span` | sms | span innerloop of G__AC_Texture@0x4CA028 |
 | `0x004CA028` | `G__AC_Texture` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
 | `0x004CA1B4` | `interpolate_linear_span` | sms | span innerloop of G__Texture@0x4CAE38 |
@@ -1812,11 +1833,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 152 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 157 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00411910` | `OnTheGround` | sms | imported by 4 shipped .MC overlays (#491); named at this VA by FA.SMS |
+| `0x00414510` | `MessagesToPlayer` | sms | drain MSGReceive queues into PLANEEventProc/GVEventProc for the player entity (_cg) |
 | `0x00436B30` | `MoveObj` | sms |  |
 | `0x004382D0` | `MoveGoalValue` | re | resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00442640` | `CATGUYEventProc` | sms |  |
@@ -1844,6 +1866,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004443DA` | `GRAPHICAddClusterReleaseBody` | re | overlapping alternate entry / body of GRAPHICAddClusterRelease |
 | `0x00444560` | `GRAPHICAddSpecialDebris` | sms | scatter type-specific debris (wings/panels) drawn from the exploding object's own shape |
 | `0x004447A0` | `GRAPHICAddDevice` | sms | spawn the visual for a dropped device (chaff/flare/tank) as a GRAPHIC |
+| `0x0044B9B0` | `ROInit` | sms | pre-allocated reusable-object pool: T_AddObj records in _ro; size check vs class size + 0xDE |
+| `0x0044BA20` | `ROGet` | sms | grab a free pooled object (alive-bit + cooldown checks) |
+| `0x0044BAA0` | `RORemoveCurObj` | sms | return the current object to the pool with a cooldown |
 | `0x00462600` | `InitChain` | sms |  |
 | `0x00462620` | `RemoveFromChains` | sms |  |
 | `0x00462640` | `ChainRemoveCurObj` | re | unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
@@ -1909,6 +1934,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00474740` | `AmmoForClass` | sms | per-class ammo query; between GVEventProc and Alive in the objects run |
 | `0x004747C0` | `Alive` | sms | imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x0047CEB0` | `MANAdd` | sms |  |
+| `0x0047D0F0` | `MANRunAway` | sms | spawn runner.NT flee maneuvers via MANAdd (objects owns MANAdd) |
 | `0x0048D780` | `PLANESayProc` | sms |  |
 | `0x0048E8D0` | `OBJSayProc` | sms |  |
 | `0x0048EC40` | `PLANECommentProc` | sms |  |
@@ -2108,7 +2134,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 79 named functions
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 80 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -2163,6 +2189,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00417ED0` | `PotRudder` | sms |  |
 | `0x00417F00` | `Slew` | sms | compose yaw/pitch view offsets with object attitude via rotation matrices + ArcTan -> euler view angles (padlock/slew view math) |
 | `0x00481280` | `GetKeySlow` | sms |  |
+| `0x00492280` | `ShowSlewObj` | sms | draw the G_Box marker around _slewId (the input Slew unit: SlewKey/SlewObjListCollect) |
 | `0x00494270` | `ReadSticksRaw` | sms | poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10) |
 | `0x004942D0` | `InitJoysticks` | sms | joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions |
 | `0x00494430` | `GetJoystickType` | sms | JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4 |
@@ -2529,12 +2556,14 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 491 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 495 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00403700` | `usnfmain` | sms |  |
 | `0x00404C70` | `FlyingLoop` | sms |  |
+| `0x0041E370` | `SetConfig` | sms | command-line parser: /D /H /J /M /N switches + janes* globals + UCONFIG_Initialize |
+| `0x0041E8E0` | `WriteConfig` | sms | serialize devices/volumes/prefs/pilot to EA.CFG via SaveFile |
 | `0x0041E8F0` | `IsBrentDLL` | sms | PE/DLL loader family: directly precedes IsDLL@0x41E910 (claimed in #534) |
 | `0x0041E910` | `IsDLL` | sms |  |
 | `0x0041E990` | `VAToPtrInFile` | sms |  |
@@ -2553,6 +2582,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00476660` | `CreateGameThread` | sms |  |
 | `0x00476700` | `EndGame` | sms |  |
 | `0x004767F0` | `DisplayCopyright` | sms |  |
+| `0x00486E80` | `StartTimeThread` | sms | the 15ms timer thread: ticks + WRUpdatePalette + ASynchJoystick + GG_Shake |
+| `0x00487A10` | `WaitUntil` | sms | busy-wait on _timerTicks (the timer thread's counter) |
 | `0x00492740` | `doConfigurationScreen` | sms |  |
 | `0x004B27C0` | `UCONFIG_DMusic` | sms |  |
 | `0x004B2820` | `UCONFIG_SetVideoOptions` | sms |  |

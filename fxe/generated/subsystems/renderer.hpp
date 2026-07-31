@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 175/239 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
+// 179/245 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -21,6 +21,9 @@ extern u32 overflowQuotient;  // 0x0058F0E8  divide-overflow handler scratch: th
 extern u32 overflowSignMask;  // 0x0058F0F4  divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign
 
 // --- functions -------------------------------------------------------
+undefined4 PrintShapeName(void);  // 0x004129A0  __stdcall
+undefined4 SetHShake(undefined4, undefined4);  // 0x00412A30  __fastcall
+undefined4 SetVShake(undefined4, undefined4);  // 0x00412A60  __fastcall
 long ModeCallback(_DDSURFACEDESC *, void *);  // 0x0041E130  __stdcall
 undefined4 G_Tile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00447AA5  __fastcall
 unsigned short DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *);  // 0x0045CA70  __cdecl
@@ -193,6 +196,7 @@ void Horizon2d(void);  // 0x004C8FD4  __cdecl
 void NoHorizon(void);  // 0x004C9224  __cdecl
 void SolidHorizon(undefined4, undefined4);  // 0x004C924C  __cdecl
 undefined4 GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C942C  __cdecl
+undefined4 ScreenMove(undefined4, undefined4, undefined4, undefined4);  // 0x004C95C8  __stdcall
 undefined4 DoSetTmapRemaps(void);  // 0x004CC518  __fastcall
 undefined4 RemapYLRP(undefined4);  // 0x004CC7F4  __fastcall
 undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
@@ -242,6 +246,8 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x004789E0  ?InitSurfaceDesc@CDirDrawSurface@@SAXPAU_DDSURFACEDESC@@@Z -- signature not recovered
 // TODO(#453): 0x00478A00  ?Destroy@CDirDrawSurface@@QAEXXZ -- signature not recovered
 // TODO(#453): 0x00478AE0  ?Clear@CDirDrawSurface@@QAEJXZ -- signature not recovered
+// TODO(#453): 0x0047A5A0  InitGraphicsMode -- signature not recovered
+// TODO(#453): 0x0047A610  InitGraphicsSystem -- signature not recovered
 // TODO(#453): 0x00486CF0  FPSInit -- signature not recovered
 // TODO(#453): 0x00498A50  G_Visible -- signature not recovered
 // TODO(#453): 0x004991B0  G_CopyDriverName -- signature not recovered

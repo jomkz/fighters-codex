@@ -563,6 +563,12 @@ Full record: [`db/symbols/network.csv`](https://github.com/jomkz/fighters-codex/
 | `0x4B1DD0` | `validate_player` | id to `_player_info`, with liveness checks |
 | `0x4B1E00` | `clear_all_syncs` | reset the sync table |
 | `0x4B1E30` | `clear_all_sync_replies` | reset the sync-reply table |
+| `0x47F990` | `RunSimpleConnect` | `NET.DAT` config + `MP_Initialize` with dialog feedback |
+| `0x4A45E0` | `AddJanesStatsJOGC` | build the JOGC post-mission stats report |
+| `0x4A55F0` | `EveryoneHasChosenSides` | all players have picked a side |
+| `0x4A5620` | `ChooseSidesDialog` | MP side-selection dialog |
+| `0x4A5760` | `FixChosenSides` | rebalance an oversubscribed side |
+| `0x4A5810` | `ChooseSidesDialog2` | side-selection variant requiring both sides non-empty |
 
 ### IPX/SPX transport
 

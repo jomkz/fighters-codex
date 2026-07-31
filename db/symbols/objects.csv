@@ -1,5 +1,6 @@
 va,kind,name,display,source,confidence,notes,type
 0x00411910,func,_OnTheGround@0,OnTheGround,sms,confirmed,imported by 4 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall OnTheGround(void)
+0x00414510,func,?MessagesToPlayer@@YAHXZ,MessagesToPlayer,sms,confirmed,drain MSGReceive queues into PLANEEventProc/GVEventProc for the player entity (_cg),int __cdecl MessagesToPlayer(void)
 0x00436B30,func,_MoveObj@0,MoveObj,sms,confirmed,,undefined4 __stdcall MoveObj(void)
 0x004382D0,func,MoveGoalValue,,re,confirmed,resolve one move-goal operand by kind (heading/altitude/speed/...); executes CreateMoveGoal records for MoveObj; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,"undefined4 __fastcall MoveGoalValue(undefined4, undefined4)"
 0x0043846C,data,,,waiver,confirmed,MoveGoalValue switch jump-table / tail data (computed access),
@@ -28,6 +29,9 @@ va,kind,name,display,source,confidence,notes,type
 0x004443DA,func,GRAPHICAddClusterReleaseBody,,re,confirmed,overlapping alternate entry / body of GRAPHICAddClusterRelease,
 0x00444560,func,_GRAPHICAddSpecialDebris@16,GRAPHICAddSpecialDebris,sms,confirmed,scatter type-specific debris (wings/panels) drawn from the exploding object's own shape,"undefined4 __stdcall GRAPHICAddSpecialDebris(undefined4, undefined4, undefined4, undefined4)"
 0x004447A0,func,@GRAPHICAddDevice@12,GRAPHICAddDevice,sms,confirmed,spawn the visual for a dropped device (chaff/flare/tank) as a GRAPHIC,"undefined4 __fastcall GRAPHICAddDevice(undefined4, undefined4, undefined4)"
+0x0044B9B0,func,_ROInit@0,ROInit,sms,confirmed,pre-allocated reusable-object pool: T_AddObj records in _ro; size check vs class size + 0xDE,undefined4 __stdcall ROInit(void)
+0x0044BA20,func,_ROGet@8,ROGet,sms,confirmed,grab a free pooled object (alive-bit + cooldown checks),"undefined4 __stdcall ROGet(undefined4, undefined4)"
+0x0044BAA0,func,_RORemoveCurObj@0,RORemoveCurObj,sms,confirmed,return the current object to the pool with a cooldown,undefined4 __stdcall RORemoveCurObj(void)
 0x00462600,func,_InitChain@0,InitChain,sms,confirmed,,undefined4 __stdcall InitChain(void)
 0x00462620,func,_RemoveFromChains@0,RemoveFromChains,sms,confirmed,,undefined4 __stdcall RemoveFromChains(void)
 0x00462640,func,ChainRemoveCurObj,,re,confirmed,unlink the current object from a service chain head; clears in-chain flag (entity +0x01 bit1); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __fastcall ChainRemoveCurObj(u16 *)
@@ -93,6 +97,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00474740,func,@AmmoForClass@4,AmmoForClass,sms,confirmed,per-class ammo query; between GVEventProc and Alive in the objects run,undefined4 __fastcall AmmoForClass(undefined4)
 0x004747C0,func,@Alive@4,Alive,sms,confirmed,imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS,undefined4 __fastcall Alive(undefined4)
 0x0047CEB0,func,_MANAdd@24,MANAdd,sms,confirmed,,"undefined4 __stdcall MANAdd(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x0047D0F0,func,@MANRunAway@4,MANRunAway,sms,confirmed,spawn runner.NT flee maneuvers via MANAdd (objects owns MANAdd),undefined4 __fastcall MANRunAway(undefined4)
 0x0048D780,func,_PLANESayProc,PLANESayProc,sms,confirmed,,
 0x0048E8D0,func,_OBJSayProc,OBJSayProc,sms,confirmed,,
 0x0048EC40,func,_PLANECommentProc,PLANECommentProc,sms,confirmed,,

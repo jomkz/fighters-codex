@@ -8,13 +8,14 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 67/81 functions have a recovered signature; 0/0 globals have a recovered type.
+// 68/82 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
 // --- functions -------------------------------------------------------
 void VDOInit(void);  // 0x00405490  __fastcall
 void ZeroFrame(unsigned char *, long, long, short);  // 0x004054B0  __stdcall
+undefined4 ScreenDump(void);  // 0x004127B0  __stdcall
 undefined4 StopCobraSound(void);  // 0x004219B0  __stdcall
 undefined4 StartCobraSound(void);  // 0x004219D0  __stdcall
 undefined4 PlayCobra(undefined4);  // 0x00421A50  __stdcall

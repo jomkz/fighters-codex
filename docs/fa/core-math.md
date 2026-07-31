@@ -73,6 +73,11 @@ Full record: [`db/symbols/core-math.csv`](https://github.com/jomkz/fighters-code
 | `0x4C6C30` | `GetWordPointDelta` | 16-bit point delta |
 | `0x4C6D60` | `CpuId` | CPUID vendor/family probe (misc runtime) |
 | `0x4CCB88` | `ArcTan` | fixed-point arctangent |
+| `0x4124E0` | `SampleInit` | time-series sample ring init (tick + value records) |
+| `0x412550` | `SampleShutdown` | free a sample ring |
+| `0x412570` | `SampleUpdate` | push a timestamped sample |
+| `0x4125C0` | `SampleGet` | interpolated read-back (angle / 2×s16 / 3×s32 modes) |
+| `0x4B3010` | `CPUSpeed` | tick-calibrated CPU speed probe (returns `CpuId` results) |
 
 ## Open Questions
 
