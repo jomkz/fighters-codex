@@ -555,6 +555,14 @@ Full record: [`db/symbols/network.csv`](https://github.com/jomkz/fighters-codex/
 | `0x4B1240` | `NETIsAddrLocal` | test whether a `NET_ADDRESS` is one of this host's |
 | `0x4B1540` | `NETProcessEvent` | dispatch a transport event (msg/wParam/lParam) |
 | `0x44BF00` | `_SER_Read` | read from the serial-link transport |
+| `0x494BB0` | `noIO` | no-op I/O stub (precedes `MP_Initialize`) |
+| `0x499F90` | `computePacketCRC` | CRC over a `SERIAL_PACKET` (follows `setPacketInfo`) |
+| `0x49A380` | `InitializeQueue` | reset a `SERIAL_QUEUE` (precedes `updateQueueHead`) |
+| `0x4B18F0` | `scan_packet_queue` | walk a `_packet_queue` for matches |
+| `0x4B1B60` | `get_pkt_err_string` | packet-error code to message |
+| `0x4B1DD0` | `validate_player` | id to `_player_info`, with liveness checks |
+| `0x4B1E00` | `clear_all_syncs` | reset the sync table |
+| `0x4B1E30` | `clear_all_sync_replies` | reset the sync-reply table |
 
 ### IPX/SPX transport
 

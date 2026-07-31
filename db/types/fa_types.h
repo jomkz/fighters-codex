@@ -106,6 +106,8 @@ typedef struct NET_PLAYER_LIST       NET_PLAYER_LIST;
 typedef struct SERIAL_PACKET         SERIAL_PACKET;
 typedef struct SERIAL_PACKET_WRAPPER SERIAL_PACKET_WRAPPER;
 typedef struct SERIAL_QUEUE          SERIAL_QUEUE;
+typedef struct _packet_queue         _packet_queue; /* network: scan_packet_queue        */
+typedef struct _player_info          _player_info;  /* network: validate_player          */
 typedef struct sockaddr_ipx          sockaddr_ipx;  /* IPX transport address         */
 typedef struct sockaddr_in           sockaddr_in;   /* Winsock TCP/IP address        */
 typedef struct socket_state          socket_state;
