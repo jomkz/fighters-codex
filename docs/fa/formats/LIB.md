@@ -114,15 +114,24 @@ Certain filename prefixes are engine conventions that apply to files of any type
 stored in a `.LIB`. On extraction, `fx lib unpack` maps the characters
 `& * ? " < > | / \ :` to `_` (via `ealib_safe_name`) so output filenames are
 legal and byte-identical on every platform; of the prefixes below, only `&` is
-affected — `^`, `$`, and `_` extract as-is. The original names are preserved in
-memory for patching operations.
+affected — `^`, `$`, `#`, `~`, and `_` extract as-is. The original names are
+preserved in memory for patching operations.
 
 | Prefix | Convention | Applies to |
 |--------|-----------|------------|
 | `&` | Looping ambient / cockpit sound | `*.11K`, `*.5K`, `*.8K` |
 | `^` | Voice / radio callout (one-shot) | `*.11K`, `*.5K`, `*.8K` |
+| `#` | Radio speech phrase — a second voice family; many stems ship under both `#` and `^` (`#AARRRGH`/`^AARRRGH`, `#ABRFORM`/`^ABRFORM`) | `*.5K` |
+| `~` | Engine-internal / generated content: in FA_1, cockpit view art (`~<aircraft>[_<panel>].PIC` — `~A7_C`/`_L`/`_RH`, …); in FA_2, generated mission templates (`~AA7.M`, `~AASTOVL.M`, …) and the hidden-craft type records (`~MOTH.PT`/`.JT`/`.HUD`/`.PTS`, `~QUE.PT`) | `*.PIC`, `*.M`, `*.MT`, `*.MM`, `*.OT`, `*.JT`, `*.PT`, `*.PTS`, `*.HUD` |
 | `$` | 2D weapon / ordnance cockpit icon | `*.PIC` |
 | `_` | Aircraft skin / texture | `*.PIC` |
+
+Observed census against the retail archives (`fx lib ls`): FA_1 holds `~`
+`.PIC` ×229 and `$` `.PIC` ×99; FA_2 holds `#` `.5K` ×85, `^` `.5K` ×618,
+`&` ×191 (`.11K` ×112, `.5K` ×78, `.8K` ×1), `_` `.PIC` ×1158 (every FA_2
+PIC), and `~` ×726 (`.M` ×403, `.MT` ×246, `.MM` ×59, `.OT` ×8, `.JT` ×4,
+`.PT` ×3, `.HUD` ×2, `.PTS` ×1); FA_4C holds `^` `.11K` ×40. No other archive
+carries prefixed names.
 
 Example: `&AFTB2.11K` in the archive extracts to `_AFTB2.11K` on disk.
 
@@ -208,11 +217,11 @@ static const int lenextra[] = {0,0,0,0,0,0,0,0, 1, 2, 3, 4,  5,  6,  7,  8};
 | FA_1.LIB | `"1 "` | Install dir | `.FNT` ×15, `.PIC` ×1986 |
 | FA_2.LIB | `"2 "` | Install dir | Main asset archive — see extension inventory below |
 | FA_3.LIB | — | Disk 2 (Red) | `.PIC` ×822 (aircraft skin textures, raw), `.INF` ×269 (aircraft tech sheets, dcl) |
-| FA_4B.LIB | — | Install dir | `.11K` ×77, `.5K` ×9 |
+| FA_4B.LIB | — | Install dir | `.11K` ×77 |
 | FA_4C.LIB | `"4C"` | Disk 1 (Blue) | `.11K` ×44, `.PIC` ×43, `.CB8` ×4 |
-| FA_4D.LIB | — | Install dir | `.CB8` + `.11K` FMV footage |
-| FA_7.LIB | `"7 "` | Disk 1 (Blue) | `.FBC` ×355, `.VDO` ×355, `.11K` ×105, `.5K` ×1 |
-| FA_10.LIB | `"10"` | Disk 2 (Red) | `.CB8` ×9, `.11K` ×9 |
+| FA_4D.LIB | — | Install dir | `.11K` ×22 |
+| FA_7.LIB | `"7 "` | Disk 1 (Blue) | `.FBC` ×355, `.VDO` ×355, `.11K` ×104, `.5K` ×1 |
+| FA_10.LIB | `"10"` | Disk 2 (Red) | `.CB8` ×11, `.11K` ×11 |
 | FA_10B.LIB | `"AB"` | Disk 2 (Red) | `.CB8` ×10, `.11K` ×10 |
 | FA_11.LIB | `"41"` | Disk 2 (Red) | `.CB8` ×10, `.11K` ×10 |
 | FA_11B.LIB | — | Disk 2 (Red) | `.CB8` ×8, `.11K` ×8 |
@@ -286,6 +295,16 @@ header still have no written spec — no FA archive contains either flavour, so
 writing the decoders needs samples from the wider Fighters family (ATF/USNF).
 
 *Status: open — re-static (#54)*
+
+### 2. What distinguishes the `#` and `^` speech families
+
+Many phrase stems ship under both prefixes (`#AARRRGH`/`^AARRRGH`,
+`#ABRFORM`/`^ABRFORM`) but the sets are not identical (`#` ×85 vs `^` ×618 in
+FA_2). Two voices, two radio filters, or two speakers (tower vs wingman) are
+all consistent with the names; the sound dispatch code that chooses between
+them has not been traced.
+
+*Status: open — re-asset*
 
 ## Related
 
