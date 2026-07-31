@@ -123,6 +123,14 @@ decoder. All PIC files in `FA_3.LIB` are this format. These are encyclopedia
 reference images (photographs, diagrams), not the 3D aircraft skin textures
 (which use format 0 and carry the `_` prefix in FA_2.LIB).
 
+### Name prefixes
+
+Three PIC namespaces exist in the retail archives, marked by filename prefix
+(an engine convention — see [LIB.md](LIB.md#filename-conventions)): `~` cockpit
+view art in FA_1 (`~<aircraft>[_<panel>].PIC`, ×229), `$` weapon/ordnance
+cockpit icons in FA_1 (×99), and `_` on every FA_2 PIC (aircraft skin and
+shell art, ×1158). Unprefixed PICs (FA_1 ×1658) are the shell's screen art.
+
 ## File Inventory
 
 ### Filename Conventions

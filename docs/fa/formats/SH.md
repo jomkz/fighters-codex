@@ -77,7 +77,7 @@ For bulk vertex edits (e.g. scaling an entire section), the community workflow
 converts the vertex file to a spreadsheet, applies transformations numerically,
 then reconverts before importing back into FASHion.
 
-SH files with x86-only geometry (65/1275 in FA — see Round-Trip Notes) cannot
+SH files with x86-only geometry (17/1275 in FA — see Round-Trip Notes) cannot
 be edited with FASHion and require direct x86 disassembly for modification.
 
 ## File Layout
@@ -484,12 +484,15 @@ sub-stream. The original x86 need never execute — the switch is what matters.
 | Shapes embedding x86 blocks (reference `do_start_interp`) | 208 | structural parse |
 | …reading `_PL*` articulation state | 134 | structural parse |
 | …reading effect state (`brentObjId`/`_SAMcount`/`@HARDNumLoaded@8`) | 12 | structural parse |
-| Shapes producing **no** static OBJ geometry (x86 gates everything) | 65 | `fx` codec ([Round-Trip Notes](#round-trip-notes)) |
+| Shapes producing **no** static OBJ geometry (x86 gates everything) | 17 | `fx` codec ([Round-Trip Notes](#round-trip-notes)) |
 
-The 65 fully-gated shapes are procedural effects (`FIRE.SH`, `FLARE.SH`,
-`DEBRIS.SH`, `EXP.SH`, `CLOUD*.SH`, …) and a few complex models (`AC130.SH`);
-the rest are articulated aircraft whose base mesh extracts normally but whose
-moving-part variants sit behind these switches. The evidence script is
+The 17 fully-gated shapes (swept 1275/1275 against the retail `FA_2.LIB`) are
+fifteen procedural effects (`BULLET.SH`, `CHAFF.SH`, `CLOUDS.SH`, `CRATER.SH`,
+`DEBRIS.SH`, `EXP.SH`, `FIRE.SH`, `FLARE.SH`, `MOON.SH`, `MOTHB.SH`, `SMOKE.SH`,
+`SUN.SH`, `TRACER.SH`, `WAVE1.SH`, `WAVE2.SH`) and two human figures
+(`SOLDIER.SH`, `CATGUY.SH`). Articulated aircraft are *not* in this set — their
+base mesh extracts normally and only the moving-part variants sit behind
+x86 switches. The evidence script is
 [`AnalyzeSHX86.java`](https://github.com/jomkz/fighters-codex/blob/main/scripts/ghidra/AnalyzeSHX86.java).
 
 ### .PTS distribution files
@@ -831,19 +834,22 @@ Extraction coverage, tested against all 1275 `.SH` files from FA_2.LIB:
 
 | Result | Count | % |
 |--------|-------|---|
-| Vertices + faces extracted | 1257 | 98.6% |
-| No geometry (no OBJ output) | 18 | 1.4% |
+| Vertices + faces extracted | 1258 | 98.7% |
+| No geometry (no OBJ output) | 17 | 1.3% |
 | Parser crash / error | 0 | 0% |
 
 (The counts are for the default state — finest LOD, full detail, intact,
 frame 0. Since the structural walk landed, per-shape face counts are one
 coherent state, no longer the union of every LOD/frame/damage block.)
 
-The remaining **no-geometry files** are pure procedural effects that emit their
-geometry entirely from x86 (no static VertexBuffer/Face at all): `FIRE.SH`,
-`FLARE.SH`, `BULLET.SH`, `CHAFF.SH`, `CLOUD*.SH`, `CRATER.SH`, `DEBRIS.SH`,
-`EXP.SH`, `EJECT.SH`, etc. (Complex airframes that were previously x86-only, such
-as `AC130.SH`, now recover their facets via the walk-through harvest above.)
+The remaining **no-geometry files** emit their geometry entirely from x86 (no
+static VertexBuffer/Face at all). The full set of 17: `BULLET.SH`, `CHAFF.SH`,
+`CLOUDS.SH`, `CRATER.SH`, `DEBRIS.SH`, `EXP.SH`, `FIRE.SH`, `FLARE.SH`,
+`MOON.SH`, `MOTHB.SH`, `SMOKE.SH`, `TRACER.SH`, `WAVE1.SH`, `WAVE2.SH` — plus
+the two human figures `SOLDIER.SH` and `CATGUY.SH`, and the sky disc `SUN.SH`.
+`EJECT.SH` is **not** in the set — it extracts 106 vertices / 342 faces.
+(Complex airframes that were previously x86-only, such as `AC130.SH`, now
+recover their facets via the walk-through harvest above.)
 
 **Shadow models** (`*_S.SH`): flat ground silhouettes, Z=0, typically 6-20 faces.
 
@@ -904,7 +910,7 @@ The runtime contract of these regions is specified in
 `FF25` trampoline reads of `_PL*`/effect globals, and the `do_start_interp`
 re-entry that selects a geometry sub-stream. What remains is not a spec gap but
 a **codec limitation**: the static `fx` read path skips these regions, so the
-65 fully-gated shapes still export no OBJ (see [Round-Trip Notes](#round-trip-notes)),
+17 fully-gated shapes still export no OBJ (see [Round-Trip Notes](#round-trip-notes)),
 and the exhaustive per-shape case-value tables are carried with attribution to
 OpenFA rather than re-derived here.
 
