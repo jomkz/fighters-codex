@@ -33,6 +33,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00412B50,func,@StringToNumber@4,StringToNumber,sms,confirmed,,undefined4 __fastcall StringToNumber(undefined4)
 0x00412CB0,func,_NearestObj@16,NearestObj,sms,confirmed,,"undefined4 __stdcall NearestObj(undefined4, undefined4, undefined4, undefined4)"
 0x00412DA0,func,_LimitAngle@12,LimitAngle,sms,confirmed,,"undefined4 __stdcall LimitAngle(undefined4, undefined4, undefined4)"
+0x00412DF0,func,?CompareMemory@@YAHPBX0I@Z,CompareMemory,sms,confirmed,memcmp-like; directly follows the library's 0x411950-0x412DE2 primary range,"int __cdecl CompareMemory(const void *, const void *, unsigned int)"
 0x0044A0A0,func,_MultDiv32@12,MultDiv32,sms,confirmed,,"undefined4 __stdcall MultDiv32(undefined4, undefined4, undefined4)"
 0x004561A0,func,@Percent@4,Percent,sms,confirmed,,undefined4 __fastcall Percent(undefined4)
 0x004561C0,func,@InitRand@4,InitRand,sms,confirmed,,undefined4 __fastcall InitRand(undefined4)
@@ -40,3 +41,20 @@ va,kind,name,display,source,confidence,notes,type
 0x004562D0,func,_Rand16@0,Rand16,sms,confirmed,,undefined4 __stdcall Rand16(void)
 0x004562E0,func,_Rand8@0,Rand8,sms,confirmed,,undefined4 __stdcall Rand8(void)
 0x004562F0,func,@Rand@4,Rand,sms,confirmed,,undefined4 __fastcall Rand(undefined4)
+0x004C64B8,func,_Swapmem@12,Swapmem,sms,confirmed,,"undefined4 __stdcall Swapmem(undefined4, undefined4, undefined4)"
+0x004C6524,func,_DoWordToString@16,DoWordToString,sms,confirmed,,"undefined4 __stdcall DoWordToString(undefined4, undefined4, undefined4, undefined4)"
+0x004C65EC,func,@LMultDiv256@8,LMultDiv256,sms,confirmed,,"undefined4 __fastcall LMultDiv256(undefined4, undefined4)"
+0x004C65F8,func,@LFMult@8,LFMult,sms,confirmed,,"undefined4 __fastcall LFMult(undefined4, undefined4)"
+0x004C6604,func,@LFDiv@8,LFDiv,sms,confirmed,,"undefined4 __fastcall LFDiv(undefined4, undefined4)"
+0x004C6614,func,@Abs@4,Abs,sms,confirmed,,undefined4 __fastcall Abs(undefined4)
+0x004C6620,func,@F24ToPA@4,F24ToPA,sms,confirmed,,undefined4 __fastcall F24ToPA(undefined4)
+0x004C6638,func,@PAToF24@4,PAToF24,sms,confirmed,,undefined4 __fastcall PAToF24(undefined4)
+0x004C6654,func,_Rotate2@8,Rotate2,sms,confirmed,,"undefined4 __stdcall Rotate2(undefined4, undefined4)"
+0x004C6744,func,_CpymemX@12,CpymemX,sms,confirmed,generic copy primitive (renderer is the main caller); the screen-buffer Copy* family lives in video,"undefined4 __stdcall CpymemX(undefined4, undefined4, undefined4)"
+0x004C6838,func,_CpymemXRemap@12,CpymemXRemap,sms,confirmed,,"undefined4 __stdcall CpymemXRemap(undefined4, undefined4, undefined4)"
+0x004C686C,func,_Sprintf,Sprintf,sms,confirmed,the engine's own printf (296 call sites),
+0x004C6A84,func,FormatField,FormatField,sms,confirmed,,
+0x004C6ADC,func,NumberToAscii,NumberToAscii,sms,confirmed,,
+0x004C6C30,func,_GetWordPointDelta@12,GetWordPointDelta,sms,confirmed,,"undefined4 __stdcall GetWordPointDelta(undefined4, undefined4, undefined4)"
+0x004C6D60,func,_CpuId@0,CpuId,sms,confirmed,misc-runtime group (Checksum/MaybeExitToDOS precedent),undefined4 __stdcall CpuId(void)
+0x004CCB88,func,@ArcTan@8,ArcTan,sms,confirmed,,"undefined4 __fastcall ArcTan(undefined4, undefined4)"

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Core math & runtime utility library -- FA.EXE
-// 39/41 functions have a recovered signature; 0/0 globals have a recovered type.
+// 54/59 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::core_math {
 
@@ -45,6 +45,7 @@ undefined4 StringIsNumber(undefined4);  // 0x00412B00  __fastcall
 undefined4 StringToNumber(undefined4);  // 0x00412B50  __fastcall
 undefined4 NearestObj(undefined4, undefined4, undefined4, undefined4);  // 0x00412CB0  __stdcall
 undefined4 LimitAngle(undefined4, undefined4, undefined4);  // 0x00412DA0  __stdcall
+int CompareMemory(const void *, const void *, unsigned int);  // 0x00412DF0  __cdecl
 undefined4 MultDiv32(undefined4, undefined4, undefined4);  // 0x0044A0A0  __stdcall
 undefined4 Percent(undefined4);  // 0x004561A0  __fastcall
 undefined4 InitRand(undefined4);  // 0x004561C0  __fastcall
@@ -52,11 +53,28 @@ undefined4 Rand32(undefined4);  // 0x004561D0  __fastcall
 undefined4 Rand16(void);  // 0x004562D0  __stdcall
 undefined4 Rand8(void);  // 0x004562E0  __stdcall
 undefined4 Rand(undefined4);  // 0x004562F0  __fastcall
+undefined4 Swapmem(undefined4, undefined4, undefined4);  // 0x004C64B8  __stdcall
+undefined4 DoWordToString(undefined4, undefined4, undefined4, undefined4);  // 0x004C6524  __stdcall
+undefined4 LMultDiv256(undefined4, undefined4);  // 0x004C65EC  __fastcall
+undefined4 LFMult(undefined4, undefined4);  // 0x004C65F8  __fastcall
+undefined4 LFDiv(undefined4, undefined4);  // 0x004C6604  __fastcall
+undefined4 Abs(undefined4);  // 0x004C6614  __fastcall
+undefined4 F24ToPA(undefined4);  // 0x004C6620  __fastcall
+undefined4 PAToF24(undefined4);  // 0x004C6638  __fastcall
+undefined4 Rotate2(undefined4, undefined4);  // 0x004C6654  __stdcall
+undefined4 CpymemX(undefined4, undefined4, undefined4);  // 0x004C6744  __stdcall
+undefined4 CpymemXRemap(undefined4, undefined4, undefined4);  // 0x004C6838  __stdcall
+undefined4 GetWordPointDelta(undefined4, undefined4, undefined4);  // 0x004C6C30  __stdcall
+undefined4 CpuId(void);  // 0x004C6D60  __stdcall
+undefined4 ArcTan(undefined4, undefined4);  // 0x004CCB88  __fastcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x00411A20  LibraryStartup -- signature not recovered
 // TODO(#453): 0x00411A30  LibraryShutdown -- signature not recovered
+// TODO(#453): 0x004C686C  Sprintf -- signature not recovered
+// TODO(#453): 0x004C6A84  FormatField -- signature not recovered
+// TODO(#453): 0x004C6ADC  NumberToAscii -- signature not recovered
 
 }  // namespace fxe::fa::core_math

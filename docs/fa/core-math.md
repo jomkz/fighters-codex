@@ -55,6 +55,24 @@ Full record: [`db/symbols/core-math.csv`](https://github.com/jomkz/fighters-code
 | `0x4562F0` | `Rand` | pseudo-random helper (`Rand8`/`Rand16`/`Rand32` widths, `InitRand` seeds) |
 | `0x4561A0` | `Percent` | percentage / ratio helper |
 | `0x44A0A0` | `MultDiv32` | 32-bit multiply-then-divide (overflow-safe scale) |
+| `0x412DF0` | `CompareMemory` | memcmp-like compare (follows the primary range) |
+| `0x4C64B8` | `Swapmem` | swap two memory blocks |
+| `0x4C6524` | `DoWordToString` | 16-bit value to decimal string |
+| `0x4C65EC` | `LMultDiv256` | (a*b)/256 long multiply-divide |
+| `0x4C65F8` | `LFMult` | F24.8 fixed-point multiply |
+| `0x4C6604` | `LFDiv` | F24.8 fixed-point divide |
+| `0x4C6614` | `Abs` | integer absolute value (155 call sites) |
+| `0x4C6620` | `F24ToPA` | F24.8 angle to packed-angle |
+| `0x4C6638` | `PAToF24` | packed-angle to F24.8 |
+| `0x4C6654` | `Rotate2` | rotate a 2-vector by an angle |
+| `0x4C6744` | `CpymemX` | extended memory copy (renderer's main copy primitive) |
+| `0x4C6838` | `CpymemXRemap` | copy through a remap table |
+| `0x4C686C` | `Sprintf` | the engine's own printf (296 call sites) |
+| `0x4C6A84` | `FormatField` | fixed-width field formatter |
+| `0x4C6ADC` | `NumberToAscii` | number to ASCII with separators |
+| `0x4C6C30` | `GetWordPointDelta` | 16-bit point delta |
+| `0x4C6D60` | `CpuId` | CPUID vendor/family probe (misc runtime) |
+| `0x4CCB88` | `ArcTan` | fixed-point arctangent |
 
 ## Open Questions
 
