@@ -142,6 +142,10 @@ Full record: [`db/symbols/shell-ui.csv`](https://github.com/jomkz/fighters-codex
 | `0x4A18A0` | `CampaignSelect` | campaign chooser over `.CAM` + `<name>.TXT` |
 | `0x4A1C80` | `DialogPickFiles` | generic object/mission/map picker |
 | `0x4A2220` | `GraphicPrefs` | graphics preferences dialog |
+| `0x4053D0` | `IFMSetTime` | in-flight-menu open/close: pause time, dim palette, snapshot view |
+| `0x4A0640` | `DialogFadeout` | palette fade out for the Dialog family |
+| `0x4A0710` | `DialogFadein` | palette fade in for the Dialog family |
+| `0x4A2480` | `SoundPrefs` | the `SNDPREF`/`SOUND320` sound-preferences dialog |
 
 ## Open Questions
 

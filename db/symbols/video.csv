@@ -1,6 +1,7 @@
 va,kind,name,display,source,confidence,notes,type
 0x00405490,func,?VDOInit@@YIXXZ,VDOInit,sms,confirmed,,void __fastcall VDOInit(void)
 0x004054B0,func,?ZeroFrame@@YGXPAEJJF@Z,ZeroFrame,sms,confirmed,VDO frame clear; directly follows VDOInit@0x405490,"void __stdcall ZeroFrame(unsigned char *, long, long, short)"
+0x004127B0,func,_ScreenDump@0,ScreenDump,sms,confirmed,screenshot writer: mhwa/nh header + _curPalette + _cb framebuffer to screen%d.raw,undefined4 __stdcall ScreenDump(void)
 0x004219B0,func,_StopCobraSound@0,StopCobraSound,sms,confirmed,,undefined4 __stdcall StopCobraSound(void)
 0x004219D0,func,_StartCobraSound@0,StartCobraSound,sms,confirmed,,undefined4 __stdcall StartCobraSound(void)
 0x00421A50,func,_PlayCobra@4,PlayCobra,sms,confirmed,imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS,undefined4 __stdcall PlayCobra(undefined4)

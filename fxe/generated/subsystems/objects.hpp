@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 132/149 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
+// 137/154 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -45,6 +45,7 @@ extern u8 wasOnGround;  // 0x00571420  previous-frame ground contact, fed to _PL
 
 // --- functions -------------------------------------------------------
 undefined4 OnTheGround(void);  // 0x00411910  __stdcall
+int MessagesToPlayer(void);  // 0x00414510  __cdecl
 undefined4 MoveObj(void);  // 0x00436B30  __stdcall
 undefined4 MoveGoalValue(undefined4, undefined4);  // 0x004382D0  __fastcall
 undefined4 CATGUYDraw(undefined4);  // 0x00442AB0  __stdcall
@@ -64,6 +65,9 @@ undefined4 GRAPHICAddDebris(undefined4, undefined4, undefined4, undefined4, unde
 undefined4 GRAPHICAddClusterRelease(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004443D0  __stdcall
 undefined4 GRAPHICAddSpecialDebris(undefined4, undefined4, undefined4, undefined4);  // 0x00444560  __stdcall
 undefined4 GRAPHICAddDevice(undefined4, undefined4, undefined4);  // 0x004447A0  __fastcall
+undefined4 ROInit(void);  // 0x0044B9B0  __stdcall
+undefined4 ROGet(undefined4, undefined4);  // 0x0044BA20  __stdcall
+undefined4 RORemoveCurObj(void);  // 0x0044BAA0  __stdcall
 undefined4 InitChain(void);  // 0x00462600  __stdcall
 undefined4 RemoveFromChains(void);  // 0x00462620  __stdcall
 void ChainRemoveCurObj(u16 *);  // 0x00462640  __fastcall
@@ -125,6 +129,7 @@ undefined4 NPCSetReact(undefined4, undefined4, undefined4);  // 0x00474650  __fa
 undefined4 AmmoForClass(undefined4);  // 0x00474740  __fastcall
 undefined4 Alive(undefined4);  // 0x004747C0  __fastcall
 undefined4 MANAdd(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0047CEB0  __stdcall
+undefined4 MANRunAway(undefined4);  // 0x0047D0F0  __fastcall
 undefined4 OBJGet(undefined4);  // 0x00491240  __fastcall
 undefined4 OBJInit(undefined4);  // 0x00491250  __stdcall
 undefined4 OBJShutdown(void);  // 0x004912C0  __stdcall

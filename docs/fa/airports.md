@@ -84,6 +84,8 @@ Full record: [`db/symbols/airports.csv`](https://github.com/jomkz/fighters-codex
 | `0x4BE6A0` | `APApproachPath` | glideslope steering to the home field |
 | `0x4BE8E0` | `APTeleport` | free-flight jump to the nearest airport |
 | `0x4BEB90` | `APCheckCarrier` | attach/detach a parked aircraft to a carrier deck |
+| `0x481150` | `AtFriendlyAP` | on the ground near the nearest airport |
+| `0x48F6A0` | `APCommentProc` | tower/LSO chatter (takeoff/cat/ball/wind/welcome calls) |
 
 ## Open Questions
 

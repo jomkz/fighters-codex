@@ -1,4 +1,5 @@
 va,kind,name,display,source,confidence,notes,type
+0x00401000,func,,,waiver,confirmed,vendored PKWARE DCL unit (not first-party): _explode + its FUN_ helper table at 0x401180-0x401680,
 0x00412FC0,func,_cdpath,cdpath,sms,confirmed,scan logical drives for the FA CD (GetDriveTypeA==DRIVE_CDROM + probe fopen); caches _CDPATH,
 0x00435C60,func,@MMInit@4,MMInit,sms,confirmed,alloc handle table operator_new(count*0x1C); thread all handles onto free list; GetSystemInfo page size; sets mm_initialized,undefined4 __fastcall MMInit(undefined4)
 0x00435D40,func,@MMShutdown@0,MMShutdown,sms,confirmed,MMFreeAllId for ids 0..0x12 (19 pools) then free handle array; clears mm_initialized,undefined4 __fastcall MMShutdown(void)

@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 52/79 functions have a recovered signature; 1/6 globals have a recovered type.
+// 53/80 functions have a recovered signature; 1/6 globals have a recovered type.
 
 namespace fxe::fa::input {
 
@@ -40,6 +40,7 @@ unsigned short KeyRudder(short, unsigned short);  // 0x00417D10  __cdecl
 unsigned short PotThrottle(short, unsigned short);  // 0x00417D80  __cdecl
 unsigned short PotRudder(short, unsigned short);  // 0x00417ED0  __cdecl
 undefined4 Slew(undefined4, undefined4, undefined4, undefined4);  // 0x00417F00  __stdcall
+void ShowSlewObj(void);  // 0x00492280  __cdecl
 undefined4 ReadSticksRaw(void);  // 0x00494270  __fastcall
 undefined4 InitJoysticks(void);  // 0x004942D0  __stdcall
 JOYRESULT GetJoystickType(unsigned long);  // 0x00494430  __cdecl

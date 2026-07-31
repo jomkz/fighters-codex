@@ -153,6 +153,9 @@ Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex
 | `0x4A10E0` | `SingleMission` | single-mission browser + launcher |
 | `0x486160` | `MISSIONEndScenario` | multiplayer end-condition test |
 | `0x485820` | `KillStats` | tally a kill into its category bucket |
+| `0x481B80` | `AlmostHome` | near the home airport and low (RTB gating) |
+| `0x481BD0` | `ConvertOldPreferredTargetId` | widen an old 16-bit save target id |
+| `0x4A5970` | `CanReplay` | replay available: mission loaded and single-player |
 
 ## Mission runtime — the `.M` interpreter (#485)
 

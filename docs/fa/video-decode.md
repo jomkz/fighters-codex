@@ -99,6 +99,7 @@ Full record: [`db/symbols/video.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x4AE350` | `CenterPrint` | centered-text helper (VDO subtitle print) |
 | `0x4AF030` | `FileExists` | VDO unit's file probe |
 | `0x4AF050` | `FileSize` | VDO unit's file-size query |
+| `0x4127B0` | `ScreenDump` | screenshot writer (`mhwa`/`nh` header + palette + framebuffer) |
 
 ### Vendored libjpeg
 

@@ -51,6 +51,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00417ED0,func,?PotRudder@@YAGFG@Z,PotRudder,sms,confirmed,,"unsigned short __cdecl PotRudder(short, unsigned short)"
 0x00417F00,func,_Slew@16,Slew,sms,confirmed,compose yaw/pitch view offsets with object attitude via rotation matrices + ArcTan -> euler view angles (padlock/slew view math),"undefined4 __stdcall Slew(undefined4, undefined4, undefined4, undefined4)"
 0x00481280,func,_GetKeySlow,GetKeySlow,sms,confirmed,,
+0x00492280,func,?ShowSlewObj@@YAXXZ,ShowSlewObj,sms,confirmed,draw the G_Box marker around _slewId (the input Slew unit: SlewKey/SlewObjListCollect),void __cdecl ShowSlewObj(void)
 0x00494270,func,@ReadSticksRaw@0,ReadSticksRaw,sms,confirmed,poll X/throttle/rudder/POV via ReadDevice gated by joystickFunctions bits (1/4/8/0x10),undefined4 __fastcall ReadSticksRaw(void)
 0x004942D0,func,_InitJoysticks@0,InitJoysticks,sms,confirmed,joyGetNumDevs (cap 16); probe each joyGetPos+joyGetDevCapsA(0x194) into joystickCaps; build joystickMask; assign X/Y/throttle/rudder/POV device roles -> joystickFunctions,undefined4 __stdcall InitJoysticks(void)
 0x00494430,func,?GetJoystickType@@YA?AW4JOYRESULT@@K@Z,GetJoystickType,sms,confirmed,JOYRESULT enum: 4=uninit 3=absent 0=legacy(JOYINFO) 1=extended(JOYINFOEX); decides by caps axes<3 && buttons<4,JOYRESULT __cdecl GetJoystickType(unsigned long)

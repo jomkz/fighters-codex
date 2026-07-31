@@ -1,4 +1,7 @@
 va,kind,name,display,source,confidence,notes,type
+0x004129A0,func,_PrintShapeName@0,PrintShapeName,sms,confirmed,empty release stub (single ret) of a shape-name debug print,undefined4 __stdcall PrintShapeName(void)
+0x00412A30,func,@SetHShake@8,SetHShake,sms,confirmed,player-gated public entry over G_SetHShake (renderer owns G_SetHShake/GG_Shake),"undefined4 __fastcall SetHShake(undefined4, undefined4)"
+0x00412A60,func,@SetVShake@8,SetVShake,sms,confirmed,,"undefined4 __fastcall SetVShake(undefined4, undefined4)"
 0x0041D740,func,?CreateSingleton@CDirDraw@@SAHXZ,,sms,confirmed,,
 0x0041D800,func,?DeleteSingleton@CDirDraw@@SAXXZ,,sms,confirmed,,
 0x0041D910,func,?Create@CDirDraw@@QAEHPAX@Z,,sms,confirmed,,
@@ -62,6 +65,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00479E10,func,_G_FindFirstFile@8,G_FindFirstFile,sms,confirmed,,"undefined4 __stdcall G_FindFirstFile(undefined4, undefined4)"
 0x00479EA0,func,_G_FindNextFile@8,G_FindNextFile,sms,confirmed,,"undefined4 __stdcall G_FindNextFile(undefined4, undefined4)"
 0x00479F20,func,_G_FindClose@4,G_FindClose,sms,confirmed,,undefined4 __stdcall G_FindClose(undefined4)
+0x0047A5A0,func,_InitGraphicsMode,InitGraphicsMode,sms,confirmed,G_Init + derive _xscale/_xshift/_yscale/_yshift from the mode dims,
+0x0047A610,func,_InitGraphicsSystem,InitGraphicsSystem,sms,confirmed,CDirDraw singleton bring-up (Create + SetCooperativeLevel); the #529 device layer,
 0x00486CF0,func,_FPSInit,FPSInit,sms,confirmed,,
 0x00486D10,func,_FPSUpdate@0,FPSUpdate,sms,confirmed,,undefined4 __stdcall FPSUpdate(void)
 0x00486DA0,func,@FPSPrint@4,FPSPrint,sms,confirmed,,undefined4 __fastcall FPSPrint(undefined4)
@@ -243,6 +248,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004C9224,func,NoHorizon,,re,confirmed,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NoHorizon(void)
 0x004C924C,func,_SolidHorizon,SolidHorizon,re,confirmed,"solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand","void __cdecl SolidHorizon(undefined4, undefined4)"
 0x004C942C,func,_GouraudHorizon,GouraudHorizon,re,inferred,"Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10)","undefined4 __cdecl GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004C95C8,func,_ScreenMove@16,ScreenMove,sms,confirmed,offset a screen point along the view's _unitRight/_unitUp basis (RENDER_TILE unit),"undefined4 __stdcall ScreenMove(undefined4, undefined4, undefined4, undefined4)"
 0x004C9A88,func,AC_interpolate_linear_span,AC_interpolate_linear_span,sms,confirmed,span innerloop of G__AC_Texture@0x4CA028,
 0x004CA028,func,_G__AC_Texture,G__AC_Texture,sms,confirmed,not a C function (#479): bitmap in ESI and span state in EAX/EBX,!asm
 0x004CA1B4,func,interpolate_linear_span,interpolate_linear_span,sms,confirmed,span innerloop of G__Texture@0x4CAE38,

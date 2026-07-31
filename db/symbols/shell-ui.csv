@@ -1,4 +1,5 @@
 va,kind,name,display,source,confidence,notes,type
+0x004053D0,func,?IFMSetTime@@YAXD@Z,IFMSetTime,sms,confirmed,in-flight-menu open/close: pause time compression + dim palette + VIEWSnapshot (IFM family per FlightMenu),void __cdecl IFMSetTime(char)
 0x0040B8A0,func,?MouseLoadPtr@@YGXXZ,MouseLoadPtr,sms,confirmed,load per-screen mouse pointer bitmap (PLANE.C etc.); reads _curScreen/_menuResolution,void __stdcall MouseLoadPtr(void)
 0x0040BA10,func,?ShellSetup@@YGXXZ,ShellSetup,sms,confirmed,"shell chrome setup: palette save copies, mouse pointer PIC (MOUSE320/MOUSEPTR), SHADV32/64 + corner drop-shadow PICs by _menuResolution, steel pattern + palette for the in-flight menu (curScreen 0x10), MenuCreateRemaps",void __stdcall ShellSetup(void)
 0x0040BC20,func,?MaybeCampaignMenu@@YGXPADJJD@Z,MaybeCampaignMenu,sms,confirmed,conditionally overlay the campaign action bar (MAINMENU.MNU) on a screen,"void __stdcall MaybeCampaignMenu(char *, long, long, char)"
@@ -183,6 +184,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0048D260,func,DialogTextStreamSkip,DialogTextStreamSkip,re,confirmed,"text-stream vtable slot 4: advances the cursor by n bytes, calling DialogTextStreamRead to refill the buffer whenever the remaining count runs short","void __cdecl DialogTextStreamSkip(void *, int)"
 0x004A0560,func,_MakeNamesForList@0,MakeNamesForList,sms,confirmed,concatenate all NAMES titles into one NUL-separated buffer for a DLG list widget,undefined4 __stdcall MakeNamesForList(void)
 0x004A0610,func,_ScreenDirty@0,ScreenDirty,sms,confirmed,invalidate every scanline (_lineStats = 0xFF) to force a full redraw,undefined4 __stdcall ScreenDirty(void)
+0x004A0640,func,_DialogFadeout@0,DialogFadeout,sms,confirmed,palette fade for the Dialog family (shell-ui owns DialogSetup/Show/Update),undefined4 __stdcall DialogFadeout(void)
+0x004A0710,func,_DialogFadein@0,DialogFadein,sms,confirmed,,undefined4 __stdcall DialogFadein(void)
 0x004A0810,func,@DialogDrawBkgd@4,DialogDrawBkgd,sms,confirmed,blit <name>.PIC full-screen as a dialog backdrop,undefined4 __fastcall DialogDrawBkgd(undefined4)
 0x004A0860,func,@MainMenu@4,MainMenu,sms,confirmed,shell menu-bar service: Alt+F4 -> exit item 0x101/MaybeExitToDOS; menu group 2 -> CampaignMenu,undefined4 __fastcall MainMenu(undefined4)
 0x004A08A0,func,_ChooseActivity@0,ChooseActivity,sms,confirmed,"TOP-LEVEL shell screen dispatcher loop: gates on _doScreens, MP sync (MPSendGameMode/MPWaitEveryoneStatus), random CHOOSEAC/CHOOSE3 background, drives main-menu screen selection",undefined4 __stdcall ChooseActivity(void)
@@ -191,6 +194,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004A18A0,func,_CampaignSelect@0,CampaignSelect,sms,confirmed,"the campaign chooser: glob *.CAM + mission\*.CAM, each campaign's <name>.TXT description loaded and its [section 1]/[section 2] title/body collected into a paged [page]-joined document; returns the pick (0xffff = cancel)",undefined4 __stdcall CampaignSelect(void)
 0x004A1C80,func,_DialogPickFiles@8,DialogPickFiles,sms,confirmed,"generic file picker over GetNames(mask): captions Choose an object/mission/map by mask bit (0x8000 mission, 0x4000 map), list via MakeNamesForList, picked 0x30-byte record copied to _itemPicked","undefined4 __stdcall DialogPickFiles(undefined4, undefined4)"
 0x004A2220,func,_GraphicPrefs@0,GraphicPrefs,sms,confirmed,"graphics preferences dialog (GRAF320/GRAFPREF): detail radio pairs (0x4eb6bc/0x4eb6b2), graphics flag words 0x4eb6be (default 0xdf99) / 0x4eb6b4 (default 0xfffa), FPU warning before enabling flag 0x10000 when _fpuType==0",undefined4 __stdcall GraphicPrefs(void)
+0x004A2480,func,_SoundPrefs@0,SoundPrefs,sms,confirmed,the SNDPREF/SOUND320 sound-preferences dialog proc,undefined4 __stdcall SoundPrefs(void)
 0x004A26F0,func,_DoDialogInfoBox@8,DoDialogInfoBox,sms,confirmed,modal info-box driver; freezes time (_timeCompression=0x7fff) when in cockpit (_curScreen==0x10),"undefined4 __stdcall DoDialogInfoBox(undefined4, undefined4)"
 0x004A27C0,func,_DialogInfoBox@12,DialogInfoBox,sms,confirmed,generic INFO320/INFO640 message-box builder+run,"undefined4 __stdcall DialogInfoBox(undefined4, undefined4, undefined4)"
 0x004C6710,func,_QuickDist@8,QuickDist,sms,confirmed,,"undefined4 __stdcall QuickDist(undefined4, undefined4)"

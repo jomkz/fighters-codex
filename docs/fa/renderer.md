@@ -637,6 +637,12 @@ Representative subset of the device + rasterizer; the full record is in
 | `0x4CC4B4` | `SetShadingTable` | select the active shading table |
 | `0x4CC518` | `DoSetTmapRemaps` | install the tmap remap tables |
 | `0x4CC7F4` | `RemapYLRP` | remap for `DrawYLRP` |
+| `0x4129A0` | `PrintShapeName` | empty release stub of a shape-name debug print |
+| `0x412A30` | `SetHShake` | player-gated entry over `G_SetHShake` |
+| `0x412A60` | `SetVShake` | player-gated entry over `G_SetVShake` |
+| `0x47A5A0` | `InitGraphicsMode` | `G_Init` + derive the x/y scale-shift globals |
+| `0x47A610` | `InitGraphicsSystem` | `CDirDraw` singleton bring-up |
+| `0x4C95C8` | `ScreenMove` | offset a screen point along `_unitRight`/`_unitUp` |
 
 ## Open Questions
 

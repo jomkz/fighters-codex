@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 370/371 functions have a recovered signature; 2/3 globals have a recovered type.
+// 376/377 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -231,6 +231,7 @@ void CN_SetFactoryDefaults(CN_INFO *);  // 0x0047F6D0  __cdecl
 long CfigChecksum(CN_INFO *);  // 0x0047F740  __cdecl
 void CN_ReadConfig(CN_INFO *, unsigned char *);  // 0x0047F7A0  __cdecl
 void CN_WriteConfig(CN_INFO *, unsigned char *);  // 0x0047F930  __cdecl
+void RunSimpleConnect(long, char *);  // 0x0047F990  __stdcall
 unsigned int sapopensocket(NET_PROTOCOL *, CN_INFO *, long, char *);  // 0x004874C0  __cdecl
 void sapserverbroadcast(unsigned int, NET_ADDRESS *, char *, NET_SEND_CANCEL);  // 0x00487670  __cdecl
 void sapquery(unsigned int, PKT_PLAYER_AD *, NET_ADDRESS *);  // 0x00487760  __cdecl
@@ -295,6 +296,11 @@ long MOD_InitializeAndConnect(CN_INFO *, long, long *);  // 0x0049AF30  __cdecl
 long MOD_Initialize(CN_INFO *, long);  // 0x0049AFF0  __cdecl
 void MOD_Shutdown(void);  // 0x0049B0D0  __cdecl
 long serIO(long, char *);  // 0x0049B110  __cdecl
+undefined4 AddJanesStatsJOGC(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A45E0  __stdcall
+undefined4 EveryoneHasChosenSides(void);  // 0x004A55F0  __stdcall
+undefined4 ChooseSidesDialog(undefined4);  // 0x004A5620  __fastcall
+char FixChosenSides(void);  // 0x004A5760  __stdcall
+undefined4 ChooseSidesDialog2(undefined4);  // 0x004A5810  __fastcall
 char winsock_load(_winsock_funcs *, char *);  // 0x004A5990  __cdecl
 void winsock_cleanup(void);  // 0x004A5CB0  __cdecl
 char * winsock_handle_error(char *, ERROR_SEVERITY, char *, int);  // 0x004A5CE0  __cdecl

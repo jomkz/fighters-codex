@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Sound / music (incl. WAIL32) -- FA.EXE
-// 51/52 functions have a recovered signature; 5/5 globals have a recovered type.
+// 52/53 functions have a recovered signature; 5/5 globals have a recovered type.
 
 namespace fxe::fa::sound {
 
@@ -20,6 +20,7 @@ extern s32 curShellMusic;  // 0x004F3CCC  current shell-music category; extent p
 extern u8 warnSnd[96];  // 0x005380B8  RWR/IR threat-warning tone channel table (8 entries); extent proven in the #455 close-out
 
 // --- functions -------------------------------------------------------
+undefined4 ButtonSound(undefined4);  // 0x00412A90  __fastcall
 void InitMusic(void);  // 0x004328B0  __fastcall
 void ShutDownMidi(void);  // 0x00432920  __fastcall
 void DMusicOn(char *, short);  // 0x004329A0  __fastcall

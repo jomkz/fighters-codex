@@ -59,6 +59,7 @@ Full record: [`db/symbols/sound.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x432F80` | `ShellMusicUpdate` | pick menu/brief/debrief music |
 | `0x46B4C0` | `InitAudio` | bring the audio system up (called from game init) |
 | `0x46B4D0` | `CleanAudio` | tear the audio system down |
+| `0x412A90` | `ButtonSound` | play `_BUTTON1`/`_BUTTON2.11K` via `SingleSound` |
 
 ## Open Questions
 

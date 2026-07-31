@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 419/487 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
+// 422/491 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -57,6 +57,7 @@ extern undefined4 _acmdln;  // 0x00592C4C  MSVC CRT global (xrefs=5)
 // --- functions -------------------------------------------------------
 void usnfmain(void);  // 0x00403700  __cdecl
 void FlyingLoop(void);  // 0x00404C70  __cdecl
+undefined4 SetConfig(undefined4, undefined4, undefined4);  // 0x0041E370  __stdcall
 char IsBrentDLL(void *);  // 0x0041E8F0  __fastcall
 undefined4 IsDLL(undefined4);  // 0x0041E910  __stdcall
 void * VAToPtrInFile(_IMAGE_DOS_HEADER *, long, SECTION_INFO **);  // 0x0041E990  __stdcall
@@ -73,6 +74,8 @@ int InitApplication(void *);  // 0x004764B0  __cdecl
 int CreateGameThread(void);  // 0x00476660  __cdecl
 void EndGame(void);  // 0x00476700  __cdecl
 void DisplayCopyright(void *);  // 0x004767F0  __cdecl
+unsigned long StartTimeThread(unsigned long *);  // 0x00486E80  __cdecl
+void WaitUntil(unsigned long);  // 0x00487A10  __fastcall
 void doConfigurationScreen(long, void (*)(CN_INFO *, char *));  // 0x00492740  __cdecl
 char UCONFIG_DMusic(void);  // 0x004B27C0  __cdecl
 void UCONFIG_SetVideoOptions(void);  // 0x004B2820  __stdcall
@@ -486,6 +489,7 @@ undefined4 HeapSize(undefined4, undefined4, undefined4);  // 0x004E8B66  __stdca
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x0041E8E0  WriteConfig -- signature not recovered
 // TODO(#453): 0x0041F240  LoadBrentDLL -- signature not recovered
 // TODO(#453): 0x0044A120  ErrorExit -- signature not recovered
 // TODO(#453): 0x004D72FE  _closeMS -- signature not recovered

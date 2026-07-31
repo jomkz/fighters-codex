@@ -32,6 +32,10 @@ Full record: [`db/symbols/startup.csv`](https://github.com/jomkz/fighters-codex/
 | `0x4D7220` | `_ser_rs232_getpacket@12` | serial-comms driver import thunk |
 | `0x41E8F0` | `IsBrentDLL` | probe a buffer for the in-house DLL container format |
 | `0x41F240` | `LoadBrentDLL` | load an in-house-container DLL (pairs with `LoadDLL`) |
+| `0x41E370` | `SetConfig` | command-line parser (`/D`/`/H`/`/J`/`/M`/`/N`, `janes*` globals) |
+| `0x41E8E0` | `WriteConfig` | serialize devices/volumes/prefs to `EA.CFG` |
+| `0x486E80` | `StartTimeThread` | the 15 ms timer thread (ticks, palette, joystick, shake) |
+| `0x487A10` | `WaitUntil` | busy-wait on the timer thread's `_timerTicks` |
 
 ### Win32 application bootstrap
 

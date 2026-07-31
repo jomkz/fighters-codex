@@ -27,6 +27,10 @@ va,kind,name,display,source,confidence,notes,type
 0x00412200,func,_DistToLine@12,DistToLine,sms,confirmed,,"undefined4 __stdcall DistToLine(undefined4, undefined4, undefined4)"
 0x00412340,func,@SortObjs@8,SortObjs,sms,confirmed,,"undefined4 __fastcall SortObjs(undefined4, undefined4)"
 0x00412480,func,_InterpAngle@16,InterpAngle,sms,confirmed,,"undefined4 __stdcall InterpAngle(undefined4, undefined4, undefined4, undefined4)"
+0x004124E0,func,@SampleInit@8,SampleInit,sms,confirmed,time-series sample ring (tick + 12-byte value records); inside the library's primary range,"undefined4 __fastcall SampleInit(undefined4, undefined4)"
+0x00412550,func,@SampleShutdown@4,SampleShutdown,sms,confirmed,,undefined4 __fastcall SampleShutdown(undefined4)
+0x00412570,func,@SampleUpdate@8,SampleUpdate,sms,confirmed,push a timestamped sample; shifts the ring when the window advances,"undefined4 __fastcall SampleUpdate(undefined4, undefined4)"
+0x004125C0,func,_SampleGet@12,SampleGet,sms,confirmed,interpolated read-back: mode 0 angles (InterpAngle) / 1 two-s16 / 2 three-s32,"undefined4 __stdcall SampleGet(undefined4, undefined4, undefined4)"
 0x004129B0,func,_GetRotatedOffsetF24@12,GetRotatedOffsetF24,sms,confirmed,,"undefined4 __stdcall GetRotatedOffsetF24(undefined4, undefined4, undefined4)"
 0x00412A10,func,@ObjRadius@4,ObjRadius,sms,confirmed,,undefined4 __fastcall ObjRadius(undefined4)
 0x00412B00,func,@StringIsNumber@4,StringIsNumber,sms,confirmed,,undefined4 __fastcall StringIsNumber(undefined4)
@@ -41,6 +45,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004562D0,func,_Rand16@0,Rand16,sms,confirmed,,undefined4 __stdcall Rand16(void)
 0x004562E0,func,_Rand8@0,Rand8,sms,confirmed,,undefined4 __stdcall Rand8(void)
 0x004562F0,func,@Rand@4,Rand,sms,confirmed,,undefined4 __fastcall Rand(undefined4)
+0x004B3010,func,_CPUSpeed@16,CPUSpeed,sms,confirmed,tick-calibrated CPU speed probe; returns CpuId results (misc-runtime group),"undefined4 __stdcall CPUSpeed(undefined4, undefined4, undefined4, undefined4)"
 0x004C64B8,func,_Swapmem@12,Swapmem,sms,confirmed,,"undefined4 __stdcall Swapmem(undefined4, undefined4, undefined4)"
 0x004C6524,func,_DoWordToString@16,DoWordToString,sms,confirmed,,"undefined4 __stdcall DoWordToString(undefined4, undefined4, undefined4, undefined4)"
 0x004C65EC,func,@LMultDiv256@8,LMultDiv256,sms,confirmed,,"undefined4 __fastcall LMultDiv256(undefined4, undefined4)"
