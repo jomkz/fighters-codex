@@ -8,12 +8,13 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 59/66 functions have a recovered signature; 0/0 globals have a recovered type.
+// 63/70 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
 // --- functions -------------------------------------------------------
 void VDOInit(void);  // 0x00405490  __fastcall
+void ZeroFrame(unsigned char *, long, long, short);  // 0x004054B0  __stdcall
 undefined4 StopCobraSound(void);  // 0x004219B0  __stdcall
 undefined4 StartCobraSound(void);  // 0x004219D0  __stdcall
 undefined4 PlayCobra(undefined4);  // 0x00421A50  __stdcall
@@ -42,6 +43,9 @@ undefined4 DecodeSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B
 undefined4 DecodeInterSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045B9C0  __cdecl
 undefined4 DecodeInterDSVGA15NONFrame(undefined4, undefined4, undefined4);  // 0x0045BE60  __cdecl
 undefined4 DecodeInterDSVGA15NONSkipFrame(undefined4, undefined4, undefined4);  // 0x0045C500  __cdecl
+undefined4 WritePalette(undefined4, undefined4);  // 0x0046ADC0  __fastcall
+unsigned short SetVESABank(unsigned short);  // 0x0046ADF0  __cdecl
+void SetVESATop(unsigned short, unsigned short);  // 0x0046AE00  __cdecl
 unsigned short InitCobra(GlobalData *);  // 0x0046AE10  __cdecl
 unsigned short CleanCobra(GlobalData *);  // 0x0046B0F0  __cdecl
 unsigned short InitVideo(GlobalData *);  // 0x0046B120  __cdecl

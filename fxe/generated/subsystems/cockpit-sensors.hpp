@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Cockpit sensors (radar / IR / RWR) -- FA.EXE
-// 20/62 functions have a recovered signature; 0/9 globals have a recovered type.
+// 21/63 functions have a recovered signature; 0/9 globals have a recovered type.
 
 namespace fxe::fa::cockpit_sensors {
 
@@ -33,6 +33,7 @@ undefined4 CPResetRWR(void);  // 0x0043E830  __stdcall
 undefined4 CPComputeRCS(undefined4, undefined4);  // 0x0043E8C0  __stdcall
 undefined4 CPNextTarget(undefined4);  // 0x00440E10  __fastcall
 void CPUpdateIRItems(void);  // 0x00440FE0  __stdcall
+unsigned short CPGetContact(long);  // 0x00441160  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would

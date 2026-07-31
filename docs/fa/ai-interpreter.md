@@ -83,6 +83,8 @@ Representative subset; the full record (incl. all `CTEval_*`/`CTDo_*` handlers) 
 | `0x465EA0` | `CTDo_turn` | action: turn to a heading |
 | `0x465CC0` | `CTDo_move` | action: move toward a point |
 | `0x464C90` | `CTRespondToCancelCmdBuf` | re-enter the script after a command-buffer cancel |
+| `0x4AC510` | `MVRMove` | maneuver-library move step (MVR family) |
+| `0x4AC880` | `MVRApproachTarget` | maneuver-library approach-target step |
 
 ## Open Questions
 

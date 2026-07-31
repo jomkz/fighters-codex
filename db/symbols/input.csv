@@ -14,6 +14,13 @@ va,kind,name,display,source,confidence,notes,type
 0x00412960,func,_GetKey,GetKey,sms,confirmed,,
 0x00413D10,func,_SlewKey,SlewKey,sms,confirmed,"slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0",
 0x00414070,func,SlewObjListCollect,,re,confirmed,T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24,
+0x004140A0,func,@SetPlayerTarget@4,SetPlayerTarget,sms,confirmed,targeting-key support unit 0x4140A0-0x4144B0 inside the input key region (SlewObjListCollect < here < FlightKey); input owns the same-family PickVisibleTarget,undefined4 __fastcall SetPlayerTarget(undefined4)
+0x004140C0,func,@TargetNearestTo@12,TargetNearestTo,sms,confirmed,,"undefined4 __fastcall TargetNearestTo(undefined4, undefined4, undefined4)"
+0x00414180,func,@GetTargetPositions@4,GetTargetPositions,sms,confirmed,,undefined4 __fastcall GetTargetPositions(undefined4)
+0x004141D0,func,_Targetable@16,Targetable,sms,confirmed,,"undefined4 __stdcall Targetable(undefined4, undefined4, undefined4, undefined4)"
+0x004143F0,func,@SetPlayerContact@4,SetPlayerContact,sms,confirmed,,undefined4 __fastcall SetPlayerContact(undefined4)
+0x00414410,func,@ContactNearestTo@12,ContactNearestTo,sms,confirmed,,"undefined4 __fastcall ContactNearestTo(undefined4, undefined4, undefined4)"
+0x004144B0,func,@GetContactPositions@4,GetContactPositions,sms,confirmed,,undefined4 __fastcall GetContactPositions(undefined4)
 0x00414690,func,@FlightKey@4,FlightKey,sms,confirmed,"THE in-flight command table: offers the key to the stick/rudder/throttle device procs (msg 3) then dispatches ~70 commands - flight controls (a/b/f/g/h/o), sensors (r/i/m/y, Shift+R A/G, Shift+A AWACS, Shift+G GCI), targeting (Enter/t/T/;), weapons ([ ] Space Tab, keypad-Ins chaff keypad-Del flare, Shift+J/K jettison), wingman Alt+letters + Alt+1..9 break angles, Shift+digit MFD windows, Ctrl+keypad thrust vector, Shift+E eject (double-press). See input.md section",undefined4 __fastcall FlightKey(undefined4)
 0x00415E30,func,PickVisibleTarget,,re,confirmed,"filter _visibleTargetIds by Targetable, then param!=0: nearest to screen centre (boresight), param==0: next in raster order after the current target",
 0x00415F80,func,NextTargetOnScreen,,re,confirmed,"raster-order scan of on-screen target positions; returns the id following the reference position, skipping the current target",

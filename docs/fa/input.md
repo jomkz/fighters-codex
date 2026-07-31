@@ -218,6 +218,13 @@ Full record: [`db/symbols/input.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x4942D0` | `InitJoysticks` | enumerate/initialise joystick devices |
 | `0x494430` | `GetJoystickType` | map a device to the configured stick type |
 | `0x4944A0` | `ReadDevice` | read one device's current state |
+| `0x4140A0` | `SetPlayerTarget` | set the player's locked target (targeting-key unit) |
+| `0x4140C0` | `TargetNearestTo` | nearest targetable object to a point |
+| `0x414180` | `GetTargetPositions` | collect candidate target positions |
+| `0x4141D0` | `Targetable` | is this object a legal target for the player |
+| `0x4143F0` | `SetPlayerContact` | set the player's selected sensor contact |
+| `0x414410` | `ContactNearestTo` | nearest sensor contact to a point |
+| `0x4144B0` | `GetContactPositions` | collect sensor-contact positions |
 
 ## Open Questions
 

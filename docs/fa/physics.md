@@ -542,6 +542,7 @@ Representative subset; the full record is in
 | `0x49D2D0` | `EnvelopeSpeedLimits` | speed limits from the envelope table |
 | `0x49D490` | `MaxGAtAlt` | maximum g available at the current altitude |
 | `0x49D4D0` | `EnvHighest` | envelope-table maximum (ceiling) query |
+| `0x4479D8` | `IntersectB` | segment intersection test (sibling of `IntersectT`) |
 
 ## 7. Arming and the damage model (#487)
 

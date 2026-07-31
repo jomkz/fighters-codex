@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 45/72 functions have a recovered signature; 1/6 globals have a recovered type.
+// 52/79 functions have a recovered signature; 1/6 globals have a recovered type.
 
 namespace fxe::fa::input {
 
@@ -19,6 +19,13 @@ extern s32 lastThrottle;  // 0x00522C18  analog-throttle hysteresis state: the p
 void KEYEvent(unsigned int, unsigned int, long);  // 0x00411600  __cdecl
 undefined4 PutFakeKey(undefined4);  // 0x00411F00  __fastcall
 undefined4 GetFakeKey(void);  // 0x00411F20  __stdcall
+undefined4 SetPlayerTarget(undefined4);  // 0x004140A0  __fastcall
+undefined4 TargetNearestTo(undefined4, undefined4, undefined4);  // 0x004140C0  __fastcall
+undefined4 GetTargetPositions(undefined4);  // 0x00414180  __fastcall
+undefined4 Targetable(undefined4, undefined4, undefined4, undefined4);  // 0x004141D0  __stdcall
+undefined4 SetPlayerContact(undefined4);  // 0x004143F0  __fastcall
+undefined4 ContactNearestTo(undefined4, undefined4, undefined4);  // 0x00414410  __fastcall
+undefined4 GetContactPositions(undefined4);  // 0x004144B0  __fastcall
 undefined4 FlightKey(undefined4);  // 0x00414690  __fastcall
 undefined4 SetAutopilot(undefined4, undefined4);  // 0x00416380  __fastcall
 undefined4 ForceAutopilot(undefined4);  // 0x00416470  __fastcall
