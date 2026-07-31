@@ -34,7 +34,7 @@ jobs:
             os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install GUI build deps
         # Ubuntu runners ship no libsdl3-dev, so the gui always exercises the
@@ -72,7 +72,7 @@ jobs:
     name: docs-status
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # Spec front-matter, template conformance, encoding/link hygiene, and
       # STATUS.md currency (docs/spec-authoring.md). Stdlib-only — the
@@ -131,7 +131,7 @@ jobs:
     # workflow; open the job's logs for its real status.
     continue-on-error: true
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Configure
         # Deliberately no preset: presets stay Linux/Windows-only by policy.
@@ -155,7 +155,7 @@ jobs:
       run: ${{ steps.filter.outputs.run }}
       harnesses: ${{ steps.filter.outputs.harnesses }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -191,7 +191,7 @@ jobs:
       matrix:
         harness: ${{ fromJson(needs.fuzz-changes.outputs.harnesses) }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Configure
         run: cmake --preset fuzz
@@ -238,7 +238,7 @@ jobs:
     name: coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Configure
         run: cmake --preset coverage
