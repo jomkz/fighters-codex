@@ -524,6 +524,24 @@ Representative subset; the full record is in
 | `0x453B90` | `HARDRearmTest` | can this loadout be rearmed at the current base |
 | `0x454140` | `ChangePlaneType` | swap the aircraft to a different type record |
 | `0x4543C0` | `SelectRepairPlane` | pick/repair an aircraft in the campaign rearm flow |
+| `0x476880` | `LimitFromLowSpeed` | control-authority limit at low airspeed |
+| `0x4768F0` | `WrapHB` | wrap a heading/bank attitude angle into range |
+| `0x476920` | `WrapP` | wrap a pitch attitude angle into range |
+| `0x476950` | `StickInput` | apply stick/rudder control input to the flight model |
+| `0x476AA0` | `GToTurn` | convert a g-load command to a turn rate |
+| `0x476AE0` | `MovePlane` | per-frame player-aircraft motion integration step |
+| `0x477140` | `CheckLandingParms` | landing-parameter test (speed/sink/attitude gates) |
+| `0x477240` | `CheckLanding` | evaluate a touchdown against the landing gates |
+| `0x477D50` | `MaxSpeed` | maximum-speed performance query (CO cluster) |
+| `0x47ADD0` | `ThrustSupport` | thrust contribution to the motion step |
+| `0x47AF20` | `GetGround` | ground elevation under the aircraft |
+| `0x49D1B0` | `TakeoffSpeed` | takeoff-speed envelope query |
+| `0x49D1D0` | `StallSpeed` | stall-speed envelope query |
+| `0x49D200` | `GetFlightEnvelope` | resolve the aircraft's flight-envelope record |
+| `0x49D230` | `CheckFlightEnvelope` | test a state against the flight envelope |
+| `0x49D2D0` | `EnvelopeSpeedLimits` | speed limits from the envelope table |
+| `0x49D490` | `MaxGAtAlt` | maximum g available at the current altitude |
+| `0x49D4D0` | `EnvHighest` | envelope-table maximum (ceiling) query |
 
 ## 7. Arming and the damage model (#487)
 
