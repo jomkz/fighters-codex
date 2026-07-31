@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Flight model / physics (FM/HARD) -- FA.EXE
-// 97/97 functions have a recovered signature; 0/0 globals have a recovered type.
+// 115/115 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::flight_model {
 
@@ -87,9 +87,18 @@ undefined4 HARDRearmFortLoad(void);  // 0x00454060  __stdcall
 undefined4 ChangePlaneType(undefined4, undefined4, undefined4);  // 0x00454140  __stdcall
 long RepairTime(long);  // 0x004543A0  __fastcall
 undefined4 SelectRepairPlane(undefined4, undefined4, undefined4, undefined4);  // 0x004543C0  __stdcall
+undefined4 LimitFromLowSpeed(undefined4, undefined4, undefined4);  // 0x00476880  __stdcall
+undefined4 WrapHB(undefined4);  // 0x004768F0  __fastcall
+undefined4 WrapP(undefined4);  // 0x00476920  __fastcall
+undefined4 StickInput(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00476950  __stdcall
+undefined4 GToTurn(undefined4, undefined4);  // 0x00476AA0  __fastcall
+undefined4 MovePlane(void);  // 0x00476AE0  __stdcall
+undefined4 CheckLandingParms(void);  // 0x00477140  __stdcall
+undefined4 CheckLanding(void);  // 0x00477240  __stdcall
 undefined4 FMTurbulence(void);  // 0x00477590  __stdcall
 undefined4 COMinSpeed(void);  // 0x00477D10  __stdcall
 undefined4 COCornerSpeed(void);  // 0x00477D30  __stdcall
+undefined4 MaxSpeed(undefined4, undefined4);  // 0x00477D50  __stdcall
 undefined4 COMaxSpeed(void);  // 0x00477E50  __stdcall
 undefined4 COAcc(void);  // 0x00477E60  __stdcall
 undefined4 CODacc(void);  // 0x00477E80  __stdcall
@@ -105,10 +114,19 @@ undefined4 COGPullDrag(void);  // 0x004784A0  __stdcall
 undefined4 FMAircraftSetup(void);  // 0x0047A690  __stdcall
 undefined4 FMGetAcc(undefined4, undefined4, undefined4);  // 0x0047A770  __stdcall
 undefined4 FMGetNPCAcc(void);  // 0x0047AC60  __stdcall
+undefined4 ThrustSupport(void);  // 0x0047ADD0  __stdcall
 undefined4 FMVertMotion(void);  // 0x0047AEB0  __stdcall
+undefined4 GetGround(void);  // 0x0047AF20  __stdcall
 undefined4 FMSetTV(undefined4, undefined4);  // 0x0047AF70  __stdcall
 undefined4 FMResetTV(void);  // 0x0047B000  __stdcall
 undefined4 FMFlight(void);  // 0x0047B020  __stdcall
 undefined4 _ArmPlane(undefined4);  // 0x0047FA50  __stdcall
+undefined4 TakeoffSpeed(void);  // 0x0049D1B0  __fastcall
+undefined4 StallSpeed(undefined4);  // 0x0049D1D0  __stdcall
+undefined4 GetFlightEnvelope(undefined4);  // 0x0049D200  __fastcall
+undefined4 CheckFlightEnvelope(undefined4, undefined4);  // 0x0049D230  __stdcall
+undefined4 EnvelopeSpeedLimits(undefined4, undefined4, undefined4, undefined4);  // 0x0049D2D0  __stdcall
+undefined4 MaxGAtAlt(void);  // 0x0049D490  __stdcall
+undefined4 EnvHighest(undefined4);  // 0x0049D4D0  __fastcall
 
 }  // namespace fxe::fa::flight_model

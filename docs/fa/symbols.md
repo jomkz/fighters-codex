@@ -1256,7 +1256,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 97 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 115 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1334,9 +1334,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00454140` | `ChangePlaneType` | sms |  |
 | `0x004543A0` | `RepairTime` | sms |  |
 | `0x004543C0` | `SelectRepairPlane` | sms |  |
+| `0x00476880` | `LimitFromLowSpeed` | sms |  |
+| `0x004768F0` | `WrapHB` | sms | wrap a heading/bank attitude angle; sits in the flight-dynamics code region |
+| `0x00476920` | `WrapP` | sms | wrap a pitch attitude angle |
+| `0x00476950` | `StickInput` | sms |  |
+| `0x00476AA0` | `GToTurn` | sms |  |
+| `0x00476AE0` | `MovePlane` | sms | the per-frame player-aircraft motion integration step |
+| `0x00477140` | `CheckLandingParms` | sms |  |
+| `0x00477240` | `CheckLanding` | sms |  |
 | `0x00477590` | `FMTurbulence` | sms |  |
 | `0x00477D10` | `COMinSpeed` | sms |  |
 | `0x00477D30` | `COCornerSpeed` | sms |  |
+| `0x00477D50` | `MaxSpeed` | sms | between COCornerSpeed and COMaxSpeed in the CO performance-query cluster |
 | `0x00477E50` | `COMaxSpeed` | sms |  |
 | `0x00477E60` | `COAcc` | sms |  |
 | `0x00477E80` | `CODacc` | sms |  |
@@ -1352,11 +1361,20 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0047A690` | `FMAircraftSetup` | sms |  |
 | `0x0047A770` | `FMGetAcc` | sms |  |
 | `0x0047AC60` | `FMGetNPCAcc` | sms |  |
+| `0x0047ADD0` | `ThrustSupport` | sms |  |
 | `0x0047AEB0` | `FMVertMotion` | sms |  |
+| `0x0047AF20` | `GetGround` | sms | ground elevation under the aircraft; between FMVertMotion and FMSetTV |
 | `0x0047AF70` | `FMSetTV` | sms |  |
 | `0x0047B000` | `FMResetTV` | sms |  |
 | `0x0047B020` | `FMFlight` | sms |  |
 | `0x0047FA50` | `_ArmPlane` | sms | thunk to @ArmPlane@4 |
+| `0x0049D1B0` | `TakeoffSpeed` | sms |  |
+| `0x0049D1D0` | `StallSpeed` | sms |  |
+| `0x0049D200` | `GetFlightEnvelope` | sms |  |
+| `0x0049D230` | `CheckFlightEnvelope` | sms |  |
+| `0x0049D2D0` | `EnvelopeSpeedLimits` | sms |  |
+| `0x0049D490` | `MaxGAtAlt` | sms |  |
+| `0x0049D4D0` | `EnvHighest` | sms | envelope-table maximum query; envelope cluster at 0x49D1B0-0x49D4D0 |
 
 ### Video decode (FMV/Cobra)
 

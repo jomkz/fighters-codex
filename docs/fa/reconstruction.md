@@ -16,7 +16,7 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 |---|---|---|---|---|---|---|---|
 | Object / entity system & shape selection | `0x462600–0x464660`<br>`0x4A6EB0–0x4A7240`<br>`0x473A40–0x473DA0`<br>`0x491240–0x491AA0` | 143 named · 0 waived / 143 (100%) | 31 named · 174 waived | [doc](objects.md) | ✓ | [#210](https://github.com/jomkz/fighters-codex/issues/210) | complete |
 | Renderer & rasterizer (GG/G_) | `0x45DBD0–0x45E460`<br>`0x497330–0x499380`<br>`0x4B7900–0x4BA700` | 236 named · 12 waived / 248 (100%) | 14 named · 289 waived | [doc](renderer.md) | ✓ | [#211](https://github.com/jomkz/fighters-codex/issues/211) | complete |
-| Flight model / physics (FM/HARD) | `0x451480–0x454800` | 97 named · 4 waived / 101 (100%) | 0 named · 334 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
+| Flight model / physics (FM/HARD) | `0x451480–0x454800` | 115 named · 4 waived / 119 (100%) | 0 named · 334 waived | [doc](physics.md) | ✓ | [#212](https://github.com/jomkz/fighters-codex/issues/212) | complete |
 | HUD / cockpit | `0x405E30–0x40AE50` | 42 named · 7 waived / 49 (100%) | 16 named · 189 waived | [doc](hud.md) | ✓ | [#213](https://github.com/jomkz/fighters-codex/issues/213) | complete |
 | Weapons — projectiles / seekers / ECM (PROJ) | `0x4C0690–0x4C5D30` | 55 named · 4 waived / 59 (100%) | 6 named · 49 waived | [doc](weapons.md) | ✓ | [#215](https://github.com/jomkz/fighters-codex/issues/215) | complete |
 | AI interpreter (CT) | `0x464C60–0x467110` | 128 named · 0 waived / 128 (100%) | 8 named · 30 waived | [doc](ai-interpreter.md) | ✓ | [#216](https://github.com/jomkz/fighters-codex/issues/216) | complete |
@@ -40,9 +40,9 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 | Airports / carriers — parking, approach, deck (AP) | `0x4BA7E0–0x4BAD40`<br>`0x4BD2D0–0x4BD510`<br>`0x4BE6A0–0x4BEE60` | 24 named · 0 waived / 24 (100%) | 0 named · 0 waived | [doc](airports.md) | · | [#493](https://github.com/jomkz/fighters-codex/issues/493) | active |
 | Core math & runtime utility library | `0x411950–0x412DE2` | 41 named · 0 waived / 50 (82%) | 0 named · 0 waived | [doc](core-math.md) | · | [#482](https://github.com/jomkz/fighters-codex/issues/482) | active |
 
-**FA.EXE totals:** 21/25 subsystems complete; 3029/3039 in-scope functions named; 4228/8266 referenced globals resolved.
+**FA.EXE totals:** 21/25 subsystems complete; 3047/3057 in-scope functions named; 4228/8266 referenced globals resolved.
 
-> **Unclaimed: 544 of 3573 functions (142,248 of 866,332 code bytes, 16%) are in the binary but in no subsystem** — so nothing above measures them. **158 of them already carry a recovered name** (the binary tells us what they are; they are the debt #482 closes to zero). See [#482](https://github.com/jomkz/fighters-codex/issues/482).
+> **Unclaimed: 526 of 3573 functions (138,429 of 866,332 code bytes, 15%) are in the binary but in no subsystem** — so nothing above measures them. **140 of them already carry a recovered name** (the binary tells us what they are; they are the debt #482 closes to zero). See [#482](https://github.com/jomkz/fighters-codex/issues/482).
 
 > **Undefined: 62,800 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **246 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
@@ -116,5 +116,5 @@ canonical Ghidra project lives; see [db/README.md](https://github.com/jomkz/figh
 
 > **Undefined: 10,993 more executable bytes are in no function at all** — code auto-analysis never reached (typically entered only through a function pointer: window procs, thread entries, proc-table entries, callbacks), so it was labelled but never disassembled. It is absent from the counts above, because a function that does not exist cannot be reported missing. **22 symbol names already sit inside these bytes** — those are free to claim. See [#496](https://github.com/jomkz/fighters-codex/issues/496).
 
-**Program totals (all binaries):** 28/32 subsystems complete; 6574/6584 in-scope functions named; 6702/11595 referenced globals resolved.
+**Program totals (all binaries):** 28/32 subsystems complete; 6592/6602 in-scope functions named; 6702/11595 referenced globals resolved.
 

@@ -79,9 +79,18 @@ va,kind,name,display,source,confidence,notes,type
 0x00454140,func,_ChangePlaneType@12,ChangePlaneType,sms,confirmed,,"undefined4 __stdcall ChangePlaneType(undefined4, undefined4, undefined4)"
 0x004543A0,func,?RepairTime@@YIJJ@Z,RepairTime,sms,confirmed,,long __fastcall RepairTime(long)
 0x004543C0,func,_SelectRepairPlane@16,SelectRepairPlane,sms,confirmed,,"undefined4 __stdcall SelectRepairPlane(undefined4, undefined4, undefined4, undefined4)"
+0x00476880,func,_LimitFromLowSpeed@12,LimitFromLowSpeed,sms,confirmed,,"undefined4 __stdcall LimitFromLowSpeed(undefined4, undefined4, undefined4)"
+0x004768F0,func,@WrapHB@4,WrapHB,sms,confirmed,wrap a heading/bank attitude angle; sits in the flight-dynamics code region,undefined4 __fastcall WrapHB(undefined4)
+0x00476920,func,@WrapP@4,WrapP,sms,confirmed,wrap a pitch attitude angle,undefined4 __fastcall WrapP(undefined4)
+0x00476950,func,_StickInput@28,StickInput,sms,confirmed,,"undefined4 __stdcall StickInput(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00476AA0,func,@GToTurn@8,GToTurn,sms,confirmed,,"undefined4 __fastcall GToTurn(undefined4, undefined4)"
+0x00476AE0,func,_MovePlane@0,MovePlane,sms,confirmed,the per-frame player-aircraft motion integration step,undefined4 __stdcall MovePlane(void)
+0x00477140,func,_CheckLandingParms@0,CheckLandingParms,sms,confirmed,,undefined4 __stdcall CheckLandingParms(void)
+0x00477240,func,_CheckLanding@0,CheckLanding,sms,confirmed,,undefined4 __stdcall CheckLanding(void)
 0x00477590,func,_FMTurbulence@0,FMTurbulence,sms,confirmed,,undefined4 __stdcall FMTurbulence(void)
 0x00477D10,func,_COMinSpeed@0,COMinSpeed,sms,confirmed,,undefined4 __stdcall COMinSpeed(void)
 0x00477D30,func,_COCornerSpeed@0,COCornerSpeed,sms,confirmed,,undefined4 __stdcall COCornerSpeed(void)
+0x00477D50,func,_MaxSpeed@8,MaxSpeed,sms,confirmed,between COCornerSpeed and COMaxSpeed in the CO performance-query cluster,"undefined4 __stdcall MaxSpeed(undefined4, undefined4)"
 0x00477E50,func,_COMaxSpeed@0,COMaxSpeed,sms,confirmed,,undefined4 __stdcall COMaxSpeed(void)
 0x00477E60,func,_COAcc@0,COAcc,sms,confirmed,,undefined4 __stdcall COAcc(void)
 0x00477E80,func,_CODacc@0,CODacc,sms,confirmed,,undefined4 __stdcall CODacc(void)
@@ -97,11 +106,20 @@ va,kind,name,display,source,confidence,notes,type
 0x0047A690,func,_FMAircraftSetup@0,FMAircraftSetup,sms,confirmed,,undefined4 __stdcall FMAircraftSetup(void)
 0x0047A770,func,_FMGetAcc@12,FMGetAcc,sms,confirmed,,"undefined4 __stdcall FMGetAcc(undefined4, undefined4, undefined4)"
 0x0047AC60,func,_FMGetNPCAcc@0,FMGetNPCAcc,sms,confirmed,,undefined4 __stdcall FMGetNPCAcc(void)
+0x0047ADD0,func,_ThrustSupport@0,ThrustSupport,sms,confirmed,,undefined4 __stdcall ThrustSupport(void)
 0x0047AEB0,func,_FMVertMotion@0,FMVertMotion,sms,confirmed,,undefined4 __stdcall FMVertMotion(void)
+0x0047AF20,func,_GetGround@0,GetGround,sms,confirmed,ground elevation under the aircraft; between FMVertMotion and FMSetTV,undefined4 __stdcall GetGround(void)
 0x0047AF70,func,_FMSetTV@8,FMSetTV,sms,confirmed,,"undefined4 __stdcall FMSetTV(undefined4, undefined4)"
 0x0047B000,func,_FMResetTV@0,FMResetTV,sms,confirmed,,undefined4 __stdcall FMResetTV(void)
 0x0047B020,func,_FMFlight@0,FMFlight,sms,confirmed,,undefined4 __stdcall FMFlight(void)
 0x0047FA50,func,__ArmPlane@4,_ArmPlane,sms,confirmed,thunk to @ArmPlane@4,undefined4 __stdcall _ArmPlane(undefined4)
+0x0049D1B0,func,@TakeoffSpeed@0,TakeoffSpeed,sms,confirmed,,undefined4 __fastcall TakeoffSpeed(void)
+0x0049D1D0,func,_StallSpeed@4,StallSpeed,sms,confirmed,,undefined4 __stdcall StallSpeed(undefined4)
+0x0049D200,func,@GetFlightEnvelope@4,GetFlightEnvelope,sms,confirmed,,undefined4 __fastcall GetFlightEnvelope(undefined4)
+0x0049D230,func,_CheckFlightEnvelope@8,CheckFlightEnvelope,sms,confirmed,,"undefined4 __stdcall CheckFlightEnvelope(undefined4, undefined4)"
+0x0049D2D0,func,_EnvelopeSpeedLimits@16,EnvelopeSpeedLimits,sms,confirmed,,"undefined4 __stdcall EnvelopeSpeedLimits(undefined4, undefined4, undefined4, undefined4)"
+0x0049D490,func,_MaxGAtAlt@0,MaxGAtAlt,sms,confirmed,,undefined4 __stdcall MaxGAtAlt(void)
+0x0049D4D0,func,@EnvHighest@4,EnvHighest,sms,confirmed,envelope-table maximum query; envelope cluster at 0x49D1B0-0x49D4D0,undefined4 __fastcall EnvHighest(undefined4)
 0x004ECB88,data,,,waiver,confirmed,interior of / adjacent to ?percentDamageString@@3PADA; named at its base or owned by that subsystem,
 0x004ECB89,data,,,waiver,confirmed,interior of / adjacent to ?percentDamageString@@3PADA; named at its base or owned by that subsystem,
 0x004ECB8A,data,,,waiver,confirmed,interior of / adjacent to ?percentDamageString@@3PADA; named at its base or owned by that subsystem,
