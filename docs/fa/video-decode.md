@@ -88,6 +88,17 @@ Full record: [`db/symbols/video.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x46ADC0` | `WritePalette` | write a palette range to the display |
 | `0x46ADF0` | `SetVESABank` | select the active VESA bank |
 | `0x46AE00` | `SetVESATop` | set the VESA display start |
+| `0x4C8BEC` | `BuildSelfModifyCode` | self-modifying blit codegen (video-decompress unit) |
+| `0x4C8C60` | `DoNibble` | nibble-stream helper for the decompressors |
+| `0x4CCD14` | `CopySB15` | 15-bit single-buffer copy (pairs `CopySB8`) |
+| `0x4CCD70` | `CopyDB15` | 15-bit double-buffer copy |
+| `0x4CCDF8` | `CopyDSB15` | 15-bit double-to-single copy |
+| `0x4CCE7C` | `CopyDDB15` | 15-bit double-to-double copy |
+| `0x4CCF88` | `ExpandSB` | expand a single-buffer frame |
+| `0x4CCFE1` | `clampit_` | YUV clamp helper (precedes `DecodeYUV15`) |
+| `0x4AE350` | `CenterPrint` | centered-text helper (VDO subtitle print) |
+| `0x4AF030` | `FileExists` | VDO unit's file probe |
+| `0x4AF050` | `FileSize` | VDO unit's file-size query |
 
 ### Vendored libjpeg
 

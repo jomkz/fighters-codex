@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 63/70 functions have a recovered signature; 0/0 globals have a recovered type.
+// 67/81 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
@@ -53,12 +53,15 @@ unsigned short CleanVideo(GlobalData *);  // 0x0046B4B0  __cdecl
 unsigned short SetupCobra(GlobalData *);  // 0x0046B4E0  __cdecl
 unsigned short CleanupCobra(GlobalData *);  // 0x0046B530  __cdecl
 undefined4 DoFadeout(void);  // 0x004A06F0  __stdcall
+void CenterPrint(char *, long, T_HANDLE *);  // 0x004AE350  __cdecl
 short PlayVDOFile(char *, short, char);  // 0x004AE410  __cdecl
 short PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char);  // 0x004AE440  __cdecl
 void VDOClearToBlack(void);  // 0x004AECD0  __cdecl
 void VDOSetMode(VDO *);  // 0x004AED50  __cdecl
 void VDOSetLineStats(unsigned short, unsigned short, unsigned char);  // 0x004AEE30  __cdecl
 VDOLinkedList * BuildVDOList(char *);  // 0x004AEE80  __cdecl
+char FileExists(char *);  // 0x004AF030  __cdecl
+long FileSize(char *);  // 0x004AF050  __cdecl
 char StartVDOAudio(char *);  // 0x004AF070  __cdecl
 VDOLinkedList * NewVDOLinkNode(char *, char *);  // 0x004AF100  __cdecl
 void FreeVDOLinkNode(VDOLinkedList *);  // 0x004AF1B0  __cdecl
@@ -75,15 +78,23 @@ void VDO_320x200_to_640x480(T_BITMAP *, T_BITMAP *, unsigned long);  // 0x004AF6
 unsigned long VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long);  // 0x004AF760  __cdecl
 undefined4 DecompressVideo(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C8AA4  __stdcall
 undefined4 UnRLE(undefined4, undefined4);  // 0x004C8AFC  __stdcall
+undefined4 BuildSelfModifyCode(void);  // 0x004C8BEC  __stdcall
 undefined4 DecompressVideoImage(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C8CD8  __stdcall
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004AF2D0  ReadVDOPalette -- signature not recovered
+// TODO(#453): 0x004C8C60  DoNibble -- signature not recovered
 // TODO(#453): 0x004CCC48  CopySB8 -- signature not recovered
 // TODO(#453): 0x004CCC7C  CopyDB8 -- signature not recovered
+// TODO(#453): 0x004CCD14  CopySB15 -- signature not recovered
+// TODO(#453): 0x004CCD70  CopyDB15 -- signature not recovered
+// TODO(#453): 0x004CCDF8  CopyDSB15 -- signature not recovered
+// TODO(#453): 0x004CCE7C  CopyDDB15 -- signature not recovered
 // TODO(#453): 0x004CCF54  ExpandDB -- signature not recovered
+// TODO(#453): 0x004CCF88  ExpandSB -- signature not recovered
+// TODO(#453): 0x004CCFE1  clampit_ -- signature not recovered
 // TODO(#453): 0x004CCFFC  DecodeYUV15 -- signature not recovered
 // TODO(#453): 0x004CD1C0  DecodeYUV15Double1 -- signature not recovered
 // TODO(#453): 0x004CD394  DecodeYUV15Double2 -- signature not recovered

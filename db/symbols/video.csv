@@ -44,12 +44,15 @@ va,kind,name,display,source,confidence,notes,type
 0x004760E0,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jcopy_block_row@@YAXPAY0EA@F0I@Z,
 0x00476100,func,,,waiver,confirmed,vendored libjpeg unit (not first-party): ?jzero_far@@YAXPAXI@Z,
 0x004A06F0,func,_DoFadeout@0,DoFadeout,sms,confirmed,imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS,undefined4 __stdcall DoFadeout(void)
+0x004AE350,func,?CenterPrint@@YAXPADJPAUT_HANDLE@@@Z,CenterPrint,sms,confirmed,centered-text helper directly before PlayVDOFile (VDO subtitle print),"void __cdecl CenterPrint(char *, long, T_HANDLE *)"
 0x004AE410,func,?PlayVDOFile@@YAFPADFD@Z,PlayVDOFile,sms,confirmed,,"short __cdecl PlayVDOFile(char *, short, char)"
 0x004AE440,func,?PlayVDOString@@YAFPADFPAUT_HANDLE@@PAEJJD@Z,PlayVDOString,sms,confirmed,,"short __cdecl PlayVDOString(char *, short, T_HANDLE *, unsigned char *, long, long, char)"
 0x004AECD0,func,?VDOClearToBlack@@YAXXZ,VDOClearToBlack,sms,confirmed,,void __cdecl VDOClearToBlack(void)
 0x004AED50,func,?VDOSetMode@@YAXPAUVDO@@@Z,VDOSetMode,sms,confirmed,,void __cdecl VDOSetMode(VDO *)
 0x004AEE30,func,?VDOSetLineStats@@YAXGGE@Z,VDOSetLineStats,sms,confirmed,,"void __cdecl VDOSetLineStats(unsigned short, unsigned short, unsigned char)"
 0x004AEE80,func,?BuildVDOList@@YAPAUVDOLinkedList@@PAD@Z,BuildVDOList,sms,confirmed,,VDOLinkedList * __cdecl BuildVDOList(char *)
+0x004AF030,func,?FileExists@@YADPAD@Z,FileExists,sms,confirmed,VDO unit's local file probe (video callers; sits in the VDO code run),char __cdecl FileExists(char *)
+0x004AF050,func,?FileSize@@YAJPAD@Z,FileSize,sms,confirmed,,long __cdecl FileSize(char *)
 0x004AF070,func,?StartVDOAudio@@YADPAD@Z,StartVDOAudio,sms,confirmed,,char __cdecl StartVDOAudio(char *)
 0x004AF100,func,?NewVDOLinkNode@@YAPAUVDOLinkedList@@PAD0@Z,NewVDOLinkNode,sms,confirmed,,"VDOLinkedList * __cdecl NewVDOLinkNode(char *, char *)"
 0x004AF1B0,func,?FreeVDOLinkNode@@YAXPAUVDOLinkedList@@@Z,FreeVDOLinkNode,sms,confirmed,,void __cdecl FreeVDOLinkNode(VDOLinkedList *)
@@ -67,10 +70,18 @@ va,kind,name,display,source,confidence,notes,type
 0x004AF760,func,?VDOCompareBitmaps@@YAKPAUT_HANDLE@@0PAEK@Z,VDOCompareBitmaps,sms,confirmed,,"unsigned long __cdecl VDOCompareBitmaps(T_HANDLE *, T_HANDLE *, unsigned char *, unsigned long)"
 0x004C8AA4,func,_DecompressVideo@20,DecompressVideo,sms,confirmed,,"undefined4 __stdcall DecompressVideo(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004C8AFC,func,_UnRLE@8,UnRLE,sms,confirmed,,"undefined4 __stdcall UnRLE(undefined4, undefined4)"
+0x004C8BEC,func,_BuildSelfModifyCode@0,BuildSelfModifyCode,sms,confirmed,self-modifying blit codegen inside the video-decompress unit (UnRLE < here < DecompressVideoImage),undefined4 __stdcall BuildSelfModifyCode(void)
+0x004C8C60,func,DoNibble,DoNibble,sms,confirmed,,
 0x004C8CD8,func,_DecompressVideoImage@20,DecompressVideoImage,sms,confirmed,,"undefined4 __stdcall DecompressVideoImage(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004CCC48,func,_CopySB8,CopySB8,sms,confirmed,,
 0x004CCC7C,func,_CopyDB8,CopyDB8,sms,confirmed,,
+0x004CCD14,func,_CopySB15,CopySB15,sms,confirmed,15-bit variants interleaved with the claimed CopySB8/CopyDB8/ExpandDB/DecodeYUV15 family,
+0x004CCD70,func,_CopyDB15,CopyDB15,sms,confirmed,,
+0x004CCDF8,func,_CopyDSB15,CopyDSB15,sms,confirmed,,
+0x004CCE7C,func,_CopyDDB15,CopyDDB15,sms,confirmed,,
 0x004CCF54,func,_ExpandDB,ExpandDB,sms,confirmed,,
+0x004CCF88,func,_ExpandSB,ExpandSB,sms,confirmed,,
+0x004CCFE1,func,clampit_,clampit_,sms,confirmed,YUV clamp helper directly before DecodeYUV15@0x4CCFFC,
 0x004CCFFC,func,_DecodeYUV15,DecodeYUV15,sms,confirmed,,
 0x004CD1C0,func,_DecodeYUV15Double1,DecodeYUV15Double1,sms,confirmed,,
 0x004CD394,func,_DecodeYUV15Double2,DecodeYUV15Double2,sms,confirmed,,

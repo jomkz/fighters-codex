@@ -628,6 +628,15 @@ Representative subset of the device + rasterizer; the full record is in
 | `0x4C8A38` | `G_Polygon` | clipped convex-polygon span fill |
 | `0x4CAE38` | `G__Texture` | affine texture-mapped scanline span filler |
 | `0x4CBD0B` | `G__Perspective` | perspective texture-mapped scanline span filler |
+| `0x41E130` | `ModeCallback` | `CDirDraw::EnumDisplayModes` callback |
+| `0x4C9A88` | `AC_interpolate_linear_span` | span innerloop of `G__AC_Texture` |
+| `0x4CA1B4` | `interpolate_linear_span` | span innerloop of `G__Texture` |
+| `0x4CB088` | `interpolate_perspective_span` | span innerloop of `G__Perspective` |
+| `0x4CC3A5` | `expand_texture_poly` | expand a texture polygon for the span fillers |
+| `0x4CC44C` | `Remap` | apply a remap table to a span |
+| `0x4CC4B4` | `SetShadingTable` | select the active shading table |
+| `0x4CC518` | `DoSetTmapRemaps` | install the tmap remap tables |
+| `0x4CC7F4` | `RemapYLRP` | remap for `DrawYLRP` |
 
 ## Open Questions
 

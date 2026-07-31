@@ -1388,7 +1388,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 70 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 81 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1432,12 +1432,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0046B4E0` | `SetupCobra` | sms |  |
 | `0x0046B530` | `CleanupCobra` | sms |  |
 | `0x004A06F0` | `DoFadeout` | sms | imported by 6 shipped .CAM overlays (#491); named at this VA by FA.SMS |
+| `0x004AE350` | `CenterPrint` | sms | centered-text helper directly before PlayVDOFile (VDO subtitle print) |
 | `0x004AE410` | `PlayVDOFile` | sms |  |
 | `0x004AE440` | `PlayVDOString` | sms |  |
 | `0x004AECD0` | `VDOClearToBlack` | sms |  |
 | `0x004AED50` | `VDOSetMode` | sms |  |
 | `0x004AEE30` | `VDOSetLineStats` | sms |  |
 | `0x004AEE80` | `BuildVDOList` | sms |  |
+| `0x004AF030` | `FileExists` | sms | VDO unit's local file probe (video callers; sits in the VDO code run) |
+| `0x004AF050` | `FileSize` | sms |  |
 | `0x004AF070` | `StartVDOAudio` | sms |  |
 | `0x004AF100` | `NewVDOLinkNode` | sms |  |
 | `0x004AF1B0` | `FreeVDOLinkNode` | sms |  |
@@ -1455,17 +1458,25 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004AF760` | `VDOCompareBitmaps` | sms |  |
 | `0x004C8AA4` | `DecompressVideo` | sms |  |
 | `0x004C8AFC` | `UnRLE` | sms |  |
+| `0x004C8BEC` | `BuildSelfModifyCode` | sms | self-modifying blit codegen inside the video-decompress unit (UnRLE < here < DecompressVideoImage) |
+| `0x004C8C60` | `DoNibble` | sms |  |
 | `0x004C8CD8` | `DecompressVideoImage` | sms |  |
 | `0x004CCC48` | `CopySB8` | sms |  |
 | `0x004CCC7C` | `CopyDB8` | sms |  |
+| `0x004CCD14` | `CopySB15` | sms | 15-bit variants interleaved with the claimed CopySB8/CopyDB8/ExpandDB/DecodeYUV15 family |
+| `0x004CCD70` | `CopyDB15` | sms |  |
+| `0x004CCDF8` | `CopyDSB15` | sms |  |
+| `0x004CCE7C` | `CopyDDB15` | sms |  |
 | `0x004CCF54` | `ExpandDB` | sms |  |
+| `0x004CCF88` | `ExpandSB` | sms |  |
+| `0x004CCFE1` | `clampit_` | sms | YUV clamp helper directly before DecodeYUV15@0x4CCFFC |
 | `0x004CCFFC` | `DecodeYUV15` | sms |  |
 | `0x004CD1C0` | `DecodeYUV15Double1` | sms |  |
 | `0x004CD394` | `DecodeYUV15Double2` | sms |  |
 
 ### Renderer & rasterizer (GG/G_)
 
-[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 236 named functions
+[`renderer.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/renderer.csv) · [page](renderer.md) — 245 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1486,6 +1497,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0041E050` | `?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z` | sms |  |
 | `0x0041E060` | `?WaitForVerticalBlank@CDirDraw@@QAEXK@Z` | sms |  |
 | `0x0041E090` | `?EnumDisplayModes@CDirDraw@@QAEKXZ` | sms |  |
+| `0x0041E130` | `ModeCallback` | sms | the CDirDraw::EnumDisplayModes callback (directly follows it at 0x41E090) |
 | `0x0041E300` | `?ShowDDError@CDirDraw@@SAXJ@Z` | sms |  |
 | `0x0041E310` | `?ddECS@CDirDraw@@SAXXZ` | sms |  |
 | `0x0041E330` | `?ddLCS@CDirDraw@@SAXXZ` | sms |  |
@@ -1700,10 +1712,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004C9224` | `NoHorizon` | re | off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004C924C` | `SolidHorizon` | re | solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand |
 | `0x004C942C` | `GouraudHorizon` | re | Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10) |
+| `0x004C9A88` | `AC_interpolate_linear_span` | sms | span innerloop of G__AC_Texture@0x4CA028 |
 | `0x004CA028` | `G__AC_Texture` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
+| `0x004CA1B4` | `interpolate_linear_span` | sms | span innerloop of G__Texture@0x4CAE38 |
 | `0x004CAE38` | `G__Texture` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
+| `0x004CB088` | `interpolate_perspective_span` | sms | span innerloop of G__Perspective@0x4CBD0B |
 | `0x004CBD0B` | `G__Perspective` | sms | not a C function (#479): bitmap in ESI and span state in EAX/EBX |
 | `0x004CBE7C` | `G__ScaleBitmap` | sms | not a C function (#479): source bitmap in ESI and destination rect in EDI |
+| `0x004CC3A5` | `expand_texture_poly` | sms |  |
+| `0x004CC44C` | `Remap` | sms | shading/remap table machinery for the rasterizer |
+| `0x004CC4B4` | `SetShadingTable` | sms |  |
+| `0x004CC518` | `DoSetTmapRemaps` | sms |  |
+| `0x004CC7F4` | `RemapYLRP` | sms | pairs with DrawYLRP@0x4CC8B0 |
 | `0x004CC8B0` | `DrawYLRP` | sms |  |
 
 ### Wingman / group AI (WNG/GRP)
