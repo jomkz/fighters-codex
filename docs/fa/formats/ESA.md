@@ -155,6 +155,78 @@ and `FA_2.LIB` and adds `msapi.dll`; the reconstruction database describes that
 **patched** build, so a from-disc install is the earlier binary. `FA.SMS` here
 declares 3,753 symbols versus 3,829 after the patch.
 
+### Install Footprint (registry & on-disk layout)
+
+> **Provenance:** read from a licensed install on the x64 Windows 11 bench
+> (offline hive parse of `SOFTWARE` + the `EA1.UIL` uninstall log; single
+> install run of 2026-05-07, then the official 1.02 patch). The install is
+> pinned to **1.02F** by `FA.SMS` and `FA_1.LIB` matching
+> [`fa-patch.sha256`](https://github.com/jomkz/fighters-codex/blob/main/tests/integration/fa-patch.sha256)
+> byte-for-byte (`FA.EXE` alone differs — the known one-byte no-CD property,
+> [development.md](../../development.md#real-media-install-mode-fx_fa_disc1fx_fa_disc2)).
+
+The setup program is **EA's in-house installer** (`EAEXEC.EXE` / `EAREMOVE.EXE`
+/ `.UIL` uninstall logs), not InstallShield. confirmed
+
+#### Registry writes
+
+The installer writes exactly **three keys** — and the only *path* record among
+them is the App Paths default value:
+
+| Key (as written by the 32-bit installer) | Values | Where it lands on x64 |
+|---|---|---|
+| `HKLM\SOFTWARE\Jane's Combat Simulations\Fighters Anthology` | **none — created empty** (no values, no subkeys) | `WOW6432Node` view |
+| `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Fighters Anthology` | `DisplayName` = `Fighters Anthology`; `UninstallString` = `C:\WINDOWS\system32\EAREMOVE.EXE C:\WINDOWS\system32\EA1.UIL` | `WOW6432Node` view |
+| `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\FA.EXE` | `(default)` = `C:\JANES\Fighters Anthology\FA.EXE` | **native view** (observed) |
+
+All three carry the install run's timestamps; **the 1.02 patch (`fae102.exe`)
+writes nothing to the registry** — it is file-level RTPatch
+([RTP.md](RTP.md)). confirmed
+
+No per-user (`HKCU`) key is written by the installer or the game — runtime
+settings live in `EA.CFG` in the install dir, not the registry. confirmed
+
+A probe looking for the install path should therefore read, in order: the
+`App Paths\FA.EXE` default value (check **both** the native and `WOW6432Node`
+views — the observed placement is the native view on this bench, but WOW64
+redirection rules for `App Paths` have varied across Windows versions —
+inferred); then the `Uninstall` key's `UninstallString`, whose second argument
+names the `EA<n>.UIL` log; the vendor key proves *presence only* — it holds no
+path.
+
+#### The `EA<n>.UIL` uninstall log
+
+`EAREMOVE.EXE` and the log are dropped into `system32` (redirected to
+`SysWOW64` on x64; `<n>` counts EA titles on the machine — FA on a clean box is
+`EA1.UIL`). The log is plain CRLF text, one directive per line, and is the
+richest install record on the machine — its `INSTALLPATH` line *is* the
+install directory:
+
+| Directive | Meaning |
+|---|---|
+| `APPNAME "…"` / `INSTALLPATH "…"` / `LOGNAME "…"` | identity: app name, install dir (default `C:\JANES\Fighters Anthology`), the log's own recorded path |
+| `SKIP_ON_REMOVE "pat"` | user data the uninstaller preserves: `*.P` (pilots), `*.BKP`, `*.M`/`*.MT`/`*.MM` (user missions), `EA.CFG`, `MODEM.DAT`/`NET.DAT`/`SERIAL.DAT`, `*.RAW` (ScreenDump screenshots), `*.GID` |
+| `DELKEY hive,"key"` | registry keys to remove — lists the vendor key and `App Paths\FA.EXE` (the uninstaller's own record of what setup wrote) |
+| `DELFILE` / `DELTREE` / `DELSYSFILE` | the installed-file manifest (below) and the `system32` drops (`EAREMOVE.EXE`, `EAEXEC.EXE`) |
+| `REMOVE_GROUP` / `REMOVE_ITEM` | the Start-menu group `Jane's Combat Simulations\Fighters Anthology` (4 shortcuts) and the desktop shortcut |
+
+#### Installed files (what setup copies vs what stays disc-resident)
+
+The `DELFILE` manifest is exactly **20 files**: `FA.EXE`, `FA.SMS`, `IP.EXE`,
+`IP.CFG`, `WAIL32.DLL`, `CDRVDL32.DLL`, `CDRVHF32.DLL`, `CDRVXF32.DLL`,
+`COMMSC32.DLL`, `README.TXT`, `LICENSE.TXT`, `CHAT.TXT`, `BRIEFING.TXT`,
+`EXAMPLE.MT`, `EAHELP.HLP`, `JANE'S HOME PAGE.URL`, and the four archives
+**`FA_1.LIB`, `FA_2.LIB`, `FA_4B.LIB`, `FA_4D.LIB`** — matching the
+"Install dir" rows of [LIB.md § File Inventory](LIB.md#file-inventory). Every
+other archive stays disc-resident (`FA_4C`/`FA_7` on Disk 1; `FA_3`/`FA_10`/
+`FA_10B`/`FA_11`/`FA_11B` on Disk 2), though the game runs fine with them
+hand-copied beside the installed set. confirmed
+
+The disc `SETUP` script's own registry/shell directives (`REGEXE`,
+`ADD_GROUP`, `DESKTOP_ITEM`, …) are surfaced — reported, not executed — by
+`fx install`'s directive report
+([install.h](https://github.com/jomkz/fighters-codex/blob/main/lib/include/fx/install.h)).
+
 ## Round-Trip Notes
 
 `fx esa repack` reads the directory and rebuilds the archive: metadata is copied
