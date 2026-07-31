@@ -329,6 +329,15 @@ Recovered object-system state (full list, with per-symbol confidence, in the
 | `0x00442DE0` | `GRAPHICUpdate` | step every live effect (motion, fuse, adders) |
 | `0x004431B0` | `GRAPHICAddYourObjs` | draw live effects when the object `0x200` flag is set |
 | `0x004432D0` | `GRAPHICAddExp` | spawn an explosion (+ chained debris / smoke) |
+| `0x00473680` | `FlightControlOverMe` | does flight control own the current entity |
+| `0x004736B0` | `NPCSetStateTarget` | set an NPC's state target |
+| `0x00474650` | `NPCSetReact` | set an NPC's reaction state |
+| `0x00474740` | `AmmoForClass` | ammo count for an object class |
+| `0x0049FD70` | `FindStreamerDef` | look up a `STREAMER_DEF` (wingtip/contrail trail) |
+| `0x0049FD90` | `DrawStreamer` | draw one streamer trail |
+| `0x004A0010` | `StreamersInit` | reset the streamer pool |
+| `0x004A0250` | `StreamersUpdate` | per-frame streamer advance |
+| `0x004A02D0` | `StreamersShutdown` | free streamers at mission teardown |
 
 ### Aircraft (`PLANE*`) & ground-vehicle (`GV*`) object procs
 

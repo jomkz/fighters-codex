@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Startup / Phar Lap DOS extender / config -- FA.EXE
-// 418/485 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
+// 419/487 functions have a recovered signature (+4 that are not C functions); 40/40 globals have a recovered type.
 
 namespace fxe::fa::startup {
 
@@ -57,6 +57,7 @@ extern undefined4 _acmdln;  // 0x00592C4C  MSVC CRT global (xrefs=5)
 // --- functions -------------------------------------------------------
 void usnfmain(void);  // 0x00403700  __cdecl
 void FlyingLoop(void);  // 0x00404C70  __cdecl
+char IsBrentDLL(void *);  // 0x0041E8F0  __fastcall
 undefined4 IsDLL(undefined4);  // 0x0041E910  __stdcall
 void * VAToPtrInFile(_IMAGE_DOS_HEADER *, long, SECTION_INFO **);  // 0x0041E990  __stdcall
 void FindSection(_IMAGE_DOS_HEADER *, char *, SECTION_INFO *);  // 0x0041EA80  __stdcall
@@ -485,6 +486,7 @@ undefined4 HeapSize(undefined4, undefined4, undefined4);  // 0x004E8B66  __stdca
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
+// TODO(#453): 0x0041F240  LoadBrentDLL -- signature not recovered
 // TODO(#453): 0x0044A120  ErrorExit -- signature not recovered
 // TODO(#453): 0x004D72FE  _closeMS -- signature not recovered
 // TODO(#453): 0x004D74A0  _cexit -- signature not recovered

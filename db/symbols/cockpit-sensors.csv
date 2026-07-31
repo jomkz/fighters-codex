@@ -65,6 +65,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00440D00,func,CPScopeSelectContact,,re,confirmed,update the selected/designated contact highlight on a scope,
 0x00440E10,func,@CPNextTarget@4,CPNextTarget,sms,confirmed,cycle the radar-scope target: scan the radar contact buffer (0x53bea8) for the next (or previous) radar-detectable contact past/before the current target range — the t / T keys (input.md FlightKey),undefined4 __fastcall CPNextTarget(undefined4)
 0x00440FE0,func,?CPUpdateIRItems@@YGXXZ,CPUpdateIRItems,sms,confirmed,per-frame IR-item update: refreshes the IR-seeker contact list,void __stdcall CPUpdateIRItems(void)
+0x00441160,func,?CPGetContact@@YGGJ@Z,CPGetContact,sms,confirmed,in the CP scope unit (CPNextTarget < here < ChooseScoreInit),unsigned short __stdcall CPGetContact(long)
 0x004F3DD4,data,,,waiver,confirmed,interior of / adjacent to mmAllocIdSp; named at its base or owned by that subsystem,
 0x004F3EC8,data,,,waiver,confirmed,interior of / adjacent to mmAllocIdSp; named at its base or owned by that subsystem,
 0x004F3ECC,data,,,waiver,confirmed,interior of / adjacent to mmAllocIdSp; named at its base or owned by that subsystem,

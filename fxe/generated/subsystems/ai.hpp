@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // AI interpreter (CT) -- FA.EXE
-// 121/128 functions have a recovered signature; 8/8 globals have a recovered type.
+// 123/130 functions have a recovered signature; 8/8 globals have a recovered type.
 
 namespace fxe::fa::ai {
 
@@ -139,8 +139,10 @@ void CTSaveState(void);  // 0x00466920  __cdecl
 undefined4 CTExecProgram(undefined4);  // 0x00466970  __stdcall
 void CTStep(void);  // 0x00466A80  __cdecl
 undefined4 * CTVarPtr(short);  // 0x004670E0  __fastcall
+undefined4 MVRMove(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC510  __stdcall
 undefined4 MVRMoveToAlt(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC680  __stdcall
 undefined4 MVRYoyo(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC780  __stdcall
+undefined4 MVRApproachTarget(undefined4, undefined4, undefined4);  // 0x004AC880  __fastcall
 undefined4 MVRJink(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AC9E0  __stdcall
 undefined4 MVRSplitS(undefined4, undefined4, undefined4);  // 0x004ACB80  __fastcall
 undefined4 MVRImmelman(undefined4, undefined4, undefined4);  // 0x004ACCB0  __fastcall

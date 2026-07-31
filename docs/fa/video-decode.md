@@ -84,6 +84,10 @@ Full record: [`db/symbols/video.csv`](https://github.com/jomkz/fighters-codex/bl
 | `0x456EC0` | `DecodeSVGA8Frame` | key frame → 8bpp paletted |
 | `0x456AD0` | `EDB` | expand-book: interpolated 2×2 dither pattern |
 | `0x4575E0` | `ClampU8` | saturate a channel to `[0,255]` (YUV→RGB leaf) |
+| `0x4054B0` | `ZeroFrame` | clear a VDO frame buffer (follows `VDOInit`) |
+| `0x46ADC0` | `WritePalette` | write a palette range to the display |
+| `0x46ADF0` | `SetVESABank` | select the active VESA bank |
+| `0x46AE00` | `SetVESATop` | set the VESA display start |
 
 ### Vendored libjpeg
 

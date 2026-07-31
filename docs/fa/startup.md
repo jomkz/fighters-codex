@@ -30,6 +30,8 @@ Full record: [`db/symbols/startup.csv`](https://github.com/jomkz/fighters-codex/
 | `0x4D9D00` | `_WinMainCRTStartup` | PE entry: CRT init → game `_WinMain` |
 | `0x4D715A` | `_DirectDrawCreate@12` | DDRAW import thunk |
 | `0x4D7220` | `_ser_rs232_getpacket@12` | serial-comms driver import thunk |
+| `0x41E8F0` | `IsBrentDLL` | probe a buffer for the in-house DLL container format |
+| `0x41F240` | `LoadBrentDLL` | load an in-house-container DLL (pairs with `LoadDLL`) |
 
 ### Win32 application bootstrap
 

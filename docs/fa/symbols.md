@@ -1139,7 +1139,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Cockpit sensors (radar / IR / RWR)
 
-[`cockpit-sensors.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/cockpit-sensors.csv) · [page](cockpit-sensors.md) — 62 named functions
+[`cockpit-sensors.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/cockpit-sensors.csv) · [page](cockpit-sensors.md) — 63 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1205,6 +1205,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00440D00` | `CPScopeSelectContact` | re | update the selected/designated contact highlight on a scope |
 | `0x00440E10` | `CPNextTarget` | sms | cycle the radar-scope target: scan the radar contact buffer (0x53bea8) for the next (or previous) radar-detectable contact past/before the current target range — the t / T keys (input.md FlightKey) |
 | `0x00440FE0` | `CPUpdateIRItems` | sms | per-frame IR-item update: refreshes the IR-seeker contact list |
+| `0x00441160` | `CPGetContact` | sms | in the CP scope unit (CPNextTarget < here < ChooseScoreInit) |
 
 ### .SEQ scripted-cutscene / sequence player (SEQ)
 
@@ -1256,7 +1257,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Flight model / physics (FM/HARD)
 
-[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 115 named functions
+[`flight-model.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/flight-model.csv) · [page](physics.md) — 116 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1271,6 +1272,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00413C70` | `TVKey` | sms |  |
 | `0x004197D0` | `ArmPlane` | sms | the interactive arming/loadout screen (#487): presents the aircraft hardpoints, drives weapon selection via dialogs, and applies the loadout through _HARDPtrs/_HARDLoad (+ _MPSetHardpoints/_MPSetFuel for MP sync); reads shell-UI state. Returns a status uint. The largest single function in the binary (11 KB) |
 | `0x00447970` | `IntersectT` | sms |  |
+| `0x004479D8` | `IntersectB` | sms | sibling of IntersectT@0x447970 (same signature; 0x68 apart in the same unit) |
 | `0x004514C0` | `FMUpdateGearPitch` | sms |  |
 | `0x00451580` | `FMUpdateGear` | sms |  |
 | `0x004515E0` | `FMUpdateWingSweep` | sms |  |
@@ -1378,11 +1380,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Video decode (FMV/Cobra)
 
-[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 66 named functions
+[`video.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/video.csv) · [page](video-decode.md) — 70 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00405490` | `VDOInit` | sms |  |
+| `0x004054B0` | `ZeroFrame` | sms | VDO frame clear; directly follows VDOInit@0x405490 |
 | `0x004219B0` | `StopCobraSound` | sms |  |
 | `0x004219D0` | `StartCobraSound` | sms |  |
 | `0x00421A50` | `PlayCobra` | sms | imported by 1 shipped .CAM overlay (#491); named at this VA by FA.SMS |
@@ -1411,6 +1414,9 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0045B9C0` | `DecodeInterSVGA15NONFrame` | sms | INTER/delta NON 8bpp single; dispatch inter submode6 case1 |
 | `0x0045BE60` | `DecodeInterDSVGA15NONFrame` | sms | INTER/delta NON 8bpp doubled; dispatch inter submode6 case2 (+4==0) |
 | `0x0045C500` | `DecodeInterDSVGA15NONSkipFrame` | sms | INTER/delta NON 8bpp doubled with skip-map; dispatch inter submode6 case2 (+4!=0) |
+| `0x0046ADC0` | `WritePalette` | sms | VESA/palette trio directly preceding InitCobra@0x46AE10 |
+| `0x0046ADF0` | `SetVESABank` | sms |  |
+| `0x0046AE00` | `SetVESATop` | sms |  |
 | `0x0046AE10` | `InitCobra` | sms |  |
 | `0x0046B0F0` | `CleanCobra` | sms |  |
 | `0x0046B120` | `InitVideo` | sms |  |
@@ -1749,7 +1755,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Object / entity system & shape selection
 
-[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 143 named functions
+[`objects.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/objects.csv) · [page](objects.md) — 152 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -1832,6 +1838,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00464640` | `SetScenarioEndTime` | sms |  |
 | `0x00469960` | `EJECTRemove` | sms |  |
 | `0x00469970` | `EJECTAdd` | sms |  |
+| `0x00473680` | `FlightControlOverMe` | sms | entity flight-control-ownership query; run into NPCWeaponsProc@0x4736F0 |
+| `0x004736B0` | `NPCSetStateTarget` | sms | NPC is an entity class in the OBJ/NPC/PLANE/PROJ hierarchy (see _cg note) |
 | `0x004736F0` | `NPCWeaponsProc` | sms |  |
 | `0x00473A40` | `OBJEventProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00473B40` | `OBJDamageProc` | sms | label-only in FA.SMS import; ApplySymbols materializes the function |
@@ -1840,6 +1848,8 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00473DB0` | `GVProc` | sms | class proc for ground vehicles, named by 73 shipped .NT records (#491); a selector: 3 -> GVEventProc, 5 -> NPCWeaponsProc, else delegates to OBJProc — so GV extends OBJ |
 | `0x00473DE0` | `GVDoCurrentWaypoint` | sms |  |
 | `0x00473F50` | `GVEventProc` | sms |  |
+| `0x00474650` | `NPCSetReact` | sms |  |
+| `0x00474740` | `AmmoForClass` | sms | per-class ammo query; between GVEventProc and Alive in the objects run |
 | `0x004747C0` | `Alive` | sms | imported by 6 shipped .MC overlays (#491); named at this VA by FA.SMS |
 | `0x0047CEB0` | `MANAdd` | sms |  |
 | `0x0048D780` | `PLANESayProc` | sms |  |
@@ -1879,6 +1889,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049FB70` | `PLANECheckFuel` | sms |  |
 | `0x0049FCD0` | `PLANESetThrottle` | sms |  |
 | `0x0049FD40` | `PLANEUpdateJustLanded` | sms |  |
+| `0x0049FD70` | `FindStreamerDef` | sms | streamer (wingtip/contrail trail) unit 0x49FD70-0x4A0300 nested inside the PLANE region |
+| `0x0049FD90` | `DrawStreamer` | sms |  |
+| `0x004A0010` | `StreamersInit` | sms |  |
+| `0x004A0250` | `StreamersUpdate` | sms |  |
+| `0x004A02D0` | `StreamersShutdown` | sms | called from MISSIONShutdown (campaign.csv note) |
 | `0x004A0310` | `PLANEHackForPlayerWing` | sms |  |
 | `0x004A04F0` | `PLANETurnOffGunSound` | sms |  |
 | `0x004A0510` | `PLANESetFeetWet` | sms |  |
@@ -1899,7 +1914,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### AI interpreter (CT)
 
-[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 128 named functions
+[`ai.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/ai.csv) · [page](ai-interpreter.md) — 130 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -2025,16 +2040,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00466970` | `CTExecProgram` | sms |  |
 | `0x00466A80` | `CTStep` | re | fetch one opcode and dispatch via switch; CALL_BY_NAME(0x27) resolves via SMAddress then self-patches to CALL_DIRECT(0x26); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004670E0` | `CTVarPtr` | re | return &_ctState[i] for script var index i in [0,4]; out-of-range raises CTError(3); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
+| `0x004AC510` | `MVRMove` | sms | MVR maneuver family: interleaved with MVRJink/MVRSplitS/MVRImmelman @0x4AC9E0-0x4ACCB0 |
 | `0x004AC680` | `MVRMoveToAlt` | sms |  |
 | `0x004AC760` | `MVRInvert` | sms |  |
 | `0x004AC780` | `MVRYoyo` | sms |  |
+| `0x004AC880` | `MVRApproachTarget` | sms |  |
 | `0x004AC9E0` | `MVRJink` | sms |  |
 | `0x004ACB80` | `MVRSplitS` | sms |  |
 | `0x004ACCB0` | `MVRImmelman` | sms |  |
 
 ### Input — joystick / serial / modem
 
-[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 72 named functions
+[`input.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/input.csv) · [page](input.md) — 79 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -2053,6 +2070,13 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00412960` | `GetKey` | sms |  |
 | `0x00413D10` | `SlewKey` | sms | slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0 |
 | `0x00414070` | `SlewObjListCollect` | re | T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24 |
+| `0x004140A0` | `SetPlayerTarget` | sms | targeting-key support unit 0x4140A0-0x4144B0 inside the input key region (SlewObjListCollect < here < FlightKey); input owns the same-family PickVisibleTarget |
+| `0x004140C0` | `TargetNearestTo` | sms |  |
+| `0x00414180` | `GetTargetPositions` | sms |  |
+| `0x004141D0` | `Targetable` | sms |  |
+| `0x004143F0` | `SetPlayerContact` | sms |  |
+| `0x00414410` | `ContactNearestTo` | sms |  |
+| `0x004144B0` | `GetContactPositions` | sms |  |
 | `0x00414690` | `FlightKey` | sms | THE in-flight command table: offers the key to the stick/rudder/throttle device procs (msg 3) then dispatches ~70 commands - flight controls (a/b/f/g/h/o), sensors (r/i/m/y, Shift+R A/G, Shift+A AWACS, Shift+G GCI), targeting (Enter/t/T/;), weapons ([ ] Space Tab, keypad-Ins chaff keypad-Del flare, Shift+J/K jettison), wingman Alt+letters + Alt+1..9 break angles, Shift+digit MFD windows, Ctrl+keypad thrust vector, Shift+E eject (double-press). See input.md section |
 | `0x00415E30` | `PickVisibleTarget` | re | filter _visibleTargetIds by Targetable, then param!=0: nearest to screen centre (boresight), param==0: next in raster order after the current target |
 | `0x00415F80` | `NextTargetOnScreen` | re | raster-order scan of on-screen target positions; returns the id following the reference position, skipping the current target |
@@ -2448,16 +2472,18 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Startup / Phar Lap DOS extender / config
 
-[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 489 named functions
+[`startup.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/startup.csv) · [page](startup.md) — 491 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x00403700` | `usnfmain` | sms |  |
 | `0x00404C70` | `FlyingLoop` | sms |  |
+| `0x0041E8F0` | `IsBrentDLL` | sms | PE/DLL loader family: directly precedes IsDLL@0x41E910 (claimed in #534) |
 | `0x0041E910` | `IsDLL` | sms |  |
 | `0x0041E990` | `VAToPtrInFile` | sms |  |
 | `0x0041EA80` | `FindSection` | sms |  |
 | `0x0041EB60` | `LoadDLL` | sms |  |
+| `0x0041F240` | `LoadBrentDLL` | sms |  |
 | `0x00436320` | `StartGameThread` | sms |  |
 | `0x0044A110` | `InstallErrorExit` | sms |  |
 | `0x0044A120` | `ErrorExit` | sms |  |

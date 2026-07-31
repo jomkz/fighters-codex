@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 123/140 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
+// 132/149 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -113,12 +113,16 @@ undefined4 CloseToAnything(undefined4);  // 0x00464550  __fastcall
 undefined4 SetScenarioEndTime(undefined4);  // 0x00464640  __fastcall
 undefined4 EJECTRemove(void);  // 0x00469960  __stdcall
 undefined4 EJECTAdd(undefined4);  // 0x00469970  __fastcall
+undefined4 FlightControlOverMe(void);  // 0x00473680  __stdcall
+undefined4 NPCSetStateTarget(undefined4, undefined4);  // 0x004736B0  __fastcall
 undefined4 OBJEventProc(u16, undefined4);  // 0x00473A40  __cdecl
 void OBJDamageProc(HIT_OBJ_DATA *);  // 0x00473B40  __cdecl
 undefined4 OBJProc(undefined4);  // 0x00473BE0  __cdecl
 undefined4 Kill(void);  // 0x00473C10  __stdcall
 undefined4 GVProc(char);  // 0x00473DB0  __cdecl
 char GVDoCurrentWaypoint(void);  // 0x00473DE0  __cdecl
+undefined4 NPCSetReact(undefined4, undefined4, undefined4);  // 0x00474650  __fastcall
+undefined4 AmmoForClass(undefined4);  // 0x00474740  __fastcall
 undefined4 Alive(undefined4);  // 0x004747C0  __fastcall
 undefined4 MANAdd(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0047CEB0  __stdcall
 undefined4 OBJGet(undefined4);  // 0x00491240  __fastcall
@@ -153,6 +157,11 @@ undefined4 PLANEList(undefined4, undefined4);  // 0x0049FAA0  __stdcall
 undefined4 PLANECheckFuel(void);  // 0x0049FB70  __stdcall
 undefined4 PLANESetThrottle(undefined4, undefined4);  // 0x0049FCD0  __fastcall
 undefined4 PLANEUpdateJustLanded(undefined4, undefined4);  // 0x0049FD40  __fastcall
+STREAMER_DEF * FindStreamerDef(unsigned char *);  // 0x0049FD70  __fastcall
+undefined4 DrawStreamer(undefined4, undefined4, undefined4);  // 0x0049FD90  __stdcall
+undefined4 StreamersInit(void);  // 0x004A0010  __stdcall
+undefined4 StreamersUpdate(void);  // 0x004A0250  __stdcall
+undefined4 StreamersShutdown(void);  // 0x004A02D0  __stdcall
 undefined4 PLANEHackForPlayerWing(void);  // 0x004A0310  __stdcall
 undefined4 PLANETurnOffGunSound(void);  // 0x004A04F0  __stdcall
 undefined4 PLANESetFeetWet(void);  // 0x004A0510  __stdcall

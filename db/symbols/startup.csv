@@ -9,10 +9,12 @@ va,kind,name,display,source,confidence,notes,type
 0x00404C4A,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
 0x00404C4F,data,,,waiver,confirmed,interior of / adjacent to switchdataD_00404bf0; named at its base or owned by that subsystem,
 0x00404C70,func,?FlyingLoop@@YAXXZ,FlyingLoop,sms,confirmed,,void __cdecl FlyingLoop(void)
+0x0041E8F0,func,?IsBrentDLL@@YIDPAX@Z,IsBrentDLL,sms,confirmed,PE/DLL loader family: directly precedes IsDLL@0x41E910 (claimed in #534),char __fastcall IsBrentDLL(void *)
 0x0041E910,func,_IsDLL@4,IsDLL,sms,confirmed,,undefined4 __stdcall IsDLL(undefined4)
 0x0041E990,func,?VAToPtrInFile@@YGPAXPAU_IMAGE_DOS_HEADER@@JPAPAUSECTION_INFO@@@Z,VAToPtrInFile,sms,confirmed,,"void * __stdcall VAToPtrInFile(_IMAGE_DOS_HEADER *, long, SECTION_INFO **)"
 0x0041EA80,func,?FindSection@@YGXPAU_IMAGE_DOS_HEADER@@PADPAUSECTION_INFO@@@Z,FindSection,sms,confirmed,,"void __stdcall FindSection(_IMAGE_DOS_HEADER *, char *, SECTION_INFO *)"
 0x0041EB60,func,_LoadDLL@16,LoadDLL,sms,confirmed,,"undefined4 __stdcall LoadDLL(undefined4, undefined4, undefined4, undefined4)"
+0x0041F240,func,?LoadBrentDLL@@YGPAUT_HANDLE@@PAEPAU1@F@Z,LoadBrentDLL,sms,confirmed,,
 0x00436320,func,?StartGameThread@@YAKPAK@Z,StartGameThread,sms,confirmed,,unsigned long __cdecl StartGameThread(unsigned long *)
 0x0044A110,func,_InstallErrorExit@0,InstallErrorExit,sms,confirmed,,undefined4 __stdcall InstallErrorExit(void)
 0x0044A120,func,_ErrorExit,ErrorExit,sms,confirmed,,

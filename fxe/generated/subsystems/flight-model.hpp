@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Flight model / physics (FM/HARD) -- FA.EXE
-// 115/115 functions have a recovered signature; 0/0 globals have a recovered type.
+// 116/116 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::flight_model {
 
@@ -24,6 +24,7 @@ undefined4 SpeedOfSound(undefined4);  // 0x00412780  __fastcall
 unsigned short TVKey(unsigned short);  // 0x00413C70  __fastcall
 undefined4 ArmPlane(undefined4);  // 0x004197D0  __fastcall
 long IntersectT(F24_POINT *, long, long);  // 0x00447970  __cdecl
+long IntersectB(F24_POINT *, long, long);  // 0x004479D8  __cdecl
 undefined4 FMUpdateGearPitch(void);  // 0x004514C0  __stdcall
 undefined4 FMUpdateGear(void);  // 0x00451580  __stdcall
 undefined4 FMUpdateWingSweep(void);  // 0x004515E0  __stdcall

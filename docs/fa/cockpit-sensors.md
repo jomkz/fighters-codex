@@ -104,6 +104,7 @@ Full record: [`db/symbols/cockpit-sensors.csv`](https://github.com/jomkz/fighter
 | `0x43A5C0` | `CPDrawRadarScope` | radar B-scope / target-designation MFD (weather-gated) |
 | `0x43EA40` | `CPDrawRWR` | RWR threat display + track/search lock spike timing |
 | `0x440E10` | `CPNextTarget` | cycle the radar contact buffer (`t`/`T` keys) |
+| `0x441160` | `CPGetContact` | fetch a contact from the CP scope buffer |
 
 ## Open Questions
 
