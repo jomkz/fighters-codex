@@ -16,6 +16,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0041E050,func,?Unlock@CDirDraw@@QAEHPAVCDirDrawSurface@@@Z,,sms,confirmed,,
 0x0041E060,func,?WaitForVerticalBlank@CDirDraw@@QAEXK@Z,,sms,confirmed,,
 0x0041E090,func,?EnumDisplayModes@CDirDraw@@QAEKXZ,,sms,confirmed,,
+0x0041E130,func,?ModeCallback@@YGJPAU_DDSURFACEDESC@@PAX@Z,ModeCallback,sms,confirmed,the CDirDraw::EnumDisplayModes callback (directly follows it at 0x41E090),"long __stdcall ModeCallback(_DDSURFACEDESC *, void *)"
 0x0041E2F0,func,,,waiver,confirmed,5-byte duplicate-name entry — jmp thunk / COMDAT fold of the 0x0041DEB0 ?Destroy@CDirDraw@@QAEXXZ body,
 0x0041E300,func,?ShowDDError@CDirDraw@@SAXJ@Z,,sms,confirmed,,
 0x0041E310,func,?ddECS@CDirDraw@@SAXXZ,,sms,confirmed,,
@@ -242,10 +243,18 @@ va,kind,name,display,source,confidence,notes,type
 0x004C9224,func,NoHorizon,,re,confirmed,off-screen fallback for _SolidHorizon when the tilted horizon line falls outside the viewport — emits no raster output; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl NoHorizon(void)
 0x004C924C,func,_SolidHorizon,SolidHorizon,re,confirmed,"solid-colour sky/ground band: stores _sky_color_data/_ground_color_data, derives the horizon quad from the camera up-vector (top_up/right_up/forward_up) plus __amtMoveHorizon, then calls Horizon2d (on-screen) or NoHorizon (renderer.md §10); signature recovered in the #453 close-out; convention and stack arity checked against the binary's RET operand","void __cdecl SolidHorizon(undefined4, undefined4)"
 0x004C942C,func,_GouraudHorizon,GouraudHorizon,re,inferred,"Gouraud sky/ground gradient: stages gradient-polygon vertices/colours (tilted by heading vector _headv_x/_headv_z) into 0x50FDA0-0x50FE40, then rasterizes them through the vector_table SH draw-opcodes (renderer.md §10)","undefined4 __cdecl GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x004C9A88,func,AC_interpolate_linear_span,AC_interpolate_linear_span,sms,confirmed,span innerloop of G__AC_Texture@0x4CA028,
 0x004CA028,func,_G__AC_Texture,G__AC_Texture,sms,confirmed,not a C function (#479): bitmap in ESI and span state in EAX/EBX,!asm
+0x004CA1B4,func,interpolate_linear_span,interpolate_linear_span,sms,confirmed,span innerloop of G__Texture@0x4CAE38,
 0x004CAE38,func,_G__Texture,G__Texture,sms,confirmed,not a C function (#479): bitmap in ESI and span state in EAX/EBX,!asm
+0x004CB088,func,interpolate_perspective_span,interpolate_perspective_span,sms,confirmed,span innerloop of G__Perspective@0x4CBD0B,
 0x004CBD0B,func,_G__Perspective,G__Perspective,sms,confirmed,not a C function (#479): bitmap in ESI and span state in EAX/EBX,!asm
 0x004CBE7C,func,_G__ScaleBitmap,G__ScaleBitmap,sms,confirmed,not a C function (#479): source bitmap in ESI and destination rect in EDI,!asm
+0x004CC3A5,func,expand_texture_poly,expand_texture_poly,sms,confirmed,,
+0x004CC44C,func,Remap,Remap,sms,confirmed,shading/remap table machinery for the rasterizer,
+0x004CC4B4,func,SetShadingTable,SetShadingTable,sms,confirmed,,
+0x004CC518,func,@DoSetTmapRemaps@0,DoSetTmapRemaps,sms,confirmed,,undefined4 __fastcall DoSetTmapRemaps(void)
+0x004CC7F4,func,@RemapYLRP@4,RemapYLRP,sms,confirmed,pairs with DrawYLRP@0x4CC8B0,undefined4 __fastcall RemapYLRP(undefined4)
 0x004CC8B0,func,@DrawYLRP@8,DrawYLRP,sms,confirmed,,"undefined4 __fastcall DrawYLRP(undefined4, undefined4)"
 0x004EB6B4,data,,,waiver,confirmed,view/screen state named at the _mainV base; shared with hud/shell-ui,
 0x004EB6BE,data,,,waiver,confirmed,view/screen state named at the _mainV base; shared with hud/shell-ui,

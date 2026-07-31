@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 172/230 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
+// 175/239 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -21,6 +21,7 @@ extern u32 overflowQuotient;  // 0x0058F0E8  divide-overflow handler scratch: th
 extern u32 overflowSignMask;  // 0x0058F0F4  divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign
 
 // --- functions -------------------------------------------------------
+long ModeCallback(_DDSURFACEDESC *, void *);  // 0x0041E130  __stdcall
 undefined4 G_Tile(undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x00447AA5  __fastcall
 unsigned short DrawAcrossBankInter(short, short, short, short, unsigned long, GlobalData *, unsigned short, unsigned char *);  // 0x0045CA70  __cdecl
 unsigned short DrawAcrossBank(short, short, short, short, unsigned long, GlobalData *, unsigned short);  // 0x0045CDA0  __cdecl
@@ -192,6 +193,8 @@ void Horizon2d(void);  // 0x004C8FD4  __cdecl
 void NoHorizon(void);  // 0x004C9224  __cdecl
 void SolidHorizon(undefined4, undefined4);  // 0x004C924C  __cdecl
 undefined4 GouraudHorizon(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C942C  __cdecl
+undefined4 DoSetTmapRemaps(void);  // 0x004CC518  __fastcall
+undefined4 RemapYLRP(undefined4);  // 0x004CC7F4  __fastcall
 undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 
 // --- not C functions --------------------------------------------------
@@ -265,6 +268,12 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x004BF2C0  line_overflow1 -- signature not recovered
 // TODO(#453): 0x004BF310  line_overflow2 -- signature not recovered
 // TODO(#453): 0x004BF340  access_violation_handler -- signature not recovered
+// TODO(#453): 0x004C9A88  AC_interpolate_linear_span -- signature not recovered
+// TODO(#453): 0x004CA1B4  interpolate_linear_span -- signature not recovered
+// TODO(#453): 0x004CB088  interpolate_perspective_span -- signature not recovered
+// TODO(#453): 0x004CC3A5  expand_texture_poly -- signature not recovered
+// TODO(#453): 0x004CC44C  Remap -- signature not recovered
+// TODO(#453): 0x004CC4B4  SetShadingTable -- signature not recovered
 // TODO(#455): 0x0050C8D8  _lensFlareTable -- type not recovered
 // TODO(#455): 0x0050C8DC  _lensFlareCount -- type not recovered
 // TODO(#455): 0x00580D90  _curEyeLayer -- type not recovered
