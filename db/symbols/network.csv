@@ -245,6 +245,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00493EE0,func,?connected_state_callback@@YAXPAXW4NET_CONNECTED_STATE@@@Z,connected_state_callback,sms,confirmed,,"void __cdecl connected_state_callback(void *, NET_CONNECTED_STATE)"
 0x004940E0,func,?players_box_add@@YAXPAXW4PLAYER_ACTION@@PADPAUNET_ADDRESS@@J@Z,players_box_add,sms,confirmed,,"void __cdecl players_box_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long)"
 0x004941E0,func,?players_box_connected_state_callback@@YAXPAXW4NET_CONNECTED_STATE@@@Z,players_box_connected_state_callback,sms,confirmed,,"void __cdecl players_box_connected_state_callback(void *, NET_CONNECTED_STATE)"
+0x00494BB0,func,?noIO@@YAJJPAD@Z,noIO,sms,confirmed,no-op I/O stub directly before MP_Initialize,"long __cdecl noIO(long, char *)"
 0x00494BC0,func,?MP_Initialize@@YAJPAUCN_INFO@@J@Z,MP_Initialize,sms,confirmed,,"long __cdecl MP_Initialize(CN_INFO *, long)"
 0x00494CB0,func,?MP_Info@@YAPAUMP_INFO@@XZ,MP_Info,sms,confirmed,,MP_INFO * __cdecl MP_Info(void)
 0x00494CC0,func,?MP_Shutdown@@YAXXZ,MP_Shutdown,sms,confirmed,,void __cdecl MP_Shutdown(void)
@@ -261,6 +262,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00497290,func,?spxbuildaddress@@YADPAUNET_PROTOCOL@@PAUCN_INFO@@PAUNET_ADDRESS@@@Z,spxbuildaddress,sms,confirmed,build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO,"char __cdecl spxbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *)"
 0x004972D0,func,?spxfactory@@YAXPAUNET_PROTOCOL@@PADH@Z,spxfactory,sms,confirmed,,"void __cdecl spxfactory(NET_PROTOCOL *, char *, int)"
 0x00499F70,func,?setPacketInfo@@YAXAAUSERIAL_PACKET@@JJ@Z,setPacketInfo,sms,confirmed,write SERIAL_PACKET type (low2 bits of byte0 | 0xfc) and seq (byte3),"void __cdecl setPacketInfo(SERIAL_PACKET &, long, long)"
+0x00499F90,func,?computePacketCRC@@YAKAAUSERIAL_PACKET@@@Z,computePacketCRC,sms,confirmed,directly after setPacketInfo in the serial-packet unit,unsigned long __cdecl computePacketCRC(SERIAL_PACKET &)
 0x0049A000,func,?packetCRC@@YAKAAUSERIAL_PACKET@@@Z,packetCRC,sms,confirmed,extract stored CRC (byte1 [+byte10 for type0/3]) by packet type,unsigned long __cdecl packetCRC(SERIAL_PACKET &)
 0x0049A040,func,?verifyPacketCRC@@YADAAUSERIAL_PACKET@@@Z,verifyPacketCRC,sms,confirmed,packetCRC()==computePacketCRC(),char __cdecl verifyPacketCRC(SERIAL_PACKET &)
 0x0049A070,func,?assignPacketCRC@@YAXAAUSERIAL_PACKET@@@Z,assignPacketCRC,sms,confirmed,store computed CRC into byte1 (+byte10 for type0/3),void __cdecl assignPacketCRC(SERIAL_PACKET &)
@@ -269,6 +271,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0049A120,func,?SER_CheckDisconnect@@YADXZ,SER_CheckDisconnect,sms,confirmed,detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags,char __cdecl SER_CheckDisconnect(void)
 0x0049A1B0,func,?SER_GetOutholdingLimit@@YAXXZ,SER_GetOutholdingLimit,sms,confirmed,transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window),void __cdecl SER_GetOutholdingLimit(void)
 0x0049A260,func,?SER_BackgroundThread@@YGKPAX@Z,SER_BackgroundThread,sms,confirmed,,unsigned long __stdcall SER_BackgroundThread(void *)
+0x0049A380,func,?InitializeQueue@@YAXAAUSERIAL_QUEUE@@PAUSERIAL_PACKET_WRAPPER@@J@Z,InitializeQueue,sms,confirmed,directly before updateQueueHead in the serial-queue unit,"void __cdecl InitializeQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER *, long)"
 0x0049A3E0,func,?updateQueueHead@@YAXAAUSERIAL_QUEUE@@J@Z,updateQueueHead,sms,confirmed,head = seq % capacity; returns seq / capacity (wrap count),"void __cdecl updateQueueHead(SERIAL_QUEUE &, long)"
 0x0049A400,func,?insertQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,insertQueue,sms,confirmed,copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count,"void __cdecl insertQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
 0x0049A460,func,?overwriteQueue@@YAXAAUSERIAL_QUEUE@@AAUSERIAL_PACKET_WRAPPER@@@Z,overwriteQueue,sms,confirmed,overwrite slot by wrapper seq without count bump (history record),"void __cdecl overwriteQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &)"
@@ -356,14 +359,19 @@ va,kind,name,display,source,confidence,notes,type
 0x004B1590,func,?fill_in_mpinfo@@YAXXZ,fill_in_mpinfo,sms,confirmed,,void __cdecl fill_in_mpinfo(void)
 0x004B1660,func,?game_event_handler@@YADIJHPAUsocket_state@@@Z,game_event_handler,sms,confirmed,,"char __cdecl game_event_handler(unsigned int, long, int, socket_state *)"
 0x004B16B0,func,?net_write_output_q@@YAXH@Z,net_write_output_q,sms,confirmed,,void __cdecl net_write_output_q(int)
+0x004B18F0,func,?scan_packet_queue@@YAXPAU_packet_queue@@HH@Z,scan_packet_queue,sms,confirmed,,"void __cdecl scan_packet_queue(_packet_queue *, int, int)"
 0x004B1A80,func,?validate_packet@@YADPAUNET_PKT@@@Z,validate_packet,sms,confirmed,,char __cdecl validate_packet(NET_PKT *)
 0x004B1B10,func,?net_handle_fd_write@@YAXPAUsocket_state@@@Z,net_handle_fd_write,sms,confirmed,,void __cdecl net_handle_fd_write(socket_state *)
 0x004B1B40,func,?net_all_players_ready@@YADXZ,net_all_players_ready,sms,confirmed,,char __cdecl net_all_players_ready(void)
+0x004B1B60,func,?get_pkt_err_string@@YAPADJ@Z,get_pkt_err_string,sms,confirmed,,char * __cdecl get_pkt_err_string(long)
 0x004B1B80,func,?net_send_all@@YAXPAUNET_PKT@@@Z,net_send_all,sms,confirmed,,void __cdecl net_send_all(NET_PKT *)
 0x004B1BF0,func,?net_do_accept_connection@@YADIP6ADIJHPAUsocket_state@@@Z@Z,net_do_accept_connection,sms,confirmed,,"char __cdecl net_do_accept_connection(unsigned int, char (__cdecl *)(unsigned int, long, int, socket_state *))"
 0x004B1CA0,func,?net_set_ready@@YAXPAUsocket_state@@@Z,net_set_ready,sms,confirmed,,void __cdecl net_set_ready(socket_state *)
 0x004B1CC0,func,?net_print_player_found@@YAXHPAD@Z,net_print_player_found,sms,confirmed,,"void __cdecl net_print_player_found(int, char *)"
 0x004B1D00,func,?net_add_self@@YAXPADH@Z,net_add_self,sms,confirmed,,"void __cdecl net_add_self(char *, int)"
+0x004B1DD0,func,?validate_player@@YAPAU_player_info@@J@Z,validate_player,sms,confirmed,,_player_info * __cdecl validate_player(long)
+0x004B1E00,func,?clear_all_syncs@@YAXXZ,clear_all_syncs,sms,confirmed,,void __cdecl clear_all_syncs(void)
+0x004B1E30,func,?clear_all_sync_replies@@YAXXZ,clear_all_sync_replies,sms,confirmed,,void __cdecl clear_all_sync_replies(void)
 0x004B2070,func,?net_print_connection_failed@@YAXPAUsocket_state@@@Z,net_print_connection_failed,sms,confirmed,,void __cdecl net_print_connection_failed(socket_state *)
 0x004B20C0,func,?net_addr_equal@@YADPAUNET_ADDRESS@@0@Z,net_addr_equal,sms,confirmed,,"char __cdecl net_addr_equal(NET_ADDRESS *, NET_ADDRESS *)"
 0x004B2120,func,?net_mung_name@@YAXPAD0@Z,net_mung_name,sms,confirmed,,"void __cdecl net_mung_name(char *, char *)"

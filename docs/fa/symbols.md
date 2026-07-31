@@ -60,7 +60,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 363 named functions
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 371 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
@@ -296,6 +296,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00493EE0` | `connected_state_callback` | sms |  |
 | `0x004940E0` | `players_box_add` | sms |  |
 | `0x004941E0` | `players_box_connected_state_callback` | sms |  |
+| `0x00494BB0` | `noIO` | sms | no-op I/O stub directly before MP_Initialize |
 | `0x00494BC0` | `MP_Initialize` | sms |  |
 | `0x00494CB0` | `MP_Info` | sms |  |
 | `0x00494CC0` | `MP_Shutdown` | sms |  |
@@ -312,6 +313,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00497290` | `spxbuildaddress` | sms | build a NET_ADDRESS for an SPX peer from NET_PROTOCOL/CN_INFO |
 | `0x004972D0` | `spxfactory` | sms |  |
 | `0x00499F70` | `setPacketInfo` | sms | write SERIAL_PACKET type (low2 bits of byte0 \| 0xfc) and seq (byte3) |
+| `0x00499F90` | `computePacketCRC` | sms | directly after setPacketInfo in the serial-packet unit |
 | `0x0049A000` | `packetCRC` | sms | extract stored CRC (byte1 [+byte10 for type0/3]) by packet type |
 | `0x0049A040` | `verifyPacketCRC` | sms | packetCRC()==computePacketCRC() |
 | `0x0049A070` | `assignPacketCRC` | sms | store computed CRC into byte1 (+byte10 for type0/3) |
@@ -320,6 +322,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0049A120` | `SER_CheckDisconnect` | sms | detect link loss: modem carrier (IsCarrierDetect) / 8s idle timeout; on loss SER_ShutdownLowLevel + set disconnect flags |
 | `0x0049A1B0` | `SER_GetOutholdingLimit` | sms | transmit-buffer flow control: BytesInTransmitBuffer -> out-holding budget (250-byte / 0xfa window) |
 | `0x0049A260` | `SER_BackgroundThread` | sms |  |
+| `0x0049A380` | `InitializeQueue` | sms | directly before updateQueueHead in the serial-queue unit |
 | `0x0049A3E0` | `updateQueueHead` | sms | head = seq % capacity; returns seq / capacity (wrap count) |
 | `0x0049A400` | `insertQueue` | sms | copy wrapper (0xc dwords) into slot (seq%cap)*0x30; mark valid (+0x10=1); bump count |
 | `0x0049A460` | `overwriteQueue` | sms | overwrite slot by wrapper seq without count bump (history record) |
@@ -407,14 +410,19 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004B1590` | `fill_in_mpinfo` | sms |  |
 | `0x004B1660` | `game_event_handler` | sms |  |
 | `0x004B16B0` | `net_write_output_q` | sms |  |
+| `0x004B18F0` | `scan_packet_queue` | sms |  |
 | `0x004B1A80` | `validate_packet` | sms |  |
 | `0x004B1B10` | `net_handle_fd_write` | sms |  |
 | `0x004B1B40` | `net_all_players_ready` | sms |  |
+| `0x004B1B60` | `get_pkt_err_string` | sms |  |
 | `0x004B1B80` | `net_send_all` | sms |  |
 | `0x004B1BF0` | `net_do_accept_connection` | sms |  |
 | `0x004B1CA0` | `net_set_ready` | sms |  |
 | `0x004B1CC0` | `net_print_player_found` | sms |  |
 | `0x004B1D00` | `net_add_self` | sms |  |
+| `0x004B1DD0` | `validate_player` | sms |  |
+| `0x004B1E00` | `clear_all_syncs` | sms |  |
+| `0x004B1E30` | `clear_all_sync_replies` | sms |  |
 | `0x004B2070` | `net_print_connection_failed` | sms |  |
 | `0x004B20C0` | `net_addr_equal` | sms |  |
 | `0x004B2120` | `net_mung_name` | sms |  |

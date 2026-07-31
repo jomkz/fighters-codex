@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Network / multiplayer (NET/SER/UDP/MP) -- FA.EXE
-// 362/363 functions have a recovered signature; 2/3 globals have a recovered type.
+// 370/371 functions have a recovered signature; 2/3 globals have a recovered type.
 
 namespace fxe::fa::network {
 
@@ -248,6 +248,7 @@ void RunIPXOptionsDialog(CN_INFO *, char *);  // 0x00493780  __cdecl
 void connected_state_callback(void *, NET_CONNECTED_STATE);  // 0x00493EE0  __cdecl
 void players_box_add(void *, PLAYER_ACTION, char *, NET_ADDRESS *, long);  // 0x004940E0  __cdecl
 void players_box_connected_state_callback(void *, NET_CONNECTED_STATE);  // 0x004941E0  __cdecl
+long noIO(long, char *);  // 0x00494BB0  __cdecl
 long MP_Initialize(CN_INFO *, long);  // 0x00494BC0  __cdecl
 MP_INFO * MP_Info(void);  // 0x00494CB0  __cdecl
 void MP_Shutdown(void);  // 0x00494CC0  __cdecl
@@ -264,6 +265,7 @@ char spxaddr2str(NET_ADDRESS *, char *);  // 0x00497250  __cdecl
 char spxbuildaddress(NET_PROTOCOL *, CN_INFO *, NET_ADDRESS *);  // 0x00497290  __cdecl
 void spxfactory(NET_PROTOCOL *, char *, int);  // 0x004972D0  __cdecl
 void setPacketInfo(SERIAL_PACKET &, long, long);  // 0x00499F70  __cdecl
+unsigned long computePacketCRC(SERIAL_PACKET &);  // 0x00499F90  __cdecl
 unsigned long packetCRC(SERIAL_PACKET &);  // 0x0049A000  __cdecl
 char verifyPacketCRC(SERIAL_PACKET &);  // 0x0049A040  __cdecl
 void assignPacketCRC(SERIAL_PACKET &);  // 0x0049A070  __cdecl
@@ -272,6 +274,7 @@ void SER_LeaveCriticalCodeBackground(void);  // 0x0049A100  __cdecl
 char SER_CheckDisconnect(void);  // 0x0049A120  __cdecl
 void SER_GetOutholdingLimit(void);  // 0x0049A1B0  __cdecl
 unsigned long SER_BackgroundThread(void *);  // 0x0049A260  __stdcall
+void InitializeQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER *, long);  // 0x0049A380  __cdecl
 void updateQueueHead(SERIAL_QUEUE &, long);  // 0x0049A3E0  __cdecl
 void insertQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A400  __cdecl
 void overwriteQueue(SERIAL_QUEUE &, SERIAL_PACKET_WRAPPER &);  // 0x0049A460  __cdecl
@@ -359,14 +362,19 @@ void NETProcessEvent(void *, unsigned int, unsigned int, long);  // 0x004B1540  
 void fill_in_mpinfo(void);  // 0x004B1590  __cdecl
 char game_event_handler(unsigned int, long, int, socket_state *);  // 0x004B1660  __cdecl
 void net_write_output_q(int);  // 0x004B16B0  __cdecl
+void scan_packet_queue(_packet_queue *, int, int);  // 0x004B18F0  __cdecl
 char validate_packet(NET_PKT *);  // 0x004B1A80  __cdecl
 void net_handle_fd_write(socket_state *);  // 0x004B1B10  __cdecl
 char net_all_players_ready(void);  // 0x004B1B40  __cdecl
+char * get_pkt_err_string(long);  // 0x004B1B60  __cdecl
 void net_send_all(NET_PKT *);  // 0x004B1B80  __cdecl
 char net_do_accept_connection(unsigned int, char (*)(unsigned int, long, int, socket_state *));  // 0x004B1BF0  __cdecl
 void net_set_ready(socket_state *);  // 0x004B1CA0  __cdecl
 void net_print_player_found(int, char *);  // 0x004B1CC0  __cdecl
 void net_add_self(char *, int);  // 0x004B1D00  __cdecl
+_player_info * validate_player(long);  // 0x004B1DD0  __cdecl
+void clear_all_syncs(void);  // 0x004B1E00  __cdecl
+void clear_all_sync_replies(void);  // 0x004B1E30  __cdecl
 void net_print_connection_failed(socket_state *);  // 0x004B2070  __cdecl
 char net_addr_equal(NET_ADDRESS *, NET_ADDRESS *);  // 0x004B20C0  __cdecl
 void net_mung_name(char *, char *);  // 0x004B2120  __cdecl
