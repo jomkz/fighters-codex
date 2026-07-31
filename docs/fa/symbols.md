@@ -1083,10 +1083,11 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Memory & resource managers (MM/RM)
 
-[`memory-resource.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/memory-resource.csv) · [page](memory-resource.md) — 57 named functions
+[`memory-resource.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/memory-resource.csv) · [page](memory-resource.md) — 86 named functions
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
+| `0x00412FC0` | `cdpath` | sms | scan logical drives for the FA CD (GetDriveTypeA==DRIVE_CDROM + probe fopen); caches _CDPATH |
 | `0x00435C60` | `MMInit` | sms | alloc handle table operator_new(count*0x1C); thread all handles onto free list; GetSystemInfo page size; sets mm_initialized |
 | `0x00435D40` | `MMShutdown` | sms | MMFreeAllId for ids 0..0x12 (19 pools) then free handle array; clears mm_initialized |
 | `0x00435D80` | `MMAllocHandle` | sms | core allocator: MMInternalAlloc(size)+MMUseHandle -> T_HANDLE*; frees block if no free handle |
@@ -1120,11 +1121,22 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004362F0` | `MMUWordAt` | sms | SMS-named; not in inventory; unsigned 16-bit read primitive; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00436300` | `MMLongAt` | sms | SMS-named; not in inventory; signed 32-bit read primitive; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00436310` | `MMULongAt` | sms | *(uint32*)(base+off) |
+| `0x0046A370` | `SMInit` | sms | load the FA.SMS symbol map (<exe>.SMS then RELEASE.SMS fallback); build the sorted name->VA table; family of the claimed SMCallByName@0x46A570 |
+| `0x0046A4C0` | `SMShutdown` | sms |  |
+| `0x0046A4E0` | `SMAddress` | sms | binary-search the symbol map: name -> address (RM binds <type>_Load/_Setup/_Free through it) |
 | `0x0046A570` | `SMCallByName` | sms |  |
 | `0x00478BC0` | `LibStartUp` | sms |  |
 | `0x00479630` | `DoLoadLibFile` | sms |  |
+| `0x004797E0` | `CompareHints` | sms | comparator for the SearchLib hint table (DoLoadLibFile < here < SearchLib) |
 | `0x004798B0` | `SearchLib` | sms |  |
+| `0x00479960` | `FindNext` | sms | file-find family inside the LIB-search unit (SearchLib < here < LibOpen) |
+| `0x00479A60` | `FindFirst` | sms |  |
+| `0x00479B20` | `FindClose` | sms |  |
+| `0x00479B50` | `MatchPattern` | sms |  |
 | `0x00479BD0` | `LibOpen` | sms |  |
+| `0x00479DA0` | `GetDiskFree` | sms |  |
+| `0x00479F50` | `GetDosFileTime` | sms |  |
+| `0x004A5540` | `GetFiles` | sms | collect 8.3 filenames matching pattern into a table over _FindFirst/_FindNext/_FindClose |
 | `0x004A67F0` | `RMInit` | sms | zero resList[1400] (0x19FA dwords) and resCache[20]; set rmInitialized(@0x50A618)=1 |
 | `0x004A6820` | `RMShutdown` | sms | RMFree every live resList slot; zero table; clear rmInitialized |
 | `0x004A6860` | `RMType` | sms |  |
@@ -1141,9 +1153,26 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x004A6DB0` | `RMNotify` | sms | callback from MMFreeHandle: find resList entry whose ptr(+0F)==freed handle and invalidate it; gated by rmNotifyEnabled |
 | `0x004A6DF0` | `RMSetup` | re | post-load per-type hook: SMCallByName <type>_Setup (string @0x50A654) on the freshly loaded resource [FUN_004a6df0]; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004A6E20` | `SetupBitmapAccess` | sms |  |
+| `0x004A6E50` | `LoadPIC` | sms | RM-cached PIC load (RMFind/RMChangeType/G_LoadBitmap/RMLocate); 10 bytes past the declared range end 0x4A6E46 |
 | `0x004A7240` | `RMLegalFilename` | sms | canonicalize a resource filename in place (IsBadStringPtr len 0xD; collapse to a single '.'); OUT-OF-RANGE claim (sits in terrain span) |
+| `0x004ACDC0` | `DiskInit` | sms | disk-I/O layer 0x4ACDC0-0x4AD3A0 directly preceding LoadFile@0x4AD3C0 which builds on it |
+| `0x004ACDF0` | `GetHandle16` | sms |  |
+| `0x004ACE50` | `Open` | sms |  |
+| `0x004ACF30` | `Create` | sms |  |
+| `0x004ACFA0` | `Close` | sms |  |
+| `0x004AD0C0` | `Read` | sms |  |
+| `0x004AD140` | `Write` | sms |  |
+| `0x004AD1C0` | `UGetFileSize` | sms |  |
+| `0x004AD220` | `Delete` | sms |  |
+| `0x004AD250` | `Rename` | sms |  |
+| `0x004AD270` | `GetCurrentPath` | sms |  |
+| `0x004AD2E0` | `SaveFile` | sms |  |
+| `0x004AD380` | `ClearCachedFilenames` | sms |  |
+| `0x004AD3A0` | `GetExecutablePath` | sms |  |
 | `0x004AD3C0` | `LoadFile` | sms |  |
 | `0x004AD9B0` | `LoadFile2` | sms |  |
+| `0x004ADAC0` | `ConcatDirAndFile` | sms | path join for LoadFile/LoadFile2 (sits between them and PlayVDOFile) |
+| `0x004C60F0` | `DecodeFile` | sms | LZSS ring decoder over _lzwBuff (0xFEE init / 0x20 fill); named API entry of the waived lzwlib unit |
 
 ### Cockpit sensors (radar / IR / RWR)
 
