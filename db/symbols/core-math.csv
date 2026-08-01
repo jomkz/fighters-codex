@@ -2,7 +2,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00411950,func,@TurnTowardAngle@12,TurnTowardAngle,sms,confirmed,,"undefined4 __fastcall TurnTowardAngle(undefined4, undefined4, undefined4)"
 0x004119A0,func,_MatchF24@12,MatchF24,sms,confirmed,,"undefined4 __stdcall MatchF24(undefined4, undefined4, undefined4)"
 0x00411A20,func,_LibraryStartup,LibraryStartup,sms,confirmed,,
-0x00411A30,func,_LibraryShutdown,LibraryShutdown,sms,confirmed,,
+0x00411A30,func,_LibraryShutdown,LibraryShutdown,sms,confirmed,,undefined4 __cdecl LibraryShutdown(undefined4)
 0x00411A40,func,_Angles@16,Angles,sms,confirmed,,"undefined4 __stdcall Angles(undefined4, undefined4, undefined4, undefined4)"
 0x00411AF0,func,_AngleOffNose@4,AngleOffNose,sms,confirmed,,undefined4 __stdcall AngleOffNose(undefined4)
 0x00411B60,func,_AnglesOffNose@16,AnglesOffNose,sms,confirmed,,"undefined4 __stdcall AnglesOffNose(undefined4, undefined4, undefined4, undefined4)"

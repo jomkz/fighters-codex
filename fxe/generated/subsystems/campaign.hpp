@@ -8,11 +8,23 @@
 #include "../fa_types.hpp"
 
 // Campaign / mission / pilot (MAP/CAM/MC/MM/PLT) -- FA.EXE
-// 233/277 functions have a recovered signature (+2 that are not C functions); 8/14 globals have a recovered type.
+// 233/277 functions have a recovered signature (+2 that are not C functions); 20/25 globals have a recovered type.
 
 namespace fxe::fa::campaign {
 
 // --- globals ---------------------------------------------------------
+extern undefined1 pilotMedalHonor;  // 0x004F912A  _campaignPilot+0x572: Medal of Honor awarded-flag byte (Navy/AF variant per campaign; P.md medal band) (#29)
+extern undefined1 pilotMedalCross;  // 0x004F912B  _campaignPilot+0x573: Navy Cross / AF Cross awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalDSM;  // 0x004F912C  _campaignPilot+0x574: Distinguished Service Medal awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalAir;  // 0x004F912D  _campaignPilot+0x575: Air Medal awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalDFC;  // 0x004F912E  _campaignPilot+0x576: Distinguished Flying Cross awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalAchievement;  // 0x004F912F  _campaignPilot+0x577: Achievement Medal awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalCommendation;  // 0x004F9130  _campaignPilot+0x578: Commendation Medal awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalExpeditionary;  // 0x004F9131  _campaignPilot+0x579: Expeditionary Medal awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotPurpleHearts;  // 0x004F9132  _campaignPilot+0x57A: Purple Heart count, incremented per award, capped at 3 (P.md medal band) (#29)
+extern undefined1 pilotMedalSilverStar;  // 0x004F9133  _campaignPilot+0x57B: Silver Star awarded-flag byte (P.md medal band) (#29)
+extern undefined1 pilotMedalYellowFever;  // 0x004F9134  _campaignPilot+0x57C: Conquest of Yellow Fever Medal awarded-flag byte (Kurile only; P.md medal band) (#29)
+extern undefined4 pilotMissionsFlown;  // 0x004FAB38  _campaignPilot+0x1F80 (P.md stats block) (#492)
 extern s16 ejectNextTime;  // 0x0050CFD1  ejection seat: next state deadline, in _currentT ticks — EJECTAdd sets _currentT+0xC, EJECTMoveProc re-arms at +1 and parks it at 0x7FFF when the sequence ends
 extern ANGLE ejectAngle;  // 0x0050CFD3  ejection seat: seat attitude — passed as the ANGLE* first argument of ?MPPrepareForInterp@@YGXPAUANGLE@@J@Z, which types it, and slewed toward 0x7FF8 by _Slew@16
 extern s32 ejectSpeed;  // 0x0050CFD9  ejection seat: seat velocity — EJECTAdd seeds it from the ejecting aircraft, EJECTMoveProc drains it by _LMultDiv256(speed, _serviceTicks) each tick and drives _Move3d with the remainder, clamping at 0
@@ -314,7 +326,6 @@ undefined4 CanReplay(void);  // 0x004A5970  __stdcall
 // TODO(#455): 0x004F9937  campaignFileCopy -- type not recovered
 // TODO(#455): 0x004F9944  campaignDisplayName -- type not recovered
 // TODO(#455): 0x004FA818  campaignStores -- type not recovered
-// TODO(#455): 0x004FAB38  pilotMissionsFlown -- type not recovered
 // TODO(#455): 0x004FB1A8  missionName -- type not recovered
 
 }  // namespace fxe::fa::campaign

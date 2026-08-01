@@ -36,7 +36,8 @@ confirmed
 | `+0x95` | photo PIC name | the photo picker (`MakePicList("LEFT"…)` pairs LEFT/RIGHT facings) |
 | `+0xA2` | rank string | from `_pilotRanks` |
 | `+0xC2` | campaigns-won list | appended (", "-joined) by `CallCampaignProc` cmd 5 on victory |
-| `+0x5AF` | service-record lines | the dossier's free-text block (≤10 lines) |
+| `+0x572` | medal-flag band | 11 decoration-slot bytes latched by the per-theater `*Medals` passes ([P.md § Medal-flag band](formats/P.md)) |
+| `+0x5AF` | service-record lines | the dossier's free-text block (≤10 lines); `AwardMedal` appends each medal title here (1,000-byte cap) |
 | `+0xD7F` | active campaign file | `InitCampaignPilot` |
 | `+0xDAC` | status word | 0 available · 1 on campaign ("%s, mission %d") · 2 MIA · 3 KIA · 4 retired |
 | `+0xDB0` | plane roster | 0xBC-byte per-plane slots: damage array copy at `+0x30`, **repair %** at `+0x2E` (`dam×100/max + type+0x1B4`, clamp 100); a bail zeroes the slot |
@@ -153,6 +154,13 @@ Full record: [`db/symbols/campaign.csv`](https://github.com/jomkz/fighters-codex
 | `0x4A10E0` | `SingleMission` | single-mission browser + launcher |
 | `0x486160` | `MISSIONEndScenario` | multiplayer end-condition test |
 | `0x485820` | `KillStats` | tally a kill into its category bucket |
+| `0x467110` | `AwardMedal` | append a medal title to the pilot service-record block (`+0x5AF`) |
+| `0x483E00` | `UkraineMedals` | Ukraine medal pass — latch the `+0x572` flag band (Navy decorations) |
+| `0x484050` | `KurileMedals` | Kurile medal pass (Navy decorations + Yellow Fever) |
+| `0x484410` | `VietnamMedals` | stub — the Vietnam campaign awards no medals |
+| `0x484430` | `ATFEgyptMedals` | ATF Egypt medal pass (Air Force decorations) |
+| `0x484690` | `ATFVladMedals` | ATF Vladivostok medal pass (Air Force decorations) |
+| `0x484B70` | `ATFBalticMedals` | ATF Baltic medal pass (Air Force decorations) |
 | `0x481B80` | `AlmostHome` | near the home airport and low (RTB gating) |
 | `0x481BD0` | `ConvertOldPreferredTargetId` | widen an old 16-bit save target id |
 | `0x4A5970` | `CanReplay` | replay available: mission loaded and single-player |
@@ -229,6 +237,18 @@ split player vs wingman, keyed on the victim's class and type-flag bits), and `L
 (landing count + a quality bonus). Each mirrors to peers via its `MP*` twin, and Jane's
 Online games count only human-target events. `_EndOfMissionStats@0` (`0x484D90`) and
 `_EndOfFortMissionStats@0` roll these into the pilot record at mission end. confirmed
+
+**Medal awards.** Each theater's `.CAM` script imports its own medal pass as a
+per-theatre hook ([CAM.md](formats/CAM.md) § imports): `UkraineMedals` /
+`KurileMedals` (Navy decorations), `ATFEgyptMedals` / `ATFVladMedals` /
+`ATFBalticMedals` (Air Force decorations), `VietnamMedals` (a `return 0` stub —
+that campaign awards none). Each pass tests award criteria against the mission
+scratch stats, the pilot counters, and the rank word (`+0xDAE`), latches the
+pilot record's medal-flag band (`+0x572`–`+0x57C` — one byte per decoration
+slot; Purple Heart is a 0–3 count), and hands the title to `AwardMedal`
+(`0x467110`), which appends it to the service-record block at `+0x5AF`
+(skipped once the block would exceed 1,000 bytes). Mapped statically from the
+post-#482 corpus ([P.md § Medal-flag band](formats/P.md)). confirmed
 
 The **scoreboard** ranks players by `MISSIONScore` (`0x4864D0`) under the `_scoreBy` metric
 (kills / kill-ratio / damage); `MISSIONSortPlayers` qsorts them and `MISSIONScoreSides` sums

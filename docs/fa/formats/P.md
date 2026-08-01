@@ -12,7 +12,7 @@ spec:
       note: "0xB0-0xC1 (18 B) — rank/score tier fields"
     - kind: re-gameplay
       issue: 29
-      note: "0xCF-0x5AE (1,344 B) — mission log content"
+      note: "0xCF-0x571 + 0x57D-0x5AE (1,237 B) — mission log content; medal-flag band 0x572-0x57C mapped statically"
     - kind: re-gameplay
       issue: 29
       note: "0x2018-0x20B7 (160 B) — between kill tallies and accuracy"
@@ -55,7 +55,8 @@ fx plt dump  PLT441.P        # full stats block: missions, kills, weapon accurac
 The identity block (`0x01`–`0xAF`) is fully mapped and editable via the fxs
 PLT editor. The stats counters (`0x1F80`–`0x21F7`) are confirmed from RE and
 displayed by `fx plt dump` and the fxs stats pane. The four gap regions
-remain unmapped (see Open Questions).
+remain unmapped (see Open Questions), except the medal-flag band
+(`0x572`–`0x57C`) inside gap 2, mapped statically (§ Medal-flag band).
 
 The `fx_lib` write API (`plt_read` → edit → `plt_write`, [api.md](../../api.md)
 § plt.h) serializes a pilot file back to bytes, overlaying only the mapped
@@ -101,11 +102,43 @@ Four anchor fields confirmed from `FUN_004674f0` (pilot card display, VA
 |--------|------|------|-------|
 | `0xB0` | 18 | ? | **Unknown** (see Open Questions) |
 | `0xC2` | ~13 | char[] | Secondary identity string — printed on pilot card after rank (squadron, unit, or location); exact length unknown |
-| `0xCF` | 1344 | ? | **Unknown** — mission log region (see Open Questions) |
+| `0xCF` | 1187 | ? | **Unknown** — mission log region (see Open Questions) |
+| `0x572` | 11 | u8[11] | Medal-awarded flag band — one byte per decoration slot, written by the per-campaign `*Medals` passes (see § Medal-flag band) |
+| `0x57D` | 50 | ? | **Unknown** — mission log region remainder (see Open Questions) |
 | `0x5AF` | var | char[][] | Mission log — up to 10 null-terminated entries read sequentially; each up to 3 lines; likely mission history |
 | `0xD7F` | 13 | char[] | Campaign `.CAM` filename (e.g. `EGYPT.CAM`) — confirmed: `DAT_004f9937 = _campaignPilot + 0xD7F`, written by campaign init |
 | `0xD8C` | 32 | char[] | Campaign display name (e.g. `Egypt 1998`) — confirmed: `DAT_004f9944 = _campaignPilot + 0xD8C`, written by campaign init |
 | `0xDAC` | 2 | u16 | Pilot status enum — confirmed: `DAT_004f9964 = _campaignPilot + 0xDAC`; `0`=Available, `1`=On mission, `2`=MIA, `3`=KIA, `4`=Retired From Active Duty |
+
+### Medal-flag band (`0x572`–`0x57C`) — mapped
+
+Recovered statically (2026-08-01) from the complete post-#482 decompile
+corpus: the six per-campaign medal passes (`_UkraineMedals` `0x483E00`,
+`_KurileMedals` `0x484050`, `_VietnamMedals` `0x484410` — a `return 0` stub,
+`_ATFEgyptMedals` `0x484430`, `_ATFVladMedals` `0x484690`, `_ATFBalticMedals`
+`0x484B70`) write fixed VAs `0x4F912A`–`0x4F9134` inside `_campaignPilot`.
+Each byte is an awarded-flag for one decoration slot; a slot means the same
+decoration class in every campaign, with the Navy or Air Force variant of the
+title by theater. Pattern per medal: `if (flag == 0 && <criteria>) { flag = 1;
+_AwardMedal(title); }` — the criteria read the end-of-mission scratch stats
+(`0x54DDxx`), the pilot stats counters (e.g. `+0x1FC8`), and the
+promotion/rank word (`+0xDAE`). `_AwardMedal` (`0x467110`) then appends the
+title to the service-record block at `+0x5AF`, skipping the append once the
+block would exceed 1,000 bytes.
+
+| Offset | Global | Decoration slot |
+|--------|--------|-----------------|
+| `0x572` | `pilotMedalHonor` | Medal of Honor (Navy / Air Force) |
+| `0x573` | `pilotMedalCross` | Navy Cross / Air Force Cross |
+| `0x574` | `pilotMedalDSM` | Distinguished Service Medal |
+| `0x575` | `pilotMedalAir` | Air Medal |
+| `0x576` | `pilotMedalDFC` | Distinguished Flying Cross |
+| `0x577` | `pilotMedalAchievement` | Achievement Medal |
+| `0x578` | `pilotMedalCommendation` | Commendation Medal |
+| `0x579` | `pilotMedalExpeditionary` | Expeditionary Medal |
+| `0x57A` | `pilotPurpleHearts` | Purple Heart — a count 0–3, not a flag |
+| `0x57B` | `pilotMedalSilverStar` | Silver Star |
+| `0x57C` | `pilotMedalYellowFever` | Conquest of Yellow Fever Medal (Kurile easter egg) |
 
 ### Campaign data strings (0xDAE–0x1C5F) — partially mapped
 
@@ -260,8 +293,9 @@ Confirmed engine functions (FA.SMS + `DumpAllFunctions.txt`):
 `plt_write` is a **byte-exact passthrough serializer**: it starts from a copy
 of the original file bytes (`PltFile::raw`) and overlays only the fixed-offset
 mapped fields — the identity block (`0x00`–`0xAF`) and, when present, the stats
-counters (`0x1F80`–`0x21F7`). Everything else — the four unmapped gap regions
-and the variable-length campaign/ordnance region (`0xB0`–`0x1F7F`) — is copied
+counters (`0x1F80`–`0x21F7`). Everything else — the gap regions (including the
+now-mapped medal-flag band, which the codec does not yet decode) and the
+variable-length campaign/ordnance region (`0xB0`–`0x1F7F`) — is copied
 through unchanged. A `plt_read` → `plt_write` round-trip is therefore
 byte-identical, and Phase 6 (#29) can map the gaps without touching the codec.
 
@@ -286,13 +320,19 @@ edits.
 ## Open Questions
 
 Static Ghidra analysis (`AnalyzePLT.java`, 46,985-line output) and binary diff
-of three fresh pilot saves (PLT441.P, PLT628.P, PLT937.P) are exhausted for
-all four gaps — every one needs pilot saves taken after actual gameplay:
-complete 5+ standard missions (gaps 2 and 3), a fort-assault mission (gap 4),
-and a rank advance (gap 1), then diff with **HxD** (side-by-side compare →
-Differ) or **010 Editor** using the field tables above. A binary probe test
-(2026-05-21, four `PROBE_GAP*` pilots) confirmed the pilot records screen
-reads none of the gap regions.
+of three fresh pilot saves (PLT441.P, PLT628.P, PLT937.P) were exhausted for
+all four gaps against the May corpus. A 2026-08-01 re-scan of the complete
+post-#482 corpus (the May analysis predates #496, which surfaced 490
+never-disassembled functions) recovered the gap-2 medal-flag band
+(§ Medal-flag band) and found **zero** fixed-VA references into gaps 1, 3,
+and 4 — the bench verdict stands, on stronger evidence. Every remaining
+region needs pilot saves taken after actual gameplay: complete 5+ standard
+missions (gaps 2 and 3), a fort-assault mission (gap 4), and a rank advance
+(gap 1), then diff with **HxD** (side-by-side compare → Differ) or **010
+Editor** using the field tables above. A binary probe test (2026-05-21, four
+`PROBE_GAP*` pilots) confirmed the pilot records screen reads none of the gap
+regions. Bench bonus: a medal award should flip exactly the predicted byte in
+the `0x572` band — a live validation of the static read.
 
 ### 1. Gap 0xB0–0xC1 (18 bytes)
 
@@ -304,14 +344,18 @@ rank fields.
 
 *Status: open — re-gameplay (#29)*
 
-### 2. Gap 0xCF–0x5AE (1,344 bytes)
+### 2. Gap 0xCF–0x5AE (1,248 bytes; medal-flag band mapped)
 
-This region holds variable-length null-terminated mission log text; decompile
+The medal-flag band (`0x572`–`0x57C`, § Medal-flag band) was recovered
+statically from the post-#482 corpus: eleven one-byte decoration slots
+written by the per-campaign `*Medals` passes. (The size previously stated
+here, 1,344, was an arithmetic error — `0x5AF − 0xCF` = 1,248.) The rest of
+the region holds variable-length null-terminated mission log text; decompile
 of `FUN_004674f0` shows the pilot card reader scanning from `0x5AF` backwards,
-implying the entries grow downward from `0x5AE`. No fixed-offset accesses
-within the region. All zeros in fresh saves (no missions flown). Structure
-known, content unsampled: each log entry is one or more null-terminated lines
-terminated by a `0x01` styled-text byte.
+implying the entries grow downward from `0x5AE`. No other fixed-offset
+accesses within the region. All zeros in fresh saves (no missions flown).
+Structure known, content unsampled: each log entry is one or more
+null-terminated lines terminated by a `0x01` styled-text byte.
 
 *Status: open — re-gameplay (#29)*
 

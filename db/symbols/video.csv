@@ -74,13 +74,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004C8BEC,func,_BuildSelfModifyCode@0,BuildSelfModifyCode,sms,confirmed,self-modifying blit codegen inside the video-decompress unit (UnRLE < here < DecompressVideoImage),undefined4 __stdcall BuildSelfModifyCode(void)
 0x004C8C60,func,DoNibble,DoNibble,sms,confirmed,,
 0x004C8CD8,func,_DecompressVideoImage@20,DecompressVideoImage,sms,confirmed,,"undefined4 __stdcall DecompressVideoImage(undefined4, undefined4, undefined4, undefined4, undefined4)"
-0x004CCC48,func,_CopySB8,CopySB8,sms,confirmed,,
-0x004CCC7C,func,_CopyDB8,CopyDB8,sms,confirmed,,
-0x004CCD14,func,_CopySB15,CopySB15,sms,confirmed,15-bit variants interleaved with the claimed CopySB8/CopyDB8/ExpandDB/DecodeYUV15 family,
-0x004CCD70,func,_CopyDB15,CopyDB15,sms,confirmed,,
-0x004CCDF8,func,_CopyDSB15,CopyDSB15,sms,confirmed,,
-0x004CCE7C,func,_CopyDDB15,CopyDDB15,sms,confirmed,,
-0x004CCF54,func,_ExpandDB,ExpandDB,sms,confirmed,,
+0x004CCC48,func,_CopySB8,CopySB8,sms,confirmed,,"undefined4 __cdecl CopySB8(undefined4, undefined4, undefined4)"
+0x004CCC7C,func,_CopyDB8,CopyDB8,sms,confirmed,,"undefined4 __cdecl CopyDB8(undefined4, undefined4, undefined4, undefined4)"
+0x004CCD14,func,_CopySB15,CopySB15,sms,confirmed,15-bit variants interleaved with the claimed CopySB8/CopyDB8/ExpandDB/DecodeYUV15 family,"undefined4 __cdecl CopySB15(undefined4, undefined4, undefined4)"
+0x004CCD70,func,_CopyDB15,CopyDB15,sms,confirmed,,"undefined4 __cdecl CopyDB15(undefined4, undefined4, undefined4, undefined4)"
+0x004CCDF8,func,_CopyDSB15,CopyDSB15,sms,confirmed,,"undefined4 __cdecl CopyDSB15(undefined4, undefined4, undefined4)"
+0x004CCE7C,func,_CopyDDB15,CopyDDB15,sms,confirmed,,"undefined4 __cdecl CopyDDB15(undefined4, undefined4, undefined4, undefined4)"
+0x004CCF54,func,_ExpandDB,ExpandDB,sms,confirmed,,"undefined4 __cdecl ExpandDB(undefined4, undefined4)"
 0x004CCF88,func,_ExpandSB,ExpandSB,sms,confirmed,,
 0x004CCFE1,func,clampit_,clampit_,sms,confirmed,YUV clamp helper directly before DecodeYUV15@0x4CCFFC,
 0x004CCFFC,func,_DecodeYUV15,DecodeYUV15,sms,confirmed,,

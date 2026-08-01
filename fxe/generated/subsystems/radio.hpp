@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Radio / speech — orders & AWACS chatter (MSG/SAY) -- FA.EXE
-// 17/39 functions have a recovered signature; 0/0 globals have a recovered type.
+// 18/39 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::radio {
 
@@ -26,6 +26,7 @@ undefined4 SAYInit(void);  // 0x0048D2B0  __stdcall
 undefined4 SAYInit2(void);  // 0x0048D2F0  __stdcall
 undefined4 SAYShutdown(void);  // 0x0048D340  __stdcall
 undefined4 SAYMsg(undefined4);  // 0x0048D350  __fastcall
+undefined4 SAYDefaultSayProc(undefined4);  // 0x0048D3C0  __cdecl
 undefined4 SAYRearmMessage(undefined4, undefined4);  // 0x0048E920  __fastcall
 undefined4 SAYSuppRadarMessage(undefined4, undefined4, undefined4);  // 0x0048EA10  __fastcall
 undefined4 SAYLowFuelMessage(undefined4, undefined4);  // 0x0048EB20  __fastcall
@@ -35,7 +36,6 @@ undefined4 SAYTranslate(undefined4);  // 0x00490F30  __fastcall
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x0041873E  MSGMultiPurge -- signature not recovered
-// TODO(#453): 0x0048D3C0  SAYDefaultSayProc -- signature not recovered
 // TODO(#453): 0x0048D410  SayLineReset -- signature not recovered
 // TODO(#453): 0x0048D420  SayLineAppend -- signature not recovered
 // TODO(#453): 0x0048D470  FinishSayLine -- signature not recovered

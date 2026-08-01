@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Video decode (FMV/Cobra) -- FA.EXE
-// 68/82 functions have a recovered signature; 0/0 globals have a recovered type.
+// 75/82 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::video {
 
@@ -81,19 +81,19 @@ undefined4 DecompressVideo(undefined4, undefined4, undefined4, undefined4, undef
 undefined4 UnRLE(undefined4, undefined4);  // 0x004C8AFC  __stdcall
 undefined4 BuildSelfModifyCode(void);  // 0x004C8BEC  __stdcall
 undefined4 DecompressVideoImage(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004C8CD8  __stdcall
+undefined4 CopySB8(undefined4, undefined4, undefined4);  // 0x004CCC48  __cdecl
+undefined4 CopyDB8(undefined4, undefined4, undefined4, undefined4);  // 0x004CCC7C  __cdecl
+undefined4 CopySB15(undefined4, undefined4, undefined4);  // 0x004CCD14  __cdecl
+undefined4 CopyDB15(undefined4, undefined4, undefined4, undefined4);  // 0x004CCD70  __cdecl
+undefined4 CopyDSB15(undefined4, undefined4, undefined4);  // 0x004CCDF8  __cdecl
+undefined4 CopyDDB15(undefined4, undefined4, undefined4, undefined4);  // 0x004CCE7C  __cdecl
+undefined4 ExpandDB(undefined4, undefined4);  // 0x004CCF54  __cdecl
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x004AF2D0  ReadVDOPalette -- signature not recovered
 // TODO(#453): 0x004C8C60  DoNibble -- signature not recovered
-// TODO(#453): 0x004CCC48  CopySB8 -- signature not recovered
-// TODO(#453): 0x004CCC7C  CopyDB8 -- signature not recovered
-// TODO(#453): 0x004CCD14  CopySB15 -- signature not recovered
-// TODO(#453): 0x004CCD70  CopyDB15 -- signature not recovered
-// TODO(#453): 0x004CCDF8  CopyDSB15 -- signature not recovered
-// TODO(#453): 0x004CCE7C  CopyDDB15 -- signature not recovered
-// TODO(#453): 0x004CCF54  ExpandDB -- signature not recovered
 // TODO(#453): 0x004CCF88  ExpandSB -- signature not recovered
 // TODO(#453): 0x004CCFE1  clampit_ -- signature not recovered
 // TODO(#453): 0x004CCFFC  DecodeYUV15 -- signature not recovered

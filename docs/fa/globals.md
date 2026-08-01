@@ -192,11 +192,22 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Campaign / mission / pilot (MAP/CAM/MC/MM/PLT)
 
-[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 14 named referenced globals
+[`campaign.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/campaign.csv) · [page](campaign.md) — 25 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004F8C7A` | `pilotCampaignsWon` | re | _campaignPilot+0xC2: ", "-joined completed-campaigns list (P.md) (#492) |
+| `0x004F912A` | `pilotMedalHonor` | re | _campaignPilot+0x572: Medal of Honor awarded-flag byte (Navy/AF variant per campaign; P.md medal band) (#29) |
+| `0x004F912B` | `pilotMedalCross` | re | _campaignPilot+0x573: Navy Cross / AF Cross awarded-flag byte (P.md medal band) (#29) |
+| `0x004F912C` | `pilotMedalDSM` | re | _campaignPilot+0x574: Distinguished Service Medal awarded-flag byte (P.md medal band) (#29) |
+| `0x004F912D` | `pilotMedalAir` | re | _campaignPilot+0x575: Air Medal awarded-flag byte (P.md medal band) (#29) |
+| `0x004F912E` | `pilotMedalDFC` | re | _campaignPilot+0x576: Distinguished Flying Cross awarded-flag byte (P.md medal band) (#29) |
+| `0x004F912F` | `pilotMedalAchievement` | re | _campaignPilot+0x577: Achievement Medal awarded-flag byte (P.md medal band) (#29) |
+| `0x004F9130` | `pilotMedalCommendation` | re | _campaignPilot+0x578: Commendation Medal awarded-flag byte (P.md medal band) (#29) |
+| `0x004F9131` | `pilotMedalExpeditionary` | re | _campaignPilot+0x579: Expeditionary Medal awarded-flag byte (P.md medal band) (#29) |
+| `0x004F9132` | `pilotPurpleHearts` | re | _campaignPilot+0x57A: Purple Heart count, incremented per award, capped at 3 (P.md medal band) (#29) |
+| `0x004F9133` | `pilotMedalSilverStar` | re | _campaignPilot+0x57B: Silver Star awarded-flag byte (P.md medal band) (#29) |
+| `0x004F9134` | `pilotMedalYellowFever` | re | _campaignPilot+0x57C: Conquest of Yellow Fever Medal awarded-flag byte (Kurile only; P.md medal band) (#29) |
 | `0x004F9937` | `campaignFileCopy` | re | _campaignPilot+0xD7F: active campaign .CAM filename (P.md) (#492) |
 | `0x004F9944` | `campaignDisplayName` | re | _campaignPilot+0xD8C: campaign display name (P.md) (#492) |
 | `0x004FA818` | `campaignStores` | re | _campaignPilot+0x1C60: 50 x 16-byte ordnance pool (P.md) (#492) |

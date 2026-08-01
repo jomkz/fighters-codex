@@ -8,17 +8,49 @@
 #include "../fa_types.hpp"
 
 // Core shell / menu / dialog UI -- FA.EXE
-// 159/199 functions have a recovered signature; 6/43 globals have a recovered type.
+// 159/199 functions have a recovered signature; 38/43 globals have a recovered type.
 
 namespace fxe::fa::shell_ui {
 
 // --- globals ---------------------------------------------------------
 extern undefined1 gameMode;  // 0x004EB620  imported by 3 shipped .CAM overlays (#491); named at this VA by FA.SMS
+extern undefined4 namesItems;  // 0x004EEA34  GetNames: the NAMES record array (alias of _items) (#492)
+extern undefined4 info2SavedIndex;  // 0x004F6DB8  reference screen: remembered selection (category 1 only) (#492)
+extern undefined1 info2ForceClear;  // 0x004F6DBC  clear-pane flag (ar_nopic case) (#492)
+extern undefined2 info2PicX;  // 0x004F6DC0  photo blit x (#492)
+extern undefined2 info2PicY;  // 0x004F6DC2  photo blit y (#492)
+extern undefined4 info2DragX;  // 0x004F6DC8  3-D drag anchor x (#492)
+extern undefined4 info2DragY;  // 0x004F6DCC  3-D drag anchor y (#492)
 extern char * yesString;  // 0x00502170  localized dialog-button label; the table _yesString/_noString/_okString/_cancelString/_exitString is contiguous
 extern char * noString;  // 0x00502174  localized dialog-button label
 extern char * okString;  // 0x00502178  localized dialog-button label; IMPORTED BY 69 of the 92 shipped .DLG overlays (#491)
 extern char * cancelString;  // 0x0050217C  localized dialog-button label; imported by 72 of the 92 shipped .DLG overlays (#491)
 extern char * exitString;  // 0x00502184  localized dialog-button label; imported by 1 shipped .DLG overlay (#491)
+extern undefined4 namesCapacity;  // 0x0052912C  GetNames: allocated NAMES record capacity (grows by 400) (#492)
+extern undefined2 namesCount;  // 0x00529160  GetNames: NAMES records in _items (#492)
+extern undefined2 info2LastPitch;  // 0x00546B0A  INFO2 dirty-check: last drawn pitch (#492)
+extern undefined2 info2LastRoll;  // 0x00546B0C  INFO2 dirty-check: last drawn roll (#492)
+extern undefined4 info2Palette;  // 0x00546B10  palette.PAL contents for the photo pages (#492)
+extern undefined4 info2LastPhoto;  // 0x00546B14  INFO2 dirty-check: last drawn photo index (#492)
+extern undefined4 info2PhotoIndex;  // 0x00546B18  current photo page index (#492)
+extern undefined2 info2LightYaw;  // 0x00546B1C  3-D view light heading (#492)
+extern undefined4 info2BaseDist;  // 0x00546B20  ObjRadius*15 base view distance (#492)
+extern undefined4 info2PhotoPages;  // 0x00546B24  number of <type>_N photo pages found (#492)
+extern undefined4 info2LastType;  // 0x00546B28  INFO2 dirty-check: last drawn type record (#492)
+extern undefined4 info2TypeRec;  // 0x00546B2C  selected type record (RMAccess of _items[n]) (#492)
+extern undefined4 info2TextPage;  // 0x00546B30  current .INF text page (#492)
+extern undefined4 info2ViewMode;  // 0x00546B34  view mode: 0 text, 1 3-D, 2 photos, 3-6 art, 7-9 video (#492)
+extern undefined1 info2FadePending;  // 0x00546B38  first-draw flag: fade in instead of flush (#492)
+extern undefined4 info2Zoom;  // 0x00546B3C  3-D view distance (0x800..0x6400) (#492)
+extern undefined4 info2LastTextPage;  // 0x00546B50  INFO2 dirty-check: last drawn text page (#492)
+extern undefined4 info2PaletteCopy;  // 0x00546B58  screen palette copy for change detection (Info2SyncPalette) (#492)
+extern undefined4 info2Background;  // 0x00546B68  the ar background PIC handle (#492)
+extern undefined4 info2LastMode;  // 0x00546B6C  INFO2 dirty-check: last drawn view mode (#492)
+extern undefined4 info2Category;  // 0x00546B70  active GetNames category mask (#492)
+extern undefined4 info2Index;  // 0x00546B74  selected _items index (#492)
+extern undefined1 info2Dirty;  // 0x00546B78  needs-redraw flag (#492)
+extern undefined1 info2GlassesOn;  // 0x00546B7C  3-D glasses active for the 3-D view (#492)
+extern undefined4 info2LastZoom;  // 0x00546B80  INFO2 dirty-check: last drawn zoom (#492)
 
 // --- functions -------------------------------------------------------
 void IFMSetTime(char);  // 0x004053D0  __cdecl
@@ -224,42 +256,10 @@ undefined4 QuickDist(undefined4, undefined4);  // 0x004C6710  __stdcall
 // TODO(#453): 0x0048CCA0  DrawOK320 -- signature not recovered
 // TODO(#453): 0x0048CD40  DrawLight320 -- signature not recovered
 // TODO(#453): 0x004A1810  SortIndexByString -- signature not recovered
-// TODO(#455): 0x004EEA34  namesItems -- type not recovered
-// TODO(#455): 0x004F6DB8  info2SavedIndex -- type not recovered
-// TODO(#455): 0x004F6DBC  info2ForceClear -- type not recovered
-// TODO(#455): 0x004F6DC0  info2PicX -- type not recovered
-// TODO(#455): 0x004F6DC2  info2PicY -- type not recovered
-// TODO(#455): 0x004F6DC8  info2DragX -- type not recovered
-// TODO(#455): 0x004F6DCC  info2DragY -- type not recovered
-// TODO(#455): 0x0052912C  namesCapacity -- type not recovered
-// TODO(#455): 0x00529160  namesCount -- type not recovered
 // TODO(#455): 0x00546B08  info2LastYaw -- type not recovered
-// TODO(#455): 0x00546B0A  info2LastPitch -- type not recovered
-// TODO(#455): 0x00546B0C  info2LastRoll -- type not recovered
-// TODO(#455): 0x00546B10  info2Palette -- type not recovered
-// TODO(#455): 0x00546B14  info2LastPhoto -- type not recovered
-// TODO(#455): 0x00546B18  info2PhotoIndex -- type not recovered
-// TODO(#455): 0x00546B1C  info2LightYaw -- type not recovered
-// TODO(#455): 0x00546B20  info2BaseDist -- type not recovered
-// TODO(#455): 0x00546B24  info2PhotoPages -- type not recovered
-// TODO(#455): 0x00546B28  info2LastType -- type not recovered
-// TODO(#455): 0x00546B2C  info2TypeRec -- type not recovered
-// TODO(#455): 0x00546B30  info2TextPage -- type not recovered
-// TODO(#455): 0x00546B34  info2ViewMode -- type not recovered
-// TODO(#455): 0x00546B38  info2FadePending -- type not recovered
-// TODO(#455): 0x00546B3C  info2Zoom -- type not recovered
 // TODO(#455): 0x00546B40  info2TypeName -- type not recovered
-// TODO(#455): 0x00546B50  info2LastTextPage -- type not recovered
-// TODO(#455): 0x00546B58  info2PaletteCopy -- type not recovered
 // TODO(#455): 0x00546B60  info2Yaw -- type not recovered
 // TODO(#455): 0x00546B64  info2Roll -- type not recovered
-// TODO(#455): 0x00546B68  info2Background -- type not recovered
-// TODO(#455): 0x00546B6C  info2LastMode -- type not recovered
-// TODO(#455): 0x00546B70  info2Category -- type not recovered
-// TODO(#455): 0x00546B74  info2Index -- type not recovered
-// TODO(#455): 0x00546B78  info2Dirty -- type not recovered
-// TODO(#455): 0x00546B7C  info2GlassesOn -- type not recovered
-// TODO(#455): 0x00546B80  info2LastZoom -- type not recovered
 // TODO(#455): 0x00572008  singleMissionName -- type not recovered
 
 }  // namespace fxe::fa::shell_ui

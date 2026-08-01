@@ -37,13 +37,13 @@ va,kind,name,display,source,confidence,notes,type
 0x0046A370,func,_SMInit@0,SMInit,sms,confirmed,load the FA.SMS symbol map (<exe>.SMS then RELEASE.SMS fallback); build the sorted name->VA table; family of the claimed SMCallByName@0x46A570,undefined4 __stdcall SMInit(void)
 0x0046A4C0,func,_SMShutdown@0,SMShutdown,sms,confirmed,,undefined4 __stdcall SMShutdown(void)
 0x0046A4E0,func,_SMAddress@4,SMAddress,sms,confirmed,binary-search the symbol map: name -> address (RM binds <type>_Load/_Setup/_Free through it),undefined4 __stdcall SMAddress(undefined4)
-0x0046A570,func,_SMCallByName,SMCallByName,sms,confirmed,,
-0x00478BC0,func,_LibStartUp,LibStartUp,sms,confirmed,,
+0x0046A570,func,_SMCallByName,SMCallByName,sms,confirmed,,"undefined4 __cdecl SMCallByName(undefined4, undefined4, undefined4, undefined4, undefined4)"
+0x00478BC0,func,_LibStartUp,LibStartUp,sms,confirmed,,undefined4 __cdecl LibStartUp(undefined4)
 0x004792D0,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibShutDown,
 0x00479350,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibUpdate,
-0x00479630,func,_DoLoadLibFile,DoLoadLibFile,sms,confirmed,,
+0x00479630,func,_DoLoadLibFile,DoLoadLibFile,sms,confirmed,,"undefined4 __cdecl DoLoadLibFile(undefined4, undefined4, undefined4, undefined4)"
 0x004797E0,func,?CompareHints@@YAJPAX0@Z,CompareHints,sms,confirmed,comparator for the SearchLib hint table (DoLoadLibFile < here < SearchLib),"long __cdecl CompareHints(void *, void *)"
-0x004798B0,func,_SearchLib,SearchLib,sms,confirmed,,
+0x004798B0,func,_SearchLib,SearchLib,sms,confirmed,,undefined4 __cdecl SearchLib(undefined4)
 0x00479960,func,__FindNext@8,FindNext,sms,confirmed,file-find family inside the LIB-search unit (SearchLib < here < LibOpen),"undefined4 __stdcall _FindNext(undefined4, undefined4)"
 0x00479A60,func,__FindFirst@8,FindFirst,sms,confirmed,,"undefined4 __stdcall _FindFirst(undefined4, undefined4)"
 0x00479B20,func,__FindClose@4,FindClose,sms,confirmed,,undefined4 __stdcall _FindClose(undefined4)
@@ -52,7 +52,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00479C80,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibRead,
 0x00479D20,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibClose,
 0x00479D40,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibFileSize,
-0x00479DA0,func,_GetDiskFree,GetDiskFree,sms,confirmed,,
+0x00479DA0,func,_GetDiskFree,GetDiskFree,sms,confirmed,,undefined4 __cdecl GetDiskFree(undefined4)
 0x00479F50,func,@GetDosFileTime@12,GetDosFileTime,sms,confirmed,,"undefined4 __fastcall GetDosFileTime(undefined4, undefined4, undefined4)"
 0x0047A090,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): _LibSeek@8,
 0x0047A130,func,,,waiver,confirmed,vendored lzwlib LIB-codec unit (not first-party; see memory-resource.md): @LibFileExists@4,
@@ -86,13 +86,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004AD220,func,@Delete@4,Delete,sms,confirmed,,undefined4 __fastcall Delete(undefined4)
 0x004AD250,func,@Rename@8,Rename,sms,confirmed,,"undefined4 __fastcall Rename(undefined4, undefined4)"
 0x004AD270,func,@GetCurrentPath@8,GetCurrentPath,sms,confirmed,,"undefined4 __fastcall GetCurrentPath(undefined4, undefined4)"
-0x004AD2E0,func,_SaveFile,SaveFile,sms,confirmed,,
+0x004AD2E0,func,_SaveFile,SaveFile,sms,confirmed,,"undefined4 __cdecl SaveFile(undefined4, undefined4, undefined4)"
 0x004AD380,func,_ClearCachedFilenames@0,ClearCachedFilenames,sms,confirmed,,undefined4 __stdcall ClearCachedFilenames(void)
 0x004AD3A0,func,@GetExecutablePath@8,GetExecutablePath,sms,confirmed,,"undefined4 __fastcall GetExecutablePath(undefined4, undefined4)"
 0x004AD3C0,func,_LoadFile@16,LoadFile,sms,confirmed,,"undefined4 __stdcall LoadFile(undefined4, undefined4, undefined4, undefined4)"
 0x004AD9B0,func,_LoadFile2@20,LoadFile2,sms,confirmed,,"undefined4 __stdcall LoadFile2(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004ADAC0,func,?ConcatDirAndFile@@YAXPAD00@Z,ConcatDirAndFile,sms,confirmed,path join for LoadFile/LoadFile2 (sits between them and PlayVDOFile),"void __cdecl ConcatDirAndFile(char *, char *, char *)"
-0x004C60F0,func,_DecodeFile,DecodeFile,sms,confirmed,LZSS ring decoder over _lzwBuff (0xFEE init / 0x20 fill); named API entry of the waived lzwlib unit,
+0x004C60F0,func,_DecodeFile,DecodeFile,sms,confirmed,LZSS ring decoder over _lzwBuff (0xFEE init / 0x20 fill); named API entry of the waived lzwlib unit,"undefined4 __cdecl DecodeFile(undefined4, undefined4, undefined4)"
 0x004F3DBC,data,?mm_initialized@@3DA,mm_initialized,sms,confirmed,MM one-time init guard (bool); set by MMInit cleared by MMShutdown,char
 0x004F3DC0,data,?mm_handles@@3PAUT_HANDLE@@A,mm_handles,sms,confirmed,base of T_HANDLE[count] pool (operator_new'd in MMInit),T_HANDLE *
 0x004F3DC4,data,?mm_used_list@@3PAUT_HANDLE@@A,mm_used_list,sms,confirmed,head of allocated-handle intrusive list (next@+0 prev@+4),T_HANDLE *

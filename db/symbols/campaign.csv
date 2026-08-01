@@ -138,7 +138,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0044CF00,func,@FortMultiButton2@8,FortMultiButton2,sms,confirmed,second Fort-setup radio-group button setter,"undefined4 __fastcall FortMultiButton2(undefined4, undefined4)"
 0x0044CF10,func,@FortMultiButtonText2@8,FortMultiButtonText2,sms,confirmed,second Fort-setup radio group text matcher,"undefined4 __fastcall FortMultiButtonText2(undefined4, undefined4)"
 0x0044D070,func,_FortMission2@4,FortMission2,sms,confirmed,Fort mission builder (variant 2),undefined4 __stdcall FortMission2(undefined4)
-0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,,undefined4 __cdecl AwardMedal(undefined4)
+0x00467110,func,_AwardMedal,AwardMedal,sms,confirmed,"append the medal title to the pilot service-record block (+0x5AF), skipped when the block would exceed 1000 bytes (#29)",undefined4 __cdecl AwardMedal(undefined4)
 0x00467180,func,?PilotSave@@YIFPAUPILOT@@F@Z,PilotSave,sms,confirmed,"write a PILOT record to PLT%03d.P (slot -1 = PilotFindFreeSlot), 0x25e0 bytes via RM cache + SaveFile, insert into the sorted roster, set _pilotName","short __fastcall PilotSave(PILOT *, short)"
 0x00467240,func,PilotFindFreeSlot,,re,confirmed,find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __cdecl PilotFindFreeSlot(void)
 0x004672C0,func,?PilotPhoto@@YIXPAUPILOT@@@Z,PilotPhoto,sms,confirmed,"blit the pilot photo PIC (name at PILOT+0x95) at (0x44,0x69) + MenuCreateRemaps",void __fastcall PilotPhoto(PILOT *)
@@ -230,15 +230,15 @@ va,kind,name,display,source,confidence,notes,type
 0x00483D10,func,TextIsDelim,,re,confirmed,predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,undefined4 __fastcall TextIsDelim(char)
 0x00483D30,func,TextNextNumber,,re,confirmed,read next token and convert to integer (_StringToNumber); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand,void __cdecl TextNextNumber(void)
 0x00483D50,func,TextTokenToValue,,re,inferred,"scalar token->value conversion helper (uint->uint); low-confidence, revisit",undefined4 __stdcall TextTokenToValue(undefined4)
-0x00483E00,func,_UkraineMedals,UkraineMedals,sms,confirmed,,
-0x00484050,func,_KurileMedals,KurileMedals,sms,confirmed,,
+0x00483E00,func,_UkraineMedals,UkraineMedals,sms,confirmed,"Ukraine campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Navy decorations) (#29)",
+0x00484050,func,_KurileMedals,KurileMedals,sms,confirmed,"Kurile campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Navy decorations + Yellow Fever) (#29)",
 0x004842B0,func,_KurilePromotions,KurilePromotions,sms,confirmed,,
-0x00484410,func,_VietnamMedals,VietnamMedals,sms,confirmed,,
+0x00484410,func,_VietnamMedals,VietnamMedals,sms,confirmed,stub — return 0; the Vietnam campaign awards no medals (#29),
 0x00484420,func,_VietnamPromotions,VietnamPromotions,sms,confirmed,,
-0x00484430,func,_ATFEgyptMedals,ATFEgyptMedals,sms,confirmed,,
-0x00484690,func,_ATFVladMedals,ATFVladMedals,sms,confirmed,,
+0x00484430,func,_ATFEgyptMedals,ATFEgyptMedals,sms,confirmed,"ATF Egypt campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Air Force decorations) (#29)",
+0x00484690,func,_ATFVladMedals,ATFVladMedals,sms,confirmed,"ATF Vladivostok campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Air Force decorations) (#29)",
 0x004848F0,func,_ATFPromotions,ATFPromotions,sms,confirmed,,
-0x00484B70,func,_ATFBalticMedals,ATFBalticMedals,sms,confirmed,,
+0x00484B70,func,_ATFBalticMedals,ATFBalticMedals,sms,confirmed,"ATF Baltic campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Air Force decorations) (#29)",
 0x00484D90,func,_EndOfMissionStats@0,EndOfMissionStats,sms,confirmed,end-of-mission player statistics (kills/losses/score),undefined4 __stdcall EndOfMissionStats(void)
 0x00485040,func,_EndOfFortMissionStats@0,EndOfFortMissionStats,sms,confirmed,end-of-mission statistics for Fort (base-assault) missions,undefined4 __stdcall EndOfFortMissionStats(void)
 0x004851C0,func,_MISSIONFortDestroyed@4,MISSIONFortDestroyed,sms,confirmed,Fort-mission: a fort object was destroyed,undefined4 __stdcall MISSIONFortDestroyed(undefined4)
@@ -609,6 +609,17 @@ va,kind,name,display,source,confidence,notes,type
 0x004F8BF9,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
 0x004F8C7A,data,pilotCampaignsWon,,re,confirmed,"_campaignPilot+0xC2: "", ""-joined completed-campaigns list (P.md) (#492)",
 0x004F8C7B,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
+0x004F912A,data,pilotMedalHonor,,re,confirmed,_campaignPilot+0x572: Medal of Honor awarded-flag byte (Navy/AF variant per campaign; P.md medal band) (#29),undefined1
+0x004F912B,data,pilotMedalCross,,re,confirmed,_campaignPilot+0x573: Navy Cross / AF Cross awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F912C,data,pilotMedalDSM,,re,confirmed,_campaignPilot+0x574: Distinguished Service Medal awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F912D,data,pilotMedalAir,,re,confirmed,_campaignPilot+0x575: Air Medal awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F912E,data,pilotMedalDFC,,re,confirmed,_campaignPilot+0x576: Distinguished Flying Cross awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F912F,data,pilotMedalAchievement,,re,confirmed,_campaignPilot+0x577: Achievement Medal awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F9130,data,pilotMedalCommendation,,re,confirmed,_campaignPilot+0x578: Commendation Medal awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F9131,data,pilotMedalExpeditionary,,re,confirmed,_campaignPilot+0x579: Expeditionary Medal awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F9132,data,pilotPurpleHearts,,re,confirmed,"_campaignPilot+0x57A: Purple Heart count, incremented per award, capped at 3 (P.md medal band) (#29)",undefined1
+0x004F9133,data,pilotMedalSilverStar,,re,confirmed,_campaignPilot+0x57B: Silver Star awarded-flag byte (P.md medal band) (#29),undefined1
+0x004F9134,data,pilotMedalYellowFever,,re,confirmed,_campaignPilot+0x57C: Conquest of Yellow Fever Medal awarded-flag byte (Kurile only; P.md medal band) (#29),undefined1
 0x004F98AC,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
 0x004F98B0,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
 0x004F98DA,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
@@ -622,7 +633,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004FA826,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
 0x004FA828,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
 0x004FA836,data,,,waiver,confirmed,interior of _campaignPilot (the 0x25E0 pilot record; formats/P.md maps it),
-0x004FAB38,data,pilotMissionsFlown,,re,confirmed,_campaignPilot+0x1F80 (P.md stats block) (#492),
+0x004FAB38,data,pilotMissionsFlown,,re,confirmed,_campaignPilot+0x1F80 (P.md stats block) (#492),undefined4
 0x004FAB40,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FAB44,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,
 0x004FAB50,data,,,waiver,confirmed,interior of / adjacent to _campaignPilot; named at its base or owned by that subsystem,

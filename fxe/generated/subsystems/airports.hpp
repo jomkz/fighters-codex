@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Airports / carriers — parking, approach, deck (AP) -- FA.EXE
-// 20/26 functions have a recovered signature; 0/0 globals have a recovered type.
+// 21/26 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::airports {
 
@@ -27,6 +27,7 @@ undefined4 APGetPark(void);  // 0x004BD3D0  __stdcall
 undefined4 APAssignPark(void);  // 0x004BD420  __stdcall
 undefined4 APUnassignPark(void);  // 0x004BD490  __stdcall
 undefined4 APApproachPath(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004BE6A0  __stdcall
+undefined4 APTeleport(undefined4);  // 0x004BE8E0  __cdecl
 void APSetOffset(OBJ *, AIRPORT *, OBJ_ON_CARRIER *);  // 0x004BEAB0  __stdcall
 undefined4 APAddToCarrier(undefined4);  // 0x004BEB00  __fastcall
 undefined4 APRemoveFromCarrier(void);  // 0x004BEB60  __fastcall
@@ -41,7 +42,6 @@ undefined4 APObjOnShip(undefined4);  // 0x004BEE30  __fastcall
 // TODO(#453): 0x004BAB20  APOnCatapult -- signature not recovered
 // TODO(#453): 0x004BAC83  APStripFreeBody -- signature not recovered
 // TODO(#453): 0x004BE6AB  APApproachPathBody -- signature not recovered
-// TODO(#453): 0x004BE8E0  APTeleport -- signature not recovered
 // TODO(#453): 0x004BEC60  APOnDeck -- signature not recovered
 
 }  // namespace fxe::fa::airports

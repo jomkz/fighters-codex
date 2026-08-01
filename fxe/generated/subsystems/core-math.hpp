@@ -8,13 +8,14 @@
 #include "../fa_types.hpp"
 
 // Core math & runtime utility library -- FA.EXE
-// 59/64 functions have a recovered signature; 0/0 globals have a recovered type.
+// 60/64 functions have a recovered signature; 0/0 globals have a recovered type.
 
 namespace fxe::fa::core_math {
 
 // --- functions -------------------------------------------------------
 undefined4 TurnTowardAngle(undefined4, undefined4, undefined4);  // 0x00411950  __fastcall
 undefined4 MatchF24(undefined4, undefined4, undefined4);  // 0x004119A0  __stdcall
+undefined4 LibraryShutdown(undefined4);  // 0x00411A30  __cdecl
 undefined4 Angles(undefined4, undefined4, undefined4, undefined4);  // 0x00411A40  __stdcall
 undefined4 AngleOffNose(undefined4);  // 0x00411AF0  __stdcall
 undefined4 AnglesOffNose(undefined4, undefined4, undefined4, undefined4);  // 0x00411B60  __stdcall
@@ -77,7 +78,6 @@ undefined4 ArcTan(undefined4, undefined4);  // 0x004CCB88  __fastcall
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x00411A20  LibraryStartup -- signature not recovered
-// TODO(#453): 0x00411A30  LibraryShutdown -- signature not recovered
 // TODO(#453): 0x004C686C  Sprintf -- signature not recovered
 // TODO(#453): 0x004C6A84  FormatField -- signature not recovered
 // TODO(#453): 0x004C6ADC  NumberToAscii -- signature not recovered

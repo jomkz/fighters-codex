@@ -17,7 +17,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004BD490,func,_APUnassignPark@0,APUnassignPark,sms,confirmed,release every parking spot held by _curId across all airports,undefined4 __stdcall APUnassignPark(void)
 0x004BE6A0,func,_APApproachPath@20,APApproachPath,sms,confirmed,"compute the glideslope steering to the home airport: cross-track + vertical offsets rotated into the runway heading, plus a range-scaled throttle/gear cue","undefined4 __stdcall APApproachPath(undefined4, undefined4, undefined4, undefined4, undefined4)"
 0x004BE6AB,func,APApproachPathBody,,re,confirmed,overlapping alternate entry of APApproachPath,
-0x004BE8E0,func,_APTeleport,APTeleport,sms,confirmed,"free-flight teleport of the player to the nearest airport: 0 = on the runway, 1 = short final w/ hook, 2 = 10k airborne, 3 = 40k airborne (FMInitPlane each)",
+0x004BE8E0,func,_APTeleport,APTeleport,sms,confirmed,"free-flight teleport of the player to the nearest airport: 0 = on the runway, 1 = short final w/ hook, 2 = 10k airborne, 3 = 40k airborne (FMInitPlane each)",undefined4 __cdecl APTeleport(undefined4)
 0x004BEAB0,func,?APSetOffset@@YGXPAUOBJ@@PAUAIRPORT@@PAUOBJ_ON_CARRIER@@@Z,APSetOffset,sms,confirmed,record a plane's position relative to a carrier deck (rotated offset + heading delta) into an OBJ_ON_CARRIER slot so it rides the moving ship,"void __stdcall APSetOffset(OBJ *, AIRPORT *, OBJ_ON_CARRIER *)"
 0x004BEB00,func,@APAddToCarrier@4,APAddToCarrier,sms,confirmed,add _curId to the carrier-deck occupancy table with its relative offset,undefined4 __fastcall APAddToCarrier(undefined4)
 0x004BEB60,func,@APRemoveFromCarrier@0,APRemoveFromCarrier,sms,confirmed,remove _curId from the carrier-deck table,undefined4 __fastcall APRemoveFromCarrier(void)

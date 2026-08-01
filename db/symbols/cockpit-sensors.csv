@@ -56,7 +56,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0043F0E0,func,CPScopeForEach,,re,confirmed,walk a scope contact buffer applying a predicate/callback (thunk),
 0x0043F0EA,func,CPScopeForEachBody,,re,confirmed,"body of CPScopeForEach: iterate the contact buffer, dropping entries the predicate rejects",
 0x0043F280,func,CPScopeAge,,re,confirmed,age out stale scope contacts past their timeout,
-0x0043F300,func,CPContactVisible,,re,confirmed,is a scope contact currently drawable (on-scope + not expired),
+0x0043F300,func,CPContactVisible,,re,confirmed,is a scope contact currently drawable (on-scope + not expired),"undefined4 __cdecl CPContactVisible(undefined4, undefined4, undefined4)"
 0x0043F360,func,CPScopeSymbol,,re,confirmed,pick + draw the symbol/colour for one scope contact by its class/threat state,
 0x0043F510,func,CPDrawWindow5,,re,confirmed,cockpit MFD window-type 5 renderer (thunk),
 0x0043F51A,func,CPDrawWindow5Body,,re,confirmed,cockpit MFD window-type 5 renderer body,
@@ -167,10 +167,10 @@ va,kind,name,display,source,confidence,notes,type
 0x005387D2,data,,,waiver,confirmed,cockpit-sensors scope draw/state scalar; MFD rendering detail,
 0x005387D4,data,,,waiver,confirmed,cockpit-sensors scope draw/state scalar; MFD rendering detail,
 0x005387D6,data,,,waiver,confirmed,cockpit-sensors scope draw/state scalar; MFD rendering detail,
-0x005387D8,data,_radarMode,,re,confirmed,"cockpit sensors: current radar mode (0=off, 2/3 air scan variants, 4 air-to-ground/wide) — the value the detection predicates branch on (#486)",
+0x005387D8,data,_radarMode,,re,confirmed,"cockpit sensors: current radar mode (0=off, 2/3 air scan variants, 4 air-to-ground/wide) — the value the detection predicates branch on (#486)",undefined4
 0x005387E8,data,,,waiver,confirmed,interior of / adjacent to _numWindowPos; named at its base or owned by that subsystem,
 0x005387EC,data,,,waiver,confirmed,interior of / adjacent to _numWindowPos; named at its base or owned by that subsystem,
-0x005387F0,data,_rwrLaunchWarn,,re,confirmed,cockpit sensors: RWR missile-launch warning flag (#486),
+0x005387F0,data,_rwrLaunchWarn,,re,confirmed,cockpit sensors: RWR missile-launch warning flag (#486),undefined1
 0x005387F4,data,,,waiver,confirmed,interior of / adjacent to _numWindowPos; named at its base or owned by that subsystem,
 0x005387F8,data,,,waiver,confirmed,interior of / adjacent to _numWindowPos; named at its base or owned by that subsystem,
 0x00538800,data,_scopeYScale,,re,confirmed,"cockpit sensors: MFD vertical scale shift (from screen resolution, WPCInit) (#486)",
@@ -211,7 +211,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00539D98,data,,,waiver,confirmed,interior of / adjacent to ?ifmHandle@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
 0x00539DA0,data,,,waiver,confirmed,interior of / adjacent to ?ifmHandle@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
 0x00539E48,data,,,waiver,confirmed,interior of / adjacent to ?ifmHandle@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
-0x00539E4C,data,_rwrNextRefresh,,re,confirmed,"cockpit sensors: next tick the RWR display re-renders (CPDrawRWR, +0x40) (#486)",
+0x00539E4C,data,_rwrNextRefresh,,re,confirmed,"cockpit sensors: next tick the RWR display re-renders (CPDrawRWR, +0x40) (#486)",undefined4
 0x00539E58,data,_rwrScopeBuf,,re,confirmed,cockpit sensors: the RWR contact buffer filed by CPScopeInsert and drawn by CPDrawRWR (#486),
 0x00539E5C,data,,,waiver,confirmed,interior of / adjacent to ?ifmHandle@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
 0x00539ED8,data,,,waiver,confirmed,interior of / adjacent to ?ifmHandle@@3PAUT_HANDLE@@A; named at its base or owned by that subsystem,
@@ -248,5 +248,5 @@ va,kind,name,display,source,confidence,notes,type
 0x0053BFBD,data,,,waiver,confirmed,interior of / adjacent to ?targetV@@3UVIEW_VARS@@A; named at its base or owned by that subsystem,
 0x0053DA00,data,,,waiver,confirmed,"cockpit-sensors scope layout/state table (indexed) — MFD window rects, radar params, symbol/colour tables; drawing constants, not sim state",
 0x0053DA01,data,,,waiver,confirmed,"cockpit-sensors scope layout/state table (indexed) — MFD window rects, radar params, symbol/colour tables; drawing constants, not sim state",
-0x0053DA08,data,_radarEmitter,,re,confirmed,cockpit sensors: the active radar/seeker emitter object driving the scope this frame (#486),
-0x0053DA10,data,_rwrNextScan,,re,confirmed,cockpit sensors: next tick the RWR re-scans its contact buffer (+0x300) (#486),
+0x0053DA08,data,_radarEmitter,,re,confirmed,cockpit sensors: the active radar/seeker emitter object driving the scope this frame (#486),undefined4
+0x0053DA10,data,_rwrNextScan,,re,confirmed,cockpit sensors: next tick the RWR re-scans its contact buffer (+0x300) (#486),undefined4

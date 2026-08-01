@@ -13,7 +13,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0048D2F0,func,_SAYInit2@0,SAYInit2,sms,confirmed,second-stage SAY reset: seed home/succeeded/failed flags from MISSIONSucceededForThisPlayer,undefined4 __stdcall SAYInit2(void)
 0x0048D340,func,_SAYShutdown@0,SAYShutdown,sms,confirmed,SAY teardown (no-op),undefined4 __stdcall SAYShutdown(void)
 0x0048D350,func,@SAYMsg@4,SAYMsg,sms,confirmed,"render one queued T_MSG: push its sender as cur-obj, then dispatch to the object class SayProc via CallUtilProc(6) (PLANESayProc etc.) or SAYDefaultSayProc",undefined4 __fastcall SAYMsg(undefined4)
-0x0048D3C0,func,_SAYDefaultSayProc,SAYDefaultSayProc,sms,confirmed,"the fallback SayProc: emit the literal $-prefixed payload string, then FinishSayLine",
+0x0048D3C0,func,_SAYDefaultSayProc,SAYDefaultSayProc,sms,confirmed,"the fallback SayProc: emit the literal $-prefixed payload string, then FinishSayLine",undefined4 __cdecl SAYDefaultSayProc(undefined4)
 0x0048D410,func,SayLineReset,,re,confirmed,"clear the two SAY line accumulators (text at 0x552ff0, sound-name list at 0x553050)",
 0x0048D420,func,SayLineAppend,,re,confirmed,"append a {text,sound} pair to the SAY line accumulators (comma-separating stacked sound names)",
 0x0048D470,func,FinishSayLine,,re,confirmed,"finish a spoken line: prefix the speaker callsign (or ""CO-PILOT""/""VOICE""), HUDMessage the text, play the queued sound names at radio volume, arm the chatter cooldown",

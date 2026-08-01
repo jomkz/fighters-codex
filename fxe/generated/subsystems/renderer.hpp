@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Renderer & rasterizer (GG/G_) -- FA.EXE
-// 179/245 functions have a recovered signature (+6 that are not C functions); 6/14 globals have a recovered type.
+// 181/245 functions have a recovered signature (+6 that are not C functions); 12/14 globals have a recovered type.
 
 namespace fxe::fa::renderer {
 
@@ -17,6 +17,12 @@ extern undefined4 blitDestX;  // 0x004F6CA4  destination X of the present blit r
 extern undefined4 blitDestY;  // 0x004F6CA8  destination Y of the present blit rect; offset by screen shake
 extern undefined1 shakeParity;  // 0x004F6CAC  current screen-shake parity toggle (GG_FlushShaken)
 extern u32 glassesBitmap;  // 0x0050C5C4  stereo-glasses overlay bitmap handle — allocated by _G_AllocBitmap@12 in ?GLASSESInit@@YGXXZ, freed in ?GLASSESShutDown@@YGXXZ
+extern undefined4 curEyeLayer;  // 0x00580D90  WR: the LAYER struct covering the eye altitude this frame (WRUpdate) (#493)
+extern undefined4 eyeAltitude;  // 0x00580DA4  WR: current eye altitude >> 8 (WRUpdate / WRSetRemaps interpolation) (#493)
+extern undefined2 sunScreenY;  // 0x00583DBE  WR: projected sun screen Y for the lens flare (WRLensFlare) (#493)
+extern undefined1 wrHazeActive;  // 0x005843C0  WR: nonzero when the eye is under a haze/cloud deck (drives WRSetRemaps blending) (#493)
+extern undefined4 wrLayerAbove;  // 0x005843CC  WR: LAYER just above the eye (interpolation bound) (#493)
+extern undefined4 wrLayerBelow;  // 0x005843D4  WR: LAYER just below the eye (interpolation bound) (#493)
 extern u32 overflowQuotient;  // 0x0058F0E8  divide-overflow handler scratch: the saturated quotient magnitude, computed as (mask ^ 0x70000000) - mask. Reached through the _overflow_ptr slot the raster inner loops install (renderer.md)
 extern u32 overflowSignMask;  // 0x0058F0F4  divide-overflow handler scratch: the sign mask (arithmetic >> 0x1F of the dividend XOR divisor) that gives _overflowQuotient its sign
 
@@ -46,6 +52,7 @@ undefined4 G_Circle(undefined4, undefined4, undefined4, undefined4);  // 0x0046A
 undefined4 G_FindFirstFile(undefined4, undefined4);  // 0x00479E10  __stdcall
 undefined4 G_FindNextFile(undefined4, undefined4);  // 0x00479EA0  __stdcall
 undefined4 G_FindClose(undefined4);  // 0x00479F20  __stdcall
+undefined4 InitGraphicsMode(undefined4);  // 0x0047A5A0  __cdecl
 undefined4 FPSUpdate(void);  // 0x00486D10  __stdcall
 undefined4 FPSPrint(undefined4);  // 0x00486DA0  __fastcall
 void FPSPrint2(char *, long);  // 0x00486DF0  __fastcall
@@ -141,6 +148,7 @@ undefined4 WRInit(undefined4);  // 0x004B4370  __stdcall
 undefined4 WRShutdown(void);  // 0x004B46D0  __stdcall
 undefined4 WRInt(undefined4);  // 0x004B46F0  __fastcall
 undefined4 WRForcePaletteUpdate(void);  // 0x004B4700  __stdcall
+undefined4 WRWeatherEffects(undefined4, undefined4, undefined4, undefined4);  // 0x004B4720  __cdecl
 void InitTmapRemaps(void);  // 0x004B4790  __fastcall
 undefined4 SetTmapRemaps(void);  // 0x004B47B0  __fastcall
 undefined4 WRMakeHazeList(undefined4, undefined4, undefined4);  // 0x004B48C0  __fastcall
@@ -246,7 +254,6 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x004789E0  ?InitSurfaceDesc@CDirDrawSurface@@SAXPAU_DDSURFACEDESC@@@Z -- signature not recovered
 // TODO(#453): 0x00478A00  ?Destroy@CDirDrawSurface@@QAEXXZ -- signature not recovered
 // TODO(#453): 0x00478AE0  ?Clear@CDirDrawSurface@@QAEJXZ -- signature not recovered
-// TODO(#453): 0x0047A5A0  InitGraphicsMode -- signature not recovered
 // TODO(#453): 0x0047A610  InitGraphicsSystem -- signature not recovered
 // TODO(#453): 0x00486CF0  FPSInit -- signature not recovered
 // TODO(#453): 0x00498A50  G_Visible -- signature not recovered
@@ -262,7 +269,6 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x004B3CB0  WRBuildSkyBands -- signature not recovered
 // TODO(#453): 0x004B4320  WRFogLayerUpdate -- signature not recovered
 // TODO(#453): 0x004B4680  WRPickTintTable -- signature not recovered
-// TODO(#453): 0x004B4720  WRWeatherEffects -- signature not recovered
 // TODO(#453): 0x004B8570  G_ColorPrintf -- signature not recovered
 // TODO(#453): 0x004BEE60  unknown_divide_error -- signature not recovered
 // TODO(#453): 0x004BEE70  divide_by_ecx_handler -- signature not recovered
@@ -282,11 +288,5 @@ undefined4 DrawYLRP(undefined4, undefined4);  // 0x004CC8B0  __fastcall
 // TODO(#453): 0x004CC4B4  SetShadingTable -- signature not recovered
 // TODO(#455): 0x0050C8D8  _lensFlareTable -- type not recovered
 // TODO(#455): 0x0050C8DC  _lensFlareCount -- type not recovered
-// TODO(#455): 0x00580D90  _curEyeLayer -- type not recovered
-// TODO(#455): 0x00580DA4  _eyeAltitude -- type not recovered
-// TODO(#455): 0x00583DBE  _sunScreenY -- type not recovered
-// TODO(#455): 0x005843C0  _wrHazeActive -- type not recovered
-// TODO(#455): 0x005843CC  _wrLayerAbove -- type not recovered
-// TODO(#455): 0x005843D4  _wrLayerBelow -- type not recovered
 
 }  // namespace fxe::fa::renderer
