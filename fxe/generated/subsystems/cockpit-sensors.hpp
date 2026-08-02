@@ -8,9 +8,16 @@
 #include "../fa_types.hpp"
 
 // Cockpit sensors (radar / IR / RWR) -- FA.EXE
-// 21/63 functions have a recovered signature; 0/9 globals have a recovered type.
+// 22/63 functions have a recovered signature; 5/9 globals have a recovered type.
 
 namespace fxe::fa::cockpit_sensors {
+
+// --- globals ---------------------------------------------------------
+extern undefined4 radarMode;  // 0x005387D8  cockpit sensors: current radar mode (0=off, 2/3 air scan variants, 4 air-to-ground/wide) — the value the detection predicates branch on (#486)
+extern undefined1 rwrLaunchWarn;  // 0x005387F0  cockpit sensors: RWR missile-launch warning flag (#486)
+extern undefined4 rwrNextRefresh;  // 0x00539E4C  cockpit sensors: next tick the RWR display re-renders (CPDrawRWR, +0x40) (#486)
+extern undefined4 radarEmitter;  // 0x0053DA08  cockpit sensors: the active radar/seeker emitter object driving the scope this frame (#486)
+extern undefined4 rwrNextScan;  // 0x0053DA10  cockpit sensors: next tick the RWR re-scans its contact buffer (+0x300) (#486)
 
 // --- functions -------------------------------------------------------
 undefined4 CPSetMissile(undefined4);  // 0x00438520  __fastcall
@@ -31,6 +38,7 @@ undefined4 CPBombRange(undefined4);  // 0x0043E7E0  __fastcall
 undefined4 CPUpdateRadar(void);  // 0x0043E810  __stdcall
 undefined4 CPResetRWR(void);  // 0x0043E830  __stdcall
 undefined4 CPComputeRCS(undefined4, undefined4);  // 0x0043E8C0  __stdcall
+undefined4 CPContactVisible(undefined4, undefined4, undefined4);  // 0x0043F300  __cdecl
 undefined4 CPNextTarget(undefined4);  // 0x00440E10  __fastcall
 void CPUpdateIRItems(void);  // 0x00440FE0  __stdcall
 unsigned short CPGetContact(long);  // 0x00441160  __stdcall
@@ -73,21 +81,15 @@ unsigned short CPGetContact(long);  // 0x00441160  __stdcall
 // TODO(#453): 0x0043F0E0  CPScopeForEach -- signature not recovered
 // TODO(#453): 0x0043F0EA  CPScopeForEachBody -- signature not recovered
 // TODO(#453): 0x0043F280  CPScopeAge -- signature not recovered
-// TODO(#453): 0x0043F300  CPContactVisible -- signature not recovered
 // TODO(#453): 0x0043F360  CPScopeSymbol -- signature not recovered
 // TODO(#453): 0x0043F510  CPDrawWindow5 -- signature not recovered
 // TODO(#453): 0x0043F51A  CPDrawWindow5Body -- signature not recovered
 // TODO(#453): 0x0043FAF0  CPDrawGroundRadar -- signature not recovered
 // TODO(#453): 0x00440BF0  CPScopeRangeRing -- signature not recovered
 // TODO(#453): 0x00440D00  CPScopeSelectContact -- signature not recovered
-// TODO(#455): 0x005387D8  _radarMode -- type not recovered
-// TODO(#455): 0x005387F0  _rwrLaunchWarn -- type not recovered
 // TODO(#455): 0x00538800  _scopeYScale -- type not recovered
 // TODO(#455): 0x00538808  _scopeXScale -- type not recovered
-// TODO(#455): 0x00539E4C  _rwrNextRefresh -- type not recovered
 // TODO(#455): 0x00539E58  _rwrScopeBuf -- type not recovered
 // TODO(#455): 0x0053BEA8  _radarScopeBuf -- type not recovered
-// TODO(#455): 0x0053DA08  _radarEmitter -- type not recovered
-// TODO(#455): 0x0053DA10  _rwrNextScan -- type not recovered
 
 }  // namespace fxe::fa::cockpit_sensors

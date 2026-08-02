@@ -863,7 +863,7 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x0044CF00` | `FortMultiButton2` | sms | second Fort-setup radio-group button setter |
 | `0x0044CF10` | `FortMultiButtonText2` | sms | second Fort-setup radio group text matcher |
 | `0x0044D070` | `FortMission2` | sms | Fort mission builder (variant 2) |
-| `0x00467110` | `AwardMedal` | sms |  |
+| `0x00467110` | `AwardMedal` | sms | append the medal title to the pilot service-record block (+0x5AF), skipped when the block would exceed 1000 bytes (#29) |
 | `0x00467180` | `PilotSave` | sms | write a PILOT record to PLT%03d.P (slot -1 = PilotFindFreeSlot), 0x25e0 bytes via RM cache + SaveFile, insert into the sorted roster, set _pilotName |
 | `0x00467240` | `PilotFindFreeSlot` | re | find an unused pilot save slot by probing PLT%03d.P (s_PLT_03d_P) with _Rand until _Open fails; signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x004672C0` | `PilotPhoto` | sms | blit the pilot photo PIC (name at PILOT+0x95) at (0x44,0x69) + MenuCreateRemaps |
@@ -950,15 +950,15 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 | `0x00483D10` | `TextIsDelim` | re | predicate: is char a token delimiter/whitespace (helper of TextNextToken); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D30` | `TextNextNumber` | re | read next token and convert to integer (_StringToNumber); signature recovered in the #453 per-subsystem pass; convention and stack arity checked against the binary's RET operand |
 | `0x00483D50` | `TextTokenToValue` | re | scalar token->value conversion helper (uint->uint); low-confidence, revisit |
-| `0x00483E00` | `UkraineMedals` | sms |  |
-| `0x00484050` | `KurileMedals` | sms |  |
+| `0x00483E00` | `UkraineMedals` | sms | Ukraine campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Navy decorations) (#29) |
+| `0x00484050` | `KurileMedals` | sms | Kurile campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Navy decorations + Yellow Fever) (#29) |
 | `0x004842B0` | `KurilePromotions` | sms |  |
-| `0x00484410` | `VietnamMedals` | sms |  |
+| `0x00484410` | `VietnamMedals` | sms | stub — return 0; the Vietnam campaign awards no medals (#29) |
 | `0x00484420` | `VietnamPromotions` | sms |  |
-| `0x00484430` | `ATFEgyptMedals` | sms |  |
-| `0x00484690` | `ATFVladMedals` | sms |  |
+| `0x00484430` | `ATFEgyptMedals` | sms | ATF Egypt campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Air Force decorations) (#29) |
+| `0x00484690` | `ATFVladMedals` | sms | ATF Vladivostok campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Air Force decorations) (#29) |
 | `0x004848F0` | `ATFPromotions` | sms |  |
-| `0x00484B70` | `ATFBalticMedals` | sms |  |
+| `0x00484B70` | `ATFBalticMedals` | sms | ATF Baltic campaign medal pass: test criteria, set the +0x572 medal-flag band, _AwardMedal the title (Air Force decorations) (#29) |
 | `0x00484D90` | `EndOfMissionStats` | sms | end-of-mission player statistics (kills/losses/score) |
 | `0x00485040` | `EndOfFortMissionStats` | sms | end-of-mission statistics for Fort (base-assault) missions |
 | `0x004851C0` | `MISSIONFortDestroyed` | sms | Fort-mission: a fort object was destroyed |

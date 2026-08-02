@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Memory & resource managers (MM/RM) -- FA.EXE
-// 77/86 functions have a recovered signature; 12/12 globals have a recovered type.
+// 84/86 functions have a recovered signature; 12/12 globals have a recovered type.
 
 namespace fxe::fa::memory_resource {
 
@@ -63,12 +63,17 @@ undefined4 MMULongAt(undefined4, undefined4);  // 0x00436310  __cdecl
 undefined4 SMInit(void);  // 0x0046A370  __stdcall
 undefined4 SMShutdown(void);  // 0x0046A4C0  __stdcall
 undefined4 SMAddress(undefined4);  // 0x0046A4E0  __stdcall
+undefined4 SMCallByName(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x0046A570  __cdecl
+undefined4 LibStartUp(undefined4);  // 0x00478BC0  __cdecl
+undefined4 DoLoadLibFile(undefined4, undefined4, undefined4, undefined4);  // 0x00479630  __cdecl
 long CompareHints(void *, void *);  // 0x004797E0  __cdecl
+undefined4 SearchLib(undefined4);  // 0x004798B0  __cdecl
 undefined4 _FindNext(undefined4, undefined4);  // 0x00479960  __stdcall
 undefined4 _FindFirst(undefined4, undefined4);  // 0x00479A60  __stdcall
 undefined4 _FindClose(undefined4);  // 0x00479B20  __stdcall
 char MatchPattern(char *, char *);  // 0x00479B50  __cdecl
 undefined4 LibOpen(undefined4, undefined4);  // 0x00479BD0  __fastcall
+undefined4 GetDiskFree(undefined4);  // 0x00479DA0  __cdecl
 undefined4 GetDosFileTime(undefined4, undefined4, undefined4);  // 0x00479F50  __fastcall
 undefined4 GetFiles(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004A5540  __stdcall
 undefined4 RMInit(void);  // 0x004A67F0  __stdcall
@@ -99,23 +104,18 @@ undefined4 UGetFileSize(undefined4);  // 0x004AD1C0  __fastcall
 undefined4 Delete(undefined4);  // 0x004AD220  __fastcall
 undefined4 Rename(undefined4, undefined4);  // 0x004AD250  __fastcall
 undefined4 GetCurrentPath(undefined4, undefined4);  // 0x004AD270  __fastcall
+undefined4 SaveFile(undefined4, undefined4, undefined4);  // 0x004AD2E0  __cdecl
 undefined4 ClearCachedFilenames(void);  // 0x004AD380  __stdcall
 undefined4 GetExecutablePath(undefined4, undefined4);  // 0x004AD3A0  __fastcall
 undefined4 LoadFile(undefined4, undefined4, undefined4, undefined4);  // 0x004AD3C0  __stdcall
 undefined4 LoadFile2(undefined4, undefined4, undefined4, undefined4, undefined4);  // 0x004AD9B0  __stdcall
 void ConcatDirAndFile(char *, char *, char *);  // 0x004ADAC0  __cdecl
+undefined4 DecodeFile(undefined4, undefined4, undefined4);  // 0x004C60F0  __cdecl
 
 // --- not yet recovered -----------------------------------------------
 // Emitted as TODOs, not as guessed declarations: a wrong prototype would
 // compile and then lie about what the original function took.
 // TODO(#453): 0x00412FC0  cdpath -- signature not recovered
-// TODO(#453): 0x0046A570  SMCallByName -- signature not recovered
-// TODO(#453): 0x00478BC0  LibStartUp -- signature not recovered
-// TODO(#453): 0x00479630  DoLoadLibFile -- signature not recovered
-// TODO(#453): 0x004798B0  SearchLib -- signature not recovered
-// TODO(#453): 0x00479DA0  GetDiskFree -- signature not recovered
 // TODO(#453): 0x004A6E50  LoadPIC -- signature not recovered
-// TODO(#453): 0x004AD2E0  SaveFile -- signature not recovered
-// TODO(#453): 0x004C60F0  DecodeFile -- signature not recovered
 
 }  // namespace fxe::fa::memory_resource

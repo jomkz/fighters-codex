@@ -8,7 +8,7 @@
 #include "../fa_types.hpp"
 
 // Object / entity system & shape selection -- FA.EXE
-// 137/154 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
+// 139/154 functions have a recovered signature (+3 that are not C functions); 29/31 globals have a recovered type.
 
 namespace fxe::fa::objects {
 
@@ -125,6 +125,7 @@ undefined4 OBJProc(undefined4);  // 0x00473BE0  __cdecl
 undefined4 Kill(void);  // 0x00473C10  __stdcall
 undefined4 GVProc(char);  // 0x00473DB0  __cdecl
 char GVDoCurrentWaypoint(void);  // 0x00473DE0  __cdecl
+undefined4 GVEventProc(undefined4, undefined4);  // 0x00473F50  __cdecl
 undefined4 NPCSetReact(undefined4, undefined4, undefined4);  // 0x00474650  __fastcall
 undefined4 AmmoForClass(undefined4);  // 0x00474740  __fastcall
 undefined4 Alive(undefined4);  // 0x004747C0  __fastcall
@@ -155,6 +156,7 @@ undefined4 PLANESetEjectTime(undefined4);  // 0x0049D6E0  __stdcall
 void PLANEBreakUp(void);  // 0x0049D730  __stdcall
 void PLANEBlow(void);  // 0x0049D860  __cdecl
 undefined4 PLANECrash(undefined4);  // 0x0049D890  __stdcall
+undefined4 PLANEEventProc(undefined4, undefined4);  // 0x0049DF40  __cdecl
 void PLANEMoveProc(char);  // 0x0049F840  __cdecl
 undefined4 PLANECheckEject(void);  // 0x0049FA10  __stdcall
 long PLANEAddProc(void);  // 0x0049FA50  __cdecl
@@ -201,11 +203,9 @@ undefined4 WriteFile(undefined4, undefined4, undefined4, undefined4, undefined4)
 // TODO(#453): 0x00443C60  GRAPHICFindSlot -- signature not recovered
 // TODO(#453): 0x004443DA  GRAPHICAddClusterReleaseBody -- signature not recovered
 // TODO(#453): 0x004736F0  NPCWeaponsProc -- signature not recovered
-// TODO(#453): 0x00473F50  GVEventProc -- signature not recovered
 // TODO(#453): 0x0048D780  PLANESayProc -- signature not recovered
 // TODO(#453): 0x0048E8D0  OBJSayProc -- signature not recovered
 // TODO(#453): 0x0048EC40  PLANECommentProc -- signature not recovered
-// TODO(#453): 0x0049DF40  PLANEEventProc -- signature not recovered
 // TODO(#453): 0x0049FB10  PLANEProc -- signature not recovered
 // TODO(#453): 0x004BD5B0  CARRIERProc -- signature not recovered
 // TODO(#453): 0x004BE640  STRIPProc -- signature not recovered

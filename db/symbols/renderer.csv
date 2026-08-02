@@ -65,7 +65,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00479E10,func,_G_FindFirstFile@8,G_FindFirstFile,sms,confirmed,,"undefined4 __stdcall G_FindFirstFile(undefined4, undefined4)"
 0x00479EA0,func,_G_FindNextFile@8,G_FindNextFile,sms,confirmed,,"undefined4 __stdcall G_FindNextFile(undefined4, undefined4)"
 0x00479F20,func,_G_FindClose@4,G_FindClose,sms,confirmed,,undefined4 __stdcall G_FindClose(undefined4)
-0x0047A5A0,func,_InitGraphicsMode,InitGraphicsMode,sms,confirmed,G_Init + derive _xscale/_xshift/_yscale/_yshift from the mode dims,
+0x0047A5A0,func,_InitGraphicsMode,InitGraphicsMode,sms,confirmed,G_Init + derive _xscale/_xshift/_yscale/_yshift from the mode dims,undefined4 __cdecl InitGraphicsMode(undefined4)
 0x0047A610,func,_InitGraphicsSystem,InitGraphicsSystem,sms,confirmed,CDirDraw singleton bring-up (Create + SetCooperativeLevel); the #529 device layer,
 0x00486CF0,func,_FPSInit,FPSInit,sms,confirmed,,
 0x00486D10,func,_FPSUpdate@0,FPSUpdate,sms,confirmed,,undefined4 __stdcall FPSUpdate(void)
@@ -180,7 +180,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004B46D0,func,_WRShutdown@0,WRShutdown,sms,confirmed,free the LAYER header allocation and clear the WR-enabled flag,undefined4 __stdcall WRShutdown(void)
 0x004B46F0,func,@WRInt@4,WRInt,sms,confirmed,write the single-byte WR-enabled flag,undefined4 __fastcall WRInt(undefined4)
 0x004B4700,func,_WRForcePaletteUpdate@0,WRForcePaletteUpdate,sms,confirmed,invalidate _lastPalette so the next frame re-uploads the whole palette,undefined4 __stdcall WRForcePaletteUpdate(void)
-0x004B4720,func,_WRWeatherEffects,WRWeatherEffects,sms,confirmed,"the visibility model: the minimum per-LAYER visibility byte (+0x14e) across the altitude band between two objects, plus the layer's fog distance — the range weather permits seeing through",
+0x004B4720,func,_WRWeatherEffects,WRWeatherEffects,sms,confirmed,"the visibility model: the minimum per-LAYER visibility byte (+0x14e) across the altitude band between two objects, plus the layer's fog distance — the range weather permits seeing through","undefined4 __cdecl WRWeatherEffects(undefined4, undefined4, undefined4, undefined4)"
 0x004B4790,func,?InitTmapRemaps@@YIXXZ,InitTmapRemaps,sms,confirmed,,void __fastcall InitTmapRemaps(void)
 0x004B47B0,func,@SetTmapRemaps@0,SetTmapRemaps,sms,confirmed,,undefined4 __fastcall SetTmapRemaps(void)
 0x004B48C0,func,@WRMakeHazeList@12,WRMakeHazeList,sms,confirmed,"build the (distance,colour) haze ramp list the sky renderer walks, terminated by 0x7fffffff","undefined4 __fastcall WRMakeHazeList(undefined4, undefined4, undefined4)"
@@ -442,9 +442,9 @@ va,kind,name,display,source,confidence,notes,type
 0x0055C074,data,,,waiver,confirmed,graphics-mode state named at the _grMode base,
 0x00580C60,data,,,waiver,confirmed,interior of / adjacent to ?glasses3dAmount@@3JA; named at its base or owned by that subsystem,
 0x00580D88,data,,,waiver,confirmed,interior of / adjacent to ?player_list@@3UNET_PLAYER_LIST@@A; named at its base or owned by that subsystem,
-0x00580D90,data,_curEyeLayer,,re,confirmed,WR: the LAYER struct covering the eye altitude this frame (WRUpdate) (#493),
+0x00580D90,data,_curEyeLayer,,re,confirmed,WR: the LAYER struct covering the eye altitude this frame (WRUpdate) (#493),undefined4
 0x00580D98,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
-0x00580DA4,data,_eyeAltitude,,re,confirmed,WR: current eye altitude >> 8 (WRUpdate / WRSetRemaps interpolation) (#493),
+0x00580DA4,data,_eyeAltitude,,re,confirmed,WR: current eye altitude >> 8 (WRUpdate / WRSetRemaps interpolation) (#493),undefined4
 0x00580DA8,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
 0x00580DB4,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
 0x00580DB8,data,,,waiver,confirmed,interior of the WR eye-layer state block; named fields at their base,
@@ -513,7 +513,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00583AA0,data,,,waiver,confirmed,interior of / adjacent to _currentLayer; named at its base or owned by that subsystem,
 0x00583AA8,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
 0x00583AAC,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
-0x00583DBE,data,_sunScreenY,,re,confirmed,WR: projected sun screen Y for the lens flare (WRLensFlare) (#493),
+0x00583DBE,data,_sunScreenY,,re,confirmed,WR: projected sun screen Y for the lens flare (WRLensFlare) (#493),undefined2
 0x00583DC4,data,,,waiver,confirmed,interior of _curPalette,
 0x00583E80,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
 0x00583E84,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
@@ -522,12 +522,12 @@ va,kind,name,display,source,confidence,notes,type
 0x00584064,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
 0x00584180,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
 0x00584184,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
-0x005843C0,data,_wrHazeActive,,re,confirmed,WR: nonzero when the eye is under a haze/cloud deck (drives WRSetRemaps blending) (#493),
+0x005843C0,data,_wrHazeActive,,re,confirmed,WR: nonzero when the eye is under a haze/cloud deck (drives WRSetRemaps blending) (#493),undefined1
 0x005843C4,data,,,waiver,confirmed,interior of / adjacent to _realPalette; named at its base or owned by that subsystem,
 0x005843C8,data,,,waiver,confirmed,interior of / adjacent to _realPalette; named at its base or owned by that subsystem,
-0x005843CC,data,_wrLayerAbove,,re,confirmed,WR: LAYER just above the eye (interpolation bound) (#493),
+0x005843CC,data,_wrLayerAbove,,re,confirmed,WR: LAYER just above the eye (interpolation bound) (#493),undefined4
 0x005843D2,data,,,waiver,confirmed,"interior of the WR sky/palette/remap working block (haze list, blended palette bands, tmap-remap cache); WR internal state, renderer.md § Weather",
-0x005843D4,data,_wrLayerBelow,,re,confirmed,WR: LAYER just below the eye (interpolation bound) (#493),
+0x005843D4,data,_wrLayerBelow,,re,confirmed,WR: LAYER just below the eye (interpolation bound) (#493),undefined4
 0x005843D8,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables),
 0x005843DC,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables),
 0x005843E0,data,,,waiver,confirmed,interior of the NPM triangle-rasterizer vertex/edge working set (palColorRGB/edge tables),

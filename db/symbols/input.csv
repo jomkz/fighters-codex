@@ -12,7 +12,7 @@ va,kind,name,display,source,confidence,notes,type
 0x00411F20,func,_GetFakeKey@0,GetFakeKey,sms,confirmed,pop the fake-key stack (0 when empty); polled after GetKey by the shell screens,undefined4 __stdcall GetFakeKey(void)
 0x00412930,func,_WaitKey,WaitKey,sms,confirmed,spin (Sleep 0) until GetKey returns a key,
 0x00412960,func,_GetKey,GetKey,sms,confirmed,,
-0x00413D10,func,_SlewKey,SlewKey,sms,confirmed,"slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0",
+0x00413D10,func,_SlewKey,SlewKey,sms,confirmed,"slew-mode key dispatch: keypad 8/2/4/6 translate, 9/3 altitude, ctrl+7/9 heading +/-364 (2 deg), keypad-0 speed x2, keypad-. speed /2 (min 0x100), ctrl+S next slewable object (obj flag bit0 via T_ObjList), Esc exit; consumed keys return 0",undefined4 __cdecl SlewKey(undefined4)
 0x00414070,func,SlewObjListCollect,,re,confirmed,T_ObjList visitor for SlewKey ctrl+S: append object id to the bounded id list at 0x522c1c/0x522c24,
 0x004140A0,func,@SetPlayerTarget@4,SetPlayerTarget,sms,confirmed,targeting-key support unit 0x4140A0-0x4144B0 inside the input key region (SlewObjListCollect < here < FlightKey); input owns the same-family PickVisibleTarget,undefined4 __fastcall SetPlayerTarget(undefined4)
 0x004140C0,func,@TargetNearestTo@12,TargetNearestTo,sms,confirmed,,"undefined4 __fastcall TargetNearestTo(undefined4, undefined4, undefined4)"
@@ -41,7 +41,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0041769C,func,PlayerPickParkingAlt,,re,confirmed,alternate entry of PlayerPickParking (reference point in EAX); overlapping-entry pair,
 0x00417754,data,,,waiver,confirmed,interior of / adjacent to caseD_3; named at its base or owned by that subsystem,
 0x00417760,func,_InitPlayerControl@0,InitPlayerControl,sms,confirmed,"load vis240.SEE into the 57-byte view/visibility block 0x4ee348, deviceProc(0) init for stick/rudder/throttle, clear buttons + coolie state, throttle from entity+0x1f2",undefined4 __stdcall InitPlayerControl(void)
-0x00417850,func,_InputCalibrate,InputCalibrate,sms,confirmed,deviceProc(1) calibrate for one device + ensure the shell mouse is shown,
+0x00417850,func,_InputCalibrate,InputCalibrate,sms,confirmed,deviceProc(1) calibrate for one device + ensure the shell mouse is shown,undefined4 __cdecl InputCalibrate(undefined4)
 0x00417880,func,_GetPlayerControl@0,GetPlayerControl,sms,confirmed,"per-frame control poll: ReadSticksRaw + deviceProc(2) stick/rudder/throttle + KeyStick(2,0) so Space/Tab always latch fire buttons",undefined4 __stdcall GetPlayerControl(void)
 0x004178D0,func,?KeyStick@@YAGFG@Z,KeyStick,sms,confirmed,"keyboard stick device proc: msg2 latches Space=_weaponButton Tab=_gunButton from _keyarray, arrows = full deflection +/-0x100 (shift reserved for views, alt+arrows reserved for TV); msg3 passes keys through","unsigned short __cdecl KeyStick(short, unsigned short)"
 0x00417A10,func,?PotStick@@YAGFG@Z,PotStick,sms,confirmed,,"unsigned short __cdecl PotStick(short, unsigned short)"
@@ -84,10 +84,10 @@ va,kind,name,display,source,confidence,notes,type
 0x0049C780,func,?RunModemConfigurationScreen@@YGXXZ,RunModemConfigurationScreen,sms,confirmed,large device-config dialog for modem link (init string/dial/port); ~2.6KB UI — could alternatively be shell-ui,void __stdcall RunModemConfigurationScreen(void)
 0x004EBCE4,data,,,waiver,confirmed,interior of / adjacent to ?videoInitialized@@3DA; named at its base or owned by that subsystem,
 0x004ECE0C,data,,,waiver,confirmed,interior of / adjacent to ?ignoreRepeats@@3PAIA; named at its base or owned by that subsystem,
-0x004ECE40,data,fakeKeyCount,,re,confirmed,depth of the 8-entry synthetic-key stack (PutFakeKey/GetFakeKey) (#492),
+0x004ECE40,data,fakeKeyCount,,re,confirmed,depth of the 8-entry synthetic-key stack (PutFakeKey/GetFakeKey) (#492),undefined2
 0x004EE348,data,visConfig,,re,confirmed,the 57-byte view/visibility block loaded from vis240.SEE by InitPlayerControl; handed to PROJInFOV (#492),
 0x004EE34C,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
-0x004EE384,data,slewSpeed,,re,confirmed,"slew step per keypress; keypad-0 doubles, keypad-. halves (min 0x100) (#492)",
+0x004EE384,data,slewSpeed,,re,confirmed,"slew step per keypress; keypad-0 doubles, keypad-. halves (min 0x100) (#492)",undefined4
 0x004EE388,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
 0x004EE398,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
 0x004EE3A8,data,,,waiver,confirmed,interior of / adjacent to ?throttle100@@3JA; named at its base or owned by that subsystem,
@@ -187,8 +187,8 @@ va,kind,name,display,source,confidence,notes,type
 0x005225E7,data,,,waiver,confirmed,"interior of _keyarray (+0x4F) — scan-code 0x4F (End) key state, read as rudder-left by ?KeyRudder@@YAGFG@Z; named at its base",
 0x005225E9,data,,,waiver,confirmed,"interior of _keyarray (+0x51) — scan-code 0x51 (PgDn) key state, read as rudder-right by ?KeyRudder@@YAGFG@Z; named at its base",
 0x00522C18,data,_lastThrottle,lastThrottle,re,confirmed,"analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one",s32
-0x00522C1C,data,slewListEnd,,re,confirmed,end pointer for the SlewObjListCollect id list (#492),
-0x00522C24,data,slewListCursor,,re,confirmed,write cursor for the SlewObjListCollect id list (#492),
+0x00522C1C,data,slewListEnd,,re,confirmed,end pointer for the SlewObjListCollect id list (#492),undefined4
+0x00522C24,data,slewListCursor,,re,confirmed,write cursor for the SlewObjListCollect id list (#492),undefined4
 0x0054B824,data,,,waiver,confirmed,interior of / adjacent to _buttonBoxes; named at its base or owned by that subsystem,
 0x00554ABC,data,,,waiver,confirmed,interior of / adjacent to _buttonPresses; named at its base or owned by that subsystem,
 0x00554AC0,data,,,waiver,confirmed,"interior of _buttonPresses (+8) — element [2], the pending select-next-missile press count drained by ?PotStick@@YAGFG@Z; named at its base",

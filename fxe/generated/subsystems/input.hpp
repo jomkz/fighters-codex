@@ -8,17 +8,22 @@
 #include "../fa_types.hpp"
 
 // Input — joystick / serial / modem -- FA.EXE
-// 53/80 functions have a recovered signature; 1/6 globals have a recovered type.
+// 55/80 functions have a recovered signature; 5/6 globals have a recovered type.
 
 namespace fxe::fa::input {
 
 // --- globals ---------------------------------------------------------
+extern undefined2 fakeKeyCount;  // 0x004ECE40  depth of the 8-entry synthetic-key stack (PutFakeKey/GetFakeKey) (#492)
+extern undefined4 slewSpeed;  // 0x004EE384  slew step per keypress; keypad-0 doubles, keypad-. halves (min 0x100) (#492)
 extern s32 lastThrottle;  // 0x00522C18  analog-throttle hysteresis state: the previous smoothed reading — ?PotThrottle@@YAGFG@Z keeps the old value when the new one moves less than 3 counts, and otherwise latches the new one
+extern undefined4 slewListEnd;  // 0x00522C1C  end pointer for the SlewObjListCollect id list (#492)
+extern undefined4 slewListCursor;  // 0x00522C24  write cursor for the SlewObjListCollect id list (#492)
 
 // --- functions -------------------------------------------------------
 void KEYEvent(unsigned int, unsigned int, long);  // 0x00411600  __cdecl
 undefined4 PutFakeKey(undefined4);  // 0x00411F00  __fastcall
 undefined4 GetFakeKey(void);  // 0x00411F20  __stdcall
+undefined4 SlewKey(undefined4);  // 0x00413D10  __cdecl
 undefined4 SetPlayerTarget(undefined4);  // 0x004140A0  __fastcall
 undefined4 TargetNearestTo(undefined4, undefined4, undefined4);  // 0x004140C0  __fastcall
 undefined4 GetTargetPositions(undefined4);  // 0x00414180  __fastcall
@@ -32,6 +37,7 @@ undefined4 ForceAutopilot(undefined4);  // 0x00416470  __fastcall
 undefined4 RestoreAutopilot(void);  // 0x00416490  __stdcall
 undefined4 ServicePlayer(void);  // 0x004164B0  __stdcall
 undefined4 InitPlayerControl(void);  // 0x00417760  __stdcall
+undefined4 InputCalibrate(undefined4);  // 0x00417850  __cdecl
 undefined4 GetPlayerControl(void);  // 0x00417880  __stdcall
 unsigned short KeyStick(short, unsigned short);  // 0x004178D0  __cdecl
 unsigned short PotStick(short, unsigned short);  // 0x00417A10  __cdecl
@@ -83,7 +89,6 @@ void RunModemConfigurationScreen(void);  // 0x0049C780  __stdcall
 // TODO(#453): 0x004118D0  KEYPause -- signature not recovered
 // TODO(#453): 0x00412930  WaitKey -- signature not recovered
 // TODO(#453): 0x00412960  GetKey -- signature not recovered
-// TODO(#453): 0x00413D10  SlewKey -- signature not recovered
 // TODO(#453): 0x00414070  SlewObjListCollect -- signature not recovered
 // TODO(#453): 0x00415E30  PickVisibleTarget -- signature not recovered
 // TODO(#453): 0x00415F80  NextTargetOnScreen -- signature not recovered
@@ -98,12 +103,7 @@ void RunModemConfigurationScreen(void);  // 0x0049C780  __stdcall
 // TODO(#453): 0x00417620  PlayerNeedsRearm -- signature not recovered
 // TODO(#453): 0x00417690  PlayerPickParking -- signature not recovered
 // TODO(#453): 0x0041769C  PlayerPickParkingAlt -- signature not recovered
-// TODO(#453): 0x00417850  InputCalibrate -- signature not recovered
 // TODO(#453): 0x00481280  GetKeySlow -- signature not recovered
-// TODO(#455): 0x004ECE40  fakeKeyCount -- type not recovered
 // TODO(#455): 0x004EE348  visConfig -- type not recovered
-// TODO(#455): 0x004EE384  slewSpeed -- type not recovered
-// TODO(#455): 0x00522C1C  slewListEnd -- type not recovered
-// TODO(#455): 0x00522C24  slewListCursor -- type not recovered
 
 }  // namespace fxe::fa::input
