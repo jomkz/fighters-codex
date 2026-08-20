@@ -96,6 +96,16 @@ variant:
   from `FA.EXE`; their `.SMS` maps parse with `fx sms dump` (ATF 3,615 symbols, USNF 3,440). This
   page verifies the *asset formats*, not those executables — a per-title reconstruction is out of
   scope for the verification pass.
+- **The pilot save record is shared across the family, but generationally sized.** FA and ATF Gold
+  use the identical pilot record — a legacy `0x15B4`-byte format migrated field-by-field to the
+  current `0x25E0` (9,696-byte) layout by `_ConvertPilotFiles`. USNF'97 uses the prior generation
+  (`0x1514` → `0x2540`, 160 bytes smaller): the two differ by a single ~160-byte block in the
+  mission-history region (USNF's converter copies `0x384` dwords where ATF/FA copy `0x3AC`), which
+  shifts every later field down `0xA0` — so USNF carries the same store table, stats counters and
+  campaign-phase region, just 160 bytes earlier, not truncated. Each title's own `_CampaignSave`
+  and `_ConvertPilotFiles` agree on the size three ways: the `_campaignPilot`→`_pilotName` symbol
+  gap, the save-loop `rep movs` dword count, and the `_SaveFile` byte count all match. See the FA
+  pilot format at [P](formats/P.md).
 
 ## Scope and status
 

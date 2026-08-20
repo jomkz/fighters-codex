@@ -377,6 +377,13 @@ block (starts 0x20B8). Could be additional kill subcategories (objective
 kills, suppression counts), a mission-result history array, or reserved
 padding.
 
+The pilot-file migration routine `_ConvertPilotFiles` (`0x485AE0`) corroborates
+this positively rather than by absence: it zero-fills the whole 9,696-byte
+record, then copies legacy `0x15B4` fields into the new layout only through
+`+0x2010` — one dword below this gap. So an upgraded pilot receives nothing
+here and the region is left zero, consistent with a field written only at
+runtime.
+
 *Status: open — re-gameplay (#29)*
 
 ### 4. Gap 0x21F8–0x25DF (~1,000 bytes)
@@ -388,6 +395,15 @@ globals (`_statsFortKills__3PAJA`, `_statsFortAircraftUsed__3PAJA`, etc.) are
 confirmed present but their flush path into the PILOT struct was not
 identified. This region is populated only after completing campaign
 fort-assault missions.
+
+`_ConvertPilotFiles` (`0x485AE0`) confirms the region is runtime-only from the
+migration side: its old→new field copies stop at `+0x2010`, so everything from
+here up is left zero on a format upgrade. The pilot record itself is shared
+across the engine family — U.S. Navy Fighters '97 carries the same trailing
+region `0xA0` bytes earlier, inside its smaller `0x2540`-byte pilot record (see
+[Game compatibility](../game-compatibility.md)) — so this is family-wide career
+state rather than an FA-only addition, which argues against it being reserved
+padding.
 
 *Status: open — re-gameplay (#29)*
 
