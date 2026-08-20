@@ -1,0 +1,152 @@
+# Bench VM — running Fighters Anthology for the gameplay-gated RE
+
+A Vagrant/libvirt VM that runs the real, licensed Jane's Fighters Anthology on this Fedora host,
+so the **gameplay-gated RE probes** ([#56](https://github.com/jomkz/fighters-codex/issues/56) /
+[#29](https://github.com/jomkz/fighters-codex/issues/29) /
+[#142](https://github.com/jomkz/fighters-codex/issues/142)) can be flown and observed here instead
+of on the physical Windows bench.
+
+**Why a VM beats the bench for these probes.** Everything #29 needs is a *differential observation*
+— fly a thing, see which PLT gap bytes change. The VM adds two instruments the bench cannot:
+
+- **Live memory watching.** [`plt-watch.ps1`](plt-watch.ps1) attaches to the running `FA.EXE` and
+  polls `_campaignPilot` (`0x4F8BB8`) while you fly, printing a byte-level diff the instant a gap
+  region changes. That tells you *when* and *under what action* a byte moves — not just what ends
+  up in the saved `.P` file.
+- **Snapshots.** `run-bench.sh snapshot` / `restore` give a perfectly repeatable pre-mission state,
+  so a save-diff isolates exactly one variable (one mission, one medal, one fort assault).
+
+It is a **correctness/observation environment, not a measurement one** — sized generously off the
+host, software-rendered. Timings taken here are meaningless.
+
+> Status: this scaffolding follows the proven pattern in
+> `fighters-legacy/tools/windows-env/`, but the first `vagrant up` is the real test — a Windows box
+> download plus a game install is not something CI exercises. Treat the initial bring-up as the
+> validation step, and file anything that needs fixing.
+
+## Host prerequisites (one-time)
+
+Already satisfied on the primary Fedora box (verified 2026-08-20): KVM (`i9-12900K`, VT-x),
+`qemu-kvm`, `virt-manager`/`virt-viewer`, `vagrant` **2.4.9** with the **vagrant-libvirt** plugin
+(0.12.2), and `libvirtd`. If `libvirtd` is inactive: `sudo systemctl enable --now libvirtd`. The
+user must be in the `libvirt` group.
+
+## Guest OS: Server 2022 first, XP SP3 as the fallback
+
+The default guest is the **Windows Server 2022 evaluation** box
+(`peru/windows-server-2022-standard-x64-eval`) — the same one `windows-env` uses. It is
+license-clean for this (180-day eval, rebuild to refresh), WinRM-driveable so the FA install +
+registry step is fully scripted, and avoids the TPM/SecureBoot emulation a Windows 11 guest needs
+under KVM. FA is a 1998 DirectDraw title, but it runs on modern Windows (the physical bench is
+Windows 11), so software DirectDraw under QXL is expected to work.
+
+### XP SP3 fallback
+
+If the DirectDraw / 8-bit-palette path misbehaves under Server 2022, rebuild the guest on **Windows
+XP SP3** — the era-correct target, where FA's video path is exactly what it was written for. XP is
+the fallback rather than the default because it cannot be WinRM-automated (Vagrant cannot drive it),
+so the install is hand-driven:
+
+1. Create the VM in `virt-manager` from the XP SP3 ISO (`~/iso/…` — you have one on hand). Give it
+   an IDE disk, an `ich9-intel-hda` or AC'97 sound device, and a QXL display.
+2. Install XP, then copy the FA install into `C:\JANES\Fighters Anthology` (see *Staging* below).
+3. Apply the three registry keys from [`provision.ps1`](provision.ps1) by hand (or import a `.reg`).
+4. Drop [`plt-watch.ps1`](plt-watch.ps1), [`probe-savediff.ps1`](probe-savediff.ps1) and
+   [`probes.psd1`](probes.psd1) into `C:\bench`. The watcher needs PowerShell 2.0+ (built into
+   XP SP3 once WMF is installed) — if `Import-PowerShellDataFile` is missing on that PS version,
+   read `probes.psd1` with `Invoke-Expression (Get-Content -Raw …)`.
+
+The probe scripts themselves are guest-version-agnostic; only the *provisioning* differs.
+
+## Staging the FA install
+
+The guest gets FA from **your licensed install**, uploaded at `vagrant up` — nothing FA is
+committed or downloaded. Point `FX_FA_SRC` at the install directory:
+
+```
+FX_FA_SRC="/run/media/john/Windows Disk/JANES/Fighters Anthology" \
+  tools/bench-vm/run-bench.sh up
+```
+
+`provision.ps1` copies it to `C:\JANES\Fighters Anthology` (the path the #551 footprint records) and
+writes the registry keys. The install on that Windows disk is already patched to **1.02F**, so no
+disc install or RTPatch step is needed. (Alternatively, install from the disc ISOs in `~/iso/` and
+run the 1.02 patch — but copying the ready install is faster and byte-for-byte known.)
+
+## The workflow
+
+```
+# 1. bring the guest up (first run downloads the box + provisions; expect a while)
+FX_FA_SRC="…/Fighters Anthology" tools/bench-vm/run-bench.sh up
+
+# 2. open the game screen
+tools/bench-vm/run-bench.sh console
+
+# 3. (optional) take a clean base for repeatable save-diffs
+tools/bench-vm/run-bench.sh snapshot pre-mission
+
+# 4. in the guest: launch "Fighters Anthology", then run "FA Bench" (starts plt-watch.ps1)
+
+# 5. fly the probe. The watcher prints every gap-region change live; for a file-level
+#    before/after instead, use probe-savediff.ps1 in the guest.
+
+# 6. pull the watch log back to the host
+tools/bench-vm/run-bench.sh fetch-log
+```
+
+### Live memory (`plt-watch.ps1`)
+
+Attaches to `FA.EXE` and watches the regions in [`probes.psd1`](probes.psd1) — the four #29 gaps,
+the medal band, and the service record — addressed by absolute VA. FA.EXE is a non-relocatable 1998
+PE (`ImageBase 0x400000`, no reloc table), so `_campaignPilot`'s VA `0x4F8BB8` is valid directly;
+the script still reads the live module base and rebases defensively. `_campaignPilot` maps 1:1 to
+the `.P` file image, so file offset *N* in [`P.md`](../../docs/fa/formats/P.md) is VA `0x4F8BB8 + N`.
+
+For a host-only path that never touches the guest, bring the VM up with `FX_BENCH_GDB=1` and QEMU
+exposes a gdbstub on `localhost:1234`; a host debugger can read guest memory there. The in-guest
+watcher is the primary tool because it already has the process's virtual address space — the gdbstub
+path has to walk the guest page tables from `CR3` to translate a VA, which is only worth it if the
+in-guest route is ever blocked.
+
+### Differential saves (`probe-savediff.ps1`)
+
+`-Snapshot before` → fly → `-Snapshot after` → `-Diff` reports which gap-region bytes changed in
+which `PLTnnn.P`. Simpler than the live watcher when you only care about the persisted result.
+
+## The probe checklist (what to fly)
+
+From [#29](https://github.com/jomkz/fighters-codex/issues/29) and
+[#142](https://github.com/jomkz/fighters-codex/issues/142):
+
+| Probe | Region | Action to fly |
+|---|---|---|
+| gap 1 | `0xB0`–`0xC1` | advance rank / score; watch for the rank-index or score-tier write |
+| gap 2 | `0xCF`–`0x571` + `0x57D`–`0x5AE` | fly 3–5 missions; watch mission-log growth |
+| **medal band** | `0x572`–`0x57C` | **earn a medal → exactly one band byte must flip** (validates the static read in P.md § Medal-flag band) |
+| gap 3 | `0x2018`–`0x20B7` | fly with kills; watch kill-subcategory / score-history |
+| gap 4 | `0x21F8`–`0x25DF` | complete a fort-assault mission; watch the fort-stats flush |
+| HUD `+0x238` | HUD struct | needs the HUD struct base VA from `db/symbols` — add it to `probes.psd1` |
+| HUD flag bit 14 | HUD flags word | the single-player state transition that sets it |
+| CB8 palette-half | — | the CB8 screen that exercises it |
+| wingman `wm_control` | — | the formation-tightness range |
+
+The medal-band probe is the cheapest win: the codec already decodes and edits that band
+([#567](https://github.com/jomkz/fighters-codex/pull/567)), so confirming the live write closes the
+loop between the static map and the running game. Feed everything else into the P/PLT codec
+completion ([#143](https://github.com/jomkz/fighters-codex/issues/143)).
+
+## Files
+
+- `Vagrantfile` — the guest definition (libvirt, Windows Server 2022, QXL/SPICE, emulated audio,
+  optional `FX_BENCH_GDB` gdbstub).
+- `provision.ps1` — places the FA install, writes the #551 registry footprint, enables audio, drops
+  the probe shortcuts. Idempotent.
+- `plt-watch.ps1` — the live `_campaignPilot` memory watcher.
+- `probe-savediff.ps1` — the file-level before/after gap differ.
+- `probes.psd1` — the watch table (VAs + lengths + notes); fill the #142 HUD VAs before that campaign.
+- `run-bench.sh` — host entry point: up / console / snapshot / restore / fetch-log / halt.
+
+## Licensing
+
+The guest is a Microsoft evaluation image; the FA bits are John's own licensed install, uploaded
+from the host and never redistributed or committed. Both are used, not shipped.
