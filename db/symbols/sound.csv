@@ -57,6 +57,8 @@ va,kind,name,display,source,confidence,notes,type
 0x0046B4D0,func,?CleanAudio@@YAGPAUGlobalData@@@Z,CleanAudio,sms,confirmed,,unsigned short __cdecl CleanAudio(GlobalData *)
 0x0047A670,func,_ShutdownGraphicsSystem,ShutdownGraphicsSystem,sms,confirmed,,
 0x004EB5F0,data,_musicOn,,re,confirmed,music/MIDI subsystem-available master flag,undefined1
+0x004ECEA0,data,,,waiver,confirmed,"string literal (""_BUTTON1.11K"" sample name)",
+0x004ECEB0,data,,,waiver,confirmed,"string literal (""_BUTTON2.11K"" sample name)",
 0x004EE2BC,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,
 0x004EE2BD,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,
 0x004EE2BE,data,,,waiver,confirmed,interior of / adjacent to _defaultChatSoundName; named at its base or owned by that subsystem,

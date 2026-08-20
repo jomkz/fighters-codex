@@ -202,6 +202,7 @@ va,kind,name,display,source,confidence,notes,type
 0x004F4E7D,data,,,waiver,confirmed,unnamed computed-access table base (indexed) referenced by the #493 claims; layout not yet recovered,
 0x004F4E88,data,,,waiver,confirmed,unnamed scalar referenced by the #493 claims; role not yet recovered,
 0x004F4E94,data,,,waiver,confirmed,unnamed scalar referenced by the #493 claims; role not yet recovered,
+0x004F5404,data,,,waiver,confirmed,resource-name string passed to _T_AddObj_12 / _RMAccess_8,
 0x004F6D6C,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
 0x004F6D78,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
 0x004F6D80,data,,,waiver,confirmed,referenced via computed addressing; reader not yet decompiled - revisit,
@@ -210,10 +211,13 @@ va,kind,name,display,source,confidence,notes,type
 0x004F6FE0,data,_cmdBufWritePtr,,re,confirmed,command-buffer write cursor (WriteCmdBuf*/AllocCmdBuf),undefined4
 0x004F6FE8,data,,,waiver,confirmed,command-buffer bookkeeping next to _cmdBufWritePtr; accessed via computed base - revisit,
 0x004F6FF0,data,,,waiver,confirmed,command-buffer bookkeeping next to _cmdBufWritePtr; accessed via computed base - revisit,
+0x004F73C8,data,,,waiver,confirmed,"string literal (""_eject.5K"" sample name)",
+0x004F73D4,data,,,waiver,confirmed,resource-name string passed to _RMAccess_8,
 0x004F7BFC,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C08,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C14,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
 0x004F7C24,data,,,waiver,confirmed,SAY voice-callout state written on kill events; SAY/sound pass names it,
+0x004F81C4,data,,,waiver,confirmed,"string literal (""runner.NT"" passed to _MANAdd_24)",
 0x004FF5E0,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
 0x004FF5E8,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
 0x004FF620,data,,,waiver,confirmed,"pointer into the wingman-chatter line table read by _PLANECommentProc (""Feet wet"", ""Break!"", ""Don't overshoot!"", …) — constant text, not state",
@@ -280,6 +284,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0050CF9A,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11A); named via structs.md, not a standalone global",
 0x0050CF9C,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11C); named via structs.md, not a standalone global",
 0x0050CF9D,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x11D); named via structs.md, not a standalone global",
+0x0050CFD7,data,,,waiver,confirmed,adjacent to _ejectAngle / _ejectSpeed; time-gate word (_currentTime+4 debounce),
 0x0050CFF7,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x177); named via structs.md, not a standalone global",
 0x0050CFFB,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x17B); named via structs.md, not a standalone global",
 0x0050CFFF,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x17F); named via structs.md, not a standalone global",
@@ -299,9 +304,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D0E8,data,_sayCommentMinute,sayCommentMinute,re,confirmed,wingman chatter: current minute bucket (_currentTime / 0x3C); a change resets _sayHighGTicks (_PLANECommentProc),u16
 0x0050D0EA,data,_sayLastAngleOff,sayLastAngleOff,re,confirmed,"wingman chatter: last angle-off-nose snapshot — the angle must change before ""Approaching target"" is repeated (_PLANECommentProc)",u16
 0x0050D0EC,data,_sayCommentUntil,sayCommentUntil,re,confirmed,wingman chatter: per-line cooldown deadline in _currentTime ticks; chatter is suppressed while _currentTime < this (_PLANECommentProc),u16
+0x0050D0EE,data,,,waiver,confirmed,adjacent to _sayCommentUntil; companion time-gate word (_currentTime+8 debounce),
 0x0050D0F3,data,,,waiver,confirmed,"interior of _cg current-object mirror (= entity +0x273); named via structs.md, not a standalone global",
 0x0050D26D,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x05),
 0x0050D271,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x09 type flags dword; bit 0x400 = auto-remove when destroyed),
+0x0050D2A3,data,,,waiver,confirmed,"interior of / adjacent to _cgt; 16-bit parameter scaled <<8/100000, role not yet recovered",
 0x0050D2B1,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x49),
 0x0050D2BD,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x55),
 0x0050D2BE,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x56),
@@ -315,6 +322,7 @@ va,kind,name,display,source,confidence,notes,type
 0x0050D32C,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0xC4),
 0x0050D390,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x128),
 0x0050D392,data,,,waiver,confirmed,interior of _cgt type-record mirror (= type +0x12A),
+0x00517BB4,data,,,waiver,confirmed,adjacent to _shiftbuf; 16-bit save/restore slot,
 0x0052253D,data,_damageQuietUntil,damageQuietUntil,re,confirmed,damage: cooldown deadline in _currentTime ticks — _DAMAGEInit@0 parks it at 0x7FFF (disabled) and _DAMAGEUpdate@0 gates on it; also read as the end-of-mission grace check by _PLANECommentProc,u16
 0x00538260,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass,
 0x00538264,data,,,waiver,confirmed,MoveObj/MoveGoalValue movement scratch block; typed by the flight-model pass,
@@ -340,6 +348,11 @@ va,kind,name,display,source,confidence,notes,type
 0x0053DB62,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB64,data,,,waiver,confirmed,sound-engine channel state reached from Kill/MoveObj paths via computed addressing; sound pass names it,
 0x0053DB8E,data,,,waiver,confirmed,interior of / adjacent to _graphics; named at its base or owned by that subsystem,
+0x00544598,data,,,waiver,confirmed,"adjacent to _ro; computed object-record extension bound (0xDE base size + per-class extension, see docs/fa/objects.md)",
+0x005445A6,data,,,waiver,confirmed,"interior of / adjacent to _ro; computed-access, layout not yet recovered",
+0x005445AC,data,,,waiver,confirmed,"interior of / adjacent to _ro; computed-access, layout not yet recovered",
+0x005445B0,data,,,waiver,confirmed,"interior of / adjacent to _ro; computed-access, layout not yet recovered",
+0x005445B2,data,,,waiver,confirmed,"interior of / adjacent to _ro; computed-access, layout not yet recovered",
 0x00546B94,data,_curObjSize,,re,confirmed,byte size of the current entity mirror; = type +0x03 + 0xDE for classes 0/2/4/6,undefined2
 0x00546B9C,data,_curTypeSize,,re,confirmed,byte size of the current type-record mirror (from type +0x01),undefined2
 0x00546BA4,data,_lastPadlockId,,re,inferred,"previous padlock/tracked id, compared by CheckForEvents1/2",undefined2
@@ -359,5 +372,11 @@ va,kind,name,display,source,confidence,notes,type
 0x00553840,data,_objArenaSize,,re,confirmed,"arena byte capacity (OBJInit parameter), bounds OBJAdd",undefined4
 0x0055384C,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 1),
 0x00553850,data,,,waiver,confirmed,interior of _objPtrs pointer array (element 2),
+0x00570EF8,data,,,waiver,confirmed,between _numPlanes and _planes; array of 5-dword Sample blocks indexed per plane (_SampleInit_8/_SampleUpdate_8/_SampleShutdown_4),
+0x00570F0C,data,,,waiver,confirmed,interior of the per-plane Sample array at 0x00570EF8,
 0x005713AA,data,,,waiver,confirmed,interior of _planes (+2) — element [1] of the u16 active-plane-id array walked as &_planes + _numPlanes; named at its base,
+0x005713AC,data,,,waiver,confirmed,"interior of / adjacent to _planes; computed-access, layout not yet recovered",
+0x005713AE,data,,,waiver,confirmed,"interior of / adjacent to _planes; computed-access, layout not yet recovered",
 0x00571420,data,_wasOnGround,wasOnGround,re,confirmed,"previous-frame ground contact, fed to _PLANEUpdateJustLanded@8 and then refreshed from _OnTheGround@0 — the edge that makes a landing ""just landed"" exactly once",u8
+0x00571428,data,,,waiver,confirmed,after _wasOnGround; second array of 5-dword Sample blocks indexed per plane (_SampleInit_8/_SampleUpdate_8/_SampleShutdown_4),
+0x0057143C,data,,,waiver,confirmed,interior of the per-plane Sample array at 0x00571428,

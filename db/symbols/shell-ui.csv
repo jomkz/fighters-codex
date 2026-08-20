@@ -511,6 +511,8 @@ va,kind,name,display,source,confidence,notes,type
 0x00502910,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x00502988,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x00502990,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
+0x0050299C,data,,,waiver,confirmed,"string literal (""SOUND320"")",
+0x005029A8,data,,,waiver,confirmed,"string literal (""SNDPREF"")",
 0x005029B0,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005029BC,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
 0x005029C8,data,,,waiver,confirmed,interior of / adjacent to ?fortNames@@3PAPADA; named at its base or owned by that subsystem,
