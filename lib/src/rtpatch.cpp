@@ -177,11 +177,19 @@ private:
     void build_limits(int start) {
         uint32_t gc = r32(0x0c), lim = r32(0x10);
         int num = r16u(0x04);
-        int s3 = (start == 0) ? 2 : r16s(lim + (start - 1) * 8) * 2;
+        // s3/s4 mirror the original codec's 16-bit registers, so every step wraps
+        // to 16 bits — the same modular model the rest of this decoder uses (s16,
+        // &0xFFFF). Without the wrap, `s3 = s4 * 2` doubles each level and s4 grows
+        // without bound on crafted input until `s4 * 16` overflows int (UBSan
+        // signed-overflow). Everything here is stored mod 2^16 via w16 and the
+        // recurrence is linear, so wrapping is identical on every valid patch while
+        // bounding s4 to the int16 range — the *2/*4/*16 products can no longer
+        // overflow. (Regression seed: fuzz/corpus/fuzz_rtpatch/overflow-build_limits.)
+        int s3 = (start == 0) ? 2 : s16((uint16_t)(r16s(lim + (start - 1) * 8) * 2));
         for (int level = start; level < num; ++level) {
-            int s4 = s3 - r16s(gc + level * 2);
+            int s4 = s16((uint16_t)(s3 - r16s(gc + level * 2)));
             w16(lim + level * 8, s4);
-            s3 = s4 * 2;
+            s3 = s16((uint16_t)(s4 * 2));
             w16(lim + level * 8 + 2, s3);
             w16(lim + level * 8 + 4, s4 * 4);
             w16(lim + level * 8 + 6, s4 * 16);
