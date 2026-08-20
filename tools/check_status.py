@@ -1745,9 +1745,149 @@ def check_binary_coverage(manifest, symbols, inventories, db_dir=DB_DIR):
     return errs, actual
 
 
-def check_reconstruction(db_dir=DB_DIR):
+BASELINE_HEADER = ["binary", "unclaimed_functions", "named_unclaimed", "total_functions",
+                   "undefined_bytes", "func_rows", "data_rows", "ref_globals_total",
+                   "ref_globals_unresolved"]
+
+
+def _db_row_counts(symbols, slug_to_binary):
+    """{binary: (distinct func-row VAs, distinct data-row VAs)} from db/symbols/ alone."""
+    funcs, datas = {}, {}
+    for slug, rows in symbols.items():
+        b = slug_to_binary.get(slug)
+        for r in rows:
+            (funcs if r["kind"] == "func" else datas).setdefault(b, set()).add(r["va"])
+    return {b: (len(funcs.get(b, ())), len(datas.get(b, ())))
+            for b in set(funcs) | set(datas)}
+
+
+def _ref_global_stats(manifest, symbols, inventories):
+    """{binary: (referenced globals in complete subsystems, unresolved among them)},
+    mirroring check_coverage()'s data rule, for binaries with a live export."""
+    out = {}
+    for binary, inv in inventories.items():
+        complete = {s["slug"] for s in manifest
+                    if s["binary"] == binary and s["status"] == "complete"}
+        covered = {r["va"] for s in manifest if s["binary"] == binary
+                   for r in symbols.get(s["slug"], []) if r["kind"] == "data"}
+        total = unresolved = 0
+        for g in inv["globals"]:
+            if not complete.intersection(g["subs"]):
+                continue
+            total += 1
+            unnamed = g["name"] == "<unnamed>" or g["name"].startswith("DAT_")
+            if unnamed and g["va"] not in covered:
+                unresolved += 1
+        out[binary] = (total, unresolved)
+    return out
+
+
+def check_baseline_currency(manifest, symbols, inventories, db_dir=DB_DIR):
+    """The referenced-globals gate CI can run WITHOUT an inventory export (#554).
+
+    check_coverage()'s referenced-globals rule is ground-truthed against the local
+    Ghidra export, which CI does not have (#342) — so a PR could add claims whose
+    unresolved-globals debt was invisible at merge time. The #543–#549 claims merged
+    green that way and left 234 unresolved globals for the next fresh export (#553).
+
+    The guard is a committed pair recorded at export time:
+
+      * `func_rows`/`data_rows` — distinct claimed VAs per kind, derivable from
+        db/symbols/ alone at ANY time. If db/symbols no longer matches the baseline,
+        the export (and the referenced-globals proof made against it) is stale, and
+        that is now an error everywhere, inventory or not: refresh the export and run
+        --write-matrix. This is what forces a claim-adding PR to re-prove coverage.
+      * `ref_globals_total`/`ref_globals_unresolved` — the referenced-globals count
+        in complete subsystems and its unresolved remainder, computed FROM the fresh
+        export at --write-matrix time. `ref_globals_unresolved` is a ratchet like its
+        three left-hand neighbours: the only legal direction is down.
+    """
+    errs = []
+    base_path = db_dir / "coverage-baseline.csv"
+    if not base_path.exists():
+        return errs
+    baseline = {}
+    with open(base_path, newline="", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
+        missing = [c for c in BASELINE_HEADER if c not in (reader.fieldnames or [])]
+        if missing:
+            return ["db/coverage-baseline.csv: missing column(s) %s -- regenerate with "
+                    "a local inventory export and 'check_status.py --write-matrix' (#554)"
+                    % ", ".join(missing)]
+        for r in reader:
+            baseline[r["binary"]] = r
+
+    slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
+    counts = _db_row_counts(symbols, slug_to_binary)
+    live = _ref_global_stats(manifest, symbols, inventories)
+    for binary, want in sorted(baseline.items()):
+        got_f, got_d = counts.get(binary, (0, 0))
+        want_f, want_d = int(want["func_rows"]), int(want["data_rows"])
+        if (got_f, got_d) != (want_f, want_d):
+            errs.append("%s: db/symbols/ holds %d func / %d data rows but "
+                        "db/coverage-baseline.csv records %d / %d. The claims changed "
+                        "without re-proving referenced-globals coverage against a fresh "
+                        "inventory export -- run scripts/ghidra/export_inventory.sh %s, then "
+                        "'python3 tools/check_status.py --write-matrix', and commit the "
+                        "refreshed baseline (#554)."
+                        % (binary, got_f, got_d, want_f, want_d, binary))
+        allowed = int(want["ref_globals_unresolved"])
+        if binary in live:
+            total, unresolved = live[binary]
+            if total != int(want["ref_globals_total"]) or unresolved != allowed:
+                errs.append("%s: the live export shows %d referenced globals (%d unresolved) "
+                            "but db/coverage-baseline.csv records %d (%d) -- stale baseline; "
+                            "run 'python3 tools/check_status.py --write-matrix' and commit "
+                            "(#554)." % (binary, total, unresolved,
+                                         int(want["ref_globals_total"]), allowed))
+            if unresolved > allowed:
+                errs.append("%s: %d referenced globals in complete subsystems are unnamed and "
+                            "unwaived (baseline allows %d). Referenced-globals debt may not "
+                            "grow -- name or waive them (see #553 for the recipe) (#554)."
+                            % (binary, unresolved, allowed))
+    return errs
+
+
+def write_baseline(manifest, symbols, inventories, db_dir=DB_DIR):
+    """Refresh the export-derived baseline columns for binaries with a live export.
+
+    The three manual ratchet columns (unclaimed_functions, named_unclaimed,
+    undefined_bytes) are ratchets lowered BY HAND when debt is retired; this only
+    rewrites the #554 columns, and only where a fresh export backs the numbers.
+    Returns True if the file changed."""
+    base_path = db_dir / "coverage-baseline.csv"
+    if not base_path.exists():
+        return False
+    with open(base_path, newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    slug_to_binary = {s["slug"]: s["binary"] for s in manifest}
+    counts = _db_row_counts(symbols, slug_to_binary)
+    live = _ref_global_stats(manifest, symbols, inventories)
+    changed = False
+    for r in rows:
+        binary = r["binary"]
+        if binary not in live:
+            continue
+        got_f, got_d = counts.get(binary, (0, 0))
+        total, unresolved = live[binary]
+        new = {"func_rows": str(got_f), "data_rows": str(got_d),
+               "ref_globals_total": str(total), "ref_globals_unresolved": str(unresolved)}
+        if any(r.get(k) != v for k, v in new.items()):
+            r.update(new)
+            changed = True
+    if changed:
+        with open(base_path, "w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=BASELINE_HEADER, lineterminator="\n")
+            w.writeheader()
+            w.writerows({k: r.get(k, "") for k in BASELINE_HEADER} for r in rows)
+    return changed
+
+
+def check_reconstruction(db_dir=DB_DIR, refresh_baseline=False):
     """Validate the symbol DB and return (errors, matrix-or-None, registries).
-    registries maps (doc-path, marker-tag) -> generated block text."""
+    registries maps (doc-path, marker-tag) -> generated block text.
+    With refresh_baseline (--write-matrix), the export-derived #554 baseline
+    columns are rewritten from the live export before being checked."""
     manifest, errs = load_manifest(db_dir / "subsystems.csv")
     if not manifest:
         return errs, None, {}
@@ -1778,6 +1918,11 @@ def check_reconstruction(db_dir=DB_DIR):
         if sub["status"] == "complete" and binary in inventories:
             errs += check_coverage(sub, symbols, inventories[binary], claims,
                                    slugs_by_binary.get(binary, set()))
+    # The referenced-globals gate that still runs when CI has no export (#554).
+    if refresh_baseline and inventories:
+        if write_baseline(manifest, symbols, inventories, db_dir):
+            print("wrote db/coverage-baseline.csv [#554 columns]")
+    errs += check_baseline_currency(manifest, symbols, inventories, db_dir)
     # Anchored to the BINARY, not to the ranges we chose to declare (#482).
     if inventories:
         cerrs, unclaimed = check_binary_coverage(manifest, symbols, inventories, db_dir)
@@ -1819,7 +1964,8 @@ def run_checks(write_matrix):
 
     # Reconstruction DB + matrix. Generate (and, in --write-matrix, write) both
     # matrices before hygiene so db/README's link to reconstruction.md resolves.
-    recon_errs, recon_matrix, registries = check_reconstruction()
+    recon_errs, recon_matrix, registries = check_reconstruction(
+        refresh_baseline=write_matrix)
     matrix = generate_matrix(specs)
     # recon_matrix is None when any binary's local inventory export is absent
     # (#342): reconstruction.md is then neither rewritten nor currency-checked.
@@ -2247,6 +2393,54 @@ def _recon_self_test(expect, tmpdir=None):
 
         for f in ("globals.csv", "ranges.csv", "unaccounted.csv"):
             (base / "inventory" / "FA.EXE" / f).unlink()
+        (base / "coverage-baseline.csv").unlink()
+
+        # --- Referenced-globals gate that survives CI's missing export (#554) ---
+        # CI has no db/inventory/, so the referenced-globals rule used to go silently
+        # blind there: the #543-#549 claims merged green and left 234 unresolved
+        # globals for the next fresh export (#553). The committed baseline pair
+        # (db-derived row counts + export-derived ref-global counts) closes that.
+        m554 = [{"slug": "obj", "binary": "FA.EXE", "status": "complete"}]
+        syms554 = {"obj": [{"va": 0x100, "kind": "func"}, {"va": 0x200, "kind": "data"}]}
+        expect(_db_row_counts(syms554, {"obj": "FA.EXE"}) == {"FA.EXE": (1, 1)},
+               "554: func/data row counts derive from db/symbols alone")
+        inv554 = {"FA.EXE": {"globals": [
+            {"va": 0x200, "name": "<unnamed>", "subs": ["obj"]},   # covered by data row
+            {"va": 0x300, "name": "DAT_00000300", "subs": ["obj"]},  # unresolved
+            {"va": 0x400, "name": "named_thing", "subs": ["obj"]},   # named in project
+            {"va": 0x500, "name": "<unnamed>", "subs": ["other"]}]}}  # other subsystem
+        expect(_ref_global_stats(m554, syms554, inv554) == {"FA.EXE": (3, 1)},
+               "554: covered/named globals are resolved; other subsystems don't count")
+        hdr554 = ",".join(BASELINE_HEADER) + "\n"
+        write("coverage-baseline.csv", hdr554 + "FA.EXE,0,0,1,0,1,1,3,1\n")
+        expect(check_baseline_currency(m554, syms554, {}, base) == [],
+               "554: clean with NO inventory when db counts match the baseline")
+        expect(check_baseline_currency(m554, syms554, inv554, base) == [],
+               "554: clean with a live export at the recorded ratchet")
+        grown = {"obj": syms554["obj"] + [{"va": 0x600, "kind": "func"}]}
+        expect(any("re-proving" in e
+                   for e in check_baseline_currency(m554, grown, {}, base)),
+               "554: a claim-adding change fails even with NO inventory")
+        write("coverage-baseline.csv", hdr554 + "FA.EXE,0,0,1,0,1,1,3,0\n")
+        e554 = check_baseline_currency(m554, syms554, inv554, base)
+        expect(any("may not grow" in e for e in e554),
+               "554: unresolved-globals ratchet fails when the debt grows")
+        expect(any("stale baseline" in e for e in e554),
+               "554: live export disagreeing with the baseline reads as stale")
+        write("coverage-baseline.csv",
+              "binary,unclaimed_functions,named_unclaimed,total_functions,undefined_bytes\n"
+              "FA.EXE,0,0,1,0\n")
+        expect(any("missing column" in e
+                   for e in check_baseline_currency(m554, syms554, {}, base)),
+               "554: a pre-#554 baseline format is rejected, not skipped")
+        write("coverage-baseline.csv", hdr554 + "FA.EXE,0,0,1,0,9,9,9,9\n")
+        expect(write_baseline(m554, syms554, inv554, base),
+               "554: --write-matrix refreshes the export-derived columns")
+        expect(check_baseline_currency(m554, syms554, inv554, base) == [],
+               "554: a refreshed baseline is current again")
+        base_txt = (base / "coverage-baseline.csv").read_text()
+        expect(base_txt.splitlines()[1] == "FA.EXE,0,0,1,0,1,1,3,1",
+               "554: the manual ratchet columns are preserved verbatim")
         (base / "coverage-baseline.csv").unlink()
 
         # --- Multi-binary (#252): VAs are unique only within a binary -----------

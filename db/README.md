@@ -186,6 +186,23 @@ inside a larger total. It is the check [#482](https://github.com/jomkz/fighters-
 calls "the real fix". Retiring an entry is the same one-line move as everywhere else: add its
 `db/symbols` row (named or waived) and re-export, then lower the baseline to match.
 
+Four further columns keep the *referenced-globals* rule honest where CI has no inventory export
+([#554](https://github.com/jomkz/fighters-codex/issues/554)) — without them, a PR could add claims
+whose unresolved-globals debt was invisible at merge time (the
+[#543](https://github.com/jomkz/fighters-codex/issues/543)–[#549](https://github.com/jomkz/fighters-codex/issues/549)
+claims merged green that way and left 234 unresolved globals for the next fresh export,
+[#553](https://github.com/jomkz/fighters-codex/issues/553)):
+
+| Column | What it records | Checked |
+|---|---|---|
+| `func_rows` / `data_rows` | distinct claimed VAs per kind in `db/symbols/`, snapshotted when the baseline was last refreshed | **always**, inventory or not: if `db/symbols/` no longer matches, the referenced-globals proof is stale — re-export and run `--write-matrix` |
+| `ref_globals_total` / `ref_globals_unresolved` | referenced globals in `complete` subsystems, and how many are still unnamed-and-unwaived, computed from the fresh export at `--write-matrix` time | with a live export both must match it; `ref_globals_unresolved` is a ratchet — the only legal direction is down |
+
+The first pair is what forces a claim-adding PR to re-prove coverage: changing `db/symbols/`
+without refreshing the baseline (which requires a fresh export, which surfaces the debt) is an
+error everywhere, including CI. Unlike the three manual ratchet columns, these four are written by
+`check_status.py --write-matrix`, never by hand.
+
 ## Definition of done (per subsystem, enforced at `status=complete`)
 
 1. **Functions:** every `inventory/functions.csv` entry inside the subsystem's ranges

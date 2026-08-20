@@ -212,15 +212,18 @@ def process(write, sites):
                 continue
 
             # Already signed -- by #452's decoration pass, or sharpened by hand. The call
-            # sites are still ground truth about the ARITY, so they must not disagree.
+            # sites are still ground truth about the stack layout, so they must not
+            # disagree -- comparing dwords to dwords (#554).
             stored = ctype.strip()
-            got = _arity_of(stored)
-            if got is not None and got != arity:
-                errs.append("%s:%d: %s -- stored signature takes %d argument(s) but its call "
-                            "sites clean %d dword(s) off the stack"
-                            % (rel, i, name, got, arity))
-            else:
-                stats["already"] += 1
+            params = _params_of(stored)
+            if params is not None:
+                want, exact = _stack_dwords(params)
+                if (arity != want) if exact else (arity < want):
+                    errs.append("%s:%d: %s -- stored signature occupies %s%d stack dword(s) "
+                                "but its call sites clean %d dword(s) off the stack"
+                                % (rel, i, name, "" if exact else ">= ", want, arity))
+                    continue
+            stats["already"] += 1
         if write and dirty:
             with open(path, "w", encoding="utf-8", newline="") as fh:
                 w = csv.writer(fh, lineterminator="\n")
@@ -229,23 +232,73 @@ def process(write, sites):
     return stats, errs
 
 
-def _arity_of(proto):
-    """Argument count of a stored prototype, or None. Paren-aware: a function-pointer
-    parameter carries commas of its own."""
+def _params_of(proto):
+    """Parameter type strings of a stored prototype, or None. Paren-aware: a
+    function-pointer parameter carries commas of its own."""
     i, j = proto.find("("), proto.rfind(")")
     if i < 0 or j < i:
         return None
-    body, depth, n = proto[i + 1:j], 0, 0
+    body, depth, parts, cur = proto[i + 1:j], 0, [], []
     if not body.strip() or body.strip() == "void":
-        return 0
+        return []
     for ch in body:
         if ch == "(":
             depth += 1
         elif ch == ")":
             depth -= 1
-        elif ch == "," and depth == 0:
-            n += 1
-    return n + 1
+        if ch == "," and depth == 0:
+            parts.append("".join(cur))
+            cur = []
+        else:
+            cur.append(ch)
+    parts.append("".join(cur))
+    return parts
+
+
+def _arity_of(proto):
+    """Argument count of a stored prototype, or None."""
+    params = _params_of(proto)
+    return None if params is None else len(params)
+
+
+# 8 bytes on the stack under 32-bit MSVC; everything else scalar is one dword.
+_TWO_DWORD = {"double", "long double", "__int64", "unsigned __int64",
+              "long long", "unsigned long long", "longlong", "ulonglong"}
+_ONE_DWORD = {"bool", "char", "signed char", "unsigned char", "wchar_t",
+              "short", "unsigned short", "int", "unsigned int",
+              "long", "unsigned long", "float",
+              "undefined", "undefined1", "undefined2", "undefined4", "byte",
+              "uchar", "ushort", "uint", "ulong", "word", "dword", "size_t"}
+
+
+def _stack_dwords(params):
+    """(minimum stack dwords, exact?) occupied by a parameter list.
+
+    The call-site witness is a DWORD count, so the comparison must be dwords to
+    dwords, not argument count to dwords: a by-value struct is ONE argument but
+    sizeof(struct)/4 dwords (SERIAL_PACKET is 6 — the #554 false positive). Its
+    size is not in the mangling and db/types/ keeps structs opaque, so a by-value
+    UDT contributes an unknown >= 1 dwords and makes the total a lower bound.
+    """
+    total, exact = 0, True
+    for p in params:
+        p = p.strip()
+        if p in ("", "..."):        # varargs: callers may push anything
+            return total, False
+        if "*" in p or "&" in p:    # any pointer/reference level is one dword
+            total += 1
+            continue
+        words = [w for w in p.replace("const", " ").split()
+                 if w not in ("struct", "union", "class", "enum")]
+        core = " ".join(words)
+        if core in _TWO_DWORD:
+            total += 2
+        elif core in _ONE_DWORD or core == "void":
+            total += 1 if core != "void" else 0
+        else:                       # by-value UDT of unknown size
+            total += 1
+            exact = False
+    return total, exact
 
 
 def revalidate(sites):
@@ -272,12 +325,15 @@ def revalidate(sites):
                                              convention_known=True)
                 if arity is None:
                     continue
-                if arity == len(g[3]):
+                # Dwords to dwords: a by-value struct is one argument but
+                # sizeof/4 dwords, so its parameter list is a lower bound (#554).
+                want, exact = _stack_dwords(g[3])
+                if (arity == want) if exact else (arity >= want):
                     ok += 1
                 else:
                     bad += 1
-                    fails.append("%s: mangling proves %d argument(s), call sites say %d"
-                                 % (g[0], len(g[3]), arity))
+                    fails.append("%s: mangling proves %s%d stack dword(s), call sites say %d"
+                                 % (g[0], "" if exact else ">= ", want, arity))
     return ok, bad, fails
 
 
@@ -318,6 +374,32 @@ def self_test():
     if _arity_of("void __cdecl f(void)") != 0:
         fails.append("  _arity_of: (void) must read as arity 0")
 
+    # Dword accounting (#554). The SERIAL_PACKET case is the one the old
+    # argument-count rule flagged as a permanent false positive: one by-value
+    # struct argument, six dwords of caller cleanup, both correct.
+    for params, want, label in [
+        (["SERIAL_PACKET"], (1, False), "by-value UDT is >= 1 dword, inexact"),
+        (["struct SERIAL_PACKET"], (1, False), "struct keyword stripped"),
+        (["F24_POINT *", "long", "long"], (3, True), "pointers and scalars are exact"),
+        (["double", "long"], (3, True), "double is two dwords"),
+        (["unsigned __int64"], (2, True), "int64 is two dwords"),
+        (["const char *"], (1, True), "const pointer is one dword"),
+        ([], (0, True), "no parameters, no dwords"),
+        (["long", "..."], (1, False), "varargs make the total a lower bound"),
+    ]:
+        got = _stack_dwords(params)
+        if got != want:
+            fails.append("  _stack_dwords(%s): want %r, got %r  (%s)"
+                         % (params, want, got, label))
+    sp = _params_of("void __cdecl SER_ProcessIncomingPacket(SERIAL_PACKET)")
+    n, exact = _stack_dwords(sp)
+    if not (n <= 6 and not exact):
+        fails.append("  SERIAL_PACKET by value must accept a 6-dword cleanup "
+                     "(the old rule read it as 1 argument vs 6 and failed)")
+    n, exact = _stack_dwords(_params_of("long __cdecl f(long)"))
+    if not (exact and n == 1):
+        fails.append("  scalar-only signatures must stay strict (1 dword exactly)")
+
     for nm, want in [("_CTVarDiff", "cdecl"), ("_SetupOT@4", "callee"),
                      ("@FMGear@4", "callee"), ("CTLoadProgram", None),
                      ("?IntersectT@@YAJPAUF24_POINT@@JJ@Z", "cdecl"),
@@ -329,7 +411,7 @@ def self_test():
     if fails:
         print("recover_signatures self-test FAILED:\n" + "\n".join(fails))
         return 1
-    print("recover_signatures self-test: %d cases OK" % (len(cases) + 4))
+    print("recover_signatures self-test: %d cases OK" % (len(cases) + 14))
     return 0
 
 
