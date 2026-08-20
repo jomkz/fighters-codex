@@ -213,6 +213,7 @@ nav:
   - Modding: fa/modding.md
   - Reference:
       - Format Status Matrix: fa/formats/STATUS.md
+      - Game Compatibility (ATF/USNF): fa/game-compatibility.md
       - Reconstruction Matrix: fa/reconstruction.md
       - Symbols: fa/symbols.md
       - Globals: fa/globals.md

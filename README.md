@@ -15,8 +15,12 @@ implementation is the proof that a format is truly understood.
 
 **Supported games:**
 - Jane's Fighters Anthology (1998)
-- Advanced Tactical Fighters (1996) - Confirmation needed ([verification pass planned](https://github.com/jomkz/fighters-codex/issues/57))
-- U.S. Navy Fighters (1994) - Confirmation needed ([verification pass planned](https://github.com/jomkz/fighters-codex/issues/57))
+- Advanced Tactical Fighters — Gold (1996) — **verified**: every `fx`-supported format decodes; LIB and ESA round-trip byte-identically ([compatibility report](docs/fa/game-compatibility.md))
+- U.S. Navy Fighters '97 (1994/97) — **verified**: same, plus the `.VDO`/`.FBC` cutscenes ([compatibility report](docs/fa/game-compatibility.md))
+
+The Fighters family shares one continuously-evolved engine, so the FA format specs describe these
+predecessors too; the only divergences are minor self-describing structural deltas. See the
+[game-compatibility report](docs/fa/game-compatibility.md) for the per-format matrix and method.
 
 **Documentation and research:**
 
