@@ -34,7 +34,11 @@ case "$cmd" in
     ;;
   console)
     need virt-viewer "the SPICE console"
-    virt-viewer --connect qemu:///system "$(domain)" &
+    # --attach connects to the display through libvirt directly. vagrant-libvirt gives the guest a
+    # SPICE display with <listen type='none'> (no network-reachable address), so virt-viewer's
+    # default network-connect mode fails with "Display can only be attached through libvirt with
+    # --attach".
+    virt-viewer --attach --connect qemu:///system "$(domain)" &
     echo "opened console for $(domain) (pid $!)"
     ;;
   snapshot)
