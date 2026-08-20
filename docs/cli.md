@@ -439,13 +439,13 @@ Sensors:    F16CSEE.SEE
 
 #### `fx plt dump <file.P>`
 
-Print the confirmed stats block (kill tallies, mission counters, weapon accuracy
-at `0x1F80`–`0x21F7`). Decoding the remaining gap regions is tracked in
+Print the decorations (the medal-flag band at `0x572`–`0x57C`, including the
+Purple Heart count), the service-record citation lines at `0x5AF`, and the
+confirmed stats block (kill tallies, mission counters, weapon accuracy at
+`0x1F80`–`0x21F7`). Decoding the remaining gap regions is tracked in
 [#29](https://github.com/jomkz/fighters-codex/issues/29).
 
 Pilot save files (`.P`) are stored in the FA install directory alongside `FA.EXE`.
-The stats block (offsets 0xB0–0x0D7E) is not yet decoded; only the identity and
-campaign blocks are read.
 
 *See also: [fa/formats/P.md](fa/formats/P.md)*
 

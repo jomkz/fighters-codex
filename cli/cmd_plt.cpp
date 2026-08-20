@@ -87,6 +87,37 @@ static int cmd_dump(int argc, char** argv) {
     }
     printf("Pilot: %s  Rank: %s\n\n", info.name.c_str(), info.rank.c_str());
 
+    PltMedals md;
+    if (plt_parse_medals(data.data(), data.size(), &md)) {
+        printf("=== Decorations ===\n");
+        auto flag = [](const char* label, uint8_t v) {
+            if (v) printf("  %s\n", label);
+        };
+        flag("Medal of Honor",              md.honor);
+        flag("Navy Cross / AF Cross",       md.cross);
+        flag("Distinguished Service Medal", md.dsm);
+        flag("Air Medal",                   md.air_medal);
+        flag("Distinguished Flying Cross",  md.dfc);
+        flag("Achievement Medal",           md.achievement);
+        flag("Commendation Medal",          md.commendation);
+        flag("Expeditionary Medal",         md.expeditionary);
+        flag("Silver Star",                 md.silver_star);
+        flag("Conquest of Yellow Fever",    md.yellow_fever);
+        if (md.purple_hearts)
+            printf("  Purple Heart x%u\n", (unsigned)md.purple_hearts);
+        if (!(md.honor | md.cross | md.dsm | md.air_medal | md.dfc |
+              md.achievement | md.commendation | md.expeditionary |
+              md.purple_hearts | md.silver_star | md.yellow_fever))
+            printf("  (none awarded)\n");
+
+        auto record = plt_service_record(data.data(), data.size());
+        if (!record.empty()) {
+            printf("\n=== Service record ===\n");
+            for (auto& line : record) printf("  %s\n", line.c_str());
+        }
+        printf("\n");
+    }
+
     PltStats st;
     if (!plt_parse_stats(data.data(), data.size(), &st)) {
         printf("Stats block not present (file too small: %zu bytes, need 0x21F8).\n",
