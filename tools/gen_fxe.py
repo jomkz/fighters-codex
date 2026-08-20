@@ -101,6 +101,19 @@ def strip_convention(proto):
     return re.sub(r"\s+", " ", out).replace("( ", "(").replace(" )", ")").strip(), own
 
 
+def portable_ident(proto):
+    """Make an emitted prototype portable across compilers. A handful of MSVC CRT
+    helpers carry a `$` in their name (e.g. `$I10_OUTPUT`, the 80-bit float
+    formatter). GCC and MSVC accept `$` in an identifier, but AppleClang flags it
+    under -Wpedantic (`-Wdollar-in-identifier-extension`), which fails a
+    warnings-as-error build (#155). `$` never appears in a type token, only in a
+    symbol name, so replacing it with `_` sanitizes the identifier without
+    touching the signature; the real symbol still shows in the trailing VA
+    comment. This is a compile-validation declaration, not a linked one, so the
+    spelling is cosmetic."""
+    return proto.replace("$", "_")
+
+
 def proto_ident(proto):
     """The function's own name: the last identifier before its parameter list."""
     head = proto.split("(", 1)[0]
@@ -223,7 +236,8 @@ def emit_subsystem(sub, rows):
         o.append("// --- functions -------------------------------------------------------")
         for r in signed:
             proto, conv = strip_convention(r["type"].strip())
-            o.append("%s;  // %s%s" % (proto, r["va"], "  " + conv if conv else ""))
+            o.append("%s;  // %s%s" % (portable_ident(proto), r["va"],
+                                       "  " + conv if conv else ""))
         o.append("")
 
     # Entry points that are NOT C functions (#479). These are not debt -- they will never have a
@@ -362,6 +376,14 @@ def self_test():
         cases += 1
         if undecorate(name) != want:
             fails.append("  undecorate(%r) -> %r, want %r" % (name, undecorate(name), want))
+
+    for proto, want in [
+            ("int $I10_OUTPUT(u32, short *)", "int _I10_OUTPUT(u32, short *)"),
+            ("undefined4 realloc(undefined4)", "undefined4 realloc(undefined4)")]:
+        cases += 1
+        if portable_ident(proto) != want:
+            fails.append("  portable_ident(%r) -> %r, want %r"
+                         % (proto, portable_ident(proto), want))
 
     cases += 1
     if ns("flight-model") != "flight_model":

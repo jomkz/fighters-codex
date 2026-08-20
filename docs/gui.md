@@ -11,9 +11,14 @@ replacing FATK is a byproduct rather than the goal.
 
 ## Platforms
 
-`fxs` runs natively on Linux and Windows from the same code: SDL3 windowing with
-an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for audio preview
-(backend rationale in [ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md)).
+`fxs` runs natively on Linux, Windows and macOS from the same code: SDL3
+windowing with an OpenGL 3.3 core renderer through Dear ImGui, and miniaudio for
+audio preview (backend rationale in
+[ADR-0001](adr/0001-fx-gui-sdl3-opengl3-miniaudio.md)). On macOS the renderer
+requests a 4.1 core context — the platform's only core profile at or above 3.3,
+and a strict superset of it (see
+[#155](https://github.com/jomkz/fighters-codex/issues/155)). macOS is gated in CI
+for correctness but ships no release artifacts.
 
 - **Theming** — Auto follows the desktop's dark/light preference (via
   `SDL_GetSystemTheme`) and switches live; Dark/Light can be forced in

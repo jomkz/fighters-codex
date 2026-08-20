@@ -29,8 +29,20 @@ bool CreateWindowGL(const WindowConfig& cfg) {
     if (!SDL_Init(SDL_INIT_VIDEO))
         return Fail("SDL_Init failed");
 
+    // The renderer targets an OpenGL 3.3 core context. macOS is the exception:
+    // its only core profiles are 3.2 and 4.1, so a 3.3 request silently yields a
+    // 3.2 context that is *missing* the 3.3 entry points (glVertexAttribDivisor,
+    // etc.), which then load as null and crash at first use. 4.1 core is a strict
+    // superset of 3.3 and is the macOS way to get every 3.3 function; the
+    // forward-compatible flag is mandatory for a core profile on Cocoa.
+#if defined(__APPLE__)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+#else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);

@@ -124,25 +124,32 @@ jobs:
           python3 tools/gen_fxe.py --check
 
   macos:
-    name: macos (informational)
+    name: macos (full, AppleClang)
     runs-on: macos-latest
-    # Informational only — macOS is unsupported (see docs/development.md).
-    # continue-on-error at job level: a failure here never fails the
-    # workflow; open the job's logs for its real status.
-    continue-on-error: true
+    # A required gate (#155): fa-bridge's house rule is green on Windows, Linux
+    # AND macOS. All three products — fx_lib, the fx CLI, and the fxs GUI — build
+    # clean under AppleClang, so this gates the whole tree, not just the library.
+    # Verified on real hardware (Apple M4 Pro / Apple clang 21) before promotion
+    # from the old informational job. See docs/development.md § macOS.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Configure
-        # Deliberately no preset: presets stay Linux/Windows-only by policy.
-        # FX_BUILD_GUI=OFF — this job sanity-checks fx_lib/cli portability;
-        # FetchContent would otherwise compile all of SDL3 here for nothing.
-        run: cmake -B build-macos -DCMAKE_BUILD_TYPE=Debug -DFX_BUILD_GUI=OFF
+        # No preset: presets stay Linux/Windows-only by policy. The GUI is built
+        # with the pinned FetchContent SDL3 (FX_SDL3_VENDORED=ON, ADR-0001) — no
+        # brew/system dep needed, since SDL3 links the always-present Cocoa /
+        # OpenGL frameworks on macOS. FX_WERROR=ON scopes -Werror to this repo's
+        # own targets (not SDL3/Catch2), so an AppleClang portability warning is a
+        # failure rather than a note that scrolls past — the informational job hid
+        # a -Wpedantic `$`-in-identifier warning for exactly that reason (#155).
+        run: cmake -B build-macos -DCMAKE_BUILD_TYPE=Debug -DFX_BUILD_GUI=ON -DFX_SDL3_VENDORED=ON -DFX_WERROR=ON
 
       - name: Build
         run: cmake --build build-macos
 
       - name: Test
+        # The suite includes gui_smoke, which renders three frames headless; the
+        # macOS runner's WindowServer gives it a real GL 4.1 core context.
         run: ctest --test-dir build-macos --output-on-failure --no-tests=error
 
   # Gate + fan-out for the fuzz smoke. Decides whether the smoke needs to run

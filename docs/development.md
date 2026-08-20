@@ -90,12 +90,20 @@ the path embedders use (see [api.md](api.md)).
 
 ### Platform notes
 
-- **macOS** is unsupported and ships no release artifacts; the presets are
-  deliberately Linux/Windows-only. CI does compile and run the suite on
-  macOS as an informational, never-blocking check (a plain `cmake -B`
-  build with `continue-on-error` — see the CI table below), so gross
-  portability breaks surface early even though the platform stays
-  unsupported.
+- **macOS** is a fully supported build target and a **required CI gate**
+  ([#155](https://github.com/jomkz/fighters-codex/issues/155)): fa-bridge's house
+  rule is green builds on Windows, Linux and macOS, so all three products —
+  `fx_lib`, the `fx` CLI, and the `fxs` GUI — build clean under AppleClang. CI
+  runs a plain `cmake -B` build (no preset — presets stay Linux/Windows-only)
+  with `FX_BUILD_GUI=ON`, the pinned FetchContent SDL3 (`FX_SDL3_VENDORED=ON`,
+  ADR-0001 — no brew dep, SDL3 links the system Cocoa/OpenGL frameworks), and
+  `FX_WERROR=ON`, then the full suite (`gui_smoke` included; the runner's
+  WindowServer gives it a real GL context). `FX_WERROR` scopes `-Werror` to this
+  repo's own targets, so a third-party warning never breaks the gate. Verified
+  against real hardware (Apple M4 Pro / Apple clang 21). macOS still ships no
+  release artifacts — the platform is gated for correctness, not packaged. The
+  renderer requests a **4.1 core** context on macOS (its only ≥3.3 core profile;
+  a superset of the 3.3 the code targets), forward-compatible per Cocoa's rules.
 - The `msvc` preset assumes the platform-default generator is Visual Studio;
   a `CMAKE_GENERATOR` environment override (e.g. to Ninja) conflicts with its
   `x64` architecture setting.
@@ -306,7 +314,7 @@ Every PR to `main` (and every push to it) runs the
 | `clang` | ubuntu-latest | Linux Clang build + full test suite |
 | `asan-ubsan` | ubuntu-latest | Full suite under AddressSanitizer + UBSan — memory errors and UB in the binary parsers fail the PR |
 | `msvc` | windows-latest | Windows MSVC build + full test suite |
-| `macos (informational)` | macos-latest | AppleClang build + suite as an early-warning signal; `continue-on-error` — never blocks a PR |
+| `macos (full, AppleClang)` | macos-latest | AppleClang build of `lib/` + `cli/` + `fxs` (vendored SDL3, `FX_WERROR`), then the suite incl. `gui_smoke`; a **required gate** (#155) |
 | `fuzz-smoke` | ubuntu-latest | 60-second libFuzzer run per harness over its seed corpus — parser crashes on malformed input fail the PR |
 | Fuzz (deep) | ubuntu-latest | Weekly scheduled [30-minute-per-harness run](https://github.com/jomkz/fighters-codex/blob/main/.github/workflows/fuzz-deep.yml); findings upload as reproducer artifacts and auto-file a `fuzzing` issue — see [Fuzzing](#fuzzing) |
 | `docs-status` | ubuntu-latest | [`tools/check_status.py`](https://github.com/jomkz/fighters-codex/blob/main/tools/check_status.py) `--self-test` + `--check`: format-spec front-matter and template conformance ([spec-authoring.md](spec-authoring.md)), encoding and link hygiene across all markdown — relative links resolve case-exactly, links in `docs/` stay inside the docs tree, repo `blob`/`tree` URLs point at real `main` paths — front-matter claims vs. `lib/`+`cli/`+`tests/`+`fuzz/` reality, and currency of the generated [status matrix](fa/formats/STATUS.md) — a stale matrix fails the PR |
