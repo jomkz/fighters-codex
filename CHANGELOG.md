@@ -7,6 +7,61 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.8] - 2026-08-20
+
+**`#482` closes — every function the game executable names is documented.** The seven tail
+batches ([#543](https://github.com/jomkz/fighters-codex/issues/543)–[#549](https://github.com/jomkz/fighters-codex/issues/549))
+read the remaining named-but-unclaimed functions body by body: the flight-dynamics and envelope
+tail, scattered picks across seven subsystems, the serial-packet and sync layer, the game's
+runtime-utility library, the rasterizer span innerloops and the 15-bit blit family, the file/disk
+layer and its symbol map, and a final 38-claim body-read pass that also recorded the vendored
+PKWARE DCL unit as a waiver. `named_unclaimed` falls **158 → 0** and `unclaimed_functions`
+**544 → 386**; `#482` — the issue that began by exposing a 49%-unclaimed binary behind a
+"complete" report — is closed.
+
+The close then got its honesty audit. The next fresh inventory export surfaced **234 referenced
+globals** in `complete` subsystems that those claims owed — invisible at merge time because the
+coverage gate goes blind where CI has no local export. All 234 are settled (`#553`): one named
+from evidence — `pkt_err_strings`, the packet error-string table behind `get_pkt_err_string` —
+and 233 anchored waivers, the bulk being the LoadBrent loader's string/section-map data, the
+terrain span-innerloop scratch block, and struct interiors with their VBE/`CDPATH`/`cnConnect`
+offsets spelled out. And the blind spot itself is closed in the tool (`#554`):
+`coverage-baseline.csv` now carries four export-derived columns that CI checks with **no
+inventory at all** — db/symbols row-count drift against the baseline is a hard error, and
+`ref_globals_unresolved` is a shrink-only ratchet — so a claim-adding PR can no longer merge
+green with unproven globals. `recover_signatures` also prices parameters in **stack dwords**,
+ending the by-value-struct false positive (`SERIAL_PACKET` is one argument but six dwords, and
+both the signature and the call sites were right).
+
+Static RE kept moving besides: the campaign pilot's **medal-flag band** (`+0x572`–`+0x57C`, one
+awarded-flag byte per medal plus the Purple Heart count, written by the six campaign medal
+functions) is mapped from the post-`#482` corpus, shrinking PLT gap 2; the installer's
+**registry footprint and install layout** are documented from the ESA scripts; and the `#488`
+asset-count findings are verified against the retail archives.
+
+No `fx_lib` changes — this release is entirely reconstruction database, tooling, and
+documentation.
+
+### Added
+- **re** — the `#482` tail: flight-dynamics & envelope (#543), scattered picks across seven
+  subsystems (#544), the serial-packet & sync tail (#545), the runtime-utility library tail
+  (#546), the rasterizer span innerloops & 15-bit blit family (#547), the file/disk layer &
+  symbol map (#548), and the body-read tail with the PKWARE DCL waiver (#549) —
+  `named_unclaimed` 158 → 0, `#482` closed
+- **db** — a referenced-globals gate CI can run without an inventory export: four
+  export-derived `coverage-baseline.csv` columns (written only by `--write-matrix`), checked
+  everywhere, with `ref_globals_unresolved` as a shrink-only ratchet (#554, #565)
+
+### Changed
+- **re** — the 234 referenced globals surfaced by the refreshed inventory export are named or
+  waived; `pkt_err_strings` named from evidence (#553, #564)
+- **re** — the PLT medal-flag band (gap 2) mapped statically from the post-#482 corpus (#552)
+- **esa** — the installer's registry footprint & install layout documented (#551)
+- **docs** — the asset-count findings from the #488 audit verified against the retail
+  archives (#550)
+- **tools** — `recover_signatures` compares stack dwords to stack dwords; the two
+  `SERIAL_PACKET` false positives are gone (#554, #565)
+
 ## [0.8.7] - 2026-07-17
 
 **The #482 grind — closing the gap between "named" and "documented."** v0.8.5 exposed that a
@@ -976,7 +1031,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.7...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.8...HEAD
+[0.8.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.8
 [0.8.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.7
 [0.8.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.6
 [0.8.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.5
