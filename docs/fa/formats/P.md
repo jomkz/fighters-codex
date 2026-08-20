@@ -292,14 +292,17 @@ Confirmed engine functions (FA.SMS + `DumpAllFunctions.txt`):
 
 `plt_write` is a **byte-exact passthrough serializer**: it starts from a copy
 of the original file bytes (`PltFile::raw`) and overlays only the fixed-offset
-mapped fields — the identity block (`0x00`–`0xAF`) and, when present, the stats
-counters (`0x1F80`–`0x21F7`). Everything else — the gap regions (including the
-now-mapped medal-flag band, which the codec does not yet decode) and the
-variable-length campaign/ordnance region (`0xB0`–`0x1F7F`) — is copied
-through unchanged. A `plt_read` → `plt_write` round-trip is therefore
-byte-identical, and Phase 6 (#29) can map the gaps without touching the codec.
+mapped fields — the identity block (`0x00`–`0xAF`), the medal-flag band
+(`0x572`–`0x57C`, decoded into `PltMedals` and editable), and, when present,
+the stats counters (`0x1F80`–`0x21F7`). Everything else — the remaining gap
+regions and the variable-length campaign/ordnance region (`0xB0`–`0x1F7F`) —
+is copied through unchanged. The service-record citations at `0x5AF` are
+decoded as a **read-only view** (`plt_service_record`): the surrounding
+mission-log region is still unmapped, so the codec never re-encodes it. A
+`plt_read` → `plt_write` round-trip is therefore byte-identical, and Phase 6
+(#29) can map the remaining gaps without touching the codec.
 
-Two details keep the round-trip exact even before the gaps are understood:
+Three details keep the round-trip exact even before the gaps are understood:
 
 - **Unedited string fields are left verbatim.** An identity field is only
   rewritten when its value differs from what the original bytes decode to.
@@ -310,6 +313,10 @@ Two details keep the round-trip exact even before the gaps are understood:
   `cam_file` / `aircraft` / `ordnance` views come from a heuristic forward
   scan; they are read-only display state. The bytes themselves pass through, so
   the scan's imprecision cannot perturb the file.
+- **The medal band is overlaid raw.** All eleven slots are written back as the
+  u8 values held in `PltMedals` — an unedited read → write reproduces whatever
+  bytes were there (even out-of-range values), so the overlay cannot normalize
+  a file it merely passed through.
 
 Validation: `plt_repack` (read → write) is byte-identical across all 7 real
 pilot files in the reference install (`PLT441/628/937/991/992/993/994.P`,

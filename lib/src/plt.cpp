@@ -206,6 +206,53 @@ bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* st) {
     return true;
 }
 
+// ─── Medal-flag band + service record (P.md § Medal-flag band, #143) ────────
+
+constexpr size_t kMedalBand    = 0x572;  // eleven u8 decoration slots
+constexpr size_t kMedalCount   = 11;
+constexpr size_t kServiceRec   = 0x5AF;  // _AwardMedal's citation block
+constexpr size_t kServiceEnd   = 0xD7F;  // campaign .CAM filename field
+constexpr size_t kServiceMax   = 10;     // entries the pilot card reads
+
+bool plt_parse_medals(const uint8_t* data, size_t size, PltMedals* m) {
+    if (size < kMedalBand + kMedalCount) return false;
+    const uint8_t* b = data + kMedalBand;
+    m->honor         = b[0];
+    m->cross         = b[1];
+    m->dsm           = b[2];
+    m->air_medal     = b[3];
+    m->dfc           = b[4];
+    m->achievement   = b[5];
+    m->commendation  = b[6];
+    m->expeditionary = b[7];
+    m->purple_hearts = b[8];
+    m->silver_star   = b[9];
+    m->yellow_fever  = b[10];
+    return true;
+}
+
+std::vector<std::string> plt_service_record(const uint8_t* data, size_t size) {
+    std::vector<std::string> out;
+    size_t pos = kServiceRec;
+    const size_t end = std::min(size, kServiceEnd);
+    while (pos < end && out.size() < kServiceMax) {
+        const char* s = (const char*)(data + pos);
+        size_t len = strnlen(s, end - pos);
+        if (len == 0) break;                 // the block ends at the first empty slot
+        out.push_back(std::string(s, len));
+        pos += len + 1;
+    }
+    return out;
+}
+
+static void overlay_medals(std::vector<uint8_t>& out, const PltMedals& m) {
+    uint8_t* b = out.data() + kMedalBand;
+    b[0] = m.honor;          b[1] = m.cross;        b[2]  = m.dsm;
+    b[3] = m.air_medal;      b[4] = m.dfc;          b[5]  = m.achievement;
+    b[6] = m.commendation;   b[7] = m.expeditionary;b[8]  = m.purple_hearts;
+    b[9] = m.silver_star;    b[10] = m.yellow_fever;
+}
+
 // ─── Write path (issue #103) ────────────────────────────────────────────────
 // plt_write overlays only the fixed-offset mapped fields onto a copy of the
 // original bytes; the four unmapped gap regions and the variable-length
@@ -295,7 +342,9 @@ static void overlay_stats(std::vector<uint8_t>& out, const PltStats& st) {
 bool plt_read(const uint8_t* data, size_t size, PltFile* out) {
     if (!plt_parse(data, size, &out->info)) return false;
     out->raw.assign(data, data + size);
-    out->has_stats = plt_parse_stats(data, size, &out->stats);
+    out->has_stats  = plt_parse_stats(data, size, &out->stats);
+    out->has_medals = plt_parse_medals(data, size, &out->medals);
+    out->service_record = plt_service_record(data, size);
     return true;
 }
 
@@ -312,6 +361,9 @@ std::vector<uint8_t> plt_write(const PltFile& f) {
     overlay_field(out, 0x88, 13, f.info.right_decal);
     overlay_field(out, 0x95, 13, f.info.portrait);
     overlay_field(out, 0xA2, 14, f.info.rank);
+
+    if (f.has_medals && out.size() >= kMedalBand + kMedalCount)
+        overlay_medals(out, f.medals);
 
     if (f.has_stats && out.size() >= 0x21F8)
         overlay_stats(out, f.stats);

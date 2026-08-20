@@ -176,6 +176,77 @@ TEST_CASE("editing a stats counter via PltFile touches only that field") {
     }
 }
 
+// ─── Medal-flag band + service record (#143) ────────────────────────────────
+
+TEST_CASE("plt_parse_medals rejects a buffer that ends before the band") {
+    std::vector<uint8_t> buf(0x57C, 0);   // one byte short of 0x57D
+    buf[0x00] = 0x0F;
+    PltMedals m;
+    REQUIRE_FALSE(plt_parse_medals(buf.data(), buf.size(), &m));
+}
+
+TEST_CASE("plt_parse_medals reads every decoration slot at its offset") {
+    auto buf = make_plt_full();
+    for (size_t i = 0; i < 11; i++) buf[0x572 + i] = 0;
+    buf[0x572] = 1;   // Medal of Honor
+    buf[0x57A] = 3;   // Purple Heart count
+    buf[0x57C] = 1;   // Conquest of Yellow Fever
+    PltMedals m;
+    REQUIRE(plt_parse_medals(buf.data(), buf.size(), &m));
+    REQUIRE(m.honor == 1);
+    REQUIRE(m.cross == 0);
+    REQUIRE(m.purple_hearts == 3);
+    REQUIRE(m.silver_star == 0);
+    REQUIRE(m.yellow_fever == 1);
+}
+
+TEST_CASE("plt_repack is byte-identical with arbitrary medal-band bytes") {
+    auto buf = make_plt_full();           // LCG fill leaves the band non-zero
+    auto out = plt_repack(buf.data(), buf.size());
+    REQUIRE(out == buf);
+}
+
+TEST_CASE("editing a medal via PltFile touches only that byte") {
+    auto buf = make_plt_full();
+    PltFile f;
+    REQUIRE(plt_read(buf.data(), buf.size(), &f));
+    REQUIRE(f.has_medals);
+    f.medals.silver_star = 1;
+    auto out = plt_write(f);
+
+    PltMedals re;
+    REQUIRE(plt_parse_medals(out.data(), out.size(), &re));
+    REQUIRE(re.silver_star == 1);
+    for (size_t i = 0; i < out.size(); i++) {
+        if (i == 0x57B) continue;          // the Silver Star flag byte
+        INFO("byte " << i);
+        REQUIRE(out[i] == buf[i]);
+    }
+}
+
+TEST_CASE("plt_service_record decodes the citation lines at 0x5AF") {
+    auto buf = make_plt_full();
+    // Two citations followed by an empty slot; the LCG garbage past the
+    // terminator must not be read once the block ends.
+    std::memset(buf.data() + 0x5AF, 0, 0xD7F - 0x5AF);
+    copy_field(buf, 0x5AF, "Navy Cross", 0xD0);
+    copy_field(buf, 0x5AF + 11, "Air Medal", 0xD0);
+    auto rec = plt_service_record(buf.data(), buf.size());
+    REQUIRE(rec.size() == 2);
+    REQUIRE(rec[0] == "Navy Cross");
+    REQUIRE(rec[1] == "Air Medal");
+}
+
+TEST_CASE("plt_service_record is bounded by the campaign filename field") {
+    auto buf = make_plt_full();
+    // Fill the whole block with unterminated non-zero bytes: the scan must
+    // stop at 0xD7F and never read into the campaign fields.
+    for (size_t i = 0x5AF; i < 0xD7F; i++) buf[i] = 'A';
+    auto rec = plt_service_record(buf.data(), buf.size());
+    REQUIRE(rec.size() == 1);
+    REQUIRE(rec[0].size() == 0xD7F - 0x5AF);
+}
+
 TEST_CASE("plt_repack rejects a buffer smaller than the identity block") {
     std::vector<uint8_t> tiny(0xAF, 0);
     tiny[0x00] = 0x0F;

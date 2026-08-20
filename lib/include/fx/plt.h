@@ -25,10 +25,17 @@
 //   Unknown gap       0x2018-0x20B7  (0xA0 bytes — not accessed in decompile)
 //   Weapon accuracy   0x20B8-0x21F7  (8 groups x 0x28 bytes: player slot + wingman slot)
 //
-// Remaining gaps (0xB0-0xC1, 0xCF-0x5AE, 0x21F8-0x25DF):
-//   No code in the game executable was found accessing these regions via static analysis.
-//   Differential save of fresh pilot files shows all zeros — populated only after
-//   actual campaign gameplay. Layout unknown; marked reserved.
+// Medal-flag band (0x572-0x57C) — mapped statically from the per-campaign
+// *Medals passes (P.md § Medal-flag band): eleven u8 decoration slots, one
+// awarded-flag per medal except purple_hearts, which is a count 0-3.
+// _AwardMedal appends each awarded title to the service record at 0x5AF
+// (null-terminated strings, appended while the block stays under 1,000 bytes).
+//
+// Remaining gaps (0xB0-0xC1, 0xCF-0x571 + 0x57D-0x5AE, 0x2018-0x20B7,
+// 0x21F8-0x25DF): no code in the game executable was found accessing these
+// regions via static analysis. Differential save of fresh pilot files shows
+// all zeros — populated only after actual campaign gameplay. Layout unknown;
+// marked reserved (#29).
 
 namespace fx {
 
@@ -124,11 +131,40 @@ struct PltStats {
     PltWpnGroup wpn_kill_d;
 };
 
+// Medal-flag band (0x572-0x57C): one u8 per decoration slot, written by the
+// per-campaign *Medals passes. Every field is a 0/1 awarded flag except
+// purple_hearts (a count, capped at 3 in-engine). A slot means the same
+// decoration class in every campaign, with the Navy or Air Force variant of
+// the title by theater.
+struct PltMedals {
+    uint8_t honor;          // 0x572  Medal of Honor (Navy / Air Force)
+    uint8_t cross;          // 0x573  Navy Cross / Air Force Cross
+    uint8_t dsm;            // 0x574  Distinguished Service Medal
+    uint8_t air_medal;      // 0x575  Air Medal
+    uint8_t dfc;            // 0x576  Distinguished Flying Cross
+    uint8_t achievement;    // 0x577  Achievement Medal
+    uint8_t commendation;   // 0x578  Commendation Medal
+    uint8_t expeditionary;  // 0x579  Expeditionary Medal
+    uint8_t purple_hearts;  // 0x57A  Purple Heart count, 0-3
+    uint8_t silver_star;    // 0x57B  Silver Star
+    uint8_t yellow_fever;   // 0x57C  Conquest of Yellow Fever (Kurile easter egg)
+};
+
 // Parse pilot identity block. Returns false if size < 0xB0 or version tag != 0x0F.
 bool plt_parse(const uint8_t* data, size_t size, PltInfo* info);
 
 // Parse confirmed stats block. Returns false if size < 0x21F8 (stats not present).
 bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* stats);
+
+// Parse the medal-flag band. Returns false if size < 0x57D (band not present).
+bool plt_parse_medals(const uint8_t* data, size_t size, PltMedals* medals);
+
+// Decoded view of the service-record block at 0x5AF: the null-terminated
+// citation lines _AwardMedal appended, read sequentially (up to 10 entries,
+// bounded by the campaign filename field at 0xD7F). A VIEW ONLY: the block's
+// full content layout is still #29's mission-log gap, so plt_write never
+// re-encodes it — these strings pass through verbatim.
+std::vector<std::string> plt_service_record(const uint8_t* data, size_t size);
 
 // A pilot file decoded for round-trip editing. `raw` holds every original byte
 // verbatim — the pass-through backbone. `info` and `stats` are decoded views
@@ -138,9 +174,15 @@ bool plt_parse_stats(const uint8_t* data, size_t size, PltStats* stats);
 // campaign/ordnance region are preserved exactly (see P.md § Round-Trip Notes).
 struct PltFile {
     std::vector<uint8_t> raw;
-    PltInfo  info;
-    PltStats stats{};
-    bool     has_stats = false;
+    PltInfo   info;
+    PltStats  stats{};
+    bool      has_stats = false;
+    PltMedals medals{};
+    bool      has_medals = false;   // file reaches 0x57D
+    // Decoded view of the citation lines at 0x5AF (see plt_service_record).
+    // Never overlaid by plt_write — the surrounding mission-log region is
+    // still unmapped (#29), so editing it is not supported yet.
+    std::vector<std::string> service_record;
 };
 
 // Read a pilot file: keep the full bytes in `out->raw` and decode the identity
@@ -149,8 +191,9 @@ struct PltFile {
 bool plt_read(const uint8_t* data, size_t size, PltFile* out);
 
 // Serialize a pilot file: start from a copy of `f.raw` and overlay only the
-// fixed-offset mapped fields — the identity block, and (when `f.has_stats`) the
-// stats counters. Every other byte passes through verbatim, so a
+// fixed-offset mapped fields — the identity block, (when `f.has_medals`) the
+// medal-flag band, and (when `f.has_stats`) the stats counters. Every other
+// byte passes through verbatim, so a
 // plt_read → plt_write round-trip is byte-identical. Edit `f.info` / `f.stats`
 // first to change those fields. Returns an empty vector if `f.raw` is shorter
 // than the identity block (0xB0 bytes).

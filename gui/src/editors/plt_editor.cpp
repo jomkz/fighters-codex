@@ -28,6 +28,8 @@ static char s_portrait[14] = {};
 static char s_rank[15]     = {};
 static PltStats s_stats    = {};
 static bool s_hasStats     = false;
+static PltMedals s_medals  = {};
+static bool s_hasMedals    = false;
 static int  s_lastEntry    = -2;
 
 static void ReadField(const std::vector<uint8_t>& data, int off, char* buf, int len) {
@@ -82,7 +84,8 @@ void DrawPltEditor(App& app) {
         ReadField(ed.data, OFF_RIGHT,    s_right,    sizeof(s_right));
         ReadField(ed.data, OFF_PORTRAIT, s_portrait, sizeof(s_portrait));
         ReadField(ed.data, OFF_RANK,     s_rank,     sizeof(s_rank));
-        s_hasStats = plt_parse_stats(ed.data.data(), ed.data.size(), &s_stats);
+        s_hasStats  = plt_parse_stats(ed.data.data(), ed.data.size(), &s_stats);
+        s_hasMedals = plt_parse_medals(ed.data.data(), ed.data.size(), &s_medals);
     }
 
     // ── Identity ────────────────────────────────────────────────────────────
@@ -195,6 +198,49 @@ void DrawPltEditor(App& app) {
         ImGui::Spacing();
     }
 
+    // ── Decorations (medal-flag band 0x572–0x57C, P.md § Medal-flag band) ───
+    ImGui::SeparatorText("Decorations");
+
+    if (!s_hasMedals) {
+        ImGui::TextDisabled("Medal band not present (file < 0x57D bytes).");
+    } else {
+        // Each slot is one byte in the file; a checkbox edit writes it directly.
+        auto medal = [&](const char* label, uint8_t* field, int off) {
+            bool v = *field != 0;
+            if (ImGui::Checkbox(label, &v)) {
+                *field = v ? 1 : 0;
+                ed.data[off] = *field;
+                ed.modified = true;
+            }
+        };
+        medal("Medal of Honor",              &s_medals.honor,         0x572);
+        medal("Navy Cross / AF Cross",       &s_medals.cross,         0x573);
+        medal("Distinguished Service Medal", &s_medals.dsm,           0x574);
+        medal("Air Medal",                   &s_medals.air_medal,     0x575);
+        medal("Distinguished Flying Cross",  &s_medals.dfc,           0x576);
+        medal("Achievement Medal",           &s_medals.achievement,   0x577);
+        medal("Commendation Medal",          &s_medals.commendation,  0x578);
+        medal("Expeditionary Medal",         &s_medals.expeditionary, 0x579);
+        medal("Silver Star",                 &s_medals.silver_star,   0x57B);
+        medal("Conquest of Yellow Fever",    &s_medals.yellow_fever,  0x57C);
+        int ph = s_medals.purple_hearts;
+        ImGui::SetNextItemWidth(120);
+        if (ImGui::SliderInt("Purple Hearts", &ph, 0, 3)) {   // count, capped in-engine
+            s_medals.purple_hearts = (uint8_t)ph;
+            ed.data[0x57A] = s_medals.purple_hearts;
+            ed.modified = true;
+        }
+
+        auto record = plt_service_record(ed.data.data(), ed.data.size());
+        if (!record.empty() && ImGui::TreeNode("Service record (read-only)")) {
+            ImGui::TextDisabled("Citation lines _AwardMedal appended at 0x5AF; the surrounding");
+            ImGui::TextDisabled("mission-log region is still unmapped (#29), so no editing yet.");
+            for (auto& line : record) ImGui::TextUnformatted(line.c_str());
+            ImGui::TreePop();
+        }
+        ImGui::Spacing();
+    }
+
     // ── Gap Explorer ────────────────────────────────────────────────────────
     ImGui::SeparatorText("Gap Explorer");
     ImGui::TextDisabled("Probe workflow: set bytes below, Save, launch the game, observe what changes.");
@@ -249,10 +295,11 @@ void DrawPltEditor(App& app) {
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Gap 2 — 0xCF–0x5AE  (1344 bytes, first 128 shown)")) {
-        ImGui::TextDisabled("Likely variable-length mission log text (null-terminated strings).");
-        ImGui::TextDisabled("Edit as text with a hex editor for full access; probe first 128 bytes here.");
-        ShowNonZero(0xCF, 1344);
+    if (ImGui::TreeNode("Gap 2 — 0xCF–0x571 + 0x57D–0x5AE  (1237 bytes, first 128 shown)")) {
+        ImGui::TextDisabled("Mission log region. The medal band 0x572–0x57C is mapped (Decorations");
+        ImGui::TextDisabled("above); the rest is unknown. Probe first 128 bytes here.");
+        ShowNonZero(0xCF, 0x572 - 0xCF);
+        ShowNonZero(0x57D, 0x5AF - 0x57D);
         if (GapHexGrid(0xCF, 128)) ed.modified = true;
         ImGui::TreePop();
     }

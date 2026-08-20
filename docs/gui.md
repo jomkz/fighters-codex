@@ -324,7 +324,15 @@ Identity block fields (all editable):
 | Portrait ID | 0x95 | 13 bytes |
 | Rank | 0xA2 | 14 bytes |
 
-> Stats block (0xB0–0x0D7E) and campaign/inventory data: pending gameplay-derived saves (see [fa/formats/P.md](fa/formats/P.md) Open Questions).
+The **Decorations** section edits the medal-flag band (`0x572`–`0x57C`): a
+checkbox per decoration slot plus the Purple Heart count (0–3), and a read-only
+view of the service-record citations at `0x5AF`. The stats block
+(`0x1F80`–`0x21F7`) is shown read-only, and the **Gap Explorer** exposes the
+four unmapped regions as editable hex for the
+[#29](https://github.com/jomkz/fighters-codex/issues/29) probe workflow.
+
+> The remaining gap regions and the mission-log content are pending
+> gameplay-derived saves (see [fa/formats/P.md](fa/formats/P.md) Open Questions).
 
 ## Settings / Preferences
 
