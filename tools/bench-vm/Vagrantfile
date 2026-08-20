@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2026 MKZ Systems LLC
+# SPDX-License-Identifier: MIT
+#
+# Bench VM — runs the real Jane's Fighters Anthology under Windows on this host, so the
+# gameplay-gated RE probes (#56 / #29 / #142) can be flown and observed here instead of on the
+# physical Windows bench. The win over the bench is host-side instrumentation: QEMU snapshots for
+# controlled save-diffs, and a live memory watcher (tools/bench-vm/plt-watch.ps1) that reads
+# `_campaignPilot` (0x4F8BB8) while you fly — so a gap byte is caught the instant it changes, not
+# only after it reaches the .P file.
+#
+#   FX_FA_SRC="/run/media/john/Windows Disk/JANES/Fighters Anthology" \
+#     vagrant up --provider=libvirt      # provision: copies FA in, writes the #551 registry keys
+#   tools/bench-vm/run-bench.sh console  # open the game's screen (virt-viewer / SPICE)
+#
+# THIS IS A CORRECTNESS/OBSERVATION ENVIRONMENT, NOT A MEASUREMENT ONE — sized generously off the
+# host, software-rendered by default. Any timing taken here is meaningless.
+#
+# GUEST OS. Default is the Windows Server 2022 evaluation image: license-clean for this use
+# (180 days, rebuild to refresh), WinRM-driveable so the whole FA install + registry step is
+# scripted, and free of the TPM/SecureBoot emulation a Windows 11 guest needs under KVM. FA is a
+# 1998 DirectDraw title but runs on modern Windows (the physical bench is Windows 11), so software
+# DirectDraw under QXL is expected to work. If the DirectDraw/8-bit-palette path misbehaves, the
+# fallback is a Windows XP SP3 guest — see README § "XP SP3 fallback" (hand-driven, no WinRM).
+#
+# Box hosting has bitten sibling repos before, so the box is an override: set FX_BENCH_BOX to any
+# Windows box that publishes a libvirt artifact and speaks WinRM.
+
+Vagrant.configure("2") do |config|
+  config.vm.box = ENV.fetch("FX_BENCH_BOX", "peru/windows-server-2022-standard-x64-eval")
+  config.vm.guest = :windows
+  config.vm.hostname = "fx-bench"
+
+  # WinRM drives the Windows guest. Generous timeouts: the FA copy is a few thousand small files.
+  config.vm.communicator = "winrm"
+  config.vm.boot_timeout = 900
+  config.winrm.timeout = 1800
+  config.winrm.retry_limit = 30
+
+  # No synced folder (every option is bad for a Windows/libvirt guest — see windows-env's note).
+  # FA is uploaded by provisioning instead, from the host directory named in FX_FA_SRC.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Staged FA install + the probe scripts are uploaded, then provision.ps1 places them.
+  fa_src = ENV["FX_FA_SRC"]
+  if fa_src && !fa_src.empty?
+    config.vm.provision "file", source: fa_src, destination: 'C:\fa-staging'
+  end
+  config.vm.provision "file", source: "plt-watch.ps1",     destination: 'C:\bench\plt-watch.ps1'
+  config.vm.provision "file", source: "probe-savediff.ps1", destination: 'C:\bench\probe-savediff.ps1'
+  config.vm.provision "file", source: "probes.psd1",        destination: 'C:\bench\probes.psd1'
+  config.vm.provision "shell", path: "provision.ps1", privileged: true,
+    env: { "FX_FA_STAGED" => (fa_src && !fa_src.empty? ? "1" : "0") }
+
+  config.vm.provider "libvirt" do |v|
+    # Generous slice; leave the host usable while the game runs.
+    v.cpus   = Integer(ENV.fetch("FX_BENCH_CPUS", "8"))
+    v.memory = Integer(ENV.fetch("FX_BENCH_MEM_MB", "8192"))
+    v.machine_virtual_size = Integer(ENV.fetch("FX_BENCH_DISK_GB", "80"))
+
+    # A real screen for the game. QXL + SPICE gives an interactive console (run-bench.sh console)
+    # and a software DirectDraw path good enough for a 1998 title.
+    v.video_type = "qxl"
+    v.graphics_type = "spice"
+    v.video_vram = 65536
+
+    # FA treats a missing audio device unkindly; give the guest an emulated one (provision.ps1
+    # starts the Windows Audio service, which Server leaves disabled).
+    v.qemuargs value: "-device"
+    v.qemuargs value: "ich9-intel-hda"
+    v.qemuargs value: "-device"
+    v.qemuargs value: "hda-output"
+
+    # Host-side live memory access for the probes: expose QEMU's gdbstub on localhost:1234. The
+    # in-guest watcher (plt-watch.ps1) is the primary tool; this is the belt-and-suspenders path
+    # for reading guest memory from the host without touching the guest. See README § "Live memory".
+    if ENV["FX_BENCH_GDB"] == "1"
+      v.qemuargs value: "-gdb"
+      v.qemuargs value: "tcp::1234"
+    end
+  end
+end
