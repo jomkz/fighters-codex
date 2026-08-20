@@ -1,0 +1,5 @@
+# Vagrant/libvirt local runtime state — machine ids, box metadata, forwarding logs. Never committed.
+.vagrant/
+
+# Host-side artifacts pulled from the guest by run-bench.sh.
+watch.log

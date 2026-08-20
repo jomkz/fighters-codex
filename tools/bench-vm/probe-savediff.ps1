@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 #
-# probe-savediff.ps1 — the classic differential-save probe for the PLT gap regions (#29), for when
+# probe-savediff.ps1 - the classic differential-save probe for the PLT gap regions (#29), for when
 # the live watcher is more than you need: snapshot every PLTnnn.P file, do a thing in-game (fly a
 # mission, earn a medal, complete a fort assault), snapshot again, and report which gap-region
 # bytes changed in which pilot file.
@@ -11,7 +11,7 @@
 #   powershell -File C:\bench\probe-savediff.ps1 -Snapshot after
 #   powershell -File C:\bench\probe-savediff.ps1 -Diff before after
 #
-# Gap regions are addressed by .P FILE OFFSET (not VA) — this reads files, not memory. Offsets are
+# Gap regions are addressed by .P FILE OFFSET (not VA) - this reads files, not memory. Offsets are
 # the same ones docs/fa/formats/P.md and the plt codec use.
 
 [CmdletBinding()]
@@ -34,6 +34,10 @@ $Regions = @(
     @{ Name = 'medal-band';         Off = 0x0572; Len = 0x0B  }
     @{ Name = 'gap2-log-b';         Off = 0x057D; Len = 0x32  }
     @{ Name = 'service-record';     Off = 0x05AF; Len = 0x1D0 }
+    # CONTROL (not a gap): confirmed mission/kill counters. A completed mission must change this;
+    # if it is flat between snapshots, the in-game action did not persist and a "no gap change"
+    # result is meaningless - re-fly before trusting it.
+    @{ Name = 'control-stats-block';Off = 0x1F80; Len = 0x98  }
     @{ Name = 'gap3-kill-subcats';  Off = 0x2018; Len = 0xA0  }
     @{ Name = 'gap4-fort-stats';    Off = 0x21F8; Len = 0x3E8 }
 )
