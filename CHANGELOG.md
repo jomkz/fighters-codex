@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.8] - 2026-08-20
+
 **`#482` closes — every function the game executable names is documented.** The seven tail
 batches ([#543](https://github.com/jomkz/fighters-codex/issues/543)–[#549](https://github.com/jomkz/fighters-codex/issues/549))
 read the remaining named-but-unclaimed functions body by body: the flight-dynamics and envelope
@@ -1029,7 +1031,8 @@ overlays and one-way translations.
 - `fx` — command-line tool for unpacking, inspecting, and repacking FA assets
 - `fx-gui` — ImGui/DirectX 11 GUI editor for FA LIB archives with three-panel layout
 
-[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.7...HEAD
+[Unreleased]: https://github.com/jomkz/fighters-codex/compare/v0.8.8...HEAD
+[0.8.8]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.8
 [0.8.7]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.7
 [0.8.6]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.6
 [0.8.5]: https://github.com/jomkz/fighters-codex/releases/tag/v0.8.5
