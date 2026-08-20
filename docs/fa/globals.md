@@ -97,11 +97,12 @@ _Generated from [`db/symbols/`](https://github.com/jomkz/fighters-codex/blob/mai
 
 ### Network / multiplayer (NET/SER/UDP/MP)
 
-[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 3 named referenced globals
+[`network.csv`](https://github.com/jomkz/fighters-codex/blob/main/db/symbols/network.csv) · [page](network.md) — 4 named referenced globals
 
 | VA | Symbol | Src | Role |
 |----|--------|-----|------|
 | `0x004EB608` | `thisComputer` | sms | imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS |
+| `0x0050C720` | `pkt_err_strings` | re | table of error-message string pointers indexed by packet error code; returned by ?get_pkt_err_string@@YAPADJ@Z |
 | `0x00520A1C` | `playerId` | sms | imported by 1 shipped .MC overlay (#491); named at this VA by FA.SMS |
 | `0x00572568` | `querySocket` | re | master/query socket handle — set from the connect result in ?NET_StartQuery@@…, used for the broadcast host query, closed and reset to -1 by ?NET_MasterShutdown@@YAXXZ |
 
