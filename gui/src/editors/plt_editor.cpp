@@ -205,11 +205,11 @@ void DrawPltEditor(App& app) {
         ImGui::TextDisabled("Medal band not present (file < 0x57D bytes).");
     } else {
         // Each slot is one byte in the file; a checkbox edit writes it directly.
-        auto medal = [&](const char* label, uint8_t* field, int off) {
-            bool v = *field != 0;
+        auto medal = [&](const char* label, uint8_t* slot, int off) {
+            bool v = *slot != 0;
             if (ImGui::Checkbox(label, &v)) {
-                *field = v ? 1 : 0;
-                ed.data[off] = *field;
+                *slot = v ? 1 : 0;
+                ed.data[off] = *slot;
                 ed.modified = true;
             }
         };

@@ -107,11 +107,6 @@ static const InstallItem* item(const InstallPlan& plan, const std::string& dest)
     return nullptr;
 }
 
-static size_t count(const InstallPlan& plan, InstallStatus status) {
-    return (size_t)std::count_if(plan.items.begin(), plan.items.end(),
-                                 [&](const InstallItem& it) { return it.status == status; });
-}
-
 // ---------------------------------------------------------------------------
 // Glob — the DOS matcher the scripts speak
 // ---------------------------------------------------------------------------

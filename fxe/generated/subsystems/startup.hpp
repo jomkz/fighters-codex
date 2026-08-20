@@ -412,7 +412,7 @@ undefined4 _onexit(undefined4);  // 0x004E63B0  __cdecl
 undefined4 atexit(undefined4);  // 0x004E6440  __cdecl
 void abort(void);  // 0x004E64A0  __cdecl
 undefined4 raise(undefined4);  // 0x004E6730  __cdecl
-int $I10_OUTPUT(u32, u32, u16, int, u8, short *);  // 0x004E7320  __cdecl
+int _I10_OUTPUT(u32, u32, u16, int, u8, short *);  // 0x004E7320  __cdecl
 undefined4 realloc(undefined4, undefined4);  // 0x004E76C0  __cdecl
 undefined4 _mbschr(undefined4, undefined4);  // 0x004E7890  __cdecl
 undefined4 _strdup(undefined4);  // 0x004E7950  __cdecl

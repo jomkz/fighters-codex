@@ -12,11 +12,21 @@ endif()
 
 # Warning policy for every target in this repo; linked PRIVATE so it never
 # propagates to consumers.
+#
+# FX_WERROR makes THIS repo's warnings errors, scoped to fx_warnings — so it
+# never turns a third-party dependency's warning (a FetchContent SDL3, Catch2)
+# into a build break. The macOS CI gate turns it on: AppleClang under -Werror is
+# the project's portability canary (#155), catching what the Linux/Windows gates,
+# which do not use -Werror, let through.
+option(FX_WERROR "Treat this repo's own warnings as errors (not third-party deps)" OFF)
 add_library(fx_warnings INTERFACE)
 if(MSVC)
-    target_compile_options(fx_warnings INTERFACE /W3 /WX-)
+    target_compile_options(fx_warnings INTERFACE /W3 $<IF:$<BOOL:${FX_WERROR}>,/WX,/WX->)
 else()
     target_compile_options(fx_warnings INTERFACE -Wall -Wextra -Wpedantic -Wshadow)
+    if(FX_WERROR)
+        target_compile_options(fx_warnings INTERFACE -Werror)
+    endif()
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         # Catch2's TEST_CASE expands __COUNTER__, which Clang's -Wpedantic
         # flags as a C2y extension at the expansion site in test files
@@ -41,7 +51,8 @@ if(PROJECT_IS_TOP_LEVEL)
 
     add_subdirectory(cli)
 
-    # fxs: SDL3 + OpenGL 3.3 + miniaudio on Linux and Windows (ADR-0001).
+    # fxs: SDL3 + OpenGL 3.3 + miniaudio on Linux, Windows and macOS (ADR-0001;
+    # macOS uses a 4.1 core context, the platform's ≥3.3 superset — see #155).
     # OFF in the coverage/fuzz presets — no value in instrumented SDL3 builds.
     option(FX_BUILD_GUI "Build the fxs editor" ON)
     option(FX_SDL3_VENDORED "Force the pinned FetchContent SDL3 (static)" OFF)
