@@ -38,7 +38,11 @@ case "$cmd" in
     # SPICE display with <listen type='none'> (no network-reachable address), so virt-viewer's
     # default network-connect mode fails with "Display can only be attached through libvirt with
     # --attach".
-    virt-viewer --attach --connect qemu:///system "$(domain)" &
+    # GDK_BACKEND=x11 runs virt-viewer under XWayland. On a fractional-scaled Wayland desktop (e.g.
+    # a 4K monitor at 125%), spice-gtk's native-Wayland cursor path mis-scales the guest cursor
+    # ("cursor image size ... not an integer multiple of scale" -> a giant pointer); XWayland lets
+    # the compositor scale the whole window uniformly and the cursor renders at normal size.
+    GDK_BACKEND=x11 virt-viewer --attach --connect qemu:///system "$(domain)" &
     echo "opened console for $(domain) (pid $!)"
     ;;
   snapshot)

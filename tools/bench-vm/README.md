@@ -19,16 +19,15 @@ of on the physical Windows bench.
 It is a **correctness/observation environment, not a measurement one** — sized generously off the
 host, software-rendered. Timings taken here are meaningless.
 
-> Status: bring-up validated on the primary Fedora host (2026-08-20). The first `vagrant up` was
-> the real test — a Windows box boot plus a ~1 GB game install is not something CI exercises — and it
-> surfaced three scaffold bugs, all fixed here: the guest **audio device** (raw `hda-output`
-> qemuargs aborted QEMU on a host with no default audio driver → now libvirt's managed
-> `sound_type = "ich9"`); the **provisioner encoding** (non-ASCII `—`/`§`/box-drawing chars in the
-> `.ps1` scripts broke PowerShell 5.1 parsing over WinRM → the bench scripts are ASCII-only); and
-> **FA placement** (was gated on an env var a plain `vagrant provision` does not re-thread → now
-> keyed off the staged files on the guest disk). The guest boots, FA installs to
-> `C:\JANES\Fighters Anthology`, and the registry footprint is written. The actual flying is still a
-> human console session.
+> Status: **validated end-to-end on the primary Fedora host (2026-08-20) — FA boots, renders, and
+> flies in the VM.** The first `vagrant up` was the real test and surfaced a chain of issues, all
+> fixed here: guest **audio device** (raw `hda-output` qemuargs aborted QEMU → libvirt
+> `sound_type`), **provisioner encoding** (non-ASCII in the `.ps1` scripts broke PowerShell 5.1 over
+> WinRM → ASCII only), **FA placement** (env-var gated → keyed off staged files) plus a **Copy-Item
+> leaf-dir** collapse, the **SPICE console** (needs `--attach`, XWayland, and a USB tablet for a
+> usable mouse/cursor), and the **render + DEP** stack (§ Rendering, input & sound). The guest boots,
+> installs FA to `C:\JANES\Fighters Anthology`, and comes up game-ready. Flying the probes is still a
+> human console session; sound is optional and not yet wired to the host.
 
 ## Host prerequisites (one-time)
 
@@ -78,6 +77,34 @@ FX_FA_SRC="/run/media/john/Windows Disk/JANES/Fighters Anthology" \
 writes the registry keys. The install on that Windows disk is already patched to **1.02F**, so no
 disc install or RTPatch step is needed. (Alternatively, install from the disc ISOs in `~/iso/` and
 run the 1.02 patch — but copying the ready install is faster and byte-for-byte known.)
+
+## Rendering, input & sound
+
+FA is a 1998 8-bit DirectDraw title; QXL's modern WDDM driver can't run it as shipped. `provision.ps1`
+step 6 codifies the working setup (proven by hand 2026-08-20, validate on the next fresh rebuild):
+
+- **Display driver + mouse.** The SPICE guest tools (QXL DoD driver + `spice-vdagent`) plus a USB
+  tablet (in the `Vagrantfile`) give a real display driver, a seamless **absolute** mouse, and
+  window resize. Without them the guest falls back to the Microsoft Basic Display Adapter with a
+  grabbed pointer.
+- **cnc-ddraw (GDI renderer).** FA needs an 8-bit 640×480 mode QXL cannot expose. The FA install
+  ships **dgVoodoo** as `ddraw.dll`, which needs Direct3D 11 that QXL lacks and crashes on mission
+  start; provisioning renames it `ddraw.dll.dgvoodoo-off` and drops in **cnc-ddraw**'s `ddraw.dll`
+  with a `ddraw.ini` set to `renderer=gdi`, windowed. That pure-software path renders FA with no GPU.
+- **DEP off.** FA executes generated code (its SH interpreter/renderer); DEP kills it with a `BEX`
+  crash the instant a mission starts (fault offset always ends `…3832`, faulting module "unknown").
+  `bcdedit /set nx AlwaysOff` (system-wide — per-app `DisableNX` shims did **not** stick). Needs one
+  reboot to take effect.
+- **Console.** `run-bench.sh console` runs `virt-viewer --attach` under `GDK_BACKEND=x11` (XWayland),
+  so a fractional-scaled 4K desktop doesn't blow the cursor up to 141×141. `Shift+F12` releases the
+  mouse; `Shift+F11` toggles fullscreen; inside cnc-ddraw's window, `Tab` releases the cursor and
+  `Enter` toggles its own fullscreen.
+- **Sound (optional, not wired).** The guest has an ich9 card, but its `<audio type='spice'/>`
+  backend isn't carried over `--attach`, so it's silent — harmless for the RE probes (FA only needs
+  the device to *exist*). To actually hear it, re-point QEMU audio at the host PipeWire
+  (`<audio type='pipewire'/>`); the catch is that the system-session QEMU (`qemu:///system`) runs as
+  the `qemu` user and can't reach your per-user PipeWire socket without a libvirt `qemu.conf`
+  `user`/`group` change (or an ACL on `/run/user/<uid>`).
 
 ## The workflow
 

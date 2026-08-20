@@ -98,6 +98,65 @@ if (Test-Path (Join-Path $InstallDir 'FA.EXE')) {
     $fa.Save()
 }
 
+# -- 6. Render + display stack so FA actually runs on QXL (no 3D GPU) ---------
+# CODIFIES THE MANUALLY-VERIFIED bring-up (2026-08-20). Unlike the FA/game content (never
+# downloaded), this DOES fetch two guest-runtime tools from the network -- a dedicated FA bench
+# cannot render without them. Each step is idempotent. NOTE: the QXL-driver and DEP changes need
+# ONE reboot to take effect ('vagrant reload' after the first 'up'). Validate on the next fresh
+# rebuild -- this block was assembled from steps proven by hand, not yet from a clean provision.
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# 6a. SPICE guest tools: QXL display driver + spice-vdagent (seamless mouse, window resize, and a
+# real display driver instead of the Basic adapter). Pair with the USB tablet in the Vagrantfile.
+if (-not (Get-CimInstance Win32_VideoController | Where-Object { $_.Name -match 'QXL' })) {
+    try {
+        $sgt = Join-Path $env:TEMP 'spice-guest-tools.exe'
+        Invoke-WebRequest 'https://www.spice-space.org/download/windows/spice-guest-tools/spice-guest-tools-latest.exe' -OutFile $sgt -UseBasicParsing
+        Start-Process $sgt -ArgumentList '/S' -Wait
+        Write-Host "SPICE guest tools installed (reboot required)."
+    } catch { Write-Warning "SPICE guest tools install failed: $_" }
+}
+
+# 6b. Rendering: FA needs an 8-bit 640x480 DirectDraw mode QXL's WDDM driver cannot expose. The
+# shipped dgVoodoo wrapper needs Direct3D 11 (QXL has none) and crashes; cnc-ddraw's GDI software
+# renderer provides the mode with no GPU.
+$ddraw = Join-Path $InstallDir 'ddraw.dll'
+$isCnc = (Test-Path $ddraw) -and ((Get-Item $ddraw).VersionInfo.ProductName -match 'cnc-ddraw')
+if ((Test-Path (Join-Path $InstallDir 'FA.EXE')) -and -not $isCnc) {
+    if ((Test-Path $ddraw) -and ((Get-Item $ddraw).VersionInfo.ProductName -match 'dgVoodoo')) {
+        Rename-Item $ddraw ($ddraw + '.dgvoodoo-off') -Force
+        Write-Host "Disabled the shipped dgVoodoo ddraw.dll (needs a 3D GPU)."
+    }
+    try {
+        $zip = Join-Path $env:TEMP 'cnc-ddraw.zip'; $tmp = Join-Path $env:TEMP 'cnc-ddraw'
+        Invoke-WebRequest 'https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip' -OutFile $zip -UseBasicParsing
+        Expand-Archive $zip $tmp -Force
+        Copy-Item (Join-Path $tmp 'ddraw.dll') $InstallDir -Force
+        @"
+[ddraw]
+renderer=gdi
+fullscreen=false
+windowed=true
+border=true
+resizable=true
+maintas=true
+nonexclusive=true
+adjmouse=true
+singlecpu=true
+savesettings=0
+"@ | Set-Content (Join-Path $InstallDir 'ddraw.ini') -Encoding ASCII
+        Write-Host "cnc-ddraw installed (GDI software renderer)."
+    } catch { Write-Warning "cnc-ddraw install failed: $_" }
+}
+
+# 6c. DEP off: FA executes generated code (its SH interpreter / renderer). DEP kills it with a BEX
+# crash the instant a mission starts (fault always ends ...3832, module 'unknown' = a data page).
+# Per-app DisableNX compat shims did NOT stick; system-wide is the reliable switch.
+if ((bcdedit /enum '{current}' | Select-String 'nx' | Out-String) -notmatch 'AlwaysOff') {
+    bcdedit /set '{current}' nx AlwaysOff | Out-Null
+    Write-Host "DEP disabled (nx AlwaysOff) -- reboot required."
+}
+
 Write-Host ""
 Write-Host "=== Bench guest ready. ==="
 Write-Host "Open the console (host: tools/bench-vm/run-bench.sh console), launch Fighters"

@@ -71,6 +71,11 @@ Vagrant.configure("2") do |config|
     # starts the Windows Audio service, which Server leaves disabled.
     v.sound_type = "ich9"
 
+    # A USB tablet gives the guest an ABSOLUTE pointer, so SPICE tracks the host cursor instead of
+    # grabbing/capturing it (the default PS/2 mouse is relative-only). Needs the SPICE guest tools
+    # (QXL driver + spice-vdagent) in the guest — see README "Guest display + mouse".
+    v.input :type => "tablet", :bus => "usb"
+
     # Host-side live memory access for the probes: expose QEMU's gdbstub on localhost:1234. The
     # in-guest watcher (plt-watch.ps1) is the primary tool; this is the belt-and-suspenders path
     # for reading guest memory from the host without touching the guest. See README § "Live memory".
