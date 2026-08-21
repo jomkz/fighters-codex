@@ -116,6 +116,14 @@ if (-not (Get-CimInstance Win32_VideoController | Where-Object { $_.Name -match 
         Write-Host "SPICE guest tools installed (reboot required)."
     } catch { Write-Warning "SPICE guest tools install failed: $_" }
 }
+# Ensure the SPICE agent service actually runs (seamless/absolute mouse, resize); it can land
+# installed-but-stopped or Manual after the driver reboot.
+$vd = Get-Service vdservice -ErrorAction SilentlyContinue
+if ($vd) {
+    Set-Service vdservice -StartupType Automatic
+    if ($vd.Status -ne 'Running') { Start-Service vdservice -ErrorAction SilentlyContinue }
+    Write-Host "vdservice: $((Get-Service vdservice).Status)"
+}
 
 # 6b. Rendering: FA needs an 8-bit 640x480 DirectDraw mode QXL's WDDM driver cannot expose. The
 # shipped dgVoodoo wrapper needs Direct3D 11 (QXL has none) and crashes; cnc-ddraw's GDI software
@@ -155,6 +163,17 @@ savesettings=0
 if ((bcdedit /enum '{current}' | Select-String 'nx' | Out-String) -notmatch 'AlwaysOff') {
     bcdedit /set '{current}' nx AlwaysOff | Out-Null
     Write-Host "DEP disabled (nx AlwaysOff) -- reboot required."
+}
+
+# 6d. Game audio: the FA install ships DSOAL (a DirectSound->OpenAL wrapper) as dsound.dll +
+# alsoft.ini. DSOAL needs OpenAL Soft (soft_oal.dll), which isn't present here, so FA's audio init
+# fails silently -- the game is mute while plain Windows sounds (which bypass DSOAL) still play.
+# Disable the wrapper so FA uses the OS DirectSound, which works with the emulated card. (If
+# soft_oal.dll is ever dropped in alongside it, DSOAL can work and this leaves it alone.)
+$dsoal = Join-Path $InstallDir 'dsound.dll'
+if ((Test-Path $dsoal) -and -not (Test-Path (Join-Path $InstallDir 'soft_oal.dll'))) {
+    Rename-Item $dsoal ($dsoal + '.dsoal-off') -Force
+    Write-Host "Disabled the DSOAL dsound.dll wrapper (no OpenAL Soft present); FA uses OS DirectSound."
 }
 
 Write-Host ""

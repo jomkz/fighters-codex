@@ -35,9 +35,8 @@ case "$cmd" in
   console)
     need virt-viewer "the SPICE console"
     # --attach connects to the display through libvirt directly. vagrant-libvirt gives the guest a
-    # SPICE display with <listen type='none'> (no network-reachable address), so virt-viewer's
-    # default network-connect mode fails with "Display can only be attached through libvirt with
-    # --attach".
+    # SPICE display with <listen type='none'> and won't reliably set a reachable listen address
+    # (libvirt drops it), so --attach is required. It carries all SPICE channels including audio.
     # GDK_BACKEND=x11 runs virt-viewer under XWayland. On a fractional-scaled Wayland desktop (e.g.
     # a 4K monitor at 125%), spice-gtk's native-Wayland cursor path mis-scales the guest cursor
     # ("cursor image size ... not an integer multiple of scale" -> a giant pointer); XWayland lets

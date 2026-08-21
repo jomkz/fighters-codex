@@ -63,6 +63,10 @@ Vagrant.configure("2") do |config|
     v.video_type = "qxl"
     v.graphics_type = "spice"
     v.video_vram = 65536
+    # NOTE: vagrant-libvirt cannot reliably set a reachable SPICE listen address (graphics_ip is
+    # dropped by libvirt with "failed to fully update the domain"), so the display stays
+    # <listen type='none'> and run-bench.sh connects with `virt-viewer --attach`, which carries the
+    # SPICE audio channel too. Guest audio itself is fixed in provision.ps1 (DSOAL disabled).
 
     # FA treats a missing audio device unkindly; give the guest an emulated HD Audio card. Use
     # libvirt's managed sound device rather than a raw `-device hda-output` qemuarg: libvirt wires

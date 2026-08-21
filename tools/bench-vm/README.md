@@ -26,8 +26,8 @@ host, software-rendered. Timings taken here are meaningless.
 > WinRM → ASCII only), **FA placement** (env-var gated → keyed off staged files) plus a **Copy-Item
 > leaf-dir** collapse, the **SPICE console** (needs `--attach`, XWayland, and a USB tablet for a
 > usable mouse/cursor), and the **render + DEP** stack (§ Rendering, input & sound). The guest boots,
-> installs FA to `C:\JANES\Fighters Anthology`, and comes up game-ready. Flying the probes is still a
-> human console session; sound is optional and not yet wired to the host.
+> installs FA to `C:\JANES\Fighters Anthology`, and comes up game-ready — **FA renders, flies, and has
+> sound** (validated on a clean `vagrant up`). Flying the probes is still a human console session.
 
 ## Host prerequisites (one-time)
 
@@ -99,12 +99,12 @@ step 6 codifies the working setup (proven by hand 2026-08-20, validate on the ne
   so a fractional-scaled 4K desktop doesn't blow the cursor up to 141×141. `Shift+F12` releases the
   mouse; `Shift+F11` toggles fullscreen; inside cnc-ddraw's window, `Tab` releases the cursor and
   `Enter` toggles its own fullscreen.
-- **Sound (optional, not wired).** The guest has an ich9 card, but its `<audio type='spice'/>`
-  backend isn't carried over `--attach`, so it's silent — harmless for the RE probes (FA only needs
-  the device to *exist*). To actually hear it, re-point QEMU audio at the host PipeWire
-  (`<audio type='pipewire'/>`); the catch is that the system-session QEMU (`qemu:///system`) runs as
-  the `qemu` user and can't reach your per-user PipeWire socket without a libvirt `qemu.conf`
-  `user`/`group` change (or an ACL on `/run/user/<uid>`).
+- **Sound.** Works over the `--attach` connection — spice-gtk carries the SPICE audio channel to the
+  host (GStreamer → PipeWire). The one catch is FA-specific: the install ships **DSOAL** (a
+  DirectSound→OpenAL wrapper) as `dsound.dll` + `alsoft.ini`, but with no OpenAL Soft (`soft_oal.dll`)
+  present, FA's audio init fails silently while plain Windows sounds still play. `provision.ps1`
+  disables the DSOAL wrapper so FA uses the OS DirectSound. (Drop `soft_oal.dll` in beside it if you
+  want DSOAL's EAX/3D-positional audio back.)
 
 ## The workflow
 
