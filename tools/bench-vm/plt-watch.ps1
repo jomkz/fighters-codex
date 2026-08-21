@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: MIT
 #
-# plt-watch.ps1 — live memory watcher for the FA gameplay-gated RE probes (#56).
+# plt-watch.ps1 - live memory watcher for the FA gameplay-gated RE probes (#56).
 #
 # Polls FA.EXE's `_campaignPilot` gap regions (and any other VAs in probes.psd1) via
 # ReadProcessMemory while the game runs, and prints a timestamped line every time a watched region
-# changes — with a byte-level diff. This is what the physical bench cannot do: it sees WHEN a gap
+# changes - with a byte-level diff. This is what the physical bench cannot do: it sees WHEN a gap
 # byte changes and under what in-game action, not just what ends up in the saved .P file.
 #
 # Run it in the guest console AFTER launching Fighters Anthology (the "FA Bench" desktop shortcut
@@ -90,15 +90,15 @@ $state  = @{}   # probe name -> last bytes
 while ($true) {
     $proc = Get-FaProcess
     if (-not $proc) {
-        if ($handle -ne [IntPtr]::Zero) { [void][Mem]::CloseHandle($handle); $handle = [IntPtr]::Zero; $state.Clear(); Log "FA.EXE exited — waiting for relaunch ..." }
+        if ($handle -ne [IntPtr]::Zero) { [void][Mem]::CloseHandle($handle); $handle = [IntPtr]::Zero; $state.Clear(); Log "FA.EXE exited - waiting for relaunch ..." }
         Start-Sleep -Milliseconds 500
         continue
     }
     if ($handle -eq [IntPtr]::Zero) {
         $handle = [Mem]::OpenProcess(($PROCESS_VM_READ -bor $PROCESS_QUERY_INFORMATION), $false, $proc.Id)
-        if ($handle -eq [IntPtr]::Zero) { Log "OpenProcess failed (run as Administrator) — retrying"; Start-Sleep 1; continue }
+        if ($handle -eq [IntPtr]::Zero) { Log "OpenProcess failed (run as Administrator) - retrying"; Start-Sleep 1; continue }
         # FA.EXE is non-relocatable, so it loads at 0x400000 and rebase is 0. Confirm off the live
-        # module base when we can — but reading a 32-bit process's MainModule from 64-bit
+        # module base when we can - but reading a 32-bit process's MainModule from 64-bit
         # PowerShell can throw, so treat 0x400000 as the trusted default and only refine on success.
         $rebase = 0
         try {
@@ -121,7 +121,7 @@ while ($true) {
         if ($changed) {
             if ($null -eq $prev) {
                 $nz = ($bytes | Where-Object { $_ -ne 0 }).Count
-                Log ("[{0}] first read — {1}/{2} non-zero  ({3})" -f $p.Name, $nz, $p.Len, $p.Note)
+                Log ("[{0}] first read - {1}/{2} non-zero  ({3})" -f $p.Name, $nz, $p.Len, $p.Note)
             } else {
                 Log ("[{0}] {1}   ({2})" -f $p.Name, (Format-Diff $prev $bytes $p.VA), $p.Note)
             }

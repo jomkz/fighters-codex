@@ -48,8 +48,9 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "plt-watch.ps1",     destination: 'C:\bench\plt-watch.ps1'
   config.vm.provision "file", source: "probe-savediff.ps1", destination: 'C:\bench\probe-savediff.ps1'
   config.vm.provision "file", source: "probes.psd1",        destination: 'C:\bench\probes.psd1'
-  config.vm.provision "shell", path: "provision.ps1", privileged: true,
-    env: { "FX_FA_STAGED" => (fa_src && !fa_src.empty? ? "1" : "0") }
+  # provision.ps1 keys FA placement off the staged files on the guest disk, not an env var, so it
+  # does the right thing on a plain `vagrant provision` too (which does not re-thread FX_FA_SRC).
+  config.vm.provision "shell", path: "provision.ps1", privileged: true
 
   config.vm.provider "libvirt" do |v|
     # Generous slice; leave the host usable while the game runs.
@@ -62,13 +63,22 @@ Vagrant.configure("2") do |config|
     v.video_type = "qxl"
     v.graphics_type = "spice"
     v.video_vram = 65536
+    # NOTE: vagrant-libvirt cannot reliably set a reachable SPICE listen address (graphics_ip is
+    # dropped by libvirt with "failed to fully update the domain"), so the display stays
+    # <listen type='none'> and run-bench.sh connects with `virt-viewer --attach`, which carries the
+    # SPICE audio channel too. Guest audio itself is fixed in provision.ps1 (DSOAL disabled).
 
-    # FA treats a missing audio device unkindly; give the guest an emulated one (provision.ps1
-    # starts the Windows Audio service, which Server leaves disabled).
-    v.qemuargs value: "-device"
-    v.qemuargs value: "ich9-intel-hda"
-    v.qemuargs value: "-device"
-    v.qemuargs value: "hda-output"
+    # FA treats a missing audio device unkindly; give the guest an emulated HD Audio card. Use
+    # libvirt's managed sound device rather than a raw `-device hda-output` qemuarg: libvirt wires
+    # the audiodev backend for us, whereas the raw device aborts the VM on QEMU builds that have no
+    # default audio driver ("-device hda-output: no default audio driver available"). provision.ps1
+    # starts the Windows Audio service, which Server leaves disabled.
+    v.sound_type = "ich9"
+
+    # A USB tablet gives the guest an ABSOLUTE pointer, so SPICE tracks the host cursor instead of
+    # grabbing/capturing it (the default PS/2 mouse is relative-only). Needs the SPICE guest tools
+    # (QXL driver + spice-vdagent) in the guest — see README "Guest display + mouse".
+    v.input :type => "tablet", :bus => "usb"
 
     # Host-side live memory access for the probes: expose QEMU's gdbstub on localhost:1234. The
     # in-guest watcher (plt-watch.ps1) is the primary tool; this is the belt-and-suspenders path

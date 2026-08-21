@@ -19,10 +19,15 @@ of on the physical Windows bench.
 It is a **correctness/observation environment, not a measurement one** — sized generously off the
 host, software-rendered. Timings taken here are meaningless.
 
-> Status: this scaffolding follows the proven pattern in
-> `fighters-legacy/tools/windows-env/`, but the first `vagrant up` is the real test — a Windows box
-> download plus a game install is not something CI exercises. Treat the initial bring-up as the
-> validation step, and file anything that needs fixing.
+> Status: **validated end-to-end on the primary Fedora host (2026-08-20) — FA boots, renders, and
+> flies in the VM.** The first `vagrant up` was the real test and surfaced a chain of issues, all
+> fixed here: guest **audio device** (raw `hda-output` qemuargs aborted QEMU → libvirt
+> `sound_type`), **provisioner encoding** (non-ASCII in the `.ps1` scripts broke PowerShell 5.1 over
+> WinRM → ASCII only), **FA placement** (env-var gated → keyed off staged files) plus a **Copy-Item
+> leaf-dir** collapse, the **SPICE console** (needs `--attach`, XWayland, and a USB tablet for a
+> usable mouse/cursor), and the **render + DEP** stack (§ Rendering, input & sound). The guest boots,
+> installs FA to `C:\JANES\Fighters Anthology`, and comes up game-ready — **FA renders, flies, and has
+> sound** (validated on a clean `vagrant up`). Flying the probes is still a human console session.
 
 ## Host prerequisites (one-time)
 
@@ -73,6 +78,34 @@ writes the registry keys. The install on that Windows disk is already patched to
 disc install or RTPatch step is needed. (Alternatively, install from the disc ISOs in `~/iso/` and
 run the 1.02 patch — but copying the ready install is faster and byte-for-byte known.)
 
+## Rendering, input & sound
+
+FA is a 1998 8-bit DirectDraw title; QXL's modern WDDM driver can't run it as shipped. `provision.ps1`
+step 6 codifies the working setup (proven by hand 2026-08-20, validate on the next fresh rebuild):
+
+- **Display driver + mouse.** The SPICE guest tools (QXL DoD driver + `spice-vdagent`) plus a USB
+  tablet (in the `Vagrantfile`) give a real display driver, a seamless **absolute** mouse, and
+  window resize. Without them the guest falls back to the Microsoft Basic Display Adapter with a
+  grabbed pointer.
+- **cnc-ddraw (GDI renderer).** FA needs an 8-bit 640×480 mode QXL cannot expose. The FA install
+  ships **dgVoodoo** as `ddraw.dll`, which needs Direct3D 11 that QXL lacks and crashes on mission
+  start; provisioning renames it `ddraw.dll.dgvoodoo-off` and drops in **cnc-ddraw**'s `ddraw.dll`
+  with a `ddraw.ini` set to `renderer=gdi`, windowed. That pure-software path renders FA with no GPU.
+- **DEP off.** FA executes generated code (its SH interpreter/renderer); DEP kills it with a `BEX`
+  crash the instant a mission starts (fault offset always ends `…3832`, faulting module "unknown").
+  `bcdedit /set nx AlwaysOff` (system-wide — per-app `DisableNX` shims did **not** stick). Needs one
+  reboot to take effect.
+- **Console.** `run-bench.sh console` runs `virt-viewer --attach` under `GDK_BACKEND=x11` (XWayland),
+  so a fractional-scaled 4K desktop doesn't blow the cursor up to 141×141. `Shift+F12` releases the
+  mouse; `Shift+F11` toggles fullscreen; inside cnc-ddraw's window, `Tab` releases the cursor and
+  `Enter` toggles its own fullscreen.
+- **Sound.** Works over the `--attach` connection — spice-gtk carries the SPICE audio channel to the
+  host (GStreamer → PipeWire). The one catch is FA-specific: the install ships **DSOAL** (a
+  DirectSound→OpenAL wrapper) as `dsound.dll` + `alsoft.ini`, but with no OpenAL Soft (`soft_oal.dll`)
+  present, FA's audio init fails silently while plain Windows sounds still play. `provision.ps1`
+  disables the DSOAL wrapper so FA uses the OS DirectSound. (Drop `soft_oal.dll` in beside it if you
+  want DSOAL's EAX/3D-positional audio back.)
+
 ## The workflow
 
 ```
@@ -118,17 +151,31 @@ which `PLTnnn.P`. Simpler than the live watcher when you only care about the per
 From [#29](https://github.com/jomkz/fighters-codex/issues/29) and
 [#142](https://github.com/jomkz/fighters-codex/issues/142):
 
-| Probe | Region | Action to fly |
-|---|---|---|
-| gap 1 | `0xB0`–`0xC1` | advance rank / score; watch for the rank-index or score-tier write |
-| gap 2 | `0xCF`–`0x571` + `0x57D`–`0x5AE` | fly 3–5 missions; watch mission-log growth |
-| **medal band** | `0x572`–`0x57C` | **earn a medal → exactly one band byte must flip** (validates the static read in P.md § Medal-flag band) |
-| gap 3 | `0x2018`–`0x20B7` | fly with kills; watch kill-subcategory / score-history |
-| gap 4 | `0x21F8`–`0x25DF` | complete a fort-assault mission; watch the fort-stats flush |
-| HUD `+0x238` | HUD struct | needs the HUD struct base VA from `db/symbols` — add it to `probes.psd1` |
-| HUD flag bit 14 | HUD flags word | the single-player state transition that sets it |
-| CB8 palette-half | — | the CB8 screen that exercises it |
-| wingman `wm_control` | — | the formation-tightness range |
+| Probe | Region | Action to fly | Expected writer |
+|---|---|---|---|
+| **control** | `0x1F80`–`0x2017` | any completed mission | `_EndOfMissionStats` flush (`FUN_00485380`) — **must move** |
+| gap 1 | `0xB0`–`0xC1` | advance rank / score | rank-index or score-tier write (unknown) |
+| gap 2 | `0xCF`–`0x571` + `0x57D`–`0x5AE` | fly 3–5 missions | mission-log growth |
+| **medal band** | `0x572`–`0x57C` | **earn a medal → exactly one band byte must flip** | `_AwardMedal` (`0x467110`) via the per-campaign `*Medals` pass |
+| gap 3 | `0x2018`–`0x20B7` | fly with kills | `_EndOfMissionStats` flush, if written at all |
+| gap 4 | `0x21F8`–`0x25DF` | complete a **fort-assault** mission | `_EndOfFortMissionStats` (`0x485040`) |
+| HUD `+0x238` | HUD struct | (see #142) | needs the HUD struct base VA from `db/symbols` — add it to `probes.psd1` |
+| HUD flag bit 14 | HUD flags word | the single-player state transition that sets it | — |
+| CB8 palette-half | — | the CB8 screen that exercises it | — |
+| wingman `wm_control` | — | the formation-tightness range | — |
+
+**Read the control row first — it is a measurement-integrity guard, not a probe to solve.** The
+`0x1F80`–`0x2017` block (confirmed mission/kill counters, [P.md](../../docs/fa/formats/P.md) §
+Stats counters) is written by the same end-of-mission flush that would populate the upper gaps. If
+you complete a mission and the **control block does not change**, the watcher is not attached, the
+save did not commit, or the module rebased — so a "gap 3/4 did not change" reading is meaningless.
+Trust a negative on the gaps only when the control moved in the same run.
+
+Static RE already narrows what to expect: `_ConvertPilotFiles` (`0x485AE0`) zero-fills the whole
+`0x25E0` record and migrates legacy fields only through `+0x2010`, so gaps 3 and 4 are **runtime-only**
+— zero until gameplay writes them (see [P.md](../../docs/fa/formats/P.md) gaps 3–4 and
+[game-compatibility.md](../../docs/fa/game-compatibility.md)). That is why the fresh-save baseline
+reads all-zero there, and why the fort-assault path is the specific trigger for gap 4.
 
 The medal-band probe is the cheapest win: the codec already decodes and edits that band
 ([#567](https://github.com/jomkz/fighters-codex/pull/567)), so confirming the live write closes the
